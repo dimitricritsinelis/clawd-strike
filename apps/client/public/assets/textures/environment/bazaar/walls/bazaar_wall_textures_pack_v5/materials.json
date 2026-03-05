@@ -316,6 +316,27 @@
       }
     },
     {
+      "id": "ph_whitewashed_brick_dusty",
+      "tileSizeM": 2.0,
+      "tintHex": "#e8dccb",
+      "albedoBoost": 1.08,
+      "roughness": 0.9,
+      "normalScale": 0.5,
+      "aoIntensity": 0.36,
+      "textures": {
+        "1k": {
+          "albedo": "./white_plaster_02/white_plaster_02_diff_1k.jpg",
+          "normal": "./white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
+          "arm": "./white_plaster_02/white_plaster_02_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./white_plaster_02/white_plaster_02_diff_2k.jpg",
+          "normal": "./white_plaster_02/white_plaster_02_nor_gl_2k.jpg",
+          "arm": "./white_plaster_02/white_plaster_02_arm_2k.jpg"
+        }
+      }
+    },
+    {
       "id": "ph_sandstone_blocks_06",
       "tileSizeM": 1.8,
       "tintHex": "#c0a080",

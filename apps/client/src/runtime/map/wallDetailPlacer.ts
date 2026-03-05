@@ -78,16 +78,34 @@ const ROOF_OVERHANG_M = 0.15;
 const ENCLOSURE_WALL_THICKNESS = 0.25; // thinner than collision walls, visual only
 
 // Balcony constants
-const BALCONY_DEPTH_M = 1.1;
-const BALCONY_SLAB_THICKNESS_M = 0.12;
-const BALCONY_WALL_H = 0.95;
-const BALCONY_WALL_THICKNESS_M = 0.15;
+const BALCONY_DEPTH_M = 0.95;
+const BALCONY_SLAB_THICKNESS_M = 0.10;
+const BALCONY_FRONT_PARAPET_H = 0.34;
+const BALCONY_FRONT_PARAPET_THICKNESS_M = 0.10;
+const BALCONY_END_NIB_DEPTH_M = 0.36;
+const BALCONY_END_NIB_W = 0.12;
+const BALCONY_END_NIB_H = 0.42;
+const BALCONY_LIP_H = 0.06;
+const BALCONY_LIP_DEPTH_M = 0.08;
+const BALCONY_RAIL_THICKNESS_M = 0.04;
+const BALCONY_RAIL_H = 0.05;
+const BALCONY_BRACKET_H = 0.30;
+const BALCONY_BRACKET_D = 0.24;
+const BALCONY_BRACKET_W = 0.16;
 const BALCONY_DOOR_H = 2.2;
 const BALCONY_DOOR_SILL_OFFSET = 0.08;
 // 35 % facade-level gate: if a non-spawn facade wins the roll, ALL its door
 // columns get balconies → coherent decorated/clean rhythm across a block face.
 const FACADE_BALCONY_CHANCE = 0.35;
 const BALCONY_ELIGIBLE_ZONES = new Set(["main_lane_segment", "spawn_plaza"]);
+// Derived from docs/map-design/window_bay_patterns.csv:
+// 3/7/11 effective bay families correspond to odd-distance window offsets
+// of 1, 3, and 5 bays from each door column.
+const SPAWN_HERO_WINDOW_REACH_BY_STATE = {
+  clean: 1,
+  balcony_light: 3,
+  balcony_heavy: 5,
+} as const;
 
 type SegmentFrame = {
   lengthM: number;
@@ -101,6 +119,7 @@ type SegmentFrame = {
 };
 
 type ColumnRole = "door" | "window" | "blank";
+type HeroFacadeState = keyof typeof SPAWN_HERO_WINDOW_REACH_BY_STATE;
 
 type FacadeSpec = {
   bayCount: number;
@@ -116,6 +135,9 @@ type FacadeSpec = {
   frameThickness: number;
   frameDepth: number;
   jambDepth: number;
+  heroFacadeState: HeroFacadeState | null;
+  heroFacadeLean: -1 | 1;
+  isSpawnHeroFacade: boolean;
 };
 
 type SegmentDecorContext = {
@@ -298,6 +320,57 @@ function tagTrim(instances: WallDetailInstance[], trimId: string | null): void {
   }
 }
 
+function isSpawnHeroFacade(ctx: SegmentDecorContext): boolean {
+  return ctx.zone?.type === "spawn_plaza";
+}
+
+function pickHeroFacadeState(ctx: SegmentDecorContext): HeroFacadeState {
+  const stateRng = ctx.rng.fork("spawn-hero-state");
+  const roll = stateRng.next();
+  if (ctx.frame.lengthM >= 18) {
+    return roll < 0.6 ? "balcony_light" : "balcony_heavy";
+  }
+  if (roll < 0.4) return "clean";
+  if (roll < 0.75) return "balcony_light";
+  return "balcony_heavy";
+}
+
+function pickHeroFacadeLean(ctx: SegmentDecorContext): -1 | 1 {
+  return ctx.rng.fork("spawn-hero-lean").next() < 0.5 ? -1 : 1;
+}
+
+function applySpawnHeroWindowPattern(
+  columnRoles: ColumnRole[],
+  doorCols: readonly number[],
+  bayCount: number,
+  state: HeroFacadeState,
+  lean: -1 | 1,
+): void {
+  const maxReach = Math.min(
+    SPAWN_HERO_WINDOW_REACH_BY_STATE[state],
+    Math.max(1, Math.floor((bayCount - 1) * 0.5)),
+  );
+
+  for (const dc of doorCols) {
+    for (let offset = 1; offset <= maxReach; offset += 2) {
+      const left = dc - offset;
+      const right = dc + offset;
+      if (left >= 0 && columnRoles[left] === "blank") columnRoles[left] = "window";
+      if (right < bayCount && columnRoles[right] === "blank") columnRoles[right] = "window";
+    }
+  }
+
+  const windowCols = columnRoles
+    .map((role, index) => (role === "window" ? index : -1))
+    .filter((index) => index >= 0);
+  if (windowCols.length >= 4) {
+    const pruneCol = lean < 0 ? Math.max(...windowCols) : Math.min(...windowCols);
+    if (!doorCols.includes(pruneCol)) {
+      columnRoles[pruneCol] = "blank";
+    }
+  }
+}
+
 // ── Per-segment height variation ───────────────────────────────────────────
 
 function resolveSegmentWallHeight(
@@ -359,14 +432,15 @@ function resolveSegmentWallHeight(
 function placeParapetCap(ctx: SegmentDecorContext): void {
   if (ctx.frame.lengthM < 1.0) return;
   const dims = getTrimDims(ctx.wallHeightM);
+  const isHero = isSpawnHeroFacade(ctx);
   ctx.rng.range(0.18, 0.35); // consume
   ctx.rng.range(0.06, 0.14); // consume
-  const capHeight = dims.parapetH;
-  const capDepth = clamp(dims.parapetD, 0.04, ctx.maxProtrusionM + 0.06);
+  const capHeight = dims.parapetH * (isHero ? 1.18 : 1);
+  const capDepth = clamp(dims.parapetD * (isHero ? 1.35 : 1), 0.04, ctx.maxProtrusionM + 0.06);
   const y = ctx.wallHeightM + capHeight * 0.5;
   pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
     ctx.frame, 0, y, capDepth * 0.5, capDepth, capHeight, ctx.frame.lengthM);
-  tagTrim(ctx.instances, null); // plaster — not stone
+  tagTrim(ctx.instances, isHero ? ctx.trimHeavyMaterialId : null);
 }
 
 // ── Roof cap ───────────────────────────────────────────────────────────────
@@ -457,10 +531,11 @@ function placeBuildingEnclosure(ctx: SegmentDecorContext): void {
 function placePlinthStrip(ctx: SegmentDecorContext): void {
   if (ctx.frame.lengthM < 1.0) return;
   const dims = getTrimDims(ctx.wallHeightM);
+  const isHero = isSpawnHeroFacade(ctx);
   ctx.rng.range(0.28, 0.48); // consume
   ctx.rng.range(0.06, 0.13); // consume
-  const plinthHeight = dims.plinthH;
-  const plinthDepth = clamp(dims.plinthD, 0.04, ctx.maxProtrusionM + 0.06);
+  const plinthHeight = dims.plinthH * (isHero ? 1.28 : 1);
+  const plinthDepth = clamp(dims.plinthD * (isHero ? 1.35 : 1), 0.04, ctx.maxProtrusionM + 0.06);
   if (ctx.isSideHall) return; // side halls: no base trim (RNG consumed above for determinism)
   pushBox(ctx.instances, ctx.maxInstances, "plinth_strip", ctx.wallMaterialId,
     ctx.frame, 0, plinthHeight * 0.5, plinthDepth * 0.5,
@@ -473,6 +548,7 @@ function placeStringCourses(ctx: SegmentDecorContext): void {
   const dims = getTrimDims(ctx.wallHeightM);
   ctx.rng.range(0.10, 0.18); // consume
   ctx.rng.range(0.06, 0.11); // consume
+  if (isSpawnHeroFacade(ctx)) return;
   const courseHeight = dims.courseH;
   const courseDepth = clamp(dims.courseD, 0.04, ctx.maxProtrusionM + 0.04);
 
@@ -497,6 +573,7 @@ function placeCorniceStrip(ctx: SegmentDecorContext): void {
   const dims = getTrimDims(ctx.wallHeightM);
   ctx.rng.range(0.18, 0.30); // consume
   ctx.rng.range(0.10, 0.19); // consume
+  if (isSpawnHeroFacade(ctx)) return;
   const corniceHeight = dims.corniceH;
   const corniceDepth = clamp(dims.corniceD, 0.06, ctx.maxProtrusionM + 0.08);
   const y = ctx.wallHeightM - corniceHeight * 0.5;
@@ -512,14 +589,15 @@ function placeCornerPiers(ctx: SegmentDecorContext): void {
   if (ctx.frame.lengthM < 0.8) return;
 
   const dims = getTrimDims(ctx.wallHeightM);
+  const isHero = isSpawnHeroFacade(ctx);
   const marginM = ctx.profile === "pbr" ? 0.04 : 0.02;
   const maxWidth = Math.max(0.28, Math.min(1.05, ctx.frame.lengthM * 0.4));
   // Consume RNG calls that were previously used for random dims (preserves sequence).
   ctx.rng.range(0.4, 0.72);   // was baseWidth
   ctx.rng.range(0.05, 0.1);   // was baseDepth
   ctx.rng.range(0.35, 0.75);  // was pierHeight offset
-  const pierWidth = clamp(dims.pierW, 0.3, maxWidth);
-  const pierDepth = clamp(dims.pierD, 0.05, ctx.maxProtrusionM);
+  const pierWidth = clamp(dims.pierW * (isHero ? 0.72 : 1), 0.22, maxWidth);
+  const pierDepth = clamp(dims.pierD * (isHero ? 0.9 : 1), 0.05, ctx.maxProtrusionM);
   const pierHeight = ctx.wallHeightM; // full height — contiguous with roofline
   const halfLen = ctx.frame.lengthM * 0.5;
 
@@ -531,6 +609,17 @@ function placeCornerPiers(ctx: SegmentDecorContext): void {
     const isCorner = (side === -1 && ctx.cornerAtStart) || (side === 1 && ctx.cornerAtEnd);
     const effectiveMargin = isCorner ? 0 : marginM;
     const effectiveDepth = isCorner ? cornerDepth : pierDepth;
+    const capChance = clamp(
+      0.22 + (ctx.isShopfrontZone ? 0.08 : 0) - (ctx.isSideHall ? 0.08 : 0) + ctx.density * 0.04,
+      0.08, 0.45,
+    );
+    if (isHero && !isCorner) {
+      if (ctx.rng.next() < capChance) {
+        ctx.rng.range(0.55, 1.05);
+        ctx.rng.range(0.4, 0.62);
+      }
+      continue;
+    }
     const s = side * Math.max(0.02, halfLen - pierWidth * 0.5 - effectiveMargin);
     if (!pushBox(
       ctx.instances, ctx.maxInstances, "corner_pier", ctx.wallMaterialId,
@@ -542,10 +631,6 @@ function placeCornerPiers(ctx: SegmentDecorContext): void {
     tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
 
     // Consume cap RNG to preserve downstream determinism — no cap geometry emitted.
-    const capChance = clamp(
-      0.22 + (ctx.isShopfrontZone ? 0.08 : 0) - (ctx.isSideHall ? 0.08 : 0) + ctx.density * 0.04,
-      0.08, 0.45,
-    );
     if (ctx.rng.next() < capChance) {
       ctx.rng.range(0.55, 1.05); // consume — was capHeight
       ctx.rng.range(0.4, 0.62);  // consume — was capWidthFrac
@@ -694,6 +779,9 @@ function computeFacadeSpec(ctx: SegmentDecorContext): FacadeSpec | null {
   if (usableLength < 1.4) return null;
 
   const stories = Math.max(1, Math.floor(ctx.wallHeightM / STORY_HEIGHT_M));
+  const spawnHeroFacade = isSpawnHeroFacade(ctx);
+  const heroFacadeState = spawnHeroFacade ? pickHeroFacadeState(ctx) : null;
+  const heroFacadeLean = spawnHeroFacade ? pickHeroFacadeLean(ctx) : 1;
 
   // Uniform bay width — pick a target, then round to get an integer count.
   // Pre-compute door count first so we can guarantee enough bays for doors + margins.
@@ -730,28 +818,30 @@ function computeFacadeSpec(ctx: SegmentDecorContext): FacadeSpec | null {
   );
 
   if (doorCount > 0) {
-    // PRIMARY wall: doors + symmetric windows at even distances from each door
     const doorCols = assignDoorColumns(bayCount, doorCount);
 
     for (const col of doorCols) {
       columnRoles[col] = "door";
     }
 
-    // Windows at ODD distances from nearest door (1, 3, 5…); even distances stay blank.
-    // Produces tight  _ W _ W D W _ W _  clusters centered on each door.
-    // Window columns are balcony candidates — balconies replace windows at render time.
-    for (let col = 0; col < bayCount; col += 1) {
-      if (columnRoles[col] !== "blank") continue;
+    if (spawnHeroFacade && heroFacadeState) {
+      applySpawnHeroWindowPattern(columnRoles, doorCols, bayCount, heroFacadeState, heroFacadeLean);
+    } else {
+      // Windows at ODD distances from nearest door (1, 3, 5…); even distances stay blank.
+      // Produces tight  _ W _ W D W _ W _  clusters centered on each door.
+      // Window columns are balcony candidates — balconies replace windows at render time.
+      for (let col = 0; col < bayCount; col += 1) {
+        if (columnRoles[col] !== "blank") continue;
 
-      let minDoorDist = bayCount;
-      for (const dc of doorCols) {
-        minDoorDist = Math.min(minDoorDist, Math.abs(col - dc));
-      }
+        let minDoorDist = bayCount;
+        for (const dc of doorCols) {
+          minDoorDist = Math.min(minDoorDist, Math.abs(col - dc));
+        }
 
-      if (minDoorDist % 2 === 1) {              // odd distance → window
-        columnRoles[col] = "window";
+        if (minDoorDist % 2 === 1) {
+          columnRoles[col] = "window";
+        }
       }
-      // even distance (≥ 2) → stays blank
     }
   } else if (!ctx.isConnector && !ctx.isCut && !ctx.isSideHall) {
     // SECONDARY wall (doorless): windows at every other bay from center
@@ -767,6 +857,9 @@ function computeFacadeSpec(ctx: SegmentDecorContext): FacadeSpec | null {
     bayCount, bayWidth, usableLength, stories, columnRoles,
     windowW, windowH, doorW, doorH,
     recessDepth, frameThickness, frameDepth, jambDepth,
+    heroFacadeState,
+    heroFacadeLean,
+    isSpawnHeroFacade: spawnHeroFacade,
   };
 }
 
@@ -843,7 +936,7 @@ function placeArchedDoor(
     spec.frameDepth, spec.frameThickness, spec.doorW + spec.frameThickness * 2);
 }
 
-// ── Balcony placement (stone balustrade style) ─────────────────────────────
+// ── Balcony placement (thin slab + light parapet) ──────────────────────────
 
 function placeBalcony(
   ctx: SegmentDecorContext,
@@ -853,21 +946,27 @@ function placeBalcony(
   leftBays: number,      // 0 or 1 — window columns available to the left of the door
   rightBays: number,     // 0 or 1 — window columns available to the right of the door
 ): void {
-  const totalBays   = 1 + leftBays + rightBays;          // 1, 2, or 3
-  const balconyW    = totalBays * spec.bayWidth;
+  const totalBays = 1 + leftBays + rightBays;
+  const balconyW = totalBays * spec.bayWidth;
   // Slab centre is offset so the slab spans its actual columns while the
   // french door remains visually on the door column.
   const slabCenterS = doorCenterS + (rightBays - leftBays) * spec.bayWidth * 0.5;
   const slabY = storyBaseY + BALCONY_SLAB_THICKNESS_M * 0.5;
 
-  // 1. Slab — extends outward toward walkable zone (positive inwardN)
+  // 1. Thin slab
   pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
     ctx.frame, slabCenterS, slabY, BALCONY_DEPTH_M * 0.5,
     BALCONY_DEPTH_M, BALCONY_SLAB_THICKNESS_M, balconyW);
   tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
 
-  // 2. French door opening — taller & wider than regular window, starts near floor
-  const doorW = clamp(balconyW * 0.70, spec.bayWidth * 0.52, balconyW * 0.78);
+  // 1b. Visible underside lip so the balcony reads as a separate attached piece.
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_parapet", ctx.wallMaterialId,
+    ctx.frame, slabCenterS, storyBaseY - BALCONY_LIP_H * 0.35, BALCONY_DEPTH_M - BALCONY_LIP_DEPTH_M * 0.5,
+    BALCONY_LIP_DEPTH_M, BALCONY_LIP_H, balconyW * 0.94);
+  tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+
+  // 2. Recessed french door opening behind the balcony
+  const doorW = clamp(balconyW * 0.62, spec.bayWidth * 0.5, balconyW * 0.72);
   const doorCenterY = storyBaseY + BALCONY_DOOR_SILL_OFFSET + BALCONY_DOOR_H * 0.5;
 
   // 2a. Dark void
@@ -898,28 +997,37 @@ function placeBalcony(
     ctx.frame, doorCenterS, doorCenterY, 0.018,
     0.035, 0.04, doorW * 0.92);
 
-  // 3. Stone balustrade — front wall at outer edge of slab
-  const wallY = storyBaseY + BALCONY_SLAB_THICKNESS_M + BALCONY_WALL_H * 0.5;
-  pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
-    ctx.frame, slabCenterS, wallY, BALCONY_DEPTH_M,
-    BALCONY_WALL_THICKNESS_M, BALCONY_WALL_H, balconyW);
+  // 3. Front parapet — thin and intentional, not a full wall chunk.
+  const parapetY = storyBaseY + BALCONY_SLAB_THICKNESS_M + BALCONY_FRONT_PARAPET_H * 0.5;
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_parapet", ctx.wallMaterialId,
+    ctx.frame, slabCenterS, parapetY, BALCONY_DEPTH_M - BALCONY_FRONT_PARAPET_THICKNESS_M * 0.5,
+    BALCONY_FRONT_PARAPET_THICKNESS_M, BALCONY_FRONT_PARAPET_H, balconyW * 0.9);
   tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
 
-  // 4. Stone balustrade — side walls
-  for (const side of [-1, 1] as const) {
-    pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
-      ctx.frame, slabCenterS + side * balconyW * 0.5, wallY, BALCONY_DEPTH_M * 0.5,
-      BALCONY_DEPTH_M, BALCONY_WALL_H, BALCONY_WALL_THICKNESS_M);
-    tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+  // 3b. Thin top rail helps the silhouette read at gameplay distance.
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_railing", null,
+    ctx.frame, slabCenterS, parapetY + BALCONY_FRONT_PARAPET_H * 0.5 + BALCONY_RAIL_H * 0.5,
+    BALCONY_DEPTH_M - BALCONY_FRONT_PARAPET_THICKNESS_M * 0.5,
+    BALCONY_RAIL_THICKNESS_M, BALCONY_RAIL_H, balconyW * 0.82);
+
+  // 4. Short end nibs instead of full-height side walls.
+  if (totalBays > 1) {
+    const endNibY = storyBaseY + BALCONY_SLAB_THICKNESS_M + BALCONY_END_NIB_H * 0.5;
+    for (const side of [-1, 1] as const) {
+      pushBox(ctx.instances, ctx.maxInstances, "balcony_end_cap", ctx.wallMaterialId,
+        ctx.frame, slabCenterS + side * (balconyW * 0.5 - BALCONY_END_NIB_W * 0.5), endNibY,
+        BALCONY_DEPTH_M - BALCONY_END_NIB_DEPTH_M * 0.5,
+        BALCONY_END_NIB_DEPTH_M, BALCONY_END_NIB_H, BALCONY_END_NIB_W);
+      tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+    }
   }
 
-  // 5. Support brackets — small stone corbels under slab
-  const bracketH = 0.25;
-  const bracketD = 0.3;
+  // 5. Corbel brackets under the slab.
   for (const side of [-1, 1] as const) {
-    pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
-      ctx.frame, slabCenterS + side * (balconyW * 0.35), storyBaseY - bracketH * 0.5, bracketD * 0.5,
-      bracketD, bracketH, 0.12);
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_bracket", ctx.wallMaterialId,
+      ctx.frame, slabCenterS + side * Math.min(balconyW * 0.26, Math.max(0.24, balconyW * 0.3)),
+      storyBaseY - BALCONY_BRACKET_H * 0.5, BALCONY_DEPTH_M * 0.58,
+      BALCONY_BRACKET_D, BALCONY_BRACKET_H, BALCONY_BRACKET_W);
     tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
   }
 }
@@ -930,28 +1038,12 @@ function placePilasters(ctx: SegmentDecorContext, spec: FacadeSpec): void {
   if (spec.bayCount < 2) return;
   if (ctx.frame.lengthM < 3.0) return;
 
-  const dims = getTrimDims(ctx.wallHeightM);
   ctx.rng.range(0.04, 0.09); // consume
   ctx.rng.range(0.14, 0.24); // consume
 
-  // Only spawn plazas keep pilasters — all other zones skip for cleaner plaster fields.
+  // Spawn hero pass removes pilasters — they flatten the silhouette into a repeated grid.
   // RNG consumed above to preserve downstream determinism.
-  if (ctx.zone?.type !== "spawn_plaza") return;
-
-  const pilasterDepth = clamp(dims.pilasterD, 0.03, ctx.maxProtrusionM + 0.02);
-  const pilasterWidth = dims.pilasterW;
-  const pilasterHeight = ctx.wallHeightM;
-
-  // Place between bay columns — aligned to the same grid as openings
-  for (let i = 1; i < spec.bayCount; i += 1) {
-    const s = -spec.usableLength * 0.5 + spec.bayWidth * i;
-    if (!pushBox(ctx.instances, ctx.maxInstances, "pilaster", ctx.wallMaterialId,
-      ctx.frame, s, pilasterHeight * 0.5, pilasterDepth * 0.5,
-      pilasterDepth, pilasterHeight, pilasterWidth)) {
-      return;
-    }
-    tagTrim(ctx.instances, null); // plaster — not stone
-  }
+  return;
 }
 
 // ── Cable segments ─────────────────────────────────────────────────────────
@@ -997,10 +1089,9 @@ function decorateSegment(ctx: SegmentDecorContext): void {
 
   // Pre-compute balcony placements.
   //
-  // SPAWN PLAZA: 100% chance on every door column → both side walls of a
-  // spawn (x≈14 and x≈36) always carry matching balconies — guaranteed
-  // left/right symmetry.  Wing count is still facade-spec-driven so each
-  // segment produces the widest slab its own column layout allows.
+  // SPAWN PLAZA: three deterministic facade states — clean, balcony-light,
+  // balcony-heavy. Balconies lean and alternate per door column so both spawn
+  // courtyards share the same grammar without mirrored placement.
   //
   // MAIN LANE + other eligible zones: staged two-level decision —
   //   Level 1 — facade gate (35 %): whole facade is either decorated or clean.
@@ -1012,11 +1103,17 @@ function decorateSegment(ctx: SegmentDecorContext): void {
   if (BALCONY_ELIGIBLE_ZONES.has(ctx.zone?.type ?? "") && spec.stories >= 2) {
     const balconyRng = ctx.rng.fork("balconies");
     const isSpawnPlaza = ctx.zone?.type === "spawn_plaza";
+    const doorCols = spec.columnRoles
+      .map((role, index) => (role === "door" ? index : -1))
+      .filter((index) => index >= 0);
 
-    // Facade-level gate — spawn always passes; main lane uses FACADE_BALCONY_CHANCE.
-    const facadeHasBalconies = isSpawnPlaza || (balconyRng.next() < FACADE_BALCONY_CHANCE);
+    // Facade-level gate — spawn uses the facade state; main lane uses FACADE_BALCONY_CHANCE.
+    const facadeHasBalconies = isSpawnPlaza
+      ? spec.heroFacadeState !== "clean"
+      : (balconyRng.next() < FACADE_BALCONY_CHANCE);
 
     if (facadeHasBalconies) {
+      let spawnDoorOrder = 0;
       for (let col = 0; col < spec.bayCount; col += 1) {
         if (spec.columnRoles[col] !== "door") continue;
 
@@ -1027,9 +1124,25 @@ function decorateSegment(ctx: SegmentDecorContext): void {
         let rightBays: number;
 
         if (isSpawnPlaza) {
-          // Spawn: always claim all available adjacent windows → max slab.
-          leftBays  = hasLeft  ? 1 : 0;
-          rightBays = hasRight ? 1 : 0;
+          const doorOrder = spawnDoorOrder;
+          spawnDoorOrder += 1;
+          const favorLeft = ((doorOrder + (spec.heroFacadeLean > 0 ? 1 : 0)) % 2) === 0;
+          const doorCount = doorCols.length;
+          const skipLightDoor = spec.heroFacadeState === "balcony_light"
+            && doorCount > 1
+            && ((doorOrder + (spec.heroFacadeLean > 0 ? 0 : 1)) % 2 === 1);
+
+          if (skipLightDoor) {
+            continue;
+          }
+
+          if (hasLeft && hasRight) {
+            leftBays = favorLeft ? 1 : 0;
+            rightBays = favorLeft ? 0 : 1;
+          } else {
+            leftBays = hasLeft ? 1 : 0;
+            rightBays = hasRight ? 1 : 0;
+          }
         } else {
           // Main lane: weighted pick — build an options array, roll an index.
           // Weights: 1-bay ×2, 2-bay ×3, 3-bay ×2  (up to 7 entries).

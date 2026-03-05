@@ -9,9 +9,9 @@ export type WallMaterialCombo = {
 // ── Main lane combos (each lane segment has a distinct palette) ─────────
 
 const COMBO_MAIN_1: WallMaterialCombo = {
-  wall: "ph_beige_wall_001",
-  trimHeavy: "ph_stone_trim_sandstone",
-  trimLight: "ph_beige_wall_001",
+  wall: "ph_whitewashed_brick_dusty",
+  trimHeavy: "ph_sandstone_blocks_05",
+  trimLight: "ph_whitewashed_brick_dusty",
 };
 
 const COMBO_MAIN_2: WallMaterialCombo = {
@@ -21,9 +21,9 @@ const COMBO_MAIN_2: WallMaterialCombo = {
 };
 
 const COMBO_MAIN_3: WallMaterialCombo = {
-  wall: "ph_plastered_wall",
-  trimHeavy: "ph_stone_trim_sandstone",
-  trimLight: "ph_plastered_wall",
+  wall: "ph_whitewashed_brick_dusty",
+  trimHeavy: "ph_sandstone_blocks_05",
+  trimLight: "ph_whitewashed_brick_dusty",
 };
 
 // ── Plaster-dominant combos for secondary zones ─────────────────────────
@@ -85,9 +85,9 @@ export function resolveWallComboForZone(zoneId: string | null): WallMaterialComb
 // ── Zone → wall material (used by buildPbrWalls for wall surfaces) ──────
 
 export const WALL_MATERIAL_BY_ZONE_ID: Record<string, string> = {
-  BZ_M1: "ph_beige_wall_001",
+  BZ_M1: "ph_whitewashed_brick_dusty",
   BZ_M2_JOG: "ph_beige_wall_002",
-  BZ_M3: "ph_plastered_wall",
+  BZ_M3: "ph_whitewashed_brick_dusty",
   SPAWN_A_COURTYARD: "ph_whitewashed_brick_warm",
   SPAWN_B_GATE_PLAZA: "ph_whitewashed_brick_warm",
   SH_E: "ph_whitewashed_brick",

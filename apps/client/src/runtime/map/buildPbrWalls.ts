@@ -5,6 +5,7 @@ import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type { BoundarySegment } from "./buildBlockout";
 import type { RuntimeBlockoutZone } from "./types";
 import { resolveWallMaterialIdForZone } from "./wallMaterialAssignment";
+import { resolveWallShaderProfile } from "./wallShaderProfiles";
 
 const WALL_ZONE_TYPES = new Set([
   "spawn_plaza",
@@ -270,6 +271,7 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
       dirtHeightM: 1.5,
       dirtDarken: 0.22,
       dirtRoughnessBoost: 0.12,
+      ...resolveWallShaderProfile(materialId, "wall"),
     });
 
     const mesh = new Mesh(geometry, material);

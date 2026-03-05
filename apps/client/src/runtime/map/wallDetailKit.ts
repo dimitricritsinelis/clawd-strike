@@ -13,6 +13,7 @@ import type { WallMaterialLibrary, WallTextureQuality } from "../render/material
 import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type { RuntimeWallMode } from "../utils/UrlParams";
+import { resolveWallShaderProfile } from "./wallShaderProfiles";
 
 export type WallDetailMeshId =
   | "plinth_strip"
@@ -35,7 +36,10 @@ export type WallDetailMeshId =
   | "window_shutter"
   | "window_glass"
   | "balcony_slab"
+  | "balcony_parapet"
   | "balcony_railing"
+  | "balcony_end_cap"
+  | "balcony_bracket"
   | "roof_slab";
 
 export type WallDetailInstance = {
@@ -97,7 +101,10 @@ const DETAIL_IDS: WallDetailMeshId[] = [
   "window_shutter",
   "window_glass",
   "balcony_slab",
+  "balcony_parapet",
   "balcony_railing",
+  "balcony_end_cap",
+  "balcony_bracket",
   "roof_slab",
 ];
 
@@ -108,6 +115,9 @@ const HEAVY_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
   "pilaster",
   "recessed_panel_back",
   "balcony_slab",
+  "balcony_parapet",
+  "balcony_end_cap",
+  "balcony_bracket",
 ]);
 
 const LIGHT_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
@@ -352,9 +362,21 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
       geometry: new BoxGeometry(1, 1, 1),
       material: stoneTrim,
     },
+    balcony_parapet: {
+      geometry: new BoxGeometry(1, 1, 1),
+      material: stoneTrim,
+    },
     balcony_railing: {
       geometry: new BoxGeometry(1, 1, 1),
       material: bracketMetal,
+    },
+    balcony_end_cap: {
+      geometry: new BoxGeometry(1, 1, 1),
+      material: stoneTrim,
+    },
+    balcony_bracket: {
+      geometry: new BoxGeometry(1, 1, 1),
+      material: stoneTrim,
     },
     roof_slab: {
       geometry: new BoxGeometry(1, 1, 1),
@@ -474,6 +496,7 @@ function buildPbrDetailMeshes(
       dirtHeightM: 1.5,
       dirtDarken: 0.22,
       dirtRoughnessBoost: 0.12,
+      ...resolveWallShaderProfile(materialId, "detail"),
     });
     surfaceMaterialCache.set(materialId, material);
     return material;
