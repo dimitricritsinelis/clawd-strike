@@ -259,9 +259,9 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
     const uvOffset = resolveMaterialUvOffset(options.seed, materialId);
     applyWallShaderTweaks(material, {
       albedoBoost,
-      macroColorAmplitude: 0.06,
-      macroRoughnessAmplitude: 0.04,
-      macroFrequency: 0.035,
+      macroColorAmplitude: 0.08,
+      macroRoughnessAmplitude: 0.05,
+      macroFrequency: 0.18,
       macroSeed: deriveSubSeed(options.seed, `wall-macro:${materialId}`),
       tileSizeM,
       uvOffset,

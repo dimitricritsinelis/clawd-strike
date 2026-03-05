@@ -381,7 +381,7 @@ function placeRoofCap(ctx: SegmentDecorContext): void {
 
   pushBox(
     ctx.instances, ctx.maxInstances,
-    "balcony_slab", ctx.wallMaterialId,
+    "roof_slab", ctx.wallMaterialId,
     ctx.frame,
     0,
     roofY,
@@ -390,7 +390,7 @@ function placeRoofCap(ctx: SegmentDecorContext): void {
     ROOF_THICKNESS_M,
     roofLength,
   );
-  tagTrim(ctx.instances, null); // plaster — not stone
+  tagTrim(ctx.instances, null); // uses template roof material — not wall surface
 }
 
 // ── Building enclosure (back wall + return walls) ────────────────────────
@@ -796,6 +796,16 @@ function placeWindowOpening(
     ctx.frame, centerS, centerY, 0.015,
     WINDOW_GLASS_THICKNESS_M, spec.windowH, spec.windowW);
 
+  // 7. Horizontal crossbar across glass center
+  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_h", null,
+    ctx.frame, centerS, centerY, 0.018,
+    0.035, 0.055, spec.windowW * 0.92);
+
+  // 8. Vertical crossbar
+  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_v", null,
+    ctx.frame, centerS, centerY, 0.018,
+    0.035, spec.windowH * 0.92, 0.055);
+
   // 3–4. Frame jambs — protruding forward, creating depth contrast with void
   for (const side of [-1, 1] as const) {
     pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_v", ctx.wallMaterialId,
@@ -812,16 +822,6 @@ function placeWindowOpening(
   pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_h", ctx.wallMaterialId,
     ctx.frame, centerS, sillY + spec.windowH + spec.frameThickness * 0.5, spec.frameDepth * 0.5,
     spec.frameDepth, spec.frameThickness * 1.2, spec.windowW + spec.frameThickness * 2);
-
-  // 7. Horizontal crossbar across glass center
-  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_h", null,
-    ctx.frame, centerS, centerY, 0.018,
-    0.035, 0.055, spec.windowW * 0.92);
-
-  // 8. Vertical crossbar
-  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_v", null,
-    ctx.frame, centerS, centerY, 0.018,
-    0.035, spec.windowH * 0.92, 0.055);
 
 }
 

@@ -35,7 +35,8 @@ export type WallDetailMeshId =
   | "window_shutter"
   | "window_glass"
   | "balcony_slab"
-  | "balcony_railing";
+  | "balcony_railing"
+  | "roof_slab";
 
 export type WallDetailInstance = {
   meshId: WallDetailMeshId;
@@ -97,6 +98,7 @@ const DETAIL_IDS: WallDetailMeshId[] = [
   "window_glass",
   "balcony_slab",
   "balcony_railing",
+  "roof_slab",
 ];
 
 const HEAVY_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
@@ -115,6 +117,96 @@ const LIGHT_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
 
 function inheritsWallSurface(meshId: WallDetailMeshId): boolean {
   return HEAVY_TRIM_MESH_IDS.has(meshId) || LIGHT_TRIM_MESH_IDS.has(meshId);
+}
+
+type RoofMaterialShader = Parameters<NonNullable<MeshStandardMaterial["onBeforeCompile"]>>[0];
+
+function applyRoofDustShader(material: MeshStandardMaterial): void {
+  const previousOnBeforeCompile = material.onBeforeCompile;
+  material.onBeforeCompile = (shader: RoofMaterialShader, renderer): void => {
+    previousOnBeforeCompile.call(material, shader, renderer);
+
+    if (!shader.vertexShader.includes("varying vec3 vRoofWorldPos;")) {
+      shader.vertexShader = shader.vertexShader.replace(
+        "#include <common>",
+        `#include <common>
+varying vec3 vRoofWorldPos;
+varying vec3 vRoofWorldNormal;`,
+      );
+      shader.vertexShader = shader.vertexShader.replace(
+        "#include <worldpos_vertex>",
+        `#include <worldpos_vertex>
+{
+  vec4 roofWp = vec4(transformed, 1.0);
+  #ifdef USE_INSTANCING
+    roofWp = instanceMatrix * roofWp;
+  #endif
+  roofWp = modelMatrix * roofWp;
+  vRoofWorldPos = roofWp.xyz;
+}
+vec3 roofObjN = normal;
+#ifdef USE_INSTANCING
+roofObjN = mat3(instanceMatrix) * roofObjN;
+#endif
+vRoofWorldNormal = normalize(mat3(modelMatrix) * roofObjN);`,
+      );
+    }
+
+    if (!shader.fragmentShader.includes("varying vec3 vRoofWorldPos;")) {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <common>",
+        `#include <common>
+varying vec3 vRoofWorldPos;
+varying vec3 vRoofWorldNormal;
+
+float roofHash12(vec2 p) {
+  vec3 p3 = fract(vec3(p.xyx) * 0.1031);
+  p3 += dot(p3, p3.yzx + 33.33);
+  return fract((p3.x + p3.y) * p3.z);
+}
+
+float roofValueNoise(vec2 p) {
+  vec2 i = floor(p);
+  vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  float a = roofHash12(i);
+  float b = roofHash12(i + vec2(1.0, 0.0));
+  float c = roofHash12(i + vec2(0.0, 1.0));
+  float d = roofHash12(i + vec2(1.0, 1.0));
+  return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
+}`,
+      );
+    }
+
+    if (!shader.fragmentShader.includes("// roof-dust-applied")) {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <map_fragment>",
+        `#include <map_fragment>
+// roof-dust-applied
+{
+  float upFacing = clamp(vRoofWorldNormal.y, 0.0, 1.0);
+  float dustNoise = roofValueNoise(vRoofWorldPos.xz * 0.22);
+  float dustNoise2 = roofValueNoise(vRoofWorldPos.xz * 0.08 + vec2(17.3, -9.1));
+  float dustMask = upFacing * mix(dustNoise, dustNoise2, 0.4);
+  dustMask = smoothstep(0.15, 0.65, dustMask);
+  vec3 dustColor = vec3(0.85, 0.78, 0.65);
+  diffuseColor.rgb = mix(diffuseColor.rgb, dustColor, dustMask * 0.55);
+}`,
+      );
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <roughnessmap_fragment>",
+        `#include <roughnessmap_fragment>
+{
+  float roofUpFacing = clamp(vRoofWorldNormal.y, 0.0, 1.0);
+  roughnessFactor = clamp(roughnessFactor + roofUpFacing * 0.05, 0.04, 1.0);
+}`,
+      );
+    }
+  };
+
+  const previousProgramCacheKey = material.customProgramCacheKey.bind(material);
+  material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|roof-dust`;
+  material.needsUpdate = true;
 }
 
 function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTemplate> {
@@ -171,6 +263,13 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
     specularColor: 0xc8e4ff,
   });
   applyWindowGlassShaderTweaks(windowGlass, { highVis });
+
+  const roofBitumen = new MeshStandardMaterial({
+    color: highVis ? 0x4a4540 : 0x3a3530,
+    roughness: 0.92,
+    metalness: 0,
+  });
+  applyRoofDustShader(roofBitumen);
 
   return {
     plinth_strip: {
@@ -256,6 +355,10 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
     balcony_railing: {
       geometry: new BoxGeometry(1, 1, 1),
       material: bracketMetal,
+    },
+    roof_slab: {
+      geometry: new BoxGeometry(1, 1, 1),
+      material: roofBitumen,
     },
   };
 }
@@ -360,9 +463,9 @@ function buildPbrDetailMeshes(
     const uvOffset = resolveMaterialUvOffset(options.seed, materialId);
     applyWallShaderTweaks(material, {
       albedoBoost,
-      macroColorAmplitude: 0.06,
-      macroRoughnessAmplitude: 0.04,
-      macroFrequency: 0.035,
+      macroColorAmplitude: 0.08,
+      macroRoughnessAmplitude: 0.05,
+      macroFrequency: 0.18,
       macroSeed: deriveSubSeed(options.seed, `wall-macro:${materialId}`),
       tileSizeM,
       uvOffset,

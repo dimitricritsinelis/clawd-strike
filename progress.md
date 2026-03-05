@@ -25,6 +25,17 @@ BASE_URL=http://127.0.0.1:5174 AGENT_NAME=SmokeRunner pnpm --filter @clawd-strik
 ```
 
 ## Last Completed Prompt
+- Title: Dust2 quality pass — material hierarchy & visual polish (branch: map-dev-2)
+- Problem: Art review identified toy-like appearance — walls flat at gameplay distance, trim overpowering facades, uniform blue windows, roof slabs using same stone material as walls
+- P0.1+P0.3: Reduced albedoBoost (plaster 1.08-1.12, stone 1.05, bands 1.00-1.05) and normalScale (trim 0.50-0.60) across all 16 materials in `materials.json`
+- P0.2: Increased wall macro variation — `macroColorAmplitude: 0.08`, `macroRoughnessAmplitude: 0.05`, `macroFrequency: 0.18` (was 0.06/0.04/0.035) in both `buildPbrWalls.ts` and `wallDetailKit.ts`
+- P0.4: Changed string course (`trimLight`) to use wall material instead of contrasting band — mid-bands now read as plaster ledges, not stone belts
+- P1: Added `roof_slab` mesh ID with procedural bitumen material (dark grey, roughness 0.92) + dust overlay shader (world-normal-based sand accumulation with noise breakup)
+- P2: Created 3 window variants (dark_interior, dirty_glass, shuttered) with per-column deterministic assignment (40/35/25% weight). Parameterized `applyWindowGlassShaderTweaks` with `variant` option. Shuttered windows use existing `window_shutter` mesh ID
+- Files changed: `materials.json`, `buildPbrWalls.ts`, `wallDetailKit.ts`, `wallMaterialAssignment.ts`, `wallDetailPlacer.ts`, `applyWindowGlassShaderTweaks.ts`
+- Verified: `pnpm typecheck` + `pnpm build` clean; walls show patchy value breakup at 10-30m; trim recedes; windows show 3 distinct variants; roofs read as dark flat surfaces with sand dust; no console errors
+
+## Previous Completed Prompt
 - Title: Complete spawn outer buildings — add enclosure geometry (branch: map-dev-2)
 - Problem: Spawn outer buildings (2-story, 6m) looked like flat facade walls with floating 4m-deep roof overhangs — no back wall or side return walls to close off the building volume
 - Fix: Added `placeBuildingEnclosure(ctx)` function in `wallDetailPlacer.ts` that places 3 boxes per qualifying wall segment: back wall (parallel, offset 4m inward), and 2 return walls (perpendicular, at segment endpoints). Gated to `isSpawnOuterWall` (spawn_plaza non-entry walls) and `isConnectorSpawnFacing` (connector walls facing spawn, not main lane)
@@ -134,8 +145,8 @@ BASE_URL=http://127.0.0.1:5174 AGENT_NAME=SmokeRunner pnpm --filter @clawd-strik
   - `artifacts/screenshots/2026-03-02-agent-mode-headless-safe/after.png`
 
 ## Next 3 Tasks
-1. Add decals/props for storytelling (posters, painted numbers, stains under windows, cloth awnings) to break wall uniformity.
-2. Add fog/haze pass for warm dusty atmosphere that compresses contrast at distance.
+1. Add decals/props for storytelling (posters, painted numbers, stains under windows, cloth awnings) to break wall uniformity further.
+2. Iterate on macro/dirt tuning after in-game review at multiple distances — verify Dust2 readability target is met.
 3. Run a manual desktop pointer-lock pass (non-headless) to verify movement/look/collision UX and no console noise.
 
 ## Known Issues / Risks

@@ -11,19 +11,19 @@ export type WallMaterialCombo = {
 const COMBO_MAIN_1: WallMaterialCombo = {
   wall: "ph_beige_wall_001",
   trimHeavy: "ph_stone_trim_sandstone",
-  trimLight: "ph_band_beige_001",
+  trimLight: "ph_beige_wall_001",
 };
 
 const COMBO_MAIN_2: WallMaterialCombo = {
   wall: "ph_beige_wall_002",
   trimHeavy: "ph_stone_trim_white",
-  trimLight: "ph_band_beige_002",
+  trimLight: "ph_beige_wall_002",
 };
 
 const COMBO_MAIN_3: WallMaterialCombo = {
   wall: "ph_plastered_wall",
   trimHeavy: "ph_stone_trim_sandstone",
-  trimLight: "ph_band_plastered",
+  trimLight: "ph_plastered_wall",
 };
 
 // ── Plaster-dominant combos for secondary zones ─────────────────────────
