@@ -15,6 +15,11 @@ type WallShaderTweakOptions = {
   macroSeed?: number;
   tileSizeM?: number;
   uvOffset?: WallShaderUvOffset;
+  dirtEnabled?: boolean;
+  dirtHeightM?: number;
+  dirtDarken?: number;
+  dirtRoughnessBoost?: number;
+  floorTopY?: number;
 };
 
 const UINT32_MAX = 0xffff_ffff;
@@ -97,6 +102,12 @@ export function applyWallShaderTweaks(
   const uvOffsetY = clamp(toFiniteNumber(options.uvOffset?.y, 0), -64, 64);
   const macroEnabled = macroColorAmplitude > 1e-4 || macroRoughnessAmplitude > 1e-4;
 
+  const dirtEnabled = options.dirtEnabled === true;
+  const dirtHeightM = clamp(toFiniteNumber(options.dirtHeightM, 0.8), 0.1, 4);
+  const dirtDarken = clamp(toFiniteNumber(options.dirtDarken, 0.15), 0, 0.5);
+  const dirtRoughnessBoost = clamp(toFiniteNumber(options.dirtRoughnessBoost, 0.08), 0, 0.3);
+  const floorTopY = toFiniteNumber(options.floorTopY, 0);
+
   const previousOnBeforeCompile = material.onBeforeCompile;
   material.onBeforeCompile = (shader: MaterialShader, renderer: WebGLRenderer): void => {
     previousOnBeforeCompile.call(material, shader, renderer);
@@ -110,6 +121,12 @@ export function applyWallShaderTweaks(
       shader.uniforms.uWallMacroRoughnessAmplitude = { value: macroRoughnessAmplitude };
       shader.uniforms.uWallMacroFrequency = { value: macroFrequency };
       shader.uniforms.uWallMacroSeed = { value: macroSeed };
+    }
+    if (dirtEnabled) {
+      shader.uniforms.uWallFloorTopY = { value: floorTopY };
+      shader.uniforms.uWallDirtHeightM = { value: dirtHeightM };
+      shader.uniforms.uWallDirtDarken = { value: dirtDarken };
+      shader.uniforms.uWallDirtRoughnessBoost = { value: dirtRoughnessBoost };
     }
 
     if (!shader.fragmentShader.includes("uniform float uWallAlbedoBoost;")) {
@@ -147,23 +164,44 @@ float wallMacroNoise(vec2 wallMacroUv) {
 }`
         : "";
 
+      const dirtHeader = dirtEnabled
+        ? `
+uniform float uWallFloorTopY;
+uniform float uWallDirtHeightM;
+uniform float uWallDirtDarken;
+uniform float uWallDirtRoughnessBoost;`
+        : "";
+
+      // When dirt is enabled but macro is not, we still need the varying for world pos.
+      const worldPosVarying = !macroEnabled && dirtEnabled
+        ? "\nvarying vec3 vWallWorldPos;"
+        : "";
+
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <common>",
         `#include <common>
-uniform float uWallAlbedoBoost;${macroHeader}`,
+uniform float uWallAlbedoBoost;${macroHeader}${worldPosVarying}${dirtHeader}`,
       );
     }
 
     if (!shader.fragmentShader.includes("diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost")) {
+      const dirtColorSnippet = dirtEnabled
+        ? `
+float wallDirtDist = clamp((vWallWorldPos.y - uWallFloorTopY) / uWallDirtHeightM, 0.0, 1.0);
+float wallDirtFactor = 1.0 - wallDirtDist;
+wallDirtFactor = wallDirtFactor * wallDirtFactor;
+diffuseColor.rgb *= 1.0 - wallDirtFactor * uWallDirtDarken;`
+        : "";
+
       const mapPatch = macroEnabled
         ? `#include <map_fragment>
 vec2 wallMacroUv = vec2(vWallWorldPos.x + vWallWorldPos.z, vWallWorldPos.y);
 float wallMacro = wallMacroNoise(wallMacroUv);
 float wallMacroCentered = (wallMacro - 0.5) * 2.0;
 float wallMacroColor = 1.0 + wallMacroCentered * uWallMacroColorAmplitude;
-diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost * wallMacroColor, 0.0, 1.0);`
+diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost * wallMacroColor, 0.0, 1.0);${dirtColorSnippet}`
         : `#include <map_fragment>
-diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost, 0.0, 1.0);`;
+diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost, 0.0, 1.0);${dirtColorSnippet}`;
       shader.fragmentShader = shader.fragmentShader.replace("#include <map_fragment>", mapPatch);
     }
 
@@ -171,6 +209,9 @@ diffuseColor.rgb = clamp(diffuseColor.rgb * uWallAlbedoBoost, 0.0, 1.0);`;
       macroEnabled &&
       !shader.fragmentShader.includes("roughnessFactor = clamp(roughnessFactor + wallMacroCentered")
     ) {
+      const dirtRoughnessSnippet = dirtEnabled
+        ? "\nroughnessFactor = clamp(roughnessFactor + wallDirtFactor * uWallDirtRoughnessBoost, 0.04, 1.0);"
+        : "";
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
@@ -178,15 +219,34 @@ roughnessFactor = clamp(
   roughnessFactor + wallMacroCentered * uWallMacroRoughnessAmplitude,
   0.04,
   1.0
-);`,
+);${dirtRoughnessSnippet}`,
+      );
+    }
+
+    // When dirt is enabled but macro is not, we still need the roughness patch.
+    if (
+      dirtEnabled &&
+      !macroEnabled &&
+      !shader.fragmentShader.includes("roughnessFactor = clamp(roughnessFactor + wallDirtFactor")
+    ) {
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <roughnessmap_fragment>",
+        `#include <roughnessmap_fragment>
+float wallDirtDistR = clamp((vWallWorldPos.y - uWallFloorTopY) / uWallDirtHeightM, 0.0, 1.0);
+float wallDirtFactorR = 1.0 - wallDirtDistR;
+wallDirtFactorR = wallDirtFactorR * wallDirtFactorR;
+roughnessFactor = clamp(roughnessFactor + wallDirtFactorR * uWallDirtRoughnessBoost, 0.04, 1.0);`,
       );
     }
   };
 
   const previousProgramCacheKey = material.customProgramCacheKey.bind(material);
+  const dirtCacheSegment = dirtEnabled
+    ? `:dirt:${dirtHeightM.toFixed(2)}:${dirtDarken.toFixed(3)}:${dirtRoughnessBoost.toFixed(3)}:${floorTopY.toFixed(2)}`
+    : "";
   const cacheKey = macroEnabled
-    ? `wall-tweak:${albedoBoost.toFixed(3)}:${macroColorAmplitude.toFixed(3)}:${macroRoughnessAmplitude.toFixed(3)}:${macroFrequency.toFixed(4)}:${macroSeed.toFixed(0)}:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}`
-    : `wall-tweak:${albedoBoost.toFixed(3)}:flat:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}`;
+    ? `wall-tweak:${albedoBoost.toFixed(3)}:${macroColorAmplitude.toFixed(3)}:${macroRoughnessAmplitude.toFixed(3)}:${macroFrequency.toFixed(4)}:${macroSeed.toFixed(0)}:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}`
+    : `wall-tweak:${albedoBoost.toFixed(3)}:flat:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}`;
   material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|${cacheKey}`;
   material.needsUpdate = true;
 }

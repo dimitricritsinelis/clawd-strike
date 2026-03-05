@@ -25,6 +25,42 @@ BASE_URL=http://127.0.0.1:5174 AGENT_NAME=SmokeRunner pnpm --filter @clawd-strik
 ```
 
 ## Last Completed Prompt
+- Title: Complete spawn outer buildings — add enclosure geometry (branch: map-dev-2)
+- Problem: Spawn outer buildings (2-story, 6m) looked like flat facade walls with floating 4m-deep roof overhangs — no back wall or side return walls to close off the building volume
+- Fix: Added `placeBuildingEnclosure(ctx)` function in `wallDetailPlacer.ts` that places 3 boxes per qualifying wall segment: back wall (parallel, offset 4m inward), and 2 return walls (perpendicular, at segment endpoints). Gated to `isSpawnOuterWall` (spawn_plaza non-entry walls) and `isConnectorSpawnFacing` (connector walls facing spawn, not main lane)
+- New constant: `ENCLOSURE_WALL_THICKNESS = 0.25` (visual only, thinner than collision walls)
+- New context fields: `isSpawnOuterWall`, `isConnectorSpawnFacing` on `SegmentDecorContext`
+- File changed: `apps/client/src/runtime/map/wallDetailPlacer.ts`
+- Verified: `pnpm typecheck` + `pnpm build` clean; A-spawn and B-spawn buildings look like complete 2-story structures from all angles; roof caps sit on solid enclosed volumes; no floating geometry; no console errors
+
+## Previous Completed Prompt
+- Title: Direction-based connector wall heights — fix deleted 3rd story regression (branch: map-dev-2)
+- Problem: Previous blanket `2 * STORY_HEIGHT_M` for all connector walls also reduced the back faces of 3-story main-lane buildings that resolve to connector zones, deleting their top story; side-hall sightlines to spawn building backs looked fake
+- Fix: Added `isConnectorMainLaneFacing` boolean (dot product of wall inward normal with zone→mapCenter vector) to `resolveSegmentWallHeight()` — main-lane-facing connector walls stay at 9m (3 stories), spawn-facing connector walls at 6m (2 stories)
+- All 4 connectors verified: CONN_SW/SE north walls (z=12) → 9m, south walls (z=8) → 6m; CONN_NW/NE south walls (z=70) → 9m, north walls (z=74) → 6m
+- File changed: `apps/client/src/runtime/map/wallDetailPlacer.ts`
+- Verified: `pnpm typecheck` + `pnpm build` clean; A-spawn and B-spawn correct; no 3-story towers at spawn corners; main-lane building 3rd story preserved; no console errors
+
+## Previous Completed Prompt
+- Title: Fix 3-story connector towers at spawn corners (branch: map-dev-2)
+- Change: `resolveSegmentWallHeight()` connector case lowered from `3 * STORY_HEIGHT_M` (9m) to `2 * STORY_HEIGHT_M` (6m)
+- All 4 connector zones (CONN_SW/SE/NW/NE) now match the adjacent spawn outer wall height (6m / 2 stories)
+- Side-hall inner walls (9m) and spawn entry walls (9m) unchanged — the height step at the connector/side-hall junction is at an interior corner and reads naturally
+- File changed: `apps/client/src/runtime/map/wallDetailPlacer.ts`
+- Verified: `pnpm typecheck` + `pnpm build` clean; no 3-story towers at spawn corners; both A-spawn and B-spawn verified; main lane unaffected
+
+## Previous Completed Prompt (Facade Overhaul)
+- Title: Bazaar facade overhaul — Dust2-quality plaster-dominant walls (branch: map-dev-2)
+- Step 1: All wall segments now render PBR when `wallMode=pbr` — removed zone-type filter that kept spawns/connectors/cuts as blockout Lambert
+- Step 2: Extended material combos to all 16 zones; flipped stone-wall zones (spawns, connectors, cuts) to plaster walls with stone trim only at base + corners
+- Step 3: Re-tagged trim materials — cornice, parapet, roof cap, string course, pilaster now use wall plaster (not stone); only plinth_strip + corner_pier + balcony keep stone trim
+- Step 4: Pilasters skip placement on all zones except spawn_plaza; string courses limited to 1 per facade
+- Step 5: Added dirt/age ground gradient shader — quadratic darkening + roughness boost within 0.8m of floor, wired into both wall and detail PBR paths
+- Step 6: Added 3 material manifest variants (ph_whitewashed_brick_cool, ph_whitewashed_brick_warm, ph_sandstone_blocks_06) for per-zone differentiation without new texture files
+- Files changed: `buildBlockout.ts`, `wallMaterialAssignment.ts`, `wallDetailPlacer.ts`, `applyWallShaderTweaks.ts`, `buildPbrWalls.ts`, `wallDetailKit.ts`, `materials.json`
+- Verified: `pnpm typecheck` + `pnpm build` clean; all walls PBR; plaster-dominant facades; stone at base+corners only; no pilaster grid; dirt gradient visible
+
+## Previous Completed Prompt
 - Title: Desert lighting overhaul — Dust2-style atmosphere (branch: map-dev-2)
 - Phase 1: Fixed shadow reliability — `shadowMap.needsUpdate=true` on init + 20-frame warmup counter in bootstrap step loop
 - Phase 2: Desert lighting rig — reduced ambient (0.52→0.15), hemi (1.0→0.45), cool blue fill (0xBFD9FF, 0.18), stronger sun (2.0, 4096 shadow map), fog density 0.005
@@ -98,8 +134,8 @@ BASE_URL=http://127.0.0.1:5174 AGENT_NAME=SmokeRunner pnpm --filter @clawd-strik
   - `artifacts/screenshots/2026-03-02-agent-mode-headless-safe/after.png`
 
 ## Next 3 Tasks
-1. Tune SSAO parameters (kernel radius, distance thresholds) for best contact-shadow quality at bazaar scale.
-2. Add sun shadow cascade or tighter frustum fitting to improve shadow resolution on nearby geometry.
+1. Add decals/props for storytelling (posters, painted numbers, stains under windows, cloth awnings) to break wall uniformity.
+2. Add fog/haze pass for warm dusty atmosphere that compresses contrast at distance.
 3. Run a manual desktop pointer-lock pass (non-headless) to verify movement/look/collision UX and no console noise.
 
 ## Known Issues / Risks

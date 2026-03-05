@@ -73,6 +73,10 @@ const ROOF_DEPTH_M = 4.0;
 const ROOF_THICKNESS_M = 0.20;
 const ROOF_OVERHANG_M = 0.15;
 
+// Building enclosure — back wall + return walls that close off the volume behind
+// spawn outer facades so the roof cap doesn't appear to float.
+const ENCLOSURE_WALL_THICKNESS = 0.25; // thinner than collision walls, visual only
+
 // Balcony constants
 const BALCONY_DEPTH_M = 1.1;
 const BALCONY_SLAB_THICKNESS_M = 0.12;
@@ -138,6 +142,10 @@ type SegmentDecorContext = {
   maxInstances: number;
   cornerAtStart: boolean;
   cornerAtEnd: boolean;
+  /** Spawn plaza outer wall (back/side, NOT the entry wall facing bazaar). */
+  isSpawnOuterWall: boolean;
+  /** Connector wall facing toward the spawn (not the main lane). */
+  isConnectorSpawnFacing: boolean;
 };
 
 export type BuildWallDetailProfile = "blockout" | "pbr";
@@ -298,6 +306,7 @@ function resolveSegmentWallHeight(
   _rng: DeterministicRng,
   isInsideWall: boolean,
   isSpawnEntryWall: boolean,
+  isConnectorMainLaneFacing: boolean,
 ): number {
   const zoneType = zone?.type ?? "main_lane_segment";
 
@@ -332,11 +341,14 @@ function resolveSegmentWallHeight(
     return 3 * STORY_HEIGHT_M; // 9 m fixed
   }
 
-  // Connector zones sit at building corners between spawn plazas (9 m) and side-hall
-  // inner walls (9 m). Leaving them at the 6 m spec default creates a visible 3 m
-  // rectangular gap at every corner — raise them to flush 9 m.
+  // Connector zones sit at the transition between 9 m main-lane buildings and
+  // 6 m spawn buildings.  Main-lane-facing walls (back of 3-story buildings)
+  // stay at 9 m so the building silhouette is preserved.  Spawn-facing walls
+  // match the spawn outer wall height (6 m / 2 stories).
   if (zoneType === "connector") {
-    return 3 * STORY_HEIGHT_M; // 9 m — closes corner gap
+    return isConnectorMainLaneFacing
+      ? 3 * STORY_HEIGHT_M  // 9 m — back of main-lane building
+      : 2 * STORY_HEIGHT_M; // 6 m — matches spawn outer walls
   }
 
   return baseHeight;
@@ -354,7 +366,7 @@ function placeParapetCap(ctx: SegmentDecorContext): void {
   const y = ctx.wallHeightM + capHeight * 0.5;
   pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
     ctx.frame, 0, y, capDepth * 0.5, capDepth, capHeight, ctx.frame.lengthM);
-  tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+  tagTrim(ctx.instances, null); // plaster — not stone
 }
 
 // ── Roof cap ───────────────────────────────────────────────────────────────
@@ -378,7 +390,66 @@ function placeRoofCap(ctx: SegmentDecorContext): void {
     ROOF_THICKNESS_M,
     roofLength,
   );
-  tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+  tagTrim(ctx.instances, null); // plaster — not stone
+}
+
+// ── Building enclosure (back wall + return walls) ────────────────────────
+
+/**
+ * Close off the volume behind spawn outer facades so they look like complete
+ * 2-story buildings rather than flat wall slabs with floating roof caps.
+ *
+ * Adds three boxes per qualifying segment:
+ *   1. Back wall  — parallel to front face, offset inward by ROOF_DEPTH_M
+ *   2. Return wall at segment start — perpendicular, front-to-back
+ *   3. Return wall at segment end   — same
+ */
+function placeBuildingEnclosure(ctx: SegmentDecorContext): void {
+  // Only enclose walls that need a building shell
+  if (!ctx.isSpawnOuterWall && !ctx.isConnectorSpawnFacing) return;
+  if (ctx.frame.lengthM < 1.0) return;
+
+  const wallH = ctx.wallHeightM;
+  const t = ENCLOSURE_WALL_THICKNESS;
+
+  // ── Back wall ──────────────────────────────────────────────────────────
+  // Parallel to the front face, offset inward by the roof depth.
+  // Negative inwardN = behind the front wall (into building mass).
+  const backInwardN = -(ROOF_DEPTH_M - t * 0.5);
+  pushBox(
+    ctx.instances, ctx.maxInstances,
+    "recessed_panel_back", ctx.wallMaterialId,
+    ctx.frame,
+    0,              // centered along segment
+    wallH * 0.5,    // vertically centered
+    backInwardN,
+    t,              // depth  (thin slab)
+    wallH,          // full wall height
+    ctx.frame.lengthM,
+  );
+  tagTrim(ctx.instances, null); // plaster, not stone
+
+  // ── Return walls (side caps) ───────────────────────────────────────────
+  // Perpendicular to the front face at each endpoint, spanning from the
+  // front face back to the back wall.
+  const halfLen = ctx.frame.lengthM * 0.5;
+  const returnCenterN = -(ROOF_DEPTH_M * 0.5);  // midpoint front-to-back
+
+  for (const side of [-1, 1] as const) {
+    const alongS = side * (halfLen - t * 0.5);
+    pushBox(
+      ctx.instances, ctx.maxInstances,
+      "recessed_panel_back", ctx.wallMaterialId,
+      ctx.frame,
+      alongS,
+      wallH * 0.5,
+      returnCenterN,
+      ROOF_DEPTH_M,     // depth spans front-to-back
+      wallH,            // full wall height
+      t,                // thin slab width
+    );
+    tagTrim(ctx.instances, null);
+  }
 }
 
 // ── Horizontal banding ─────────────────────────────────────────────────────
@@ -405,13 +476,19 @@ function placeStringCourses(ctx: SegmentDecorContext): void {
   const courseHeight = dims.courseH;
   const courseDepth = clamp(dims.courseD, 0.04, ctx.maxProtrusionM + 0.04);
 
+  // At most 1 string course per facade — place only the first story break.
+  let placed = false;
   for (let storyY = STORY_HEIGHT_M; storyY < ctx.wallHeightM - 0.5; storyY += STORY_HEIGHT_M) {
-    if (!pushBox(ctx.instances, ctx.maxInstances, "string_course_strip", ctx.wallMaterialId,
-      ctx.frame, 0, storyY, courseDepth * 0.5,
-      courseDepth, courseHeight, ctx.frame.lengthM)) {
-      return;
+    if (!placed) {
+      if (!pushBox(ctx.instances, ctx.maxInstances, "string_course_strip", ctx.wallMaterialId,
+        ctx.frame, 0, storyY, courseDepth * 0.5,
+        courseDepth, courseHeight, ctx.frame.lengthM)) {
+        return;
+      }
+      tagTrim(ctx.instances, null); // plaster — subtle value shift only
+      placed = true;
     }
-    tagTrim(ctx.instances, ctx.trimLightMaterialId);
+    // Loop continues to keep iteration count stable (no RNG consumed per iteration).
   }
 }
 
@@ -426,7 +503,7 @@ function placeCorniceStrip(ctx: SegmentDecorContext): void {
   pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
     ctx.frame, 0, y, corniceDepth * 0.5,
     corniceDepth, corniceHeight, ctx.frame.lengthM);
-  tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+  tagTrim(ctx.instances, null); // plaster — not stone
 }
 
 // ── Corner piers ───────────────────────────────────────────────────────────
@@ -856,6 +933,11 @@ function placePilasters(ctx: SegmentDecorContext, spec: FacadeSpec): void {
   const dims = getTrimDims(ctx.wallHeightM);
   ctx.rng.range(0.04, 0.09); // consume
   ctx.rng.range(0.14, 0.24); // consume
+
+  // Only spawn plazas keep pilasters — all other zones skip for cleaner plaster fields.
+  // RNG consumed above to preserve downstream determinism.
+  if (ctx.zone?.type !== "spawn_plaza") return;
+
   const pilasterDepth = clamp(dims.pilasterD, 0.03, ctx.maxProtrusionM + 0.02);
   const pilasterWidth = dims.pilasterW;
   const pilasterHeight = ctx.wallHeightM;
@@ -868,7 +950,7 @@ function placePilasters(ctx: SegmentDecorContext, spec: FacadeSpec): void {
       pilasterDepth, pilasterHeight, pilasterWidth)) {
       return;
     }
-    tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+    tagTrim(ctx.instances, null); // plaster — not stone
   }
 }
 
@@ -896,6 +978,7 @@ function decorateSegment(ctx: SegmentDecorContext): void {
   placeCornerPiers(ctx);
   placeParapetCap(ctx);
   placeRoofCap(ctx);
+  placeBuildingEnclosure(ctx);
 
   // Horizontal banding
   placePlinthStrip(ctx);
@@ -1121,9 +1204,22 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       const spawnCenterZ = zone.rect.y + zone.rect.h / 2;
       isSpawnEntryWall = (frame.centerZ - spawnCenterZ) * (mapCenterZ - spawnCenterZ) > 0;
     }
+    // Connector main-lane-facing wall: the wall's inward normal points away from
+    // the map centre (toward the spawn), meaning the wall's visible face looks
+    // toward the map centre (toward the main-lane buildings).  These walls are the
+    // backs of 3-story main-lane buildings and must stay at 9 m.
+    let isConnectorMainLaneFacing = false;
+    if (zone?.type === "connector") {
+      const zoneCenterZ = zone.rect.y + zone.rect.h / 2;
+      const zoneCenterX = zone.rect.x + zone.rect.w / 2;
+      const toMainLane =
+        frame.inwardZ * (mapCenterZ - zoneCenterZ) +
+        frame.inwardX * (mapCenterX - zoneCenterX);
+      isConnectorMainLaneFacing = toMainLane < -0.01;
+    }
     const heightSeed = deriveSubSeed(seed, `height:${zone?.id ?? "none"}`);
     const heightRng = new DeterministicRng(heightSeed);
-    const segHeight = resolveSegmentWallHeight(options.wallHeightM, zone, heightRng, isInsideWall, isSpawnEntryWall);
+    const segHeight = resolveSegmentWallHeight(options.wallHeightM, zone, heightRng, isInsideWall, isSpawnEntryWall, isConnectorMainLaneFacing);
     segmentHeights.push(segHeight);
 
     if (instances.length >= maxInstances) {
@@ -1155,6 +1251,11 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       cornerAtEnd   = cornerKeys.has(toCornerKey(segment.end, segment.coord));
     }
 
+    // Spawn outer wall: any spawn_plaza wall that is NOT the entry wall facing bazaar.
+    const isSpawnOuterWall = zone?.type === "spawn_plaza" && !isSpawnEntryWall;
+    // Connector spawn-facing wall: the opposite of main-lane-facing.
+    const isConnectorSpawnFacing = zone?.type === "connector" && !isConnectorMainLaneFacing;
+
     const countBefore = instances.length;
     decorateSegment({
       frame,
@@ -1178,6 +1279,8 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       maxInstances,
       cornerAtStart,
       cornerAtEnd,
+      isSpawnOuterWall,
+      isConnectorSpawnFacing,
     });
     if (instances.length > countBefore) {
       segmentsDecorated += 1;

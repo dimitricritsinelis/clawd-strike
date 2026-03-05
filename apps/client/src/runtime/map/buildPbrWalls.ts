@@ -265,6 +265,8 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
       macroSeed: deriveSubSeed(options.seed, `wall-macro:${materialId}`),
       tileSizeM,
       uvOffset,
+      dirtEnabled: true,
+      floorTopY: options.floorTopY,
     });
 
     const mesh = new Mesh(geometry, material);

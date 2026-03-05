@@ -7,7 +7,7 @@ import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
 import type { RuntimeFloorMode, RuntimeFloorQuality, RuntimeLightingPreset, RuntimeWallMode } from "../utils/UrlParams";
 import { buildPbrFloors } from "./buildPbrFloors";
 import { buildSandAccumulation } from "./buildSandAccumulation";
-import { buildPbrWalls, toSegmentFrame, resolveSegmentZone } from "./buildPbrWalls";
+import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 
@@ -388,48 +388,18 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   const segmentHeights = wallDetailPlacements.segmentHeights;
 
   if (options.wallMode === "pbr" && options.wallMaterials) {
-    // Split segments: side_hall zones get PBR texture; all others stay blockout.
-    const pbrSegments: BoundarySegment[] = [];
-    const pbrHeights: number[] = [];
-    const blockoutSegments: BoundarySegment[] = [];
-    const blockoutHeights: number[] = [];
-    for (let i = 0; i < wallSegments.length; i++) {
-      const seg = wallSegments[i]!;
-      const zone = resolveSegmentZone(toSegmentFrame(seg), spec.zones);
-      if (zone?.type === "side_hall" || zone?.type === "main_lane_segment") {
-        pbrSegments.push(seg);
-        pbrHeights.push(segmentHeights[i] ?? spec.defaults.wall_height);
-      } else {
-        blockoutSegments.push(seg);
-        blockoutHeights.push(segmentHeights[i] ?? spec.defaults.wall_height);
-      }
-    }
-
+    // All wall segments get PBR textures — no blockout fallback.
     const pbrWalls = buildPbrWalls({
-      segments: pbrSegments,
+      segments: wallSegments,
       zones: spec.zones,
       seed: options.seed,
       quality: wallTextureQuality,
       manifest: options.wallMaterials,
       wallHeightM: spec.defaults.wall_height,
       floorTopY,
-      segmentHeights: pbrHeights,
+      segmentHeights,
     });
     root.add(pbrWalls);
-
-    const blockoutWalls = createWallInstances(
-      blockoutSegments,
-      new MeshLambertMaterial({ color: palette.wall }),
-      spec.defaults.wall_height,
-      wallThicknessM,
-      floorTopY,
-      blockoutHeights,
-    );
-    if (blockoutWalls) {
-      blockoutWalls.castShadow = true;
-      blockoutWalls.receiveShadow = true;
-      root.add(blockoutWalls);
-    }
   } else {
     const wallInstances = createWallInstances(
       wallSegments,

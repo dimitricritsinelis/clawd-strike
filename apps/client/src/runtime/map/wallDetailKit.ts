@@ -366,6 +366,8 @@ function buildPbrDetailMeshes(
       macroSeed: deriveSubSeed(options.seed, `wall-macro:${materialId}`),
       tileSizeM,
       uvOffset,
+      dirtEnabled: true,
+      floorTopY: 0,
     });
     surfaceMaterialCache.set(materialId, material);
     return material;
