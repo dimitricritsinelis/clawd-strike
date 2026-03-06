@@ -18,7 +18,7 @@ const MAX_PIXEL_RATIO = 2;
 // ── SSAO tuning constants ───────────────────────────────────────────
 const SSAO_KERNEL_RADIUS = 4;
 const SSAO_MIN_DISTANCE = 0.002;
-const SSAO_MAX_DISTANCE = 0.10;
+const SSAO_MAX_DISTANCE = 0.14;
 
 type RendererOptions = {
   highVis: boolean;
@@ -107,7 +107,7 @@ export class Renderer {
     if (this.renderer) {
       this.renderer.outputColorSpace = SRGBColorSpace;
       this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.45;
+      this.renderer.toneMappingExposure = 1.32;
       this.renderer.shadowMap.enabled = true;
       this.renderer.shadowMap.type = PCFSoftShadowMap;
       this.renderer.shadowMap.autoUpdate = false;

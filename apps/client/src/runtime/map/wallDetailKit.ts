@@ -59,6 +59,7 @@ export type WallDetailInstance = {
   rollRad?: number;
   wallMaterialId: string | null;
   trimMaterialId: string | null;
+  detailMaterialId?: string | null;
 };
 
 export type BuildWallDetailMeshesOptions = {
@@ -76,7 +77,8 @@ type DetailTemplate = {
 
 type DetailBucket = {
   meshId: WallDetailMeshId;
-  wallMaterialId: string | null;
+  materialId: string | null;
+  materialSource: "manifest" | "template" | "mesh-template";
   instances: WallDetailInstance[];
 };
 
@@ -130,6 +132,7 @@ function inheritsWallSurface(meshId: WallDetailMeshId): boolean {
 }
 
 type RoofMaterialShader = Parameters<NonNullable<MeshStandardMaterial["onBeforeCompile"]>>[0];
+type TemplateMaterialOverrideId = "tm_balcony_wood_dark" | "tm_balcony_painted_metal";
 
 function applyRoofDustShader(material: MeshStandardMaterial): void {
   const previousOnBeforeCompile = material.onBeforeCompile;
@@ -253,24 +256,24 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
     metalness: 0.34,
   });
   const frameTrim = new MeshStandardMaterial({
-    color: highVis ? 0x9a8068 : 0x8a7058,
-    roughness: 0.78,
+    color: highVis ? 0xb59a7c : 0x9d8367,
+    roughness: 0.76,
     metalness: 0.04,
   });
   const woodShutter = new MeshStandardMaterial({
-    color: highVis ? 0x5a8a62 : 0x4a6e52,
-    roughness: 0.75,
+    color: highVis ? 0x6c8d78 : 0x556f60,
+    roughness: 0.8,
     metalness: 0.02,
   });
   const windowGlass = new MeshPhysicalMaterial({
-    color: highVis ? 0x4a7a9a : 0x2e5472,
-    roughness: 0.12,
+    color: highVis ? 0x6b767d : 0x505c64,
+    roughness: 0.22,
     metalness: 0,
     clearcoat: 1,
-    clearcoatRoughness: 0.08,
+    clearcoatRoughness: 0.12,
     ior: 1.5,
-    specularIntensity: 0.7,
-    specularColor: 0xc8e4ff,
+    specularIntensity: 0.5,
+    specularColor: 0xd0d7dd,
   });
   applyWindowGlassShaderTweaks(windowGlass, { highVis });
 
@@ -385,6 +388,23 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
   };
 }
 
+function createTemplateMaterialOverrides(
+  highVis: boolean,
+): Record<TemplateMaterialOverrideId, MeshStandardMaterial> {
+  return {
+    tm_balcony_wood_dark: new MeshStandardMaterial({
+      color: highVis ? 0x98714a : 0x7b5b3d,
+      roughness: 0.8,
+      metalness: 0.02,
+    }),
+    tm_balcony_painted_metal: new MeshStandardMaterial({
+      color: highVis ? 0x7d868d : 0x626a72,
+      roughness: 0.56,
+      metalness: 0.4,
+    }),
+  };
+}
+
 function resolveMaterialUvOffset(seed: number, materialId: string): { x: number; y: number } {
   const offsetSeed = deriveSubSeed(seed, `wall-uvoffset:${materialId}`);
   const offsetRng = new DeterministicRng(offsetSeed);
@@ -446,19 +466,28 @@ function buildPbrDetailMeshes(
   if (materialIds.length === 0) return;
   const fallbackMaterialId = materialIds[0]!;
   const availableMaterialIds = new Set(materialIds);
+  const templateMaterialOverrides = createTemplateMaterialOverrides(options.highVis);
+  const availableTemplateMaterialIds = new Set<string>(Object.keys(templateMaterialOverrides));
 
   const grouped = new Map<string, DetailBucket>();
   for (const instance of instances) {
     const shouldInheritWallSurface = inheritsWallSurface(instance.meshId);
+    const preferred = instance.detailMaterialId ?? (instance.trimMaterialId ?? instance.wallMaterialId);
+
+    let materialSource: DetailBucket["materialSource"] = "mesh-template";
     let resolvedMaterialId: string | null = null;
-    if (shouldInheritWallSurface) {
-      // Prefer trimMaterialId (set by combo system) over wallMaterialId (legacy)
-      const preferred = instance.trimMaterialId ?? instance.wallMaterialId;
-      resolvedMaterialId = preferred && availableMaterialIds.has(preferred)
-        ? preferred
-        : fallbackMaterialId;
+    if (preferred && availableMaterialIds.has(preferred)) {
+      materialSource = "manifest";
+      resolvedMaterialId = preferred;
+    } else if (preferred && availableTemplateMaterialIds.has(preferred)) {
+      materialSource = "template";
+      resolvedMaterialId = preferred;
+    } else if (shouldInheritWallSurface) {
+      materialSource = "manifest";
+      resolvedMaterialId = fallbackMaterialId;
     }
-    const key = shouldInheritWallSurface ? `${instance.meshId}|${resolvedMaterialId}` : `${instance.meshId}|template`;
+
+    const key = `${instance.meshId}|${materialSource}|${resolvedMaterialId ?? "template"}`;
     const existing = grouped.get(key);
     if (existing) {
       existing.instances.push(instance);
@@ -466,14 +495,19 @@ function buildPbrDetailMeshes(
     }
     grouped.set(key, {
       meshId: instance.meshId,
-      wallMaterialId: resolvedMaterialId,
+      materialId: resolvedMaterialId,
+      materialSource,
       instances: [instance],
     });
   }
 
   const surfaceMaterialCache = new Map<string, MeshStandardMaterial>();
-  const getSurfaceMaterial = (materialId: string): MeshStandardMaterial => {
-    const cached = surfaceMaterialCache.get(materialId);
+  const getSurfaceMaterial = (
+    materialId: string,
+    surfaceKind: "detail" | "balcony",
+  ): MeshStandardMaterial => {
+    const cacheKey = `${materialId}|${surfaceKind}`;
+    const cached = surfaceMaterialCache.get(cacheKey);
     if (cached) return cached;
 
     const material = wallMaterials.createStandardMaterial(materialId, options.quality);
@@ -496,19 +530,25 @@ function buildPbrDetailMeshes(
       dirtHeightM: 1.5,
       dirtDarken: 0.22,
       dirtRoughnessBoost: 0.12,
-      ...resolveWallShaderProfile(materialId, "detail"),
+      ...resolveWallShaderProfile(materialId, surfaceKind),
     });
-    surfaceMaterialCache.set(materialId, material);
+    surfaceMaterialCache.set(cacheKey, material);
     return material;
   };
 
   const dummy = new Object3D();
   for (const bucket of grouped.values()) {
     const template = templates[bucket.meshId];
-    const material = bucket.wallMaterialId ? getSurfaceMaterial(bucket.wallMaterialId) : template.material;
+    const isBalconySurface = bucket.meshId.startsWith("balcony_");
+    const material =
+      bucket.materialSource === "manifest" && bucket.materialId
+        ? getSurfaceMaterial(bucket.materialId, isBalconySurface ? "balcony" : "detail")
+        : bucket.materialSource === "template" && bucket.materialId
+          ? templateMaterialOverrides[bucket.materialId as TemplateMaterialOverrideId]
+          : template.material;
     const mesh = new InstancedMesh(template.geometry, material, bucket.instances.length);
-    mesh.name = bucket.wallMaterialId
-      ? `wall-detail-${bucket.meshId}-${bucket.wallMaterialId}`
+    mesh.name = bucket.materialId
+      ? `wall-detail-${bucket.meshId}-${bucket.materialSource}-${bucket.materialId}`
       : `wall-detail-${bucket.meshId}-template`;
     mesh.castShadow = true;
     mesh.receiveShadow = true;

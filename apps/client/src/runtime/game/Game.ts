@@ -2,7 +2,7 @@ import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, Object
 import { installDesertSky, type DesertSkyHandle } from "../render/DesertSky";
 import { AnchorsDebug, type AnchorsDebugState } from "../debug/AnchorsDebug";
 import { Hud } from "../debug/Hud";
-import { EnemyManager, type EnemyHitResult } from "../enemies/EnemyManager";
+import { EnemyManager, type EnemyHitResult, type EnemyManagerDebugSnapshot } from "../enemies/EnemyManager";
 import type { WeaponAudio } from "../audio/WeaponAudio";
 import { buildBlockout } from "../map/buildBlockout";
 import { buildProps, type PropsBuildStats } from "../map/buildProps";
@@ -575,6 +575,32 @@ export class Game {
     return this.playerController.getGrounded();
   }
 
+  getPlayerPosition(): { x: number; y: number; z: number } {
+    const position = this.playerController.getPosition();
+    return {
+      x: position.x,
+      y: position.y,
+      z: position.z,
+    };
+  }
+
+  getPlayerVelocity(): { x: number; y: number; z: number } {
+    const velocity = this.playerController.getVelocity();
+    return {
+      x: velocity.x,
+      y: velocity.y,
+      z: velocity.z,
+    };
+  }
+
+  getPlayerCollisionState(): { hitX: boolean; hitY: boolean; hitZ: boolean; grounded: boolean } {
+    return this.playerController.getLastCollisionState();
+  }
+
+  isPlayerWithinPlayableBounds(): boolean {
+    return this.playerController.isWithinPlayableBounds();
+  }
+
   getSpeedMps(): number {
     return this.playerController.getHorizontalSpeedMps();
   }
@@ -640,6 +666,23 @@ export class Game {
 
   setEnemyNewWaveCallback(cb: (wave: number) => void): void {
     this.enemyManager?.setNewWaveCallback(cb);
+  }
+
+  reportPlayerGunshot(): void {
+    this.enemyManager?.reportPlayerGunshot(this.playerController.getPosition());
+  }
+
+  reportPlayerFootstep(speedMps: number): void {
+    if (speedMps <= 0.4) return;
+    this.enemyManager?.reportPlayerFootstep(this.playerController.getPosition(), speedMps);
+  }
+
+  getBotDebugSnapshot(): EnemyManagerDebugSnapshot | null {
+    return this.enemyManager?.getDebugSnapshot() ?? null;
+  }
+
+  getWaveElapsedS(): number {
+    return this.enemyManager?.getWaveElapsedS() ?? 0;
   }
 
   setLandingCallback(cb: () => void): void {
@@ -756,23 +799,23 @@ export class Game {
     // Tuning constants kept here for easy adjustment.
     const FOG_COLOR = 0xEADBC8;       // warm dust
     const AMBIENT_COLOR = 0xFFEFD4;
-    const AMBIENT_INTENSITY = 0.28;   // lifted for shadow readability
+    const AMBIENT_INTENSITY = 0.22;   // keep plaster readable without washing edges
     const HEMI_SKY = 0xCFE3FF;        // cool pale blue
     const HEMI_GROUND = 0xD7B07A;     // sand bounce
-    const HEMI_INTENSITY = 0.60;
+    const HEMI_INTENSITY = 0.48;
     const SUN_COLOR = 0xFFD2A1;
-    const SUN_INTENSITY = 2.0;
+    const SUN_INTENSITY = 2.1;
     const SUN_POS: [number, number, number] = [-110, 75, -40];
     const SUN_TARGET: [number, number, number] = [25, 0, 41];
     const SHADOW_MAP_SIZE = 2048;
     const SHADOW_BIAS = 0.0001;        // reduced shadow creep
-    const SHADOW_NORMAL_BIAS = 0.02;
+    const SHADOW_NORMAL_BIAS = 0.015;
     const SHADOW_BOUNDS = 50;         // ±50 ortho frustum (covers 50×82m playable area)
     const SHADOW_RADIUS = 1;
     const FILL_COLOR = 0xBFD9FF;      // cool blue counter-fill
-    const FILL_INTENSITY = 0.28;
+    const FILL_INTENSITY = 0.16;
     const FILL_POS: [number, number, number] = [90, 35, 70];
-    const FOG_DENSITY = 0.005;
+    const FOG_DENSITY = 0.0045;
 
     this.scene.fog = new FogExp2(FOG_COLOR, FOG_DENSITY);
 
@@ -1047,6 +1090,8 @@ export class Game {
     this.runtimeColliders = [...builtBlockout.colliders, ...this.propColliders].sort((a, b) => a.id.localeCompare(b.id));
     this.worldColliders = new WorldColliders(this.runtimeColliders, blockoutSpec.playable_boundary);
     this.playerController.setWorld(this.worldColliders);
+    this.enemyManager?.fullDispose(this.scene);
+    this.enemyManager?.setTacticalContext(blockoutSpec, this.anchorsSpec ?? null);
     this.enemyManager?.spawn(this.worldColliders);
 
     const spawnPose = this.selectSpawnPose(blockoutSpec, this.spawn);
