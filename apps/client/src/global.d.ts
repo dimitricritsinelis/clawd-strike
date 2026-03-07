@@ -14,6 +14,7 @@ declare global {
       damage?: number;
       enemyName?: string;
     }) => void;
+    __debug_eliminate_all_bots?: () => number;
     __vt_pending?: unknown;
   }
 }

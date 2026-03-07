@@ -12,12 +12,13 @@ This is the only normative internal implementation doc in the repo.
 
 If any internal prose conflicts with this file, follow this file.
 
-Active repo-owned Markdown is limited to five files:
+Active repo-owned Markdown is limited to six files:
 1. `README.md`
 2. `AGENTS.md`
 3. `progress.md`
 4. `docs/decisions.md`
-5. `apps/client/public/skills.md`
+5. `docs/map-design/layout-reference.md`
+6. `apps/client/public/skills.md`
 
 Do not add a third memory layer. No per-thread notes, no duplicate tool guides, no subsystem process docs.
 
@@ -27,12 +28,13 @@ Do not add a third memory layer. No per-thread notes, no duplicate tool guides, 
 3. Read the single spec or contract selected by the task's primary change tag.
 4. Read only the code and scripts directly touched.
 
-If a fact is not in one of the five Markdown authorities, prefer code, scripts, JSON specs, and runtime contracts over creating new Markdown.
+If a fact is not in one of the six Markdown authorities, prefer code, scripts, JSON specs, and runtime contracts over creating new Markdown.
 
 ## Memory Model
 - Short-term memory: `progress.md` only. Overwrite aggressively. Never turn it into a transcript.
 - Long-term prose memory: `docs/decisions.md` only. Add entries only for durable, non-obvious choices that should survive context resets.
 - Durable structured memory: `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json`, and `apps/client/public/skills.md`.
+- Generated map-reference views: `docs/map-design/layout-reference.md` and `docs/map-design/layout-reference.svg` are convenience outputs generated from `map_spec.json`; never hand-maintain them or treat them as higher authority than the design packet.
 - Evidence, not memory: `artifacts/`, generated `apps/client/dist/skills.md`, and external archive material at `/Users/dimitri/Desktop/clawd-strike-archive`.
 
 ## Authority Map
@@ -40,6 +42,7 @@ If a fact is not in one of the five Markdown authorities, prefer code, scripts, 
 - `AGENTS.md`: internal policy, read order, change tags, validation policy.
 - `progress.md`: current branch/task state only.
 - `docs/decisions.md`: durable internal decisions that change future implementation behavior.
+- `docs/map-design/layout-reference.md`: generated human-readable map naming and wall-reference view only; regenerate it, do not hand-author it.
 - `apps/client/public/skills.md`: public browser-only contract only.
 
 ### Hard Authority Rules
@@ -52,6 +55,7 @@ If a fact is not in one of the five Markdown authorities, prefer code, scripts, 
   - `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png`
   - `docs/map-design/refs/bazaar_slice_v2_2_map_only.png`
   - `docs/map-design/refs/bazaar_main_hall_reference.png`
+- `docs/map-design/layout-reference.md` and `docs/map-design/layout-reference.svg` are generated reference views. Regenerate them with `pnpm --filter @clawd-strike/client gen:layout-reference`; do not treat them as map authority over the design packet.
 - Runtime map files must be generated from the design packet with `pnpm --filter @clawd-strike/client gen:maps`. Do not hand-maintain drift in `apps/client/public/maps/`.
 - `apps/client/public/skills.md` must stay fair and browser-only. Do not expose coordinates, map zones, landmark IDs, enemy positions, routes, seeds, hidden line-of-sight truth, or repo-only debug data.
 - Internal agent tooling is not game runtime code and is not part of the public `/skills.md` surface. Keep agent-only deploy or debug bundles out of the repo root unless they become an explicit repo workflow requirement.

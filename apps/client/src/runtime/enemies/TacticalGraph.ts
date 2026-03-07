@@ -3,7 +3,15 @@ import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
 
 export type TacticalLane = "west" | "main" | "east";
 
-export type TacticalNodeType = "zone_center" | "spawn_cover" | "cover_cluster" | "open_node";
+export type TacticalNodeType =
+  | "zone_center"
+  | "spawn_cover"
+  | "cover_cluster"
+  | "open_node"
+  | "connector_entry"
+  | "hall_entry"
+  | "breach"
+  | "pre_peek";
 
 export type TacticalNode = {
   id: string;
@@ -25,6 +33,7 @@ export type TacticalGraph = {
   zoneNodes: Map<string, TacticalNode[]>;
   zoneCenterNodeIds: Map<string, string>;
   zoneAdjacency: Map<string, string[]>;
+  zoneById: Map<string, RuntimeBlockoutZone>;
 };
 
 const ZONE_TYPES = new Set([
@@ -87,6 +96,10 @@ function zonesTouch(a: RuntimeBlockoutZone, b: RuntimeBlockoutZone): boolean {
   return touchVertically || touchHorizontally || intersects;
 }
 
+function pointInRect(zone: RuntimeBlockoutZone, x: number, z: number): boolean {
+  return x >= zone.rect.x && x <= zone.rect.x + zone.rect.w && z >= zone.rect.y && z <= zone.rect.y + zone.rect.h;
+}
+
 function scoreZoneCenter(zone: RuntimeBlockoutZone): Pick<TacticalNode, "coverScore" | "flankScore"> {
   switch (zone.type) {
     case "spawn_plaza":
@@ -117,6 +130,45 @@ function scoreAnchor(anchor: RuntimeAnchor): Pick<TacticalNode, "coverScore" | "
   }
 }
 
+function scoreDerivedNode(
+  zone: RuntimeBlockoutZone,
+  neighbor: RuntimeBlockoutZone,
+  nodeType: TacticalNodeType,
+): Pick<TacticalNode, "coverScore" | "flankScore"> {
+  const zoneScore = scoreZoneCenter(zone);
+  const neighborScore = scoreZoneCenter(neighbor);
+  switch (nodeType) {
+    case "connector_entry":
+      return {
+        coverScore: clamp(zoneScore.coverScore * 0.95 + 0.08, 0, 1),
+        flankScore: clamp(Math.max(zoneScore.flankScore, neighborScore.flankScore) * 0.9 + 0.06, 0, 1),
+      };
+    case "hall_entry":
+      return {
+        coverScore: clamp(zoneScore.coverScore * 0.9 + 0.05, 0, 1),
+        flankScore: clamp(zoneScore.flankScore * 0.95 + 0.08, 0, 1),
+      };
+    case "breach":
+      return {
+        coverScore: clamp(zoneScore.coverScore * 0.7, 0, 1),
+        flankScore: clamp(zoneScore.flankScore * 1.08 + 0.12, 0, 1),
+      };
+    case "pre_peek":
+    default:
+      return {
+        coverScore: clamp(zoneScore.coverScore * 0.88 + 0.04, 0, 1),
+        flankScore: clamp(zoneScore.flankScore * 0.92 + 0.07, 0, 1),
+      };
+  }
+}
+
+function resolveDerivedNodeType(zone: RuntimeBlockoutZone): TacticalNodeType {
+  if (zone.type === "connector") return "connector_entry";
+  if (zone.type === "side_hall") return "hall_entry";
+  if (zone.type === "cut") return "breach";
+  return "pre_peek";
+}
+
 function resolveExposureYawRad(zone: RuntimeBlockoutZone, anchor: RuntimeAnchor | null): number {
   if (anchor && typeof anchor.yawDeg === "number") {
     return designYawDegToWorldYawRad(anchor.yawDeg);
@@ -141,6 +193,95 @@ function createNode(payload: Omit<MutableNode, "adjacency">): MutableNode {
     coverScore: clamp(payload.coverScore, 0, 1),
     flankScore: clamp(payload.flankScore, 0, 1),
     adjacency: new Set<string>(),
+  };
+}
+
+function resolveEdgeInset(zone: RuntimeBlockoutZone): number {
+  switch (zone.type) {
+    case "spawn_plaza":
+      return 2.6;
+    case "main_lane_segment":
+      return 2.1;
+    case "side_hall":
+      return 1.7;
+    case "connector":
+      return 1.1;
+    case "cut":
+      return 1.0;
+    default:
+      return 1.4;
+  }
+}
+
+function clampPointToZoneInterior(
+  zone: RuntimeBlockoutZone,
+  point: { x: number; z: number },
+  inset: number,
+): { x: number; z: number } {
+  return {
+    x: clamp(point.x, zone.rect.x + inset, zone.rect.x + zone.rect.w - inset),
+    z: clamp(point.z, zone.rect.y + inset, zone.rect.y + zone.rect.h - inset),
+  };
+}
+
+function resolveTransitionPoints(
+  a: RuntimeBlockoutZone,
+  b: RuntimeBlockoutZone,
+): { aPoint: { x: number; z: number }; bPoint: { x: number; z: number } } {
+  const aCenter = zoneCenter(a);
+  const bCenter = zoneCenter(b);
+  const aInset = resolveEdgeInset(a);
+  const bInset = resolveEdgeInset(b);
+
+  const verticalGap = Math.max(0, Math.max(a.rect.y - (b.rect.y + b.rect.h), b.rect.y - (a.rect.y + a.rect.h)));
+  const horizontalGap = Math.max(0, Math.max(a.rect.x - (b.rect.x + b.rect.w), b.rect.x - (a.rect.x + a.rect.w)));
+
+  if (verticalGap <= 0.5 && overlaps(a.rect.x, a.rect.x + a.rect.w, b.rect.x, b.rect.x + b.rect.w)) {
+    const overlapMinX = Math.max(a.rect.x, b.rect.x);
+    const overlapMaxX = Math.min(a.rect.x + a.rect.w, b.rect.x + b.rect.w);
+    const bridgeX = (overlapMinX + overlapMaxX) * 0.5;
+    const aSouthEdge = a.rect.y + a.rect.h <= b.rect.y + b.rect.h;
+    if (aSouthEdge && a.rect.y + a.rect.h <= b.rect.y + 0.5) {
+      return {
+        aPoint: { x: bridgeX, z: a.rect.y + a.rect.h - aInset },
+        bPoint: { x: bridgeX, z: b.rect.y + bInset },
+      };
+    }
+    if (b.rect.y + b.rect.h <= a.rect.y + 0.5) {
+      return {
+        aPoint: { x: bridgeX, z: a.rect.y + aInset },
+        bPoint: { x: bridgeX, z: b.rect.y + b.rect.h - bInset },
+      };
+    }
+  }
+
+  if (horizontalGap <= 0.5 && overlaps(a.rect.y, a.rect.y + a.rect.h, b.rect.y, b.rect.y + b.rect.h)) {
+    const overlapMinZ = Math.max(a.rect.y, b.rect.y);
+    const overlapMaxZ = Math.min(a.rect.y + a.rect.h, b.rect.y + b.rect.h);
+    const bridgeZ = (overlapMinZ + overlapMaxZ) * 0.5;
+    if (a.rect.x + a.rect.w <= b.rect.x + 0.5) {
+      return {
+        aPoint: { x: a.rect.x + a.rect.w - aInset, z: bridgeZ },
+        bPoint: { x: b.rect.x + bInset, z: bridgeZ },
+      };
+    }
+    if (b.rect.x + b.rect.w <= a.rect.x + 0.5) {
+      return {
+        aPoint: { x: a.rect.x + aInset, z: bridgeZ },
+        bPoint: { x: b.rect.x + b.rect.w - bInset, z: bridgeZ },
+      };
+    }
+  }
+
+  return {
+    aPoint: clampPointToZoneInterior(a, {
+      x: aCenter.x + clamp(bCenter.x - aCenter.x, -resolveEdgeInset(a), resolveEdgeInset(a)),
+      z: aCenter.z + clamp(bCenter.z - aCenter.z, -resolveEdgeInset(a), resolveEdgeInset(a)),
+    }, aInset),
+    bPoint: clampPointToZoneInterior(b, {
+      x: bCenter.x + clamp(aCenter.x - bCenter.x, -resolveEdgeInset(b), resolveEdgeInset(b)),
+      z: bCenter.z + clamp(aCenter.z - bCenter.z, -resolveEdgeInset(b), resolveEdgeInset(b)),
+    }, bInset),
   };
 }
 
@@ -217,6 +358,52 @@ export function buildTacticalGraph(
     }
   }
 
+  for (const [zoneId, neighborIds] of zoneAdjacency.entries()) {
+    for (const neighborId of neighborIds) {
+      if (zoneId >= neighborId) continue;
+      const zone = zoneById.get(zoneId);
+      const neighbor = zoneById.get(neighborId);
+      if (!zone || !neighbor) continue;
+
+      const { aPoint, bPoint } = resolveTransitionPoints(zone, neighbor);
+      const zoneNodeType = resolveDerivedNodeType(zone);
+      const neighborNodeType = resolveDerivedNodeType(neighbor);
+      const zoneScores = scoreDerivedNode(zone, neighbor, zoneNodeType);
+      const neighborScores = scoreDerivedNode(neighbor, zone, neighborNodeType);
+
+      const zoneNode = createNode({
+        id: `edge:${zone.id}->${neighbor.id}`,
+        zoneId: zone.id,
+        lane: laneFromZone(zone),
+        nodeType: zoneNodeType,
+        x: aPoint.x,
+        z: aPoint.z,
+        coverScore: zoneScores.coverScore,
+        flankScore: zoneScores.flankScore,
+        exposureYawRad: Math.atan2(bPoint.x - aPoint.x, bPoint.z - aPoint.z),
+        tags: [zone.type, neighbor.type, "entry-node", zoneNodeType],
+      });
+      const neighborNode = createNode({
+        id: `edge:${neighbor.id}->${zone.id}`,
+        zoneId: neighbor.id,
+        lane: laneFromZone(neighbor),
+        nodeType: neighborNodeType,
+        x: bPoint.x,
+        z: bPoint.z,
+        coverScore: neighborScores.coverScore,
+        flankScore: neighborScores.flankScore,
+        exposureYawRad: Math.atan2(aPoint.x - bPoint.x, aPoint.z - bPoint.z),
+        tags: [neighbor.type, zone.type, "entry-node", neighborNodeType],
+      });
+
+      zoneNode.adjacency.add(neighborNode.id);
+      neighborNode.adjacency.add(zoneNode.id);
+      nodes.push(zoneNode, neighborNode);
+      zoneNodes.get(zone.id)?.push(zoneNode);
+      zoneNodes.get(neighbor.id)?.push(neighborNode);
+    }
+  }
+
   for (const [zoneId, entries] of zoneNodes.entries()) {
     const centerId = zoneCenterNodeIds.get(zoneId);
     if (!centerId) continue;
@@ -267,7 +454,29 @@ export function buildTacticalGraph(
     zoneNodes: finalizedZoneNodes,
     zoneCenterNodeIds,
     zoneAdjacency,
+    zoneById,
   };
+}
+
+export function findZoneForPoint(
+  graph: TacticalGraph | null,
+  x: number,
+  z: number,
+): RuntimeBlockoutZone | null {
+  if (!graph) return null;
+
+  let bestMatch: RuntimeBlockoutZone | null = null;
+  let bestArea = Number.POSITIVE_INFINITY;
+  for (const zone of graph.zoneById.values()) {
+    if (!pointInRect(zone, x, z)) continue;
+    const area = zone.rect.w * zone.rect.h;
+    if (area < bestArea) {
+      bestArea = area;
+      bestMatch = zone;
+    }
+  }
+
+  return bestMatch;
 }
 
 export function findNearestTacticalNode(

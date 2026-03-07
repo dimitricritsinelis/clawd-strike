@@ -4,13 +4,14 @@ import { rayVsAabb } from "../sim/collision/rayVsAabb";
 import { raycastFirstHit, type RaycastAabbHit } from "../sim/collision/raycastAabb";
 import type { WorldColliders } from "../sim/collision/WorldColliders";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
+import { createLineOfSightScratch, hasLineOfSight } from "./enemyLineOfSight";
 
 const DEG_TO_RAD = Math.PI / 180;
 const RAD_TO_DEG = 180 / Math.PI;
 
 export const ENEMY_HALF_WIDTH_M = 0.3;
 export const ENEMY_HEIGHT_M = 1.8;
-const ENEMY_EYE_HEIGHT_M = 1.5;
+export const ENEMY_EYE_HEIGHT_M = 1.5;
 const ENEMY_ROTATE_SPEED_MPS = 3.15;
 const ENEMY_INVESTIGATE_SPEED_MPS = 2.6;
 const ENEMY_HOLD_SPEED_MPS = 1.1;
@@ -23,6 +24,8 @@ const ENEMY_STUCK_THRESHOLD_S = 0.45;
 const ENEMY_MIN_MOVED_M = 0.05;
 const ENEMY_PEEK_CHANGE_S_MIN = 1.2;
 const ENEMY_PEEK_CHANGE_S_MAX = 1.8;
+const ENEMY_SWEEP_CHANGE_S_MIN = 0.9;
+const ENEMY_SWEEP_CHANGE_S_MAX = 1.5;
 const ENEMY_MIN_NODE_RADIUS_M = 0.6;
 const ENEMY_RELOAD_DECISION_MAG = 6;
 const GRAVITY_MPS2 = 20.0;
@@ -135,39 +138,39 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
   },
   {
     tier: 4,
-    reactionTimeS: 0.22,
+    reactionTimeS: 0.26,
     memoryS: 4.2,
-    spreadDeg: 3.2,
+    spreadDeg: 4.0,
     visionRangeM: 90,
     sharedAlertRadiusM: 55,
-    maxTurnDegPerS: 260,
+    maxTurnDegPerS: 235,
     activeFlankers: 1,
     pairSwing: true,
     collapse: false,
     mandatoryReloadFallback: true,
     maxLaneStack: 2,
-    shotIntervalS: 0.12,
+    shotIntervalS: 0.13,
     longBurst: [1, 2],
-    midBurst: [3, 4],
-    closeBurst: [5, 7],
+    midBurst: [2, 3],
+    closeBurst: [4, 6],
   },
   {
     tier: 5,
-    reactionTimeS: 0.16,
+    reactionTimeS: 0.22,
     memoryS: 5.5,
-    spreadDeg: 2.4,
+    spreadDeg: 3.7,
     visionRangeM: 95,
     sharedAlertRadiusM: 70,
-    maxTurnDegPerS: 300,
+    maxTurnDegPerS: 245,
     activeFlankers: 2,
     pairSwing: true,
     collapse: true,
     mandatoryReloadFallback: true,
     maxLaneStack: 3,
-    shotIntervalS: 0.1,
+    shotIntervalS: 0.12,
     longBurst: [1, 2],
-    midBurst: [3, 4],
-    closeBurst: [5, 7],
+    midBurst: [2, 4],
+    closeBurst: [4, 6],
   },
 ] as const;
 
@@ -308,6 +311,8 @@ export class EnemyController {
   private stuckTimer = 0;
   private peekDir = 1;
   private peekTimerS = 0;
+  private sweepDir = 1;
+  private sweepTimerS = 0;
   private footstepTimerS = 0;
   private currentTier = 0;
 
@@ -323,16 +328,8 @@ export class EnemyController {
   private rng: DeterministicRng;
   private readonly motionResult: MotionResult = { hitX: false, hitY: false, hitZ: false, grounded: false };
 
-  private readonly losOrigin = new Vector3();
-  private readonly losDir = new Vector3();
+  private readonly losScratch = createLineOfSightScratch();
   private readonly shotDir = new Vector3();
-  private readonly losHit: RaycastAabbHit = {
-    distance: 0,
-    point: new Vector3(),
-    normal: new Vector3(),
-    colliderId: "",
-    colliderKind: "wall",
-  };
   private readonly shotHit: RaycastAabbHit = {
     distance: 0,
     point: new Vector3(),
@@ -358,6 +355,7 @@ export class EnemyController {
     this.rng = new DeterministicRng(deriveSubSeed(seed, id));
     this.shootTimer = this.rng.range(0.08, 0.22);
     this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
+    this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
   }
 
   reset(spawnX: number, spawnZ: number, seed: number): void {
@@ -396,6 +394,8 @@ export class EnemyController {
     this.stuckTimer = 0;
     this.peekDir = 1;
     this.peekTimerS = 0;
+    this.sweepDir = 1;
+    this.sweepTimerS = 0;
     this.footstepTimerS = 0;
     this.currentTier = 0;
     this.currentMovePoint = null;
@@ -414,6 +414,7 @@ export class EnemyController {
     this.rng = new DeterministicRng(deriveSubSeed(seed, this.id));
     this.shootTimer = this.rng.range(0.08, 0.22);
     this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
+    this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
   }
 
   step(
@@ -464,6 +465,11 @@ export class EnemyController {
       this.peekDir *= -1;
       this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
     }
+    this.sweepTimerS -= clampedDt;
+    if (this.sweepTimerS <= 0) {
+      this.sweepDir *= -1;
+      this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
+    }
 
     const tierProfile = directive.tierProfile;
     const visibleTarget = this.findVisibleTarget(targets, tierProfile, worldColliders, enemyAabbs);
@@ -498,6 +504,7 @@ export class EnemyController {
       this.memoryTimerS = Math.max(0, this.memoryTimerS - clampedDt);
       if (this.memoryTimerS <= 0) {
         this.lastVisibleTargetId = null;
+        this.lastKnownTargetPos = null;
       }
     }
 
@@ -668,7 +675,7 @@ export class EnemyController {
 
     const focus = visibleTarget
       ? visibleTarget.position
-      : this.lastKnownTargetPos ?? directive.focusPoint ?? null;
+      : (this.memoryTimerS > 0 ? this.lastKnownTargetPos : null) ?? directive.focusPoint ?? null;
     const anchorPoint = directive.holdPoint ?? directive.movePoint;
 
     const lowAmmoNeedsCover =
@@ -686,11 +693,15 @@ export class EnemyController {
         this.moveTowardPoint(directive.movePoint, ENEMY_ROTATE_SPEED_MPS);
         break;
       case "INVESTIGATE":
-        this.moveTowardPoint(directive.movePoint, ENEMY_INVESTIGATE_SPEED_MPS);
+        if (anchorPoint && focus) {
+          this.moveTowardSweep(anchorPoint, focus, directive.peekOffsetM * 1.55, ENEMY_INVESTIGATE_SPEED_MPS);
+        } else {
+          this.moveTowardPoint(directive.movePoint, ENEMY_INVESTIGATE_SPEED_MPS);
+        }
         break;
       case "PRESSURE":
         if (anchorPoint && focus) {
-          this.moveTowardPeek(anchorPoint, focus, directive.peekOffsetM * (directive.aggressive ? 1.15 : 0.75), ENEMY_PRESSURE_SPEED_MPS);
+          this.moveTowardPressure(anchorPoint, focus, directive.peekOffsetM * (directive.aggressive ? 1.25 : 0.9), ENEMY_PRESSURE_SPEED_MPS);
         } else if (directive.movePoint) {
           this.moveTowardPoint(directive.movePoint, ENEMY_PRESSURE_SPEED_MPS);
         } else if (focus) {
@@ -776,6 +787,58 @@ export class EnemyController {
     const invDesiredDistance = 1 / desiredDistance;
     this.desiredVX = desiredDx * invDesiredDistance * speed;
     this.desiredVZ = desiredDz * invDesiredDistance * speed;
+  }
+
+  private moveTowardSweep(
+    anchorPoint: { x: number; z: number },
+    focusPoint: { x: number; z: number } | { x: number; y: number; z: number },
+    offsetM: number,
+    speed: number,
+  ): void {
+    const dx = focusPoint.x - anchorPoint.x;
+    const dz = focusPoint.z - anchorPoint.z;
+    const distance = Math.hypot(dx, dz);
+    if (distance <= 0.01) {
+      this.moveTowardPoint(anchorPoint, speed);
+      return;
+    }
+
+    const invDistance = 1 / distance;
+    const forwardX = dx * invDistance;
+    const forwardZ = dz * invDistance;
+    const perpX = -forwardZ;
+    const perpZ = forwardX;
+    const desiredPoint = {
+      x: anchorPoint.x + perpX * this.sweepDir * offsetM + forwardX * offsetM * 0.3,
+      z: anchorPoint.z + perpZ * this.sweepDir * offsetM + forwardZ * offsetM * 0.3,
+    };
+    this.moveTowardPoint(desiredPoint, speed);
+  }
+
+  private moveTowardPressure(
+    anchorPoint: { x: number; z: number },
+    focusPoint: { x: number; z: number } | { x: number; y: number; z: number },
+    offsetM: number,
+    speed: number,
+  ): void {
+    const dx = focusPoint.x - anchorPoint.x;
+    const dz = focusPoint.z - anchorPoint.z;
+    const distance = Math.hypot(dx, dz);
+    if (distance <= 0.01) {
+      this.moveTowardPoint(anchorPoint, speed);
+      return;
+    }
+
+    const invDistance = 1 / distance;
+    const forwardX = dx * invDistance;
+    const forwardZ = dz * invDistance;
+    const perpX = -forwardZ;
+    const perpZ = forwardX;
+    const desiredPoint = {
+      x: anchorPoint.x + forwardX * Math.max(0.9, offsetM * 0.95) + perpX * this.peekDir * offsetM * 0.55,
+      z: anchorPoint.z + forwardZ * Math.max(0.9, offsetM * 0.95) + perpZ * this.peekDir * offsetM * 0.55,
+    };
+    this.moveTowardPoint(desiredPoint, speed);
   }
 
   private runFiringLogic(
@@ -880,35 +943,17 @@ export class EnemyController {
     world: WorldColliders,
     enemyAabbs: readonly EnemyAabb[],
   ): boolean {
-    const eyeX = this.position.x;
-    const eyeY = this.position.y + ENEMY_EYE_HEIGHT_M;
-    const eyeZ = this.position.z;
-
-    const targetEyeX = targetPos.x;
-    const targetEyeY = targetPos.y + ENEMY_EYE_HEIGHT_M;
-    const targetEyeZ = targetPos.z;
-
-    const dx = targetEyeX - eyeX;
-    const dy = targetEyeY - eyeY;
-    const dz = targetEyeZ - eyeZ;
-    const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
-    if (dist < 0.01) return true;
-
-    const invDist = 1 / dist;
-    const ndx = dx * invDist;
-    const ndy = dy * invDist;
-    const ndz = dz * invDist;
-
-    for (const aabb of enemyAabbs) {
-      if (aabb.id === this.id) continue;
-      if (aabb.id === "player") continue;
-      const t = rayVsAabb(eyeX, eyeY, eyeZ, ndx, ndy, ndz, dist - 0.1, aabb);
-      if (t < dist - 0.1) return false;
-    }
-
-    this.losOrigin.set(eyeX, eyeY, eyeZ);
-    this.losDir.set(ndx, ndy, ndz);
-    return !raycastFirstHit(world, this.losOrigin, this.losDir, dist - 0.1, this.losHit);
+    return hasLineOfSight(
+      this.position,
+      ENEMY_EYE_HEIGHT_M,
+      targetPos,
+      ENEMY_EYE_HEIGHT_M,
+      world,
+      enemyAabbs,
+      this.losScratch,
+      this.id,
+      "player",
+    );
   }
 
   private tryFireAt(
@@ -978,9 +1023,9 @@ export class EnemyController {
       }
     }
 
-    this.losOrigin.set(eyeX, eyeY, eyeZ);
+    this.losScratch.origin.set(eyeX, eyeY, eyeZ);
     this.shotDir.set(ndx, ndy, ndz);
-    const worldHit = raycastFirstHit(world, this.losOrigin, this.shotDir, maxRange, this.shotHit);
+    const worldHit = raycastFirstHit(world, this.losScratch.origin, this.shotDir, maxRange, this.shotHit);
     if (worldHit && this.shotHit.distance < bestDist) {
       bestHitId = null;
     }

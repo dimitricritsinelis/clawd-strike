@@ -47,9 +47,9 @@ const repoRoot = path.resolve(scriptDir, "../../..");
 const mapSpecPath = path.join(repoRoot, "docs/map-design/specs/map_spec.json");
 const calloutsPath = path.join(repoRoot, "docs/map-design/specs/callouts.csv");
 const objectCatalogPath = path.join(repoRoot, "docs/map-design/specs/object_catalog.csv");
-const artifactDir = path.join(repoRoot, "artifacts");
-const markdownOutPath = path.join(artifactDir, "bazaar-map-layout-reference.md");
-const svgOutPath = path.join(artifactDir, "bazaar-map-layout-reference.svg");
+const docsOutDir = path.join(repoRoot, "docs/map-design");
+const markdownOutPath = path.join(docsOutDir, "layout-reference.md");
+const svgOutPath = path.join(docsOutDir, "layout-reference.svg");
 
 function fail(message) {
   throw new Error(`[gen:layout-reference] ${message}`);
@@ -1777,7 +1777,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
     "",
     `Generated from \`docs/map-design/specs/map_spec.json\` with \`pnpm --filter @clawd-strike/client gen:layout-reference\`. This Markdown and its SVG are generated reference artifacts; the authoritative source stays in the design packet.`,
     "",
-    "![Bazaar map layout reference](./bazaar-map-layout-reference.svg)",
+    "![Bazaar map layout reference](./layout-reference.svg)",
     "",
     "## ID Legend",
     "",

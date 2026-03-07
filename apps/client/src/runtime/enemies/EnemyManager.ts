@@ -2,12 +2,13 @@ import { Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import type { WeaponAudio } from "../audio/WeaponAudio";
 import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../map/types";
-import { PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/PlayerController";
+import { PLAYER_EYE_HEIGHT_M, PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/PlayerController";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
 import type { WorldColliders } from "../sim/collision/WorldColliders";
 import { DeterministicRng, deriveSubSeed, resolveRuntimeSeed } from "../utils/Rng";
 import {
   EnemyController,
+  ENEMY_EYE_HEIGHT_M,
   ENEMY_HALF_WIDTH_M,
   clampEnemyTier,
   resolveEnemyTierProfile,
@@ -22,18 +23,29 @@ import {
 import { EnemyVisual } from "./EnemyVisual";
 import {
   buildTacticalGraph,
+  findZoneForPoint,
   findNearestTacticalNode,
   findTacticalPath,
   type TacticalGraph,
   type TacticalLane,
   type TacticalNode,
 } from "./TacticalGraph";
+import { createLineOfSightScratch, hasLineOfSight } from "./enemyLineOfSight";
 
 const PLAYER_HALF_WIDTH_M = PLAYER_WIDTH_M * 0.5;
-const SPAWN_JITTER_M = 1.5;
+const FIXED_SPAWN_JITTER_M = 1.5;
+const ADAPTIVE_SPAWN_JITTER_M = 0.75;
 const WAVE_RESPAWN_DELAY_S = 5.0;
 const SCORE_IMPROVEMENT_THRESHOLD = 0.75;
 const LONG_SIGHT_OVERWATCH_RANGE_M = 18;
+const HUNT_MIN_OVERWATCH_RANGE_M = 1.8;
+const GUNSHOT_HEAR_RANGE_M = 44;
+const FOOTSTEP_HEAR_RANGE_M = 22;
+const ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M = [26, 24, 22, 20, 18] as const;
+const ADAPTIVE_RESPAWN_EMERGENCY_DISTANCE_M = 0;
+const ADAPTIVE_RESPAWN_MAX_VISIBLE_BOTS = 1;
+const ADAPTIVE_RESPAWN_TIGHT_CLUSTER_M = 4;
+const ADAPTIVE_RESPAWN_NEAR_CLUSTER_M = 7;
 
 /** Hunt pressure: forces increasingly aggressive behavior over time to prevent stalling. */
 const HUNT_ACTIVATION_S = 45;
@@ -74,13 +86,22 @@ const ROLE_TEMPLATE: readonly EnemyRole[] = [
   "roamer",
 ] as const;
 
+type ContactSource = "visual" | "footstep" | "gunshot" | "radio" | "hunt";
+
 type BlackboardContact = {
   x: number;
   y: number;
   z: number;
   timeS: number;
+  zoneId: string | null;
+  lane: TacticalLane;
+  radiusM: number;
+  confidence: number;
   sourceEnemyId?: string;
-  kind?: "gunshot" | "footstep" | "visual";
+  source: ContactSource;
+  kind?: ContactSource;
+  precise: boolean;
+  shared: boolean;
 };
 
 type BlackboardState = {
@@ -106,6 +127,73 @@ type DirectiveMemory = {
   hadDirectSight: boolean;
 };
 
+type PressureProfile = {
+  normalized: number;
+  overwatchRangeM: number;
+  flankBudget: number;
+  sharedTrust: number;
+  collapseWeight: number;
+  commitScale: number;
+  certaintyFloor: number;
+  radioDelayScale: number;
+  overdueCollapseS: number;
+  searchRadiusBonusM: number;
+  fullHunt: boolean;
+};
+
+type SharedContactReport = {
+  targetEnemyId: string;
+  deliverAtS: number;
+  contact: BlackboardContact;
+};
+
+type SpawnRequest = {
+  mode: "initial" | "respawn";
+  playerPos?: { x: number; y: number; z: number } | null;
+};
+
+type SpawnPlacement = {
+  spawnX: number;
+  spawnZ: number;
+  nodeId: string | null;
+  zoneId: string | null;
+  lane: TacticalLane | null;
+  nodeType: TacticalNode["nodeType"] | "authored";
+  distanceToPlayerM: number | null;
+  visibleToPlayer: boolean;
+};
+
+type AdaptiveSpawnCandidate = SpawnPlacement & {
+  node: TacticalNode;
+  nodeId: string;
+  zoneId: string;
+  lane: TacticalLane;
+  nodeType: TacticalNode["nodeType"];
+  distanceToPlayerM: number;
+};
+
+type RespawnPhase = {
+  distanceFloorM: number;
+  allowAdjacentZones: boolean;
+  allowPlayerZone: boolean;
+  maxVisibleBots: number;
+};
+
+type ScoringMode = "caution" | "search" | "contain" | "collapse";
+
+export type EnemySpawnTelemetry = {
+  mode: "authored-fixed" | "adaptive";
+  distanceFloorM: number | null;
+  minDistanceToPlayerM: number | null;
+  visibleCount: number;
+  selectedNodeIds: string[];
+  playerZoneId: string | null;
+  usedAdjacentZoneFallback: boolean;
+  usedVisibilityFallback: boolean;
+  usedPlayerZoneEmergencyFallback: boolean;
+  usedDistanceEmergencyFallback: boolean;
+};
+
 export type EnemyHitResult =
   | { hit: true; enemyId: string; distance: number; hitX: number; hitY: number; hitZ: number }
   | { hit: false };
@@ -121,8 +209,11 @@ export type EnemyManagerDebugSnapshot = {
   lastHeardPlayer: BlackboardContact | null;
   occupiedNodeIds: string[];
   preventedFriendlyFireCount: number;
+  lastSpawn: EnemySpawnTelemetry | null;
   enemies: EnemyDebugSnapshot[];
 };
+
+const NO_RESPAWN_BLOCKERS: readonly EnemyAabb[] = [];
 
 function distanceSq(aX: number, aZ: number, bX: number, bZ: number): number {
   const dx = aX - bX;
@@ -134,6 +225,10 @@ function distanceM(aX: number, aZ: number, bX: number, bZ: number): number {
   return Math.hypot(aX - bX, aZ - bZ);
 }
 
+function clamp01(value: number): number {
+  return Math.min(1, Math.max(0, value));
+}
+
 function laneFromPosition(x: number): TacticalLane {
   if (x <= 14.5) return "west";
   if (x >= 35.5) return "east";
@@ -143,6 +238,21 @@ function laneFromPosition(x: number): TacticalLane {
 function safeCopyContact(contact: BlackboardContact | null): BlackboardContact | null {
   if (!contact) return null;
   return { ...contact };
+}
+
+function safeCopySpawnTelemetry(telemetry: EnemySpawnTelemetry | null): EnemySpawnTelemetry | null {
+  if (!telemetry) return null;
+  return {
+    ...telemetry,
+    selectedNodeIds: [...telemetry.selectedNodeIds],
+  };
+}
+
+function zoneCenter(zone: { rect: { x: number; y: number; w: number; h: number } }): { x: number; z: number } {
+  return {
+    x: zone.rect.x + zone.rect.w * 0.5,
+    z: zone.rect.y + zone.rect.h * 0.5,
+  };
 }
 
 export function resolveEnemyTier(waveNumber: number, waveElapsedS: number): number {
@@ -167,6 +277,7 @@ export class EnemyManager {
   private onNewWave: ((wave: number) => void) | null = null;
   private tacticalGraph: TacticalGraph | null = null;
   private tacticalMapId = "bazaar-map";
+  private lastSpawnTelemetry: EnemySpawnTelemetry | null = null;
 
   private readonly aabbScratch: EnemyAabb[] = [];
   private readonly targetPool: EnemyTarget[];
@@ -194,6 +305,10 @@ export class EnemyManager {
 
   private readonly lastDirectiveByEnemyId = new Map<string, EnemyDirective>();
   private readonly directiveMemoryByEnemyId = new Map<string, DirectiveMemory>();
+  private readonly localKnowledgeByEnemyId = new Map<string, BlackboardContact>();
+  private readonly sharedKnowledgeByEnemyId = new Map<string, BlackboardContact>();
+  private readonly pendingSharedReports: SharedContactReport[] = [];
+  private readonly respawnLosScratch = createLineOfSightScratch();
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -271,6 +386,7 @@ export class EnemyManager {
       lastHeardPlayer: safeCopyContact(this.blackboard.lastHeardPlayer),
       occupiedNodeIds: Array.from(this.blackboard.occupiedNodeIds.keys()).sort((a, b) => a.localeCompare(b)),
       preventedFriendlyFireCount: this.preventedFriendlyFireCount,
+      lastSpawn: safeCopySpawnTelemetry(this.lastSpawnTelemetry),
       enemies,
     };
   }
@@ -283,7 +399,7 @@ export class EnemyManager {
     return this.waveRespawnTimer;
   }
 
-  spawn(worldColliders: WorldColliders): void {
+  spawn(worldColliders: WorldColliders, request: SpawnRequest = { mode: "initial" }): void {
     this.worldCollidersRef = worldColliders;
     this.waveNumber += 1;
     this.waveRespawnTimer = null;
@@ -297,6 +413,9 @@ export class EnemyManager {
     this.blackboard.currentTier = 0;
     this.lastDirectiveByEnemyId.clear();
     this.directiveMemoryByEnemyId.clear();
+    this.localKnowledgeByEnemyId.clear();
+    this.sharedKnowledgeByEnemyId.clear();
+    this.pendingSharedReports.length = 0;
 
     if (
       this.controllers.length > 0 &&
@@ -307,27 +426,29 @@ export class EnemyManager {
 
     const mapSeed = resolveRuntimeSeed(this.tacticalMapId, null);
     const waveSeed = deriveSubSeed(mapSeed, `wave_${this.waveNumber}`);
-    const jitterRng = new DeterministicRng(waveSeed);
-    const pb = worldColliders.playableBounds;
+    const spawnBatch = request.mode === "respawn" && this.waveNumber > 1 && request.playerPos
+      ? this.resolveAdaptiveRespawnPlacements(worldColliders, request.playerPos, waveSeed) ?? this.resolveFixedSpawnPlacements(worldColliders, waveSeed)
+      : this.resolveFixedSpawnPlacements(worldColliders, waveSeed);
+    this.lastSpawnTelemetry = spawnBatch.telemetry;
 
     if (this.controllers.length === 0) {
-      for (const config of ENEMY_SPAWN_CONFIG) {
+      for (let i = 0; i < ENEMY_SPAWN_CONFIG.length; i += 1) {
+        const config = ENEMY_SPAWN_CONFIG[i]!;
+        const placement = spawnBatch.placements[i]!;
         const id: EnemyId = `enemy_${config.name.toLowerCase()}`;
         const seed = deriveSubSeed(waveSeed, id);
-        const { spawnX, spawnZ } = this.getJitteredSpawn(config.x, config.z, jitterRng, pb);
-        const controller = new EnemyController(id, config.name, spawnX, spawnZ, seed);
+        const controller = new EnemyController(id, config.name, placement.spawnX, placement.spawnZ, seed);
         const visual = new EnemyVisual(config.name, this.scene, this.sharedLoader);
         this.controllers.push(controller);
         this.visuals.push(visual);
       }
     } else {
       for (let i = 0; i < ENEMY_SPAWN_CONFIG.length; i += 1) {
-        const config = ENEMY_SPAWN_CONFIG[i]!;
+        const placement = spawnBatch.placements[i]!;
         const controller = this.controllers[i]!;
         const visual = this.visuals[i]!;
         const seed = deriveSubSeed(waveSeed, controller.id);
-        const { spawnX, spawnZ } = this.getJitteredSpawn(config.x, config.z, jitterRng, pb);
-        controller.reset(spawnX, spawnZ, seed);
+        controller.reset(placement.spawnX, placement.spawnZ, seed);
         visual.reset();
       }
     }
@@ -336,24 +457,13 @@ export class EnemyManager {
   }
 
   reportPlayerGunshot(position: { x: number; y: number; z: number }): void {
-    this.blackboard.lastHeardPlayer = {
-      x: position.x,
-      y: position.y,
-      z: position.z,
-      timeS: this.waveElapsedS,
-      kind: "gunshot",
-    };
+    this.reportHeardContact(position, "gunshot", GUNSHOT_HEAR_RANGE_M, 5.2, 0.72);
   }
 
   reportPlayerFootstep(position: { x: number; y: number; z: number }, speedMps: number): void {
     if (speedMps <= 0.4) return;
-    this.blackboard.lastHeardPlayer = {
-      x: position.x,
-      y: position.y,
-      z: position.z,
-      timeS: this.waveElapsedS,
-      kind: "footstep",
-    };
+    const speedFactor = clamp01((speedMps - 0.4) / 4);
+    this.reportHeardContact(position, "footstep", FOOTSTEP_HEAR_RANGE_M + speedFactor * 8, 4.2 + speedFactor * 2.4, 0.58 + speedFactor * 0.14);
   }
 
   private assignRoles(waveSeed: number): void {
@@ -385,19 +495,308 @@ export class EnemyManager {
     }
   }
 
+  private resolveFixedSpawnPlacements(
+    worldColliders: WorldColliders,
+    waveSeed: number,
+  ): { placements: SpawnPlacement[]; telemetry: EnemySpawnTelemetry } {
+    const jitterRng = new DeterministicRng(deriveSubSeed(waveSeed, "authored-fixed"));
+    const placements = ENEMY_SPAWN_CONFIG.map((config) => {
+      const { spawnX, spawnZ } = this.getJitteredSpawn(
+        config.x,
+        config.z,
+        jitterRng,
+        worldColliders.playableBounds,
+        FIXED_SPAWN_JITTER_M,
+      );
+      return {
+        spawnX,
+        spawnZ,
+        nodeId: null,
+        zoneId: null,
+        lane: null,
+        nodeType: "authored" as const,
+        distanceToPlayerM: null,
+        visibleToPlayer: false,
+      };
+    });
+
+    return {
+      placements,
+      telemetry: {
+        mode: "authored-fixed",
+        distanceFloorM: null,
+        minDistanceToPlayerM: null,
+        visibleCount: 0,
+        selectedNodeIds: [],
+        playerZoneId: null,
+        usedAdjacentZoneFallback: false,
+        usedVisibilityFallback: false,
+        usedPlayerZoneEmergencyFallback: false,
+        usedDistanceEmergencyFallback: false,
+      },
+    };
+  }
+
+  private resolveAdaptiveRespawnPlacements(
+    worldColliders: WorldColliders,
+    playerPos: { x: number; y: number; z: number },
+    waveSeed: number,
+  ): { placements: SpawnPlacement[]; telemetry: EnemySpawnTelemetry } | null {
+    if (!this.tacticalGraph || this.tacticalGraph.nodes.length < ENEMY_SPAWN_CONFIG.length) {
+      return null;
+    }
+
+    const playerZone = findZoneForPoint(this.tacticalGraph, playerPos.x, playerPos.z);
+    const adjacentZones = new Set<string>(playerZone ? this.tacticalGraph.zoneAdjacency.get(playerZone.id) ?? [] : []);
+    const candidates: AdaptiveSpawnCandidate[] = this.tacticalGraph.nodes
+      .map((node) => {
+        const nodeRng = new DeterministicRng(deriveSubSeed(waveSeed, `adaptive-node:${node.id}`));
+        const { spawnX, spawnZ } = this.getJitteredSpawn(
+          node.x,
+          node.z,
+          nodeRng,
+          worldColliders.playableBounds,
+          ADAPTIVE_SPAWN_JITTER_M,
+        );
+        return {
+          node,
+          nodeId: node.id,
+          zoneId: node.zoneId,
+          lane: node.lane,
+          nodeType: node.nodeType,
+          spawnX,
+          spawnZ,
+          distanceToPlayerM: distanceM(spawnX, spawnZ, playerPos.x, playerPos.z),
+          visibleToPlayer: hasLineOfSight(
+            playerPos,
+            PLAYER_EYE_HEIGHT_M,
+            { x: spawnX, y: 0, z: spawnZ },
+            ENEMY_EYE_HEIGHT_M,
+            worldColliders,
+            NO_RESPAWN_BLOCKERS,
+            this.respawnLosScratch,
+          ),
+        };
+      })
+      .sort((a, b) => a.nodeId.localeCompare(b.nodeId));
+
+    for (const phase of this.buildAdaptiveRespawnPhases()) {
+      const placements = this.pickAdaptiveRespawnSet(candidates, phase, playerZone?.id ?? null, adjacentZones, waveSeed);
+      if (!placements) continue;
+
+      const minDistanceToPlayerM = placements.reduce((best, placement) => Math.min(best, placement.distanceToPlayerM), Number.POSITIVE_INFINITY);
+      const visibleCount = placements.reduce((count, placement) => count + (placement.visibleToPlayer ? 1 : 0), 0);
+
+      return {
+        placements,
+        telemetry: {
+          mode: "adaptive",
+          distanceFloorM: phase.distanceFloorM,
+          minDistanceToPlayerM: Number.isFinite(minDistanceToPlayerM) ? minDistanceToPlayerM : null,
+          visibleCount,
+          selectedNodeIds: placements.map((placement) => placement.nodeId),
+          playerZoneId: playerZone?.id ?? null,
+          usedAdjacentZoneFallback: phase.allowAdjacentZones,
+          usedVisibilityFallback: phase.maxVisibleBots > 0,
+          usedPlayerZoneEmergencyFallback: phase.allowPlayerZone,
+          usedDistanceEmergencyFallback: phase.distanceFloorM < ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M[ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M.length - 1]!,
+        },
+      };
+    }
+
+    return null;
+  }
+
+  private buildAdaptiveRespawnPhases(): RespawnPhase[] {
+    const phases: RespawnPhase[] = [];
+
+    for (const distanceFloorM of ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M) {
+      phases.push({
+        distanceFloorM,
+        allowAdjacentZones: false,
+        allowPlayerZone: false,
+        maxVisibleBots: 0,
+      });
+    }
+    for (const distanceFloorM of ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M) {
+      phases.push({
+        distanceFloorM,
+        allowAdjacentZones: true,
+        allowPlayerZone: false,
+        maxVisibleBots: 0,
+      });
+    }
+    for (const distanceFloorM of ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M) {
+      phases.push({
+        distanceFloorM,
+        allowAdjacentZones: true,
+        allowPlayerZone: false,
+        maxVisibleBots: ADAPTIVE_RESPAWN_MAX_VISIBLE_BOTS,
+      });
+    }
+    for (const distanceFloorM of ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M) {
+      phases.push({
+        distanceFloorM,
+        allowAdjacentZones: true,
+        allowPlayerZone: true,
+        maxVisibleBots: ADAPTIVE_RESPAWN_MAX_VISIBLE_BOTS,
+      });
+    }
+    phases.push({
+      distanceFloorM: ADAPTIVE_RESPAWN_EMERGENCY_DISTANCE_M,
+      allowAdjacentZones: true,
+      allowPlayerZone: true,
+      maxVisibleBots: ADAPTIVE_RESPAWN_MAX_VISIBLE_BOTS,
+    });
+
+    return phases;
+  }
+
+  private pickAdaptiveRespawnSet(
+    candidates: readonly AdaptiveSpawnCandidate[],
+    phase: RespawnPhase,
+    playerZoneId: string | null,
+    adjacentZones: ReadonlySet<string>,
+    waveSeed: number,
+  ): AdaptiveSpawnCandidate[] | null {
+    const selected: AdaptiveSpawnCandidate[] = [];
+    const selectedNodeIds = new Set<string>();
+    const laneUsage = new Map<TacticalLane, number>([
+      ["west", 0],
+      ["main", 0],
+      ["east", 0],
+    ]);
+    const zoneUsage = new Map<string, number>();
+    let visibleCount = 0;
+
+    for (let pickIndex = 0; pickIndex < ENEMY_SPAWN_CONFIG.length; pickIndex += 1) {
+      let bestCandidate: AdaptiveSpawnCandidate | null = null;
+      let bestScore = Number.NEGATIVE_INFINITY;
+
+      for (const candidate of candidates) {
+        if (selectedNodeIds.has(candidate.nodeId)) continue;
+        if (candidate.distanceToPlayerM < phase.distanceFloorM) continue;
+        if (!phase.allowPlayerZone && playerZoneId && candidate.zoneId === playerZoneId) continue;
+        if (!phase.allowAdjacentZones && adjacentZones.has(candidate.zoneId)) continue;
+        if (candidate.visibleToPlayer && visibleCount >= phase.maxVisibleBots) continue;
+
+        const score = this.scoreAdaptiveRespawnCandidate(candidate, selected, laneUsage, zoneUsage, waveSeed, pickIndex);
+        if (score > bestScore) {
+          bestScore = score;
+          bestCandidate = candidate;
+        }
+      }
+
+      if (!bestCandidate) return null;
+
+      selected.push(bestCandidate);
+      selectedNodeIds.add(bestCandidate.nodeId);
+      laneUsage.set(bestCandidate.lane, (laneUsage.get(bestCandidate.lane) ?? 0) + 1);
+      zoneUsage.set(bestCandidate.zoneId, (zoneUsage.get(bestCandidate.zoneId) ?? 0) + 1);
+      if (bestCandidate.visibleToPlayer) {
+        visibleCount += 1;
+      }
+    }
+
+    return selected;
+  }
+
+  private scoreAdaptiveRespawnCandidate(
+    candidate: AdaptiveSpawnCandidate,
+    selected: readonly AdaptiveSpawnCandidate[],
+    laneUsage: ReadonlyMap<TacticalLane, number>,
+    zoneUsage: ReadonlyMap<string, number>,
+    waveSeed: number,
+    pickIndex: number,
+  ): number {
+    let score = candidate.distanceToPlayerM * 0.18;
+    score += candidate.node.coverScore * 2.4;
+    score += candidate.node.flankScore * 0.45;
+
+    switch (candidate.nodeType) {
+      case "spawn_cover":
+        score += 3.9;
+        break;
+      case "cover_cluster":
+      case "hall_entry":
+      case "connector_entry":
+        score += 2.7;
+        break;
+      case "breach":
+      case "pre_peek":
+        score += 1.4;
+        break;
+      case "open_node":
+        score -= 2.9;
+        break;
+      case "zone_center":
+      default:
+        score += 0.8;
+        break;
+    }
+
+    score -= (laneUsage.get(candidate.lane) ?? 0) * 1.35;
+    score -= (zoneUsage.get(candidate.zoneId) ?? 0) * 2.0;
+
+    let nearestSelectedM = Number.POSITIVE_INFINITY;
+    for (const other of selected) {
+      nearestSelectedM = Math.min(nearestSelectedM, distanceM(candidate.spawnX, candidate.spawnZ, other.spawnX, other.spawnZ));
+    }
+    if (nearestSelectedM < ADAPTIVE_RESPAWN_TIGHT_CLUSTER_M) {
+      score -= 4.5;
+    } else if (nearestSelectedM < ADAPTIVE_RESPAWN_NEAR_CLUSTER_M) {
+      score -= 1.8;
+    }
+
+    if (candidate.visibleToPlayer) {
+      score -= 8.5;
+    }
+
+    const noiseRng = new DeterministicRng(deriveSubSeed(waveSeed, `adaptive-score:${pickIndex}:${candidate.nodeId}`));
+    score += noiseRng.range(-0.45, 0.45);
+    return score;
+  }
+
   private getJitteredSpawn(
     baseX: number,
     baseZ: number,
     jitterRng: DeterministicRng,
     playableBounds: { minX: number; minZ: number; maxX: number; maxZ: number },
+    jitterRadiusM: number,
   ): { spawnX: number; spawnZ: number } {
-    const jX = jitterRng.range(-SPAWN_JITTER_M, SPAWN_JITTER_M);
-    const jZ = jitterRng.range(-SPAWN_JITTER_M, SPAWN_JITTER_M);
+    const jX = jitterRng.range(-jitterRadiusM, jitterRadiusM);
+    const jZ = jitterRng.range(-jitterRadiusM, jitterRadiusM);
     const margin = ENEMY_HALF_WIDTH_M + 0.5;
     return {
       spawnX: Math.max(playableBounds.minX + margin, Math.min(playableBounds.maxX - margin, baseX + jX)),
       spawnZ: Math.max(playableBounds.minZ + margin, Math.min(playableBounds.maxZ - margin, baseZ + jZ)),
     };
+  }
+
+  private reportHeardContact(
+    position: { x: number; y: number; z: number },
+    source: "gunshot" | "footstep",
+    hearRangeM: number,
+    baseRadiusM: number,
+    baseConfidence: number,
+  ): void {
+    const template = this.createContactEstimate(position, source, baseRadiusM, baseConfidence, undefined, false, false);
+    this.blackboard.lastHeardPlayer = template;
+
+    for (const controller of this.controllers) {
+      if (controller.isDead()) continue;
+      const controllerPos = controller.getPosition();
+      const heardDistance = distanceM(controllerPos.x, controllerPos.z, position.x, position.z);
+      if (heardDistance > hearRangeM) continue;
+
+      const falloff = 1 - heardDistance / hearRangeM;
+      const contact: BlackboardContact = {
+        ...template,
+        confidence: clamp01(baseConfidence * (0.55 + falloff * 0.45)),
+        radiusM: baseRadiusM + (1 - falloff) * (source === "gunshot" ? 10 : 7),
+      };
+      this.storeKnowledge(this.localKnowledgeByEnemyId, controller.id, contact);
+    }
   }
 
   update(
@@ -450,6 +849,8 @@ export class EnemyManager {
 
     const tierProfile = resolveEnemyTierProfile(this.blackboard.currentTier);
     const huntPressure = Math.min(1.0, Math.max(0, (this.waveElapsedS - HUNT_ACTIVATION_S) / (HUNT_FULL_S - HUNT_ACTIVATION_S)));
+    const pressureProfile = this.resolvePressureProfile(huntPressure);
+    this.flushSharedReports();
     const laneAssignments = new Map<TacticalLane, number>([
       ["west", 0],
       ["main", 0],
@@ -461,7 +862,14 @@ export class EnemyManager {
     const onFootstep = this.weaponAudio ? this.handleFootstep : undefined;
     for (const controller of this.controllers) {
       if (controller.isDead()) continue;
-      const directive = this.buildDirective(controller, playerTarget, worldColliders, tierProfile, laneAssignments, huntPressure);
+      const directive = this.buildDirective(
+        controller,
+        playerTarget,
+        worldColliders,
+        tierProfile,
+        laneAssignments,
+        pressureProfile,
+      );
       this.lastDirectiveByEnemyId.set(controller.id, directive);
       if (directive.targetNodeId) {
         this.blackboard.occupiedNodeIds.set(directive.targetNodeId, controller.id);
@@ -481,14 +889,10 @@ export class EnemyManager {
         onFootstep,
         (event) => {
           if (event.kind === "seen-player") {
-            this.blackboard.lastSeenPlayer = {
-              x: event.position.x,
-              y: event.position.y,
-              z: event.position.z,
-              timeS: this.waveElapsedS,
-              sourceEnemyId: event.enemyId,
-              kind: "visual",
-            };
+            const contact = this.createContactEstimate(event.position, "visual", 1.2, 1.0, event.enemyId, true, false);
+            this.blackboard.lastSeenPlayer = contact;
+            this.storeKnowledge(this.localKnowledgeByEnemyId, event.enemyId, contact);
+            this.queueSharedContactReports(event.enemyId, contact, pressureProfile);
           }
         },
       );
@@ -500,7 +904,7 @@ export class EnemyManager {
       } else {
         this.waveRespawnTimer -= deltaSeconds;
         if (this.waveRespawnTimer <= 0 && this.worldCollidersRef) {
-          this.spawn(this.worldCollidersRef);
+          this.spawn(this.worldCollidersRef, { mode: "respawn", playerPos });
           this.onNewWave?.(this.waveNumber);
         }
       }
@@ -537,15 +941,11 @@ export class EnemyManager {
     worldColliders: WorldColliders,
     tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
     laneAssignments: Map<TacticalLane, number>,
-    huntPressure: number,
+    pressureProfile: PressureProfile,
   ): EnemyDirective {
     const role = this.blackboard.assignedRoleByEnemyId.get(controller.id) ?? "rifler";
     const roleRank = this.blackboard.roleRankByEnemyId.get(controller.id) ?? 0;
-    const effectiveActiveFlankers = Math.max(
-      tierProfile.activeFlankers,
-      huntPressure >= 0.25 ? 1 : 0,
-      huntPressure >= 0.5 ? 2 : 0,
-    );
+    const effectiveActiveFlankers = Math.max(tierProfile.activeFlankers, pressureProfile.flankBudget);
     const activeRole: EnemyRole =
       role === "flanker" && roleRank >= effectiveActiveFlankers
         ? "rifler"
@@ -559,56 +959,45 @@ export class EnemyManager {
       playerDistance <= tierProfile.visionRangeM
       && controller.canSeeTarget(playerTarget, worldColliders, this.aabbScratch);
 
-    const rawKnowledge = this.pickKnowledge(tierProfile);
-    const playerLane = laneFromPosition((rawKnowledge ?? playerTarget.position).x);
-    const distanceToKnowledge = rawKnowledge
-      ? distanceM(controllerPos.x, controllerPos.z, rawKnowledge.x, rawKnowledge.z)
-      : Number.POSITIVE_INFINITY;
-    const sharedKnowledge = rawKnowledge && this.shouldUseSharedKnowledge(
-      activeRole,
-      currentLane,
-      playerLane,
-      distanceToKnowledge,
-      tierProfile,
-    )
-      ? rawKnowledge
-      : null;
-    let knowledge = hasDirectSight
-      ? {
-          x: playerTarget.position.x,
-          y: playerTarget.position.y,
-          z: playerTarget.position.z,
-          timeS: this.waveElapsedS,
-          kind: "visual" as const,
-        }
-      : sharedKnowledge;
-
-    // Synthetic hunt knowledge: force bots to converge even without natural detection
-    if (!knowledge && huntPressure > 0) {
-      knowledge = {
-        x: playerTarget.position.x,
-        y: playerTarget.position.y,
-        z: playerTarget.position.z,
-        timeS: this.waveElapsedS,
-        kind: "visual" as const,
-      };
-    }
+    const knowledge = hasDirectSight
+      ? this.createContactEstimate(playerTarget.position, "visual", 1.2, 1.0, controller.id, true, false)
+      : this.pickKnowledge(
+        controller.id,
+        activeRole,
+        currentLane,
+        controllerPos.x,
+        controllerPos.z,
+        tierProfile,
+        pressureProfile,
+      );
+    const knowledgeAgeS = knowledge ? this.waveElapsedS - knowledge.timeS : Number.POSITIVE_INFINITY;
+    const scoringMode = this.resolveScoringMode(knowledge, hasDirectSight, pressureProfile, knowledgeAgeS);
+    const contactZoneDistances = knowledge?.zoneId ? this.buildZoneDistanceMap(knowledge.zoneId) : null;
 
     let selection: NodeSelection;
     if (controller.isReloading() || (tierProfile.mandatoryReloadFallback && controller.getMag() <= 6 && controller.getReserve() > 0)) {
       selection = this.pickFallbackNode(controllerPos.x, controllerPos.z, knowledge);
-    } else if (huntPressure < 0.5 && hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker" && currentNode) {
+    } else if (
+      !pressureProfile.fullHunt
+      && hasDirectSight
+      && playerDistance > pressureProfile.overwatchRangeM
+      && activeRole !== "flanker"
+      && currentNode
+    ) {
       selection = { node: currentNode, score: 999 };
     } else {
       selection = this.pickRoleNode(
         activeRole,
         currentLane,
+        currentNode?.zoneId ?? null,
         controllerPos.x,
         controllerPos.z,
-        playerTarget.position,
         knowledge,
         laneAssignments,
         tierProfile,
+        pressureProfile,
+        scoringMode,
+        contactZoneDistances,
       );
     }
 
@@ -617,20 +1006,32 @@ export class EnemyManager {
     let state: EnemyState = "HOLD";
     let allowFire = false;
     let debugReason = knowledge
-      ? `${knowledge.kind ?? "contact"} memory`
+      ? `${knowledge.source} ${scoringMode}`
       : activeRole === "anchor"
         ? "default lane hold"
         : "default rotation";
 
     const atTargetNode = !targetNode || distanceM(controllerPos.x, controllerPos.z, targetNode.x, targetNode.z) <= 1.2;
     const laneBuddyCount = targetNode ? laneAssignments.get(targetNode.lane) ?? 0 : 0;
-
-    const effectiveCollapse = tierProfile.collapse || huntPressure >= 0.66;
+    const knowledgeSuggestsSearch = Boolean(knowledge && (
+      knowledge.source === "footstep"
+      || knowledge.source === "radio"
+      || knowledge.source === "hunt"
+      || knowledge.radiusM >= 5.5
+      || knowledge.confidence <= 0.72
+    ));
+    const effectiveCollapse = tierProfile.collapse || pressureProfile.collapseWeight >= 0.58 || scoringMode === "collapse";
+    const pairSwingReady = tierProfile.pairSwing || pressureProfile.normalized >= 0.7;
 
     if (controller.isReloading() || (tierProfile.mandatoryReloadFallback && controller.getMag() <= 6 && controller.getReserve() > 0)) {
       state = atTargetNode ? "RELOAD" : "FALLBACK";
       debugReason = "reload fallback";
-    } else if (huntPressure < 0.5 && hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker") {
+    } else if (
+      !pressureProfile.fullHunt
+      && hasDirectSight
+      && playerDistance > pressureProfile.overwatchRangeM
+      && activeRole !== "flanker"
+    ) {
       state = atTargetNode ? "OVERWATCH" : "ROTATE";
       allowFire = atTargetNode;
       debugReason = "direct long sight overwatch";
@@ -638,41 +1039,84 @@ export class EnemyManager {
       state = atTargetNode ? "HOLD" : "ROTATE";
       debugReason = activeRole === "anchor" ? "default lane hold" : "default rotation";
     } else if (activeRole === "flanker") {
-      state = atTargetNode ? "PRESSURE" : knowledge.kind === "footstep" ? "INVESTIGATE" : "ROTATE";
-      allowFire = atTargetNode && hasDirectSight;
-      debugReason = "active flank pressure";
-    } else if (activeRole === "anchor") {
       state = atTargetNode
-        ? (hasDirectSight ? "OVERWATCH" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : "HOLD")
+        ? (effectiveCollapse ? "PRESSURE" : knowledgeSuggestsSearch ? "INVESTIGATE" : "PRESSURE")
         : "ROTATE";
       allowFire = atTargetNode && hasDirectSight;
-      debugReason = hasDirectSight ? "anchor long hold" : "anchor hold";
+      debugReason = effectiveCollapse ? "flanker collapse" : "active flank pressure";
+    } else if (activeRole === "anchor") {
+      state = atTargetNode
+        ? (
+          hasDirectSight
+            ? "OVERWATCH"
+            : effectiveCollapse && targetNode?.zoneId === knowledge.zoneId
+              ? "INVESTIGATE"
+              : pairSwingReady && laneBuddyCount > 0
+                ? "PEEK"
+                : "HOLD"
+        )
+        : "ROTATE";
+      allowFire = atTargetNode && hasDirectSight;
+      debugReason = hasDirectSight ? "anchor long hold" : effectiveCollapse ? "anchor contain" : "anchor hold";
     } else if (activeRole === "roamer") {
       state = atTargetNode
-        ? (hasDirectSight ? "OVERWATCH" : effectiveCollapse ? "PRESSURE" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : "HOLD")
-        : knowledge.kind === "footstep"
+        ? (
+          hasDirectSight
+            ? "OVERWATCH"
+            : effectiveCollapse
+              ? "PRESSURE"
+              : knowledgeSuggestsSearch
+                ? "INVESTIGATE"
+                : pairSwingReady && laneBuddyCount > 0
+                  ? "PEEK"
+                  : "HOLD"
+        )
+        : knowledgeSuggestsSearch
           ? "INVESTIGATE"
           : "ROTATE";
       allowFire = atTargetNode && hasDirectSight;
-      debugReason = hasDirectSight ? "roamer direct hold" : "roamer crossfire";
+      debugReason = hasDirectSight ? "roamer direct hold" : effectiveCollapse ? "roamer collapse" : "roamer search";
     } else {
       state = atTargetNode
-        ? (hasDirectSight ? "OVERWATCH" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : effectiveCollapse ? "PRESSURE" : "HOLD")
-        : knowledge.kind === "footstep"
+        ? (
+          hasDirectSight
+            ? "OVERWATCH"
+            : effectiveCollapse
+              ? "PRESSURE"
+              : knowledgeSuggestsSearch
+                ? "INVESTIGATE"
+                : pairSwingReady && laneBuddyCount > 0
+                  ? "PEEK"
+                  : "HOLD"
+        )
+        : knowledgeSuggestsSearch
           ? "INVESTIGATE"
           : "ROTATE";
       allowFire = atTargetNode && hasDirectSight;
-      debugReason = hasDirectSight ? "rifler direct hold" : "rifler lane pressure";
+      debugReason = hasDirectSight ? "rifler direct hold" : effectiveCollapse ? "rifler collapse" : "rifler lane pressure";
+    }
+
+    if (!hasDirectSight && state === "OVERWATCH" && knowledgeAgeS > 0.4) {
+      state = atTargetNode ? (knowledgeSuggestsSearch ? "INVESTIGATE" : "HOLD") : "ROTATE";
+      allowFire = false;
+      debugReason = `${debugReason} | stale overwatch release`;
     }
 
     const previous = this.directiveMemoryByEnemyId.get(controller.id) ?? null;
-    if (previous && this.waveElapsedS < previous.commitUntilS) {
+    const forceHuntReplan = Boolean(
+      previous
+      && knowledge
+      && effectiveCollapse
+      && this.waveElapsedS - previous.startedAtS >= pressureProfile.overdueCollapseS,
+    );
+    if (previous && this.waveElapsedS < previous.commitUntilS && !forceHuntReplan) {
       const sameNode = previous.targetNodeId === targetNode?.id;
       const scoreImprovedEnough = targetScore >= previous.score + SCORE_IMPROVEMENT_THRESHOLD;
       const criticalOverride =
         (hasDirectSight && !previous.hadDirectSight)
         || state === "RELOAD"
-        || state === "FALLBACK";
+        || state === "FALLBACK"
+        || pressureProfile.fullHunt;
 
       if (!criticalOverride) {
         if (!sameNode && !scoreImprovedEnough) {
@@ -689,9 +1133,7 @@ export class EnemyManager {
       }
     }
 
-    // Full hunt mode: after HUNT_FULL_S, every bot with knowledge pushes aggressively.
-    // Placed after hysteresis so hunt override is the final authority and cannot be reverted.
-    if (huntPressure >= 1.0 && knowledge && state !== "RELOAD" && state !== "FALLBACK") {
+    if (pressureProfile.fullHunt && knowledge && state !== "RELOAD" && state !== "FALLBACK") {
       state = hasDirectSight ? "PRESSURE" : "INVESTIGATE";
       allowFire = true;
       debugReason = "full hunt mode";
@@ -702,14 +1144,15 @@ export class EnemyManager {
     const moveNode = moveNodeId ? this.tacticalGraph?.nodeById.get(moveNodeId) ?? null : targetNode;
     const holdPoint = targetNode ? { x: targetNode.x, z: targetNode.z } : null;
     const movePoint = moveNode ? { x: moveNode.x, z: moveNode.z } : holdPoint;
-    const focusPoint = this.resolveFocusPoint(targetNode, knowledge, playerTarget.position);
+    const focusPoint = this.resolveFocusPoint(targetNode, knowledge);
     const changedDirective =
       previous?.targetNodeId !== targetNode?.id
       || previous?.state !== state;
     const startedAtS = changedDirective ? this.waveElapsedS : previous?.startedAtS ?? this.waveElapsedS;
+    const commitWindowS = Math.max(0.22, STATE_COMMIT_S[state] * pressureProfile.commitScale);
     const commitUntilS = changedDirective
-      ? this.waveElapsedS + STATE_COMMIT_S[state]
-      : previous?.commitUntilS ?? (this.waveElapsedS + STATE_COMMIT_S[state]);
+      ? this.waveElapsedS + commitWindowS
+      : previous?.commitUntilS ?? (this.waveElapsedS + commitWindowS);
 
     this.directiveMemoryByEnemyId.set(controller.id, {
       state,
@@ -730,9 +1173,9 @@ export class EnemyManager {
       movePoint,
       holdPoint,
       focusPoint,
-      peekOffsetM: activeRole === "anchor" ? 0.7 : activeRole === "flanker" ? 1.05 : 0.85,
+      peekOffsetM: activeRole === "anchor" ? 0.7 : activeRole === "flanker" ? 1.1 : 0.9,
       allowFire,
-      aggressive: state === "PRESSURE",
+      aggressive: state === "PRESSURE" || (pressureProfile.fullHunt && state === "INVESTIGATE"),
       hasDirectSight,
       directiveAgeS: this.waveElapsedS - startedAtS,
       debugReason,
@@ -742,7 +1185,6 @@ export class EnemyManager {
   private resolveFocusPoint(
     targetNode: TacticalNode | null,
     knowledge: BlackboardContact | null,
-    playerPos: { x: number; y: number; z: number },
   ): { x: number; y: number; z: number } | null {
     if (knowledge) {
       return {
@@ -751,13 +1193,7 @@ export class EnemyManager {
         z: knowledge.z,
       };
     }
-    if (!targetNode) {
-      return {
-        x: playerPos.x,
-        y: playerPos.y,
-        z: playerPos.z,
-      };
-    }
+    if (!targetNode) return null;
     return {
       x: targetNode.x + Math.sin(targetNode.exposureYawRad) * 8,
       y: 1.5,
@@ -765,40 +1201,286 @@ export class EnemyManager {
     };
   }
 
-  private pickKnowledge(
-    tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
+  private resolvePressureProfile(huntPressure: number): PressureProfile {
+    return {
+      normalized: huntPressure,
+      overwatchRangeM: LONG_SIGHT_OVERWATCH_RANGE_M + (HUNT_MIN_OVERWATCH_RANGE_M - LONG_SIGHT_OVERWATCH_RANGE_M) * huntPressure,
+      flankBudget: Math.floor(huntPressure * 2.35 + 0.15),
+      sharedTrust: 0.24 + huntPressure * 0.68,
+      collapseWeight: huntPressure,
+      commitScale: 1 - huntPressure * 0.58,
+      certaintyFloor: 0.64 - huntPressure * 0.44,
+      radioDelayScale: 1 - huntPressure * 0.45,
+      overdueCollapseS: 3.25 - huntPressure * 1.85,
+      searchRadiusBonusM: 2 + huntPressure * 12,
+      fullHunt: huntPressure >= 1.0,
+    };
+  }
+
+  private createContactEstimate(
+    position: { x: number; y: number; z: number },
+    source: ContactSource,
+    radiusM: number,
+    confidence: number,
+    sourceEnemyId?: string,
+    precise = false,
+    shared = false,
+  ): BlackboardContact {
+    const zone = findZoneForPoint(this.tacticalGraph, position.x, position.z);
+    const proxyNode = !precise
+      ? findNearestTacticalNode(
+        this.tacticalGraph,
+        position.x,
+        position.z,
+        zone && this.tacticalGraph?.zoneAdjacency.has(zone.id)
+          ? (node) => node.zoneId === zone.id
+          : undefined,
+      )
+      : null;
+    const supportedZoneId = zone && this.tacticalGraph?.zoneAdjacency.has(zone.id)
+      ? zone.id
+      : proxyNode?.zoneId ?? zone?.id ?? null;
+    const supportedZone = supportedZoneId ? this.tacticalGraph?.zoneById.get(supportedZoneId) ?? zone : zone;
+    const fallbackCenter = supportedZone ? zoneCenter(supportedZone) : { x: position.x, z: position.z };
+
+    return {
+      x: precise ? position.x : proxyNode?.x ?? fallbackCenter.x,
+      y: position.y,
+      z: precise ? position.z : proxyNode?.z ?? fallbackCenter.z,
+      timeS: this.waveElapsedS,
+      zoneId: supportedZoneId,
+      lane: laneFromPosition(proxyNode?.x ?? fallbackCenter.x),
+      radiusM,
+      confidence: clamp01(confidence),
+      source,
+      kind: source,
+      precise,
+      shared,
+      ...(sourceEnemyId ? { sourceEnemyId } : {}),
+    };
+  }
+
+  private storeKnowledge(
+    map: Map<string, BlackboardContact>,
+    enemyId: string,
+    contact: BlackboardContact,
+  ): void {
+    const existing = map.get(enemyId);
+    if (
+      !existing
+      || contact.timeS > existing.timeS
+      || contact.confidence >= existing.confidence + 0.08
+      || (contact.source === "visual" && existing.source !== "visual")
+    ) {
+      map.set(enemyId, contact);
+    }
+  }
+
+  private flushSharedReports(): void {
+    const pending: SharedContactReport[] = [];
+    for (const report of this.pendingSharedReports) {
+      if (report.deliverAtS > this.waveElapsedS) {
+        pending.push(report);
+        continue;
+      }
+
+      const controller = this.controllers.find((candidate) => candidate.id === report.targetEnemyId);
+      if (!controller || controller.isDead()) {
+        continue;
+      }
+      this.storeKnowledge(this.sharedKnowledgeByEnemyId, report.targetEnemyId, report.contact);
+    }
+    this.pendingSharedReports.length = 0;
+    this.pendingSharedReports.push(...pending);
+  }
+
+  private queueSharedContactReports(
+    sourceEnemyId: string,
+    contact: BlackboardContact,
+    pressureProfile: PressureProfile,
+  ): void {
+    for (const controller of this.controllers) {
+      if (controller.isDead() || controller.id === sourceEnemyId) continue;
+      const controllerPos = controller.getPosition();
+      const role = this.blackboard.assignedRoleByEnemyId.get(controller.id) ?? "rifler";
+      const relayDistance = distanceM(controllerPos.x, controllerPos.z, contact.x, contact.z);
+      const roleDelayS =
+        role === "anchor"
+          ? 0.42
+          : role === "roamer"
+            ? 0.22
+            : role === "flanker"
+              ? 0.16
+              : 0.28;
+      const delayS = (roleDelayS + Math.min(0.85, relayDistance * 0.015)) * pressureProfile.radioDelayScale;
+      const relayedContact: BlackboardContact = {
+        ...contact,
+        timeS: contact.timeS,
+        radiusM: Math.max(contact.radiusM + 2.8 + relayDistance * 0.025, 4.5),
+        confidence: clamp01(contact.confidence * (0.58 + pressureProfile.sharedTrust * 0.28) - (role === "anchor" ? 0.06 : 0)),
+        source: "radio",
+        kind: "radio",
+        precise: false,
+        shared: true,
+      };
+      this.pendingSharedReports.push({
+        targetEnemyId: controller.id,
+        deliverAtS: this.waveElapsedS + delayS,
+        contact: relayedContact,
+      });
+    }
+  }
+
+  private pickFreshKnowledge(
+    contact: BlackboardContact | null | undefined,
+    maxAgeS: number,
+    minConfidence: number,
   ): BlackboardContact | null {
-    const seen = this.blackboard.lastSeenPlayer;
-    if (seen && this.waveElapsedS - seen.timeS <= tierProfile.memoryS) {
-      return seen;
+    if (!contact) return null;
+    const age = this.waveElapsedS - contact.timeS;
+    if (age < 0 || age > maxAgeS) return null;
+
+    const freshness = clamp01(1 - age / Math.max(0.001, maxAgeS));
+    const confidence = clamp01(contact.confidence * (0.2 + freshness * 0.8));
+    if (confidence < minConfidence) return null;
+
+    return {
+      ...contact,
+      confidence,
+      radiusM: contact.radiusM + age * (contact.shared ? 1.8 : contact.precise ? 0.8 : 1.35),
+    };
+  }
+
+  private pickKnowledge(
+    enemyId: string,
+    role: EnemyRole,
+    currentLane: TacticalLane,
+    currentX: number,
+    currentZ: number,
+    tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
+    pressureProfile: PressureProfile,
+  ): BlackboardContact | null {
+    const local = this.pickFreshKnowledge(
+      this.localKnowledgeByEnemyId.get(enemyId),
+      tierProfile.memoryS * (1.05 + pressureProfile.normalized * 0.75),
+      Math.max(0.14, pressureProfile.certaintyFloor * 0.86),
+    );
+    if (local) return local;
+
+    const shared = this.pickFreshKnowledge(
+      this.sharedKnowledgeByEnemyId.get(enemyId),
+      tierProfile.memoryS * (1.15 + pressureProfile.normalized * 1.2),
+      Math.max(0.12, pressureProfile.certaintyFloor - pressureProfile.sharedTrust * 0.22),
+    );
+    if (shared) {
+      const distanceToKnowledge = distanceM(currentX, currentZ, shared.x, shared.z);
+      if (this.shouldUseSharedKnowledge(role, currentLane, shared.lane, distanceToKnowledge, tierProfile, pressureProfile, shared.confidence)) {
+        return shared;
+      }
     }
-    const heard = this.blackboard.lastHeardPlayer;
-    if (heard && this.waveElapsedS - heard.timeS <= Math.max(1.5, tierProfile.memoryS * 0.85)) {
-      return heard;
+
+    return this.pickHuntFallbackKnowledge(enemyId, pressureProfile);
+  }
+
+  private pickHuntFallbackKnowledge(
+    enemyId: string,
+    pressureProfile: PressureProfile,
+  ): BlackboardContact | null {
+    if (pressureProfile.normalized <= 0) return null;
+
+    const candidates = [
+      this.localKnowledgeByEnemyId.get(enemyId) ?? null,
+      this.sharedKnowledgeByEnemyId.get(enemyId) ?? null,
+      this.blackboard.lastSeenPlayer,
+      this.blackboard.lastHeardPlayer,
+    ]
+      .filter((candidate): candidate is BlackboardContact => Boolean(candidate))
+      .sort((a, b) => (b.timeS + b.confidence * 4) - (a.timeS + a.confidence * 4));
+    const candidate = candidates[0] ?? null;
+    if (!candidate) return null;
+
+    const age = this.waveElapsedS - candidate.timeS;
+    const maxStaleAgeS = 10 + pressureProfile.normalized * 48;
+    if (age > maxStaleAgeS) return null;
+
+    const confidence = clamp01(
+      candidate.confidence * (0.46 + pressureProfile.sharedTrust * 0.34)
+      - (age / Math.max(0.001, maxStaleAgeS)) * 0.18,
+    );
+    if (confidence < Math.max(0.1, pressureProfile.certaintyFloor - pressureProfile.sharedTrust * 0.5)) {
+      return null;
     }
-    return null;
+
+    return {
+      ...candidate,
+      confidence,
+      radiusM: candidate.radiusM + age * (1.05 + pressureProfile.normalized * 0.95) + pressureProfile.searchRadiusBonusM,
+      source: "hunt",
+      kind: "hunt",
+      precise: false,
+      shared: true,
+    };
   }
 
   private shouldUseSharedKnowledge(
     role: EnemyRole,
     currentLane: TacticalLane,
-    playerLane: TacticalLane,
+    knowledgeLane: TacticalLane,
     distanceToKnowledgeM: number,
     tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
+    pressureProfile: PressureProfile,
+    confidence: number,
   ): boolean {
     if (!Number.isFinite(distanceToKnowledgeM)) return false;
-    if (tierProfile.collapse) return true;
-    if (distanceToKnowledgeM <= tierProfile.sharedAlertRadiusM) return true;
+    if (confidence < Math.max(0.12, pressureProfile.certaintyFloor - pressureProfile.sharedTrust * 0.18)) return false;
+
+    const sharedRangeM = tierProfile.sharedAlertRadiusM * (0.75 + pressureProfile.sharedTrust * 0.95);
+    if (tierProfile.collapse || pressureProfile.fullHunt) return true;
+    if (distanceToKnowledgeM <= sharedRangeM) return true;
     if (role === "anchor") {
-      return currentLane === playerLane && distanceToKnowledgeM <= tierProfile.sharedAlertRadiusM * 1.25;
+      return currentLane === knowledgeLane && distanceToKnowledgeM <= sharedRangeM * 1.18;
     }
     if (role === "roamer") {
-      return currentLane === "main" && distanceToKnowledgeM <= tierProfile.sharedAlertRadiusM * 1.15;
+      return currentLane === "main" && distanceToKnowledgeM <= sharedRangeM * 1.08;
     }
     if (role === "flanker") {
-      return currentLane !== playerLane && distanceToKnowledgeM <= tierProfile.sharedAlertRadiusM * 1.5;
+      return currentLane !== knowledgeLane && distanceToKnowledgeM <= sharedRangeM * 1.35;
     }
-    return currentLane === playerLane && distanceToKnowledgeM <= tierProfile.sharedAlertRadiusM * 1.1;
+    return currentLane === knowledgeLane && distanceToKnowledgeM <= sharedRangeM * 1.05;
+  }
+
+  private resolveScoringMode(
+    knowledge: BlackboardContact | null,
+    hasDirectSight: boolean,
+    pressureProfile: PressureProfile,
+    knowledgeAgeS: number,
+  ): ScoringMode {
+    if (!knowledge) return "caution";
+    if (pressureProfile.fullHunt || pressureProfile.collapseWeight >= 0.72) return "collapse";
+    if (hasDirectSight) return "contain";
+    if (knowledge.source === "footstep" || knowledge.source === "radio" || knowledge.radiusM > 6 || knowledgeAgeS > 1.6) {
+      return pressureProfile.collapseWeight >= 0.4 ? "collapse" : "search";
+    }
+    if (knowledge.confidence >= 0.78 && knowledge.radiusM <= 4.5) return "contain";
+    return "search";
+  }
+
+  private buildZoneDistanceMap(contactZoneId: string): Map<string, number> {
+    const distances = new Map<string, number>([[contactZoneId, 0]]);
+    const queue = [contactZoneId];
+
+    while (queue.length > 0) {
+      const zoneId = queue.shift()!;
+      const currentDistance = distances.get(zoneId) ?? 0;
+      const neighbors = this.tacticalGraph?.zoneAdjacency.get(zoneId) ?? [];
+      for (const neighborId of neighbors) {
+        if (distances.has(neighborId)) continue;
+        distances.set(neighborId, currentDistance + 1);
+        queue.push(neighborId);
+      }
+    }
+
+    return distances;
   }
 
   private pickFallbackNode(
@@ -814,12 +1496,13 @@ export class EnemyManager {
       let score = node.coverScore * 5.2;
       score -= Math.sqrt(distanceSq(currentX, currentZ, node.x, node.z)) * 0.08;
       if (knowledge) {
-        score += Math.sqrt(distanceSq(knowledge.x, knowledge.z, node.x, node.z)) * 0.05;
+        score += Math.sqrt(distanceSq(knowledge.x, knowledge.z, node.x, node.z)) * 0.03;
+        if (knowledge.zoneId && node.zoneId === knowledge.zoneId) score -= 0.85;
       }
       if (this.blackboard.occupiedNodeIds.has(node.id)) {
         score -= 2.5;
       }
-      if (node.nodeType === "spawn_cover") score += 1.5;
+      if (node.nodeType === "spawn_cover") score += 1.65;
       if (score > bestScore) {
         bestScore = score;
         best = node;
@@ -832,16 +1515,24 @@ export class EnemyManager {
   private pickRoleNode(
     role: EnemyRole,
     currentLane: TacticalLane,
+    currentZoneId: string | null,
     currentX: number,
     currentZ: number,
-    playerPos: { x: number; y: number; z: number },
     knowledge: BlackboardContact | null,
     laneAssignments: Map<TacticalLane, number>,
     tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
+    pressureProfile: PressureProfile,
+    scoringMode: ScoringMode,
+    contactZoneDistances: Map<string, number> | null,
   ): NodeSelection {
     if (!this.tacticalGraph) return { node: null, score: Number.NEGATIVE_INFINITY };
 
-    const playerLane = laneFromPosition((knowledge ?? playerPos).x);
+    const playerLane = knowledge?.lane ?? currentLane;
+    const dynamicLaneStack = tierProfile.maxLaneStack + (pressureProfile.collapseWeight >= 0.82 ? 1 : 0);
+    const contactZoneId = knowledge?.zoneId ?? null;
+    const currentZoneDistance = currentZoneId && contactZoneDistances
+      ? contactZoneDistances.get(currentZoneId) ?? Number.POSITIVE_INFINITY
+      : Number.POSITIVE_INFINITY;
     let best: TacticalNode | null = null;
     let bestScore = Number.NEGATIVE_INFINITY;
 
@@ -850,44 +1541,79 @@ export class EnemyManager {
       const knowledgeDistance = knowledge ? distanceM(knowledge.x, knowledge.z, node.x, node.z) : travelDistance;
       const laneCount = laneAssignments.get(node.lane) ?? 0;
       const occupied = this.blackboard.occupiedNodeIds.has(node.id);
+      const zoneDistance = contactZoneDistances?.get(node.zoneId) ?? Number.POSITIVE_INFINITY;
+      const progressTowardContact = Number.isFinite(currentZoneDistance) && Number.isFinite(zoneDistance)
+        ? currentZoneDistance - zoneDistance
+        : 0;
+      const sameZone = Boolean(contactZoneId && node.zoneId === contactZoneId);
+      const adjacentZone = Boolean(contactZoneId && this.tacticalGraph.zoneAdjacency.get(contactZoneId)?.includes(node.zoneId));
+      const entryNode = node.tags.includes("entry-node")
+        || node.nodeType === "connector_entry"
+        || node.nodeType === "hall_entry"
+        || node.nodeType === "breach"
+        || node.nodeType === "pre_peek";
+      const entryControl = sameZone
+        ? (entryNode ? 1.25 : 0.9)
+        : adjacentZone
+          ? (entryNode ? 1.05 : 0.55)
+          : 0;
+      const cutoffValue = adjacentZone
+        && node.lane !== playerLane
+        && (entryNode || node.tags.includes("connector") || node.tags.includes("cut"))
+        ? 0.9
+        : 0;
 
       let score = 0;
-      score += node.coverScore * 3.1;
-      score += node.flankScore * 1.2;
-      score -= travelDistance * 0.085;
-      if (node.lane === currentLane) score += 0.9;
+      score += node.coverScore * (scoringMode === "caution" ? 3.0 : scoringMode === "search" ? 2.35 : scoringMode === "contain" ? 2.45 : 1.95);
+      score += node.flankScore * (role === "flanker" ? 1.55 : role === "roamer" ? 1.3 : 1.05);
+      score -= travelDistance * (scoringMode === "collapse" ? 0.055 : 0.082);
+      if (node.lane === currentLane) score += scoringMode === "caution" ? 0.85 : 0.22;
 
       if (knowledge) {
+        const preferredDistance = role === "anchor" ? 16 : role === "flanker" ? 12.5 : role === "roamer" ? 13.5 : 14;
+        const rangeWeight = scoringMode === "caution" ? 0.05 : scoringMode === "search" ? 0.03 : 0.018;
+        score -= Math.abs(knowledgeDistance - preferredDistance) * rangeWeight;
+        score += clamp01(knowledge.confidence - 0.4) * 0.9;
+
+        if (Number.isFinite(zoneDistance)) {
+          score += progressTowardContact * (scoringMode === "collapse" ? 1.7 : scoringMode === "contain" ? 1.3 : 1.05);
+          if (sameZone) score += scoringMode === "collapse" ? 2.4 : scoringMode === "contain" ? 1.35 : 0.85;
+          if (adjacentZone) score += scoringMode === "collapse" ? 1.05 : 0.8;
+          if (entryNode && (sameZone || adjacentZone)) score += scoringMode === "collapse" ? 1.35 : 1.0;
+        }
+        score += entryControl * (scoringMode === "collapse" ? 1.22 : 1.0);
+        score += cutoffValue * (role === "anchor" || role === "roamer" ? 1.1 : 0.75);
+        score -= Math.max(0, knowledgeDistance - (knowledge.radiusM + pressureProfile.searchRadiusBonusM)) * (scoringMode === "collapse" ? 0.015 : 0.008);
+
         if (role === "anchor") {
-          score -= Math.abs(knowledgeDistance - 18) * 0.08;
-          if (node.nodeType === "spawn_cover") score += 2.3;
-          if (node.lane === currentLane) score += 1.2;
+          if (scoringMode === "caution" && node.nodeType === "spawn_cover") score += 2.3;
+          if (entryControl > 0) score += scoringMode === "contain" ? 1.15 : 0.35;
+          if (sameZone && scoringMode === "collapse") score -= 0.35;
+          if (node.nodeType === "open_node") score -= 1.2;
         } else if (role === "rifler") {
-          score -= Math.abs(knowledgeDistance - 15) * 0.07;
-          if (node.lane === playerLane || node.lane === "main") score += 0.7;
+          if (node.lane === playerLane || node.lane === "main") score += 0.8 + pressureProfile.collapseWeight * 0.45;
+          if (entryControl > 0) score += 0.4;
         } else if (role === "flanker") {
-          score -= Math.abs(knowledgeDistance - 20) * 0.055;
-          if (node.lane !== playerLane && node.lane !== "main") score += 2.5;
-          if (node.nodeType === "open_node" || node.tags.includes("cut") || node.tags.includes("side_hall")) {
-            score += 1.9;
-          }
+          if (node.lane !== playerLane && node.lane !== "main") score += 1.8;
+          if (entryNode || node.tags.includes("cut") || node.tags.includes("side_hall")) score += 1.55;
+          if (sameZone && scoringMode === "collapse") score += 1.0;
         } else {
-          score -= Math.abs(knowledgeDistance - 16) * 0.06;
-          if (node.tags.includes("connector") || node.tags.includes("cut")) score += 1.35;
+          if (entryNode || node.tags.includes("connector") || node.tags.includes("cut")) score += 1.2;
+          if (adjacentZone) score += 0.9;
         }
       } else {
         if (role === "anchor" && node.nodeType === "spawn_cover") score += 2.4;
-        if (role === "roamer" && (node.tags.includes("connector") || node.tags.includes("cut"))) score += 1.5;
-        if (role === "flanker" && (node.tags.includes("side_hall") || node.tags.includes("cut"))) score += 1.2;
+        if (role === "roamer" && (node.tags.includes("connector") || node.tags.includes("cut") || node.tags.includes("entry-node"))) score += 1.5;
+        if (role === "flanker" && (node.tags.includes("side_hall") || node.tags.includes("cut") || node.tags.includes("entry-node"))) score += 1.25;
       }
 
-      if (tierProfile.collapse && knowledge && (node.lane === playerLane || node.lane === "main")) {
-        score += 0.9;
-        if (knowledgeDistance < 14) score += 0.5;
+      if ((tierProfile.collapse || scoringMode === "collapse") && knowledge && (node.lane === playerLane || node.lane === "main")) {
+        score += 0.78 + pressureProfile.collapseWeight * 0.4;
+        if (knowledgeDistance < 14 + pressureProfile.searchRadiusBonusM * 0.25) score += 0.45;
       }
 
       if (occupied) score -= 4.5;
-      if (laneCount >= tierProfile.maxLaneStack) score -= 2.5;
+      if (laneCount >= dynamicLaneStack) score -= 2.5;
       if (node.nodeType === "open_node" && role === "anchor") score -= 1.3;
 
       if (score > bestScore) {
@@ -906,6 +1632,16 @@ export class EnemyManager {
         return;
       }
     }
+  }
+
+  eliminateAllForDebug(): number {
+    let eliminated = 0;
+    for (const controller of this.controllers) {
+      if (controller.isDead()) continue;
+      controller.applyDamage(controller.getHealth() + 999, true);
+      eliminated += 1;
+    }
+    return eliminated;
   }
 
   getPlayerHealthDelta(): number {
@@ -960,12 +1696,17 @@ export class EnemyManager {
     this.blackboard.lastSeenPlayer = null;
     this.blackboard.lastHeardPlayer = null;
     this.blackboard.occupiedNodeIds.clear();
+    this.localKnowledgeByEnemyId.clear();
+    this.sharedKnowledgeByEnemyId.clear();
+    this.pendingSharedReports.length = 0;
+    this.lastSpawnTelemetry = null;
   }
 
   fullDispose(scene: Scene): void {
     this.dispose(scene);
     this.waveNumber = 0;
     this.worldCollidersRef = null;
+    this.tacticalGraph = null;
   }
 
   private resolveEnemyShot(targetId: string, damage: number): void {

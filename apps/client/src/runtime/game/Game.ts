@@ -656,6 +656,10 @@ export class Game {
     this.enemyManager?.applyDamageToEnemy(enemyId, damage, isHeadshot);
   }
 
+  eliminateAllEnemiesForDebug(): number {
+    return this.enemyManager?.eliminateAllForDebug() ?? 0;
+  }
+
   setEnemyAudio(audio: WeaponAudio): void {
     this.enemyManager?.setAudio(audio);
   }
@@ -1092,7 +1096,7 @@ export class Game {
     this.playerController.setWorld(this.worldColliders);
     this.enemyManager?.fullDispose(this.scene);
     this.enemyManager?.setTacticalContext(blockoutSpec, this.anchorsSpec ?? null);
-    this.enemyManager?.spawn(this.worldColliders);
+    this.enemyManager?.spawn(this.worldColliders, { mode: "initial" });
 
     const spawnPose = this.selectSpawnPose(blockoutSpec, this.spawn);
     this.spawnPoseCache = spawnPose;
