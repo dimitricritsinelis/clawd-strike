@@ -168,7 +168,7 @@ export async function handleSharedChampionRequest(
       // direct API call. See docs/security.md for design rationale.
       const rawToken = (body as Record<string, unknown>)?.sessionToken;
       const tokenResult = verifySessionToken(rawToken);
-      if (!tokenResult.valid) {
+      if (tokenResult.valid === false) {
         console.log(`[champion-submit] ip=${clientIp} result=rejected reason=session-${tokenResult.reason}`);
         return errorResponse(403, "Invalid or expired session token.");
       }

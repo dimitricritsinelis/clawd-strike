@@ -41,7 +41,7 @@ export function isSharedChampionPublicRunSubmissionEnabled(): boolean {
     return override;
   }
 
-  return process.env.VERCEL_ENV !== "production";
+  return true;
 }
 
 export function getSharedChampionAdminToken(): string | null {

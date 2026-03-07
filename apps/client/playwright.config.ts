@@ -22,12 +22,17 @@ export default defineConfig({
     screenshot: "only-on-failure",
     video: "off",
   },
-      webServer: process.env.PW_BASE_URL
+  webServer: process.env.PW_BASE_URL
     ? undefined
     : {
         command: `pnpm gen:maps && pnpm exec vite --host --port ${port}`,
         url: baseURL,
         cwd: configDir,
+        env: {
+          ...process.env,
+          VERCEL_ENV: process.env.VERCEL_ENV ?? "production",
+          SESSION_SECRET: process.env.SESSION_SECRET ?? "clawd-strike-playwright-session-secret-32chars",
+        },
         reuseExistingServer: true,
         timeout: 120_000,
       },

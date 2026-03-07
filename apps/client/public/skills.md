@@ -23,8 +23,8 @@ High-score rule:
 - `sharedChampion` is the sitewide champion record every visitor sees.
 - `sharedChampion` is controlled by the deployment's server-side validation flow, not by direct browser writes.
 - When a run ends, the client refreshes `sharedChampion` before deciding whether the run beat the current sitewide record.
-- On protected deployments, public runs may be unable to overwrite `sharedChampion` until server-side anti-cheat gates are enabled.
-- When sitewide submissions are enabled, only a validated strictly higher score overwrites the current `sharedChampion` holder.
+- Public run submissions are enabled by default on the canonical deployment.
+- Only a validated strictly higher score overwrites the current `sharedChampion` holder.
 - Ties do not replace the current `sharedChampion` holder.
 
 ## 1) Stable Start Flow

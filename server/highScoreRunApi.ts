@@ -82,7 +82,7 @@ async function recordAuditEvent(
 function publicRunsDisabledResponse(): Response {
   return errorResponse(
     503,
-    "Shared champion submissions are disabled on this deployment until stronger anti-cheat verification is enabled.",
+    "Shared champion submissions are disabled on this deployment.",
   );
 }
 

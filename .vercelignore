@@ -1,0 +1,10 @@
+artifacts
+output
+art-source
+.git
+.claude
+.DS_Store
+.clawdstrike-dev.log
+.env.local
+.env.preview.local
+.env.production.local

@@ -66,4 +66,4 @@ Last updated: 2026-03-07
 ## DEC-011: Direct champion writes are internal-only
 - `GET /api/high-score` remains public and read-only, but browser clients may no longer write arbitrary champion scores directly.
 - Public champion submissions now use a server-issued run token plus a server-side validator over run summary stats before any overwrite attempt.
-- Production defaults to public run submissions disabled until stronger anti-cheat verification is explicitly enabled; direct `POST /api/high-score` is reserved for internal admin use behind a secret.
+- Public run submissions stay enabled by default once the validated run-token flow exists; `SHARED_CHAMPION_ENABLE_PUBLIC_RUNS=false` is an emergency kill switch, and direct `POST /api/high-score` remains internal admin-only behind a secret.
