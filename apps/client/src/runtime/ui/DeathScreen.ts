@@ -1,3 +1,9 @@
+import {
+  formatSharedChampionMode,
+  formatSharedChampionScore,
+  type SharedChampionSnapshot,
+} from "../../../../shared/highScore";
+
 const AUTO_RESPAWN_S = 3.0;
 const FADE_IN_S = 0.5;
 
@@ -17,13 +23,20 @@ export class DeathScreen {
   private readonly youDiedEl: HTMLDivElement;
   private readonly subtitleEl: HTMLDivElement;
   private readonly finalScoreEl: HTMLDivElement;
-  private readonly bestScoreEl: HTMLDivElement;
+  private readonly sessionBestEl: HTMLDivElement;
+  private readonly sharedChampionNameEl: HTMLDivElement;
+  private readonly sharedChampionScoreEl: HTMLDivElement;
+  private readonly sharedChampionModeEl: HTMLDivElement;
   private readonly playAgainBtn: HTMLButtonElement;
   private readonly countdownEl: HTMLDivElement;
 
   private visible = false;
   private fadeTimerS = 0;
   private respawnTimerS = 0;
+  private sharedChampionSnapshot: SharedChampionSnapshot = {
+    status: "loading",
+    champion: null,
+  };
 
   /** Called by bootstrap when the screen should trigger a respawn. */
   onRespawn: (() => void) | null = null;
@@ -73,15 +86,87 @@ export class DeathScreen {
     this.finalScoreEl.style.textTransform = "uppercase";
     this.finalScoreEl.textContent = "Final Score 0";
 
-    this.bestScoreEl = document.createElement("div");
-    this.bestScoreEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
-    this.bestScoreEl.style.fontSize = "16px";
-    this.bestScoreEl.style.fontWeight = "600";
-    this.bestScoreEl.style.color = "rgba(190, 210, 236, 0.85)";
-    this.bestScoreEl.style.marginTop = "7px";
-    this.bestScoreEl.style.letterSpacing = "0.06em";
-    this.bestScoreEl.style.textTransform = "uppercase";
-    this.bestScoreEl.textContent = "HIGH SCORE 0";
+    this.sessionBestEl = document.createElement("div");
+    this.sessionBestEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.sessionBestEl.style.fontSize = "16px";
+    this.sessionBestEl.style.fontWeight = "600";
+    this.sessionBestEl.style.color = "rgba(190, 210, 236, 0.85)";
+    this.sessionBestEl.style.marginTop = "7px";
+    this.sessionBestEl.style.letterSpacing = "0.06em";
+    this.sessionBestEl.style.textTransform = "uppercase";
+    this.sessionBestEl.textContent = "Session Best 0";
+
+    const championBlock = document.createElement("div");
+    Object.assign(championBlock.style, {
+      display: "grid",
+      gap: "6px",
+      justifyItems: "center",
+      marginTop: "14px",
+      padding: "14px 18px 12px",
+      minWidth: "320px",
+      borderRadius: "16px",
+      border: "1px solid rgba(255, 214, 161, 0.18)",
+      background: "rgba(22, 13, 7, 0.52)",
+      boxSizing: "border-box",
+    });
+
+    const championKicker = document.createElement("div");
+    championKicker.textContent = "WORLD CHAMPION";
+    Object.assign(championKicker.style, {
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "11px",
+      fontWeight: "700",
+      letterSpacing: "0.18em",
+      textTransform: "uppercase",
+      color: "rgba(227, 207, 179, 0.7)",
+    });
+
+    this.sharedChampionNameEl = document.createElement("div");
+    this.sharedChampionNameEl.dataset.testid = "death-world-champion-name";
+    Object.assign(this.sharedChampionNameEl.style, {
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "24px",
+      fontWeight: "760",
+      letterSpacing: "0.08em",
+      textTransform: "uppercase",
+      color: "rgba(248, 243, 235, 0.96)",
+    });
+
+    const championMeta = document.createElement("div");
+    Object.assign(championMeta.style, {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "10px",
+    });
+
+    this.sharedChampionScoreEl = document.createElement("div");
+    this.sharedChampionScoreEl.dataset.testid = "death-world-champion-score";
+    Object.assign(this.sharedChampionScoreEl.style, {
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "18px",
+      fontWeight: "700",
+      letterSpacing: "0.05em",
+      color: "#ffd38a",
+    });
+
+    this.sharedChampionModeEl = document.createElement("div");
+    this.sharedChampionModeEl.dataset.testid = "death-world-champion-mode";
+    Object.assign(this.sharedChampionModeEl.style, {
+      padding: "4px 10px",
+      borderRadius: "999px",
+      border: "1px solid rgba(255, 214, 161, 0.24)",
+      background: "rgba(255, 214, 161, 0.12)",
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "10px",
+      fontWeight: "700",
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      color: "rgba(255, 232, 200, 0.92)",
+    });
+    championMeta.append(this.sharedChampionScoreEl, this.sharedChampionModeEl);
+
+    championBlock.append(championKicker, this.sharedChampionNameEl, championMeta);
 
     this.playAgainBtn = document.createElement("button");
     this.playAgainBtn.type = "button";
@@ -107,7 +192,6 @@ export class DeathScreen {
       this.triggerRespawn();
     });
 
-    // Countdown ring / number
     this.countdownEl = document.createElement("div");
     this.countdownEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
     this.countdownEl.style.fontSize = "52px";
@@ -122,18 +206,25 @@ export class DeathScreen {
       this.youDiedEl,
       this.subtitleEl,
       this.finalScoreEl,
-      this.bestScoreEl,
+      this.sessionBestEl,
+      championBlock,
       this.playAgainBtn,
       this.countdownEl,
     );
     mountEl.append(this.root);
 
-    // Click for early respawn
-    this.root.style.pointerEvents = "none"; // set to auto in show()
+    this.root.style.pointerEvents = "none";
     this.root.addEventListener("click", () => {
       if (!this.visible) return;
       this.triggerRespawn();
     });
+
+    this.renderSharedChampion();
+  }
+
+  setSharedChampion(snapshot: SharedChampionSnapshot): void {
+    this.sharedChampionSnapshot = snapshot;
+    this.renderSharedChampion();
   }
 
   show(summary?: Partial<DeathScreenSummary>): void {
@@ -151,7 +242,8 @@ export class DeathScreen {
     const finalScore = roundScoreValue(summary?.finalScore ?? 0);
     const bestScore = roundScoreValue(summary?.bestScore ?? 0);
     this.finalScoreEl.textContent = `Final Score ${this.formatScore(finalScore)}`;
-    this.bestScoreEl.textContent = `HIGH SCORE ${this.formatScore(bestScore)}`;
+    this.sessionBestEl.textContent = `Session Best ${this.formatScore(bestScore)}`;
+    this.renderSharedChampion();
   }
 
   hide(): void {
@@ -164,11 +256,9 @@ export class DeathScreen {
   update(deltaSeconds: number): void {
     if (!this.visible) return;
 
-    // Fade in
     this.fadeTimerS = Math.min(FADE_IN_S, this.fadeTimerS + deltaSeconds);
     this.root.style.opacity = (this.fadeTimerS / FADE_IN_S).toFixed(3);
 
-    // Countdown
     this.respawnTimerS -= deltaSeconds;
     const displaySecs = Math.max(0, Math.ceil(this.respawnTimerS));
     this.countdownEl.textContent = String(displaySecs);
@@ -184,6 +274,36 @@ export class DeathScreen {
 
   dispose(): void {
     this.root.remove();
+  }
+
+  private renderSharedChampion(): void {
+    const snapshot = this.sharedChampionSnapshot;
+    const champion = snapshot.champion;
+
+    if (snapshot.status === "unavailable") {
+      this.sharedChampionNameEl.textContent = "Champion unavailable";
+      this.sharedChampionScoreEl.textContent = "--";
+      this.sharedChampionModeEl.textContent = "OFFLINE";
+      return;
+    }
+
+    if (champion) {
+      this.sharedChampionNameEl.textContent = champion.holderName.toUpperCase();
+      this.sharedChampionScoreEl.textContent = formatSharedChampionScore(champion.score);
+      this.sharedChampionModeEl.textContent = formatSharedChampionMode(champion.controlMode);
+      return;
+    }
+
+    if (snapshot.status === "loading" || snapshot.status === "idle") {
+      this.sharedChampionNameEl.textContent = "Loading champion";
+      this.sharedChampionScoreEl.textContent = "--";
+      this.sharedChampionModeEl.textContent = "SYNC";
+      return;
+    }
+
+    this.sharedChampionNameEl.textContent = "No champion yet";
+    this.sharedChampionScoreEl.textContent = "--";
+    this.sharedChampionModeEl.textContent = "OPEN";
   }
 
   private triggerRespawn(): void {

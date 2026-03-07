@@ -27,6 +27,17 @@ import { FadeOverlay } from "./ui/FadeOverlay";
 import { parseRuntimeUrlParams, sanitizeRuntimePlayerName, type RuntimeControlMode } from "./utils/UrlParams";
 import { normalizeAgentAction, type AgentAction } from "./input/AgentAction";
 import type { RuntimeWarmupAssets } from "./warmup";
+import {
+  getSharedChampionSnapshot,
+  loadSharedChampion,
+  submitSharedChampionCandidate,
+} from "../shared/sharedChampionClient";
+import {
+  isBetterSharedChampionCandidate,
+  scoreValueToHalfPoints,
+  type SharedChampion,
+  type SharedChampionSnapshot,
+} from "../../../shared/highScore";
 
 type ViewModelInstance = InstanceType<typeof import("./weapons/Ak47ViewModel")["Ak47ViewModel"]>;
 
@@ -219,16 +230,42 @@ export type RuntimeTextState = {
       y: number;
       z: number;
       timeS: number;
+      zoneId: string | null;
+      lane: "west" | "main" | "east";
+      radiusM: number;
+      confidence: number;
       sourceEnemyId?: string;
-      kind?: "gunshot" | "footstep" | "visual";
+      source: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
+      kind?: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
+      precise: boolean;
+      shared: boolean;
     } | null;
     lastHeardPlayer: {
       x: number;
       y: number;
       z: number;
       timeS: number;
+      zoneId: string | null;
+      lane: "west" | "main" | "east";
+      radiusM: number;
+      confidence: number;
       sourceEnemyId?: string;
-      kind?: "gunshot" | "footstep" | "visual";
+      source: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
+      kind?: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
+      precise: boolean;
+      shared: boolean;
+    } | null;
+    lastSpawn: {
+      mode: "authored-fixed" | "adaptive";
+      distanceFloorM: number | null;
+      minDistanceToPlayerM: number | null;
+      visibleCount: number;
+      selectedNodeIds: string[];
+      playerZoneId: string | null;
+      usedAdjacentZoneFallback: boolean;
+      usedVisibilityFallback: boolean;
+      usedPlayerZoneEmergencyFallback: boolean;
+      usedDistanceEmergencyFallback: boolean;
     } | null;
     enemies?: Array<{
       id: string;
@@ -295,6 +332,7 @@ export type RuntimeTextState = {
     best: number;
     lastRun?: number;
   };
+  sharedChampion: SharedChampion | null;
   gameOver: {
     visible: boolean;
     finalScore: number;
@@ -383,6 +421,7 @@ export type PublicAgentObserveState = {
     lastRun: number | null;
     scope: "browser-session";
   };
+  sharedChampion: SharedChampion | null;
   lastRunSummary: PublicAgentRunSummary | null;
 };
 
@@ -1017,6 +1056,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       // Teleport happens while screen is black
       game.respawn();
       scoreHud.reset();
+      submittedSharedChampionForCurrentRun = false;
       runStats.kills = 0;
       runStats.shotsFired = 0;
       runStats.shotsHit = 0;
@@ -1161,6 +1201,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const scoreStorageKey = makeScoreStorageKey(runtimeParams.mapId);
   let bestScore = readBestScore(scoreStorageKey);
   scoreHud.setBestScore(bestScore);
+  let sharedChampionSnapshot: SharedChampionSnapshot = getSharedChampionSnapshot();
+  let submittedSharedChampionForCurrentRun = false;
+  const applySharedChampionSnapshot = (snapshot: SharedChampionSnapshot): void => {
+    sharedChampionSnapshot = snapshot;
+    scoreHud.setSharedChampion(snapshot);
+    deathScreen.setSharedChampion(snapshot);
+  };
+  applySharedChampionSnapshot(sharedChampionSnapshot);
+  void loadSharedChampion().then((snapshot) => {
+    if (disposed) return;
+    applySharedChampionSnapshot(snapshot);
+  });
   let lastRunScore: number | null = null;
   let lastRunSummary: PublicAgentRunSummary | null = null;
   let runStartedAtMs = performance.now();
@@ -1362,6 +1414,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         preventedFriendlyFireCount: botDebug?.preventedFriendlyFireCount ?? 0,
         lastSeenPlayer: botDebug?.lastSeenPlayer ?? null,
         lastHeardPlayer: botDebug?.lastHeardPlayer ?? null,
+        lastSpawn: botDebug?.lastSpawn ?? null,
         ...(runtimeParams.debug && botDebug ? { enemies: botDebug.enemies } : {}),
       },
       landmarks: landmarkState,
@@ -1387,6 +1440,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         best: bestScore,
         ...(lastRunScore !== null ? { lastRun: lastRunScore } : {}),
       },
+      sharedChampion: sharedChampionSnapshot.champion,
       gameOver: {
         visible: gameOverVisible,
         finalScore,
@@ -1458,6 +1512,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         lastRun: lastRunScore === null ? null : roundScoreValue(lastRunScore),
         scope: "browser-session",
       },
+      sharedChampion: sharedChampionSnapshot.champion,
       lastRunSummary,
     };
   };
@@ -1506,6 +1561,25 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         bestScore = lastRunScore;
         writeBestScore(scoreStorageKey, bestScore);
         scoreHud.setBestScore(bestScore);
+      }
+      if (!submittedSharedChampionForCurrentRun) {
+        submittedSharedChampionForCurrentRun = true;
+        const candidateHalfPoints = scoreValueToHalfPoints(lastRunScore);
+        const shouldSubmitSharedChampion = sharedChampionSnapshot.status === "idle"
+          || sharedChampionSnapshot.status === "loading"
+          || sharedChampionSnapshot.status === "unavailable"
+          || isBetterSharedChampionCandidate(sharedChampionSnapshot.champion, candidateHalfPoints);
+
+        if (shouldSubmitSharedChampion) {
+          void submitSharedChampionCandidate({
+            playerName: runtimeParams.playerName,
+            scoreHalfPoints: candidateHalfPoints,
+            controlMode: runtimeParams.controlMode,
+          }).then(({ snapshot }) => {
+            if (disposed) return;
+            applySharedChampionSnapshot(snapshot);
+          });
+        }
       }
     }
     wasAlive = aliveNow;
@@ -1770,6 +1844,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     window.__debug_emit_combat_feedback = (payload: DebugCombatFeedbackPayload) => {
       enqueueDebugCombatFeedback(payload);
     };
+    window.__debug_eliminate_all_bots = () => game.eliminateAllEnemiesForDebug();
   }
 
   const teardown = (): void => {
@@ -1787,6 +1862,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.render_game_to_text;
     delete window.advanceTime;
     delete window.__debug_emit_combat_feedback;
+    delete window.__debug_eliminate_all_bots;
 
     pointerLock?.dispose();
     game.teardown();

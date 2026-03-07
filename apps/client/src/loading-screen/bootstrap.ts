@@ -3,6 +3,7 @@ import { preloadCriticalLoadingAssets } from "./assets";
 import type { LoadingAmbientAudioOptions } from "./audio";
 import type { LoadingScreenHandoff, LoadingScreenMode } from "./types";
 import { createLoadingScreenUI } from "./ui";
+import { getSharedChampionSnapshot, loadSharedChampion } from "../shared/sharedChampionClient";
 
 export type BootstrapLoadingScreenOptions = {
   handoff?: LoadingScreenHandoff;
@@ -34,6 +35,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   let disposed = false;
   let selectedMode: LoadingScreenMode | null = null;
   let selectedPlayerName: string = "";
+  let sharedChampionSnapshot = getSharedChampionSnapshot();
 
   const ui = createLoadingScreenUI({
     onWarmupAudio: () => {
@@ -97,6 +99,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
 
   loadingAmbient.setMuted(false);
   ui.setMuteState(loadingAmbient.isMuted());
+  ui.setSharedChampion(sharedChampionSnapshot);
   ui.show();
   // Fail-open: keep controls visible even if preload/init gets interrupted.
   // We still run preload in the background and mark ready when done.
@@ -105,6 +108,12 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   void preloadCriticalLoadingAssets().finally(() => {
     if (disposed) return;
     ui.setAssetReady(true);
+  });
+
+  void loadSharedChampion().then((snapshot) => {
+    if (disposed) return;
+    sharedChampionSnapshot = snapshot;
+    ui.setSharedChampion(snapshot);
   });
 
   void loadingAmbient.start();
@@ -136,6 +145,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
       lastRun: null,
       scope: "browser-session" as const,
     },
+    sharedChampion: sharedChampionSnapshot.champion,
     lastRunSummary: null,
   });
 
@@ -158,6 +168,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
         selectedMode,
         selectedPlayerName,
       },
+      sharedChampion: sharedChampionSnapshot,
       gameplay: {
         active: false,
         reason: "runtime not bootstrapped yet",

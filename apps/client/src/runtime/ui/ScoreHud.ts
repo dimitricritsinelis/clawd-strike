@@ -1,10 +1,15 @@
+import {
+  formatSharedChampionMode,
+  formatSharedChampionScore,
+  type SharedChampionSnapshot,
+} from "../../../../shared/highScore";
+
 type ScoreHudKillRecord = {
   isHeadshot: boolean;
 };
 
 /**
- * ScoreHud — top-right HUD showing total kills.
- * Style matches the existing AmmoHud / HealthHud glass panel aesthetic.
+ * ScoreHud — top-right HUD showing current run score plus local/session and sitewide records.
  */
 export class ScoreHud {
   readonly root: HTMLDivElement;
@@ -12,6 +17,9 @@ export class ScoreHud {
   private readonly headshotsEl: HTMLSpanElement;
   private readonly scoreEl: HTMLSpanElement;
   private readonly bestScoreEl: HTMLSpanElement;
+  private readonly sharedChampionNameEl: HTMLSpanElement;
+  private readonly sharedChampionModeEl: HTMLSpanElement;
+  private readonly sharedChampionScoreEl: HTMLSpanElement;
 
   private kills = 0;
   private headshots = 0;
@@ -38,11 +46,11 @@ export class ScoreHud {
       background: "rgba(8, 16, 28, 0.68)",
       border: "1px solid rgba(255,255,255,0.08)",
       borderRadius: "6px",
-      padding: "8px 12px 9px",
+      padding: "8px 12px 10px",
       pointerEvents: "none",
       userSelect: "none",
-      width: "300px",
-      minWidth: "300px",
+      width: "332px",
+      minWidth: "332px",
       boxSizing: "border-box",
     });
 
@@ -85,7 +93,6 @@ export class ScoreHud {
     scoreLabel.textContent = "Score";
     labels.append(killsLabel, hsLabel, scoreLabel);
 
-    // Numeric display: total kills
     const row = document.createElement("div");
     Object.assign(row.style, {
       display: "grid",
@@ -127,28 +134,29 @@ export class ScoreHud {
       textAlign: "center",
     });
     this.scoreEl.textContent = this.formatScore(this.score);
+    row.append(this.killsEl, this.headshotsEl, this.scoreEl);
 
-    const bestRow = document.createElement("div");
-    Object.assign(bestRow.style, {
+    const sessionRow = document.createElement("div");
+    Object.assign(sessionRow.style, {
       display: "flex",
       width: "100%",
       justifyContent: "space-between",
       alignItems: "baseline",
-      marginTop: "4px",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      marginTop: "6px",
+      paddingTop: "6px",
       borderTop: "1px solid rgba(255,255,255,0.08)",
-      paddingTop: "5px",
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
     });
 
-    const bestLabel = document.createElement("span");
-    Object.assign(bestLabel.style, {
+    const sessionLabel = document.createElement("span");
+    Object.assign(sessionLabel.style, {
       fontSize: "11px",
       fontWeight: "600",
       letterSpacing: "0.12em",
       textTransform: "uppercase",
       color: "rgba(180, 200, 230, 0.6)",
     });
-    bestLabel.textContent = "HIGH SCORE";
+    sessionLabel.textContent = "Session Best";
 
     this.bestScoreEl = document.createElement("span");
     this.bestScoreEl.dataset.testid = "best-score";
@@ -160,11 +168,92 @@ export class ScoreHud {
       color: "rgba(228, 238, 252, 0.95)",
     });
     this.bestScoreEl.textContent = this.formatScore(0);
-    bestRow.append(bestLabel, this.bestScoreEl);
+    sessionRow.append(sessionLabel, this.bestScoreEl);
 
-    row.append(this.killsEl, this.headshotsEl, this.scoreEl);
-    this.root.append(nameEl, labels, row, bestRow);
+    const championBlock = document.createElement("div");
+    Object.assign(championBlock.style, {
+      display: "grid",
+      gap: "5px",
+      width: "100%",
+      marginTop: "4px",
+      paddingTop: "7px",
+      borderTop: "1px solid rgba(255,255,255,0.08)",
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+    });
+
+    const championHeader = document.createElement("div");
+    Object.assign(championHeader.style, {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "baseline",
+      gap: "10px",
+    });
+
+    const championLabel = document.createElement("span");
+    Object.assign(championLabel.style, {
+      fontSize: "11px",
+      fontWeight: "600",
+      letterSpacing: "0.12em",
+      textTransform: "uppercase",
+      color: "rgba(180, 200, 230, 0.6)",
+    });
+    championLabel.textContent = "World Champion";
+
+    this.sharedChampionScoreEl = document.createElement("span");
+    this.sharedChampionScoreEl.dataset.testid = "hud-world-champion-score";
+    Object.assign(this.sharedChampionScoreEl.style, {
+      fontSize: "17px",
+      fontWeight: "700",
+      fontVariantNumeric: "tabular-nums",
+      letterSpacing: "0.04em",
+      color: "#ffdca0",
+    });
+    championHeader.append(championLabel, this.sharedChampionScoreEl);
+
+    const championBody = document.createElement("div");
+    Object.assign(championBody.style, {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "10px",
+    });
+
+    this.sharedChampionNameEl = document.createElement("span");
+    this.sharedChampionNameEl.dataset.testid = "hud-world-champion-name";
+    Object.assign(this.sharedChampionNameEl.style, {
+      minWidth: "0",
+      flex: "1 1 auto",
+      fontSize: "16px",
+      fontWeight: "700",
+      letterSpacing: "0.06em",
+      textTransform: "uppercase",
+      color: "rgba(244, 248, 255, 0.95)",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      whiteSpace: "nowrap",
+    });
+
+    this.sharedChampionModeEl = document.createElement("span");
+    this.sharedChampionModeEl.dataset.testid = "hud-world-champion-mode";
+    Object.assign(this.sharedChampionModeEl.style, {
+      flex: "0 0 auto",
+      borderRadius: "999px",
+      border: "1px solid rgba(255, 220, 172, 0.24)",
+      background: "rgba(255, 220, 172, 0.12)",
+      padding: "3px 9px 4px",
+      fontSize: "10px",
+      fontWeight: "700",
+      letterSpacing: "0.16em",
+      textTransform: "uppercase",
+      color: "rgba(255, 231, 198, 0.9)",
+    });
+    championBody.append(this.sharedChampionNameEl, this.sharedChampionModeEl);
+
+    championBlock.append(championHeader, championBody);
+    this.root.append(nameEl, labels, row, sessionRow, championBlock);
     mountEl.append(this.root);
+
+    this.setSharedChampion({ status: "loading", champion: null });
   }
 
   setTotal(_total: number): void {}
@@ -222,6 +311,34 @@ export class ScoreHud {
 
   setBestScore(value: number): void {
     this.bestScoreEl.textContent = this.formatScore(value);
+  }
+
+  setSharedChampion(snapshot: SharedChampionSnapshot): void {
+    const champion = snapshot.champion;
+    if (snapshot.status === "unavailable") {
+      this.sharedChampionNameEl.textContent = "Unavailable";
+      this.sharedChampionModeEl.textContent = "OFFLINE";
+      this.sharedChampionScoreEl.textContent = "--";
+      return;
+    }
+
+    if (champion) {
+      this.sharedChampionNameEl.textContent = champion.holderName.toUpperCase();
+      this.sharedChampionModeEl.textContent = formatSharedChampionMode(champion.controlMode);
+      this.sharedChampionScoreEl.textContent = formatSharedChampionScore(champion.score);
+      return;
+    }
+
+    if (snapshot.status === "loading" || snapshot.status === "idle") {
+      this.sharedChampionNameEl.textContent = "Loading";
+      this.sharedChampionModeEl.textContent = "SYNC";
+      this.sharedChampionScoreEl.textContent = "--";
+      return;
+    }
+
+    this.sharedChampionNameEl.textContent = "No champion yet";
+    this.sharedChampionModeEl.textContent = "OPEN";
+    this.sharedChampionScoreEl.textContent = "--";
   }
 
   dispose(): void {

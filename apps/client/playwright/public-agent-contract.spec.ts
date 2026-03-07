@@ -8,6 +8,18 @@ import {
   readDocumentedAgentState,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
+function expectSharedChampionShape(sharedChampion: unknown) {
+  if (sharedChampion === null) return;
+
+  expect(sharedChampion).toEqual({
+    holderName: expect.any(String),
+    score: expect.any(Number),
+    controlMode: expect.stringMatching(/^(human|agent)$/),
+    scope: "sitewide",
+    updatedAt: expect.any(String),
+  });
+}
+
 test("exposes the public agent contract before runtime boot", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
 
@@ -26,6 +38,8 @@ test("exposes the public agent contract before runtime boot", async ({ page }, t
   expect(state.mode).toBe("loading-screen");
   expect(state.runtimeReady).toBe(false);
   expect(state.score?.scope).toBe("browser-session");
+  expect("sharedChampion" in state).toBe(true);
+  expectSharedChampionShape(state.sharedChampion ?? null);
   expect(state.health).toBeNull();
   expect(state.ammo).toBeNull();
   expect(recorder.counts().errorCount).toBe(0);
@@ -66,6 +80,8 @@ test("keeps the public agent payload fair and minimal in runtime", async ({ page
     lastRun: null,
     scope: "browser-session",
   });
+  expect("sharedChampion" in state).toBe(true);
+  expectSharedChampionShape(state.sharedChampion ?? null);
   expect(state.lastRunSummary).toBeNull();
 
   for (const forbiddenKey of [

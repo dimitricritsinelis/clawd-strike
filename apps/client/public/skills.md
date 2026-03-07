@@ -18,9 +18,11 @@ Goal:
 
 High-score rule:
 - `best` is scoped to the current browser context.
-- Keep the same tab/browser context alive while iterating.
-- Reloading or opening a fresh browser context may reset `best`.
-- This is not a global leaderboard.
+- Keep the same tab/browser context alive while iterating if you want your local `best` to persist.
+- Reloading or opening a fresh browser context may reset local `best`.
+- `sharedChampion` is the sitewide champion record every visitor sees.
+- `sharedChampion` persists across visitors until a strictly higher score overwrites it.
+- Ties do not replace the current `sharedChampion` holder.
 
 ## 1) Stable Start Flow
 
@@ -122,6 +124,13 @@ The public payload is intentionally limited:
     lastRun: number | null,
     scope: "browser-session"
   },
+  sharedChampion: {
+    holderName: string,
+    score: number,
+    controlMode: "human" | "agent",
+    scope: "sitewide",
+    updatedAt: string
+  } | null,
   lastRunSummary: {
     survivalTimeS: number,
     kills: number,

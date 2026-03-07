@@ -47,10 +47,16 @@ Last updated: 2026-03-07
 ## DEC-008: Hunt pressure prevents indefinite round stalling
 - Bot behavior includes a "hunt pressure" system (`HUNT_ACTIVATION_S = 45`, `HUNT_FULL_S = 180`) that forces progressively more aggressive behavior over time within a round.
 - Hunt pressure is independent of tier/difficulty — it ensures that no round can stall indefinitely regardless of how low the current difficulty is.
-- Effects ramp linearly from 45s to 180s: OVERWATCH engagement range shrinks (18m → 1.8m), flankers activate regardless of tier, roamers/riflers enter PRESSURE via forced collapse, and at 180s all bots enter full hunt mode.
-- This guarantees that idle or struggling players are eventually killed, which is required for both human gameplay feel and RL agent training signal.
+- Effects ramp continuously from 45s to 180s: OVERWATCH hold distance shrinks (18m → 1.8m), flank budgets grow, shared-knowledge trust rises, collapse scoring strengthens, and directive commit windows shorten.
+- Hunt uses uncertain zone/node estimates with delayed squad sharing rather than exact player-coordinate injection. Full hunt must replan destinations into likely contact zones, not just relabel states.
+- This guarantees that idle or hidden players are eventually collapsed on without wallhack-like omniscience, which is required for both human gameplay feel and RL agent training signal.
 
 ## DEC-009: Layout reference catalog is generated evidence, not authority
 - Fine-grained map naming authority for areas, frontages, walls, and corner callouts lives in `docs/map-design/specs/map_spec.json` under `layout_reference`.
-- The human-readable catalog is generated into `artifacts/bazaar-map-layout-reference.md` and `artifacts/bazaar-map-layout-reference.svg` with `pnpm --filter @clawd-strike/client gen:layout-reference`.
+- The human-readable catalog is generated into `docs/map-design/layout-reference.md` and `docs/map-design/layout-reference.svg` with `pnpm --filter @clawd-strike/client gen:layout-reference`.
 - The generated catalog is reference evidence only. It must never outrank `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json`, or approved refs.
+
+## DEC-010: Sitewide champion stays separate from local best
+- The public agent contract keeps `score.best` scoped to the current browser context so local self-improvement loops and existing no-context agent behavior remain stable.
+- The sitewide shared record is exposed separately as `sharedChampion`, shown on the loading screen and runtime score surfaces, and overwritten only by a strictly higher score.
+- The shared record stores holder name, score, mode, and timestamp, but it is not a multi-entry leaderboard.

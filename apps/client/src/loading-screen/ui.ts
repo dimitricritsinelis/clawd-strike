@@ -1,4 +1,9 @@
 import type { LoadingScreenMode } from "./types";
+import {
+  formatSharedChampionMode,
+  formatSharedChampionScore,
+  type SharedChampionSnapshot,
+} from "../../../shared/highScore";
 
 type LoadingScreenUICallbacks = {
   onWarmupAudio: () => void;
@@ -10,6 +15,7 @@ export type LoadingScreenUI = {
   show: () => void;
   dispose: () => void;
   setAssetReady: (ready: boolean) => void;
+  setSharedChampion: (snapshot: SharedChampionSnapshot) => void;
   setMuteState: (muted: boolean) => void;
   flashMuteToggle: () => void;
   showBanner: (message: string) => void;
@@ -61,6 +67,11 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   const enterAgentModeBtn = getRequiredEl<HTMLButtonElement>("#enter-agent-mode-btn");
   const modeBanner = getRequiredEl<HTMLDivElement>("#mode-banner");
   const playerNameInput = getRequiredEl<HTMLInputElement>("#player-name-input");
+  const sharedChampionCard = getRequiredEl<HTMLElement>("#shared-champion-card");
+  const sharedChampionNameEl = getRequiredEl<HTMLElement>("#shared-champion-name");
+  const sharedChampionScoreEl = getRequiredEl<HTMLElement>("#shared-champion-score");
+  const sharedChampionModeEl = getRequiredEl<HTMLElement>("#shared-champion-mode");
+  const sharedChampionStatusEl = getRequiredEl<HTMLElement>("#shared-champion-status");
 
   let disposed = false;
   let bannerTimer: number | null = null;
@@ -233,6 +244,44 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   enterAgentModeBtn.addEventListener("click", onEnterAgentMode);
   playerNameInput.addEventListener("keydown", onNameInputKeyDown);
 
+  function setSharedChampion(snapshot: SharedChampionSnapshot) {
+    if (disposed) return;
+
+    const champion = snapshot.champion;
+    if (snapshot.status === "unavailable") {
+      sharedChampionCard.dataset.state = "unavailable";
+      sharedChampionNameEl.textContent = "Champion unavailable";
+      sharedChampionScoreEl.textContent = "--";
+      sharedChampionModeEl.textContent = "OFFLINE";
+      sharedChampionStatusEl.textContent = "Shared score service could not be reached";
+      return;
+    }
+
+    if (champion) {
+      sharedChampionCard.dataset.state = "ready";
+      sharedChampionNameEl.textContent = champion.holderName.toUpperCase();
+      sharedChampionScoreEl.textContent = formatSharedChampionScore(champion.score);
+      sharedChampionModeEl.textContent = formatSharedChampionMode(champion.controlMode);
+      sharedChampionStatusEl.textContent = "Shared sitewide record";
+      return;
+    }
+
+    if (snapshot.status === "loading" || snapshot.status === "idle") {
+      sharedChampionCard.dataset.state = "loading";
+      sharedChampionNameEl.textContent = "Loading champion";
+      sharedChampionScoreEl.textContent = "--";
+      sharedChampionModeEl.textContent = "SYNC";
+      sharedChampionStatusEl.textContent = "Fetching shared record";
+      return;
+    }
+
+    sharedChampionCard.dataset.state = "empty";
+    sharedChampionNameEl.textContent = "No champion yet";
+    sharedChampionScoreEl.textContent = "--";
+    sharedChampionModeEl.textContent = "OPEN";
+    sharedChampionStatusEl.textContent = "First score claims the board";
+  }
+
   return {
     show() {
       start.style.display = "grid";
@@ -242,6 +291,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       if (start.dataset.assetsReady === nextValue) return;
       start.dataset.assetsReady = nextValue;
     },
+    setSharedChampion,
     dispose() {
       if (disposed) return;
       disposed = true;

@@ -8,16 +8,16 @@ Last updated: 2026-03-07
 # progress.md — Clawd Strike Status
 
 ## Active Change Tag
-- `bot-ai`
+- `public-contract`
 
 ## Current Status (<=10 lines)
-- Fixed 3 critical bugs in the hunt pressure system (DEC-008) that prevented bots from converging on the player.
-- Bug 1: OVERWATCH range formula was inverted — shrinking the threshold made MORE bots enter OVERWATCH. Fixed by gating OVERWATCH on `huntPressure < 0.5` instead.
-- Bug 2: Full hunt override required `knowledge` but bots had no knowledge when player was behind walls or memory expired. Fixed by injecting synthetic knowledge from player position when `huntPressure > 0`.
-- Bug 3: Hysteresis reverted hunt-forced state changes. Fixed by moving the full hunt override AFTER the hysteresis block.
-- Bots now converge toward the player starting at 45s (synthetic knowledge), with OVERWATCH bypass at 112s, collapse at 134s, and full hunt at 180s.
-- `pnpm typecheck`, `pnpm build`, and `bot:smoke` all pass.
-- Map approval is still pending a real human pointer-lock/combat pass on the current runtime defaults.
+- Added a sitewide shared champion flow with `/api/high-score`, a Postgres-backed Vercel store, and local Vite dev middleware for `/api/high-score`.
+- Loading screen, HUD, death screen, and `agent_observe()` now expose the same `sharedChampion` record without changing local `score.best`.
+- The overwrite rule is strict-greater only; ties keep the existing holder.
+- Added Playwright coverage for API overwrite rules, cross-context champion visibility, and API-unavailable fallback.
+- `pnpm typecheck`, `pnpm build`, `BASE_URL=http://127.0.0.1:5175 pnpm verify:skills-contract`, `BASE_URL=http://127.0.0.1:5175 pnpm smoke:no-context`, and `pnpm test:playwright` all pass locally.
+- Neon Postgres is attached in Vercel, `sql/shared_champion.sql` has been applied, and `https://clawd-strike.vercel.app/api/high-score` now returns `200 {"champion":null}`.
+- Production now shows `No champion yet` / `First score claims the board` instead of `OFFLINE`, so the first real higher score will create the shared champion record.
 
 ## Canonical Playtest URL
 - `http://127.0.0.1:5174/?map=bazaar-map&autostart=human`
@@ -43,23 +43,20 @@ BASE_URL=http://127.0.0.1:5174 pnpm qa:autonomous
 ```
 
 ## Last Completed Prompt
-- Title: Fix hunt pressure bugs — bots still passive at 3+ minutes
-- Changed: fixed 3 bugs in `EnemyManager.ts`: (1) gated OVERWATCH node shortcut and state on `huntPressure < 0.5` instead of inverted range formula, (2) injected synthetic knowledge from player position when `huntPressure > 0` and no natural knowledge, (3) moved full hunt override after hysteresis so it cannot be reverted.
-- Files: `apps/client/src/runtime/enemies/EnemyManager.ts`, `progress.md`
-- Validation: `pnpm typecheck`, `pnpm build`, `pnpm --filter @clawd-strike/client bot:smoke`
+- Title: Add a sitewide shared champion record backed by Vercel API storage
+- Changed: added `/api/high-score`, shared champion storage/middleware/client state, loading-screen and runtime champion UI, `sharedChampion` public payloads, `/skills.md` contract updates, and Playwright coverage for overwrite rules and cross-context visibility.
+- Files: `api/high-score.ts`, `server/highScore*.ts`, `apps/shared/highScore.ts`, loading-screen/runtime UI + contract files, `progress.md`, `docs/decisions.md`
+- Validation: `pnpm typecheck`, `pnpm build`, `BASE_URL=http://127.0.0.1:5175 pnpm verify:skills-contract`, `BASE_URL=http://127.0.0.1:5175 pnpm smoke:no-context`, `pnpm test:playwright`
 
 ## Next 3 Tasks
-1. Run a real human pointer-lock/combat pass and confirm bots converge within ~90s and full hunt kills an idle player by 180s.
-2. Implement zone-based visibility culling using `map_spec.json` zone adjacency (highest remaining perf gain: 2-5ms in corridor views).
-3. Pre-compress floor/wall textures to KTX2 (BC7/ETC2) to cut VRAM 4-6x and improve load times.
+1. Verify a real run on production creates the first shared champion and that a second browser context sees the same holder and score.
+2. Add a small protected admin/debug seed route or internal script only if you need deterministic champion seeding without gameplay.
+3. Start phase 2 anti-cheat work by extracting deterministic run verification inputs and a headless score-validation path before accepting champion submissions.
 
 ## Known Issues / Risks
 - `gen:maps` still emits expected clear-zone anchor warnings for several landmark/open-node anchors.
-- `qa:completion` still reports advisory warnings on `SHOT_09_BZ_M2_EAST_FACADE` and `SHOT_03_SPAWN_B_TO_BAZAAR` because those views do not surface landmark anchors in-frame, even though the visual review passes.
-- CI still only enforces install, `gen:maps`, runtime map diff, `pnpm typecheck`, and `pnpm build`; the new tag matrix remains a local completion policy until a separate `tooling` update lands.
-- Automated Chrome in this environment still would not grant a true human pointer-lock playtest, so combat feel still needs a manual pass even though traversal and bot smoke are green.
-- The generic skill-client canvas capture still returns a non-WebGL black or blank frame on this runtime; project Playwright helpers were used for the real visual and perf review path.
-- If runtime warmup times out, the game now falls back to blockout-safe surfaces before spawn; that avoids late streaming but still needs a human sanity check on extremely slow machines.
-- The new headshot perf smoke exercises the queued feedback path via an internal debug-only emitter; it validates the hitch fix deterministically but does not replace full live-combat coverage.
-- The preview or prod rollout could not be executed here because `vercel whoami` reports `No existing credentials found`; live-site acceptance is still pending that authentication step.
+- The implementation assumes the Vercel project root is the repo root so `api/high-score.ts` is deployed; if the dashboard root directory is `apps/client`, the route must be moved or the setting changed.
+- CI still does not enforce the `public-contract` local gates (`verify:skills-contract`, `smoke:no-context`, Playwright); those are only local completion policy right now.
+- Port `5174` was already occupied in this environment during validation, so contract and smoke checks were run against a clean Vite instance on `5175` via `BASE_URL=http://127.0.0.1:5175`.
+- Production was deployed from a clean rsynced workspace under `/tmp/clawd-strike-vercel-fJKlKw` to avoid oversized local artifact uploads; future direct CLI deploys should keep `artifacts/` out of the upload set.
 - The current bot overhaul is still wave-survival AI, not full T/CT objective bots; there is no bomb logic, grenade usage, jump-spot system, or objective planner yet.
