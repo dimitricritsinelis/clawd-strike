@@ -12,6 +12,7 @@ type KillFeedOptions = {
 const KILL_DISPLAY_S = 3.0;
 const KILL_FADE_S = 0.4;
 const MAX_ENTRIES = 4;
+const DEFAULT_FEED_WIDTH_PX = 332;
 
 export class KillFeed {
   private readonly root: HTMLDivElement;
@@ -35,8 +36,8 @@ export class KillFeed {
     this.root.style.flexDirection = "column";
     this.root.style.gap = "8px";
     this.root.style.pointerEvents = "none";
-    this.root.style.width = "300px";
-    this.root.style.minWidth = "300px";
+    this.root.style.width = `${DEFAULT_FEED_WIDTH_PX}px`;
+    this.root.style.minWidth = `${DEFAULT_FEED_WIDTH_PX}px`;
     this.root.style.alignItems = "stretch";
 
     mountEl.append(this.root);
@@ -159,9 +160,17 @@ export class KillFeed {
 
   private updatePositionFromAnchor(): void {
     if (!this.anchorEl) return;
+
     const anchorTop = this.anchorEl.offsetTop;
+    const anchorLeft = this.anchorEl.offsetLeft;
     const anchorHeight = this.anchorEl.offsetHeight;
+    const anchorWidth = Math.max(DEFAULT_FEED_WIDTH_PX, this.anchorEl.offsetWidth);
     const top = Math.max(0, anchorTop + anchorHeight + this.gapPx);
+
     this.root.style.top = `${top}px`;
+    this.root.style.left = `${anchorLeft}px`;
+    this.root.style.right = "auto";
+    this.root.style.width = `${anchorWidth}px`;
+    this.root.style.minWidth = `${anchorWidth}px`;
   }
 }

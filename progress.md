@@ -8,15 +8,14 @@ Last updated: 2026-03-07
 # progress.md — Clawd Strike Status
 
 ## Active Change Tag
-- `tooling`
+- `ui-flow`
 
 ## Current Status (<=10 lines)
-- Fixed the production CSP regression that was turning embedded-texture GLB models white on Vercel.
-- Commit `7d4f723` is on `main` and has been pushed to `origin/main`.
-- `https://clawd-strike.vercel.app` now serves the corrected CSP header with `connect-src 'self' blob:`.
-- Required gates passed before release: `pnpm typecheck` and `pnpm build`.
-- Local static-server validation with the patched CSP passed.
-- A fresh live Playwright repro under `artifacts/weapon-white-live-fixed-20260307T1214/` no longer emits the CSP / `GLTFLoader` blob texture errors seen in `artifacts/weapon-white-live/`.
+- Adjusted the kill notification HUD so it matches the score HUD width and horizontal alignment instead of using a separate narrower fixed width.
+- `apps/client/src/runtime/ui/KillFeed.ts` now measures the anchored score HUD and mirrors its width plus left edge.
+- Local visual verification passed with a debug-injected headshot kill screenshot under `apps/artifacts/hud-width-check-20260307T1221/shot-0.png`.
+- The focused geometry probe reports exact symmetry: score HUD width `332px`, kill notification width `332px`, same left/right bounds.
+- Required gates pass for this task: `pnpm typecheck`, `pnpm build`, and `pnpm test:playwright` (`11 passed`, `1 skipped` manual pointer-lock spec).
 
 ## Canonical Playtest URL
 - `http://127.0.0.1:5174/?map=bazaar-map&autostart=human`
@@ -38,13 +37,13 @@ BASE_URL=http://127.0.0.1:5174 pnpm qa:autonomous
 ```
 
 ## Last Completed Prompt
-- Title: Commit, push, and roll out the CSP fix to production
-- Changed: committed the CSP fix as `7d4f723`, pushed `main`, and verified that production now serves the corrected header plus no longer logs blob texture load failures in the live Playwright repro.
-- Files: `vercel.json`, `docs/security.md`, `progress.md`
-- Validation: `pnpm typecheck`, `pnpm build`, live header check via `curl -I https://clawd-strike.vercel.app`, local patched-CSP Playwright repro under `artifacts/weapon-white-local-csp-20260307T1206/`, and live Playwright repro under `artifacts/weapon-white-live-fixed-20260307T1214/`.
+- Title: Make the kill notification HUD match the score HUD width
+- Changed: updated `apps/client/src/runtime/ui/KillFeed.ts` to anchor width and horizontal alignment to the score HUD instead of hardcoding a smaller notification width.
+- Files: `apps/client/src/runtime/ui/KillFeed.ts`, `progress.md`
+- Validation: `node ~/.codex/skills/develop-web-game/scripts/web_game_playwright_client.js` local client pass under `artifacts/hud-width-client-pass-20260307T1220/`, focused debug screenshot + width probe under `apps/artifacts/hud-width-check-20260307T1221/`, `pnpm typecheck`, `pnpm build`, `pnpm test:playwright`.
 
 ## Next 3 Tasks
-1. Do a real pointer-lock human pass on the live site to confirm the AK and enemy materials look correct in an actual WebGL session.
+1. Do a real pointer-lock human pass on the live site to confirm the AK/enemy materials and the adjusted HUD spacing both look correct in an actual WebGL session.
 2. Resume the separate `bot:smoke` stall investigation now that the production visual regression is cleared.
 3. Consider excluding large local artifact folders from manual Vercel CLI uploads to avoid multi-GB source deployments.
 
