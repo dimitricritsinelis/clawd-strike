@@ -12,11 +12,11 @@ Last updated: 2026-03-07
 
 ## Current Status (<=10 lines)
 - Fixed the production CSP regression that was turning embedded-texture GLB models white on Vercel.
-- `vercel.json` now allows `blob:` under `connect-src`, which is required for Three `GLTFLoader` to fetch embedded GLB texture blobs.
-- Updated `docs/security.md` to document that `blob:` is required in both `img-src` and `connect-src` for embedded-texture GLB assets.
-- Required gates pass: `pnpm typecheck` and `pnpm build`.
-- Targeted validation passed with a local static server serving the production `dist/` output plus the patched CSP header.
-- The prior live repro under `artifacts/weapon-white-live/` showed the failure; the patched local repro under `artifacts/weapon-white-local-csp-20260307T1206/` and `artifacts/weapon-white-local-csp-autostart-20260307T1207/` no longer emits the CSP / `GLTFLoader` blob texture errors.
+- Commit `7d4f723` is on `main` and has been pushed to `origin/main`.
+- `https://clawd-strike.vercel.app` now serves the corrected CSP header with `connect-src 'self' blob:`.
+- Required gates passed before release: `pnpm typecheck` and `pnpm build`.
+- Local static-server validation with the patched CSP passed.
+- A fresh live Playwright repro under `artifacts/weapon-white-live-fixed-20260307T1214/` no longer emits the CSP / `GLTFLoader` blob texture errors seen in `artifacts/weapon-white-live/`.
 
 ## Canonical Playtest URL
 - `http://127.0.0.1:5174/?map=bazaar-map&autostart=human`
@@ -38,17 +38,16 @@ BASE_URL=http://127.0.0.1:5174 pnpm qa:autonomous
 ```
 
 ## Last Completed Prompt
-- Title: Fix the white gun regression caused by the production CSP
-- Changed: patched `vercel.json` CSP to allow `blob:` under `connect-src`, updated `docs/security.md`, and recorded the result in `progress.md`.
+- Title: Commit, push, and roll out the CSP fix to production
+- Changed: committed the CSP fix as `7d4f723`, pushed `main`, and verified that production now serves the corrected header plus no longer logs blob texture load failures in the live Playwright repro.
 - Files: `vercel.json`, `docs/security.md`, `progress.md`
-- Validation: `pnpm typecheck`, `pnpm build`, `curl -I http://127.0.0.1:4174/` against a local static server serving `apps/client/dist` with the patched CSP, plus Playwright artifact captures under `artifacts/weapon-white-local-csp-20260307T1206/` and `artifacts/weapon-white-local-csp-autostart-20260307T1207/`.
+- Validation: `pnpm typecheck`, `pnpm build`, live header check via `curl -I https://clawd-strike.vercel.app`, local patched-CSP Playwright repro under `artifacts/weapon-white-local-csp-20260307T1206/`, and live Playwright repro under `artifacts/weapon-white-live-fixed-20260307T1214/`.
 
 ## Next 3 Tasks
-1. Redeploy so Vercel serves the patched CSP header in production.
-2. Re-check the deployed AK and enemy raider materials with a real pointer-lock human pass after redeploy.
-3. Resume the separate `bot:smoke` stall investigation once the production visual regression is cleared.
+1. Do a real pointer-lock human pass on the live site to confirm the AK and enemy materials look correct in an actual WebGL session.
+2. Resume the separate `bot:smoke` stall investigation now that the production visual regression is cleared.
+3. Consider excluding large local artifact folders from manual Vercel CLI uploads to avoid multi-GB source deployments.
 
 ## Known Issues / Risks
-- The current live Vercel deployment will stay broken until it is redeployed with the patched `vercel.json`.
 - Any future CSP tightening must preserve `blob:` under `connect-src` while embedded-texture `.glb` assets remain in use.
 - The separate `bot:smoke` stall remains unresolved and is unrelated to this visual regression.
