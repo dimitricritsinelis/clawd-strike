@@ -45,5 +45,6 @@ Use the canonical playtest URL recorded in `progress.md`.
 - Internal policy: `AGENTS.md`
 - Current branch state: `progress.md`
 - Durable internal decisions: `docs/decisions.md`
-- Map-design authority map: `docs/map-design/README.md`
+- Map geometry authority: `docs/map-design/specs/map_spec.json`
+- Map review shot contract: `docs/map-design/shots.json`
 - Public browser contract: `apps/client/public/skills.md`

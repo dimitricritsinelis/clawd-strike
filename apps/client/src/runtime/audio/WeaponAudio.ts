@@ -38,6 +38,7 @@ export class WeaponAudio {
   private dryFireNoisePool: AudioBuffer[] | null = null;
   private reloadStartNoisePool: AudioBuffer[] | null = null;
   private reloadSnapNoisePool: AudioBuffer[] | null = null;
+  private combatFeedbackWarmed = false;
 
   private footstepNoiseBuffer: AudioBuffer | null = null;
   private footstepAlt = false;
@@ -56,6 +57,30 @@ export class WeaponAudio {
     }
 
     this.ensureBuffersLoaded();
+    this.prewarmCombatFeedback();
+  }
+
+  prewarmCombatFeedback(): void {
+    const ctx = this.ensureAudioGraph();
+    if (!ctx || !this.compressor || this.combatFeedbackWarmed) return;
+
+    this.combatFeedbackWarmed = true;
+    if (!this.hitThudNoisePool) {
+      this.hitThudNoisePool = this.buildNoisePool(ctx, 0.04);
+    }
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const highShelf = ctx.createBiquadFilter();
+    highShelf.type = "highshelf";
+
+    osc.connect(gain);
+    gain.connect(highShelf);
+    highShelf.connect(this.compressor);
+
+    osc.disconnect();
+    gain.disconnect();
+    highShelf.disconnect();
   }
 
   playAk47Shot(): void {

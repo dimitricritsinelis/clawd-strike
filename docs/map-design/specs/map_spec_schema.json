@@ -81,6 +81,133 @@
       },
       "additionalProperties": true
     },
+    "layout_reference": {
+      "type": "object",
+      "properties": {
+        "zone_aliases": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "areaId",
+              "zoneId",
+              "label",
+              "shortLabel"
+            ],
+            "properties": {
+              "areaId": {
+                "type": "string"
+              },
+              "zoneId": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "shortLabel": {
+                "type": "string"
+              },
+              "humanLabel": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "building_frontages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "buildingId",
+              "zoneId",
+              "face",
+              "label",
+              "shortLabel"
+            ],
+            "properties": {
+              "buildingId": {
+                "type": "string"
+              },
+              "zoneId": {
+                "type": "string"
+              },
+              "face": {
+                "type": "string",
+                "enum": [
+                  "north",
+                  "south",
+                  "east",
+                  "west"
+                ]
+              },
+              "label": {
+                "type": "string"
+              },
+              "shortLabel": {
+                "type": "string"
+              },
+              "humanLabel": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "custom_callouts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "calloutId",
+              "label",
+              "shortLabel",
+              "spawnZoneId",
+              "hallZoneId",
+              "connectorZoneId",
+              "spawnFace"
+            ],
+            "properties": {
+              "calloutId": {
+                "type": "string"
+              },
+              "label": {
+                "type": "string"
+              },
+              "shortLabel": {
+                "type": "string"
+              },
+              "humanLabel": {
+                "type": "string"
+              },
+              "spawnZoneId": {
+                "type": "string"
+              },
+              "hallZoneId": {
+                "type": "string"
+              },
+              "connectorZoneId": {
+                "type": "string"
+              },
+              "spawnFace": {
+                "type": "string",
+                "enum": [
+                  "east",
+                  "west"
+                ]
+              },
+              "notes": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
     "lanes": {
       "type": "object"
     },

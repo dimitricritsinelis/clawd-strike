@@ -1,3 +1,7 @@
+type ScoreHudKillRecord = {
+  isHeadshot: boolean;
+};
+
 /**
  * ScoreHud — top-right HUD showing total kills.
  * Style matches the existing AmmoHud / HealthHud glass panel aesthetic.
@@ -15,6 +19,9 @@ export class ScoreHud {
   private readonly SCORE_BASE = 0;
   private readonly SCORE_PER_KILL = 10;
   private readonly SCORE_PER_HEADSHOT = 2.5;
+  private flashTimerS = 0;
+  private flashHeadshotActive = false;
+  private readonly FLASH_DURATION_S = 0.3;
 
   constructor(mountEl: HTMLElement, playerName: string) {
     this.root = document.createElement("div");
@@ -162,43 +169,47 @@ export class ScoreHud {
 
   setTotal(_total: number): void {}
 
-  addKill(): void {
+  recordKill(record: ScoreHudKillRecord): void {
+    const isHeadshot = record.isHeadshot;
     this.kills += 1;
     this.score += this.SCORE_PER_KILL;
+    if (isHeadshot) {
+      this.headshots += 1;
+      this.score += this.SCORE_PER_HEADSHOT;
+      this.headshotsEl.textContent = String(this.headshots);
+    }
     this.killsEl.textContent = String(this.kills);
     this.scoreEl.textContent = this.formatScore(this.score);
-    // Flash gold on kill
     this.killsEl.style.color = "#ffd700";
     this.scoreEl.style.color = "#ffd700";
-    setTimeout(() => {
-      this.killsEl.style.color = "#e8f0ff";
-      this.scoreEl.style.color = "#e8f0ff";
-    }, 300);
-  }
-
-  addHeadshot(): void {
-    this.headshots += 1;
-    this.score += this.SCORE_PER_HEADSHOT;
-    this.headshotsEl.textContent = String(this.headshots);
-    this.scoreEl.textContent = this.formatScore(this.score);
-    this.headshotsEl.style.color = "#ffd700";
-    this.scoreEl.style.color = "#ffd700";
-    setTimeout(() => {
-      this.headshotsEl.style.color = "#e8f0ff";
-      this.scoreEl.style.color = "#e8f0ff";
-    }, 300);
+    this.headshotsEl.style.color = isHeadshot ? "#ffd700" : "#e8f0ff";
+    this.flashTimerS = this.FLASH_DURATION_S;
+    this.flashHeadshotActive = isHeadshot;
   }
 
   reset(): void {
     this.kills = 0;
     this.headshots = 0;
     this.score = this.SCORE_BASE;
+    this.flashTimerS = 0;
+    this.flashHeadshotActive = false;
     this.killsEl.textContent = "0";
     this.headshotsEl.textContent = "0";
     this.scoreEl.textContent = this.formatScore(this.score);
     this.killsEl.style.color = "#e8f0ff";
     this.headshotsEl.style.color = "#e8f0ff";
     this.scoreEl.style.color = "#e8f0ff";
+  }
+
+  update(deltaSeconds: number): void {
+    if (this.flashTimerS <= 0) return;
+    this.flashTimerS = Math.max(0, this.flashTimerS - deltaSeconds);
+    if (this.flashTimerS > 0) return;
+
+    this.killsEl.style.color = "#e8f0ff";
+    this.headshotsEl.style.color = this.flashHeadshotActive ? "#e8f0ff" : this.headshotsEl.style.color;
+    this.scoreEl.style.color = "#e8f0ff";
+    this.flashHeadshotActive = false;
   }
 
   setVisible(visible: boolean): void {

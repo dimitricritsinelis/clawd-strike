@@ -1,6 +1,6 @@
 const DEFAULT_MAP_ID = "bazaar-map";
 const DEFAULT_PROP_PROFILE = "subtle";
-const DEFAULT_FLOOR_QUALITY = "4k";
+const DEFAULT_FLOOR_QUALITY = "1k";
 export const PLAYER_NAME_MAX_LENGTH = 15;
 
 export type RuntimeSpawnId = "A" | "B";
@@ -216,7 +216,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     density: parseUnitFloat(rawPropDensity),
   };
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
-  const ao = parseBooleanFlagWithDefault(rawAo, true); // default ON for golden preset
+  const ao = parseBooleanFlagWithDefault(rawAo, false);
 
   return {
     mapId,

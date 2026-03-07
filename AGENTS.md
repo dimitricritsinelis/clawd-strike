@@ -12,13 +12,12 @@ This is the only normative internal implementation doc in the repo.
 
 If any internal prose conflicts with this file, follow this file.
 
-Active repo-owned Markdown is limited to six files:
+Active repo-owned Markdown is limited to five files:
 1. `README.md`
 2. `AGENTS.md`
 3. `progress.md`
 4. `docs/decisions.md`
-5. `docs/map-design/README.md`
-6. `apps/client/public/skills.md`
+5. `apps/client/public/skills.md`
 
 Do not add a third memory layer. No per-thread notes, no duplicate tool guides, no subsystem process docs.
 
@@ -28,20 +27,19 @@ Do not add a third memory layer. No per-thread notes, no duplicate tool guides, 
 3. Read the single spec or contract selected by the task's primary change tag.
 4. Read only the code and scripts directly touched.
 
-If a fact is not in one of the six Markdown authorities, prefer code, scripts, JSON specs, and runtime contracts over creating new Markdown.
+If a fact is not in one of the five Markdown authorities, prefer code, scripts, JSON specs, and runtime contracts over creating new Markdown.
 
 ## Memory Model
 - Short-term memory: `progress.md` only. Overwrite aggressively. Never turn it into a transcript.
 - Long-term prose memory: `docs/decisions.md` only. Add entries only for durable, non-obvious choices that should survive context resets.
 - Durable structured memory: `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json`, and `apps/client/public/skills.md`.
-- Evidence, not memory: `artifacts/`, generated `apps/client/dist/skills.md`, external archive material at `/Users/dimitri/Desktop/clawd-strike-archive`, and bundled skills under `.agents/skills/`.
+- Evidence, not memory: `artifacts/`, generated `apps/client/dist/skills.md`, and external archive material at `/Users/dimitri/Desktop/clawd-strike-archive`.
 
 ## Authority Map
 - `README.md`: human quick start only.
 - `AGENTS.md`: internal policy, read order, change tags, validation policy.
 - `progress.md`: current branch/task state only.
 - `docs/decisions.md`: durable internal decisions that change future implementation behavior.
-- `docs/map-design/README.md`: map-design authority map only.
 - `apps/client/public/skills.md`: public browser-only contract only.
 
 ### Hard Authority Rules
@@ -49,8 +47,14 @@ If a fact is not in one of the six Markdown authorities, prefer code, scripts, J
   1. `docs/map-design/specs/map_spec.json`
   2. `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png`
   3. `docs/map-design/blockout/topdown_layout.svg`
+- `docs/map-design/shots.json` owns the runtime review shot contract.
+- Approved reference pack for map and visual clarification:
+  - `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png`
+  - `docs/map-design/refs/bazaar_slice_v2_2_map_only.png`
+  - `docs/map-design/refs/bazaar_main_hall_reference.png`
 - Runtime map files must be generated from the design packet with `pnpm --filter @clawd-strike/client gen:maps`. Do not hand-maintain drift in `apps/client/public/maps/`.
 - `apps/client/public/skills.md` must stay fair and browser-only. Do not expose coordinates, map zones, landmark IDs, enemy positions, routes, seeds, hidden line-of-sight truth, or repo-only debug data.
+- Internal agent tooling is not game runtime code and is not part of the public `/skills.md` surface. Keep agent-only deploy or debug bundles out of the repo root unless they become an explicit repo workflow requirement.
 - Tool shims such as `CLAUDE.md` may point to this file, but they may not redefine policy.
 
 ## Primary Change Tag
@@ -74,16 +78,22 @@ If a user prompt omits the tag, infer the best fit from the requested change and
 
 | Tag | Read this first | Ignore this by default | Required targeted validation |
 | --- | --- | --- | --- |
-| `map-geometry` | `docs/map-design/README.md`, `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json` when shot framing changes, touched map runtime scripts/code | `apps/client/public/skills.md`, archive material, `artifacts/` except direct review evidence | `pnpm --filter @clawd-strike/client gen:maps`, `pnpm qa:completion` |
-| `map-visual` | `docs/map-design/README.md`, `docs/map-design/specs/map_spec.json` for openings/collision truth, touched rendering/material code | `apps/client/public/skills.md`, archive material, `artifacts/` except the latest review captures | `pnpm qa:completion` |
-| `movement-sim` | `progress.md`, touched runtime movement/input code, `docs/map-design/specs/map_spec.json` only if traversal geometry is affected | map-design refs, `apps/client/public/skills.md` unless public controls/readiness change | the smallest targeted runtime validation; human smoke when pointer lock, fullscreen, or live input flow changes |
-| `combat-gameplay` | `progress.md`, touched combat/scoring runtime code, `apps/client/public/skills.md` if score or run-summary semantics change | map-design refs unless sightlines, cover, or traversal are affected | the smallest targeted combat validation; `pnpm --filter @clawd-strike/client bot:smoke` when enemy combat tuning is involved |
-| `bot-ai` | `progress.md`, touched enemy/runtime code, `docs/map-design/specs/map_spec.json` only if navigation/layout assumptions matter, `apps/client/public/skills.md` if exposed summaries change | visual refs unless lane/readability behavior is being tuned against them | `pnpm --filter @clawd-strike/client bot:smoke` |
-| `ui-flow` | `progress.md`, touched loading-screen/runtime UI code, `apps/client/public/skills.md` if agent entry flow or public selectors change | map-design docs unless the UI is map-specific | `pnpm test:playwright`; human smoke when pointer lock, fullscreen, or menu UX changes |
+| `map-geometry` | `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json` when shot framing or review contract changes, approved refs when the JSON needs visual clarification, touched map runtime scripts/code | `apps/client/public/skills.md`, archive material, `artifacts/` except direct review evidence | `pnpm --filter @clawd-strike/client gen:maps`, `git diff --exit-code -- apps/client/public/maps`, `pnpm qa:completion`, short manual traversal from both spawns, deterministic shot/reference review against approved refs when visible geometry changed |
+| `map-visual` | `docs/map-design/specs/map_spec.json` for openings and collision truth, approved refs for signed visual intent, touched rendering/material code | `apps/client/public/skills.md`, archive material, `artifacts/` except the latest review captures | `pnpm qa:completion`, deterministic shot/reference review against approved refs, before/after shot pair for significant changes, brief in-engine look pass |
+| `movement-sim` | `progress.md`, touched runtime movement/input code, `docs/map-design/specs/map_spec.json` only if traversal geometry is affected | map-design refs, `apps/client/public/skills.md` unless public controls/readiness change | the smallest targeted runtime smoke for the touched behavior; human pointer-lock pass when pointer lock, fullscreen, live input flow, or movement feel changed |
+| `combat-gameplay` | `progress.md`, touched combat/scoring runtime code, `apps/client/public/skills.md` if score or run-summary semantics change | map-design refs unless sightlines, cover, or traversal are affected | the smallest targeted mechanic smoke for the touched feature, short manual playtest, `pnpm --filter @clawd-strike/client bot:smoke` when enemy combat tuning is involved, `pnpm --filter @clawd-strike/client smoke:headshot-kill-perf` when kill-feedback or score-feedback perf changed |
+| `bot-ai` | `progress.md`, touched enemy/runtime code, `docs/map-design/specs/map_spec.json` only if navigation/layout assumptions matter, `apps/client/public/skills.md` if exposed summaries change | visual refs unless lane/readability behavior is being tuned against them | `pnpm --filter @clawd-strike/client bot:smoke`, short human combat pass, perf spot-check if update frequency or search logic changed |
+| `ui-flow` | `progress.md`, touched loading-screen/runtime UI code, `apps/client/public/skills.md` if agent entry flow or public selectors change | map-design docs unless the UI is map-specific | `pnpm test:playwright`, `pnpm smoke:no-context` when agent entry flow, retry flow, public selectors, or documented `/skills.md` snippets changed, human smoke when pointer lock, fullscreen, or menu UX changed |
 | `public-contract` | `apps/client/public/skills.md`, touched public runtime API/state code, touched contract verification scripts | map-design docs unless the contract text directly depends on map truth | `pnpm verify:skills-contract`, `pnpm smoke:no-context` |
-| `perf` | `progress.md`, touched bootstrap/render/warmup code, `apps/client/public/skills.md` if readiness or public state changes | map-design docs unless asset/layout paths changed | the smallest targeted perf validation; `pnpm qa:completion` if player-visible defaults changed; contract validations if public readiness changed |
-| `tooling` | `package.json`, `apps/client/package.json`, touched scripts, `.github/workflows/ci.yml` | map-design docs and `apps/client/public/skills.md` unless the tool directly validates them | the smallest targeted script or CI validation |
-| `docs` | only the authority file being corrected, plus `docs/decisions.md` when a durable rule must be captured | runtime code, visual refs, `artifacts/`, archive material unless needed to verify a fact | targeted `rg` or reference scan only; run contract validations only if a runtime-facing contract doc changed |
+| `perf` | `progress.md`, touched bootstrap/render/warmup code, `apps/client/public/skills.md` if readiness or public state changes | map-design docs unless asset/layout paths changed | before/after perf baseline on the canonical playtest URL, rerun the primary subsystem smoke, human sanity pass if timing or feel changed, `pnpm qa:completion` if player-visible defaults changed, public-contract gates if readiness or public state changed |
+| `tooling` | `package.json`, `apps/client/package.json`, touched scripts, `.github/workflows/ci.yml` | map-design docs and `apps/client/public/skills.md` unless the tool directly validates them | the smallest targeted script or CI validation; exact subsystem gate if runtime output changed; `pnpm --filter @clawd-strike/client gen:maps` plus `git diff --exit-code -- apps/client/public/maps` if map generation changed |
+| `docs` | only the authority file being corrected, plus `docs/decisions.md` when a durable rule must be captured | runtime code, visual refs, `artifacts/`, archive material unless needed to verify a fact | targeted `rg` or reference scan only; run the full `public-contract` gate if a runtime-facing contract doc changed |
+
+### Cross-cutting Public-Contract Rider
+If a task changes `/skills.md`, stable public selectors, agent-visible browser payload/state, or the documented no-context retry flow, also run `pnpm verify:skills-contract` and `pnpm smoke:no-context` regardless of the primary change tag.
+
+### Visual Signoff Rule
+Screenshot and reference inspection are required only for visual-signoff surfaces. Use them for visible map-geometry changes, map lookdev/material/props/lighting work, and major HUD layout or signoff-sensitive visual changes. Do not require them for bot logic, combat tuning, movement bug fixes, tooling, perf work, or contract-only changes unless the change intentionally altered appearance.
 
 ## Validation Policy
 Every task ends with:
@@ -100,7 +110,7 @@ Every task ends with:
 | Public contract or public runtime surface changes | `pnpm verify:skills-contract`, `pnpm smoke:no-context` | not covered |
 | Input flow, pointer lock, fullscreen, or menu UX changes | human smoke | not covered |
 
-CI is narrower than the repo completion policy. Passing CI does not replace the required local completion gates.
+CI is still narrower than the repo completion policy. It should eventually mirror the same tag matrix with path-based routing, but that follow-up belongs in `tooling` work. Passing CI does not replace the required local completion gates.
 
 ## Play-Facing Review Standard
 Apply this standard to `map-geometry`, `map-visual`, `combat-gameplay`, `bot-ai`, and any other task that changes what the player sees or feels.
@@ -139,4 +149,5 @@ Relevant authority: <spec, contract, or file that owns the change>
 - Update `progress.md` at the end of every task.
 - Keep `progress.md` short and current.
 - Keep `docs/decisions.md` short and durable.
+- Keep internal agent tooling separate from the repo root authority surface and from public `apps/client/public/skills.md`.
 - Do not create `TESTING.md`, `ARCHITECTURE.md`, `BOTS.md`, `TEXTURES.md`, `MAP_NOTES.md`, or any tool-specific duplicate of this file.

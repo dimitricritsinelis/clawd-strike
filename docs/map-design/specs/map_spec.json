@@ -77,6 +77,340 @@
       }
     ]
   },
+  "layout_reference": {
+    "zone_aliases": [
+      {
+        "areaId": "AREA_SPAWN_A",
+        "zoneId": "SPAWN_A_COURTYARD",
+        "label": "Spawn A",
+        "shortLabel": "SA",
+        "humanLabel": "Spawn A Courtyard",
+        "notes": "South spawn courtyard and staging area."
+      },
+      {
+        "areaId": "AREA_SPAWN_B",
+        "zoneId": "SPAWN_B_GATE_PLAZA",
+        "label": "Spawn B",
+        "shortLabel": "SB",
+        "humanLabel": "Spawn B Gate Plaza",
+        "notes": "North spawn gate plaza and arch threshold."
+      },
+      {
+        "areaId": "AREA_MAIN_HALL_SOUTH",
+        "zoneId": "BZ_M1",
+        "label": "Main Hall South",
+        "shortLabel": "MHS",
+        "humanLabel": "Main Hall South — Spice Market",
+        "notes": "South main-lane segment with dense merchant frontage."
+      },
+      {
+        "areaId": "AREA_MAIN_HALL_JOG",
+        "zoneId": "BZ_M2_JOG",
+        "label": "Main Hall Jog",
+        "shortLabel": "MHJ",
+        "humanLabel": "Main Hall Jog — Fabric & Textile Offset",
+        "notes": "Middle jog segment around the well landmark."
+      },
+      {
+        "areaId": "AREA_MAIN_HALL_NORTH",
+        "zoneId": "BZ_M3",
+        "label": "Main Hall North",
+        "shortLabel": "MHN",
+        "humanLabel": "Main Hall North — Rug & Craft Approach",
+        "notes": "North main-lane segment leading into the hero arch."
+      },
+      {
+        "areaId": "AREA_SIDE_HALL_A",
+        "zoneId": "SH_W",
+        "label": "Side Hall A",
+        "shortLabel": "SHA",
+        "humanLabel": "Side Hall A — West Service Hall",
+        "notes": "West service alley and flank route."
+      },
+      {
+        "areaId": "AREA_SIDE_HALL_B",
+        "zoneId": "SH_E",
+        "label": "Side Hall B",
+        "shortLabel": "SHB",
+        "humanLabel": "Side Hall B — East Service Hall",
+        "notes": "East service alley and flank route."
+      },
+      {
+        "areaId": "AREA_CONNECTOR_A",
+        "zoneId": "CONN_SW",
+        "label": "Connector A",
+        "shortLabel": "CNA",
+        "humanLabel": "Spawn A ↔ Side Hall A Connector",
+        "notes": "Southwest spawn connector."
+      },
+      {
+        "areaId": "AREA_CONNECTOR_B",
+        "zoneId": "CONN_SE",
+        "label": "Connector B",
+        "shortLabel": "CNB",
+        "humanLabel": "Spawn A ↔ Side Hall B Connector",
+        "notes": "Southeast spawn connector."
+      },
+      {
+        "areaId": "AREA_CONNECTOR_C",
+        "zoneId": "CONN_NW",
+        "label": "Connector C",
+        "shortLabel": "CNC",
+        "humanLabel": "Spawn B ↔ Side Hall A Connector",
+        "notes": "Northwest spawn connector."
+      },
+      {
+        "areaId": "AREA_CONNECTOR_D",
+        "zoneId": "CONN_NE",
+        "label": "Connector D",
+        "shortLabel": "CND",
+        "humanLabel": "Spawn B ↔ Side Hall B Connector",
+        "notes": "Northeast spawn connector."
+      },
+      {
+        "areaId": "AREA_MID_CUT_A",
+        "zoneId": "CUT_W_MID",
+        "label": "Mid Cut A",
+        "shortLabel": "MCA",
+        "humanLabel": "Mid Cut A — West",
+        "notes": "West mid cut between Side Hall A and Main Hall South/Jog."
+      },
+      {
+        "areaId": "AREA_MID_CUT_B",
+        "zoneId": "CUT_E_MID",
+        "label": "Mid Cut B",
+        "shortLabel": "MCB",
+        "humanLabel": "Mid Cut B — East",
+        "notes": "East mid cut between Side Hall B and Main Hall South/Jog."
+      },
+      {
+        "areaId": "AREA_NORTH_CUT_A",
+        "zoneId": "CUT_W_NORTH",
+        "label": "North Cut A",
+        "shortLabel": "NCA",
+        "humanLabel": "North Cut A — West",
+        "notes": "West north cut between Side Hall A and Main Hall North."
+      },
+      {
+        "areaId": "AREA_NORTH_CUT_B",
+        "zoneId": "CUT_E_NORTH",
+        "label": "North Cut B",
+        "shortLabel": "NCB",
+        "humanLabel": "North Cut B — East",
+        "notes": "East north cut between Side Hall B and Main Hall North."
+      },
+      {
+        "areaId": "AREA_CLEAR_SOUTH",
+        "zoneId": "CLEAR_M1",
+        "label": "Main Clear South",
+        "shortLabel": "CLS",
+        "humanLabel": "Main Hall South Clear Travel Zone",
+        "notes": "Protected travel strip inside Main Hall South."
+      },
+      {
+        "areaId": "AREA_CLEAR_JOG",
+        "zoneId": "CLEAR_M2",
+        "label": "Main Clear Jog",
+        "shortLabel": "CLJ",
+        "humanLabel": "Main Hall Jog Clear Travel Zone",
+        "notes": "Protected travel strip inside Main Hall Jog."
+      },
+      {
+        "areaId": "AREA_CLEAR_NORTH",
+        "zoneId": "CLEAR_M3",
+        "label": "Main Clear North",
+        "shortLabel": "CLN",
+        "humanLabel": "Main Hall North Clear Travel Zone",
+        "notes": "Protected travel strip inside Main Hall North."
+      },
+      {
+        "areaId": "AREA_STALL_SOUTH_A",
+        "zoneId": "STALL_M1_L",
+        "label": "Stall South A",
+        "shortLabel": "SSA",
+        "humanLabel": "Main Hall South Stall Strip A",
+        "notes": "West-side stall strip for Main Hall South."
+      },
+      {
+        "areaId": "AREA_STALL_SOUTH_B",
+        "zoneId": "STALL_M1_R",
+        "label": "Stall South B",
+        "shortLabel": "SSB",
+        "humanLabel": "Main Hall South Stall Strip B",
+        "notes": "East-side stall strip for Main Hall South."
+      },
+      {
+        "areaId": "AREA_STALL_JOG_A",
+        "zoneId": "STALL_M2_L",
+        "label": "Stall Jog A",
+        "shortLabel": "SJA",
+        "humanLabel": "Main Hall Jog Stall Strip A",
+        "notes": "West-side stall strip for Main Hall Jog."
+      },
+      {
+        "areaId": "AREA_STALL_JOG_B",
+        "zoneId": "STALL_M2_R",
+        "label": "Stall Jog B",
+        "shortLabel": "SJB",
+        "humanLabel": "Main Hall Jog Stall Strip B",
+        "notes": "East-side stall strip for Main Hall Jog."
+      },
+      {
+        "areaId": "AREA_STALL_NORTH_A",
+        "zoneId": "STALL_M3_L",
+        "label": "Stall North A",
+        "shortLabel": "SNA",
+        "humanLabel": "Main Hall North Stall Strip A",
+        "notes": "West-side stall strip for Main Hall North."
+      },
+      {
+        "areaId": "AREA_STALL_NORTH_B",
+        "zoneId": "STALL_M3_R",
+        "label": "Stall North B",
+        "shortLabel": "SNB",
+        "humanLabel": "Main Hall North Stall Strip B",
+        "notes": "East-side stall strip for Main Hall North."
+      }
+    ],
+    "building_frontages": [
+      {
+        "buildingId": "BLDG_A",
+        "zoneId": "BZ_M1",
+        "face": "west",
+        "label": "Building A",
+        "shortLabel": "A",
+        "humanLabel": "Spice Market West Frontage",
+        "notes": "Merchant-heavy west frontage for Main Hall South."
+      },
+      {
+        "buildingId": "BLDG_B",
+        "zoneId": "BZ_M1",
+        "face": "east",
+        "label": "Building B",
+        "shortLabel": "B",
+        "humanLabel": "Spice Market East Frontage",
+        "notes": "Residential-leaning east frontage for Main Hall South."
+      },
+      {
+        "buildingId": "BLDG_C",
+        "zoneId": "BZ_M2_JOG",
+        "face": "west",
+        "label": "Building C",
+        "shortLabel": "C",
+        "humanLabel": "Jog West Frontage",
+        "notes": "Service wall on the west side of the jog."
+      },
+      {
+        "buildingId": "BLDG_D",
+        "zoneId": "BZ_M2_JOG",
+        "face": "east",
+        "label": "Building D",
+        "shortLabel": "D",
+        "humanLabel": "Jog East Frontage",
+        "notes": "Hero merchant frontage on the east side of the jog."
+      },
+      {
+        "buildingId": "BLDG_E",
+        "zoneId": "BZ_M3",
+        "face": "west",
+        "label": "Building E",
+        "shortLabel": "E",
+        "humanLabel": "North Hall West Frontage",
+        "notes": "Residential frontage near the arch approach."
+      },
+      {
+        "buildingId": "BLDG_F",
+        "zoneId": "BZ_M3",
+        "face": "east",
+        "label": "Building F",
+        "shortLabel": "F",
+        "humanLabel": "North Hall East Frontage",
+        "notes": "Merchant frontage near the arch approach."
+      },
+      {
+        "buildingId": "BLDG_G",
+        "zoneId": "SPAWN_A_COURTYARD",
+        "face": "north",
+        "label": "Building G",
+        "shortLabel": "G",
+        "humanLabel": "Spawn A North Frontage",
+        "notes": "Spawn A entry frontage looking into the bazaar."
+      },
+      {
+        "buildingId": "BLDG_H",
+        "zoneId": "SPAWN_B_GATE_PLAZA",
+        "face": "south",
+        "label": "Building H",
+        "shortLabel": "H",
+        "humanLabel": "Spawn B South Frontage",
+        "notes": "Spawn B entry frontage behind the hero arch."
+      },
+      {
+        "buildingId": "BLDG_I",
+        "zoneId": "SH_W",
+        "face": "west",
+        "label": "Building I",
+        "shortLabel": "I",
+        "humanLabel": "Side Hall A Outer Frontage",
+        "notes": "Outer west wall of Side Hall A."
+      },
+      {
+        "buildingId": "BLDG_J",
+        "zoneId": "SH_E",
+        "face": "east",
+        "label": "Building J",
+        "shortLabel": "J",
+        "humanLabel": "Side Hall B Outer Frontage",
+        "notes": "Outer east wall of Side Hall B."
+      }
+    ],
+    "custom_callouts": [
+      {
+        "calloutId": "CORNER_A",
+        "label": "Corner A",
+        "shortLabel": "CRA",
+        "humanLabel": "Spawn A West Elbow",
+        "spawnZoneId": "SPAWN_A_COURTYARD",
+        "hallZoneId": "SH_W",
+        "connectorZoneId": "CONN_SW",
+        "spawnFace": "west",
+        "notes": "Corner space between Spawn A, Connector A, and Side Hall A."
+      },
+      {
+        "calloutId": "CORNER_B",
+        "label": "Corner B",
+        "shortLabel": "CRB",
+        "humanLabel": "Spawn A East Elbow",
+        "spawnZoneId": "SPAWN_A_COURTYARD",
+        "hallZoneId": "SH_E",
+        "connectorZoneId": "CONN_SE",
+        "spawnFace": "east",
+        "notes": "Corner space between Spawn A, Connector B, and Side Hall B."
+      },
+      {
+        "calloutId": "CORNER_C",
+        "label": "Corner C",
+        "shortLabel": "CRC",
+        "humanLabel": "Spawn B West Elbow",
+        "spawnZoneId": "SPAWN_B_GATE_PLAZA",
+        "hallZoneId": "SH_W",
+        "connectorZoneId": "CONN_NW",
+        "spawnFace": "west",
+        "notes": "Corner space between Spawn B, Connector C, and Side Hall A."
+      },
+      {
+        "calloutId": "CORNER_D",
+        "label": "Corner D",
+        "shortLabel": "CRD",
+        "humanLabel": "Spawn B East Elbow",
+        "spawnZoneId": "SPAWN_B_GATE_PLAZA",
+        "hallZoneId": "SH_E",
+        "connectorZoneId": "CONN_NE",
+        "spawnFace": "east",
+        "notes": "Corner space between Spawn B, Connector D, and Side Hall B."
+      }
+    ]
+  },
   "lanes": {
     "main_bazaar_lane": {
       "type": "primary",

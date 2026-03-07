@@ -4,12 +4,10 @@ import {
   CanvasTexture,
   CylinderGeometry,
   Group,
-  Material,
   Matrix4,
   Mesh,
   MeshStandardMaterial,
   Object3D,
-  PointLight,
   Scene,
   SphereGeometry,
   Sprite,
@@ -43,6 +41,7 @@ const BODY_COLOR = 0x2a2e2a;
 const HEAD_COLOR = 0x3a2e28;
 
 const MUZZLE_FLASH_DURATION_S = 0.085;
+let enemyVisualModelStreamingEnabled = true;
 
 type EnemyModelTemplate = {
   template: Object3D;
@@ -53,6 +52,15 @@ type EnemyModelTemplate = {
 };
 
 let enemyModelTemplatePromise: Promise<EnemyModelTemplate> | null = null;
+
+export async function preloadEnemyVisualAssets(): Promise<void> {
+  const warmupLoader = new GLTFLoader();
+  await loadEnemyModelTemplate(warmupLoader);
+}
+
+export function setEnemyVisualModelStreamingEnabled(enabled: boolean): void {
+  enemyVisualModelStreamingEnabled = enabled;
+}
 
 function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyModelTemplate> {
   if (enemyModelTemplatePromise) return enemyModelTemplatePromise;
@@ -182,7 +190,6 @@ export class EnemyVisual {
   private readonly bodyMat: MeshStandardMaterial;
   private readonly headMat: MeshStandardMaterial;
   private modelRoot: Group | null = null;
-  private modelFadeMaterials: Material[] = [];
   private readonly nameSprite: Sprite;
   private readonly nameTexture: CanvasTexture;
   private readonly nameMaterial: SpriteMaterial;
@@ -191,16 +198,14 @@ export class EnemyVisual {
   // Death fade
   private fadingOut = false;
   private fadeTimerS = 0;
-  private readonly FADE_DURATION_S = 0.6;
+  private readonly FADE_DURATION_S = 0.12;
 
-  // Muzzle flash
+  // Muzzle flash (sprite-only — no PointLight to avoid per-light reshading cost)
   private muzzleFlash: Sprite | null = null;
   private muzzleFlashMat: SpriteMaterial | null = null;
   private muzzleFlashTex: CanvasTexture | null = null;
-  private muzzleLight: PointLight | null = null;
   private muzzleTimerS = 0;
   private muzzleBaseScale = 1;
-  private muzzleLightPeak = 0;
   private muzzleRandState = 0xdeadbeef;
 
   constructor(name: string, scene: Scene, sharedGltfLoader: GLTFLoader) {
@@ -212,7 +217,6 @@ export class EnemyVisual {
       color: BODY_COLOR,
       roughness: 0.85,
       metalness: 0.05,
-      transparent: true, // pre-enabled so death fade avoids render-order glitch
     });
     this.bodyMesh = new Mesh(bodyGeo, this.bodyMat);
     this.bodyMesh.position.y = BODY_HEIGHT_M * 0.5; // center cylinder at half height
@@ -224,7 +228,6 @@ export class EnemyVisual {
       color: HEAD_COLOR,
       roughness: 0.85,
       metalness: 0.05,
-      transparent: true, // pre-enabled so death fade avoids render-order glitch
     });
     this.headMesh = new Mesh(headGeo, this.headMat);
     this.headMesh.position.y = HEAD_Y_OFFSET;
@@ -263,54 +266,35 @@ export class EnemyVisual {
     this.muzzleFlash.scale.setScalar(0.15);
     this.muzzleAnchor.add(this.muzzleFlash);
 
-    this.muzzleLight = new PointLight(0xffd7a0, 0, 3.0, 2);
-    this.muzzleLight.position.set(0, 0, 0);
-    this.muzzleAnchor.add(this.muzzleLight);
-
     // Load enemy GLB once, then clone per enemy instance.
     // This avoids repeated glTF parse/texture setup work per spawn.
-    loadEnemyModelTemplate(sharedGltfLoader).then((templateData) => {
-      const modelInstance = cloneSkeleton(templateData.template);
-      const fadeMaterials: Material[] = [];
+    if (enemyVisualModelStreamingEnabled) {
+      loadEnemyModelTemplate(sharedGltfLoader).then((templateData) => {
+        // Clone skeleton for independent transforms but share materials across
+        // all enemy instances — the opaque death-confirm path never modifies
+        // material opacity so per-instance clones are unnecessary.
+        const modelInstance = cloneSkeleton(templateData.template);
 
-      modelInstance.traverse((child) => {
-        const maybeMesh = child as Mesh;
-        if (!maybeMesh.isMesh) return;
-        const meshMaterial = maybeMesh.material;
-        if (Array.isArray(meshMaterial)) {
-          maybeMesh.material = meshMaterial.map((mat) => {
-            const cloned = (mat as Material).clone();
-            fadeMaterials.push(cloned);
-            return cloned;
-          });
-        } else {
-          const cloned = (meshMaterial as Material).clone();
-          maybeMesh.material = cloned;
-          fadeMaterials.push(cloned);
-        }
+        this.modelRoot = new Group();
+        this.modelRoot.rotation.y = MODEL_FACING_FIXUP_YAW_RAD;
+        this.modelRoot.scale.setScalar(MODEL_TARGET_HEIGHT_M / templateData.sizeY);
+        modelInstance.position.set(
+          -templateData.center.x,
+          -templateData.minY,
+          -templateData.center.z,
+        );
+        this.modelRoot.add(modelInstance);
+        this.muzzleAnchor.position.copy(templateData.muzzleLocal).add(modelInstance.position);
+        this.modelRoot.add(this.muzzleAnchor);
+        this.root.add(this.modelRoot);
+
+        this.bodyMesh.visible = false;
+        this.headMesh.visible = false;
+        this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, MODEL_TARGET_HEIGHT_M + 0.4);
+      }).catch(() => {
+        // Model load failed — fallback body/head remain visible.
       });
-
-      this.modelFadeMaterials = fadeMaterials;
-
-      this.modelRoot = new Group();
-      this.modelRoot.rotation.y = MODEL_FACING_FIXUP_YAW_RAD;
-      this.modelRoot.scale.setScalar(MODEL_TARGET_HEIGHT_M / templateData.sizeY);
-      modelInstance.position.set(
-        -templateData.center.x,
-        -templateData.minY,
-        -templateData.center.z,
-      );
-      this.modelRoot.add(modelInstance);
-      this.muzzleAnchor.position.copy(templateData.muzzleLocal).add(modelInstance.position);
-      this.modelRoot.add(this.muzzleAnchor);
-      this.root.add(this.modelRoot);
-
-      this.bodyMesh.visible = false;
-      this.headMesh.visible = false;
-      this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, MODEL_TARGET_HEIGHT_M + 0.4);
-    }).catch(() => {
-      // Model load failed — fallback body/head remain visible.
-    });
+    }
 
     scene.add(this.root);
   }
@@ -333,21 +317,16 @@ export class EnemyVisual {
     this.fadingOut = false;
     this.fadeTimerS = 0;
     this.root.visible = true;
+    this.nameSprite.visible = true;
 
     this.bodyMat.opacity = 1;
     this.headMat.opacity = 1;
     this.nameMaterial.opacity = 1;
-    for (const mat of this.modelFadeMaterials) {
-      mat.opacity = 1;
-      mat.depthWrite = true;
-    }
 
     this.muzzleTimerS = 0;
     this.muzzleBaseScale = 1;
-    this.muzzleLightPeak = 0;
     if (this.muzzleFlash) this.muzzleFlash.visible = false;
     if (this.muzzleFlashMat) this.muzzleFlashMat.opacity = 0;
-    if (this.muzzleLight) this.muzzleLight.intensity = 0;
   }
 
   startDeathFade(): void {
@@ -355,18 +334,10 @@ export class EnemyVisual {
     this.fadingOut = true;
     this.fadeTimerS = this.FADE_DURATION_S;
     this.root.visible = true;
+    this.nameSprite.visible = false;
     // Kill any muzzle flash immediately
     if (this.muzzleFlash) this.muzzleFlash.visible = false;
-    if (this.muzzleLight) this.muzzleLight.intensity = 0;
     this.muzzleTimerS = 0;
-
-    for (const mat of this.modelFadeMaterials) {
-      if (!mat.transparent) {
-        mat.transparent = true;
-        mat.needsUpdate = true;
-      }
-      mat.depthWrite = false;
-    }
   }
 
   /** Returns true when the fade is fully complete. */
@@ -374,15 +345,6 @@ export class EnemyVisual {
     if (!this.fadingOut) return false;
 
     this.fadeTimerS = Math.max(0, this.fadeTimerS - dt);
-    const t = this.fadeTimerS / this.FADE_DURATION_S; // 1.0 → 0.0
-
-    this.bodyMat.opacity = t;
-    this.headMat.opacity = t;
-    this.nameMaterial.opacity = t;
-    for (const mat of this.modelFadeMaterials) {
-      mat.opacity = t;
-    }
-    if (this.muzzleFlashMat) this.muzzleFlashMat.opacity = 0;
 
     if (this.fadeTimerS <= 0) {
       this.root.visible = false;
@@ -396,22 +358,20 @@ export class EnemyVisual {
   }
 
   triggerShotFx(): void {
-    if (!this.muzzleFlash || !this.muzzleFlashMat || !this.muzzleLight) return;
+    if (!this.muzzleFlash || !this.muzzleFlashMat) return;
 
     this.muzzleTimerS = MUZZLE_FLASH_DURATION_S;
     this.muzzleFlash.visible = true;
-    this.muzzleBaseScale = 0.9 + this.nextRand() * 0.35;
+    // Slightly larger sprite to compensate for removed PointLight bounce
+    this.muzzleBaseScale = 1.1 + this.nextRand() * 0.4;
     this.muzzleFlash.scale.setScalar(0.15 * this.muzzleBaseScale);
     this.muzzleFlashMat.opacity = 1.0;
     this.muzzleFlashMat.rotation = (this.nextRand() - 0.5) * Math.PI * 0.7;
-    this.muzzleLightPeak = 1.5 + this.nextRand() * 1.5;
-    this.muzzleLight.intensity = this.muzzleLightPeak;
   }
 
   updateFx(dt: number): void {
     if (this.muzzleTimerS <= 0) {
       if (this.muzzleFlash) this.muzzleFlash.visible = false;
-      if (this.muzzleLight) this.muzzleLight.intensity = 0;
       return;
     }
     this.muzzleTimerS = Math.max(0, this.muzzleTimerS - dt);
@@ -420,9 +380,6 @@ export class EnemyVisual {
       this.muzzleFlash.visible = lifeT > 0;
       this.muzzleFlashMat!.opacity = lifeT * lifeT;
       this.muzzleFlash.scale.setScalar(0.15 * this.muzzleBaseScale * (1 + (1 - lifeT) * 0.26));
-    }
-    if (this.muzzleLight) {
-      this.muzzleLight.intensity = this.muzzleLightPeak * lifeT * lifeT;
     }
   }
 
@@ -439,10 +396,6 @@ export class EnemyVisual {
       this.muzzleFlashMat.dispose();
       this.muzzleFlashMat = null;
     }
-    for (const mat of this.modelFadeMaterials) {
-      mat.dispose();
-    }
-    this.modelFadeMaterials = [];
   }
 
   private nextRand(): number {

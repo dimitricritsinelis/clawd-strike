@@ -12,12 +12,17 @@ dist/
 output/
 coverage/
 *.tsbuildinfo
+**/test-results/
+**/playwright-report/
+apps/client/artifacts/
+artifacts/
 artifacts/screenshots/
 artifacts/screenshots/**/tmp*/
 artifacts/screenshots/**/smoke/
 artifacts/screenshots/**/errors-*.json
 artifacts/screenshots/**/state-*.json
 artifacts/screenshots/**/shot-*.png
+artifacts/playwright/
 artifacts/tmp/
 artifacts/tmp/**
 .vercel/

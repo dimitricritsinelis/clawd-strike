@@ -1,6 +1,6 @@
 import {
   ACESFilmicToneMapping,
-  PCFSoftShadowMap,
+  PCFShadowMap,
   PerspectiveCamera,
   Scene,
   SRGBColorSpace,
@@ -13,12 +13,12 @@ import { SSAOPass } from "three/examples/jsm/postprocessing/SSAOPass.js";
 import { resolveBlockoutPalette } from "./BlockoutMaterials";
 import type { RuntimeLightingPreset } from "../utils/UrlParams";
 
-const MAX_PIXEL_RATIO = 2;
+const MAX_PIXEL_RATIO = 1.25;
 
 // ── SSAO tuning constants ───────────────────────────────────────────
-const SSAO_KERNEL_RADIUS = 4;
-const SSAO_MIN_DISTANCE = 0.002;
-const SSAO_MAX_DISTANCE = 0.14;
+const SSAO_KERNEL_RADIUS = 2;
+const SSAO_MIN_DISTANCE = 0.001;
+const SSAO_MAX_DISTANCE = 0.08;
 
 type RendererOptions = {
   highVis: boolean;
@@ -37,9 +37,12 @@ type WebGLContextLike = WebGLRenderingContext | WebGL2RenderingContext;
 
 function tryCreateWebGLContext(canvas: HTMLCanvasElement): WebGLContextLike | null {
   try {
+    // Skip hardware MSAA when the native DPR is high enough that supersampling
+    // already suppresses aliasing.  Saves significant fill cost on high-DPI panels.
+    const needsAA = (window.devicePixelRatio || 1) < 1.5;
     const attributes: WebGLContextAttributes = {
       alpha: false,
-      antialias: true,
+      antialias: needsAA,
       depth: true,
       stencil: false,
       premultipliedAlpha: true,
@@ -81,10 +84,11 @@ export class Renderer {
     let renderer: WebGLRenderer | null = null;
     if (context) {
       try {
+        const needsAA = (window.devicePixelRatio || 1) < 1.5;
         renderer = new WebGLRenderer({
           canvas,
           context,
-          antialias: true,
+          antialias: needsAA,
           alpha: false,
           powerPreference: "high-performance",
         });
@@ -109,7 +113,7 @@ export class Renderer {
       this.renderer.toneMapping = ACESFilmicToneMapping;
       this.renderer.toneMappingExposure = 1.32;
       this.renderer.shadowMap.enabled = true;
-      this.renderer.shadowMap.type = PCFSoftShadowMap;
+      this.renderer.shadowMap.type = PCFShadowMap;
       this.renderer.shadowMap.autoUpdate = false;
       this.renderer.shadowMap.needsUpdate = true;
       this.renderer.info.autoReset = false;
@@ -242,6 +246,21 @@ export class Renderer {
     this.renderer.clearDepth();
     this.renderer.render(viewModelScene, viewModelCamera);
     this.renderer.autoClear = prevAutoClear;
+  }
+
+  async compileSceneAsync(
+    worldScene: Scene,
+    worldCamera: PerspectiveCamera,
+    viewModelScene: Scene | null,
+    viewModelCamera: PerspectiveCamera | null,
+    renderViewModel: boolean,
+  ): Promise<void> {
+    if (!this.renderer) return;
+
+    await this.renderer.compileAsync(worldScene, worldCamera);
+    if (renderViewModel && viewModelScene && viewModelCamera) {
+      await this.renderer.compileAsync(viewModelScene, viewModelCamera);
+    }
   }
 
   getWebGLRenderer(): WebGLRenderer | null {

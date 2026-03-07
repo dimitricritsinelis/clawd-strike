@@ -38,6 +38,13 @@ export class DamageNumbers {
     mountEl.append(this.root);
   }
 
+  prewarm(count = 1): void {
+    const targetCount = Math.max(0, Math.ceil(count));
+    while (this.freeEls.length < targetCount) {
+      this.freeEls.push(document.createElement("div"));
+    }
+  }
+
   /**
    * Spawn a floating damage number at a 3D world position.
    * @param worldPos  3D position (enemy hit point)
@@ -140,6 +147,9 @@ export class DamageNumbers {
       entry.el.remove();
     }
     this.entries.length = 0;
+    for (const el of this.freeEls) {
+      el.remove();
+    }
     this.freeEls.length = 0;
     this.root.remove();
   }

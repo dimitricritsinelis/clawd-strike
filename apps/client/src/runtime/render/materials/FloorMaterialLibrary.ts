@@ -145,6 +145,7 @@ function parseManifest(value: unknown): FloorMaterialEntry[] {
 
 export class FloorMaterialLibrary {
   private static readonly textureCache = new Map<string, Promise<Texture>>();
+  private static readonly resolvedTextureCache = new Map<string, Texture>();
 
   private readonly materialsById = new Map<string, FloorMaterialEntry>();
   private readonly textureLoader = new TextureLoader();
@@ -188,18 +189,18 @@ export class FloorMaterialLibrary {
     const seenUrls = new Set<string>();
     const preloadTasks: Promise<Texture>[] = [];
 
-    const enqueueTexture = (relativeOrAbsoluteUrl: string, colorSpace: Texture["colorSpace"]): void => {
+    const enqueueTexture = (relativeOrAbsoluteUrl: string, colorSpace: Texture["colorSpace"], aniso: number): void => {
       const resolvedUrl = this.resolveTextureUrl(relativeOrAbsoluteUrl);
       if (seenUrls.has(resolvedUrl)) return;
       seenUrls.add(resolvedUrl);
-      preloadTasks.push(this.loadTexture(relativeOrAbsoluteUrl, colorSpace));
+      preloadTasks.push(this.loadTexture(relativeOrAbsoluteUrl, colorSpace, aniso));
     };
 
     for (const entry of this.materialsById.values()) {
       const maps = resolveTextureSetForQuality(entry.textures, quality);
-      enqueueTexture(maps.albedo, SRGBColorSpace);
-      enqueueTexture(maps.normal, NoColorSpace);
-      enqueueTexture(maps.arm, NoColorSpace);
+      enqueueTexture(maps.albedo, SRGBColorSpace, 8);
+      enqueueTexture(maps.normal, NoColorSpace, 1);
+      enqueueTexture(maps.arm, NoColorSpace, 1);
     }
 
     await Promise.all(preloadTasks);
@@ -224,7 +225,9 @@ export class FloorMaterialLibrary {
     material.userData.floorAlbedoGamma = albedoGamma;
     material.userData.floorDustStrength = dustStrength;
 
-    void this.applyMaps(material, entry, maps);
+    if (!this.applyResolvedMaps(material, entry, maps)) {
+      void this.applyMaps(material, entry, maps);
+    }
     return material;
   }
 
@@ -247,27 +250,58 @@ export class FloorMaterialLibrary {
   ): Promise<void> {
     try {
       const [albedoTex, normalTex, armTex] = await Promise.all([
-        this.loadTexture(maps.albedo, SRGBColorSpace),
-        this.loadTexture(maps.normal, NoColorSpace),
-        this.loadTexture(maps.arm, NoColorSpace),
+        this.loadTexture(maps.albedo, SRGBColorSpace, 8),
+        this.loadTexture(maps.normal, NoColorSpace, 1),
+        this.loadTexture(maps.arm, NoColorSpace, 1),
       ]);
 
-      material.map = albedoTex;
-      material.normalMap = normalTex;
-      material.aoMap = armTex;
-      material.aoMapIntensity = entry.aoIntensity ?? 0.7;
-      material.roughnessMap = armTex;
-      material.metalnessMap = armTex;
-      material.roughness = entry.roughness ?? 0.96;
-      material.metalness = 0;
-      material.needsUpdate = true;
+      this.assignMaps(material, entry, albedoTex, normalTex, armTex);
     } catch (error) {
       const detail = error instanceof Error ? error.message : String(error);
       console.warn(`[floors] failed to load PBR floor textures: ${detail}`);
     }
   }
 
-  private loadTexture(url: string, colorSpace: Texture["colorSpace"]): Promise<Texture> {
+  private applyResolvedMaps(
+    material: MeshStandardMaterial,
+    entry: FloorMaterialEntry,
+    maps: FloorTextureSet,
+  ): boolean {
+    const albedoTex = this.getResolvedTexture(maps.albedo);
+    const normalTex = this.getResolvedTexture(maps.normal);
+    const armTex = this.getResolvedTexture(maps.arm);
+    if (!albedoTex || !normalTex || !armTex) {
+      return false;
+    }
+
+    this.assignMaps(material, entry, albedoTex, normalTex, armTex);
+    return true;
+  }
+
+  private getResolvedTexture(relativeOrAbsoluteUrl: string): Texture | null {
+    const resolvedUrl = this.resolveTextureUrl(relativeOrAbsoluteUrl);
+    return FloorMaterialLibrary.resolvedTextureCache.get(resolvedUrl) ?? null;
+  }
+
+  private assignMaps(
+    material: MeshStandardMaterial,
+    entry: FloorMaterialEntry,
+    albedoTex: Texture,
+    normalTex: Texture,
+    armTex: Texture,
+  ): void {
+    material.map = albedoTex;
+    material.normalMap = normalTex;
+    material.aoMap = armTex;
+    material.aoMapIntensity = entry.aoIntensity ?? 0.7;
+    material.roughnessMap = armTex;
+    material.metalnessMap = armTex;
+    material.roughness = entry.roughness ?? 0.96;
+    material.metalness = 0;
+    material.needsUpdate = true;
+  }
+
+  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 8): Promise<Texture> {
     const resolvedUrl = this.resolveTextureUrl(url);
     let promise = FloorMaterialLibrary.textureCache.get(resolvedUrl);
     if (!promise) {
@@ -275,11 +309,13 @@ export class FloorMaterialLibrary {
         texture.colorSpace = colorSpace;
         texture.wrapS = RepeatWrapping;
         texture.wrapT = RepeatWrapping;
-        texture.anisotropy = 8;
+        texture.anisotropy = aniso;
         texture.needsUpdate = true;
+        FloorMaterialLibrary.resolvedTextureCache.set(resolvedUrl, texture);
         return texture;
       }).catch((error: unknown) => {
         FloorMaterialLibrary.textureCache.delete(resolvedUrl);
+        FloorMaterialLibrary.resolvedTextureCache.delete(resolvedUrl);
         throw error;
       });
       FloorMaterialLibrary.textureCache.set(resolvedUrl, promise);

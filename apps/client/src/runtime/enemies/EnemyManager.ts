@@ -35,6 +35,10 @@ const WAVE_RESPAWN_DELAY_S = 5.0;
 const SCORE_IMPROVEMENT_THRESHOLD = 0.75;
 const LONG_SIGHT_OVERWATCH_RANGE_M = 18;
 
+/** Hunt pressure: forces increasingly aggressive behavior over time to prevent stalling. */
+const HUNT_ACTIVATION_S = 45;
+const HUNT_FULL_S = 180;
+
 const STATE_COMMIT_S: Record<EnemyState, number> = {
   HOLD: 1.0,
   OVERWATCH: 1.0,
@@ -445,6 +449,7 @@ export class EnemyManager {
     this.targetsScratch.length = targetCount;
 
     const tierProfile = resolveEnemyTierProfile(this.blackboard.currentTier);
+    const huntPressure = Math.min(1.0, Math.max(0, (this.waveElapsedS - HUNT_ACTIVATION_S) / (HUNT_FULL_S - HUNT_ACTIVATION_S)));
     const laneAssignments = new Map<TacticalLane, number>([
       ["west", 0],
       ["main", 0],
@@ -456,7 +461,7 @@ export class EnemyManager {
     const onFootstep = this.weaponAudio ? this.handleFootstep : undefined;
     for (const controller of this.controllers) {
       if (controller.isDead()) continue;
-      const directive = this.buildDirective(controller, playerTarget, worldColliders, tierProfile, laneAssignments);
+      const directive = this.buildDirective(controller, playerTarget, worldColliders, tierProfile, laneAssignments, huntPressure);
       this.lastDirectiveByEnemyId.set(controller.id, directive);
       if (directive.targetNodeId) {
         this.blackboard.occupiedNodeIds.set(directive.targetNodeId, controller.id);
@@ -532,11 +537,17 @@ export class EnemyManager {
     worldColliders: WorldColliders,
     tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
     laneAssignments: Map<TacticalLane, number>,
+    huntPressure: number,
   ): EnemyDirective {
     const role = this.blackboard.assignedRoleByEnemyId.get(controller.id) ?? "rifler";
     const roleRank = this.blackboard.roleRankByEnemyId.get(controller.id) ?? 0;
+    const effectiveActiveFlankers = Math.max(
+      tierProfile.activeFlankers,
+      huntPressure >= 0.25 ? 1 : 0,
+      huntPressure >= 0.5 ? 2 : 0,
+    );
     const activeRole: EnemyRole =
-      role === "flanker" && roleRank >= tierProfile.activeFlankers
+      role === "flanker" && roleRank >= effectiveActiveFlankers
         ? "rifler"
         : role;
 
@@ -562,7 +573,7 @@ export class EnemyManager {
     )
       ? rawKnowledge
       : null;
-    const knowledge = hasDirectSight
+    let knowledge = hasDirectSight
       ? {
           x: playerTarget.position.x,
           y: playerTarget.position.y,
@@ -572,10 +583,21 @@ export class EnemyManager {
         }
       : sharedKnowledge;
 
+    // Synthetic hunt knowledge: force bots to converge even without natural detection
+    if (!knowledge && huntPressure > 0) {
+      knowledge = {
+        x: playerTarget.position.x,
+        y: playerTarget.position.y,
+        z: playerTarget.position.z,
+        timeS: this.waveElapsedS,
+        kind: "visual" as const,
+      };
+    }
+
     let selection: NodeSelection;
     if (controller.isReloading() || (tierProfile.mandatoryReloadFallback && controller.getMag() <= 6 && controller.getReserve() > 0)) {
       selection = this.pickFallbackNode(controllerPos.x, controllerPos.z, knowledge);
-    } else if (hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker" && currentNode) {
+    } else if (huntPressure < 0.5 && hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker" && currentNode) {
       selection = { node: currentNode, score: 999 };
     } else {
       selection = this.pickRoleNode(
@@ -603,10 +625,12 @@ export class EnemyManager {
     const atTargetNode = !targetNode || distanceM(controllerPos.x, controllerPos.z, targetNode.x, targetNode.z) <= 1.2;
     const laneBuddyCount = targetNode ? laneAssignments.get(targetNode.lane) ?? 0 : 0;
 
+    const effectiveCollapse = tierProfile.collapse || huntPressure >= 0.66;
+
     if (controller.isReloading() || (tierProfile.mandatoryReloadFallback && controller.getMag() <= 6 && controller.getReserve() > 0)) {
       state = atTargetNode ? "RELOAD" : "FALLBACK";
       debugReason = "reload fallback";
-    } else if (hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker") {
+    } else if (huntPressure < 0.5 && hasDirectSight && playerDistance > LONG_SIGHT_OVERWATCH_RANGE_M && activeRole !== "flanker") {
       state = atTargetNode ? "OVERWATCH" : "ROTATE";
       allowFire = atTargetNode;
       debugReason = "direct long sight overwatch";
@@ -625,7 +649,7 @@ export class EnemyManager {
       debugReason = hasDirectSight ? "anchor long hold" : "anchor hold";
     } else if (activeRole === "roamer") {
       state = atTargetNode
-        ? (hasDirectSight ? "OVERWATCH" : tierProfile.collapse ? "PRESSURE" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : "HOLD")
+        ? (hasDirectSight ? "OVERWATCH" : effectiveCollapse ? "PRESSURE" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : "HOLD")
         : knowledge.kind === "footstep"
           ? "INVESTIGATE"
           : "ROTATE";
@@ -633,7 +657,7 @@ export class EnemyManager {
       debugReason = hasDirectSight ? "roamer direct hold" : "roamer crossfire";
     } else {
       state = atTargetNode
-        ? (hasDirectSight ? "OVERWATCH" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : tierProfile.collapse ? "PRESSURE" : "HOLD")
+        ? (hasDirectSight ? "OVERWATCH" : tierProfile.pairSwing && laneBuddyCount > 0 ? "PEEK" : effectiveCollapse ? "PRESSURE" : "HOLD")
         : knowledge.kind === "footstep"
           ? "INVESTIGATE"
           : "ROTATE";
@@ -663,6 +687,14 @@ export class EnemyManager {
           debugReason = `${debugReason} | state commit`;
         }
       }
+    }
+
+    // Full hunt mode: after HUNT_FULL_S, every bot with knowledge pushes aggressively.
+    // Placed after hysteresis so hunt override is the final authority and cannot be reverted.
+    if (huntPressure >= 1.0 && knowledge && state !== "RELOAD" && state !== "FALLBACK") {
+      state = hasDirectSight ? "PRESSURE" : "INVESTIGATE";
+      allowFire = true;
+      debugReason = "full hunt mode";
     }
 
     const path = findTacticalPath(this.tacticalGraph, currentNode?.id ?? null, targetNode?.id ?? null);

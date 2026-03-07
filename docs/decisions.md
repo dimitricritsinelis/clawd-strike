@@ -7,8 +7,8 @@ Last updated: 2026-03-07
 
 # Durable Decisions
 
-## DEC-001: Six-file authority model
-- Active repo-owned Markdown is limited to `README.md`, `AGENTS.md`, `progress.md`, `docs/decisions.md`, `docs/map-design/README.md`, and public `apps/client/public/skills.md`.
+## DEC-001: Five-file authority model
+- Active repo-owned Markdown is limited to `README.md`, `AGENTS.md`, `progress.md`, `docs/decisions.md`, and public `apps/client/public/skills.md`.
 - `AGENTS.md` is the only normative internal implementation doc.
 - Tool shims such as `CLAUDE.md` may point to the authority files, but they may not restate or redefine policy.
 
@@ -20,6 +20,8 @@ Last updated: 2026-03-07
 
 ## DEC-003: Map authority and runtime generation
 - Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
+- `docs/map-design/shots.json` owns the runtime review shot contract.
+- Map-design authority lives in structured files and approved refs, not prose packet docs.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
 - Do not hand-maintain drift in `apps/client/public/maps/`.
 
@@ -29,10 +31,26 @@ Last updated: 2026-03-07
 
 ## DEC-005: Validation boundary
 - `pnpm qa:completion` is required for player-visible map or visual changes.
-- `pnpm verify:skills-contract` and `pnpm smoke:no-context` are required when the public contract or its runtime-facing surface changes.
+- If a task changes `/skills.md`, stable public selectors, agent-visible browser payload/state, or the documented no-context retry flow, also run `pnpm verify:skills-contract` and `pnpm smoke:no-context` regardless of the primary change tag.
+- Screenshot and reference inspection are reserved for visual-signoff surfaces rather than logic-only gameplay, bot, perf, tooling, or contract work unless appearance intentionally changed.
 - Current CI is narrower than local completion policy and does not replace these local gates.
 
 ## DEC-006: Play-facing quality bar
 - Use Dust II-level production polish as the benchmark for play-facing work, without copying its layout.
 - Favor readability over clutter, honest critique over comfort, and practical high-impact changes over vague ambition.
 - Separate quick wins from larger rework when that distinction helps prioritization.
+
+## DEC-007: Agent tooling stays out of the repo root surface
+- Repo-local agent tooling is not game runtime code and is not part of the public `apps/client/public/skills.md` contract.
+- Keep agent-only deploy or debug bundles outside the repo root unless agent-driven deploy or debug becomes an explicit repo workflow requirement.
+
+## DEC-008: Hunt pressure prevents indefinite round stalling
+- Bot behavior includes a "hunt pressure" system (`HUNT_ACTIVATION_S = 45`, `HUNT_FULL_S = 180`) that forces progressively more aggressive behavior over time within a round.
+- Hunt pressure is independent of tier/difficulty — it ensures that no round can stall indefinitely regardless of how low the current difficulty is.
+- Effects ramp linearly from 45s to 180s: OVERWATCH engagement range shrinks (18m → 1.8m), flankers activate regardless of tier, roamers/riflers enter PRESSURE via forced collapse, and at 180s all bots enter full hunt mode.
+- This guarantees that idle or struggling players are eventually killed, which is required for both human gameplay feel and RL agent training signal.
+
+## DEC-009: Layout reference catalog is generated evidence, not authority
+- Fine-grained map naming authority for areas, frontages, walls, and corner callouts lives in `docs/map-design/specs/map_spec.json` under `layout_reference`.
+- The human-readable catalog is generated into `artifacts/bazaar-map-layout-reference.md` and `artifacts/bazaar-map-layout-reference.svg` with `pnpm --filter @clawd-strike/client gen:layout-reference`.
+- The generated catalog is reference evidence only. It must never outrank `docs/map-design/specs/map_spec.json`, `docs/map-design/shots.json`, or approved refs.

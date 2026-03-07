@@ -1,6 +1,7 @@
 import { PerspectiveCamera, Vector3 } from "three";
 import { Game } from "./game/Game";
 import { PerfHud } from "./debug/PerfHud";
+import { setEnemyVisualModelStreamingEnabled } from "./enemies/EnemyVisual";
 import { PointerLockController } from "./input/PointerLock";
 import { loadMap, RuntimeMapLoadError } from "./map/loadMap";
 import { designToWorldVec3 } from "./map/coordinateTransforms";
@@ -46,11 +47,36 @@ const SCORE_RULESET_KEY = "wave-score-v1-k10-hs2_5";
 const INTERNAL_DEBUG_HOSTNAMES = new Set(["127.0.0.1", "localhost", "::1", "[::1]"]);
 const AGENT_VISIBLE_RENDER_INTERVAL_MS = 1000 / 30;
 const AGENT_BACKGROUND_STEP_INTERVAL_MS = 500;
+const TEXTURE_STABLE_WINDOW_MS = 500;
 
 type ScenePerfSnapshot = {
   materials: number;
   instancedMeshes: number;
   instancedInstances: number;
+};
+
+type QueuedCombatFeedbackEvent =
+  | {
+      type: "hit";
+      isHeadshot: boolean;
+    }
+  | {
+      type: "damage-number";
+      worldPos: { x: number; y: number; z: number };
+      damage: number;
+      isHeadshot: boolean;
+    }
+  | {
+      type: "kill";
+      enemyName: string;
+      isHeadshot: boolean;
+    };
+
+type DebugCombatFeedbackPayload = {
+  isHeadshot?: boolean;
+  didKill?: boolean;
+  damage?: number;
+  enemyName?: string;
 };
 
 function collectScenePerfSnapshot(worldScene: { traverse: (cb: (node: unknown) => void) => void }, viewModelScene: { traverse: (cb: (node: unknown) => void) => void } | null): ScenePerfSnapshot {
@@ -129,6 +155,19 @@ export type RuntimeTextState = {
       height: number;
     };
     warnings: string[];
+  };
+  boot: {
+    warmupTimedOut: boolean;
+    performanceSafeFallback: boolean;
+    enemyVisualsReady: boolean;
+    viewModelPrewarmed: boolean;
+    hiddenWarmupRenderDone: boolean;
+    precompiled: boolean;
+    readyAtMs: number | null;
+    readyTextureCount: number | null;
+    textureStableAtMs: number | null;
+    stableTextureCount: number | null;
+    lateTextureGrowth: number;
   };
   view: {
     camera: {
@@ -303,6 +342,9 @@ export type RuntimeTextState = {
     materials: number;
     instancedMeshes: number;
     instancedInstances: number;
+    combatFeedbackQueue: number;
+    lastCombatFeedbackMs: number;
+    lastKillFeedbackMs: number;
   };
 };
 
@@ -576,6 +618,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     playerName,
   };
   const warmupAssets = options.warmup ?? null;
+  const warmupTimedOut = warmupAssets?.timedOut === true;
+  const performanceSafeFallback = warmupTimedOut;
+  const bootStartedAtMs = performance.now();
 
   const warningOverlay = createOverlay(runtimeRoot, {
     left: "16px",
@@ -618,6 +663,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const damageNumbers = new DamageNumbers(runtimeRoot);
   const pauseMenu = new PauseMenu(runtimeRoot);
   const fadeOverlay = new FadeOverlay(runtimeRoot);
+  killFeed.prewarm(4);
+  damageNumbers.prewarm(4);
 
   let mapLoaded = false;
   let mapErrorMessage: string | null = null;
@@ -636,15 +683,20 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     errorOverlay.style.display = "block";
   }
 
+  setEnemyVisualModelStreamingEnabled(
+    !performanceSafeFallback && (warmupAssets?.enemyVisualsReady ?? true),
+  );
+
   const renderer = new Renderer(runtimeRoot, {
     highVis: runtimeParams.highVis,
     lightingPreset: runtimeParams.lightingPreset,
-    ao: runtimeParams.ao,
+    ao: performanceSafeFallback ? false : runtimeParams.ao,
   });
   let disposed = false;
   let shadowWarmupFrames = 0;
   const weaponAudio = new WeaponAudio();
-  const viewModelEnabled = runtimeParams.vm;
+  weaponAudio.prewarmCombatFeedback();
+  const viewModelEnabled = runtimeParams.vm && !performanceSafeFallback;
   let viewModel: ViewModelInstance | null = warmupAssets?.viewModel ?? null;
   let viewModelVisible = false;
 
@@ -657,7 +709,17 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     warningOverlay.style.display = "block";
   };
 
+  if (performanceSafeFallback) {
+    appendWarning("Runtime warmup timed out. Using performance-safe fallback before spawn.");
+  }
+  if (warmupAssets && !warmupAssets.enemyVisualsReady) {
+    appendWarning("Enemy model warmup failed. Using fallback enemy meshes to avoid late asset streaming.");
+  }
+
   let resolvedFloorMode = PBR_FLOORS_ENABLED ? runtimeParams.floorMode : "blockout";
+  if (performanceSafeFallback) {
+    resolvedFloorMode = "blockout";
+  }
   let floorMaterials: FloorMaterialLibrary | null = null;
   if (PBR_FLOORS_ENABLED && resolvedFloorMode === "pbr") {
     try {
@@ -673,11 +735,17 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   }
 
   let resolvedWallMode = PBR_WALLS_ENABLED ? runtimeParams.wallMode : "blockout";
+  if (performanceSafeFallback) {
+    resolvedWallMode = "blockout";
+  }
   let wallMaterials: WallMaterialLibrary | null = null;
   if (PBR_WALLS_ENABLED && resolvedWallMode === "pbr") {
     try {
-      wallMaterials = await WallMaterialLibrary.load(WALL_MANIFEST_URL);
+      const wallQuality = runtimeParams.floorQuality === "1k" ? "1k" : "2k";
+      wallMaterials = warmupAssets?.wallMaterials ?? await WallMaterialLibrary.load(WALL_MANIFEST_URL);
+      await wallMaterials.preloadAllTextures(wallQuality);
     } catch (error) {
+      wallMaterials = null;
       resolvedWallMode = "blockout";
       appendWarning(
         `Failed to load wall PBR pack. Falling back to blockout walls.\n${error instanceof Error ? error.message : String(error)}`,
@@ -717,6 +785,96 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       viewModel = null;
     }
   }
+
+  const bootTelemetry = {
+    warmupTimedOut,
+    performanceSafeFallback,
+    enemyVisualsReady: warmupAssets?.enemyVisualsReady ?? false,
+    viewModelPrewarmed: Boolean(warmupAssets?.viewModel),
+    hiddenWarmupRenderDone: false,
+    precompiled: false,
+    readyAtMs: null as number | null,
+    readyTextureCount: null as number | null,
+    textureStableAtMs: null as number | null,
+    stableTextureCount: null as number | null,
+    lateTextureGrowth: 0,
+  };
+  let trackedBootTextureCount: number | null = null;
+  let lastBootTextureChangeAtMs: number | null = null;
+
+  const markBootReady = (): void => {
+    const now = performance.now();
+    const perfInfo = renderer.getPerfInfo();
+    bootTelemetry.readyAtMs = now - bootStartedAtMs;
+    bootTelemetry.readyTextureCount = perfInfo.textures;
+    if (bootTelemetry.textureStableAtMs === null) {
+      bootTelemetry.textureStableAtMs = bootTelemetry.readyAtMs;
+      bootTelemetry.stableTextureCount = perfInfo.textures;
+    }
+    trackedBootTextureCount = perfInfo.textures;
+    lastBootTextureChangeAtMs = now;
+  };
+
+  const updateBootTextureTelemetry = (): void => {
+    if (bootTelemetry.readyAtMs === null || bootTelemetry.textureStableAtMs !== null) return;
+
+    const now = performance.now();
+    const textureCount = renderer.getPerfInfo().textures;
+    if (trackedBootTextureCount === null) {
+      trackedBootTextureCount = textureCount;
+      lastBootTextureChangeAtMs = now;
+      return;
+    }
+
+    if (textureCount !== trackedBootTextureCount) {
+      if (textureCount > trackedBootTextureCount) {
+        bootTelemetry.lateTextureGrowth += textureCount - trackedBootTextureCount;
+      }
+      trackedBootTextureCount = textureCount;
+      lastBootTextureChangeAtMs = now;
+    }
+
+    if (lastBootTextureChangeAtMs !== null && now - lastBootTextureChangeAtMs >= TEXTURE_STABLE_WINDOW_MS) {
+      bootTelemetry.textureStableAtMs = now - bootStartedAtMs;
+      bootTelemetry.stableTextureCount = trackedBootTextureCount;
+    }
+  };
+
+  const waitForHiddenTextureStability = async (): Promise<void> => {
+    const stableWindowStartMs = performance.now();
+    let lastTextureCount = -1;
+    let lastTextureChangeAtMs = stableWindowStartMs;
+
+    while (performance.now() - stableWindowStartMs <= 2_000) {
+      renderer.renderWithViewModel(
+        game.scene,
+        game.camera,
+        viewModel?.viewModelScene ?? null,
+        viewModel?.viewModelCamera ?? null,
+        viewModelVisible,
+      );
+
+      const textureCount = renderer.getPerfInfo().textures;
+      const now = performance.now();
+      if (textureCount !== lastTextureCount) {
+        lastTextureCount = textureCount;
+        lastTextureChangeAtMs = now;
+      }
+      if (now - lastTextureChangeAtMs >= TEXTURE_STABLE_WINDOW_MS) {
+        bootTelemetry.textureStableAtMs = now - bootStartedAtMs;
+        bootTelemetry.stableTextureCount = textureCount;
+        return;
+      }
+
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => resolve());
+      });
+    }
+
+    const perfInfo = renderer.getPerfInfo();
+    bootTelemetry.textureStableAtMs = performance.now() - bootStartedAtMs;
+    bootTelemetry.stableTextureCount = perfInfo.textures;
+  };
 
   const resolvedShot = mapAssets ? resolveShot(mapAssets.shots, runtimeParams.shot) : null;
   shotActive = resolvedShot?.active ?? false;
@@ -782,21 +940,14 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           }
           waveStats.shotsHit++;
           runStats.shotsHit++;
-          if (isHeadshot) {
-            waveStats.headshots++;
-            runStats.headshots++;
-            scoreHud.addHeadshot();
-          }
           game.applyDamageToEnemy(enemyHit.enemyId, damage, isHeadshot);
-          hitMarker.trigger(isHeadshot);
-          weaponAudio.playHitThud();
-          // Floating damage number at hit point
-          damageNumbers.spawn(
-            { x: enemyHit.hitX, y: enemyHit.hitY, z: enemyHit.hitZ },
-            game.camera,
+          enqueueCombatFeedback({ type: "hit", isHeadshot });
+          enqueueCombatFeedback({
+            type: "damage-number",
+            worldPos: { x: enemyHit.hitX, y: enemyHit.hitY, z: enemyHit.hitZ },
             damage,
             isHeadshot,
-          );
+          });
         }
       }
     },
@@ -835,11 +986,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const TOTAL_ENEMIES = 9;
   scoreHud.setTotal(TOTAL_ENEMIES);
   game.setEnemyKillCallback((name, isHeadshot) => {
-    killFeed.addKill(runtimeParams.playerName, name, isHeadshot);
-    weaponAudio.playKillDing();
-    scoreHud.addKill();
-    waveStats.kills++;
-    runStats.kills++;
+    enqueueCombatFeedback({
+      type: "kill",
+      enemyName: name,
+      isHeadshot,
+    });
   });
 
   // New wave → keep run score, but reset per-wave breakdowns and timing.
@@ -888,7 +1039,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   if (mapAssets) {
     game.setBlockoutSpec(mapAssets.blockout);
     game.setAnchorsSpec(mapAssets.anchors);
-    shadowWarmupFrames = 3;
+    shadowWarmupFrames = 0;
   }
   if (resolvedShot?.cameraPose) {
     game.setCameraPose(resolvedShot.cameraPose);
@@ -924,6 +1075,25 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     viewModel?.viewModelCamera ?? null,
     viewModelVisible,
   );
+  bootTelemetry.hiddenWarmupRenderDone = true;
+
+  try {
+    await renderer.compileSceneAsync(
+      game.scene,
+      game.camera,
+      viewModel?.viewModelScene ?? null,
+      viewModel?.viewModelCamera ?? null,
+      viewModelVisible,
+    );
+    bootTelemetry.precompiled = true;
+  } catch (error) {
+    appendWarning(
+      `Shader precompile failed. Continuing without compile warmup.\n${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
+
+  await waitForHiddenTextureStability();
+  markBootReady();
 
   let pointerLock: PointerLockController | null = null;
   if (!inputFrozen && runtimeParams.controlMode === "human") {
@@ -1007,6 +1177,83 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
     pendingAgentActions.length = 0;
   };
+  const combatFeedbackQueue: QueuedCombatFeedbackEvent[] = [];
+  let lastCombatFeedbackMs = 0;
+  let lastKillFeedbackMs = 0;
+  const debugFeedbackForwardScratch = new Vector3();
+  const enqueueCombatFeedback = (event: QueuedCombatFeedbackEvent): void => {
+    combatFeedbackQueue.push(event);
+  };
+  const enqueueDebugCombatFeedback = (payload: DebugCombatFeedbackPayload): void => {
+    const isHeadshot = payload.isHeadshot === true;
+    const didKill = payload.didKill === true;
+    const damage = Math.max(0, payload.damage ?? (isHeadshot ? 100 : 25));
+    const enemyName = payload.enemyName?.trim() || "DebugTarget";
+
+    game.camera.getWorldDirection(debugFeedbackForwardScratch);
+    const worldPos = {
+      x: game.camera.position.x + debugFeedbackForwardScratch.x * 8,
+      y: game.camera.position.y + debugFeedbackForwardScratch.y * 8,
+      z: game.camera.position.z + debugFeedbackForwardScratch.z * 8,
+    };
+
+    enqueueCombatFeedback({ type: "hit", isHeadshot });
+    enqueueCombatFeedback({
+      type: "damage-number",
+      worldPos,
+      damage,
+      isHeadshot,
+    });
+    if (didKill) {
+      enqueueCombatFeedback({
+        type: "kill",
+        enemyName,
+        isHeadshot,
+      });
+    }
+  };
+  const drainCombatFeedback = (): void => {
+    if (combatFeedbackQueue.length === 0) {
+      lastCombatFeedbackMs = 0;
+      lastKillFeedbackMs = 0;
+      return;
+    }
+
+    const queued = combatFeedbackQueue.splice(0, combatFeedbackQueue.length);
+    const feedbackStartedAtMs = performance.now();
+    let killFeedbackMs = 0;
+
+    for (const event of queued) {
+      switch (event.type) {
+        case "hit": {
+          hitMarker.trigger(event.isHeadshot);
+          weaponAudio.playHitThud();
+          break;
+        }
+        case "damage-number": {
+          damageNumbers.spawn(event.worldPos, game.camera, event.damage, event.isHeadshot);
+          break;
+        }
+        case "kill": {
+          const killStartedAtMs = performance.now();
+          killFeed.addKill(runtimeParams.playerName, event.enemyName, event.isHeadshot);
+          weaponAudio.playKillDing();
+          scoreHud.recordKill({ isHeadshot: event.isHeadshot });
+          waveStats.kills++;
+          runStats.kills++;
+          if (event.isHeadshot) {
+            waveStats.headshots++;
+            runStats.headshots++;
+          }
+          killFeedbackMs += performance.now() - killStartedAtMs;
+          break;
+        }
+      }
+    }
+
+    lastCombatFeedbackMs = performance.now() - feedbackStartedAtMs;
+    lastKillFeedbackMs = killFeedbackMs;
+  };
 
   const state = (): RuntimeTextState => {
     const yawPitch = game.getYawPitchDeg();
@@ -1058,6 +1305,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           height: renderer.getHeight(),
         },
         warnings: warningMessages,
+      },
+      boot: {
+        ...bootTelemetry,
       },
       // Include explicit camera data so screenshot review gates can assert framing consistency.
       // This prevents top-down/floor-only compare-shot regressions from passing unnoticed.
@@ -1177,6 +1427,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         materials: scenePerfSnapshot.materials,
         instancedMeshes: scenePerfSnapshot.instancedMeshes,
         instancedInstances: scenePerfSnapshot.instancedInstances,
+        combatFeedbackQueue: combatFeedbackQueue.length,
+        lastCombatFeedbackMs,
+        lastKillFeedbackMs,
       },
     };
   };
@@ -1229,6 +1482,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       game.setFreezeInput(false);
     }
     game.update(dt);
+    drainCombatFeedback();
 
     const aliveNow = !game.getIsDead();
     if (!aliveNow && wasAlive) {
@@ -1255,6 +1509,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       }
     }
     wasAlive = aliveNow;
+    updateBootTextureTelemetry();
 
     // ── Health tracking & hit vignette ───────────────────────────────────────
     const currentHealth = game.getPlayerHealth();
@@ -1333,6 +1588,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     fadeOverlay.update(dt);
     hitVignette.update(dt);
     deathScreen.update(dt);
+    scoreHud.update(dt);
     killFeed.update(dt);
     hitMarker.update(dt);
     damageNumbers.update(dt);
@@ -1510,6 +1766,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       renderFrame: runtimeParams.controlMode !== "agent" || document.visibilityState === "visible",
     });
   };
+  if (isInternalDebugSurface) {
+    window.__debug_emit_combat_feedback = (payload: DebugCombatFeedbackPayload) => {
+      enqueueDebugCombatFeedback(payload);
+    };
+  }
 
   const teardown = (): void => {
     if (disposed) return;
@@ -1525,6 +1786,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.agent_observe;
     delete window.render_game_to_text;
     delete window.advanceTime;
+    delete window.__debug_emit_combat_feedback;
 
     pointerLock?.dispose();
     game.teardown();

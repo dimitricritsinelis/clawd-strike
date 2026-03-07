@@ -99,6 +99,7 @@ function parseEntry(value: unknown, index: number): WallMaterialEntry {
 
 export class WallMaterialLibrary {
   private static readonly textureCache = new Map<string, Promise<Texture>>();
+  private static readonly resolvedTextureCache = new Map<string, Texture>();
 
   private readonly materialIds: string[] = [];
   private readonly materialsById = new Map<string, WallMaterialEntry>();
@@ -139,6 +140,27 @@ export class WallMaterialLibrary {
     return entry.tileSizeM;
   }
 
+  async preloadAllTextures(quality: WallTextureQuality): Promise<void> {
+    const seenUrls = new Set<string>();
+    const preloadTasks: Promise<Texture>[] = [];
+
+    const enqueueTexture = (relativeOrAbsoluteUrl: string, colorSpace: Texture["colorSpace"], aniso: number): void => {
+      const resolvedUrl = this.resolveTextureUrl(relativeOrAbsoluteUrl);
+      if (seenUrls.has(resolvedUrl)) return;
+      seenUrls.add(resolvedUrl);
+      preloadTasks.push(this.loadTexture(relativeOrAbsoluteUrl, colorSpace, aniso));
+    };
+
+    for (const entry of this.materialsById.values()) {
+      const maps = entry.textures[quality];
+      enqueueTexture(maps.albedo, SRGBColorSpace, 8);
+      enqueueTexture(maps.normal, NoColorSpace, 1);
+      enqueueTexture(maps.arm, NoColorSpace, 1);
+    }
+
+    await Promise.all(preloadTasks);
+  }
+
   createStandardMaterial(materialId: string, quality: WallTextureQuality): MeshStandardMaterial {
     const entry = this.materialsById.get(materialId);
     if (!entry) throw new Error(`Wall material '${materialId}' not found`);
@@ -152,7 +174,9 @@ export class WallMaterialLibrary {
     });
 
     material.userData.wallAlbedoBoost = entry.albedoBoost ?? 1;
-    void this.applyMaps(material, entry, maps);
+    if (!this.applyResolvedMaps(material, entry, maps)) {
+      void this.applyMaps(material, entry, maps);
+    }
     return material;
   }
 
@@ -165,12 +189,48 @@ export class WallMaterialLibrary {
     entry: WallMaterialEntry,
     maps: WallTextureSet,
   ): Promise<void> {
-    const [albedoTex, normalTex, armTex] = await Promise.all([
-      this.loadTexture(maps.albedo, SRGBColorSpace),
-      this.loadTexture(maps.normal, NoColorSpace),
-      this.loadTexture(maps.arm, NoColorSpace),
-    ]);
+    try {
+      const [albedoTex, normalTex, armTex] = await Promise.all([
+        this.loadTexture(maps.albedo, SRGBColorSpace, 8),
+        this.loadTexture(maps.normal, NoColorSpace, 1),
+        this.loadTexture(maps.arm, NoColorSpace, 1),
+      ]);
 
+      this.assignMaps(material, entry, albedoTex, normalTex, armTex);
+    } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+      console.warn(`[walls] failed to load PBR wall textures: ${detail}`);
+    }
+  }
+
+  private applyResolvedMaps(
+    material: MeshStandardMaterial,
+    entry: WallMaterialEntry,
+    maps: WallTextureSet,
+  ): boolean {
+    const albedoTex = this.getResolvedTexture(maps.albedo);
+    const normalTex = this.getResolvedTexture(maps.normal);
+    const armTex = this.getResolvedTexture(maps.arm);
+    if (!albedoTex || !normalTex || !armTex) {
+      return false;
+    }
+
+    this.assignMaps(material, entry, albedoTex, normalTex, armTex);
+    return true;
+  }
+
+  private getResolvedTexture(relativeOrAbsoluteUrl: string): Texture | null {
+    const resolvedUrl = this.resolveTextureUrl(relativeOrAbsoluteUrl);
+    return WallMaterialLibrary.resolvedTextureCache.get(resolvedUrl) ?? null;
+  }
+
+  private assignMaps(
+    material: MeshStandardMaterial,
+    entry: WallMaterialEntry,
+    albedoTex: Texture,
+    normalTex: Texture,
+    armTex: Texture,
+  ): void {
     material.map = albedoTex;
     material.normalMap = normalTex;
     material.aoMap = armTex;
@@ -180,7 +240,7 @@ export class WallMaterialLibrary {
     material.needsUpdate = true;
   }
 
-  private loadTexture(url: string, colorSpace: Texture["colorSpace"]): Promise<Texture> {
+  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 8): Promise<Texture> {
     const resolvedUrl = this.resolveTextureUrl(url);
     let promise = WallMaterialLibrary.textureCache.get(resolvedUrl);
     if (!promise) {
@@ -188,9 +248,14 @@ export class WallMaterialLibrary {
         texture.colorSpace = colorSpace;
         texture.wrapS = RepeatWrapping;
         texture.wrapT = RepeatWrapping;
-        texture.anisotropy = 8;
+        texture.anisotropy = aniso;
         texture.needsUpdate = true;
+        WallMaterialLibrary.resolvedTextureCache.set(resolvedUrl, texture);
         return texture;
+      }).catch((error: unknown) => {
+        WallMaterialLibrary.textureCache.delete(resolvedUrl);
+        WallMaterialLibrary.resolvedTextureCache.delete(resolvedUrl);
+        throw error;
       });
       WallMaterialLibrary.textureCache.set(resolvedUrl, promise);
     }
