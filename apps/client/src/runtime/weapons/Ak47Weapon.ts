@@ -9,7 +9,7 @@ import {
 } from "./Ak47FireController";
 
 const MAG_CAPACITY = 30;
-const RESERVE_START = 90;
+const RESERVE_START = 120;
 const RELOAD_TIME_S = 1.225;
 
 export type Ak47AmmoSnapshot = {
