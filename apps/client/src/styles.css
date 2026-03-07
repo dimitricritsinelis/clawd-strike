@@ -577,7 +577,7 @@ body {
     right: var(--corner-btn-edge-right-mobile);
   }
   #start .logo-wrap {
-    top: 31%;
+    top: 28%;
   }
   #start .logo-img {
     width: min(98vw, 780px);
@@ -588,19 +588,23 @@ body {
   }
   #start .actions-buttons {
     gap: 18px;
-    top: 75%;
+    top: 64%;
     width: min(420px, calc(100vw - 26px));
   }
   #start .shared-champion-card {
     bottom: 18px;
-    width: min(430px, calc(100vw - 26px));
-    padding: 12px 14px 14px;
+    width: min(380px, calc(100vw - 40px));
+    padding: 10px 12px 12px;
+    gap: 4px;
+  }
+  #start .shared-champion-kicker {
+    font-size: 10px;
   }
   #start .shared-champion-name {
-    font-size: clamp(18px, 4.7vw, 24px);
+    font-size: clamp(16px, 4vw, 20px);
   }
   #start .shared-champion-score {
-    font-size: clamp(16px, 4vw, 22px);
+    font-size: clamp(14px, 3.5vw, 18px);
   }
 
   #start #info-screen .info-screen-art {
