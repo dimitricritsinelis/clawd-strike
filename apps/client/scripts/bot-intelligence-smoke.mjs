@@ -123,6 +123,41 @@ function minimumDistanceToPlayer(state) {
   return best;
 }
 
+function collectSpawnValidationIssues(state, { checkLiveElevation = true } = {}) {
+  const issues = [];
+  for (const enemy of state?.bots?.enemies ?? []) {
+    const spawnValidation = enemy.spawnValidation;
+    if (!spawnValidation) {
+      issues.push(`${enemy.id}:missing-spawn-validation`);
+      continue;
+    }
+    if (!spawnValidation.valid) {
+      issues.push(`${enemy.id}:invalid-spawn`);
+    }
+    if (!spawnValidation.withinPlayableBounds) {
+      issues.push(`${enemy.id}:out-of-bounds`);
+    }
+    if (!spawnValidation.insideExpectedZone) {
+      issues.push(`${enemy.id}:outside-zone`);
+    }
+    if ((spawnValidation.blockingColliderIds ?? []).length > 0) {
+      issues.push(`${enemy.id}:blocked-by-${spawnValidation.blockingColliderIds.join("+")}`);
+    }
+    if (spawnValidation.elevated) {
+      issues.push(`${enemy.id}:spawn-elevated`);
+    }
+    if (checkLiveElevation && Math.abs(enemy.position?.y ?? 0) > 0.05) {
+      issues.push(`${enemy.id}:live-y=${(enemy.position?.y ?? 0).toFixed(3)}`);
+    }
+  }
+  return issues;
+}
+
+function spawnValidationDetail(state) {
+  const issues = collectSpawnValidationIssues(state);
+  return issues.length > 0 ? issues.join(", ") : "ok";
+}
+
 function laneFromX(x) {
   if (x <= 14.5) return "west";
   if (x >= 35.5) return "east";
@@ -624,6 +659,11 @@ try {
       detail: `minDistance=${minimumDistanceToPlayer(t0).toFixed(2)}`,
     },
     {
+      label: "initial spawn footprints stay valid",
+      passed: collectSpawnValidationIssues(t0).length === 0,
+      detail: spawnValidationDetail(t0),
+    },
+    {
       label: "wave 1 stays on tier 1 through 15s",
       passed: t15.bots.tier === 1,
       detail: `tier=${t15.bots.tier} elapsed=${t15.bots.waveElapsedS}`,
@@ -768,6 +808,11 @@ try {
       label: "wave 2 uses adaptive respawn mode under the new tier schedule",
       passed: respawnState.bots.waveNumber === 2 && respawnState.bots.tier === 1 && respawnTelemetry.mode === "adaptive",
       detail: `wave=${respawnState.bots.waveNumber} tier=${respawnState.bots.tier} mode=${respawnTelemetry.mode}`,
+    },
+    {
+      label: "adaptive respawn footprints stay valid",
+      passed: collectSpawnValidationIssues(respawnState).length === 0,
+      detail: spawnValidationDetail(respawnState),
     },
     {
       label: "adaptive respawn keeps the far-distance floor",

@@ -48,6 +48,11 @@ const ANCHOR_TYPES = new Set(["spawn_cover", "cover_cluster", "open_node"]);
 
 type MutableNode = Omit<TacticalNode, "adjacency"> & { adjacency: Set<string> };
 
+const COVER_ANCHOR_STANDOFF_M: Record<"spawn_cover" | "cover_cluster", number> = {
+  spawn_cover: 1.5,
+  cover_cluster: 1.2,
+};
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
@@ -224,6 +229,39 @@ function clampPointToZoneInterior(
   };
 }
 
+function resolveAnchorStandPoint(
+  zone: RuntimeBlockoutZone,
+  anchor: RuntimeAnchor,
+): { x: number; z: number } {
+  const nodeType = anchorToNodeType(anchor);
+  if (nodeType !== "spawn_cover" && nodeType !== "cover_cluster") {
+    return {
+      x: anchor.pos.x,
+      z: anchor.pos.y,
+    };
+  }
+
+  const center = zoneCenter(zone);
+  const rawX = anchor.pos.x;
+  const rawZ = anchor.pos.y;
+  const toCenterX = center.x - rawX;
+  const toCenterZ = center.z - rawZ;
+  const length = Math.hypot(toCenterX, toCenterZ);
+  const dirX = length > 0.0001 ? toCenterX / length : 0;
+  const dirZ = length > 0.0001 ? toCenterZ / length : 1;
+  const inset = resolveEdgeInset(zone);
+  const standOffM = COVER_ANCHOR_STANDOFF_M[nodeType];
+
+  return clampPointToZoneInterior(
+    zone,
+    {
+      x: rawX + dirX * standOffM,
+      z: rawZ + dirZ * standOffM,
+    },
+    inset,
+  );
+}
+
 function resolveTransitionPoints(
   a: RuntimeBlockoutZone,
   b: RuntimeBlockoutZone,
@@ -337,13 +375,14 @@ export function buildTacticalGraph(
     const nodeType = anchorToNodeType(anchor);
     if (!nodeType) continue;
     const scores = scoreAnchor(anchor);
+    const anchorPoint = resolveAnchorStandPoint(zone, anchor);
     const node = createNode({
       id: `anchor:${anchor.id}`,
       zoneId: zone.id,
       lane: laneFromZone(zone),
       nodeType,
-      x: anchor.pos.x,
-      z: anchor.pos.y,
+      x: anchorPoint.x,
+      z: anchorPoint.z,
       coverScore: scores.coverScore,
       flankScore: scores.flankScore,
       exposureYawRad: resolveExposureYawRad(zone, anchor),

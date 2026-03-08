@@ -250,6 +250,20 @@ export type EnemyDebugSnapshot = {
   aimYawErrorDeg: number;
   directiveAgeS: number;
   targetNodeChangeCount: number;
+  spawnValidation?: {
+    spawnX: number;
+    spawnY: number;
+    spawnZ: number;
+    actualZoneId: string | null;
+    expectedZoneId: string | null;
+    withinPlayableBounds: boolean;
+    insideExpectedZone: boolean;
+    blockingColliderIds: string[];
+    elevated: boolean;
+    valid: boolean;
+    correctionKind: "none" | "same-lane-fallback" | "global-fallback";
+    fallbackNodeId: string | null;
+  } | null;
 };
 
 function resolveBurstCount(rng: DeterministicRng, range: BurstRange): number {
