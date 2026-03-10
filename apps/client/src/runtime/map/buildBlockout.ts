@@ -431,7 +431,14 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     root.add(detailRoot);
 
     if (options.doorModels && wallDetailPlacements.doorModelPlacements.length > 0) {
-      const doorRoot = buildDoorModels(wallDetailPlacements.doorModelPlacements, options.doorModels, wallThicknessM);
+      const doorRoot = buildDoorModels(
+        wallDetailPlacements.doorModelPlacements,
+        options.doorModels,
+        wallThicknessM,
+        options.wallMaterials,
+        wallTextureQuality,
+        options.seed,
+      );
       root.add(doorRoot);
     }
   }

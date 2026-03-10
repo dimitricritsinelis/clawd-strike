@@ -7,7 +7,7 @@ import type {
 } from "./types";
 import type { BoundarySegment } from "./buildBlockout";
 import type { WallDetailInstance } from "./wallDetailKit";
-import { CASTLE_DOOR_ID, ROLLERSHUTTER_ID, type DoorModelPlacement } from "./buildDoorModels";
+import { CASTLE_DOOR_ID, ROLLERSHUTTER_ID, resolveCastleDoorSilhouette, type DoorModelPlacement } from "./buildDoorModels";
 import {
   resolveFacadeStyleForSegment,
   type BalconyStyle,
@@ -34,8 +34,9 @@ const SEGMENT_EDGE_MARGIN_M = 0.35;
 const INSTANCE_BUDGET = 9800;
 const STORY_HEIGHT_M = 3.0;
 const WINDOW_GLASS_THICKNESS_M = 0.02;
-const STANDARD_MAIN_GROUND_FACADE_DOOR_W_M = 1.4;
-const STANDARD_MAIN_GROUND_FACADE_DOOR_H_M = 2.55;
+const STANDARD_MAIN_GROUND_FACADE_DOOR_W_M = 1.698;
+const STANDARD_MAIN_GROUND_FACADE_DOOR_H_M = 2.405;
+const SPAWN_B_HERO_DOOR_SURROUND_DEPTH_M = 0.21;
 const SPAWN_B_SHELL_SHARED_PLINTH_HEIGHT_M = 0.58;
 const SPAWN_B_SHELL_SHARED_PLINTH_DEPTH_M = 0.17;
 const SPAWN_B_SHELL_SHARED_PLINTH_HEIGHT_SCALE = 0.85;
@@ -453,6 +454,29 @@ function tagTrim(
   if (detailMaterialId != null) {
     instances[instances.length - 1]!.detailMaterialId = detailMaterialId;
   }
+}
+
+function pushArchedDoorVoid(
+  ctx: SegmentDecorContext,
+  centerS: number,
+  doorH: number,
+  inwardN: number,
+  depth: number,
+  doorW: number,
+): boolean {
+  return pushBox(
+    ctx.instances,
+    ctx.maxInstances,
+    "door_void_arch",
+    null,
+    ctx.frame,
+    centerS,
+    doorH * 0.5,
+    inwardN,
+    depth,
+    doorH,
+    doorW,
+  );
 }
 
 function resolveInsetSurfaceCenterOffset(requestedInsetM: number, depthM: number): number {
@@ -1413,50 +1437,85 @@ function placeArchedDoor(
   const trimDepthScale = isSpawnBCleanup ? SPAWN_B_SHELL_TRIM_DEPTH_SCALE : 1;
 
   if (uses3DModel) {
+    const modelId = spec.doorW >= 1.2 ? CASTLE_DOOR_ID : ROLLERSHUTTER_ID;
+    const isCastleDoor = modelId === CASTLE_DOOR_ID;
+    const castleSilhouette = isCastleDoor ? resolveCastleDoorSilhouette(spec.doorH) : null;
+    const effectiveDoorW = castleSilhouette?.widthM ?? spec.doorW;
+
     // 3D model fully replaces the flat void + lintel
     const wallCenter = toWorld(ctx.frame, centerS, spec.doorH * 0.5, 0);
-    ctx.doorModelPlacements.push({
+    const placement: DoorModelPlacement = {
       wallSurfacePos: wallCenter,
-      doorW: spec.doorW,
+      doorW: effectiveDoorW,
       doorH: spec.doorH,
       yawRad: ctx.frame.yawRad,
       outwardX: -ctx.frame.inwardX,
       outwardZ: -ctx.frame.inwardZ,
-      modelId: spec.doorW >= 1.2 ? CASTLE_DOOR_ID : ROLLERSHUTTER_ID,
-    });
+      modelId,
+    };
+    if (isCastleDoor) {
+      const isSpawnBMainHeroDoor =
+        ctx.zone?.id === "SPAWN_B_GATE_PLAZA"
+        && ctx.facadeFace === "north"
+        && isBrickBackdrop;
+      const surroundDepthM = isSpawnBMainHeroDoor
+        ? SPAWN_B_HERO_DOOR_SURROUND_DEPTH_M
+        : Math.max(
+            spec.frameDepth * (isBrickBackdrop ? 1.45 : 1.2) * trimDepthScale,
+            ctx.plinthDepth + 0.04,
+          );
+      placement.trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+      placement.trimThicknessM = spec.frameThickness * (isBrickBackdrop ? 1.18 : 1);
+      placement.surroundDepthM = surroundDepthM;
+      placement.revealWidthM = Math.max(0.035, Math.min(0.06, placement.trimThicknessM * 0.24));
+      // Negative outward moves the custom surround toward the playable/street side.
+      placement.surroundCenterOffsetM = -surroundDepthM * 0.5;
+    }
+    ctx.doorModelPlacements.push(placement);
 
     // Spawn doors get decorative framing around the 3D model
     if (isSpawn) {
-      const archH = spec.doorW * (isBrickBackdrop ? 0.24 : 0.2);
-      pushBox(ctx.instances, ctx.maxInstances, "door_arch_lintel", null,
-        ctx.frame, centerS, spec.doorH, spec.frameDepth * (isBrickBackdrop ? 0.78 : 0.6) * trimDepthScale,
-        spec.frameDepth * (isBrickBackdrop ? 1.85 : 1.5) * trimDepthScale, archH, spec.doorW + spec.frameThickness * (isBrickBackdrop ? 2.6 : 2),
-        -Math.PI * 0.5);
-      if (isSpawnBCleanup) {
-        tagTrim(ctx.instances, ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId);
+      pushArchedDoorVoid(
+        ctx,
+        centerS,
+        spec.doorH,
+        -spec.recessDepth * 0.4,
+        0.006,
+        effectiveDoorW,
+      );
+
+      if (!isCastleDoor) {
+        const archH = spec.doorW * (isBrickBackdrop ? 0.24 : 0.2);
+        pushBox(ctx.instances, ctx.maxInstances, "door_arch_lintel", null,
+          ctx.frame, centerS, spec.doorH, spec.frameDepth * (isBrickBackdrop ? 0.78 : 0.6) * trimDepthScale,
+          spec.frameDepth * (isBrickBackdrop ? 1.85 : 1.5) * trimDepthScale, archH, spec.doorW + spec.frameThickness * (isBrickBackdrop ? 2.6 : 2),
+          -Math.PI * 0.5);
+        if (isSpawnBCleanup) {
+          tagTrim(ctx.instances, ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId);
+        }
+
+        for (const side of [-1, 1] as const) {
+          pushBox(ctx.instances, ctx.maxInstances, "door_jamb", ctx.wallMaterialId,
+            ctx.frame, centerS + side * (spec.doorW + spec.frameThickness) * 0.5,
+            spec.doorH * 0.5, spec.frameDepth * (isBrickBackdrop ? 0.7 : 0.5) * trimDepthScale,
+            spec.frameDepth * (isBrickBackdrop ? 1.45 : 1.2) * trimDepthScale, spec.doorH, spec.frameThickness * (isBrickBackdrop ? 1.18 : 1));
+          tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
+        }
       }
 
-      for (const side of [-1, 1] as const) {
-        pushBox(ctx.instances, ctx.maxInstances, "door_jamb", ctx.wallMaterialId,
-          ctx.frame, centerS + side * (spec.doorW + spec.frameThickness) * 0.5,
-          spec.doorH * 0.5, spec.frameDepth * (isBrickBackdrop ? 0.7 : 0.5) * trimDepthScale,
-          spec.frameDepth * (isBrickBackdrop ? 1.45 : 1.2) * trimDepthScale, spec.doorH, spec.frameThickness * (isBrickBackdrop ? 1.18 : 1));
-        tagTrim(ctx.instances, ctx.trimHeavyMaterialId);
-      }
-
-      if (isBrickBackdrop) {
+      if (isBrickBackdrop && !isCastleDoor) {
         pushBox(ctx.instances, ctx.maxInstances, "door_lintel", ctx.wallMaterialId,
           ctx.frame, centerS, spec.doorH + spec.frameThickness * 1.45, spec.frameDepth * 0.82 * trimDepthScale,
-          spec.frameDepth * 1.55 * trimDepthScale, spec.frameThickness * 0.82, spec.doorW + spec.frameThickness * 2.9);
+          spec.frameDepth * 1.55 * trimDepthScale, spec.frameThickness * 0.82, effectiveDoorW + spec.frameThickness * 2.9);
         tagTrim(
           ctx.instances,
           isSpawnBCleanup ? (ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId) : (ctx.trimLightMaterialId ?? ctx.trimHeavyMaterialId),
         );
-      } else {
-        const bracketCount: number = spec.doorW > 1.2 ? 3 : 2;
-        const bracketSpacing = spec.doorW * 0.65 / Math.max(1, bracketCount - 1);
+      } else if (!isCastleDoor) {
+        const bracketCount: number = effectiveDoorW > 1.2 ? 3 : 2;
+        const bracketSpacing = effectiveDoorW * 0.65 / Math.max(1, bracketCount - 1);
         for (let i = 0; i < bracketCount; i++) {
-          const offset = bracketCount === 1 ? 0 : -spec.doorW * 0.325 + i * bracketSpacing;
+          const offset = bracketCount === 1 ? 0 : -effectiveDoorW * 0.325 + i * bracketSpacing;
           pushBox(ctx.instances, ctx.maxInstances, "awning_bracket", null,
             ctx.frame, centerS + offset, spec.doorH + spec.frameThickness * 2.2,
             spec.frameDepth * 1.0,
@@ -1466,9 +1525,14 @@ function placeArchedDoor(
     }
   } else if (isSpawn) {
     // Small spawn doors: recessed void with decorative framing
-    pushBox(ctx.instances, ctx.maxInstances, "door_void", null,
-      ctx.frame, centerS, spec.doorH * 0.5, -spec.recessDepth * 0.4,
-      0.006, spec.doorH, spec.doorW * 1.05);
+    pushArchedDoorVoid(
+      ctx,
+      centerS,
+      spec.doorH,
+      -spec.recessDepth * 0.4,
+      0.006,
+      spec.doorW,
+    );
 
     const archH = spec.doorW * (isBrickBackdrop ? 0.24 : 0.2);
     pushBox(ctx.instances, ctx.maxInstances, "door_arch_lintel", null,
