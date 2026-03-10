@@ -1,11 +1,14 @@
 import {
+  BufferGeometry,
   BoxGeometry,
   CylinderGeometry,
+  ExtrudeGeometry,
   Group,
   InstancedMesh,
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Object3D,
+  Shape,
 } from "three";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import { applyWindowGlassShaderTweaks } from "../render/materials/applyWindowGlassShaderTweaks";
@@ -29,6 +32,7 @@ export type WallDetailMeshId =
   | "door_lintel"
   | "door_arch_lintel"
   | "door_void"
+  | "door_void_arch"
   | "sign_board"
   | "sign_bracket"
   | "awning_bracket"
@@ -71,7 +75,7 @@ export type BuildWallDetailMeshesOptions = {
 };
 
 type DetailTemplate = {
-  geometry: BoxGeometry | CylinderGeometry;
+  geometry: BufferGeometry;
   material: MeshStandardMaterial | MeshPhysicalMaterial;
 };
 
@@ -98,6 +102,7 @@ const DETAIL_IDS: WallDetailMeshId[] = [
   "door_lintel",
   "door_arch_lintel",
   "door_void",
+  "door_void_arch",
   "sign_board",
   "sign_bracket",
   "awning_bracket",
@@ -145,6 +150,24 @@ const SURFACE_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
 
 const WALL_DETAIL_RENDER_ORDER = 10;
 
+function createDoorVoidArchGeometry(): BufferGeometry {
+  const shape = new Shape();
+  shape.moveTo(-0.5, -0.5);
+  shape.lineTo(0.5, -0.5);
+  shape.lineTo(0.5, 0);
+  shape.absarc(0, 0, 0.5, 0, Math.PI, false);
+  shape.lineTo(-0.5, -0.5);
+
+  const geometry = new ExtrudeGeometry(shape, {
+    depth: 1,
+    bevelEnabled: false,
+    curveSegments: 24,
+  });
+  geometry.rotateY(Math.PI * 0.5);
+  geometry.translate(-0.5, 0, 0);
+  return geometry;
+}
+
 function inheritsWallSurface(meshId: WallDetailMeshId): boolean {
   return HEAVY_TRIM_MESH_IDS.has(meshId) || LIGHT_TRIM_MESH_IDS.has(meshId);
 }
@@ -154,7 +177,9 @@ function resolveDetailStabilityClass(meshId: WallDetailMeshId): DetailStabilityC
 }
 
 type RoofMaterialShader = Parameters<NonNullable<MeshStandardMaterial["onBeforeCompile"]>>[0];
-type TemplateMaterialOverrideId = "tm_balcony_wood_dark" | "tm_balcony_painted_metal";
+type TemplateMaterialOverrideId =
+  | "tm_balcony_wood_dark"
+  | "tm_balcony_painted_metal";
 
 function applyRoofDustShader(material: MeshStandardMaterial): void {
   const previousOnBeforeCompile = material.onBeforeCompile;
@@ -357,6 +382,10 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
     },
     door_void: {
       geometry: new BoxGeometry(1, 1, 1),
+      material: new MeshStandardMaterial({ color: 0x0c1218, roughness: 0.95, metalness: 0.0 }),
+    },
+    door_void_arch: {
+      geometry: createDoorVoidArchGeometry(),
       material: new MeshStandardMaterial({ color: 0x0c1218, roughness: 0.95, metalness: 0.0 }),
     },
     sign_board: {

@@ -6,7 +6,7 @@ Do not use for: workflow policy, durable rationale, archive history, product tru
 Schema version: stm-v2
 Canonical playtest URL: http://127.0.0.1:4174/?map=bazaar-map
 Map approval status: NOT APPROVED
-Last compacted: 2026-03-10T04:06:51Z
+Last compacted: 2026-03-10T05:22:39Z
 
 # short_term_memory.md - Clawd Strike Status
 
@@ -64,6 +64,7 @@ Recent Notes:
 
 ## Recent Completed Rollup
 <!-- TOOL-MANAGED START: completed-rollup -->
+- STM-20260310-051346-codex | map-visual | Spawn B bazaar window hero pass | 2026-03-10 | Reverted the assistant-introduced Spawn B preset/material/shot changes, regenerated runtime artifacts, and left the pre-existing branch door/detail edits intact.
 - STM-20260310-003355-codex | tooling | Reset test strategy for fast iteration | 2026-03-10 | Added smoke:game/bot:smoke/qa:release/test:playwright:full, narrowed qa:completion to routes+shots, aligned AGENTS/README/decisions/CI, fixed the empty-caret Playwright flake, and validated the new ladder through final qa:release.
 - STM-20260310-003248-codex | map-visual | Restore Spawn B cleanup trim pass | 2026-03-10 | Restored shared plinth/cornice-aware window placement without undoing PR16 Spawn B visuals, fixed docs/map-design shotCount metadata, regenerated map artifacts, and passed pnpm typecheck plus pnpm qa:completion on http://127.0.0.1:5174/.
 - STM-20260309-222607-codex | tooling | STM single-file memory rollout | 2026-03-09 | Added the STM CLI, safe-write validator/tests, CI gate, and legacy status-file migration.
