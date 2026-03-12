@@ -103,8 +103,10 @@ export class TouchInputManager {
   // ── Touch handlers ──────────────────────────────────────────────────
 
   private readonly onTouchStart = (e: TouchEvent): void => {
-    // Only prevent default on the game canvas area; allow normal behavior for UI overlays
-    e.preventDefault();
+    // Only preventDefault when we claim a touch — unrecognised touches must
+    // propagate so overlay UI (pause menu, death screen, etc.) still receives
+    // synthetic click events from the browser.
+    let claimed = false;
 
     for (let i = 0; i < e.changedTouches.length; i++) {
       const touch = e.changedTouches[i]!;
@@ -117,6 +119,7 @@ export class TouchInputManager {
       if (buttonRole) {
         this.buttonTouchIds.set(id, buttonRole);
         this.applyButtonDown(buttonRole);
+        claimed = true;
         continue;
       }
 
@@ -129,6 +132,7 @@ export class TouchInputManager {
         this.moveX = 0;
         this.moveZ = 0;
         this.onJoystickStart?.(x, y);
+        claimed = true;
         continue;
       }
 
@@ -137,13 +141,18 @@ export class TouchInputManager {
         this.lookTouchId = id;
         this.lastLookX = x;
         this.lastLookY = y;
+        claimed = true;
         continue;
       }
+    }
+
+    if (claimed) {
+      e.preventDefault();
     }
   };
 
   private readonly onTouchMove = (e: TouchEvent): void => {
-    e.preventDefault();
+    let handled = false;
 
     for (let i = 0; i < e.changedTouches.length; i++) {
       const touch = e.changedTouches[i]!;
@@ -166,6 +175,7 @@ export class TouchInputManager {
         const visualDx = dist > 0 ? (dx / dist) * clamped : 0;
         const visualDy = dist > 0 ? (dy / dist) * clamped : 0;
         this.onJoystickMove?.(visualDx, visualDy);
+        handled = true;
         continue;
       }
 
@@ -175,13 +185,19 @@ export class TouchInputManager {
         this.lookDeltaY += y - this.lastLookY;
         this.lastLookX = x;
         this.lastLookY = y;
+        handled = true;
         continue;
       }
+    }
+
+    // Only suppress browser gestures for touches we're tracking
+    if (handled) {
+      e.preventDefault();
     }
   };
 
   private readonly onTouchEnd = (e: TouchEvent): void => {
-    e.preventDefault();
+    let handled = false;
 
     for (let i = 0; i < e.changedTouches.length; i++) {
       const touch = e.changedTouches[i]!;
@@ -193,12 +209,14 @@ export class TouchInputManager {
         this.moveX = 0;
         this.moveZ = 0;
         this.onJoystickEnd?.();
+        handled = true;
         continue;
       }
 
       // Look release
       if (id === this.lookTouchId) {
         this.lookTouchId = null;
+        handled = true;
         continue;
       }
 
@@ -207,8 +225,14 @@ export class TouchInputManager {
       if (role) {
         this.buttonTouchIds.delete(id);
         this.applyButtonUp(role);
+        handled = true;
         continue;
       }
+    }
+
+    // Only suppress default for touches we were tracking
+    if (handled) {
+      e.preventDefault();
     }
   };
 
