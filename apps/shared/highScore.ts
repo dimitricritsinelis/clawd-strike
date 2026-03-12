@@ -158,16 +158,18 @@ export function normalizeRunCount(value: unknown): number {
   return Math.max(0, Math.floor(parsed));
 }
 
-export function normalizeRunSeconds(value: unknown): number {
+function normalizeTenths(value: unknown): number {
   const parsed = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(parsed)) return 0;
   return Math.max(0, Math.round(parsed * 10) / 10);
 }
 
+export function normalizeRunSeconds(value: unknown): number {
+  return normalizeTenths(value);
+}
+
 export function normalizeAccuracyPercent(value: unknown): number {
-  const parsed = typeof value === "number" ? value : Number(value);
-  if (!Number.isFinite(parsed)) return 0;
-  return Math.max(0, Math.round(parsed * 10) / 10);
+  return normalizeTenths(value);
 }
 
 export function computeAccuracyPercent(shotsHit: number, shotsFired: number): number {
