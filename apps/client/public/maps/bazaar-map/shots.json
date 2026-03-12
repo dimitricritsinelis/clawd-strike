@@ -13,7 +13,7 @@
       },
       "yaw_degrees": "0=+Y(north), 90=+X(east), 180=-Y(south), 270=-X(west)"
     },
-    "shotCount": 12,
+    "shotCount": 13,
     "notes": [
       "MVP shot list for previews/validation. Shots are optional at runtime but useful for automated capture and QA.",
       "All shot positions are approximate and may be adjusted once blockout exists in-engine."
@@ -308,6 +308,42 @@
         "two preserved ground-floor doors",
         "brick wrapping around openings and corners",
         "no repeated square-frame wallpaper"
+      ]
+    },
+    {
+      "id": "SHOT_12_SPAWN_B_BALCONY_HERO",
+      "label": "Spawn B balcony hero",
+      "description": "Spawn B north wall balcony review; validates door-to-balcony symmetry, stained-glass presence, and the integrated center-bay surround behind the balcony.",
+      "camera": {
+        "pos": {
+          "x": 25,
+          "y": 72.5,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 25,
+          "y": 81.8,
+          "z": 4.1
+        },
+        "fovDeg": 82
+      },
+      "durationSec": 4,
+      "tags": [
+        "visual",
+        "facade",
+        "spawnB"
+      ],
+      "reviewPriority": "high",
+      "reviewFocus": [
+        "full glass visibility above the balcony",
+        "centered roof-break symmetry",
+        "integrated roof-and-window composition"
+      ],
+      "mustShow": [
+        "single centered 2-bay balcony",
+        "bright stained-glass arch fully visible above the balcony",
+        "centered raised roof bay",
+        "two outer upper windows framing the center composition"
       ]
     },
     {

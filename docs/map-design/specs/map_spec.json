@@ -125,8 +125,6 @@
         "segmentOrdinal": 1,
         "windows": [
           { "centerS": -9.1285714286, "sillY": 3.78, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_bright" },
-          { "centerS": -3.0428571429, "sillY": 3.78, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_bright" },
-          { "centerS": 3.0428571429, "sillY": 3.78, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_bright" },
           { "centerS": 9.1285714286, "sillY": 3.78, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_bright" },
           { "centerS": -9.1285714286, "sillY": 0.98, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_dim" },
           { "centerS": -3.0428571429, "sillY": 0.98, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_dim" },
@@ -154,6 +152,36 @@
           { "centerS": 2.3271414036, "sillY": 3.92, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_bright" },
           { "centerS": -2.3271414036, "sillY": 1.02, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_dim" },
           { "centerS": 2.3271414036, "sillY": 1.02, "width": 0.96, "height": 1.28, "headShape": "pointed_arch", "glassStyle": "stained_glass_dim" }
+        ]
+      }
+    ],
+    "balcony_layout_overrides": [
+      {
+        "zoneId": "SPAWN_B_GATE_PLAZA",
+        "face": "north",
+        "segmentOrdinal": 1,
+        "balconies": [
+          {
+            "centerS": 0.0,
+            "storyIndex": 1,
+            "spanBays": 2,
+            "depthM": 1.1,
+            "parapetHeightM": 0.8,
+            "openingSurroundWidthM": 4.0,
+            "openingSurroundHeightM": 4.4,
+            "openingSurroundBottomOffsetM": 1.6,
+            "roofBreakWidthM": 4.0,
+            "roofBreakBottomOffsetM": 0.9,
+            "roofBreakHeightM": 0.0,
+            "roofBreakCapHeightM": 0.0,
+            "opening": {
+              "width": 2.8,
+              "height": 4.0,
+              "sillOffsetM": 1.84,
+              "headShape": "pointed_arch",
+              "glassStyle": "stained_glass_bright"
+            }
+          }
         ]
       }
     ]

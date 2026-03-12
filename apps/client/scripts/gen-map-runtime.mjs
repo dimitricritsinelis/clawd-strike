@@ -528,6 +528,176 @@ function deriveBlockoutSpec(spec, zones) {
           });
         })()
       : [];
+  const balconyLayoutOverrides =
+    wallDetailsRaw && typeof wallDetailsRaw.balcony_layout_overrides !== "undefined"
+      ? (() => {
+          if (!Array.isArray(wallDetailsRaw.balcony_layout_overrides)) {
+            fail("wall_details.balcony_layout_overrides must be an array when provided");
+          }
+
+          return wallDetailsRaw.balcony_layout_overrides.map((override, index) => {
+            if (!override || typeof override !== "object") {
+              fail(`wall_details.balcony_layout_overrides[${index}] must be an object`);
+            }
+
+            const zoneId = ensureString(override.zoneId, `wall_details.balcony_layout_overrides[${index}].zoneId`);
+            if (!zones.some((zone) => zone.id === zoneId)) {
+              fail(`wall_details.balcony_layout_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
+            }
+
+            const face = ensureString(override.face, `wall_details.balcony_layout_overrides[${index}].face`);
+            if (!["north", "south", "east", "west"].includes(face)) {
+              fail(`wall_details.balcony_layout_overrides[${index}].face must be one of north/south/east/west`);
+            }
+
+            const segmentOrdinal = asNumber(
+              override.segmentOrdinal,
+              `wall_details.balcony_layout_overrides[${index}].segmentOrdinal`,
+            );
+            if (!Number.isInteger(segmentOrdinal) || segmentOrdinal <= 0) {
+              fail(`wall_details.balcony_layout_overrides[${index}].segmentOrdinal must be an integer > 0`);
+            }
+
+            if (!Array.isArray(override.balconies) || override.balconies.length === 0) {
+              fail(`wall_details.balcony_layout_overrides[${index}].balconies must be a non-empty array`);
+            }
+
+            const balconies = override.balconies.map((balcony, balconyIndex) => {
+              if (!balcony || typeof balcony !== "object") {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}] must be an object`);
+              }
+
+              const storyIndex = asNumber(
+                balcony.storyIndex,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex`,
+              );
+              if (!Number.isInteger(storyIndex) || storyIndex < 1) {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex must be an integer >= 1`);
+              }
+
+              const spanBays = asNumber(
+                balcony.spanBays,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays`,
+              );
+              if (!Number.isInteger(spanBays) || spanBays <= 0) {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays must be an integer > 0`);
+              }
+
+              if (!balcony.opening || typeof balcony.opening !== "object") {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening must be an object`);
+              }
+
+              const headShape = ensureString(
+                balcony.opening.headShape,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape`,
+              );
+              if (headShape !== "pointed_arch") {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape must be 'pointed_arch'`);
+              }
+
+              const width = asNumber(
+                balcony.opening.width,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.width`,
+              );
+              const height = asNumber(
+                balcony.opening.height,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.height`,
+              );
+              const depthM = asNumber(
+                balcony.depthM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].depthM`,
+              );
+              const parapetHeightM = asNumber(
+                balcony.parapetHeightM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].parapetHeightM`,
+              );
+              const openingSurroundWidthM = asNumber(
+                balcony.openingSurroundWidthM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundWidthM`,
+              );
+              const openingSurroundHeightM = asNumber(
+                balcony.openingSurroundHeightM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundHeightM`,
+              );
+              const openingSurroundBottomOffsetM = asNumber(
+                balcony.openingSurroundBottomOffsetM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundBottomOffsetM`,
+              );
+              const roofBreakWidthM = asNumber(
+                balcony.roofBreakWidthM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakWidthM`,
+              );
+              const roofBreakBottomOffsetM = asNumber(
+                balcony.roofBreakBottomOffsetM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakBottomOffsetM`,
+              );
+              const roofBreakHeightM = asNumber(
+                balcony.roofBreakHeightM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakHeightM`,
+              );
+              const roofBreakCapHeightM = asNumber(
+                balcony.roofBreakCapHeightM,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakCapHeightM`,
+              );
+              if (
+                width <= 0
+                || height <= 0
+                || depthM <= 0
+                || parapetHeightM <= 0
+                || openingSurroundWidthM <= 0
+                || openingSurroundHeightM <= 0
+                || roofBreakWidthM <= 0
+                || roofBreakHeightM < 0
+                || roofBreakCapHeightM < 0
+              ) {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}] dimensions must be valid (roof-break heights may be 0; all other widths/heights must be > 0)`);
+              }
+              const glassStyle = ensureString(
+                balcony.opening.glassStyle,
+                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle`,
+              );
+              if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
+                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle must be supported`);
+              }
+
+              return {
+                centerS: asNumber(
+                  balcony.centerS,
+                  `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].centerS`,
+                ),
+                storyIndex,
+                spanBays,
+                depthM,
+                parapetHeightM,
+                openingSurroundWidthM,
+                openingSurroundHeightM,
+                openingSurroundBottomOffsetM,
+                roofBreakWidthM,
+                roofBreakBottomOffsetM,
+                roofBreakHeightM,
+                roofBreakCapHeightM,
+                opening: {
+                  width,
+                  height,
+                  sillOffsetM: asNumber(
+                    balcony.opening.sillOffsetM,
+                    `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.sillOffsetM`,
+                  ),
+                  headShape,
+                  glassStyle,
+                },
+              };
+            });
+
+            return {
+              zoneId,
+              face,
+              segmentOrdinal,
+              balconies,
+            };
+          });
+        })()
+      : [];
 
   return {
     mapId: MAP_ID,
@@ -546,6 +716,7 @@ function deriveBlockoutSpec(spec, zones) {
       facade_overrides: facadeOverrides,
       door_layout_overrides: doorLayoutOverrides,
       window_layout_overrides: windowLayoutOverrides,
+      balcony_layout_overrides: balconyLayoutOverrides,
       ...(typeof wallDetailSeed === "number" ? { seed: Math.trunc(wallDetailSeed) } : {}),
     },
     zones,

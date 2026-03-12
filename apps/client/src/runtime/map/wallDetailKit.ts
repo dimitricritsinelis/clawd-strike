@@ -24,6 +24,9 @@ import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type { RuntimeWallMode } from "../utils/UrlParams";
 import {
+  HERO_POINTED_ARCH_APERTURE_PANEL_BOUNDS,
+  HERO_POINTED_ARCH_FRAME_APERTURE_BOUNDS,
+  HERO_POINTED_ARCH_FRAME_OUTER_BOUNDS,
   POINTED_ARCH_APERTURE_PANEL_BOUNDS,
   POINTED_ARCH_FRAME_APERTURE_BOUNDS,
   POINTED_ARCH_FRAME_OUTER_BOUNDS,
@@ -53,6 +56,9 @@ export type WallDetailMeshId =
   | "window_pointed_arch_void"
   | "window_pointed_arch_glass"
   | "window_pointed_arch_frame"
+  | "hero_window_pointed_arch_void"
+  | "hero_window_pointed_arch_glass"
+  | "hero_window_pointed_arch_frame"
   | "window_glass"
   | "balcony_slab"
   | "balcony_parapet"
@@ -126,6 +132,9 @@ const DETAIL_IDS: WallDetailMeshId[] = [
   "window_pointed_arch_void",
   "window_pointed_arch_glass",
   "window_pointed_arch_frame",
+  "hero_window_pointed_arch_void",
+  "hero_window_pointed_arch_glass",
+  "hero_window_pointed_arch_frame",
   "window_glass",
   "balcony_slab",
   "balcony_parapet",
@@ -150,6 +159,7 @@ const HEAVY_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
   "balcony_end_cap",
   "balcony_bracket",
   "window_pointed_arch_frame",
+  "hero_window_pointed_arch_frame",
 ]);
 
 const LIGHT_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
@@ -170,6 +180,7 @@ const SURFACE_TRIM_MESH_IDS = new Set<WallDetailMeshId>([
   "door_lintel",
   "door_arch_lintel",
   "window_pointed_arch_frame",
+  "hero_window_pointed_arch_frame",
 ]);
 
 const WALL_DETAIL_RENDER_ORDER = 10;
@@ -242,6 +253,59 @@ function createPointedArchFrameGeometry(): BufferGeometry {
     depth: 1,
     bevelEnabled: false,
     curveSegments: 24,
+  });
+  geometry.rotateY(Math.PI * 0.5);
+  geometry.translate(-0.5, 0, 0);
+  applyProjectedArchUvs(geometry);
+  return geometry;
+}
+
+function createHeroPointedArchShape(widthHalf: number, bottomY: number, springY: number, apexY: number): Shape {
+  const shape = new Shape();
+  shape.moveTo(-widthHalf, bottomY);
+  shape.lineTo(widthHalf, bottomY);
+  shape.lineTo(widthHalf, springY);
+  shape.quadraticCurveTo(widthHalf * 0.34, apexY * 0.98, 0, apexY);
+  shape.quadraticCurveTo(-widthHalf * 0.34, apexY * 0.98, -widthHalf, springY);
+  shape.lineTo(-widthHalf, bottomY);
+  return shape;
+}
+
+function createHeroPointedArchPanelGeometry(): BufferGeometry {
+  const geometry = new ExtrudeGeometry(createHeroPointedArchShape(
+    HERO_POINTED_ARCH_APERTURE_PANEL_BOUNDS.widthHalf,
+    HERO_POINTED_ARCH_APERTURE_PANEL_BOUNDS.bottomY,
+    HERO_POINTED_ARCH_APERTURE_PANEL_BOUNDS.springY,
+    HERO_POINTED_ARCH_APERTURE_PANEL_BOUNDS.apexY,
+  ), {
+    depth: 1,
+    bevelEnabled: false,
+    curveSegments: 28,
+  });
+  geometry.rotateY(Math.PI * 0.5);
+  geometry.translate(-0.5, 0, 0);
+  applyProjectedArchUvs(geometry);
+  return geometry;
+}
+
+function createHeroPointedArchFrameGeometry(): BufferGeometry {
+  const outer = createHeroPointedArchShape(
+    HERO_POINTED_ARCH_FRAME_OUTER_BOUNDS.widthHalf,
+    HERO_POINTED_ARCH_FRAME_OUTER_BOUNDS.bottomY,
+    HERO_POINTED_ARCH_FRAME_OUTER_BOUNDS.springY,
+    HERO_POINTED_ARCH_FRAME_OUTER_BOUNDS.apexY,
+  );
+  const inner = createHeroPointedArchShape(
+    HERO_POINTED_ARCH_FRAME_APERTURE_BOUNDS.widthHalf,
+    HERO_POINTED_ARCH_FRAME_APERTURE_BOUNDS.bottomY,
+    HERO_POINTED_ARCH_FRAME_APERTURE_BOUNDS.springY,
+    HERO_POINTED_ARCH_FRAME_APERTURE_BOUNDS.apexY,
+  );
+  outer.holes.push(inner);
+  const geometry = new ExtrudeGeometry(outer, {
+    depth: 1,
+    bevelEnabled: false,
+    curveSegments: 28,
   });
   geometry.rotateY(Math.PI * 0.5);
   geometry.translate(-0.5, 0, 0);
@@ -567,6 +631,18 @@ function createTemplates(highVis: boolean): Record<WallDetailMeshId, DetailTempl
       geometry: createPointedArchFrameGeometry(),
       material: frameTrim,
     },
+    hero_window_pointed_arch_void: {
+      geometry: createHeroPointedArchPanelGeometry(),
+      material: new MeshStandardMaterial({ color: 0x0c1218, roughness: 0.96, metalness: 0.0 }),
+    },
+    hero_window_pointed_arch_glass: {
+      geometry: createHeroPointedArchPanelGeometry(),
+      material: createStainedGlassMaterial("bright"),
+    },
+    hero_window_pointed_arch_frame: {
+      geometry: createHeroPointedArchFrameGeometry(),
+      material: frameTrim,
+    },
     window_glass: {
       geometry: new BoxGeometry(1, 1, 1),
       material: windowGlass,
@@ -647,10 +723,12 @@ function buildBlockoutDetailMeshes(
     const template = templates[meshId];
     const mesh = new InstancedMesh(template.geometry, template.material, bucket.length);
     mesh.name = `wall-detail-${meshId}`;
-    mesh.castShadow = meshId !== "window_pointed_arch_glass";
+    mesh.castShadow = meshId !== "window_pointed_arch_glass" && meshId !== "hero_window_pointed_arch_glass";
     mesh.receiveShadow = true;
     mesh.frustumCulled = false;
-    mesh.renderOrder = meshId === "window_pointed_arch_glass" ? WINDOW_GLASS_RENDER_ORDER : WALL_DETAIL_RENDER_ORDER;
+    mesh.renderOrder = meshId === "window_pointed_arch_glass" || meshId === "hero_window_pointed_arch_glass"
+      ? WINDOW_GLASS_RENDER_ORDER
+      : WALL_DETAIL_RENDER_ORDER;
 
     for (let index = 0; index < bucket.length; index += 1) {
       const instance = bucket[index]!;

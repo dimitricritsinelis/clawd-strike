@@ -381,6 +381,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     facadeOverrides: spec.wall_details.facadeOverrides,
     doorLayoutOverrides: spec.wall_details.doorLayoutOverrides,
     windowLayoutOverrides: spec.wall_details.windowLayoutOverrides,
+    balconyLayoutOverrides: spec.wall_details.balconyLayoutOverrides,
     seed: options.seed,
     wallHeightM: spec.defaults.wall_height,
     wallThicknessM,
