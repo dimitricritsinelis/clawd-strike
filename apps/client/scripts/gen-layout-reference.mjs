@@ -1055,6 +1055,10 @@ function authoredDoorLayoutKey(zoneId, face, segmentOrdinal) {
   return `${zoneId}:${face}:${segmentOrdinal}`;
 }
 
+function authoredBalconyLayoutKey(zoneId, face, segmentOrdinal) {
+  return `${zoneId}:${face}:${segmentOrdinal}`;
+}
+
 function countContiguousWindowColumns(spec, startColumn, direction, maxCount) {
   let count = 0;
   for (let step = 1; step <= maxCount; step += 1) {
@@ -1175,6 +1179,7 @@ function summarizeSegmentFacade(
   faceContext,
   authoredDoorLayout,
   authoredWindowLayout,
+  authoredBalconyLayout,
   baseSeed,
   maxProtrusionM,
   density,
@@ -1255,6 +1260,7 @@ function summarizeSegmentFacade(
       groundDoorCount: 0,
       upperDoorCount: 0,
       balconyCount: 0,
+      hasAuthoredBalcony: false,
       windowCounts: { glass: 0, dark: 0, shuttered: 0 },
       windowColumns: [],
       accentWindowColumns: [],
@@ -1409,13 +1415,28 @@ function summarizeSegmentFacade(
   const windowCounts = { glass: 0, dark: 0, shuttered: 0 };
   let upperDoorCount = 0;
 
-  if (authoredWindowLayout) {
+  if (authoredBalconyLayout && !authoredWindowLayout) {
+    throw new Error(
+      `[gen:layout-reference] authored balcony layout on ${zone.id}:${faceContext.face}#${segmentOrdinal} requires an authored window layout`,
+    );
+  }
+
+  if (authoredWindowLayout || authoredBalconyLayout) {
     for (const window of authoredWindowLayout.windows) {
       windowCounts.glass += 1;
     }
 
+    const authoredBalconies = authoredBalconyLayout?.balconies ?? [];
     const upperCount = authoredWindowLayout.windows.filter((window) => window.glassStyle === "stained_glass_bright").length;
     const lowerCount = authoredWindowLayout.windows.length - upperCount;
+    upperDoorCount = authoredBalconies.length;
+    const balconyNotes = authoredBalconies.length > 0
+      ? authoredBalconies
+        .map((balcony) => `Authored balcony layout places ${balcony.spanBays}-bay centered balcony on story ${balcony.storyIndex} with a raised roof-integrated ${balcony.opening.glassStyle.replaceAll("_", "-")} ${balcony.opening.headShape.replaceAll("_", "-")} window bay and split top trim around a ${balcony.roofBreakWidthM.toFixed(2)}m center parapet.`)
+        .join(" ")
+      : spec.balconyStyle === "none"
+        ? `No balconies because ${style.family} frontage resolves balcony style "none".`
+        : `No balconies because authored window layout does not introduce balcony openings.`;
 
     return {
       wallRole,
@@ -1430,19 +1451,22 @@ function summarizeSegmentFacade(
       doorCount,
       groundDoorCount,
       upperDoorCount,
-      balconyCount: 0,
-      balconyEntries: [],
+      balconyCount: authoredBalconies.length,
+      balconyEntries: authoredBalconies.map((balcony) => ({
+        key: `story:${balcony.storyIndex}`,
+        leftBays: Math.floor((balcony.spanBays - 1) * 0.5),
+        rightBays: Math.ceil((balcony.spanBays - 1) * 0.5),
+      })),
+      hasAuthoredBalcony: authoredBalconies.length > 0,
       windowCounts,
       windowColumns: [],
       accentWindowColumns: [],
       doorColumns,
       columnPattern: "authored",
       specNotes: authoredDoorLayout
-        ? `Authored door/window layout overrides on segment #${segmentOrdinal} place exact openings while preserving the existing facade construction${authoredDoorLayout.styleSource ? `, using door style from ${authoredDoorLayout.styleSource.zoneId}:${authoredDoorLayout.styleSource.face}#${authoredDoorLayout.styleSource.segmentOrdinal}` : ""}.`
-        : `Authored window layout override on segment #${segmentOrdinal} places ${authoredWindowLayout.windows.length} exact windows while retaining the procedural door grid.`,
-      balconyNotes: spec.balconyStyle === "none"
-        ? `No balconies because ${style.family} frontage resolves balcony style "none".`
-        : `No balconies because authored window layout does not introduce balcony openings.`,
+        ? `Authored door/window${authoredBalconies.length > 0 ? "/balcony" : ""} layout overrides on segment #${segmentOrdinal} place exact openings while preserving the existing facade construction${authoredDoorLayout.styleSource ? `, using door style from ${authoredDoorLayout.styleSource.zoneId}:${authoredDoorLayout.styleSource.face}#${authoredDoorLayout.styleSource.segmentOrdinal}` : ""}.`
+        : `Authored window${authoredBalconies.length > 0 ? "/balcony" : ""} layout override on segment #${segmentOrdinal} places exact facade openings while retaining the procedural door grid.`,
+      balconyNotes,
       doorNotes: authoredDoorLayout
         ? `${groundDoorCount} authored ground door opening(s) placed on segment #${segmentOrdinal}${authoredDoorLayout.styleSource ? ` using door style from ${authoredDoorLayout.styleSource.zoneId}:${authoredDoorLayout.styleSource.face}#${authoredDoorLayout.styleSource.segmentOrdinal}` : ""}.`
         : doorColumns.length > 0
@@ -1497,6 +1521,7 @@ function summarizeSegmentFacade(
     upperDoorCount,
     balconyCount: balconyEntries.length,
     balconyEntries,
+    hasAuthoredBalcony: false,
     windowCounts,
     windowColumns: selectedWindowColumns,
     accentWindowColumns,
@@ -2011,7 +2036,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
     lines.push(`- Composition preset: \`${building.wall.totals.compositionPreset}\``);
     lines.push(`- Wall material: \`${building.wall.totals.style.materials.wall}\``);
     lines.push(`- Trim materials: heavy \`${building.wall.totals.style.materials.trimHeavy}\`, light \`${building.wall.totals.style.materials.trimLight}\``);
-    lines.push(`- Balcony material: ${building.wall.totals.style.materials.balcony ? `\`${building.wall.totals.style.materials.balcony}\`` : "none"}`);
+    lines.push(`- Balcony material: ${building.wall.totals.balconyMaterialLabel}`);
     lines.push(`- Opening totals: ${building.wall.totals.groundDoorCount} ground doors, ${building.wall.totals.upperDoorCount} upper door openings, ${building.wall.totals.balconyCount} balconies, ${building.wall.totals.windowCounts.glass} glass windows, ${building.wall.totals.windowCounts.dark} dark windows, ${building.wall.totals.windowCounts.shuttered} shuttered windows`);
     lines.push(`- Anchor summary: ${building.anchorSummary.text}`);
     lines.push(`- Texture logic: ${building.textureLogic}`);
@@ -2033,10 +2058,10 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
     lines.push(`- Wall role: \`${wall.totals.wallRole}\``);
     lines.push(`- Composition preset: \`${wall.totals.compositionPreset}\``);
     lines.push(`- Facade family: \`${wall.totals.style.family}\``);
-    lines.push(`- Balcony style: \`${wall.totals.style.balconyStyle}\``);
+    lines.push(`- Balcony style: \`${wall.totals.balconyStyleLabel}\``);
     lines.push(`- Wall material: \`${wall.totals.style.materials.wall}\``);
     lines.push(`- Trim textures: heavy \`${wall.totals.style.materials.trimHeavy}\`, light \`${wall.totals.style.materials.trimLight}\``);
-    lines.push(`- Balcony texture: ${wall.totals.style.materials.balcony ? `\`${wall.totals.style.materials.balcony}\`` : "none"}`);
+    lines.push(`- Balcony texture: ${wall.totals.balconyMaterialLabel}`);
     lines.push(`- Floor context: ${wall.floorContext}`);
     lines.push(`- Opening totals: ${wall.totals.groundDoorCount} ground doors, ${wall.totals.upperDoorCount} upper door openings, ${wall.totals.balconyCount} balconies, ${wall.totals.windowCounts.glass} glass windows, ${wall.totals.windowCounts.dark} dark windows, ${wall.totals.windowCounts.shuttered} shuttered windows`);
     lines.push(`- Door logic: ${wall.doorLogic}`);
@@ -2318,6 +2343,44 @@ async function main() {
       },
     );
   }
+  const authoredBalconyLayoutMap = new Map();
+  for (const override of asArray(specRaw.wall_details.balcony_layout_overrides ?? [], "wall_details.balcony_layout_overrides")) {
+    const object = asObject(override, "wall_details.balcony_layout_overrides[]");
+    authoredBalconyLayoutMap.set(
+      authoredBalconyLayoutKey(
+        asString(object.zoneId, "wall_details.balcony_layout_overrides[].zoneId"),
+        asString(object.face, "wall_details.balcony_layout_overrides[].face"),
+        asNumber(object.segmentOrdinal, "wall_details.balcony_layout_overrides[].segmentOrdinal"),
+      ),
+      {
+        balconies: asArray(object.balconies, "wall_details.balcony_layout_overrides[].balconies").map((balcony) => {
+          const rawBalcony = asObject(balcony, "wall_details.balcony_layout_overrides[].balconies[]");
+          const opening = asObject(rawBalcony.opening, "wall_details.balcony_layout_overrides[].balconies[].opening");
+          return {
+            centerS: asNumber(rawBalcony.centerS, "wall_details.balcony_layout_overrides[].balconies[].centerS"),
+            storyIndex: asNumber(rawBalcony.storyIndex, "wall_details.balcony_layout_overrides[].balconies[].storyIndex"),
+            spanBays: asNumber(rawBalcony.spanBays, "wall_details.balcony_layout_overrides[].balconies[].spanBays"),
+            depthM: asNumber(rawBalcony.depthM, "wall_details.balcony_layout_overrides[].balconies[].depthM"),
+            parapetHeightM: asNumber(rawBalcony.parapetHeightM, "wall_details.balcony_layout_overrides[].balconies[].parapetHeightM"),
+            openingSurroundWidthM: asNumber(rawBalcony.openingSurroundWidthM, "wall_details.balcony_layout_overrides[].balconies[].openingSurroundWidthM"),
+            openingSurroundHeightM: asNumber(rawBalcony.openingSurroundHeightM, "wall_details.balcony_layout_overrides[].balconies[].openingSurroundHeightM"),
+            openingSurroundBottomOffsetM: asNumber(rawBalcony.openingSurroundBottomOffsetM, "wall_details.balcony_layout_overrides[].balconies[].openingSurroundBottomOffsetM"),
+            roofBreakWidthM: asNumber(rawBalcony.roofBreakWidthM, "wall_details.balcony_layout_overrides[].balconies[].roofBreakWidthM"),
+            roofBreakBottomOffsetM: asNumber(rawBalcony.roofBreakBottomOffsetM, "wall_details.balcony_layout_overrides[].balconies[].roofBreakBottomOffsetM"),
+            roofBreakHeightM: asNumber(rawBalcony.roofBreakHeightM, "wall_details.balcony_layout_overrides[].balconies[].roofBreakHeightM"),
+            roofBreakCapHeightM: asNumber(rawBalcony.roofBreakCapHeightM, "wall_details.balcony_layout_overrides[].balconies[].roofBreakCapHeightM"),
+            opening: {
+              width: asNumber(opening.width, "wall_details.balcony_layout_overrides[].balconies[].opening.width"),
+              height: asNumber(opening.height, "wall_details.balcony_layout_overrides[].balconies[].opening.height"),
+              sillOffsetM: asNumber(opening.sillOffsetM, "wall_details.balcony_layout_overrides[].balconies[].opening.sillOffsetM"),
+              headShape: asString(opening.headShape, "wall_details.balcony_layout_overrides[].balconies[].opening.headShape"),
+              glassStyle: asString(opening.glassStyle, "wall_details.balcony_layout_overrides[].balconies[].opening.glassStyle"),
+            },
+          };
+        }),
+      },
+    );
+  }
 
   const mainLaneZones = spec.zones.filter((zone) => zone.type === "main_lane_segment");
   const mapCenterX = mainLaneZones.reduce((sum, zone) => sum + zone.rect.x + zone.rect.w * 0.5, 0) / Math.max(1, mainLaneZones.length);
@@ -2450,6 +2513,7 @@ async function main() {
           faceContext,
           authoredDoorLayoutMap.get(authoredDoorLayoutKey(expected.zone.id, expected.face, index + 1)) ?? null,
           authoredWindowLayoutMap.get(authoredWindowLayoutKey(expected.zone.id, expected.face, index + 1)) ?? null,
+          authoredBalconyLayoutMap.get(authoredBalconyLayoutKey(expected.zone.id, expected.face, index + 1)) ?? null,
           runtimeSeed,
           maxProtrusionM,
           density,
@@ -2471,6 +2535,13 @@ async function main() {
       balconyCount: 0,
       windowCounts: { glass: 0, dark: 0, shuttered: 0 },
     });
+    const hasAuthoredBalcony = segmentSummaries.some((segment) => segment.summary.hasAuthoredBalcony);
+    const balconyStyleLabel = hasAuthoredBalcony ? "authored_brick_parapet" : segmentSummaries[0].summary.style.balconyStyle;
+    const balconyMaterialLabel = hasAuthoredBalcony
+      ? `wall \`${segmentSummaries[0].summary.style.materials.wall}\` + trim \`${segmentSummaries[0].summary.style.materials.trimHeavy}\``
+      : segmentSummaries[0].summary.style.materials.balcony
+        ? `\`${segmentSummaries[0].summary.style.materials.balcony}\``
+        : "none";
 
     const wall = {
       id: building ? `WALL_${building.id}_FRONT` : `WALL_${area.id}_${expected.face.toUpperCase()}`,
@@ -2486,6 +2557,8 @@ async function main() {
         wallRole: segmentSummaries[0].summary.wallRole,
         compositionPreset: segmentSummaries[0].summary.compositionPreset,
         style: segmentSummaries[0].summary.style,
+        balconyStyleLabel,
+        balconyMaterialLabel,
         heightM: wallHeightM,
         stories: Math.round(wallHeightM / STORY_HEIGHT_M),
         ...totals,
@@ -2503,7 +2576,9 @@ async function main() {
       doorLogic: segmentSummaries.map((segment) => `#${segment.segmentNumber} ${segment.summary.doorNotes}`).join(" "),
       windowLogic: segmentSummaries.map((segment) => `#${segment.segmentNumber} ${segment.summary.windowNotes}`).join(" "),
       balconyLogic: segmentSummaries.map((segment) => `#${segment.segmentNumber} ${segment.summary.balconyNotes}`).join(" "),
-      textureLogic: `${style.family} facade family on ${expected.zone.id}:${expected.face} resolves wall \`${style.materials.wall}\` with balcony material ${style.materials.balcony ? `\`${style.materials.balcony}\`` : "none"}.`,
+      textureLogic: hasAuthoredBalcony
+        ? `${style.family} facade family on ${expected.zone.id}:${expected.face} resolves wall \`${style.materials.wall}\` with authored balcony surfaces using wall \`${style.materials.wall}\` and trim \`${style.materials.trimHeavy}\`.`
+        : `${style.family} facade family on ${expected.zone.id}:${expected.face} resolves wall \`${style.materials.wall}\` with balcony material ${style.materials.balcony ? `\`${style.materials.balcony}\`` : "none"}.`,
       trimLogic: isSpawnBCleanup
         ? `Spawn B shell cleanup keeps only edge trims: shared plinth ${SPAWN_B_SHELL_SHARED_PLINTH_HEIGHT_M.toFixed(2)}m / ${SPAWN_B_SHELL_SHARED_PLINTH_DEPTH_M.toFixed(2)}m, heavy top-edge trims on \`${style.materials.trimHeavy}\`, no string-course bands, and no full-height pilaster grid.`
         : style.trimTier === "hero"

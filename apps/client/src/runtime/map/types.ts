@@ -76,6 +76,30 @@ export type RuntimeAuthoredDoor = {
   centerS: number;
 };
 
+export type RuntimeAuthoredBalconyOpening = {
+  width: number;
+  height: number;
+  sillOffsetM: number;
+  headShape: "pointed_arch";
+  glassStyle: WindowGlassStyle;
+};
+
+export type RuntimeAuthoredBalcony = {
+  centerS: number;
+  storyIndex: number;
+  spanBays: number;
+  depthM: number;
+  parapetHeightM: number;
+  openingSurroundWidthM: number;
+  openingSurroundHeightM: number;
+  openingSurroundBottomOffsetM: number;
+  roofBreakWidthM: number;
+  roofBreakBottomOffsetM: number;
+  roofBreakHeightM: number;
+  roofBreakCapHeightM: number;
+  opening: RuntimeAuthoredBalconyOpening;
+};
+
 export type RuntimeDoorStyleSource = {
   zoneId: string;
   face: RuntimeFacadeFace;
@@ -97,6 +121,13 @@ export type RuntimeWindowLayoutOverride = {
   windows: RuntimeAuthoredWindow[];
 };
 
+export type RuntimeBalconyLayoutOverride = {
+  zoneId: string;
+  face: RuntimeFacadeFace;
+  segmentOrdinal: number;
+  balconies: RuntimeAuthoredBalcony[];
+};
+
 export type RuntimeWallDetailOptions = {
   enabled: boolean;
   seed?: number;
@@ -106,6 +137,7 @@ export type RuntimeWallDetailOptions = {
   facadeOverrides: RuntimeFacadeOverride[];
   doorLayoutOverrides: RuntimeDoorLayoutOverride[];
   windowLayoutOverrides: RuntimeWindowLayoutOverride[];
+  balconyLayoutOverrides: RuntimeBalconyLayoutOverride[];
 };
 
 export type RuntimeAnchor = {
@@ -248,6 +280,7 @@ function parseWallDetailOptions(value: unknown, source: string): RuntimeWallDeta
       facadeOverrides: [],
       doorLayoutOverrides: [],
       windowLayoutOverrides: [],
+      balconyLayoutOverrides: [],
     };
   }
 
@@ -276,6 +309,7 @@ function parseWallDetailOptions(value: unknown, source: string): RuntimeWallDeta
     facadeOverrides: [],
     doorLayoutOverrides: [],
     windowLayoutOverrides: [],
+    balconyLayoutOverrides: [],
   };
 
   if (typeof obj.seed !== "undefined") {
@@ -381,6 +415,164 @@ function parseWallDetailOptions(value: unknown, source: string): RuntimeWallDeta
         face,
         segmentOrdinal,
         windows,
+      };
+    });
+  }
+
+  if (typeof obj.balcony_layout_overrides !== "undefined") {
+    if (!Array.isArray(obj.balcony_layout_overrides)) {
+      failParse(`${source}.balcony_layout_overrides`, "expected array");
+    }
+
+    resolved.balconyLayoutOverrides = obj.balcony_layout_overrides.map((rawOverride, index) => {
+      const override = asObject(rawOverride, `${source}.balcony_layout_overrides[${index}]`);
+      const zoneId = asString(override.zoneId, `${source}.balcony_layout_overrides[${index}].zoneId`);
+      const face = asString(override.face, `${source}.balcony_layout_overrides[${index}].face`);
+      if (face !== "north" && face !== "south" && face !== "east" && face !== "west") {
+        failParse(`${source}.balcony_layout_overrides[${index}].face`, "expected 'north', 'south', 'east', or 'west'");
+      }
+      const segmentOrdinal = asPositiveNumber(
+        override.segmentOrdinal,
+        `${source}.balcony_layout_overrides[${index}].segmentOrdinal`,
+      );
+      if (!Number.isInteger(segmentOrdinal)) {
+        failParse(`${source}.balcony_layout_overrides[${index}].segmentOrdinal`, "expected integer > 0");
+      }
+      if (!Array.isArray(override.balconies) || override.balconies.length === 0) {
+        failParse(`${source}.balcony_layout_overrides[${index}].balconies`, "expected non-empty array");
+      }
+
+      const balconies = override.balconies.map((rawBalcony, balconyIndex) => {
+        const balcony = asObject(rawBalcony, `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}]`);
+        const storyIndex = asNumber(
+          balcony.storyIndex,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex`,
+        );
+        if (!Number.isInteger(storyIndex) || storyIndex < 1) {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex`,
+            "expected integer >= 1",
+          );
+        }
+        const spanBays = asPositiveNumber(
+          balcony.spanBays,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays`,
+        );
+        if (!Number.isInteger(spanBays)) {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays`,
+            "expected integer > 0",
+          );
+        }
+        const opening = asObject(
+          balcony.opening,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening`,
+        );
+        const headShape = asString(
+          opening.headShape,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape`,
+        );
+        if (headShape !== "pointed_arch") {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape`,
+            "expected 'pointed_arch'",
+          );
+        }
+        const balconyHeadShape: "pointed_arch" = "pointed_arch";
+        const glassStyleRaw = asString(
+          opening.glassStyle,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle`,
+        );
+        if (glassStyleRaw !== "stained_glass_bright" && glassStyleRaw !== "stained_glass_dim") {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle`,
+            "expected supported window glass style",
+          );
+        }
+        const glassStyle: WindowGlassStyle = glassStyleRaw;
+
+        const roofBreakHeightM = asNumber(
+          balcony.roofBreakHeightM,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakHeightM`,
+        );
+        if (roofBreakHeightM < 0) {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakHeightM`,
+            "expected number >= 0",
+          );
+        }
+        const roofBreakCapHeightM = asNumber(
+          balcony.roofBreakCapHeightM,
+          `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakCapHeightM`,
+        );
+        if (roofBreakCapHeightM < 0) {
+          failParse(
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakCapHeightM`,
+            "expected number >= 0",
+          );
+        }
+
+        return {
+          centerS: asNumber(
+            balcony.centerS,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].centerS`,
+          ),
+          storyIndex,
+          spanBays,
+          depthM: asPositiveNumber(
+            balcony.depthM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].depthM`,
+          ),
+          parapetHeightM: asPositiveNumber(
+            balcony.parapetHeightM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].parapetHeightM`,
+          ),
+          openingSurroundWidthM: asPositiveNumber(
+            balcony.openingSurroundWidthM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundWidthM`,
+          ),
+          openingSurroundHeightM: asPositiveNumber(
+            balcony.openingSurroundHeightM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundHeightM`,
+          ),
+          openingSurroundBottomOffsetM: asNumber(
+            balcony.openingSurroundBottomOffsetM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundBottomOffsetM`,
+          ),
+          roofBreakWidthM: asPositiveNumber(
+            balcony.roofBreakWidthM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakWidthM`,
+          ),
+          roofBreakBottomOffsetM: asNumber(
+            balcony.roofBreakBottomOffsetM,
+            `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakBottomOffsetM`,
+          ),
+          roofBreakHeightM,
+          roofBreakCapHeightM,
+          opening: {
+            width: asPositiveNumber(
+              opening.width,
+              `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.width`,
+            ),
+            height: asPositiveNumber(
+              opening.height,
+              `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.height`,
+            ),
+            sillOffsetM: asNumber(
+              opening.sillOffsetM,
+              `${source}.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.sillOffsetM`,
+            ),
+            headShape: balconyHeadShape,
+            glassStyle,
+          },
+        };
+      });
+
+      return {
+        zoneId,
+        face,
+        segmentOrdinal,
+        balconies,
       };
     });
   }

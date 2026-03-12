@@ -1,8 +1,10 @@
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type {
+  RuntimeAuthoredBalcony,
   RuntimeAuthoredDoor,
   RuntimeAuthoredWindow,
   RuntimeAnchorsSpec,
+  RuntimeBalconyLayoutOverride,
   RuntimeBlockoutZone,
   RuntimeDoorLayoutOverride,
   RuntimeDoorStyleSource,
@@ -259,6 +261,7 @@ type SegmentDecorContext = {
   authoredDoorStyleSpec: FacadeSpec | null;
   authoredDoorStyleSource: RuntimeDoorStyleSource | null;
   authoredWindowLayout: RuntimeWindowLayoutOverride | null;
+  authoredBalconyLayout: RuntimeBalconyLayoutOverride | null;
 };
 
 export type BuildWallDetailProfile = "blockout" | "pbr";
@@ -270,6 +273,7 @@ export type BuildWallDetailPlacementsOptions = {
   facadeOverrides: readonly RuntimeFacadeOverride[];
   doorLayoutOverrides: readonly RuntimeDoorLayoutOverride[];
   windowLayoutOverrides: readonly RuntimeWindowLayoutOverride[];
+  balconyLayoutOverrides: readonly RuntimeBalconyLayoutOverride[];
   seed: number;
   wallHeightM: number;
   wallThicknessM: number;
@@ -306,8 +310,55 @@ function authoredDoorLayoutKey(zoneId: string, face: FacadeFace, segmentOrdinal:
   return `${zoneId}:${face}:${segmentOrdinal}`;
 }
 
+function authoredBalconyLayoutKey(zoneId: string, face: FacadeFace, segmentOrdinal: number): string {
+  return `${zoneId}:${face}:${segmentOrdinal}`;
+}
+
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
+}
+
+function resolveAuthoredRoofBreakSpan(
+  ctx: SegmentDecorContext,
+): { centerS: number; widthM: number } | null {
+  const balcony = ctx.authoredBalconyLayout?.balconies.find((candidate) => candidate.roofBreakWidthM > 0) ?? null;
+  if (!balcony) return null;
+  return {
+    centerS: balcony.centerS,
+    widthM: balcony.roofBreakWidthM,
+  };
+}
+
+function resolveHorizontalFeatureSpans(
+  totalLengthM: number,
+  reservedSpan: { centerS: number; widthM: number } | null,
+): Array<{ centerS: number; lengthM: number }> {
+  if (!reservedSpan) {
+    return [{ centerS: 0, lengthM: totalLengthM }];
+  }
+
+  const halfLength = totalLengthM * 0.5;
+  const reservedStart = clamp(reservedSpan.centerS - reservedSpan.widthM * 0.5, -halfLength, halfLength);
+  const reservedEnd = clamp(reservedSpan.centerS + reservedSpan.widthM * 0.5, -halfLength, halfLength);
+  const spans: Array<{ centerS: number; lengthM: number }> = [];
+
+  if (reservedStart > -halfLength + 0.04) {
+    const lengthM = reservedStart + halfLength;
+    spans.push({
+      centerS: (-halfLength + reservedStart) * 0.5,
+      lengthM,
+    });
+  }
+
+  if (reservedEnd < halfLength - 0.04) {
+    const lengthM = halfLength - reservedEnd;
+    spans.push({
+      centerS: (reservedEnd + halfLength) * 0.5,
+      lengthM,
+    });
+  }
+
+  return spans.length > 0 ? spans : [{ centerS: 0, lengthM: totalLengthM }];
 }
 
 function pointInRect2D(zone: RuntimeBlockoutZone, x: number, z: number): boolean {
@@ -618,12 +669,14 @@ function placeParapetCap(ctx: SegmentDecorContext): void {
     isSpawnBCleanup,
   );
   const y = ctx.wallHeightM + capHeight * 0.5;
-  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
-    ctx.frame, 0, y, capDepth * 0.5, capDepth, capHeight, ctx.frame.lengthM);
-  tagTrim(
-    ctx.instances,
-    isSpawnBCleanup || isHero || ctx.trimTier === "hero" ? ctx.trimHeavyMaterialId : ctx.trimLightMaterialId,
-  );
+  for (const span of resolveHorizontalFeatureSpans(ctx.frame.lengthM, resolveAuthoredRoofBreakSpan(ctx))) {
+    pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+      ctx.frame, span.centerS, y, capDepth * 0.5, capDepth, capHeight, span.lengthM);
+    tagTrim(
+      ctx.instances,
+      isSpawnBCleanup || isHero || ctx.trimTier === "hero" ? ctx.trimHeavyMaterialId : ctx.trimLightMaterialId,
+    );
+  }
 }
 
 // ── Roof cap ───────────────────────────────────────────────────────────────
@@ -636,18 +689,20 @@ function placeRoofCap(ctx: SegmentDecorContext): void {
   // Positive inwardN = toward walkable zone, negative = into building mass
   const centerInwardN = (ROOF_OVERHANG_M - ROOF_DEPTH_M) * 0.5;
 
-  pushBox(
-    ctx.instances, ctx.maxInstances,
-    "roof_slab", ctx.wallMaterialId,
-    ctx.frame,
-    0,
-    roofY,
-    centerInwardN,
-    ROOF_DEPTH_M + ROOF_OVERHANG_M,
-    ROOF_THICKNESS_M,
-    roofLength,
-  );
-  tagTrim(ctx.instances, null); // uses template roof material — not wall surface
+  for (const span of resolveHorizontalFeatureSpans(roofLength, resolveAuthoredRoofBreakSpan(ctx))) {
+    pushBox(
+      ctx.instances, ctx.maxInstances,
+      "roof_slab", ctx.wallMaterialId,
+      ctx.frame,
+      span.centerS,
+      roofY,
+      centerInwardN,
+      ROOF_DEPTH_M + ROOF_OVERHANG_M,
+      ROOF_THICKNESS_M,
+      span.lengthM,
+    );
+    tagTrim(ctx.instances, null); // uses template roof material — not wall surface
+  }
 }
 
 // ── Building enclosure (back wall + return walls) ────────────────────────
@@ -831,10 +886,12 @@ function placeCorniceStrip(ctx: SegmentDecorContext): void {
     isSpawnBCleanup,
   );
   const y = ctx.wallHeightM - corniceHeight * 0.5;
-  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
-    ctx.frame, 0, y, corniceDepth * 0.5,
-    corniceDepth, corniceHeight, ctx.frame.lengthM);
-  tagTrim(ctx.instances, isSpawnBCleanup ? (ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId) : ctx.trimLightMaterialId);
+  for (const span of resolveHorizontalFeatureSpans(ctx.frame.lengthM, resolveAuthoredRoofBreakSpan(ctx))) {
+    pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+      ctx.frame, span.centerS, y, corniceDepth * 0.5,
+      corniceDepth, corniceHeight, span.lengthM);
+    tagTrim(ctx.instances, isSpawnBCleanup ? (ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId) : ctx.trimLightMaterialId);
+  }
 }
 
 // ── Corner piers ───────────────────────────────────────────────────────────
@@ -1719,6 +1776,132 @@ function placeUpperDoorOpening(
   tagTrim(ctx.instances, ctx.trimLightMaterialId ?? ctx.trimHeavyMaterialId);
 }
 
+function placeAuthoredPointedArchBalconyOpening(
+  ctx: SegmentDecorContext,
+  centerS: number,
+  storyBaseY: number,
+  spec: FacadeSpec,
+  balcony: RuntimeAuthoredBalcony,
+): void {
+  const trimDepthScale = isSpawnBShellCleanupSurface(ctx) ? SPAWN_B_SHELL_TRIM_DEPTH_SCALE : 1;
+  const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+  const surroundBottomY = storyBaseY + balcony.openingSurroundBottomOffsetM;
+  const surroundCenterY = surroundBottomY + balcony.openingSurroundHeightM * 0.5;
+  const openingBottomY = storyBaseY + balcony.opening.sillOffsetM;
+  const openingCenterY = openingBottomY + balcony.opening.height * 0.5;
+  const surroundProjection = Math.max(0.13, spec.frameDepth * 1.14 * trimDepthScale);
+  const voidDepth = 0.024;
+  const voidInset = Math.max(0.05, surroundProjection * 0.7);
+  const glassInset = voidInset + 0.012;
+  pushBox(ctx.instances, ctx.maxInstances, "hero_window_pointed_arch_frame", ctx.wallMaterialId,
+    ctx.frame, centerS, surroundCenterY, surroundProjection * 0.5,
+    surroundProjection, balcony.openingSurroundHeightM, balcony.openingSurroundWidthM);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  pushBox(ctx.instances, ctx.maxInstances, "hero_window_pointed_arch_void", null,
+    ctx.frame, centerS, openingCenterY, voidInset,
+    voidDepth, balcony.opening.height, balcony.opening.width);
+
+  pushBox(ctx.instances, ctx.maxInstances, "hero_window_pointed_arch_glass", null,
+    ctx.frame, centerS, openingCenterY, glassInset,
+    WINDOW_GLASS_THICKNESS_M, balcony.opening.height, balcony.opening.width);
+  tagTrim(ctx.instances, null, resolveStainedGlassMaterialId(balcony.opening.glassStyle));
+}
+
+function placeAuthoredBalconyRoofBreak(
+  ctx: SegmentDecorContext,
+  spec: FacadeSpec,
+  balcony: RuntimeAuthoredBalcony,
+  storyBaseY: number,
+): void {
+  if (balcony.roofBreakHeightM <= 0 && balcony.roofBreakCapHeightM <= 0) {
+    return;
+  }
+  const trimDepthScale = isSpawnBShellCleanupSurface(ctx) ? SPAWN_B_SHELL_TRIM_DEPTH_SCALE : 1;
+  const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+  const bodyBottomY = storyBaseY + balcony.roofBreakBottomOffsetM;
+  const bodyDepth = Math.max(0.18, spec.frameDepth * 0.9 * trimDepthScale);
+  const capDepth = bodyDepth + 0.08;
+  const bodyFrontFace = 0.018;
+  const capFrontFace = 0.034;
+  const bodyCenterN = bodyFrontFace - bodyDepth * 0.5;
+  const capCenterN = capFrontFace - capDepth * 0.5;
+
+  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_back", ctx.wallMaterialId,
+    ctx.frame, balcony.centerS, bodyBottomY + balcony.roofBreakHeightM * 0.5, bodyCenterN,
+    bodyDepth, balcony.roofBreakHeightM, balcony.roofBreakWidthM);
+
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, balcony.centerS,
+    bodyBottomY + balcony.roofBreakHeightM + balcony.roofBreakCapHeightM * 0.5,
+    capCenterN,
+    capDepth, balcony.roofBreakCapHeightM, balcony.roofBreakWidthM + 0.12);
+  tagTrim(ctx.instances, trimMaterialId);
+}
+
+function placeAuthoredBalcony(
+  ctx: SegmentDecorContext,
+  spec: FacadeSpec,
+  balcony: RuntimeAuthoredBalcony,
+): void {
+  if (balcony.storyIndex >= spec.stories) {
+    throw new Error(
+      `[wall-detail] authored balcony storyIndex ${balcony.storyIndex} exceeds ${spec.stories - 1} on ${ctx.zone?.id ?? "unknown"}:${ctx.facadeFace}#${ctx.segmentOrdinal ?? "?"}`,
+    );
+  }
+
+  const storyBaseY = balcony.storyIndex * STORY_HEIGHT_M;
+  const balconyW = spec.bayWidth * balcony.spanBays;
+  const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+  const slabThickness = 0.14;
+  const frontThickness = 0.18;
+  const returnThickness = 0.18;
+  const returnDepth = Math.max(0.64, balcony.depthM - frontThickness * 0.2);
+  const copingHeight = 0.1;
+  const copingDepth = frontThickness + 0.06;
+  const copingWidth = balconyW + 0.18;
+  const corbelHeight = 0.44;
+  const corbelDepth = 0.26;
+  const corbelWidth = 0.22;
+  const corbelOffset = clamp(balconyW * 0.24, 1.28, balconyW * 0.28);
+
+  placeAuthoredBalconyRoofBreak(ctx, spec, balcony, storyBaseY);
+  placeAuthoredPointedArchBalconyOpening(ctx, balcony.centerS, storyBaseY, spec, balcony);
+
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
+    ctx.frame, balcony.centerS, storyBaseY + slabThickness * 0.5, balcony.depthM * 0.5,
+    balcony.depthM, slabThickness, balconyW);
+
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_parapet", ctx.wallMaterialId,
+    ctx.frame, balcony.centerS, storyBaseY + slabThickness + balcony.parapetHeightM * 0.5, balcony.depthM - frontThickness * 0.5,
+    frontThickness, balcony.parapetHeightM, balconyW);
+
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_parapet", ctx.wallMaterialId,
+    ctx.frame, balcony.centerS, storyBaseY + slabThickness + balcony.parapetHeightM + copingHeight * 0.5, balcony.depthM - frontThickness * 0.5,
+    copingDepth, copingHeight, copingWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  for (const side of [-1, 1] as const) {
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_end_cap", ctx.wallMaterialId,
+      ctx.frame, balcony.centerS + side * (balconyW * 0.5 - returnThickness * 0.5),
+      storyBaseY + slabThickness + balcony.parapetHeightM * 0.5, returnDepth * 0.5,
+      returnDepth, balcony.parapetHeightM, returnThickness);
+
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_end_cap", ctx.wallMaterialId,
+      ctx.frame, balcony.centerS + side * (balconyW * 0.5 - returnThickness * 0.5),
+      storyBaseY + slabThickness + balcony.parapetHeightM + copingHeight * 0.5, returnDepth * 0.5,
+      returnDepth + 0.04, copingHeight, returnThickness + 0.04);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+
+  for (const alongS of [-corbelOffset, 0, corbelOffset]) {
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_bracket", ctx.wallMaterialId,
+      ctx.frame, balcony.centerS + alongS, storyBaseY - corbelHeight * 0.5, balcony.depthM * 0.58,
+      corbelDepth, corbelHeight, corbelWidth);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+}
+
 // ── Balcony placement (thin slab + light parapet) ──────────────────────────
 
 function placeBalcony(
@@ -2150,7 +2333,13 @@ function decorateSegment(ctx: SegmentDecorContext): void {
   // Pilasters aligned to the bay grid
   placePilasters(ctx, spec);
 
-  if (ctx.authoredWindowLayout || ctx.authoredDoorLayout) {
+  if (ctx.authoredWindowLayout || ctx.authoredDoorLayout || ctx.authoredBalconyLayout) {
+    if (ctx.authoredBalconyLayout && !ctx.authoredWindowLayout) {
+      throw new Error(
+        `[wall-detail] authored balcony layout on ${ctx.zone?.id ?? "unknown"}:${ctx.facadeFace}#${ctx.segmentOrdinal ?? "?"} requires an authored window layout`,
+      );
+    }
+
     const doorPlacementSpec = ctx.authoredDoorStyleSpec ?? spec;
     const doorCentersS = resolveDoorCentersS(spec, ctx.authoredDoorLayout);
 
@@ -2161,6 +2350,12 @@ function decorateSegment(ctx: SegmentDecorContext): void {
     if (ctx.authoredWindowLayout) {
       for (const window of ctx.authoredWindowLayout.windows) {
         placeAuthoredWindow(ctx, window, spec);
+      }
+    }
+
+    if (ctx.authoredBalconyLayout) {
+      for (const balcony of ctx.authoredBalconyLayout.balconies) {
+        placeAuthoredBalcony(ctx, spec, balcony);
       }
     }
 
@@ -2331,6 +2526,10 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
   for (const override of options.windowLayoutOverrides) {
     authoredWindowLayoutMap.set(authoredWindowLayoutKey(override.zoneId, override.face, override.segmentOrdinal), override);
   }
+  const authoredBalconyLayoutMap = new Map<string, RuntimeBalconyLayoutOverride>();
+  for (const override of options.balconyLayoutOverrides) {
+    authoredBalconyLayoutMap.set(authoredBalconyLayoutKey(override.zoneId, override.face, override.segmentOrdinal), override);
+  }
 
   const segmentMetaByIndex = new Map<number, {
     zone: RuntimeBlockoutZone | null;
@@ -2396,6 +2595,7 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
     isConnectorSpawnFacing: boolean;
     authoredDoorLayout: RuntimeDoorLayoutOverride | null;
     authoredWindowLayout: RuntimeWindowLayoutOverride | null;
+    authoredBalconyLayout: RuntimeBalconyLayoutOverride | null;
     wallRole: WallRole;
   };
 
@@ -2492,6 +2692,9 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
     const authoredWindowLayout = zone && segmentMeta?.segmentOrdinal
       ? authoredWindowLayoutMap.get(authoredWindowLayoutKey(zone.id, facadeFace, segmentMeta.segmentOrdinal)) ?? null
       : null;
+    const authoredBalconyLayout = zone && segmentMeta?.segmentOrdinal
+      ? authoredBalconyLayoutMap.get(authoredBalconyLayoutKey(zone.id, facadeFace, segmentMeta.segmentOrdinal)) ?? null
+      : null;
     const wallRole = resolveWallRole(zone, facadeFace, isInsideWall, isSpawnEntryWall);
 
     const descriptor: SegmentDescriptor = {
@@ -2521,6 +2724,7 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       isConnectorSpawnFacing,
       authoredDoorLayout,
       authoredWindowLayout,
+      authoredBalconyLayout,
       wallRole,
     };
     segmentDescriptorCache.set(index, descriptor);
@@ -2587,6 +2791,7 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       authoredDoorStyleSpec: null,
       authoredDoorStyleSource: null,
       authoredWindowLayout: sourceDescriptor.authoredWindowLayout,
+      authoredBalconyLayout: sourceDescriptor.authoredBalconyLayout,
     });
     if (!sourceSpec) {
       throw new Error(`[wall-detail] unable to resolve authored door style for source '${sourceKey}'`);
@@ -2645,6 +2850,7 @@ export function buildWallDetailPlacements(options: BuildWallDetailPlacementsOpti
       authoredDoorStyleSpec: authoredDoorStyle.spec,
       authoredDoorStyleSource: authoredDoorStyle.source,
       authoredWindowLayout: descriptor.authoredWindowLayout,
+      authoredBalconyLayout: descriptor.authoredBalconyLayout,
     });
     if (instances.length > countBefore) {
       segmentsDecorated += 1;

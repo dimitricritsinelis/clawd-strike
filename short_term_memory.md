@@ -6,7 +6,7 @@ Do not use for: workflow policy, durable rationale, archive history, product tru
 Schema version: stm-v2
 Canonical playtest URL: http://127.0.0.1:4174/?map=bazaar-map
 Map approval status: NOT APPROVED
-Last compacted: 2026-03-11T04:44:10Z
+Last compacted: 2026-03-12T00:38:50Z
 
 # short_term_memory.md - Clawd Strike Status
 
@@ -64,9 +64,9 @@ Recent Notes:
 
 ## Recent Completed Rollup
 <!-- TOOL-MANAGED START: completed-rollup -->
-- STM-20260311-041232-codex | map-geometry | Rework Spawn B wall openings | 2026-03-11 | Spawn B east/west doors now reuse the north-wall door style via authored styleSource, castle-door surround alignment is corrected, and map regeneration plus qa:completion pass.
-- STM-20260311-035657-codex | map-visual | Tighten Spawn B stained-glass fit | 2026-03-11 | Implemented a shared pointed-arch aperture profile for Spawn B authored stained-glass windows, aligned frame/glass/void geometry to it, and passed pnpm typecheck plus pnpm qa:completion. Manual in-game visual verification remains advisable.
-- STM-20260310-201014-codex | map-visual | Spawn B stained glass visibility fix | 2026-03-10 | Made the authored Spawn B stained-glass windows visibly render by separating void and glass meshes, moving the layered panels in front of the wall face, simplifying the material, and validating in runtime captures plus qa:completion.
-- STM-20260310-184018-codex | map-visual | Spawn B stained glass window pass | 2026-03-10 | Implemented window-only authored Spawn B courtyard layouts with pointed-arch stained glass, downloaded the approved 3DTextures asset set, regenerated map artifacts, and passed local typecheck plus qa:completion.
-- STM-20260310-051346-codex | map-visual | Spawn B bazaar window hero pass | 2026-03-10 | Reverted the assistant-introduced Spawn B preset/material/shot changes, regenerated runtime artifacts, and left the pre-existing branch door/detail edits intact.
+- STM-20260312-003607-codex | map-visual | Restore balcony arch cap | 2026-03-12 | Set the Spawn B balcony hero stone and glass arch starts to 8.2m, raised the opening and surround heights to restore visible arch cap, sharpened the hero curve, and qa:completion passed.
+- STM-20260312-003035-codex | map-visual | Set balcony arch start to 8m | 2026-03-12 | Set the Spawn B balcony hero stone and glass arch starts to 8.0m by updating the hero spring-line values; pnpm qa:completion passed.
+- STM-20260312-002235-codex | map-visual | Align arch to parapet top | 2026-03-12 | Aligned the Spawn B balcony hero window arch start to the top of the visible parapet trim above the roofline; pnpm qa:completion passed.
+- STM-20260312-001800-codex | map-visual | Raise balcony arch start | 2026-03-12 | Corrected the balcony hero window arch start by raising the spring line while preserving the current placement and overall height; pnpm qa:completion passed.
+- STM-20260312-000854-codex | map-visual | Lift balcony window again | 2026-03-12 | Raised the Spawn B balcony hero window another 0.35m without changing its shape so the arch start moves closer to the roofline; pnpm qa:completion passed.
 <!-- TOOL-MANAGED END: completed-rollup -->

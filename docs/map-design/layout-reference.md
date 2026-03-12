@@ -916,21 +916,21 @@ Generated from `docs/map-design/specs/map_spec.json` with `pnpm --filter @clawd-
 - Wall role: `spawn_frontage`
 - Composition preset: `spawn_gate_brick_backdrop`
 - Facade family: `spawn`
-- Balcony style: `none`
+- Balcony style: `authored_brick_parapet`
 - Wall material: `ph_brick_4_desert`
 - Trim textures: heavy `ph_stone_trim_white`, light `ph_band_plastered`
-- Balcony texture: none
+- Balcony texture: wall `ph_brick_4_desert` + trim `ph_stone_trim_white`
 - Floor context: PBR floor material `cobblestone_pavement`
-- Opening totals: 2 ground doors, 0 upper door openings, 0 balconies, 8 glass windows, 0 dark windows, 0 shuttered windows
+- Opening totals: 2 ground doors, 1 upper door openings, 1 balconies, 6 glass windows, 0 dark windows, 0 shuttered windows
 - Door logic: #1 2 authored ground door opening(s) placed on segment #1.
-- Window logic: #1 Authored window layout places 8 pointed-arch windows (4 bright stained-glass upper / 4 dim stained-glass lower).
-- Balcony logic: #1 No balconies because spawn frontage resolves balcony style "none".
-- Texture logic: spawn facade family on SPAWN_B_GATE_PLAZA:north resolves wall `ph_brick_4_desert` with balcony material none.
+- Window logic: #1 Authored window layout places 6 pointed-arch windows (2 bright stained-glass upper / 4 dim stained-glass lower).
+- Balcony logic: #1 Authored balcony layout places 2-bay centered balcony on story 1 with a raised roof-integrated stained-glass-bright pointed-arch window bay and split top trim around a 4.00m center parapet.
+- Texture logic: spawn facade family on SPAWN_B_GATE_PLAZA:north resolves wall `ph_brick_4_desert` with authored balcony surfaces using wall `ph_brick_4_desert` and trim `ph_stone_trim_white`.
 - Trim logic: Spawn B shell cleanup keeps only edge trims: shared plinth 0.58m / 0.17m, heavy top-edge trims on `ph_stone_trim_white`, no string-course bands, and no full-height pilaster grid.
 - Anchor summary: none
 - Segment breakdown:
-  - #1: usable=21.30m, bays=7, pattern=authored, doors=2/0, balconies=0, windows=8 glass / 0 dark / 0 shuttered
-    logic: Authored door/window layout overrides on segment #1 place exact openings while preserving the existing facade construction. 2 authored ground door opening(s) placed on segment #1. Authored window layout places 8 pointed-arch windows (4 bright stained-glass upper / 4 dim stained-glass lower). No balconies because spawn frontage resolves balcony style "none".
+  - #1: usable=21.30m, bays=7, pattern=authored, doors=2/1, balconies=1, windows=6 glass / 0 dark / 0 shuttered
+    logic: Authored door/window/balcony layout overrides on segment #1 place exact openings while preserving the existing facade construction. 2 authored ground door opening(s) placed on segment #1. Authored window layout places 6 pointed-arch windows (2 bright stained-glass upper / 4 dim stained-glass lower). Authored balcony layout places 2-bay centered balcony on story 1 with a raised roof-integrated stained-glass-bright pointed-arch window bay and split top trim around a 4.00m center parapet.
 - Notes: Spawn B exposed north face.
 
 ### WALL_BLDG_H_FRONT — Building H Front Wall

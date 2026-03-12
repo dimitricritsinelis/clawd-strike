@@ -224,6 +224,141 @@
               }
             }
           }
+        },
+        "balcony_layout_overrides": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "zoneId",
+              "face",
+              "segmentOrdinal",
+              "balconies"
+            ],
+            "properties": {
+              "zoneId": {
+                "type": "string"
+              },
+              "face": {
+                "type": "string",
+                "enum": [
+                  "north",
+                  "south",
+                  "east",
+                  "west"
+                ]
+              },
+              "segmentOrdinal": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "balconies": {
+                "type": "array",
+                "minItems": 1,
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "centerS",
+                    "storyIndex",
+                    "spanBays",
+                    "depthM",
+                    "parapetHeightM",
+                    "openingSurroundWidthM",
+                    "openingSurroundHeightM",
+                    "openingSurroundBottomOffsetM",
+                    "roofBreakWidthM",
+                    "roofBreakBottomOffsetM",
+                    "roofBreakHeightM",
+                    "roofBreakCapHeightM",
+                    "opening"
+                  ],
+                  "properties": {
+                    "centerS": {
+                      "type": "number"
+                    },
+                    "storyIndex": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "spanBays": {
+                      "type": "integer",
+                      "minimum": 1
+                    },
+                    "depthM": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "parapetHeightM": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "openingSurroundWidthM": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "openingSurroundHeightM": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "openingSurroundBottomOffsetM": {
+                      "type": "number"
+                    },
+                    "roofBreakWidthM": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "roofBreakBottomOffsetM": {
+                      "type": "number"
+                    },
+                    "roofBreakHeightM": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "roofBreakCapHeightM": {
+                      "type": "number",
+                      "minimum": 0
+                    },
+                    "opening": {
+                      "type": "object",
+                      "required": [
+                        "width",
+                        "height",
+                        "sillOffsetM",
+                        "headShape",
+                        "glassStyle"
+                      ],
+                      "properties": {
+                        "width": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "height": {
+                          "type": "number",
+                          "exclusiveMinimum": 0
+                        },
+                        "sillOffsetM": {
+                          "type": "number"
+                        },
+                        "headShape": {
+                          "type": "string",
+                          "enum": [
+                            "pointed_arch"
+                          ]
+                        },
+                        "glassStyle": {
+                          "type": "string",
+                          "enum": [
+                            "stained_glass_bright",
+                            "stained_glass_dim"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
         }
       },
       "additionalProperties": true
