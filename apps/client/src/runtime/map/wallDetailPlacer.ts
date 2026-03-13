@@ -28,7 +28,11 @@ import {
   resolveCastleDoorSilhouette,
   type DoorModelPlacement,
 } from "./buildDoorModels";
-import { resolvePointedArchFrameFromAperture } from "./pointedArchProfile";
+import {
+  resolvePointedArchFrameFromAperture,
+  resolveSpawnHeroPointedArchFrameFromAperture,
+  resolveSpawnWindowPointedArchFrameFromAperture,
+} from "./pointedArchProfile";
 import {
   resolveFacadeStyleForSegment,
   type BalconyStyle,
@@ -58,6 +62,9 @@ const WINDOW_GLASS_THICKNESS_M = 0.02;
 const STANDARD_MAIN_GROUND_FACADE_DOOR_W_M = 1.698;
 const STANDARD_MAIN_GROUND_FACADE_DOOR_H_M = 2.405;
 const SPAWN_B_HERO_DOOR_SURROUND_DEPTH_M = 0.21;
+const SPAWN_B_STANDARD_WINDOW_MODULE_ID = "spawn_standard_window";
+const SPAWN_B_STANDARD_DOOR_MODULE_ID = "spawn_standard_door";
+const SPAWN_B_CENTER_HERO_MODULE_ID = "spawn_b_center_hero";
 const SPAWN_B_SHELL_SHARED_PLINTH_HEIGHT_M = 0.58;
 const SPAWN_B_SHELL_SHARED_PLINTH_DEPTH_M = 0.17;
 const SPAWN_B_SHELL_SHARED_PLINTH_HEIGHT_SCALE = 0.85;
@@ -1571,6 +1578,18 @@ function requireHeroBayModule(ctx: SegmentDecorContext, moduleId: string): Runti
   return module;
 }
 
+function isSpawnBStandardWindowModule(module: RuntimeWindowModule): boolean {
+  return module.id === SPAWN_B_STANDARD_WINDOW_MODULE_ID;
+}
+
+function isSpawnBStandardDoorModule(module: RuntimeDoorModule): boolean {
+  return module.id === SPAWN_B_STANDARD_DOOR_MODULE_ID;
+}
+
+function isSpawnBCenterHeroModule(module: RuntimeHeroBayModule): boolean {
+  return module.id === SPAWN_B_CENTER_HERO_MODULE_ID;
+}
+
 function computeEqualMarginCenters(
   leftBoundary: number,
   rightBoundary: number,
@@ -1623,7 +1642,10 @@ function placeModuleWindow(
   sillY: number,
   module: RuntimeWindowModule,
 ): void {
-  const frameMetrics = resolvePointedArchFrameFromAperture(module.apertureWidthM, module.apertureHeightM);
+  const isSpawnBWindow = isSpawnBStandardWindowModule(module);
+  const frameMetrics = isSpawnBWindow
+    ? resolveSpawnWindowPointedArchFrameFromAperture(module.apertureWidthM, module.apertureHeightM)
+    : resolvePointedArchFrameFromAperture(module.apertureWidthM, module.apertureHeightM);
   if (
     Math.abs(frameMetrics.frameWidth - module.frameWidthM) > 0.025
     || Math.abs(frameMetrics.frameHeight - module.frameHeightM) > 0.025
@@ -1635,17 +1657,20 @@ function placeModuleWindow(
 
   const frameCenterY = sillY + frameMetrics.frameCenterYOffsetFromSill;
   const apertureCenterY = frameCenterY + frameMetrics.apertureCenterYOffsetFromFrameCenter;
+  const voidMeshId = isSpawnBWindow ? "spawn_window_pointed_arch_void" : "window_pointed_arch_void";
+  const glassMeshId = isSpawnBWindow ? "spawn_window_pointed_arch_glass" : "window_pointed_arch_glass";
+  const frameMeshId = isSpawnBWindow ? "spawn_window_pointed_arch_frame" : "window_pointed_arch_frame";
 
-  pushBox(ctx.instances, ctx.maxInstances, "window_pointed_arch_void", null,
+  pushBox(ctx.instances, ctx.maxInstances, voidMeshId, null,
     ctx.frame, centerS, apertureCenterY, module.voidInsetM,
     0.02, module.apertureHeightM, module.apertureWidthM);
 
-  pushBox(ctx.instances, ctx.maxInstances, "window_pointed_arch_glass", null,
+  pushBox(ctx.instances, ctx.maxInstances, glassMeshId, null,
     ctx.frame, centerS, apertureCenterY, module.glassInsetM,
     WINDOW_GLASS_THICKNESS_M, module.apertureHeightM, module.apertureWidthM);
   tagTrim(ctx.instances, null, resolveStainedGlassMaterialId(module.glassStyle));
 
-  pushBox(ctx.instances, ctx.maxInstances, "window_pointed_arch_frame", ctx.wallMaterialId,
+  pushBox(ctx.instances, ctx.maxInstances, frameMeshId, ctx.wallMaterialId,
     ctx.frame, centerS, frameCenterY, module.frameDepthM * 0.5,
     module.frameDepthM, module.frameHeightM, module.frameWidthM);
   tagTrim(ctx.instances, ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId);
@@ -1661,10 +1686,51 @@ function placeModuleWindow(
   tagTrim(ctx.instances, ctx.trimLightMaterialId ?? ctx.trimHeavyMaterialId);
 }
 
+function placeSpawnBSideDoorCrownAccent(
+  ctx: SegmentDecorContext,
+  centerS: number,
+  module: RuntimeDoorModule,
+): void {
+  const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+  const crownBaseHeight = Math.max(0.08, module.trimThicknessM * 0.34);
+  const crownBaseDepth = Math.max(0.14, module.surroundDepthM * 0.72);
+  const crownBaseWidth = module.coverWidthM + module.trimThicknessM * 1.55;
+  const coverTopY = module.doorHeightM * 0.5 + module.coverCenterYOffsetM + module.coverHeightM * 0.5;
+  const crownBaseY = coverTopY + crownBaseHeight * 0.6 + 0.09;
+
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, crownBaseY, crownBaseDepth * 0.5,
+    crownBaseDepth, crownBaseHeight, crownBaseWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const crownCapHeight = Math.max(0.06, crownBaseHeight * 0.72);
+  const crownCapDepth = Math.max(0.12, crownBaseDepth * 0.72);
+  const crownCapWidth = crownBaseWidth - module.trimThicknessM * 0.45;
+  const crownCapY = crownBaseY + crownBaseHeight * 0.62;
+  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_h", ctx.wallMaterialId,
+    ctx.frame, centerS, crownCapY, crownCapDepth * 0.5,
+    crownCapDepth, crownCapHeight, crownCapWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const keystoneHeight = Math.max(0.12, crownBaseHeight * 1.55);
+  const keystoneWidth = Math.max(0.08, module.trimThicknessM * 0.62);
+  const keystoneDepth = Math.max(0.1, crownBaseDepth * 0.68);
+  const keystoneY = crownBaseY - keystoneHeight * 0.1;
+  pushBox(ctx.instances, ctx.maxInstances, "recessed_panel_frame_v", ctx.wallMaterialId,
+    ctx.frame, centerS, keystoneY, keystoneDepth * 0.5,
+    keystoneDepth, keystoneHeight, keystoneWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+}
+
+type PlaceModuleDoorOptions = {
+  addSpawnSideCrownAccent?: boolean;
+};
+
 function placeModuleDoor(
   ctx: SegmentDecorContext,
   centerS: number,
   module: RuntimeDoorModule,
+  options: PlaceModuleDoorOptions = {},
 ): void {
   if (module.coverShape === "arched") {
     pushArchedDoorVoid(
@@ -1708,6 +1774,10 @@ function placeModuleDoor(
     coverHeightM: module.coverHeightM,
     coverCenterYOffsetM: module.coverCenterYOffsetM,
   });
+
+  if (options.addSpawnSideCrownAccent && isSpawnBStandardDoorModule(module)) {
+    placeSpawnBSideDoorCrownAccent(ctx, centerS, module);
+  }
 }
 
 function computeSymmetricOffsets(count: number, spreadM: number): number[] {
@@ -1717,11 +1787,176 @@ function computeSymmetricOffsets(count: number, spreadM: number): number[] {
   ));
 }
 
+function placeSpawnBCenterHeroModule(
+  ctx: SegmentDecorContext,
+  centerS: number,
+  module: RuntimeHeroBayModule,
+): void {
+  const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
+  const frameMetrics = resolveSpawnHeroPointedArchFrameFromAperture(module.openingWidthM, module.openingHeightM);
+  if (
+    Math.abs(frameMetrics.frameWidth - module.surroundWidthM) > 0.03
+    || Math.abs(frameMetrics.frameHeight - module.surroundHeightM) > 0.03
+  ) {
+    throw new Error(
+      `[wall-detail] hero bay module '${module.id}' outer bounds drift from Spawn B pointed-arch profile (expected ${frameMetrics.frameWidth.toFixed(3)}x${frameMetrics.frameHeight.toFixed(3)}, got ${module.surroundWidthM.toFixed(3)}x${module.surroundHeightM.toFixed(3)})`,
+    );
+  }
+
+  const surroundCenterY = module.surroundBottomY + module.surroundHeightM * 0.5;
+  const openingCenterY = module.openingSillY + module.openingHeightM * 0.5;
+  pushBox(ctx.instances, ctx.maxInstances, "spawn_hero_window_pointed_arch_frame", ctx.wallMaterialId,
+    ctx.frame, centerS, surroundCenterY, module.frameDepthM * 0.5,
+    module.frameDepthM, module.surroundHeightM, module.surroundWidthM);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  pushBox(ctx.instances, ctx.maxInstances, "spawn_hero_window_pointed_arch_void", null,
+    ctx.frame, centerS, openingCenterY, module.voidInsetM,
+    0.024, module.openingHeightM, module.openingWidthM);
+
+  pushBox(ctx.instances, ctx.maxInstances, "spawn_hero_window_pointed_arch_glass", null,
+    ctx.frame, centerS, openingCenterY, module.glassInsetM,
+    WINDOW_GLASS_THICKNESS_M, module.openingHeightM, module.openingWidthM);
+  tagTrim(ctx.instances, null, resolveStainedGlassMaterialId(module.glassStyle));
+
+  const pilasterOffsetS = module.surroundWidthM * 0.5 - module.pilasterWidthM * 0.5;
+  const pilasterCenterY = module.pilasterBottomY + module.pilasterHeightM * 0.5;
+  const pilasterBaseHeight = Math.max(0.18, module.entablatureThicknessM * 0.9);
+  const pilasterBaseWidth = module.pilasterWidthM * 1.36;
+  const pilasterBaseDepth = Math.max(module.pilasterDepthM, module.entablatureDepthM * 0.42);
+  const pilasterBaseY = module.entablatureCenterY + module.entablatureThicknessM * 0.5 + pilasterBaseHeight * 0.4;
+  const pilasterCapHeight = Math.max(0.2, module.pedimentLayerHeightM * 1.12);
+  const pilasterCapWidth = module.pilasterWidthM * 1.42;
+  const pilasterCapDepth = Math.max(module.pilasterDepthM, module.pedimentDepthM * 0.76);
+  const pilasterCapY = module.pedimentBottomY - pilasterCapHeight * 0.52;
+
+  for (const side of [-1, 1] as const) {
+    pushBox(ctx.instances, ctx.maxInstances, "pilaster", ctx.wallMaterialId,
+      ctx.frame, centerS + side * pilasterOffsetS, pilasterCenterY, module.pilasterDepthM * 0.5,
+      module.pilasterDepthM, module.pilasterHeightM, module.pilasterWidthM);
+    tagTrim(ctx.instances, trimMaterialId);
+
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_end_cap", ctx.wallMaterialId,
+      ctx.frame, centerS + side * pilasterOffsetS, pilasterBaseY, pilasterBaseDepth * 0.5,
+      pilasterBaseDepth, pilasterBaseHeight, pilasterBaseWidth);
+    tagTrim(ctx.instances, trimMaterialId);
+
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_end_cap", ctx.wallMaterialId,
+      ctx.frame, centerS + side * pilasterOffsetS, pilasterCapY, pilasterCapDepth * 0.5,
+      pilasterCapDepth, pilasterCapHeight, pilasterCapWidth);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+
+  const entablatureUndersideHeight = Math.max(0.1, module.entablatureThicknessM * 0.72);
+  const entablatureUndersideDepth = Math.max(0.2, module.entablatureDepthM * 0.66);
+  const entablatureUndersideWidth =
+    Math.max(module.surroundWidthM + module.pilasterWidthM * 0.9, module.entablatureWidthM - module.pilasterWidthM * 0.9);
+  const entablatureUndersideY = module.entablatureCenterY - module.entablatureThicknessM * 0.5 - entablatureUndersideHeight * 0.36;
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
+    ctx.frame, centerS, entablatureUndersideY, entablatureUndersideDepth * 0.5,
+    entablatureUndersideDepth, entablatureUndersideHeight, entablatureUndersideWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  pushBox(ctx.instances, ctx.maxInstances, "balcony_slab", ctx.wallMaterialId,
+    ctx.frame, centerS, module.entablatureCenterY, module.entablatureDepthM * 0.5,
+    module.entablatureDepthM, module.entablatureThicknessM, module.entablatureWidthM);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, module.entablatureCapCenterY, module.entablatureCapDepthM * 0.5,
+    module.entablatureCapDepthM, module.entablatureCapThicknessM, module.entablatureCapWidthM);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const entablatureLipHeight = Math.max(0.08, module.entablatureCapThicknessM * 0.84);
+  const entablatureLipDepth = Math.max(0.16, module.entablatureCapDepthM * 0.82);
+  const entablatureLipWidth = module.entablatureCapWidthM + module.pilasterWidthM * 0.32;
+  const entablatureLipY = module.entablatureCapCenterY + module.entablatureCapThicknessM * 0.5 + entablatureLipHeight * 0.42;
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, entablatureLipY, entablatureLipDepth * 0.5,
+    entablatureLipDepth, entablatureLipHeight, entablatureLipWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const corbelInset = Math.max(module.corbelDepthM * 0.56, module.entablatureDepthM * 0.72);
+  for (const offsetS of computeSymmetricOffsets(module.corbelCount, module.corbelSpreadM)) {
+    pushBox(ctx.instances, ctx.maxInstances, "balcony_bracket", ctx.wallMaterialId,
+      ctx.frame, centerS + offsetS, module.corbelCenterY, corbelInset,
+      module.corbelDepthM, module.corbelHeightM, module.corbelWidthM);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+
+  const pedimentBaseBandHeight = Math.max(0.12, module.pedimentLayerHeightM * 0.78);
+  const pedimentBaseBandDepth = Math.max(0.16, module.pedimentDepthM * 0.84);
+  const pedimentBaseBandWidth = module.pedimentBaseWidthM + module.pilasterWidthM * 0.32;
+  const pedimentBaseBandY = module.pedimentBottomY - pedimentBaseBandHeight * 0.55;
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, pedimentBaseBandY, pedimentBaseBandDepth * 0.5,
+    pedimentBaseBandDepth, pedimentBaseBandHeight, pedimentBaseBandWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const pedimentBridgeHeight = Math.max(0.16, module.pedimentLayerHeightM * 0.92);
+  const pedimentBridgeDepth = Math.max(0.18, module.pedimentDepthM * 0.78);
+  const pedimentBridgeWidth = module.surroundWidthM + module.pilasterWidthM * 1.18;
+  const pedimentBridgeY = module.pedimentBottomY + pedimentBridgeHeight * 0.08;
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, pedimentBridgeY, pedimentBridgeDepth * 0.5,
+    pedimentBridgeDepth, pedimentBridgeHeight, pedimentBridgeWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+
+  const shoulderWidth = Math.max(0.28, (module.pedimentBaseWidthM - module.surroundWidthM) * 0.5 + module.pilasterWidthM * 0.35);
+  const shoulderHeight = Math.max(0.22, module.pedimentLayerHeightM * 1.24);
+  const shoulderDepth = Math.max(0.18, module.pedimentDepthM * 0.86);
+  const shoulderOffsetS = module.surroundWidthM * 0.5 + shoulderWidth * 0.5 - module.pilasterWidthM * 0.16;
+  const shoulderY = module.pedimentBottomY + shoulderHeight * 0.28;
+  for (const side of [-1, 1] as const) {
+    pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+      ctx.frame, centerS + side * shoulderOffsetS, shoulderY, shoulderDepth * 0.5,
+      shoulderDepth, shoulderHeight, shoulderWidth);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+
+  const gableBaseWidth = Math.min(
+    module.pedimentBaseWidthM - module.pilasterWidthM * 0.3,
+    Math.max(module.surroundWidthM + module.pilasterWidthM * 1.08, module.pedimentBaseWidthM - shoulderWidth * 0.74),
+  );
+  for (let layerIndex = 0; layerIndex < module.pedimentLayerCount; layerIndex += 1) {
+    const layerWidth = gableBaseWidth - module.pedimentWidthStepM * layerIndex;
+    if (layerWidth <= 0.05) {
+      throw new Error(`[wall-detail] hero bay module '${module.id}' pediment width became non-positive at layer ${layerIndex}`);
+    }
+    const layerDepth = Math.max(0.12, module.pedimentDepthM - layerIndex * 0.05);
+    pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+      ctx.frame,
+      centerS,
+      module.pedimentBottomY + module.pedimentLayerHeightM * (layerIndex + 0.5),
+      layerDepth * 0.5,
+      layerDepth,
+      module.pedimentLayerHeightM,
+      layerWidth);
+    tagTrim(ctx.instances, trimMaterialId);
+  }
+
+  const apexHeight = Math.max(0.12, module.pedimentLayerHeightM * 0.92);
+  const apexWidth = Math.max(
+    module.pilasterWidthM * 1.55,
+    gableBaseWidth - module.pedimentWidthStepM * module.pedimentLayerCount + module.pilasterWidthM * 0.45,
+  );
+  const apexY = module.pedimentBottomY + module.pedimentLayerHeightM * module.pedimentLayerCount + apexHeight * 0.45;
+  pushBox(ctx.instances, ctx.maxInstances, "cornice_strip", ctx.wallMaterialId,
+    ctx.frame, centerS, apexY, Math.max(0.14, module.pedimentDepthM * 0.66) * 0.5,
+    Math.max(0.14, module.pedimentDepthM * 0.66), apexHeight, apexWidth);
+  tagTrim(ctx.instances, trimMaterialId);
+}
+
 function placeHeroBayModule(
   ctx: SegmentDecorContext,
   centerS: number,
   module: RuntimeHeroBayModule,
 ): void {
+  if (isSpawnBCenterHeroModule(module)) {
+    placeSpawnBCenterHeroModule(ctx, centerS, module);
+    return;
+  }
+
   const trimMaterialId = ctx.trimHeavyMaterialId ?? ctx.trimLightMaterialId;
   const surroundCenterY = module.surroundBottomY + module.surroundHeightM * 0.5;
   const openingCenterY = module.openingSillY + module.openingHeightM * 0.5;
@@ -1855,7 +2090,7 @@ function placeCompositionLayout(
       for (const center of lowerCenters.windowCentersS) {
         placeModuleWindow(ctx, center, layout.lowerWindowSillY, windowModule);
       }
-      placeModuleDoor(ctx, lowerCenters.doorCenterS, doorModule);
+      placeModuleDoor(ctx, lowerCenters.doorCenterS, doorModule, { addSpawnSideCrownAccent: true });
       emitPlinthStrip(ctx, [{ centerS: lowerCenters.doorCenterS, halfW: doorModule.coverWidthM * 0.5 }]);
       return;
     }
