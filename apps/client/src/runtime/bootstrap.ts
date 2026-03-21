@@ -1156,7 +1156,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         const worldHitDist = camPos.distanceTo(hitPoint);
         const enemyHit = game.checkEnemyRaycastHit(camPos, camFwd, worldHitDist + 0.1);
         if (enemyHit.hit && enemyHit.distance <= worldHitDist + 0.05) {
-          // Hit-zone multiplier: head=4× (instant kill), legs=0.75×, body=1×
+          // Hit-zone multiplier: head=4× (instant kill), legs=0.5×, body=1×
           // Enemy height is ~1.8m; head zone = top 20%, legs = bottom 25%
           const BASE_DAMAGE = 25;
           const ENEMY_H = 1.8;
@@ -1168,8 +1168,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
             damage = BASE_DAMAGE * 4;
             isHeadshot = true;
           } else if (enemyHit.hitY < ENEMY_H * 0.25) {
-            // Legs zone (bottom 25%) → 0.75×
-            damage = Math.round(BASE_DAMAGE * 0.75);
+            // Legs zone (bottom 25%) → 0.5×
+            damage = Math.round(BASE_DAMAGE * 0.5);
           }
           waveStats.shotsHit++;
           runStats.shotsHit++;
@@ -1231,17 +1231,17 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   buffManager.setOnBuffActivated((type) => {
     switch (type) {
       case "speed_boost":
-        game.setPlayerSpeedMultiplier(1.5);
+        game.setPlayerSpeedMultiplier(1.35);
         break;
       case "rapid_fire":
-        game.setWeaponFireInterval(0.05);
+        game.setWeaponFireInterval(0.067);
         game.setWeaponReloadSpeed(2.0);
         break;
       case "unlimited_ammo":
         game.setWeaponUnlimitedAmmo(true);
         break;
       case "health_boost":
-        game.setOvershield(50);
+        game.setOvershield(100);
         break;
     }
     buffVignette.activate(type);
@@ -2300,7 +2300,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       const ammoSnap = game.getAmmoSnapshot();
       ammoHud.update(ammoSnap);
       const overshield = game.getOvershield();
-      healthHud.update({ health: currentHealth + overshield, maxHealth: overshield > 0 ? 150 : 100 }, dt);
+      healthHud.update({ health: currentHealth + overshield, maxHealth: overshield > 0 ? 200 : 100 }, dt);
       mobileFlashUpdate?.(dt, currentHealth, ammoSnap.mag);
     }
 

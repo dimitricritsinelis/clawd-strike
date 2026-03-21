@@ -38,7 +38,7 @@ import { createLineOfSightScratch, hasLineOfSight } from "./enemyLineOfSight";
 const PLAYER_HALF_WIDTH_M = PLAYER_WIDTH_M * 0.5;
 const FIXED_SPAWN_JITTER_M = 1.5;
 const ADAPTIVE_SPAWN_JITTER_M = 0.75;
-const WAVE_RESPAWN_DELAY_S = 5.0;
+const WAVE_RESPAWN_DELAY_S = 3.0;
 const SCORE_IMPROVEMENT_THRESHOLD = 0.75;
 const LONG_SIGHT_OVERWATCH_RANGE_M = 18;
 const HUNT_MIN_OVERWATCH_RANGE_M = 1.8;

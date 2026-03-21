@@ -2,7 +2,7 @@
  * BuffTextHud — displays active buff effects as colored text lines
  * above the ammo HUD in the bottom-right corner.
  *
- * Each active buff shows its effect description (e.g. "+50% Movement Speed")
+ * Each active buff shows its effect description (e.g. "+35% Speed")
  * colored by the buff's vignette color. Buffs stack vertically, bottom-up.
  */
 
@@ -16,10 +16,10 @@ import type { ActiveBuffSnapshot } from "../buffs/BuffManager";
 const FONT_FAMILY = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 const BUFF_EFFECT_TEXT: Record<BuffType, string> = {
-  speed_boost: "+50% Speed",
-  rapid_fire: "2\u00D7 Fire Rate",
+  speed_boost: "+35% Speed",
+  rapid_fire: "1.5\u00D7 Fire Rate",
   unlimited_ammo: "\u221E Ammo",
-  health_boost: "+50 Shield",
+  health_boost: "+100 Shield",
 };
 
 /** Canonical display order (top → bottom) */
