@@ -56,6 +56,9 @@ export class BuffManager {
   private onBuffExpired: ((type: BuffType) => void) | null = null;
   private onBuffPickedUp: ((type: BuffType, result: BuffPickupResult) => void) | null = null;
 
+  // Pseudo-random buff distribution: track recent drops to guarantee variety
+  private recentDrops: BuffType[] = [];
+
   constructor(scene: Scene) {
     this.scene = scene;
   }
@@ -72,11 +75,14 @@ export class BuffManager {
     this.onBuffPickedUp = cb;
   }
 
+  private static readonly BUFF_DROP_CHANCE = 0.3;
+
   /**
-   * Called when any enemy dies. Every enemy drops a random buff orb.
+   * Called when any enemy dies. ~30% chance to drop a buff orb.
    */
   onEnemyDeath(_enemyIndex: number, deathPosition: { x: number; y: number; z: number }): void {
-    const randomType = BUFF_TYPES[Math.floor(Math.random() * BUFF_TYPES.length)]!;
+    if (Math.random() >= BuffManager.BUFF_DROP_CHANCE) return;
+    const randomType = this.pickPseudoRandomBuff();
     const def = BUFF_DEFINITIONS[randomType];
     // Defer orb creation to next update() to avoid frame spike during death processing
     this.pendingSpawns.push({
@@ -342,6 +348,22 @@ export class BuffManager {
       this.orbRenderer.dispose();
       this.orbRenderer = null;
     }
+  }
+
+  /**
+   * Pick a buff type using pseudo-random distribution.
+   * Excludes types that appeared in the last 2 drops to guarantee variety.
+   */
+  private pickPseudoRandomBuff(): BuffType {
+    // Filter out types that appeared in the last 2 drops
+    const recentSet = new Set(this.recentDrops.slice(-2));
+    let candidates = BUFF_TYPES.filter((t) => !recentSet.has(t));
+    if (candidates.length === 0) candidates = [...BUFF_TYPES];
+    const picked = candidates[Math.floor(Math.random() * candidates.length)]!;
+    this.recentDrops.push(picked);
+    // Keep queue bounded
+    if (this.recentDrops.length > 6) this.recentDrops.shift();
+    return picked;
   }
 
   private activateBuff(type: BuffType): BuffPickupResult {

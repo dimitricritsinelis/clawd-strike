@@ -23,10 +23,10 @@ const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 /* ── Buff effect descriptions (human-readable, colocated with UI) ── */
 
 const BUFF_EFFECTS: Record<BuffType, string> = {
-  speed_boost: "+50% movement speed",
-  rapid_fire: "2\u00D7 fire rate, 2\u00D7 reload speed",
+  speed_boost: "+35% movement speed",
+  rapid_fire: "1.5\u00D7 fire rate, 2\u00D7 reload speed",
   unlimited_ammo: "Unlimited ammo, no reload needed",
-  health_boost: "+50 overshield (absorbs damage first)",
+  health_boost: "+100 overshield (absorbs damage first)",
 };
 
 /* ── Helpers ── */
@@ -216,7 +216,7 @@ export class HowToPlayOverlay {
      * ══════════════════════════════════════════ */
     const buffsHeader = createSectionHeader("Buffs");
     const buffsIntro = createBodyText(
-      "Enemies drop glowing orbs on death. Walk over or shoot an orb to collect its buff.",
+      "Enemies have a chance to drop glowing orbs on death. Walk over or shoot an orb to collect its buff.",
     );
 
     const buffTable = this.buildBuffTable();

@@ -35,7 +35,6 @@ const BOUNDS_EPS = 0.001;
 
 const ENEMY_MAG_CAPACITY = 30;
 const ENEMY_RESERVE_START = 90;
-const ENEMY_RELOAD_TIME_S = 2.45;
 
 type BurstRange = readonly [number, number];
 
@@ -58,6 +57,7 @@ export type EnemyTierProfile = {
   mandatoryReloadFallback: boolean;
   maxLaneStack: number;
   shotIntervalS: number;
+  reloadTimeS: number;
   longBurst: BurstRange;
   midBurst: BurstRange;
   closeBurst: BurstRange;
@@ -78,6 +78,7 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     mandatoryReloadFallback: false,
     maxLaneStack: 2,
     shotIntervalS: 0.22,
+    reloadTimeS: 2.45,
     longBurst: [1, 1],
     midBurst: [1, 2],
     closeBurst: [2, 3],
@@ -96,6 +97,7 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     mandatoryReloadFallback: false,
     maxLaneStack: 2,
     shotIntervalS: 0.2,
+    reloadTimeS: 2.45,
     longBurst: [1, 1],
     midBurst: [1, 2],
     closeBurst: [2, 4],
@@ -108,12 +110,13 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     visionRangeM: 85,
     sharedAlertRadiusM: 30,
     maxTurnDegPerS: 180,
-    activeFlankers: 0,
+    activeFlankers: 1,
     pairSwing: false,
     collapse: false,
     mandatoryReloadFallback: false,
     maxLaneStack: 2,
     shotIntervalS: 0.18,
+    reloadTimeS: 2.2,
     longBurst: [1, 2],
     midBurst: [2, 3],
     closeBurst: [3, 5],
@@ -132,6 +135,7 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     mandatoryReloadFallback: false,
     maxLaneStack: 2,
     shotIntervalS: 0.14,
+    reloadTimeS: 2.0,
     longBurst: [1, 2],
     midBurst: [2, 3],
     closeBurst: [5, 6],
@@ -150,6 +154,7 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     mandatoryReloadFallback: true,
     maxLaneStack: 2,
     shotIntervalS: 0.13,
+    reloadTimeS: 1.8,
     longBurst: [1, 2],
     midBurst: [2, 3],
     closeBurst: [4, 6],
@@ -168,6 +173,7 @@ export const ENEMY_TIER_PROFILES: readonly EnemyTierProfile[] = [
     mandatoryReloadFallback: true,
     maxLaneStack: 3,
     shotIntervalS: 0.12,
+    reloadTimeS: 1.6,
     longBurst: [1, 2],
     midBurst: [2, 4],
     closeBurst: [4, 6],
@@ -463,7 +469,7 @@ export class EnemyController {
 
     if (this.reloading) {
       this.reloadTimer += clampedDt;
-      if (this.reloadTimer >= ENEMY_RELOAD_TIME_S) {
+      if (this.reloadTimer >= directive.tierProfile.reloadTimeS) {
         const needed = ENEMY_MAG_CAPACITY - this.mag;
         const moved = Math.min(needed, this.reserve);
         this.mag += moved;
