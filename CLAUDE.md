@@ -11,7 +11,7 @@ Last updated: 2026-07-25
 2. For map-visual work, read `.claude/skills/map-polish/SKILL.md`.
 3. When relevant, read `docs/map-design/quality-bar.md` and the named fixed-camera definitions in `docs/map-design/shots.json`.
 4. Treat the current user prompt as the complete task boundary.
-5. Read only the source files required for the bounded area.
+5. Start with the smallest relevant source area; expand into adjacent or shared visual systems only when the diagnosed cause requires it.
 
 Before editing:
 

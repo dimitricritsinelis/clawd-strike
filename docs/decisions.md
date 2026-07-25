@@ -31,7 +31,7 @@ Last updated: 2026-07-25
 
 ## DEC-005: Validation routing is policy, not durable rationale
 - `AGENTS.md` owns change-tag validation routing; package scripts and CI own the executable command surface.
-- The map quality bar owns visual, performance, and map-safety hard failures. The public browser contract owns its own compatibility boundary.
+- The map quality bar owns visual and map-safety hard failures plus final-signoff performance requirements. The public browser contract owns its own compatibility boundary.
 - Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
 ## DEC-006: Play-facing quality bar
@@ -109,7 +109,7 @@ Last updated: 2026-07-25
 - `bazaar_main_hall_reference.png` is theme/content reference only (architecture vocabulary, dressing); its dusk mood, darkness, and saturation are explicitly not targets. All painting-calibrated metered targets (e.g. saturation >=0.55) are revoked.
 
 ## DEC-020: Map quality targets and budgets have one durable owner
-- [`map-design/quality-bar.md`](map-design/quality-bar.md) owns current visual targets, performance budgets, map locks, and finish failures.
+- [`map-design/quality-bar.md`](map-design/quality-bar.md) owns current visual targets, final-signoff performance budgets, map locks, and finish failures.
 - Historical score targets, staged budgets, iteration cadence, card identifiers, and residual handling belong only to the [archived roadmap](map-design/archive/visual_overhaul_roadmap-2026-07-24.md).
 - The current user prompt owns the bounded visual task, the map-polish skill owns the iteration method, and the quality bar owns quality and performance targets.
 - Historical roadmap files are archived evidence, not active instructions; neither workflow nor current task state belongs in this durable decision log.

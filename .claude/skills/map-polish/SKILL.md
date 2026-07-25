@@ -1,51 +1,50 @@
 ---
 name: map-polish
-description: Polish one bounded Clawd Strike map area through fixed-camera capture, parallel diagnosis, focused edits, and blind before/after review.
+description: Autonomously polish one bounded Clawd Strike map area through fixed-camera capture, focused visual objectives, and blind before/after review.
 ---
 
 # Map Polish
 
 Follow `AGENTS.md` and `docs/map-design/quality-bar.md`.
+Visible improvement in the named fixed-camera screenshots is the primary objective. Guardrails protect gameplay and repository integrity; they are not reasons to avoid meaningful visual work.
 
 ## Task boundary
 
 - The current user prompt names one bounded map area.
 - The current user prompt names or implies the fixed screenshot cameras.
-- Do not expand the work into other areas.
-- Do not create a roadmap, task list, backlog, score ledger, phase plan, active brief, baseline file, or new QA tooling.
+- Act autonomously within that area. Do not ask permission for ordinary visual edits allowed by `AGENTS.md`.
+- Start with the smallest relevant source area. Expand into adjacent or shared visual systems only when the diagnosed cause requires it.
+- Do not turn the task into unrelated map-wide work.
+- Do not create roadmaps, task lists, backlogs, score ledgers, phase plans, active briefs, baseline registries, promotion systems, debt tracking, invariant bundles, or new QA tooling.
 
 ## Initial capture
 
 - Capture the exact named cameras before editing.
-- The initial screenshot artifact directory is the working baseline for the current session.
-- Keep the accepted baseline path in the current Claude session only. Do not persist baseline state in repository files.
+- Treat that artifact directory as the first accepted capture for the current session.
+- Keep the current accepted capture path in the Claude session only. Do not persist comparison state in repository files.
 - Use `pnpm capture:shots` for all sixteen review cameras or comma-delimited authored IDs, for example:
   `SHOT_IDS=SHOT_03_FOUNTAIN_COURT,SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL pnpm capture:shots`.
 - Use `pnpm capture:spice` for the four authored Spice-area cameras.
 
-## Parallel diagnosis
+## Diagnosis
 
-For each iteration, run two read-only subagents in parallel:
-
-1. Visual critic:
-   - Inspect the current screenshots against the relevant reference images.
-   - Identify the three most visible quality defects.
-   - Name the causal mechanism for each defect.
-   - Recommend the single highest-impact improvement.
-2. Technical scout:
-   - Locate the exact source files, map-spec fields, asset definitions, materials, or geometry builders responsible for the selected defect.
-   - Recommend the smallest coherent implementation approach.
-   - Do not edit files.
+- Use a read-only visual critic to inspect the current screenshots against the relevant reference images.
+- Ask for the three most visible quality defects, the causal mechanism behind each, and the single highest-impact coherent visual objective.
+- When source ownership is already obvious, proceed directly.
+- Only when source ownership is unclear, use a read-only technical scout to locate the responsible source files, map-spec fields, asset definitions, materials, or geometry builders and recommend the smallest coherent implementation approach.
+- A technical scout may run in parallel with the critic, but it must not edit files.
+- Critic and scout recommendations are evidence for Claude's judgment; they do not need unanimous agreement.
 
 ## Focused implementation
 
-- Choose one causal mechanism and make one coherent edit batch.
+- Choose one coherent visual objective and make one focused edit batch.
+- One objective may coordinate render-only geometry, placement, materials, textures, lighting response, and attachments when they jointly solve the visible problem.
 - Do not fix unrelated problems or other map areas.
 - Before editing, preserve only the files being changed under `/tmp/clawdstrike-map-loop/iteration-<n>/`.
 - Do not use `git reset`, `git checkout`, `git restore`, stash, or broad rollback commands.
-- Reasonable increases in texture resolution, geometry detail, or triangle count are allowed when they create a clear visible improvement.
-- Do not optimize every iteration prematurely.
-- Preserve final browser performance as a hard end-of-area requirement.
+- Follow generated-file authority when an owning source requires regeneration.
+- Render-only geometry changes, authored one-off assets, higher-resolution textures, increased detail, and reasonable triangle-count increases are allowed when they materially improve the target screenshots.
+- Reuse and instancing are preferences, not requirements when they would produce a visibly inferior result.
 
 ## Recapture and compare
 
@@ -56,26 +55,30 @@ After each edit batch:
 3. Launch a new read-only visual critic.
 4. Give the critic the previous accepted screenshots, candidate screenshots, relevant reference images, and bounded-area goal. Give no code diff and no indication which set is newer.
 5. Ask whether A or B is clearly closer to the reference quality bar and why.
-6. Keep the candidate only when it is clearly better.
-7. If tied or worse, restore only the files changed during that iteration from `/tmp/clawdstrike-map-loop/iteration-<n>/`.
+6. Use the comparison as strong evidence, then make the acceptance decision. Do not require unanimous subagent agreement.
+7. Keep a clearly better candidate.
+8. On a tie or ambiguous result, Claude may make one focused revision and compare again before reverting.
+9. If the candidate is clearly worse, or its focused revision still does not improve, restore only the files changed during that iteration from `/tmp/clawdstrike-map-loop/iteration-<n>/`.
 
-## Iteration limits
+These are the only required per-iteration checks. Do not run full traversal, smoke, completion, build, or repository-wide tests after every iteration.
 
-- Continue for no more than six accepted improvements.
-- Stop after two consecutive rejected iterations.
+Performance budgets are final-signoff requirements, not intermediate vetoes. A modest temporary overage may be retained while visual quality converges; perform a focused optimization pass before final validation without sacrificing the accepted visible improvement.
+
+## Stop conditions
+
+- Continue without a fixed accepted-improvement cap.
 - Stop when the bounded area is consistently close to the reference quality bar.
-- Stop when the remaining gap requires an asset or production method that cannot be created reliably in the current loop.
-- Do not stop merely because the starting map contains known defects.
+- Stop after two consecutive revised candidates fail to improve.
+- Stop when the user-defined loop limit is reached.
+- Stop when a genuine production-method blocker prevents reliable progress in the current loop.
+- Do not stop merely because the starting map contains defects. Fix them.
+- A demonstrably pre-existing unrelated test failure should be reported once, but it must not trigger repeated workflow tuning or abandonment of the visual task. Fix regressions introduced by the current work.
 
 ## Final validation
 
-After the final accepted iteration, run once:
+After the bounded area is visually finished, run once:
 
-- `pnpm typecheck`
 - `pnpm smoke:game`
 - `pnpm qa:completion`
-- One final capture of the named cameras
-
-Do not run `qa:completion` after every iteration.
 
 Do not commit or push during the map-development loop unless the user explicitly instructs it.

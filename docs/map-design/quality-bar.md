@@ -29,7 +29,7 @@ Moderate contrast is intentional. Clarity must come from value separation and cl
 
 [`bazaar_main_hall_reference.png`](refs/bazaar_main_hall_reference.png) is for theme and content only: architectural vocabulary, layered facades, dense market dressing, and hanging cloth. Its dusk mood, darkness, and saturation are not targets.
 
-## Performance budgets
+## Final-signoff performance budgets
 
 Measure the fixed review cameras with the ship profile. FPS is not a substitute for frame time.
 
@@ -38,7 +38,7 @@ Measure the fixed review cameras with the ship profile. FPS is not a substitute 
 | Desktop | ≤ 1,500 | ≤ 2.2M | ≤ 12.5 ms | < 10 s |
 | Mobile | ≤ 500 | ≤ 1.3M | No separate absolute cap; pass the focused mobile gate | < 10 s |
 
-Crossing any applicable budget is a hard failure. A stricter hard limit named by the active brief also applies.
+These budgets are hard requirements at final signoff, not per-iteration rejection criteria. A modest temporary overage may be retained while a visibly superior candidate converges, followed by a focused optimization pass before final validation. Crossing any applicable budget at final signoff is a hard failure.
 
 ## Locked gameplay surfaces
 

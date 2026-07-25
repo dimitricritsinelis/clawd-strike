@@ -9,7 +9,7 @@ Last updated: 2026-07-25
 
 ## Contract and precedence
 
-- This is the only normative repository-wide implementation policy. Do not duplicate it in entry points, briefs, skills, or subsystem notes.
+- This is the only normative repository-wide implementation policy. Do not duplicate it in entry points, skills, or subsystem notes.
 - Specs, schemas, runtime contracts, and verification scripts outrank explanatory prose.
 - `docs/decisions.md` owns durable rationale. The current user prompt owns the bounded task.
 - For map-visual work, read `.claude/skills/map-polish/SKILL.md`, the quality bar, the named fixed-camera definitions, and only the source files needed for the bounded area.
@@ -18,7 +18,7 @@ Last updated: 2026-07-25
 ## Sources of truth
 
 - Map authority is `docs/map-design/specs/map_spec.json`. `docs/map-design/shots.json` owns review cameras and shot requirements.
-- `docs/map-design/quality-bar.md` owns durable visual targets, performance budgets, and map-finaling hard failures.
+- `docs/map-design/quality-bar.md` owns durable visual targets, final-signoff performance budgets, and map-finaling hard failures.
 - Generated map outputs, layout references, top-down views, screenshots, and artifacts are evidence, never authority.
 - Regenerate map outputs with `pnpm --filter @clawd-strike/client gen:layout-reference` and `pnpm --filter @clawd-strike/client gen:maps`. Never hand-edit generated map files.
 - `apps/client/public/skills.md` is the browser-only contract. Internal tooling and hidden map data must not leak into it.
@@ -36,11 +36,12 @@ Last updated: 2026-07-25
 - Use the repository's `DeterministicRng` path for seeded visual variation; do not introduce unseeded procedural variation.
 - Preserve and populate `userData.visualQa` or `userData.visualQaInstances` on QA-visible generated meshes.
 - New external textures and models must be CC0 and recorded in the owning manifest with source, license, and MD5 provenance.
-- Prefer reusable parameterized templates, loaded material libraries, and instancing over location-specific geometry or duplicate assets.
+- Prefer reusable parameterized templates, loaded material libraries, and instancing when they meet the visible quality target. An appropriate authored hero asset is better than a visibly inferior reusable substitute.
 
 ## Map safety
 
 - Treat layout, collision, traversal surfaces, spawns, sightlines, cover, authored routes, player movement, and combat as locked unless the user explicitly authorizes the relevant change.
+- Within those locks, map-visual work may change render-only geometry, placement, materials, textures, lighting response, attachments, and authored one-off assets. Ordinary visual edits within the user-defined area do not require additional permission.
 - Render-only work must use render-only paths and must not silently change gameplay geometry or navigation.
 - Player, bot, projectile, LOS, grounding, and elevation behavior must remain consistent with the authored map contract.
 - Keep routes and openings usable and visually legible. Do not occlude doors or windows, float geometry, leave unsupported structures, or introduce visible intersections.
@@ -52,7 +53,7 @@ Last updated: 2026-07-25
 Use one primary change tag: `map-geometry`, `map-visual`, `movement-sim`, `combat-gameplay`, `bot-ai`, `ui-flow`, `public-contract`, `perf`, `tooling`, or `docs`.
 
 - `map-geometry`: read map authority; regenerate maps; verify the generated-map diff; run targeted geometry tests, all authored traversal routes, manual traversal, deterministic reference review, and `pnpm qa:completion`.
-- `map-visual`: the user prompt defines the bounded area, allowed scope, and fixed cameras. Use the map-polish skill and quality bar. During each visual iteration, run the smallest focused validation: `pnpm typecheck` and recapture the exact named cameras. Do not run full map QA after every small iteration. After the bounded area is finished, run `pnpm smoke:game` and `pnpm qa:completion`.
+- `map-visual`: the user prompt defines the bounded area, allowed scope, and fixed cameras. Visible improvement in those cameras is the primary objective. Use the map-polish skill and quality bar for the iteration method and final validation.
 - `movement-sim`, `combat-gameplay`, `ui-flow`: run the smallest targeted tests plus `pnpm smoke:game`; add human pointer-lock/menu/input smoke when feel or UX changes.
 - `bot-ai`: run targeted tests, `pnpm --filter @clawd-strike/client bot:smoke`, and `pnpm smoke:game`.
 - `perf`: record comparable before/after measurements and run the owning runtime smoke.
