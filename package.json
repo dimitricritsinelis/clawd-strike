@@ -41,9 +41,9 @@
     "test:playwright:full": "pnpm --filter @clawd-strike/client test:playwright:full",
     "smoke:no-context": "pnpm --filter @clawd-strike/client smoke:no-context",
     "verify:skills-contract": "pnpm --filter @clawd-strike/client verify:skills-contract",
+    "capture:shots": "pnpm --filter @clawd-strike/client capture:shots",
+    "capture:spice": "pnpm --filter @clawd-strike/client capture:spice",
     "qa:completion": "pnpm --filter @clawd-strike/client qa:completion",
-    "qa:cell": "pnpm --filter @clawd-strike/client qa:cell",
-    "qa:release": "pnpm --filter @clawd-strike/client test:map-traversal:blockout && pnpm qa:completion && pnpm bot:smoke:owned && pnpm build",
-    "qa:autonomous": "pnpm --filter @clawd-strike/client qa:autonomous"
+    "qa:release": "pnpm --filter @clawd-strike/client test:map-traversal:blockout && pnpm qa:completion && pnpm bot:smoke:owned && pnpm build"
   }
 }

@@ -2,7 +2,7 @@ Audience: implementation-agent
 Authority: normative
 Read when: implementation work
 Owns: durable repository-wide invariants and validation routing
-Do not use for: active task status, production-cell procedure, public browser details
+Do not use for: active task status, public browser details
 Last updated: 2026-07-25
 
 # AGENTS.md — Clawd Strike Operating Contract
@@ -11,8 +11,8 @@ Last updated: 2026-07-25
 
 - This is the only normative repository-wide implementation policy. Do not duplicate it in entry points, briefs, skills, or subsystem notes.
 - Specs, schemas, runtime contracts, and verification scripts outrank explanatory prose.
-- `docs/decisions.md` owns durable rationale. `docs/agent/active-brief.md` owns short-lived map-finaling context; it is not durable history.
-- For map-visual work, read the active brief and the skill it links. Read only the owning spec, contract, references, and code needed for the bounded task.
+- `docs/decisions.md` owns durable rationale. The current user prompt owns the bounded task.
+- For map-visual work, read `.claude/skills/map-polish/SKILL.md`, the quality bar, the named fixed-camera definitions, and only the source files needed for the bounded area.
 - `progress.md` is deprecated; do not create, read, or update it. `REFACTOR_LOG.md` is allowed only for an explicitly requested PR-review or refactor trace.
 
 ## Sources of truth
@@ -40,7 +40,7 @@ Last updated: 2026-07-25
 
 ## Map safety
 
-- Treat layout, collision, traversal surfaces, spawns, sightlines, cover, and authored routes as locked unless the task explicitly authorizes the relevant map-geometry change.
+- Treat layout, collision, traversal surfaces, spawns, sightlines, cover, authored routes, player movement, and combat as locked unless the user explicitly authorizes the relevant change.
 - Render-only work must use render-only paths and must not silently change gameplay geometry or navigation.
 - Player, bot, projectile, LOS, grounding, and elevation behavior must remain consistent with the authored map contract.
 - Keep routes and openings usable and visually legible. Do not occlude doors or windows, float geometry, leave unsupported structures, or introduce visible intersections.
@@ -52,7 +52,7 @@ Last updated: 2026-07-25
 Use one primary change tag: `map-geometry`, `map-visual`, `movement-sim`, `combat-gameplay`, `bot-ai`, `ui-flow`, `public-contract`, `perf`, `tooling`, or `docs`.
 
 - `map-geometry`: read map authority; regenerate maps; verify the generated-map diff; run targeted geometry tests, all authored traversal routes, manual traversal, deterministic reference review, and `pnpm qa:completion`.
-- `map-visual`: read the active brief, linked map-polish skill, quality bar, fixed-camera definitions, and touched files; regenerate maps; run `pnpm typecheck`, focused QA, and exact-camera before/after review. Run `pnpm qa:completion` for a full visual checkpoint or when the active brief requires it.
+- `map-visual`: the user prompt defines the bounded area, allowed scope, and fixed cameras. Use the map-polish skill and quality bar. During each visual iteration, run the smallest focused validation: `pnpm typecheck` and recapture the exact named cameras. Do not run full map QA after every small iteration. After the bounded area is finished, run `pnpm smoke:game` and `pnpm qa:completion`.
 - `movement-sim`, `combat-gameplay`, `ui-flow`: run the smallest targeted tests plus `pnpm smoke:game`; add human pointer-lock/menu/input smoke when feel or UX changes.
 - `bot-ai`: run targeted tests, `pnpm --filter @clawd-strike/client bot:smoke`, and `pnpm smoke:game`.
 - `perf`: record comparable before/after measurements and run the owning runtime smoke.

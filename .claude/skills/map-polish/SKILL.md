@@ -1,32 +1,81 @@
 ---
 name: map-polish
-description: Polish one bounded Clawd Strike map production cell with fixed-camera, baseline-controlled visual iteration and blind A/B review. Use for map-visual finaling, material, prop, lighting, architectural-detail, or close-range finish work directed by docs/agent/active-brief.md.
+description: Polish one bounded Clawd Strike map area through fixed-camera capture, parallel diagnosis, focused edits, and blind before/after review.
 ---
 
 # Map Polish
 
-Work on one bounded map area at a time. Treat `docs/agent/active-brief.md` as the complete task boundary and `docs/map-design/quality-bar.md` as the durable visual bar. Follow `AGENTS.md` for repository invariants and validation routing.
+Follow `AGENTS.md` and `docs/map-design/quality-bar.md`.
 
-## Establish the cell
+## Task boundary
 
-1. Confirm the active brief names one production cell, a goal, fixed camera IDs, allowed scope, locked systems, and hard checks. Do not expand it into a map-wide task list.
-2. Verify the current branch and worktree. Preserve unrelated changes.
-3. Capture a retained baseline from every fixed camera before editing, using identical camera poses, resolution, runtime options, and capture path for all comparisons.
-4. Inspect the baseline against the named references. Record only the top three visible defects in the cell.
-5. Name the causal mechanism for each defect, such as source material, asset construction, placement authority, light response, renderer behavior, or locked layout.
+- The current user prompt names one bounded map area.
+- The current user prompt names or implies the fixed screenshot cameras.
+- Do not expand the work into other areas.
+- Do not create a roadmap, task list, backlog, score ledger, phase plan, active brief, baseline file, or new QA tooling.
 
-## Iterate one mechanism
+## Initial capture
 
-1. Choose one causal mechanism. Change only that mechanism and stay within the brief's allowed scope.
-2. Regenerate the owning map outputs, run `pnpm typecheck`, run the focused QA named by the brief, and recapture the exact same cameras.
-3. Give a fresh-context, read-only critic the baseline and candidate captures in a blind A/B comparison. Provide only the paired captures, references, cell goal, and hard checks—never the implementation diff, preferred answer, or prior scores.
-4. Retain the candidate only when the critic finds a clear cell-level improvement and every hard check remains green. Reject a tie or regression without disturbing unrelated work.
-5. Begin the next iteration only after naming a different unresolved mechanism. Do not blindly retune the same parameters.
+- Capture the exact named cameras before editing.
+- The initial screenshot artifact directory is the working baseline for the current session.
+- Keep the accepted baseline path in the current Claude session only. Do not persist baseline state in repository files.
+- Use `pnpm capture:shots` for all sixteen review cameras or comma-delimited authored IDs, for example:
+  `SHOT_IDS=SHOT_03_FOUNTAIN_COURT,SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL pnpm capture:shots`.
+- Use `pnpm capture:spice` for the four authored Spice-area cameras.
 
-## Stop or escalate
+## Parallel diagnosis
 
-- Stop after two consecutive ties or regressions.
-- Stop when the current implementation medium has reached its visible ceiling.
-- Escalate the blocked mechanism to a new material source, authored asset, renderer change, or explicit layout unlock; do not disguise a medium change as parameter tuning.
-- Require owner approval only at the production-cell boundary, after the retained candidate and exact-camera evidence are ready.
-- Do not create a map-wide task list, score ledger, roadmap, residual backlog, or phase plan.
+For each iteration, run two read-only subagents in parallel:
+
+1. Visual critic:
+   - Inspect the current screenshots against the relevant reference images.
+   - Identify the three most visible quality defects.
+   - Name the causal mechanism for each defect.
+   - Recommend the single highest-impact improvement.
+2. Technical scout:
+   - Locate the exact source files, map-spec fields, asset definitions, materials, or geometry builders responsible for the selected defect.
+   - Recommend the smallest coherent implementation approach.
+   - Do not edit files.
+
+## Focused implementation
+
+- Choose one causal mechanism and make one coherent edit batch.
+- Do not fix unrelated problems or other map areas.
+- Before editing, preserve only the files being changed under `/tmp/clawdstrike-map-loop/iteration-<n>/`.
+- Do not use `git reset`, `git checkout`, `git restore`, stash, or broad rollback commands.
+- Reasonable increases in texture resolution, geometry detail, or triangle count are allowed when they create a clear visible improvement.
+- Do not optimize every iteration prematurely.
+- Preserve final browser performance as a hard end-of-area requirement.
+
+## Recapture and compare
+
+After each edit batch:
+
+1. Run `pnpm typecheck`.
+2. Recapture the exact same cameras with the exact same settings.
+3. Launch a new read-only visual critic.
+4. Give the critic the previous accepted screenshots, candidate screenshots, relevant reference images, and bounded-area goal. Give no code diff and no indication which set is newer.
+5. Ask whether A or B is clearly closer to the reference quality bar and why.
+6. Keep the candidate only when it is clearly better.
+7. If tied or worse, restore only the files changed during that iteration from `/tmp/clawdstrike-map-loop/iteration-<n>/`.
+
+## Iteration limits
+
+- Continue for no more than six accepted improvements.
+- Stop after two consecutive rejected iterations.
+- Stop when the bounded area is consistently close to the reference quality bar.
+- Stop when the remaining gap requires an asset or production method that cannot be created reliably in the current loop.
+- Do not stop merely because the starting map contains known defects.
+
+## Final validation
+
+After the final accepted iteration, run once:
+
+- `pnpm typecheck`
+- `pnpm smoke:game`
+- `pnpm qa:completion`
+- One final capture of the named cameras
+
+Do not run `qa:completion` after every iteration.
+
+Do not commit or push during the map-development loop unless the user explicitly instructs it.

@@ -9,4 +9,4 @@ Last updated: 2026-07-25
 
 The completed roadmap is [archived historical evidence](../archive/visual_overhaul_roadmap-2026-07-24.md). It is not an active instruction surface.
 
-Current visual work is controlled by the [active brief](../../agent/active-brief.md) and the [map-polish skill](../../../.claude/skills/map-polish/SKILL.md).
+Current visual work is defined by the user prompt and the [map-polish skill](../../../.claude/skills/map-polish/SKILL.md).

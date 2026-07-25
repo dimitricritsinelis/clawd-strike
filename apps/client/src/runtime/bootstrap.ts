@@ -1384,86 +1384,6 @@ function collectVisualQaPlacementSources(
   return { placements, declaredArtifactTags };
 }
 
-function renderedPlacementBounds(placement: VisualQaPlacementSource): Box3 {
-  const fallback = (): Box3 => {
-    const { width, depth, height } = placement.dimensionsM;
-    const transform = new Matrix4().compose(
-      new Vector3(placement.center.x, placement.center.y, placement.center.z),
-      new Quaternion(
-        placement.orientation.x,
-        placement.orientation.y,
-        placement.orientation.z,
-        placement.orientation.w,
-      ),
-      new Vector3(width, height, depth),
-    );
-    return new Box3(
-      new Vector3(-0.5, -0.5, -0.5),
-      new Vector3(0.5, 0.5, 0.5),
-    ).applyMatrix4(transform);
-  };
-
-  const source = placement.sourceObject;
-  if (!source) return fallback();
-  if (placement.sourceInstanceId === null) {
-    const bounds = new Box3().setFromObject(source);
-    return bounds.isEmpty() ? fallback() : bounds;
-  }
-
-  const instanceId = placement.sourceInstanceId;
-  if (source instanceof InstancedMesh) {
-    if (!source.geometry.boundingBox) source.geometry.computeBoundingBox();
-    if (source.geometry.boundingBox) {
-      const instanceMatrix = new Matrix4();
-      source.getMatrixAt(instanceId, instanceMatrix);
-      const worldMatrix = new Matrix4().multiplyMatrices(source.matrixWorld, instanceMatrix);
-      return source.geometry.boundingBox.clone().applyMatrix4(worldMatrix);
-    }
-  }
-
-  const batched = source as Object3D & {
-    getBoundingBoxAt?: (index: number, target: Box3) => Box3 | null;
-  };
-  if (typeof batched.getBoundingBoxAt === "function") {
-    const localBounds = batched.getBoundingBoxAt(instanceId, new Box3());
-    if (localBounds) {
-      const bounds = localBounds.applyMatrix4(source.matrixWorld);
-      if (!bounds.isEmpty()) return bounds;
-    }
-  }
-  return fallback();
-}
-
-function collectQaVisualGeometryState(
-  game: Game,
-  spec: RuntimeBlockoutSpec | null,
-): NonNullable<Window["__qa_visual_geometry_state"]> extends () => infer T ? T : never {
-  const { placements } = collectVisualQaPlacementSources(game, spec);
-  return {
-    schemaVersion: 1,
-    generatedAt: Date.now(),
-    placements: placements.map((placement) => {
-      const bounds = renderedPlacementBounds(placement);
-      return {
-        placementId: placement.placementId,
-        ...(placement.moduleId ? { moduleId: placement.moduleId } : {}),
-        semanticClass: placement.semanticClass,
-        representation: placement.representation,
-        groundingGapM: placement.groundingGapM,
-        ...(placement.supportPlacementId ? { supportPlacementId: placement.supportPlacementId } : {}),
-        ...(placement.backingPlacementId ? { backingPlacementId: placement.backingPlacementId } : {}),
-        ...(typeof placement.structurallyBacked === "boolean"
-          ? { structurallyBacked: placement.structurallyBacked }
-          : {}),
-        bounds: {
-          min: { x: bounds.min.x, y: bounds.min.y, z: bounds.min.z },
-          max: { x: bounds.max.x, y: bounds.max.y, z: bounds.max.z },
-        },
-      };
-    }).sort((left, right) => left.placementId.localeCompare(right.placementId)),
-  };
-}
-
 function hasValidVisualDimensions(dimensions: VisualQaDimensions): boolean {
   return [dimensions.width, dimensions.depth, dimensions.height].every((value) => (
     Number.isFinite(value) && value > 0
@@ -3861,9 +3781,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     };
   };
   if (deterministicQa) {
-    window.__qa_visual_geometry_state = () => (
-      collectQaVisualGeometryState(game, mapAssets?.blockout ?? null)
-    );
     window.__qa_framing_state = () => {
       const current = readQaFramingSnapshot();
       return {
@@ -4090,7 +4007,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.__qa_render_frame;
     delete window.__qa_route_state;
     delete window.__qa_heartbeat;
-    delete window.__qa_visual_geometry_state;
     delete window.__qa_framing_state;
     delete window.__qa_capture_state;
     delete window.__debug_emit_combat_feedback;

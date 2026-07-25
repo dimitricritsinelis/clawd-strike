@@ -9,7 +9,7 @@ Last updated: 2026-07-25
 
 ## DEC-001: Authority surfaces are role-based
 - `AGENTS.md` is the only normative internal implementation doc.
-- `docs/decisions.md` owns durable internal decisions, while `docs/agent/active-brief.md` owns short-lived map-finaling context.
+- `docs/decisions.md` owns durable internal decisions, while the current user prompt owns the bounded visual task.
 - `README.md` is quick start only, `docs/map-design/layout-reference.md` is generated reference evidence, and `apps/client/public/skills.md` is the public browser-only contract.
 - Tool shims such as `CLAUDE.md` may point to authority surfaces, but they may not restate or redefine policy.
 
@@ -111,4 +111,5 @@ Last updated: 2026-07-25
 ## DEC-020: Map quality targets and budgets have one durable owner
 - [`map-design/quality-bar.md`](map-design/quality-bar.md) owns current visual targets, performance budgets, map locks, and finish failures.
 - Historical score targets, staged budgets, iteration cadence, card identifiers, and residual handling belong only to the [archived roadmap](map-design/archive/visual_overhaul_roadmap-2026-07-24.md).
-- Active workflow belongs to the map-polish skill named by `docs/agent/active-brief.md`; neither workflow nor current task state belongs in this durable decision log.
+- The current user prompt owns the bounded visual task, the map-polish skill owns the iteration method, and the quality bar owns quality and performance targets.
+- Historical roadmap files are archived evidence, not active instructions; neither workflow nor current task state belongs in this durable decision log.

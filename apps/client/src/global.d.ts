@@ -41,24 +41,6 @@ declare global {
       disposed: boolean;
       frozen: boolean;
     };
-    __qa_visual_geometry_state?: () => {
-      schemaVersion: number;
-      generatedAt: number;
-      placements: Array<{
-        placementId: string;
-        moduleId?: string;
-        semanticClass: string;
-        representation: string;
-        groundingGapM: number;
-        supportPlacementId?: string;
-        backingPlacementId?: string;
-        structurallyBacked?: boolean;
-        bounds: {
-          min: { x: number; y: number; z: number };
-          max: { x: number; y: number; z: number };
-        };
-      }>;
-    };
     __qa_framing_state?: () => {
       revealPhase: string;
       camera: {
