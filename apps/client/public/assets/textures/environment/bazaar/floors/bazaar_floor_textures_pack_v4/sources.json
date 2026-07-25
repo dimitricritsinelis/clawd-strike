@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "sourceFamilies": {
+    "cobblestone_floor_04": {
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": {
+          "albedo": "a1b3340f0bd79af01072f6ace0ac686b",
+          "normal": "2112456c57bf1a1d6fbd93692b8d2080",
+          "arm": "6a0ad4ed79907f7fa5c2e6def4eb93b5"
+        },
+        "2k": {
+          "albedo": "6fd3d5dbaca10c763d813f1b9d532f1b",
+          "normal": "051fb80cac9f261e1d21f10b2a664245",
+          "arm": "d14169c7746411fe3216071da9b23f96"
+        }
+      }
+    },
+    "medieval_blocks_05": {
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "originalResolution": "4k",
+      "md5": {
+        "1k": {
+          "albedo": "dae4c2458b3a3efbeda141a98a8d66dd",
+          "normal": "ebd5906c90bedce52817eb715e4424e9",
+          "arm": "9b3f9ed1406ee6e091f15cf99a02b43c"
+        },
+        "2k": {
+          "albedo": "c88eb55a33d817fc4913aade5e6e621e",
+          "normal": "531215a47f1f242480e7c232b6ac8893",
+          "arm": "ce6be9c158f821923c9e3e3ed17fb349"
+        },
+        "4k": {
+          "albedo": "094d50f76d8b7d83babff8ae422e373f",
+          "normal": "fa39a20eeac5cb56898836801e2383a1",
+          "arm": "9a2ea46368f1c335a5974fb93a279e23"
+        }
+      }
+    },
+    "patterned_cobblestone": {
+      "source": "https://polyhaven.com/a/patterned_cobblestone",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": {
+          "albedo": "0b9f0fd1d8e2b7ae55a8cac1194d81b5",
+          "normal": "7ae8c0f236d7ff7af811c0cfd1ab5584",
+          "arm": "6c30e849495acba92589ae9e69ea2cde"
+        },
+        "2k": {
+          "albedo": "7517f9498721d3d265bf499d37067ece",
+          "normal": "caaa933e8b753a4cd21402b71d5a33df",
+          "arm": "9452875b2a417596d4ca3f0cd685f1cf"
+        }
+      }
+    },
+    "red_sandstone_pavement": {
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": {
+          "albedo": "d7048c04e343b024b310277c5d7004ba",
+          "normal": "fd71afae36c61a0705b8e07f4ad42b9d",
+          "arm": "5f78dc55ef9bcb3adf3931a468500e20"
+        },
+        "2k": {
+          "albedo": "a1259b901bce5c5b428ca1fdbb5c8ac7",
+          "normal": "331f734509e5354c74012364d1c19faa",
+          "arm": "39b7314228c5066f0b9342502d69b769"
+        }
+      }
+    }
+  }
+}

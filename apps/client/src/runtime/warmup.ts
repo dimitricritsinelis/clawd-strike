@@ -3,6 +3,7 @@ import { preloadEnemyVisualAssets } from "./enemies/EnemyVisual";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { Ak47ViewModel } from "./weapons/Ak47ViewModel";
+import { resolveQaAssetProfile } from "./qa/assetReadiness";
 
 const FLOOR_MANIFEST_URL =
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/materials.json";
@@ -32,6 +33,12 @@ function createEmptyWarmupAssets(timedOut: boolean): RuntimeWarmupAssets {
 
 async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   const parsed = parseRuntimeUrlParams(search);
+  // Map-review runs build a dependency plan only after the compiled map is
+  // available. Starting broad gameplay warmup here would defeat that plan and
+  // reintroduce enemy/viewmodel failure modes into deterministic captures.
+  if (resolveQaAssetProfile(search) !== null) {
+    return createEmptyWarmupAssets(false);
+  }
   let floorMaterials: FloorMaterialLibrary | null = null;
   let wallMaterials: WallMaterialLibrary | null = null;
   let viewModel: Ak47ViewModel | null = null;

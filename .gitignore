@@ -8,7 +8,12 @@ dist/
 **/.cache/
 .DS_Store
 .clawdstrike-dev.log
-.claude/
+/.claude/*
+!/.claude/skills/
+!/.claude/skills/**
+/.codex/
+/tmp/
+/review_artifacts/
 output/
 coverage/
 *.tsbuildinfo

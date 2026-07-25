@@ -23,22 +23,22 @@
     },
     {
       "id": "ph_sandstone_blocks_05",
-      "tileSizeM": 2.5,
-      "tintHex": "#e5cca0",
-      "albedoBoost": 1.05,
-      "roughness": 0.96,
-      "normalScale": 0.55,
-      "aoIntensity": 0.50,
+      "tileSizeM": 2.0,
+      "tintHex": "#dfc69a",
+      "albedoBoost": 1.08,
+      "roughness": 0.88,
+      "normalScale": 0.78,
+      "aoIntensity": 0.68,
       "textures": {
         "1k": {
-          "albedo": "./rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
-          "normal": "./rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_1k.jpg",
-          "arm": "./rustic_stone_wall_02/rustic_stone_wall_02_arm_1k.jpg"
+          "albedo": "./sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "normal": "./sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "arm": "./sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./rustic_stone_wall_02/rustic_stone_wall_02_diff_2k.jpg",
-          "normal": "./rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_2k.jpg",
-          "arm": "./rustic_stone_wall_02/rustic_stone_wall_02_arm_2k.jpg"
+          "albedo": "./sandstone_blocks_05/sandstone_blocks_05_diff_2k.jpg",
+          "normal": "./sandstone_blocks_05/sandstone_blocks_05_nor_gl_2k.jpg",
+          "arm": "./sandstone_blocks_05/sandstone_blocks_05_arm_2k.jpg"
         }
       }
     },
@@ -360,11 +360,11 @@
     {
       "id": "ph_sandstone_blocks_06",
       "tileSizeM": 1.8,
-      "tintHex": "#c0a080",
-      "albedoBoost": 1.05,
-      "roughness": 0.98,
-      "normalScale": 0.55,
-      "aoIntensity": 0.60,
+      "tintHex": "#d1b48c",
+      "albedoBoost": 1.10,
+      "roughness": 0.88,
+      "normalScale": 0.82,
+      "aoIntensity": 0.72,
       "textures": {
         "1k": {
           "albedo": "./rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
@@ -381,11 +381,11 @@
     {
       "id": "ph_lime_plaster_sun",
       "tileSizeM": 2.0,
-      "tintHex": "#efd6af",
-      "albedoBoost": 1.08,
-      "roughness": 0.86,
-      "normalScale": 0.50,
-      "aoIntensity": 0.34,
+      "tintHex": "#eadfc9",
+      "albedoBoost": 1.09,
+      "roughness": 0.92,
+      "normalScale": 0.48,
+      "aoIntensity": 0.42,
       "textures": {
         "1k": {
           "albedo": "./white_plaster_02/white_plaster_02_diff_1k.jpg",
@@ -401,12 +401,12 @@
     },
     {
       "id": "ph_aged_plaster_ochre",
-      "tileSizeM": 2.0,
-      "tintHex": "#d4bc97",
-      "albedoBoost": 1.04,
-      "roughness": 0.92,
-      "normalScale": 0.36,
-      "aoIntensity": 0.42,
+      "tileSizeM": 1.3,
+      "tintHex": "#d8ba8c",
+      "albedoBoost": 1.12,
+      "roughness": 0.93,
+      "normalScale": 0.52,
+      "aoIntensity": 0.48,
       "textures": {
         "1k": {
           "albedo": "./plastered_wall/plastered_wall_diff_1k.jpg",
@@ -423,11 +423,11 @@
     {
       "id": "ph_trim_sanded_01",
       "tileSizeM": 1.8,
-      "tintHex": "#dbc49c",
-      "albedoBoost": 1.02,
-      "roughness": 0.94,
-      "normalScale": 0.42,
-      "aoIntensity": 0.46,
+      "tintHex": "#dfd2b8",
+      "albedoBoost": 1.04,
+      "roughness": 0.95,
+      "normalScale": 0.26,
+      "aoIntensity": 0.28,
       "textures": {
         "1k": {
           "albedo": "./white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
@@ -444,21 +444,210 @@
     {
       "id": "ph_band_lime_soft",
       "tileSizeM": 2.0,
-      "tintHex": "#c9b28c",
-      "albedoBoost": 0.98,
-      "roughness": 0.90,
-      "normalScale": 0.34,
-      "aoIntensity": 0.40,
+      "tintHex": "#c7ad83",
+      "albedoBoost": 1.00,
+      "roughness": 0.95,
+      "normalScale": 0.18,
+      "aoIntensity": 0.24,
       "textures": {
         "1k": {
-          "albedo": "./white_plaster_02/white_plaster_02_diff_1k.jpg",
-          "normal": "./white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
-          "arm": "./white_plaster_02/white_plaster_02_arm_1k.jpg"
+          "albedo": "./plastered_wall/plastered_wall_diff_1k.jpg",
+          "normal": "./plastered_wall/plastered_wall_nor_gl_1k.jpg",
+          "arm": "./plastered_wall/plastered_wall_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./white_plaster_02/white_plaster_02_diff_2k.jpg",
-          "normal": "./white_plaster_02/white_plaster_02_nor_gl_2k.jpg",
-          "arm": "./white_plaster_02/white_plaster_02_arm_2k.jpg"
+          "albedo": "./plastered_wall/plastered_wall_diff_2k.jpg",
+          "normal": "./plastered_wall/plastered_wall_nor_gl_2k.jpg",
+          "arm": "./plastered_wall/plastered_wall_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_painted_plaster_warm",
+      "tileSizeM": 1.25,
+      "tintHex": "#d8ccba",
+      "albedoBoost": 1.05,
+      "roughness": 0.92,
+      "normalScale": 0.42,
+      "aoIntensity": 0.40,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "painted_plaster_wall",
+        "url": "https://polyhaven.com/a/painted_plaster_wall",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 2.0, "height": 2.0 },
+        "downloadedResolution": "2k",
+        "md5": {
+          "albedo": "32f4f4e5ded7d20e55e337004d0d9691",
+          "normal": "18faf9f7949aefdb3ae7cef7195cba04",
+          "arm": "b66f912016257faa7e71a1530e387545"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+          "normal": "./painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+          "arm": "./painted_plaster_wall/painted_plaster_wall_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./painted_plaster_wall/painted_plaster_wall_diff_2k.jpg",
+          "normal": "./painted_plaster_wall/painted_plaster_wall_nor_gl_2k.jpg",
+          "arm": "./painted_plaster_wall/painted_plaster_wall_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_worn_plaster_sun",
+      "tileSizeM": 1.15,
+      "tintHex": "#d5c7b0",
+      "albedoBoost": 1.08,
+      "roughness": 0.92,
+      "normalScale": 0.48,
+      "aoIntensity": 0.50,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "worn_plaster_wall",
+        "url": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 1.8, "height": 1.8 },
+        "downloadedResolution": "2k",
+        "md5": {
+          "albedo": "113c336124507f4b3fc7d440f6fd8346",
+          "normal": "737e4eb8ec9af427c8aafe46675409d9",
+          "arm": "4131b686f55a1e47777f58931d423b66"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "normal": "./worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "arm": "./worn_plaster_wall/worn_plaster_wall_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./worn_plaster_wall/worn_plaster_wall_diff_2k.jpg",
+          "normal": "./worn_plaster_wall/worn_plaster_wall_nor_gl_2k.jpg",
+          "arm": "./worn_plaster_wall/worn_plaster_wall_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_worn_plaster_ochre",
+      "tileSizeM": 1.15,
+      "tintHex": "#c9b69c",
+      "albedoBoost": 1.04,
+      "roughness": 0.92,
+      "normalScale": 0.48,
+      "aoIntensity": 0.50,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "worn_plaster_wall",
+        "url": "https://polyhaven.com/a/worn_plaster_wall",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 1.8, "height": 1.8 },
+        "downloadedResolution": "2k",
+        "md5": {
+          "albedo": "113c336124507f4b3fc7d440f6fd8346",
+          "normal": "737e4eb8ec9af427c8aafe46675409d9",
+          "arm": "4131b686f55a1e47777f58931d423b66"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "normal": "./worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "arm": "./worn_plaster_wall/worn_plaster_wall_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./worn_plaster_wall/worn_plaster_wall_diff_2k.jpg",
+          "normal": "./worn_plaster_wall/worn_plaster_wall_nor_gl_2k.jpg",
+          "arm": "./worn_plaster_wall/worn_plaster_wall_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_worn_planks",
+      "tileSizeM": 1.4,
+      "tintHex": "#ffffff",
+      "albedoBoost": 1.54,
+      "roughness": 0.84,
+      "normalScale": 0.58,
+      "aoIntensity": 0.62,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "worn_planks",
+        "url": "https://polyhaven.com/a/worn_planks",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 1.4, "height": 1.4 },
+        "downloadedResolution": "1k",
+        "md5": {
+          "albedo": "c5f7b2343880a705e9acb471938e07da",
+          "normal": "9a31cafe552f7e15228a513cfd25c574",
+          "arm": "1d4acce324ac8377e0eeace283da3cc3"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./worn_planks/worn_planks_diff_1k.jpg",
+          "normal": "./worn_planks/worn_planks_nor_gl_1k.jpg",
+          "arm": "./worn_planks/worn_planks_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_rough_pine_door",
+      "tileSizeM": 2.0,
+      "tintHex": "#ffffff",
+      "albedoBoost": 1.92,
+      "roughness": 0.86,
+      "normalScale": 0.50,
+      "aoIntensity": 0.45,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "rough_pine_door",
+        "url": "https://polyhaven.com/a/rough_pine_door",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 2.0, "height": 2.0 },
+        "downloadedResolution": "1k",
+        "md5": {
+          "albedo": "8c1036e566fe8e925e98123458aae385",
+          "normal": "4ea81cbe11f012f8dd9490de124ed1fd",
+          "arm": "f542d70fa482014e9533a896e917c161"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "normal": "./rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "arm": "./rough_pine_door/rough_pine_door_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_rusty_metal_02",
+      "tileSizeM": 1.0,
+      "tintHex": "#ffffff",
+      "albedoBoost": 1.18,
+      "roughness": 0.72,
+      "normalScale": 0.42,
+      "aoIntensity": 0.58,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "rusty_metal_02",
+        "url": "https://polyhaven.com/a/rusty_metal_02",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 1.0, "height": 1.0 },
+        "downloadedResolution": "1k",
+        "md5": {
+          "albedo": "476bff9959bc727bd4b83c0a9ac4aeaa",
+          "normal": "8d6dc7e26f2708ec59e2a739711c612b",
+          "arm": "888da78afd9bfc9fd3dafbbf2a5b8134"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./rusty_metal_02/rusty_metal_02_diff_1k.jpg",
+          "normal": "./rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
+          "arm": "./rusty_metal_02/rusty_metal_02_arm_1k.jpg"
         }
       }
     }

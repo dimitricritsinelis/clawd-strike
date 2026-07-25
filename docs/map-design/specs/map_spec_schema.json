@@ -5,18 +5,99 @@
   "required": [
     "metadata",
     "global_dimensions",
-    "zones"
+    "zones",
+    "constraints",
+    "anchors"
   ],
+  "$defs": {
+    "rect": {
+      "type": "object",
+      "required": ["x", "y", "w", "h"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "w": { "type": "number", "exclusiveMinimum": 0 },
+        "h": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "macro_lane": {
+      "type": "string",
+      "enum": ["west", "main", "east"]
+    },
+    "dimensions_m": {
+      "type": "object",
+      "required": ["width", "depth", "height"],
+      "properties": {
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "depth": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "scale": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0.75, "maximum": 1.25 },
+        "y": { "type": "number", "minimum": 0.75, "maximum": 1.25 },
+        "z": { "type": "number", "minimum": 0.75, "maximum": 1.25 }
+      },
+      "additionalProperties": false
+    },
+    "offset_m": {
+      "type": "object",
+      "required": ["x", "y", "z"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" },
+        "z": { "type": "number" }
+      },
+      "additionalProperties": false
+    }
+  },
   "properties": {
     "metadata": {
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "version": { "type": "string", "minLength": 1 }
+      }
     },
     "global_dimensions": {
       "type": "object",
+      "required": [
+        "playable_boundary",
+        "wall_height_default",
+        "ceiling_height_default",
+        "floor_height_default"
+      ],
       "properties": {
+        "playable_boundary": {
+          "type": "object",
+          "required": ["x", "y", "w", "h"],
+          "properties": {
+            "shape": { "type": "string", "const": "rect" },
+            "x": { "type": "number" },
+            "y": { "type": "number" },
+            "w": { "type": "number", "exclusiveMinimum": 0 },
+            "h": { "type": "number", "exclusiveMinimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "wall_height_default": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
         "wall_thickness_default": {
           "type": "number",
           "exclusiveMinimum": 0
+        },
+        "ceiling_height_default": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "floor_height_default": {
+          "type": "number"
         }
       }
     },
@@ -27,7 +108,7 @@
           "type": "boolean"
         },
         "seed": {
-          "type": "number"
+          "type": "integer"
         },
         "style": {
           "type": "string",
@@ -36,7 +117,9 @@
           ]
         },
         "density": {
-          "type": "number"
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1.25
         },
         "maxProtrusion": {
           "type": "number",
@@ -706,6 +789,507 @@
     "lanes": {
       "type": "object"
     },
+    "map_center": {
+      "type": "object",
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      },
+      "additionalProperties": false
+    },
+    "districts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "notes": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "traversal_surfaces": {
+      "type": "array",
+      "items": {
+        "oneOf": [
+          {
+            "type": "object",
+            "required": ["id", "zoneId", "kind", "rect", "elevationM"],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "zoneId": { "type": "string", "minLength": 1 },
+              "kind": { "const": "flat" },
+              "rect": { "$ref": "#/$defs/rect" },
+              "elevationM": { "type": "number" }
+            },
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "required": [
+              "id",
+              "zoneId",
+              "kind",
+              "rect",
+              "axis",
+              "startElevationM",
+              "endElevationM"
+            ],
+            "properties": {
+              "id": { "type": "string", "minLength": 1 },
+              "zoneId": { "type": "string", "minLength": 1 },
+              "kind": { "const": "ramp" },
+              "rect": { "$ref": "#/$defs/rect" },
+              "axis": { "type": "string", "enum": ["x", "y"] },
+              "startElevationM": { "type": "number" },
+              "endElevationM": { "type": "number" },
+              "visual_style": { "type": "string", "enum": ["ramp", "stairs"] },
+              "step_count": { "type": "integer", "minimum": 1, "maximum": 64 }
+            },
+            "dependentRequired": {
+              "step_count": ["visual_style"]
+            },
+            "additionalProperties": false
+          }
+        ]
+      }
+    },
+    "tactical_lanes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "zoneIds"],
+        "properties": {
+          "id": { "$ref": "#/$defs/macro_lane" },
+          "label": { "type": "string", "minLength": 1 },
+          "zoneIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "cost": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "explicit_connectivity": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["fromZoneId", "toZoneId"],
+        "properties": {
+          "fromZoneId": { "type": "string", "minLength": 1 },
+          "toZoneId": { "type": "string", "minLength": 1 },
+          "transitionSurfaceId": { "type": "string", "minLength": 1 },
+          "cost": { "type": "number", "exclusiveMinimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "authored_spawns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "kind", "zoneId", "surfaceId", "x", "y", "yawDeg"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "kind": { "type": "string", "enum": ["player", "enemy"] },
+          "zoneId": { "type": "string", "minLength": 1 },
+          "surfaceId": { "type": "string", "minLength": 1 },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "yawDeg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "frontages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "zoneId", "face", "facadeProfileId", "massingProfileId", "layoutIntent"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "zoneId": { "type": "string", "minLength": 1 },
+          "face": { "type": "string", "enum": ["north", "south", "east", "west"] },
+          "start": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
+          "end": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
+          "districtId": { "type": "string", "minLength": 1 },
+          "facadeProfileId": { "type": "string", "minLength": 1 },
+          "massingProfileId": { "type": "string", "minLength": 1 },
+          "layoutIntent": {
+            "type": "object",
+            "required": ["mode", "rhythm"],
+            "properties": {
+              "mode": { "const": "generated" },
+              "rhythm": { "type": "string", "enum": ["merchant", "residential", "residential_dense", "service", "arcade", "hero"] },
+              "accentModuleId": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "bays": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["id", "moduleId", "along", "baseElevationM"],
+              "properties": {
+                "id": { "type": "string", "minLength": 1 },
+                "moduleId": { "type": "string", "minLength": 1 },
+                "along": { "type": "number", "minimum": 0, "maximum": 1 },
+                "baseElevationM": { "type": "number", "minimum": 0 }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "dependentRequired": {
+          "start": ["end"],
+          "end": ["start"]
+        },
+        "additionalProperties": false
+      }
+    },
+    "frontage_exemptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["zoneId", "face", "reason", "note"],
+        "properties": {
+          "zoneId": { "type": "string", "minLength": 1 },
+          "face": { "type": "string", "enum": ["north", "south", "east", "west"] },
+          "reason": {
+            "type": "string",
+            "enum": [
+              "open_traversal_face",
+              "short_wall_return",
+              "sealed_perimeter",
+              "architectural_cut_edge",
+              "retaining_wall",
+              "system_articulated_boundary"
+            ]
+          },
+          "note": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "composition_rules": {
+      "type": "object",
+      "required": [
+        "clearances",
+        "wall_budgets",
+        "zone_density_budgets"
+      ],
+      "properties": {
+        "clearances": {
+          "type": "object",
+          "required": [
+            "door_service_m",
+            "opening_lateral_buffer_m",
+            "canopy_opening_buffer_m",
+            "placement_aabb_buffer_m",
+            "fixture_buffer_m",
+            "fixture_axis_tolerance_m"
+          ],
+          "properties": {
+            "door_service_m": { "type": "number", "exclusiveMinimum": 0 },
+            "opening_lateral_buffer_m": { "type": "number", "minimum": 0 },
+            "canopy_opening_buffer_m": { "type": "number", "minimum": 0 },
+            "placement_aabb_buffer_m": { "type": "number", "minimum": 0 },
+            "fixture_buffer_m": { "type": "number", "minimum": 0 },
+            "fixture_axis_tolerance_m": { "type": "number", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "wall_budgets": {
+          "type": "object",
+          "required": [
+            "fixture_spacing_m",
+            "symmetry_tolerance",
+            "small_wall_max_m",
+            "small_wall_max_fixtures"
+          ],
+          "properties": {
+            "fixture_spacing_m": { "type": "number", "exclusiveMinimum": 0 },
+            "symmetry_tolerance": { "type": "number", "minimum": 0, "maximum": 0.5 },
+            "small_wall_max_m": { "type": "number", "exclusiveMinimum": 0 },
+            "small_wall_max_fixtures": { "type": "integer", "minimum": 0 }
+          },
+          "additionalProperties": false
+        },
+        "zone_density_budgets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "massing_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "heightM",
+          "depthM",
+          "roofStyle",
+          "roofSetbackM",
+          "parapetHeightM",
+          "upperStorySetbackM"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "heightM": { "type": "number", "exclusiveMinimum": 0 },
+          "depthM": { "type": "number", "exclusiveMinimum": 0 },
+          "roofStyle": { "type": "string", "enum": ["flat_parapet", "setback_flat"] },
+          "roofSetbackM": { "type": "number", "minimum": 0 },
+          "parapetHeightM": { "type": "number", "exclusiveMinimum": 0 },
+          "upperStorySetbackM": { "type": "number", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "facade_modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "kind",
+          "openingType",
+          "dimensionsM",
+          "materialSlot",
+          "collisionOpening"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "kind": {
+            "type": "string",
+            "enum": ["shop_recess", "door", "window", "vent", "arch", "column", "blind_niche"]
+          },
+          "openingType": {
+            "type": "string",
+            "enum": ["none", "recess", "door_void", "window_void", "arch_void"]
+          },
+          "dimensionsM": { "$ref": "#/$defs/dimensions_m" },
+          "materialSlot": {
+            "type": "string",
+            "enum": ["wall", "trim", "roof", "timber", "metal", "accent"]
+          },
+          "collisionOpening": { "type": "boolean", "const": false },
+          "assetId": { "type": "string", "minLength": 1 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "facade_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "family", "massingProfileId", "materialSlots", "moduleIds"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "family": {
+            "type": "string",
+            "enum": ["active_merchant", "quiet_residential", "service_storage", "covered_arcade", "hero_courtyard"]
+          },
+          "massingProfileId": { "type": "string", "minLength": 1 },
+          "materialSlots": {
+            "type": "object",
+            "required": ["wall", "trim", "roof", "timber", "metal", "accent"],
+            "properties": {
+              "wall": { "type": "string", "minLength": 1 },
+              "trim": { "type": "string", "minLength": 1 },
+              "roof": { "type": "string", "minLength": 1 },
+              "timber": { "type": "string", "minLength": 1 },
+              "metal": { "type": "string", "minLength": 1 },
+              "accent": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "moduleIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "asset_registry": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "source",
+          "license",
+          "dimensionsM",
+          "collisionClass",
+          "shadowPolicy",
+          "lodEligible",
+          "semanticClass",
+          "runtime",
+          "transform"
+        ],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "label": { "type": "string", "minLength": 1 },
+          "source": {
+            "type": "object",
+            "required": ["kind", "uri"],
+            "properties": {
+              "kind": { "type": "string", "enum": ["project_original", "external_cc0"] },
+              "uri": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "license": { "type": "string", "enum": ["Project-Original", "CC0-1.0"] },
+          "dimensionsM": { "$ref": "#/$defs/dimensions_m" },
+          "collisionClass": {
+            "type": "string",
+            "enum": ["none", "soft", "hard", "overhead"]
+          },
+          "shadowPolicy": {
+            "type": "string",
+            "enum": ["cast_receive", "receive_only", "none"]
+          },
+          "lodEligible": { "type": "boolean" },
+          "semanticClass": {
+            "type": "string",
+            "enum": [
+              "architecture",
+              "container",
+              "cover",
+              "furniture",
+              "foliage",
+              "landmark",
+              "lighting",
+              "overhead",
+              "signage",
+              "textile"
+            ]
+          },
+          "runtime": {
+            "type": "object",
+            "required": ["mode", "id"],
+            "properties": {
+              "mode": { "type": "string", "enum": ["model", "procedural"] },
+              "id": { "type": "string", "minLength": 1 },
+              "uri": { "type": "string", "minLength": 1 }
+            },
+            "additionalProperties": false
+          },
+          "transform": {
+            "type": "object",
+            "required": ["pivot", "upAxis", "forwardAxis", "authoredScale"],
+            "properties": {
+              "pivot": { "type": "string", "const": "base_center" },
+              "upAxis": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] },
+              "forwardAxis": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] },
+              "authoredScale": { "$ref": "#/$defs/scale" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dressing_clusters": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "zoneId", "classification"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "zoneId": { "type": "string", "minLength": 1 },
+          "surfaceId": { "type": "string", "minLength": 1 },
+          "districtId": { "type": "string", "minLength": 1 },
+          "classification": {
+            "type": "string",
+            "enum": ["gameplay_cover", "soft_visual", "overhead"]
+          },
+          "anchors": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "assetIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "dressing_placements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "clusterId", "assetId", "anchorIds", "offsetM", "scale", "yawOffsetDeg"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "clusterId": { "type": "string", "minLength": 1 },
+          "assetId": { "type": "string", "minLength": 1 },
+          "anchorIds": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "offsetM": { "$ref": "#/$defs/offset_m" },
+          "scale": { "$ref": "#/$defs/scale" },
+          "yawOffsetDeg": { "type": "number" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "exterior_wall_patches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["orientation", "coord", "start", "end", "outward"],
+        "properties": {
+          "orientation": { "type": "string", "enum": ["vertical", "horizontal"] },
+          "coord": { "type": "number" },
+          "start": { "type": "number" },
+          "end": { "type": "number" },
+          "outward": { "type": "integer", "enum": [-1, 1] },
+          "_note": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "required": ["min_path_width_main_lane", "min_path_width_side_halls"],
+      "properties": {
+        "no_block_zone": { "type": "string" },
+        "min_path_width_main_lane": { "type": "number", "exclusiveMinimum": 0 },
+        "min_path_width_side_halls": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
     "zones": {
       "type": "array",
       "items": {
@@ -728,36 +1312,49 @@
           "notes": {
             "type": "string"
           },
-          "rect": {
-            "type": "object",
-            "required": [
-              "x",
-              "y",
-              "w",
-              "h"
-            ],
-            "properties": {
-              "x": {
-                "type": "number"
-              },
-              "y": {
-                "type": "number"
-              },
-              "w": {
-                "type": "number"
-              },
-              "h": {
-                "type": "number"
-              }
-            }
-          }
+          "rect": { "$ref": "#/$defs/rect" },
+          "surfaceId": { "type": "string", "minLength": 1 },
+          "districtId": { "type": "string", "minLength": 1 },
+          "macroLane": { "$ref": "#/$defs/macro_lane" },
+          "floorMaterialId": { "type": "string", "minLength": 1 },
+          "facadeProfileId": { "type": "string", "minLength": 1 },
+          "clearWidthM": { "type": "number", "exclusiveMinimum": 0 }
         }
       }
     },
     "anchors": {
       "type": "array",
       "items": {
-        "type": "object"
+        "type": "object",
+        "required": ["id", "type", "zone"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "type": { "type": "string", "minLength": 1 },
+          "zone": { "type": "string", "minLength": 1 },
+          "x": { "type": "number" },
+          "y": { "type": "number" },
+          "z": { "type": "number" },
+          "frontageId": { "type": "string", "minLength": 1 },
+          "servedBayId": { "type": "string", "minLength": 1 },
+          "along": { "type": "number", "minimum": 0, "maximum": 1 },
+          "vertical_offset_m": { "type": "number" },
+          "inset_m": { "type": "number", "minimum": 0 },
+          "yaw_deg": { "type": "number" },
+          "end_x": { "type": ["number", "string"] },
+          "end_y": { "type": ["number", "string"] },
+          "end_z": { "type": ["number", "string"] },
+          "end_frontage_id": { "type": "string", "minLength": 1 },
+          "end_along": { "type": "number", "minimum": 0, "maximum": 1 },
+          "end_vertical_offset_m": { "type": "number" },
+          "end_inset_m": { "type": "number", "minimum": 0 },
+          "width_m": { "type": ["number", "string"] },
+          "height_m": { "type": ["number", "string"] },
+          "notes": { "type": "string" }
+        },
+        "oneOf": [
+          { "required": ["x", "y", "z"] },
+          { "required": ["frontageId", "along"] }
+        ]
       }
     }
   }

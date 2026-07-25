@@ -26,6 +26,13 @@ export type WallShaderTweakOptions = {
   topBleachColor?: string | number;
   dustColor?: string | number;
   dustColorAmount?: number;
+  localizedWearEnabled?: boolean;
+  wearStreakStrength?: number;
+  wearChipStrength?: number;
+  wearRepairStrength?: number;
+  wearRoughnessBoost?: number;
+  wearSubstrateColor?: string | number;
+  wearRepairColor?: string | number;
   contactDarkenAmount?: number;
   contactDarkenDepth?: number;
   useLocalCoords?: boolean;
@@ -63,6 +70,9 @@ uniform vec2 uWallUvOffset;`,
       `#include <worldpos_vertex>
 {
   vec4 wallWp = vec4(transformed, 1.0);
+  #ifdef USE_BATCHING
+    wallWp = batchingMatrix * wallWp;
+  #endif
   #ifdef USE_INSTANCING
     wallWp = instanceMatrix * wallWp;
   #endif
@@ -70,6 +80,9 @@ uniform vec2 uWallUvOffset;`,
   vWallWorldPos = wallWp.xyz;
 }
 vec3 wallObjectNormal = normal;
+#ifdef USE_BATCHING
+wallObjectNormal = mat3(batchingMatrix) * wallObjectNormal;
+#endif
 #ifdef USE_INSTANCING
 wallObjectNormal = mat3(instanceMatrix) * wallObjectNormal;
 #endif
@@ -134,13 +147,22 @@ export function applyWallShaderTweaks(
   const topBleachColor = resolveColor(options.topBleachColor, 0xf4ead8);
   const dustColorAmount = clamp(toFiniteNumber(options.dustColorAmount, 0), 0, 0.2);
   const dustColor = resolveColor(options.dustColor, 0xd6c2a4);
+  const wearStreakStrength = clamp(toFiniteNumber(options.wearStreakStrength, 0), 0, 0.35);
+  const wearChipStrength = clamp(toFiniteNumber(options.wearChipStrength, 0), 0, 0.35);
+  const wearRepairStrength = clamp(toFiniteNumber(options.wearRepairStrength, 0), 0, 0.35);
+  const wearRoughnessBoost = clamp(toFiniteNumber(options.wearRoughnessBoost, 0), 0, 0.25);
+  const wearSubstrateColor = resolveColor(options.wearSubstrateColor, 0x8b6242);
+  const wearRepairColor = resolveColor(options.wearRepairColor, 0xc4a77d);
+  const localizedWearEnabled = options.localizedWearEnabled === true
+    && (wearStreakStrength > 1e-4 || wearChipStrength > 1e-4 || wearRepairStrength > 1e-4);
   const contactDarkenAmount = clamp(toFiniteNumber(options.contactDarkenAmount, 0), 0, 0.25);
   const contactDarkenDepth = clamp(toFiniteNumber(options.contactDarkenDepth, 0.14), 0.02, 0.5);
   const topBleachEnabled = topBleachAmount > 1e-4;
   const dustTintEnabled = dustColorAmount > 1e-4;
   const contactDarkenEnabled = contactDarkenAmount > 1e-4;
-  const needsGroundBand = dirtEnabled || dustTintEnabled;
-  const needsWorldPos = macroEnabled || needsGroundBand || topBleachEnabled;
+  const needsGroundBand = dirtEnabled || dustTintEnabled || localizedWearEnabled;
+  const noiseEnabled = macroEnabled || localizedWearEnabled;
+  const needsWorldPos = noiseEnabled || needsGroundBand || topBleachEnabled;
   const needsLocalCoords = options.useLocalCoords === true && contactDarkenEnabled;
 
   const previousOnBeforeCompile = material.onBeforeCompile;
@@ -163,7 +185,7 @@ vWallLocalPos = position;`,
     shader.uniforms.uWallTileSizeM = { value: tileSizeM };
     shader.uniforms.uWallUvOffset = { value: { x: uvOffsetX, y: uvOffsetY } };
     shader.uniforms.uWallAlbedoBoost = { value: albedoBoost };
-    if (macroEnabled) {
+    if (noiseEnabled) {
       shader.uniforms.uWallMacroColorAmplitude = { value: macroColorAmplitude };
       shader.uniforms.uWallMacroRoughnessAmplitude = { value: macroRoughnessAmplitude };
       shader.uniforms.uWallMacroFrequency = { value: macroFrequency };
@@ -187,13 +209,21 @@ vWallLocalPos = position;`,
       shader.uniforms.uWallTopBleachHeightM = { value: topBleachHeightM };
       shader.uniforms.uWallTopBleachColor = { value: topBleachColor };
     }
+    if (localizedWearEnabled) {
+      shader.uniforms.uWallWearStreakStrength = { value: wearStreakStrength };
+      shader.uniforms.uWallWearChipStrength = { value: wearChipStrength };
+      shader.uniforms.uWallWearRepairStrength = { value: wearRepairStrength };
+      shader.uniforms.uWallWearRoughnessBoost = { value: wearRoughnessBoost };
+      shader.uniforms.uWallWearSubstrateColor = { value: wearSubstrateColor };
+      shader.uniforms.uWallWearRepairColor = { value: wearRepairColor };
+    }
     if (contactDarkenEnabled) {
       shader.uniforms.uWallContactDarkenAmount = { value: contactDarkenAmount };
       shader.uniforms.uWallContactDarkenDepth = { value: contactDarkenDepth };
     }
 
     if (!shader.fragmentShader.includes("uniform float uWallAlbedoBoost;")) {
-      const macroHeader = macroEnabled
+      const macroHeader = noiseEnabled
         ? `
 uniform float uWallMacroColorAmplitude;
 uniform float uWallMacroRoughnessAmplitude;
@@ -250,6 +280,15 @@ uniform float uWallTopBleachStartY;
 uniform float uWallTopBleachHeightM;
 uniform vec3 uWallTopBleachColor;`
         : "";
+      const localizedWearHeader = localizedWearEnabled
+        ? `
+uniform float uWallWearStreakStrength;
+uniform float uWallWearChipStrength;
+uniform float uWallWearRepairStrength;
+uniform float uWallWearRoughnessBoost;
+uniform vec3 uWallWearSubstrateColor;
+uniform vec3 uWallWearRepairColor;`
+        : "";
       const contactDarkenHeader = contactDarkenEnabled
         ? `
 uniform float uWallContactDarkenAmount;
@@ -259,16 +298,24 @@ uniform float uWallContactDarkenDepth;`
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <common>",
         `#include <common>
-uniform float uWallAlbedoBoost;${worldPosHeader}${localPosHeader}${macroHeader}${groundBandHeader}${dirtHeader}${dustHeader}${topBleachHeader}${contactDarkenHeader}`,
+uniform float uWallAlbedoBoost;${worldPosHeader}${localPosHeader}${macroHeader}${groundBandHeader}${dirtHeader}${dustHeader}${topBleachHeader}${localizedWearHeader}${contactDarkenHeader}`,
       );
     }
 
     if (!shader.fragmentShader.includes("// wall-soft-boost-applied")) {
+      const groundWearEdgeSnippet = macroEnabled
+        ? "float wallGroundWearEdgeM = (wallMacro - 0.5) * 0.22;"
+        : "float wallGroundWearEdgeM = 0.0;";
       const groundBandSnippet = needsGroundBand
         ? `
-float wallGroundDist = clamp((vWallWorldPos.y - uWallFloorTopY) / uWallDirtHeightM, 0.0, 1.0);
-float wallGroundFactor = 1.0 - wallGroundDist;
-wallGroundFactor = wallGroundFactor * wallGroundFactor;`
+${groundWearEdgeSnippet}
+float wallGroundDist = clamp(
+  (vWallWorldPos.y - uWallFloorTopY + wallGroundWearEdgeM) / uWallDirtHeightM,
+  0.0,
+  1.0
+);
+float wallGroundFactor = 1.0 - smoothstep(0.0, 1.0, wallGroundDist);
+wallGroundFactor = wallGroundFactor * wallGroundFactor * 0.82;`
         : "";
       const dirtColorSnippet = dirtEnabled
         ? `
@@ -289,10 +336,46 @@ diffuseColor.rgb = mix(diffuseColor.rgb, uWallTopBleachColor, wallBleachT * uWal
 float wallContactFactor = clamp(((-vWallLocalPos.x) - (0.5 - uWallContactDarkenDepth)) / max(uWallContactDarkenDepth, 0.001), 0.0, 1.0);
 diffuseColor.rgb *= 1.0 - wallContactFactor * uWallContactDarkenAmount;`
         : "";
+      const localizedWearSnippet = localizedWearEnabled
+        ? `
+// Located plaster stories replace the old map-wide speckle: broad repair
+// fields, sparse substrate chips, and narrow story-datum drips each have a
+// distinct scale and silhouette.
+float wallWearAxis = vWallWorldPos.x + vWallWorldPos.z;
+float wallWearY = max(vWallWorldPos.y - uWallFloorTopY, 0.0);
+float wallRepairField = wallValueNoise(vec2(wallWearAxis * 0.19, wallWearY * 0.24) + vec2(31.7, -9.3));
+float wallRepairBreakup = wallValueNoise(vec2(wallWearAxis * 0.47, wallWearY * 0.52) + vec2(-17.1, 21.4));
+float wallRepairMask = smoothstep(0.60, 0.78, wallRepairField)
+  * smoothstep(0.28, 0.62, wallRepairBreakup);
+float wallChipField = wallValueNoise(vec2(wallWearAxis * 0.78, wallWearY * 0.96) + vec2(7.6, 43.2));
+float wallChipBreakup = wallValueNoise(vec2(wallWearAxis * 1.62, wallWearY * 1.44) + vec2(-24.8, 5.1));
+float wallChipMask = smoothstep(0.72, 0.88, wallChipField)
+  * smoothstep(0.46, 0.72, wallChipBreakup);
+float wallStoryIndex = floor(wallWearY / 2.9);
+float wallStoryPhase = mod(wallWearY, 2.9);
+float wallDripWindow = smoothstep(0.42, 0.72, wallStoryPhase)
+  * (1.0 - smoothstep(1.38, 1.82, wallStoryPhase));
+float wallDripLane = wallValueNoise(vec2(wallWearAxis * 0.34, wallStoryIndex * 3.7 + 11.2));
+float wallDripBreakup = wallValueNoise(vec2(wallWearAxis * 1.3, wallWearY * 0.22) + vec2(15.4, -31.8));
+float wallDripMask = smoothstep(0.70, 0.88, wallDripLane)
+  * smoothstep(0.30, 0.64, wallDripBreakup)
+  * wallDripWindow;
+diffuseColor.rgb = mix(
+  diffuseColor.rgb,
+  uWallWearRepairColor,
+  wallRepairMask * uWallWearRepairStrength
+);
+diffuseColor.rgb = mix(
+  diffuseColor.rgb,
+  uWallWearSubstrateColor,
+  wallChipMask * uWallWearChipStrength
+);
+diffuseColor.rgb *= 1.0 - wallDripMask * uWallWearStreakStrength;`
+        : "";
 
       // Soft-saturation boost: f(x,b) = (x*b) / (1 + (b-1)*x)
       // Preserves micro-contrast instead of hard-clamping at 1.0
-      const mapPatch = macroEnabled
+      const mapPatch = noiseEnabled
         ? `#include <map_fragment>
 // wall-soft-boost-applied
 vec2 wallMacroUv = vec2(vWallWorldPos.x + vWallWorldPos.z, vWallWorldPos.y);
@@ -302,26 +385,41 @@ float wallMacroColor = 1.0 + wallMacroCentered * uWallMacroColorAmplitude;
 {
   float wallBoostF = uWallAlbedoBoost * wallMacroColor;
   diffuseColor.rgb = (diffuseColor.rgb * wallBoostF) / (1.0 + (wallBoostF - 1.0) * diffuseColor.rgb);
-}${groundBandSnippet}${dirtColorSnippet}${dustColorSnippet}${bleachSnippet}${contactDarkenSnippet}`
+}${groundBandSnippet}${dirtColorSnippet}${dustColorSnippet}${bleachSnippet}${localizedWearSnippet}${contactDarkenSnippet}`
         : `#include <map_fragment>
 // wall-soft-boost-applied
 {
   float wallBoostF = uWallAlbedoBoost;
   diffuseColor.rgb = (diffuseColor.rgb * wallBoostF) / (1.0 + (wallBoostF - 1.0) * diffuseColor.rgb);
-}${groundBandSnippet}${dirtColorSnippet}${dustColorSnippet}${bleachSnippet}${contactDarkenSnippet}`;
+}${groundBandSnippet}${dirtColorSnippet}${dustColorSnippet}${bleachSnippet}${localizedWearSnippet}${contactDarkenSnippet}`;
       shader.fragmentShader = shader.fragmentShader.replace("#include <map_fragment>", mapPatch);
     }
 
     if (
-      macroEnabled &&
+      noiseEnabled &&
       !shader.fragmentShader.includes("roughnessFactor = clamp(roughnessFactor + wallMacroCentered")
     ) {
       const dirtRoughnessSnippet = dirtEnabled
         ? `
-float wallGroundDistR = clamp((vWallWorldPos.y - uWallFloorTopY) / uWallDirtHeightM, 0.0, 1.0);
-float wallGroundFactorR = 1.0 - wallGroundDistR;
-wallGroundFactorR = wallGroundFactorR * wallGroundFactorR;
+float wallGroundWearEdgeMR = (wallMacro - 0.5) * 0.22;
+float wallGroundDistR = clamp(
+  (vWallWorldPos.y - uWallFloorTopY + wallGroundWearEdgeMR) / uWallDirtHeightM,
+  0.0,
+  1.0
+);
+float wallGroundFactorR = 1.0 - smoothstep(0.0, 1.0, wallGroundDistR);
+wallGroundFactorR = wallGroundFactorR * wallGroundFactorR * 0.82;
 roughnessFactor = clamp(roughnessFactor + wallGroundFactorR * uWallDirtRoughnessBoost, 0.04, 1.0);`
+        : "";
+      const wearRoughnessSnippet = localizedWearEnabled
+        ? `
+roughnessFactor = clamp(
+  roughnessFactor
+    + wallRepairMask * uWallWearRoughnessBoost * 0.55
+    + wallChipMask * uWallWearRoughnessBoost,
+  0.04,
+  1.0
+);`
         : "";
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
@@ -330,22 +428,22 @@ roughnessFactor = clamp(
   roughnessFactor + wallMacroCentered * uWallMacroRoughnessAmplitude,
   0.04,
   1.0
-);${dirtRoughnessSnippet}`,
+);${dirtRoughnessSnippet}${wearRoughnessSnippet}`,
       );
     }
 
     // When dirt is enabled but macro is not, we still need the roughness patch.
     if (
       dirtEnabled &&
-      !macroEnabled &&
+      !noiseEnabled &&
       !shader.fragmentShader.includes("roughnessFactor = clamp(roughnessFactor + wallDirtFactor")
     ) {
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
 float wallGroundDistR = clamp((vWallWorldPos.y - uWallFloorTopY) / uWallDirtHeightM, 0.0, 1.0);
-float wallGroundFactorR = 1.0 - wallGroundDistR;
-wallGroundFactorR = wallGroundFactorR * wallGroundFactorR;
+float wallGroundFactorR = 1.0 - smoothstep(0.0, 1.0, wallGroundDistR);
+wallGroundFactorR = wallGroundFactorR * wallGroundFactorR * 0.82;
 roughnessFactor = clamp(roughnessFactor + wallGroundFactorR * uWallDirtRoughnessBoost, 0.04, 1.0);`,
       );
     }
@@ -364,9 +462,12 @@ roughnessFactor = clamp(roughnessFactor + wallGroundFactorR * uWallDirtRoughness
   const contactCacheSegment = contactDarkenEnabled
     ? `:contact:${contactDarkenAmount.toFixed(3)}:${contactDarkenDepth.toFixed(3)}`
     : "";
-  const cacheKey = macroEnabled
-    ? `wall-tweak:${albedoBoost.toFixed(3)}:${macroColorAmplitude.toFixed(3)}:${macroRoughnessAmplitude.toFixed(3)}:${macroFrequency.toFixed(4)}:${macroSeed.toFixed(0)}:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}${dustCacheSegment}${bleachCacheSegment}${contactCacheSegment}`
-    : `wall-tweak:${albedoBoost.toFixed(3)}:flat:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}${dustCacheSegment}${bleachCacheSegment}${contactCacheSegment}`;
+  const wearCacheSegment = localizedWearEnabled
+    ? `:wear:${wearStreakStrength.toFixed(3)}:${wearChipStrength.toFixed(3)}:${wearRepairStrength.toFixed(3)}:${wearRoughnessBoost.toFixed(3)}:${wearSubstrateColor.getHexString()}:${wearRepairColor.getHexString()}`
+    : "";
+  const cacheKey = noiseEnabled
+    ? `wall-tweak:${albedoBoost.toFixed(3)}:${macroColorAmplitude.toFixed(3)}:${macroRoughnessAmplitude.toFixed(3)}:${macroFrequency.toFixed(4)}:${macroSeed.toFixed(0)}:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}${dustCacheSegment}${bleachCacheSegment}${wearCacheSegment}${contactCacheSegment}`
+    : `wall-tweak:${albedoBoost.toFixed(3)}:flat:${tileSizeM.toFixed(3)}:${uvOffsetX.toFixed(3)}:${uvOffsetY.toFixed(3)}${dirtCacheSegment}${dustCacheSegment}${bleachCacheSegment}${wearCacheSegment}${contactCacheSegment}`;
   material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|${cacheKey}`;
   material.needsUpdate = true;
 }

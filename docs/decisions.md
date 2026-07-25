@@ -3,13 +3,13 @@ Authority: normative
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: durable internal decisions that future tasks should not rediscover
 Do not use for: current task status, temporary bug lists, per-task notes, public browser-agent behavior details
-Last updated: 2026-03-10
+Last updated: 2026-07-25
 
 # Durable Decisions
 
 ## DEC-001: Authority surfaces are role-based
 - `AGENTS.md` is the only normative internal implementation doc.
-- One current short-term memory surface owns active coordination state, and `docs/decisions.md` owns durable internal decisions.
+- `docs/decisions.md` owns durable internal decisions, while `docs/agent/active-brief.md` owns short-lived map-finaling context.
 - `README.md` is quick start only, `docs/map-design/layout-reference.md` is generated reference evidence, and `apps/client/public/skills.md` is the public browser-only contract.
 - Tool shims such as `CLAUDE.md` may point to authority surfaces, but they may not restate or redefine policy.
 
@@ -19,7 +19,7 @@ Last updated: 2026-03-10
 - Prefer code, scripts, specs, and runtime contracts over new prose when they can answer the question.
 
 ## DEC-003: Map authority and runtime generation
-- Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
+- Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_v3_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
 - `docs/map-design/shots.json` owns the runtime review shot contract.
 - Map-design authority lives in structured files and approved refs, not prose packet docs.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
@@ -29,14 +29,10 @@ Last updated: 2026-03-10
 - `apps/client/public/skills.md` is a browser-only public contract and must remain separate from internal process docs.
 - The public contract must not expose coordinates, hidden enemy state, routes, seeds, landmark IDs, or other repo-only tactical truth.
 
-## DEC-005: Validation boundary
-- Default fast local validation is `pnpm typecheck && pnpm test:server && pnpm smoke:game`.
-- `pnpm qa:completion` is required for player-visible map or visual changes and now covers traversal plus deterministic shot review only.
-- `pnpm --filter @clawd-strike/client bot:smoke` is required for enemy tuning and remains part of `pnpm qa:release` alongside `pnpm qa:completion` and `pnpm build`.
-- If a task changes `/skills.md`, stable public selectors, agent-visible browser payload/state, or the documented no-context retry flow, also run `pnpm verify:skills-contract` and `pnpm smoke:no-context` regardless of the primary change tag.
-- `pnpm test:playwright` remains the full browser regression suite for loading-screen, public-selector, public-payload, and shared-champion work rather than the default inner-loop gate.
-- Screenshot and reference inspection are reserved for visual-signoff surfaces rather than logic-only gameplay, bot, perf, tooling, or contract work unless appearance intentionally changed.
-- Current CI is narrower than local completion policy and does not replace these local gates.
+## DEC-005: Validation routing is policy, not durable rationale
+- `AGENTS.md` owns change-tag validation routing; package scripts and CI own the executable command surface.
+- The map quality bar owns visual, performance, and map-safety hard failures. The public browser contract owns its own compatibility boundary.
+- Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
 ## DEC-006: Play-facing quality bar
 - Use Dust II-level production polish as the benchmark for play-facing work, without copying its layout.
@@ -101,3 +97,18 @@ Last updated: 2026-03-10
 - Runtime buff orbs should preserve their glowing pickup readability, but they must render through pooled shared resources rather than per-orb scene graphs with dynamic lights and per-instance material allocation.
 - Idle runtime performance and orb-scaling performance are both first-class perf surfaces; orb perf validation must include zero-orb baseline plus multi-count orb scenarios rather than a single fixed orb count.
 - Future orb-look changes should preserve that scalability boundary unless a new owning perf decision explicitly replaces it.
+
+## DEC-018: Bazaar v3 uses authored surfaces and explicit connectivity
+- `bazaar-map` format v3 is a 56×92 m three-macro-lane layout whose zones, traversal surfaces, transitions, spawns, frontages, districts, dressing clusters, and asset metadata are authored in `docs/map-design/specs/map_spec.json` and compiled without silent clamps.
+- Player grounding, bot grounding/navigation, floor collision, LOS, bullets, hit-zone classification, prop placement, and wall/cage heights must share the authored elevation contract. The Tea Terrace loop is a player-and-bot route at 1.4 m, not a visual-only platform.
+- Exterior perimeter façades remain sealed. Inward openings are noninteractive dressing unless the spec identifies a connector footprint as a real passage.
+- Runtime maps, layout references, topdown SVG, and review shots are generated evidence. The public map ID, ten-enemy wave/scoring contract, controls, and `/skills.md` payload remain unchanged.
+
+## DEC-019: CS2 daylight references replace the dusk painting as the visual quality bar
+- 2026-07-23 owner decision: the five measured CS2 screenshots `docs/map-design/refs/cs2_daylight_ref_1..5.png` are the PRIMARY reference for lighting, value discipline, clarity, and finish; per-reference roles and measured luma/contrast/saturation bands live in [`map-design/quality-bar.md`](map-design/quality-bar.md).
+- `bazaar_main_hall_reference.png` is theme/content reference only (architecture vocabulary, dressing); its dusk mood, darkness, and saturation are explicitly not targets. All painting-calibrated metered targets (e.g. saturation >=0.55) are revoked.
+
+## DEC-020: Map quality targets and budgets have one durable owner
+- [`map-design/quality-bar.md`](map-design/quality-bar.md) owns current visual targets, performance budgets, map locks, and finish failures.
+- Historical score targets, staged budgets, iteration cadence, card identifiers, and residual handling belong only to the [archived roadmap](map-design/archive/visual_overhaul_roadmap-2026-07-24.md).
+- Active workflow belongs to the map-polish skill named by `docs/agent/active-brief.md`; neither workflow nor current task state belongs in this durable decision log.

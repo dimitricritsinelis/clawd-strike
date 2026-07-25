@@ -1,0 +1,175 @@
+{
+  "models": [
+    {
+      "id": "ph_wooden_crate_02",
+      "url": "wooden_crate_02/wooden_crate_02_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wooden_crate_02",
+      "license": "CC0-1.0",
+      "md5": {
+        "wooden_crate_02/wooden_crate_02_1k.gltf": "a69eb62fd20e6badb6bb56f052930e06",
+        "wooden_crate_02/wooden_crate_02.bin": "08d98507231cdeda1070d1a2d0646254",
+        "wooden_crate_02/textures/wooden_crate_02_arm_1k.jpg": "a7537612dbfb7fd25e756074eec5624e",
+        "wooden_crate_02/textures/wooden_crate_02_diff_1k.jpg": "45bca8f49da9d541e06bc926ab001c81",
+        "wooden_crate_02/textures/wooden_crate_02_nor_gl_1k.jpg": "314226b31765168cd8070898f8a7e18e"
+      }
+    },
+    {
+      "id": "ph_Barrel_02",
+      "url": "Barrel_02/Barrel_02_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/barrel_02",
+      "license": "CC0-1.0",
+      "md5": {
+        "Barrel_02/Barrel_02_1k.gltf": "f95584ab7cc325d8be4884ca2935e019",
+        "Barrel_02/Barrel_02.bin": "7340fa43610b7a983a1b352574427b64",
+        "Barrel_02/textures/Barrel_02_arm_1k.jpg": "2c4ab82215e0bc4d0b173c79bc18f15a",
+        "Barrel_02/textures/Barrel_02_diff_1k.jpg": "7d879597fa5cae9ef9095b259ccaf9fb",
+        "Barrel_02/textures/Barrel_02_nor_gl_1k.jpg": "fa1022a8d9206af8c1997db0a9597170"
+      }
+    },
+    {
+      "id": "ph_wicker_basket_02",
+      "url": "wicker_basket_02/wicker_basket_02_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wicker_basket_02",
+      "license": "CC0-1.0",
+      "md5": {
+        "wicker_basket_02/wicker_basket_02_1k.gltf": "aed62a99730dec42ef32e51c36187f37",
+        "wicker_basket_02/wicker_basket_02.bin": "32a855c75791b16826530611f9199e82",
+        "wicker_basket_02/textures/wicker_basket_02_arm_1k.jpg": "2967de2f99b85ee52d6bab63978c003a",
+        "wicker_basket_02/textures/wicker_basket_02_diff_1k.jpg": "61471823114f02ca04197e7e2af13e8f",
+        "wicker_basket_02/textures/wicker_basket_02_nor_gl_1k.jpg": "502447f7dc5687b386f8c417c31feb07"
+      }
+    },
+    {
+      "id": "ph_wooden_table_01",
+      "url": "wooden_table_01/WoodenTable_01_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wooden_table_01",
+      "license": "CC0-1.0",
+      "md5": {
+        "wooden_table_01/WoodenTable_01_1k.gltf": "585f78ec50d4b57dc239f9a9a2259fea",
+        "wooden_table_01/WoodenTable_01.bin": "b764ee635684db5cc2c06288d51a3c14",
+        "wooden_table_01/textures/WoodenTable_01_arm_1k.jpg": "266842045283ef1ea475386172e8aa2f",
+        "wooden_table_01/textures/WoodenTable_01_diff_1k.jpg": "be2bf3134566e1280412d191bd6657f8",
+        "wooden_table_01/textures/WoodenTable_01_nor_gl_1k.jpg": "ac08715658eaf47e6df70a6026231fd2"
+      }
+    },
+    {
+      "id": "cc0_spice_sack",
+      "url": "spice_sack/spice_sack_1k.gltf",
+      "scale": 1,
+      "source": "https://3dmodelscc0.itch.io/free-cc0-medieval-props",
+      "license": "CC0-1.0",
+      "md5": {
+        "spice_sack/spice_sack_1k.gltf": "7dedc8350cc9655803a60c48aed4357a",
+        "spice_sack/spice_sack.bin": "29dd4edb849d0f5d6584a47e1ff3ed01",
+        "spice_sack/textures/spice_sack_diff_1k.jpg": "c867906676cd4965df0806fb94679e2d",
+        "spice_sack/textures/spice_sack_nor_gl_1k.jpg": "e39399f5945334e0b05eeabf183e3444",
+        "spice_sack/textures/spice_sack_rough_1k.jpg": "1cf34344de7f59227f4f590d84fbcee0"
+      }
+    },
+    {
+      "id": "ph_brass_pot_01",
+      "url": "brass_pot_01/brass_pot_01_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/brass_pot_01",
+      "license": "CC0-1.0",
+      "md5": {
+        "brass_pot_01/brass_pot_01_1k.gltf": "3b225f4e684bd1df24669fdf0d52790e",
+        "brass_pot_01/brass_pot_01.bin": "3b3a13f078933ec94b4cbf55c95f12a0",
+        "brass_pot_01/textures/brass_pot_01_arm_1k.jpg": "6416768f2c7012fb1ad15513d6f345c3",
+        "brass_pot_01/textures/brass_pot_01_diff_1k.jpg": "dd37598e39de2c9415329868e6d5c8dd",
+        "brass_pot_01/textures/brass_pot_01_nor_gl_1k.jpg": "77c56abc2eec2e40aa45eaad12ff76c5"
+      }
+    },
+    {
+      "id": "ph_ceramic_pot",
+      "url": "ceramic_pot/ceramic_pot_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/ceramic_pot",
+      "license": "CC0-1.0",
+      "md5": {
+        "ceramic_pot/ceramic_pot_1k.gltf": "8777fd3f023e6f83371786b195ac665b",
+        "ceramic_pot/ceramic_pot.bin": "dab3afea04454ad1fbb1108afe764489",
+        "ceramic_pot/textures/ceramic_pot_arm_1k.jpg": "e45cd9ad939172ae7b94fd455bc44c08",
+        "ceramic_pot/textures/ceramic_pot_diff_1k.jpg": "85746a999ed333628143b3ad2c0b7f42",
+        "ceramic_pot/textures/ceramic_pot_nor_gl_1k.jpg": "a40c80e5e4f9fa107d2c2dc8983d2867"
+      }
+    },
+    {
+      "id": "ph_wooden_lantern_01",
+      "url": "wooden_lantern_01/wooden_lantern_01_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wooden_lantern_01",
+      "license": "CC0-1.0",
+      "md5": {
+        "wooden_lantern_01/wooden_lantern_01_1k.gltf": "e31edca6461023e076183cb74721b0b9",
+        "wooden_lantern_01/wooden_lantern_01.bin": "3784667126369ce5c21db3c7436409cb",
+        "wooden_lantern_01/textures/wooden_lantern_01_arm_1k.jpg": "87b5bdc9f3d5853caef38a00589541ae",
+        "wooden_lantern_01/textures/wooden_lantern_01_diff_1k.jpg": "8f9f537ab312b1ec85acb1f5aaf7ad17",
+        "wooden_lantern_01/textures/wooden_lantern_01_glass_arm_1k.jpg": "890c1dd6ad9c37521f9f0a0d9d08fba2",
+        "wooden_lantern_01/textures/wooden_lantern_01_glass_diff_1k.jpg": "c1e45d48f344f86726d02c81679af6a4",
+        "wooden_lantern_01/textures/wooden_lantern_01_glass_nor_gl_1k.jpg": "38549e36957f90dc61587010c3a8ff3a",
+        "wooden_lantern_01/textures/wooden_lantern_01_nor_gl_1k.jpg": "9db1fa975880b3cf6da5e6c30853e0cf"
+      }
+    },
+    {
+      "id": "ph_wooden_table_02",
+      "url": "wooden_table_02/wooden_table_02_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wooden_table_02",
+      "license": "CC0-1.0",
+      "md5": {
+        "wooden_table_02/wooden_table_02_1k.gltf": "957c5d94784eed976cb4c6f0256a85e7",
+        "wooden_table_02/wooden_table_02.bin": "a17c24e5366a0f7ad5522b88a4a9ea85",
+        "wooden_table_02/textures/wooden_table_02_arm_1k.jpg": "8ee06c71a226e7f53b2ba53da79a55be",
+        "wooden_table_02/textures/wooden_table_02_diff_1k.jpg": "07075a87918208594260c86c727e4396",
+        "wooden_table_02/textures/wooden_table_02_nor_gl_1k.jpg": "63ac7819b624149e77ae9459472ded6d"
+      }
+    },
+    {
+      "id": "ph_painted_wooden_stool",
+      "url": "painted_wooden_stool/painted_wooden_stool_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/painted_wooden_stool",
+      "license": "CC0-1.0",
+      "md5": {
+        "painted_wooden_stool/painted_wooden_stool_1k.gltf": "d234ba7a3ce1cc2a68847cea4e405b34",
+        "painted_wooden_stool/painted_wooden_stool.bin": "cf312e0df28055cbbf174584a01943c5",
+        "painted_wooden_stool/textures/painted_wooden_stool_arm_1k.jpg": "9ffee9bb29a95f4ef24efb415b14f0b6",
+        "painted_wooden_stool/textures/painted_wooden_stool_diff_1k.jpg": "3118c86c770a6907d0347276deebd96c",
+        "painted_wooden_stool/textures/painted_wooden_stool_nor_gl_1k.jpg": "4518ff0d1d7dbf0c5cc2d06777e92a97"
+      }
+    },
+    {
+      "id": "ph_wine_barrel_01",
+      "url": "wine_barrel_01/wine_barrel_01_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wine_barrel_01",
+      "license": "CC0-1.0",
+      "md5": {
+        "wine_barrel_01/wine_barrel_01_1k.gltf": "5397e6d959dd3ef20d1fc14436d0eb70",
+        "wine_barrel_01/wine_barrel_01.bin": "84f578460020912056a1e3fbe3ec1b97",
+        "wine_barrel_01/textures/wine_barrel_01_arm_1k.jpg": "2f0cc81ac07fdbe8c22927feac722927",
+        "wine_barrel_01/textures/wine_barrel_01_diff_1k.jpg": "fdea9538acf01a04a61626919a84b3fb",
+        "wine_barrel_01/textures/wine_barrel_01_nor_gl_1k.jpg": "6b3ce558fa74d3760fa0192dfc4564a3"
+      }
+    },
+    {
+      "id": "ph_wooden_crate_01",
+      "url": "wooden_crate_01/wooden_crate_01_1k.gltf",
+      "scale": 1,
+      "source": "https://polyhaven.com/a/wooden_crate_01",
+      "license": "CC0-1.0",
+      "md5": {
+        "wooden_crate_01/wooden_crate_01_1k.gltf": "33df4d2ae00186d4b64e878466c9e22e",
+        "wooden_crate_01/wooden_crate_01.bin": "8318f76b0c24b5538ce23051dbcb79a0",
+        "wooden_crate_01/textures/wooden_crate_01_arm_1k.jpg": "67c4aeb1154af98f95516b21ef62291c",
+        "wooden_crate_01/textures/wooden_crate_01_diff_1k.jpg": "266e0462d06e77c5745f66e89820544f",
+        "wooden_crate_01/textures/wooden_crate_01_nor_gl_1k.jpg": "e31626a1fcf6f7062c2ffd9fc982b942"
+      }
+    }
+  ]
+}

@@ -40,16 +40,33 @@ export function installDesertSky(opts: {
   // - mie up = stronger haze / sun glow
   const preset = opts.preset ?? "late-afternoon";
   if (preset === "midday") {
-    u["turbidity"]!.value = 12;
-    u["rayleigh"]!.value = 1.05;
-    u["mieCoefficient"]!.value = 0.012;
-    u["mieDirectionalG"]!.value = 0.88;
+    u["turbidity"]!.value = 6;
+    u["rayleigh"]!.value = 1.15;
+    u["mieCoefficient"]!.value = 0.004;
+    u["mieDirectionalG"]!.value = 0.82;
   } else {
-    u["turbidity"]!.value = 14;        // less haze (was 18)
-    u["rayleigh"]!.value = 0.90;       // slightly more blue (was 0.75)
-    u["mieCoefficient"]!.value = 0.015; // less forward scatter (was 0.020)
-    u["mieDirectionalG"]!.value = 0.92;
+    u["turbidity"]!.value = 8;
+    u["rayleigh"]!.value = 2.6;
+    u["mieCoefficient"]!.value = 0.005;
+    u["mieDirectionalG"]!.value = 0.91;
   }
+
+  // Keep the physical sky's cool zenith and blend only a pale atmospheric
+  // horizon. The former orange horizon patch reintroduced the sunset grade
+  // after the light itself had already been calibrated.
+  u["horizonWarmth"] = { value: preset === "late-afternoon" ? 0.55 : 0.32 };
+  sky.material.fragmentShader = sky.material.fragmentShader
+    .replace(
+      "uniform vec3 up;",
+      "uniform vec3 up;\nuniform float horizonWarmth;",
+    )
+    .replace(
+      "gl_FragColor = vec4( retColor, 1.0 );",
+      `float horizonBand = 1.0 - smoothstep(0.35, 0.75, max(direction.y, 0.0));
+      vec3 warmHorizon = vec3(0.82, 0.86, 0.88);
+      retColor = mix(retColor, warmHorizon, horizonBand * horizonWarmth);
+      gl_FragColor = vec4( retColor, 1.0 );`,
+    );
 
   const sunDir = new Vector3();
 

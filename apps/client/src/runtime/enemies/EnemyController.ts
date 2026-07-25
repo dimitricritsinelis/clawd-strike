@@ -32,6 +32,9 @@ const GRAVITY_MPS2 = 20.0;
 const MAX_SUBSTEP_DT_S = 1 / 120;
 const MAX_FRAME_DT_S = 1 / 20;
 const BOUNDS_EPS = 0.001;
+const ENEMY_MAX_STEP_M = 0.35;
+const ENEMY_GROUND_SNAP_DOWN_M = 0.45;
+const SURFACE_GROUND_EPSILON_M = 0.002;
 
 const ENEMY_MAG_CAPACITY = 30;
 const ENEMY_RESERVE_START = 90;
@@ -358,7 +361,7 @@ export class EnemyController {
     colliderKind: "wall",
   };
 
-  constructor(id: EnemyId, name: string, spawnX: number, spawnZ: number, seed: number) {
+  constructor(id: EnemyId, name: string, spawnX: number, spawnZ: number, seed: number, spawnY = 0) {
     this.id = id;
     this.name = name;
     this.aabb = {
@@ -370,7 +373,7 @@ export class EnemyController {
       maxY: 0,
       maxZ: 0,
     };
-    this.position = { x: spawnX, y: 0, z: spawnZ };
+    this.position = { x: spawnX, y: spawnY, z: spawnZ };
     this.solver = new AabbCollisionSolver(ENEMY_HALF_WIDTH_M, ENEMY_HEIGHT_M);
     this.rng = new DeterministicRng(deriveSubSeed(seed, id));
     this.shootTimer = this.rng.range(0.08, 0.22);
@@ -378,9 +381,9 @@ export class EnemyController {
     this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
   }
 
-  reset(spawnX: number, spawnZ: number, seed: number): void {
+  reset(spawnX: number, spawnZ: number, seed: number, spawnY = 0): void {
     this.position.x = spawnX;
-    this.position.y = 0;
+    this.position.y = spawnY;
     this.position.z = spawnZ;
 
     this.yaw = 0;
@@ -550,6 +553,11 @@ export class EnemyController {
     for (let i = 0; i < stepCount; i += 1) {
       this.velocityY -= GRAVITY_MPS2 * stepDt;
 
+      const previousX = this.position.x;
+      const previousY = this.position.y;
+      const previousZ = this.position.z;
+      const wasGrounded = this.grounded;
+
       this.solver.moveAndCollide(
         this.position,
         vx * stepDt,
@@ -559,7 +567,46 @@ export class EnemyController {
         this.motionResult,
       );
 
-      if (this.motionResult.hitY) {
+      if (worldColliders.hasTraversalSurfaces) {
+        const surface = worldColliders.traversalSurfaces.sample(this.position.x, this.position.z, previousY);
+        const surfaceRise = surface ? surface.elevationM - previousY : Number.POSITIVE_INFINITY;
+
+        if (wasGrounded && surface && surfaceRise <= ENEMY_MAX_STEP_M && surfaceRise >= -ENEMY_GROUND_SNAP_DOWN_M) {
+          this.position.y = surface.elevationM;
+          this.velocityY = 0;
+          this.grounded = true;
+          this.motionResult.hitY = true;
+          this.motionResult.grounded = true;
+        } else if (wasGrounded && surface && surfaceRise > ENEMY_MAX_STEP_M) {
+          this.position.x = previousX;
+          this.position.z = previousZ;
+          const previousSurface = worldColliders.traversalSurfaces.sample(previousX, previousZ, previousY);
+          this.position.y = previousSurface?.elevationM ?? previousY;
+          this.velocityY = 0;
+          this.grounded = true;
+          this.motionResult.hitX = Math.abs(vx) > 0.0001;
+          this.motionResult.hitZ = Math.abs(vz) > 0.0001;
+          this.motionResult.hitY = true;
+          this.motionResult.grounded = true;
+        } else if (
+          surface
+          && this.velocityY <= 0
+          && previousY >= surface.elevationM - SURFACE_GROUND_EPSILON_M
+          && this.position.y <= surface.elevationM + SURFACE_GROUND_EPSILON_M
+        ) {
+          this.position.y = surface.elevationM;
+          this.velocityY = 0;
+          this.grounded = true;
+          this.motionResult.hitY = true;
+          this.motionResult.grounded = true;
+        } else if (this.motionResult.hitY) {
+          if (this.velocityY < 0) this.grounded = true;
+          this.velocityY = 0;
+        } else {
+          this.grounded = false;
+          this.motionResult.grounded = false;
+        }
+      } else if (this.motionResult.hitY) {
         if (this.velocityY < 0) this.grounded = true;
         this.velocityY = 0;
       } else {
@@ -657,6 +704,15 @@ export class EnemyController {
       worldColliders,
       this.motionResult,
     );
+
+    if (worldColliders.hasTraversalSurfaces) {
+      const surface = worldColliders.traversalSurfaces.sample(this.position.x, this.position.z, this.position.y);
+      if (surface && Math.abs(surface.elevationM - this.position.y) <= ENEMY_MAX_STEP_M) {
+        this.position.y = surface.elevationM;
+        this.velocityY = 0;
+        this.grounded = true;
+      }
+    }
 
     const bounds = worldColliders.playableBounds;
     const halfWidth = ENEMY_HALF_WIDTH_M + BOUNDS_EPS;

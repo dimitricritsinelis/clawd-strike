@@ -73,6 +73,9 @@ export class AabbCollisionSolver {
     if (delta > 0) {
       let positiveLimit = Number.POSITIVE_INFINITY;
       for (const collider of this.collisionCandidates) {
+        if (collider.kind === "floor_slab" && world.hasTraversalSurfaces) {
+          continue;
+        }
         if (axis !== "y" && collider.kind === "floor_slab") {
           continue;
         }
@@ -102,6 +105,9 @@ export class AabbCollisionSolver {
     } else {
       let negativeLimit = Number.NEGATIVE_INFINITY;
       for (const collider of this.collisionCandidates) {
+        if (collider.kind === "floor_slab" && world.hasTraversalSurfaces) {
+          continue;
+        }
         if (axis !== "y" && collider.kind === "floor_slab") {
           continue;
         }

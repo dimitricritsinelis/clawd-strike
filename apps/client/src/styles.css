@@ -806,3 +806,6 @@ body {
 #mode-banner.show {
   opacity: 1;
 }
+#runtime-root[data-beauty-shot="true"] > :not(canvas) {
+  display: none !important;
+}

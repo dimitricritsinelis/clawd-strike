@@ -1,11 +1,16 @@
-import { AmbientLight, Color, DirectionalLight, FogExp2, HemisphereLight, Object3D, PerspectiveCamera, Scene, Vector3 } from "three";
+import { AmbientLight, Color, DirectionalLight, DoubleSide, Fog, HemisphereLight, MeshStandardMaterial, Object3D, PerspectiveCamera, Scene, type Texture, Vector3 } from "three";
 import { installDesertSky, type DesertSkyHandle } from "../render/DesertSky";
 import { AnchorsDebug, type AnchorsDebugState } from "../debug/AnchorsDebug";
 import { Hud } from "../debug/Hud";
 import { EnemyManager, type EnemyHitResult, type EnemyManagerDebugSnapshot } from "../enemies/EnemyManager";
 import type { WeaponAudio } from "../audio/WeaponAudio";
 import { buildBlockout } from "../map/buildBlockout";
-import { buildProps, type PropsBuildStats } from "../map/buildProps";
+import {
+  buildProps,
+  type PropsBuildStats,
+  type RenderedPropPlacement,
+} from "../map/buildProps";
+import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
 import type { WallDetailPlacementStats } from "../map/wallDetailPlacer";
 import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
 import type { FloorMaterialLibrary } from "../render/materials/FloorMaterialLibrary";
@@ -43,7 +48,75 @@ const EYE_HEIGHT_LERP_RATE = 17.1;
 const RAD_TO_DEG = 180 / Math.PI;
 const DEG_TO_RAD = Math.PI / 180;
 const AGENT_LOOK_ACCUM_LIMIT_DEG = 540;
-const MAP_PROPS_ENABLED = false;
+const MAP_PROPS_ENABLED = true;
+const SCENE_ENVIRONMENT_INTENSITY = 0.28;
+const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.10;
+const KIT_TIMBER_ENVIRONMENT_INTENSITY = 0.70;
+const KIT_METAL_ENVIRONMENT_INTENSITY = 1.15;
+const DETAIL_PLASTER_ENVIRONMENT_INTENSITY = 0.08;
+const DETAIL_TIMBER_ENVIRONMENT_INTENSITY = 0.38;
+const DETAIL_METAL_ENVIRONMENT_INTENSITY = 0.72;
+const PROP_MODEL_ENVIRONMENT_INTENSITY = 0.18;
+
+function applyStaticMaterialRenderBudget(root: Object3D): void {
+  root.traverse((object) => {
+    const mesh = object as Object3D & { isMesh?: boolean; material?: unknown };
+    if (!mesh.isMesh) return;
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const candidate of materials) {
+      if (!candidate || typeof candidate !== "object") continue;
+      const material = candidate as {
+        transparent?: boolean;
+        side?: number;
+        forceSinglePass?: boolean;
+        needsUpdate?: boolean;
+      };
+      if (material.transparent !== true || material.side !== DoubleSide) continue;
+      material.forceSinglePass = true;
+      material.needsUpdate = true;
+    }
+  });
+}
+
+function applyKitEnvironmentResponse(root: Object3D, environment: Texture): void {
+  const configured = new Set<MeshStandardMaterial>();
+  root.traverse((object) => {
+    const mesh = object as Object3D & { isMesh?: boolean; material?: unknown };
+    if (!mesh.isMesh) return;
+    const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+    for (const candidate of materials) {
+      if (!(candidate instanceof MeshStandardMaterial) || configured.has(candidate)) continue;
+      const materialId = candidate.userData.kitPbrMaterialId;
+      const detailMaterialId = candidate.userData.wallDetailPbrMaterialId;
+      const propModelId = candidate.userData.propModelId;
+      if (
+        typeof materialId !== "string"
+        && typeof detailMaterialId !== "string"
+        && typeof propModelId !== "string"
+      ) {
+        continue;
+      }
+      configured.add(candidate);
+      candidate.envMap = environment;
+      if (typeof propModelId === "string") {
+        candidate.envMapIntensity = PROP_MODEL_ENVIRONMENT_INTENSITY;
+      } else if (detailMaterialId === "ph_rusty_metal_02") {
+        candidate.envMapIntensity = DETAIL_METAL_ENVIRONMENT_INTENSITY;
+      } else if (detailMaterialId === "ph_worn_planks" || detailMaterialId === "ph_rough_pine_door") {
+        candidate.envMapIntensity = DETAIL_TIMBER_ENVIRONMENT_INTENSITY;
+      } else if (typeof detailMaterialId === "string") {
+        candidate.envMapIntensity = DETAIL_PLASTER_ENVIRONMENT_INTENSITY;
+      } else if (materialId === "ph_rusty_metal_02") {
+        candidate.envMapIntensity = KIT_METAL_ENVIRONMENT_INTENSITY;
+      } else if (materialId === "ph_worn_planks" || materialId === "ph_rough_pine_door") {
+        candidate.envMapIntensity = KIT_TIMBER_ENVIRONMENT_INTENSITY;
+      } else {
+        candidate.envMapIntensity = KIT_PLASTER_ENVIRONMENT_INTENSITY;
+      }
+      candidate.needsUpdate = true;
+    }
+  });
+}
 
 // ── Camera shake constants ────────────────────────────────────────────────────
 /** Shake impulse added per bullet fired while trigger held (metres). */
@@ -88,6 +161,8 @@ type GameOptions = {
   wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
   lightingPreset: RuntimeLightingPreset;
+  environmentLighting: boolean;
+  createEnvironmentMap: (scene: Scene, position: Vector3) => Texture | null;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
   propVisuals: RuntimePropVisualMode;
@@ -107,6 +182,7 @@ type GameOptions = {
 
 type SpawnPose = {
   x: number;
+  y: number;
   z: number;
   yawRad: number;
   zoneId: string | null;
@@ -117,6 +193,7 @@ export class Game {
   readonly camera: PerspectiveCamera;
 
   private desertSky: DesertSkyHandle | null = null;
+  private sunLight: DirectionalLight | null = null;
   private controlMode: RuntimeControlMode = "human";
   private readonly pressedKeys = new Set<string>();
   private readonly lookDirection = new Vector3();
@@ -142,6 +219,7 @@ export class Game {
 
   private yaw = 0;
   private pitch = 0;
+  private lockedCameraPose: CameraPose | null = null;
   private pointerLocked = false;
   private freezeInput = false;
   private humanFireHeld = false;
@@ -171,6 +249,8 @@ export class Game {
   private seedOverride: number | null = null;
   private highVis = false;
   private lightingPreset: RuntimeLightingPreset = "golden";
+  private environmentLighting = true;
+  private createEnvironmentMap: ((scene: Scene, position: Vector3) => Texture | null) | null = null;
   private floorMode: RuntimeFloorMode = "blockout";
   private wallMode: RuntimeWallMode = "blockout";
   private wallDetailsEnabled = true;
@@ -194,6 +274,9 @@ export class Game {
   private worldColliders: WorldColliders | null = null;
   private runtimeColliders: RuntimeColliderAabb[] = [];
   private propColliders: RuntimeColliderAabb[] = [];
+  private renderedLandmarkAnchorIds: string[] = [];
+  private renderedAnchorIds: string[] = [];
+  private renderedPropPlacements: RenderedPropPlacement[] = [];
   private propStats: PropsBuildStats = {
     seed: 1,
     profile: "subtle",
@@ -326,6 +409,8 @@ export class Game {
     this.seedOverride = options.seedOverride;
     this.highVis = options.highVis ?? false;
     this.lightingPreset = options.lightingPreset;
+    this.environmentLighting = options.environmentLighting;
+    this.createEnvironmentMap = options.createEnvironmentMap;
     this.floorMode = options.floorMode;
     this.wallMode = options.wallMode;
     this.wallDetailsEnabled = options.wallDetails;
@@ -437,15 +522,17 @@ export class Game {
   }
 
   setCameraPose(pose: CameraPose): void {
-    this.camera.fov = pose.fovDeg;
-    this.camera.position.set(pose.pos.x, pose.pos.y, pose.pos.z);
-    this.camera.lookAt(pose.lookAt.x, pose.lookAt.y, pose.lookAt.z);
-    this.camera.updateProjectionMatrix();
-    this.syncAnglesFromCamera();
+    this.lockedCameraPose = {
+      pos: { ...pose.pos },
+      lookAt: { ...pose.lookAt },
+      fovDeg: pose.fovDeg,
+    };
+    this.applyLockedCameraPose();
   }
 
   setBlockoutSpec(spec: RuntimeBlockoutSpec): void {
     this.blockoutSpec = spec;
+    this.applyMapLightingBounds(spec);
     this.rebuildWorld();
   }
 
@@ -461,6 +548,19 @@ export class Game {
 
   getPropsBuildStats(): PropsBuildStats {
     return this.propStats;
+  }
+
+  getRenderedLandmarkAnchorIds(): readonly string[] {
+    return this.renderedLandmarkAnchorIds;
+  }
+
+  getRenderedAnchorIds(): readonly string[] {
+    return this.renderedAnchorIds;
+  }
+
+  /** Internal visual-QA evidence from the exact dressing path rendered this frame. */
+  getRenderedPropPlacements(): readonly RenderedPropPlacement[] {
+    return this.renderedPropPlacements;
   }
 
   getWallDetailStats(): WallDetailPlacementStats {
@@ -490,7 +590,11 @@ export class Game {
         this.shakeYVel -= 0.06;
       }
       this.wasGrounded = nowGrounded;
-      this.updateCameraFromPlayer(deltaSeconds);
+      if (this.lockedCameraPose) {
+        this.applyLockedCameraPose();
+      } else {
+        this.updateCameraFromPlayer(deltaSeconds);
+      }
       this.desertSky?.update();
 
       this.camera.getWorldDirection(this.cameraForward);
@@ -567,9 +671,14 @@ export class Game {
       this.shakeX += this.shakeXVel * deltaSeconds;
       this.shakeY += this.shakeYVel * deltaSeconds;
 
-      // Apply shake as a small positional offset to the camera (after updateCameraFromPlayer)
-      this.camera.position.x += this.shakeX;
-      this.camera.position.y += this.shakeY;
+      // Authored review shots own the camera for the entire frame. Player camera
+      // shake continues to settle in the background but must not move the shot.
+      if (this.lockedCameraPose) {
+        this.applyLockedCameraPose();
+      } else {
+        this.camera.position.x += this.shakeX;
+        this.camera.position.y += this.shakeY;
+      }
     }
     this.anchorsDebug?.update(this.camera);
 
@@ -784,6 +893,14 @@ export class Game {
     return this.enemyManager?.getDebugSnapshot() ?? null;
   }
 
+  setEnemyNameplatesVisible(visible: boolean): void {
+    this.enemyManager?.setNameplatesVisible(visible);
+  }
+
+  setEnemyVisualsVisible(visible: boolean): void {
+    this.enemyManager?.setVisualsVisible(visible);
+  }
+
   getWaveElapsedS(): number {
     return this.enemyManager?.getWaveElapsedS() ?? 0;
   }
@@ -881,7 +998,7 @@ export class Game {
       this.spawnPoseCache = spawnPose;
       this.playerController.setSpawn(
         spawnPose.x,
-        this.blockoutSpec.defaults.floor_height,
+        spawnPose.y,
         spawnPose.z,
       );
       this.setLookAngles(spawnPose.yawRad, 0);
@@ -891,7 +1008,7 @@ export class Game {
         mode: "initial",
         playerPos: {
           x: spawnPose.x,
-          y: this.blockoutSpec.defaults.floor_height,
+          y: spawnPose.y,
           z: spawnPose.z,
         },
         playerSpawnId: this.spawn,
@@ -921,26 +1038,28 @@ export class Game {
       return;
     }
 
-    // ── Desert lighting rig (Dust2-style) ──────────────────────────────
-    // Tuning constants kept here for easy adjustment.
-    const FOG_COLOR = 0xEADBC8;       // warm dust
-    const AMBIENT_COLOR = 0xFFEFD4;
-    const AMBIENT_INTENSITY = 0.55;   // retuned to absorb the old fill light contribution
-    const HEMI_SKY = 0xD8EBFF;        // slightly brighter sky bounce (was 0xCFE3FF)
-    const HEMI_GROUND = 0xE0C08A;     // warmer/brighter ground bounce (was 0xD7B07A)
-    const HEMI_INTENSITY = 0.82;      // stronger ambient bounce without a second direct light
-    const SUN_COLOR = 0xFFD2A1;
-    const SUN_INTENSITY = 2.1;
-    const SUN_POS: [number, number, number] = [-110, 75, -40];
+    // ── High desert daylight rig ───────────────────────────────────────
+    // The key sits ~50 degrees above the authored map center. Near-field air
+    // stays clear; a pale linear fog only separates the far skyline.
+    const FOG_COLOR = 0xDCE4E8;
+    const FOG_NEAR_M = 82;
+    const FOG_FAR_M = 190;
+    const AMBIENT_COLOR = 0xEEF0EA;
+    const AMBIENT_INTENSITY = 0.38;
+    const HEMI_SKY = 0xDDEBF2;
+    const HEMI_GROUND = 0xC8BBA5;
+    const HEMI_INTENSITY = 0.78;
+    const SUN_COLOR = 0xFFF1D8;
+    const SUN_INTENSITY = 3.15;
+    const SUN_POS: [number, number, number] = [-38, 105, -22];
     const SUN_TARGET: [number, number, number] = [25, 0, 41];
-    const SHADOW_MAP_SIZE = 2048;
-    const SHADOW_BIAS = 0.0001;        // reduced shadow creep
-    const SHADOW_NORMAL_BIAS = 0.015;
-    const SHADOW_BOUNDS = 50;         // ±50 ortho frustum (covers 50×82m playable area)
-    const SHADOW_RADIUS = 1;
-    const FOG_DENSITY = 0.0030;       // reduced from 0.0045 — less haze, clearer distance
+    const SHADOW_MAP_SIZE = 4096;
+    const SHADOW_BIAS = -0.00008;
+    const SHADOW_NORMAL_BIAS = 0.012;
+    const SHADOW_FALLBACK_BOUNDS = 58; // replaced by the authored light-space fit after map load
+    const SHADOW_RADIUS = 1;           // API default; Three's PCF-soft path ignores this value
 
-    this.scene.fog = new FogExp2(FOG_COLOR, FOG_DENSITY);
+    this.scene.fog = new Fog(FOG_COLOR, FOG_NEAR_M, FOG_FAR_M);
 
     const ambient = new AmbientLight(AMBIENT_COLOR, AMBIENT_INTENSITY);
     const hemi = new HemisphereLight(HEMI_SKY, HEMI_GROUND, HEMI_INTENSITY);
@@ -952,14 +1071,15 @@ export class Game {
     sun.shadow.mapSize.set(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
     sun.shadow.camera.near = 1;
     sun.shadow.camera.far = 200;
-    sun.shadow.camera.left = -SHADOW_BOUNDS;
-    sun.shadow.camera.right = SHADOW_BOUNDS;
-    sun.shadow.camera.top = SHADOW_BOUNDS;
-    sun.shadow.camera.bottom = -SHADOW_BOUNDS;
+    sun.shadow.camera.left = -SHADOW_FALLBACK_BOUNDS;
+    sun.shadow.camera.right = SHADOW_FALLBACK_BOUNDS;
+    sun.shadow.camera.top = SHADOW_FALLBACK_BOUNDS;
+    sun.shadow.camera.bottom = -SHADOW_FALLBACK_BOUNDS;
     sun.shadow.bias = SHADOW_BIAS;
     sun.shadow.normalBias = SHADOW_NORMAL_BIAS;
     sun.shadow.radius = SHADOW_RADIUS;
     sun.target.position.set(...SUN_TARGET);
+    this.sunLight = sun;
 
     this.scene.add(ambient, hemi, sun, sun.target);
 
@@ -969,8 +1089,122 @@ export class Game {
       scene: this.scene,
       camera: this.camera,
       sunLight: sun,
-      preset: "late-afternoon",
+      preset: "midday",
     });
+    if (this.environmentLighting) {
+      this.scene.environment = this.createEnvironmentMap?.(this.scene, this.camera.position) ?? null;
+      this.scene.environmentIntensity = SCENE_ENVIRONMENT_INTENSITY;
+    }
+  }
+
+  private applyMapLightingBounds(spec: RuntimeBlockoutSpec): void {
+    const sun = this.sunLight;
+    if (!sun) return;
+    const center = spec.mapCenter ?? {
+      x: spec.playable_boundary.x + spec.playable_boundary.w * 0.5,
+      y: spec.playable_boundary.y + spec.playable_boundary.h * 0.5,
+    };
+    const traversalElevationsM = (spec.traversalSurfaces ?? []).flatMap((surface) => (
+      surface.kind === "flat"
+        ? [surface.elevationM]
+        : [surface.startElevationM, surface.endElevationM]
+    ));
+    const maxReachableElevationM = Math.max(spec.defaults.floor_height, ...traversalElevationsM);
+    const minReachableElevationM = Math.min(spec.defaults.floor_height, ...traversalElevationsM);
+    const maxCasterElevationM = Math.max(
+      spec.defaults.ceiling_height,
+      maxReachableElevationM,
+      ...(spec.architecturePlacements ?? []).map((placement) => (
+        placement.center.z
+        + placement.sizeM.height * 0.5
+        + (placement.kind === "massing" ? placement.roof.parapetHeightM : 0)
+      )),
+    );
+    const minCasterElevationM = Math.min(
+      minReachableElevationM,
+      ...(spec.architecturePlacements ?? []).map((placement) => (
+        placement.center.z - placement.sizeM.height * 0.5
+      )),
+    );
+
+    sun.target.position.set(center.x, maxReachableElevationM * 0.35, center.y);
+
+    // Fit the orthographic shadow camera in light space. The old square bounds
+    // spent half the 2048 map's vertical resolution on empty sky and clipped the
+    // far edge at 200 m. Authored massing is included so parapets and return walls
+    // cannot disappear from the map merely because they sit outside the route box.
+    const shadowPoints: Vector3[] = [];
+    const boundary = spec.playable_boundary;
+    for (const x of [boundary.x, boundary.x + boundary.w]) {
+      for (const z of [boundary.y, boundary.y + boundary.h]) {
+        shadowPoints.push(
+          new Vector3(x, minCasterElevationM, z),
+          new Vector3(x, maxCasterElevationM, z),
+        );
+      }
+    }
+    for (const placement of spec.architecturePlacements ?? []) {
+      const yawRad = placement.yawDeg * DEG_TO_RAD;
+      const cosYaw = Math.cos(yawRad);
+      const sinYaw = Math.sin(yawRad);
+      for (const widthSign of [-1, 1]) {
+        for (const depthSign of [-1, 1]) {
+          const localX = widthSign * placement.sizeM.width * 0.5;
+          const localZ = depthSign * placement.sizeM.depth * 0.5;
+          const worldX = placement.center.x + localX * cosYaw - localZ * sinYaw;
+          const worldZ = placement.center.y + localX * sinYaw + localZ * cosYaw;
+          shadowPoints.push(
+            new Vector3(worldX, placement.center.z - placement.sizeM.height * 0.5, worldZ),
+            new Vector3(
+              worldX,
+              placement.center.z + placement.sizeM.height * 0.5
+                + (placement.kind === "massing" ? placement.roof.parapetHeightM : 0),
+              worldZ,
+            ),
+          );
+        }
+      }
+    }
+
+    const lightForward = sun.target.position.clone().sub(sun.position).normalize();
+    const lightRight = lightForward.clone().cross(new Vector3(0, 1, 0));
+    if (lightRight.lengthSq() < 1e-8) lightRight.set(1, 0, 0);
+    lightRight.normalize();
+    const lightUp = lightRight.clone().cross(lightForward).normalize();
+    let minLightX = Number.POSITIVE_INFINITY;
+    let maxLightX = Number.NEGATIVE_INFINITY;
+    let minLightY = Number.POSITIVE_INFINITY;
+    let maxLightY = Number.NEGATIVE_INFINITY;
+    let minLightDepth = Number.POSITIVE_INFINITY;
+    let maxLightDepth = Number.NEGATIVE_INFINITY;
+    const fromTarget = new Vector3();
+    const fromSun = new Vector3();
+    for (const point of shadowPoints) {
+      fromTarget.copy(point).sub(sun.target.position);
+      fromSun.copy(point).sub(sun.position);
+      const lightX = fromTarget.dot(lightRight);
+      const lightY = fromTarget.dot(lightUp);
+      const lightDepth = fromSun.dot(lightForward);
+      minLightX = Math.min(minLightX, lightX);
+      maxLightX = Math.max(maxLightX, lightX);
+      minLightY = Math.min(minLightY, lightY);
+      maxLightY = Math.max(maxLightY, lightY);
+      minLightDepth = Math.min(minLightDepth, lightDepth);
+      maxLightDepth = Math.max(maxLightDepth, lightDepth);
+    }
+
+    const SHADOW_XY_PADDING_M = 2;
+    const SHADOW_DEPTH_PADDING_M = 6;
+    sun.shadow.camera.left = minLightX - SHADOW_XY_PADDING_M;
+    sun.shadow.camera.right = maxLightX + SHADOW_XY_PADDING_M;
+    sun.shadow.camera.bottom = minLightY - SHADOW_XY_PADDING_M;
+    sun.shadow.camera.top = maxLightY + SHADOW_XY_PADDING_M;
+    sun.shadow.camera.near = Math.max(0.5, minLightDepth - SHADOW_DEPTH_PADDING_M);
+    sun.shadow.camera.far = Math.max(
+      sun.shadow.camera.near + 1,
+      maxLightDepth + SHADOW_DEPTH_PADDING_M,
+    );
+    sun.shadow.camera.updateProjectionMatrix();
   }
 
   private setupInitialView(): void {
@@ -1121,6 +1355,17 @@ export class Game {
     this.applyAnglesToCamera();
   }
 
+  private applyLockedCameraPose(): void {
+    const pose = this.lockedCameraPose;
+    if (!pose) return;
+
+    this.camera.fov = pose.fovDeg;
+    this.camera.position.set(pose.pos.x, pose.pos.y, pose.pos.z);
+    this.camera.lookAt(pose.lookAt.x, pose.lookAt.y, pose.lookAt.z);
+    this.camera.updateProjectionMatrix();
+    this.syncAnglesFromCamera();
+  }
+
   private setLookAngles(nextYaw: number, nextPitch: number): void {
     this.yaw = nextYaw;
     this.pitch = Math.min(MAX_PITCH, Math.max(MIN_PITCH, nextPitch));
@@ -1145,6 +1390,32 @@ export class Game {
   }
 
   private selectSpawnPose(spec: RuntimeBlockoutSpec, spawn: RuntimeSpawnId): SpawnPose {
+    const authoredPlayerSpawns = (spec.authoredSpawns ?? []).filter((candidate) => candidate.kind === "player");
+    const authored = authoredPlayerSpawns.find((candidate) => (
+      candidate.id.toUpperCase().includes(`SPAWN_${spawn}`)
+      || candidate.zoneId.toUpperCase().includes(`SPAWN_${spawn}`)
+    )) ?? authoredPlayerSpawns[spawn === "B" ? 1 : 0];
+    if (authored) {
+      const surface = (spec.traversalSurfaces ?? []).find((candidate) => candidate.id === authored.surfaceId);
+      let elevationM = spec.defaults.floor_height;
+      if (surface?.kind === "flat") {
+        elevationM = surface.elevationM;
+      } else if (surface?.kind === "ramp") {
+        const axisStart = surface.axis === "x" ? surface.rect.x : surface.rect.y;
+        const axisLength = surface.axis === "x" ? surface.rect.w : surface.rect.h;
+        const axisCoord = surface.axis === "x" ? authored.x : authored.y;
+        const t = Math.max(0, Math.min(1, (axisCoord - axisStart) / Math.max(axisLength, 1e-6)));
+        elevationM = surface.startElevationM + (surface.endElevationM - surface.startElevationM) * t;
+      }
+      return {
+        x: authored.x,
+        y: elevationM,
+        z: authored.y,
+        yawRad: designYawDegToWorldYawRad(authored.yawDeg),
+        zoneId: authored.zoneId,
+      };
+    }
+
     const spawnZones = spec.zones.filter((zone) => zone.type === "spawn_plaza");
     const byId = spawn === "B" ? "SPAWN_B" : "SPAWN_A";
     const selected =
@@ -1154,6 +1425,7 @@ export class Game {
     if (selected) {
       return {
         x: selected.rect.x + selected.rect.w * 0.5,
+        y: spec.defaults.floor_height,
         z: selected.rect.y + selected.rect.h * 0.5,
         yawRad: spawn === "B" ? 0 : Math.PI,
         zoneId: selected.id,
@@ -1162,6 +1434,7 @@ export class Game {
 
     return {
       x: spec.playable_boundary.x + spec.playable_boundary.w * 0.5,
+      y: spec.defaults.floor_height,
       z: spec.playable_boundary.y + spec.playable_boundary.h * 0.5,
       yawRad: spawn === "B" ? 0 : Math.PI,
       zoneId: null,
@@ -1196,9 +1469,13 @@ export class Game {
     });
     this.wallDetailStats = builtBlockout.wallDetailStats;
     this.blockoutRoot = builtBlockout.root;
+    applyStaticMaterialRenderBudget(builtBlockout.root);
     this.scene.add(builtBlockout.root);
 
     this.propColliders = [];
+    this.renderedLandmarkAnchorIds = [];
+    this.renderedAnchorIds = [];
+    this.renderedPropPlacements = [];
     this.propStats = {
       seed: runtimeSeed,
       profile: this.propChaos.profile,
@@ -1227,17 +1504,31 @@ export class Game {
         highVis: this.highVis,
       });
       this.propsRoot = builtProps.root;
+      applyStaticMaterialRenderBudget(builtProps.root);
       this.propColliders = builtProps.colliders;
       this.propStats = builtProps.stats;
+      this.renderedLandmarkAnchorIds = builtProps.renderedLandmarkAnchorIds;
+      this.renderedAnchorIds = builtProps.renderedAnchorIds;
+      this.renderedPropPlacements = builtProps.renderedPlacements;
       this.scene.add(builtProps.root);
+      if (this.scene.environment) {
+        applyKitEnvironmentResponse(builtProps.root, this.scene.environment);
+      }
+    }
+    if (this.scene.environment) {
+      applyKitEnvironmentResponse(builtBlockout.root, this.scene.environment);
     }
 
     this.runtimeColliders = [...builtBlockout.colliders, ...this.propColliders].sort((a, b) => a.id.localeCompare(b.id));
-    this.worldColliders = new WorldColliders(this.runtimeColliders, blockoutSpec.playable_boundary);
+    this.worldColliders = new WorldColliders(
+      this.runtimeColliders,
+      blockoutSpec.playable_boundary,
+      blockoutSpec.traversalSurfaces ?? [],
+    );
     this.playerController.setWorld(this.worldColliders);
     const spawnPose = this.selectSpawnPose(blockoutSpec, this.spawn);
     this.spawnPoseCache = spawnPose;
-    this.playerController.setSpawn(spawnPose.x, blockoutSpec.defaults.floor_height, spawnPose.z);
+    this.playerController.setSpawn(spawnPose.x, spawnPose.y, spawnPose.z);
     this.setLookAngles(spawnPose.yawRad, 0);
     this.enemyManager?.fullDispose(this.scene);
     this.enemyManager?.setTacticalContext(blockoutSpec, this.anchorsSpec ?? null);
@@ -1245,7 +1536,7 @@ export class Game {
       mode: "initial",
       playerPos: {
         x: spawnPose.x,
-        y: blockoutSpec.defaults.floor_height,
+        y: spawnPose.y,
         z: spawnPose.z,
       },
       playerSpawnId: this.spawn,
@@ -1261,7 +1552,7 @@ export class Game {
     this.spawnPoseCache = pose;
     this.playerController.setSpawn(
       pose.x,
-      this.blockoutSpec.defaults.floor_height,
+      pose.y,
       pose.z,
     );
     this.setLookAngles(pose.yawRad, 0);

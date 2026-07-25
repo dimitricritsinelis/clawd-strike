@@ -4,6 +4,14 @@
       "id": "palm_tree_bark",
       "source": "https://polyhaven.com/a/palm_tree_bark",
       "license": "CC0",
+      "md5": {
+        "palm_tree_bark/palm_tree_bark_diff_1k.jpg": "d9c9ffbc6c32e51f81696416c0fc661e",
+        "palm_tree_bark/palm_tree_bark_nor_gl_1k.jpg": "c98b2f2f05b5178b68e74c3272a4fe77",
+        "palm_tree_bark/palm_tree_bark_arm_1k.jpg": "87ddc2127e429d08a2b853e5b34165db",
+        "palm_tree_bark/palm_tree_bark_diff_2k.jpg": "ce6ccdf926d67e1b1c629917635ae187",
+        "palm_tree_bark/palm_tree_bark_nor_gl_2k.jpg": "613435764f3dea5301c5763733fb0c80",
+        "palm_tree_bark/palm_tree_bark_arm_2k.jpg": "88aa9bb569fea8f1b7989b35d22696e1"
+      },
       "files": [
         "palm_tree_bark/palm_tree_bark_diff_1k.jpg",
         "palm_tree_bark/palm_tree_bark_nor_gl_1k.jpg",
@@ -17,6 +25,12 @@
       "id": "palm_bark",
       "source": "https://polyhaven.com/a/palm_bark",
       "license": "CC0",
+      "notes": "Normal and ARM maps are also reused on the palm frond cards to restore subtle leaf-surface breakup without adding another texture allocation.",
+      "md5": {
+        "palm_bark/palm_bark_diff_1k.jpg": "89e6474313f1547e3c12c4b68410ee39",
+        "palm_bark/palm_bark_nor_gl_1k.jpg": "47c13a26ef585fbb0d93f5593f8f711f",
+        "palm_bark/palm_bark_arm_1k.jpg": "94ac0d9506483f206b67e20b3e4b590f"
+      },
       "files": [
         "palm_bark/palm_bark_diff_1k.jpg",
         "palm_bark/palm_bark_nor_gl_1k.jpg",
@@ -24,23 +38,15 @@
       ]
     },
     {
-      "id": "palm_frond_generated",
-      "source": "https://everytexture.com/everytexture-com-stock-nature-leaf-texture-00009/",
-      "license": "See upstream source page",
-      "notes": "Derived foliage-card textures generated in-repo on 2026-03-14 from the EveryTexture diffuse, normal, and bump maps with a custom palm-frond alpha silhouette and packed ARM output.",
+      "id": "palm_frond_project_original",
+      "source": "repo://generated/bazaar/palm-frond",
+      "license": "Project-Original",
+      "notes": "Project-owned palm frond cutout generated for Clawd Strike and chroma-key extracted in-repo on 2026-07-10.",
+      "md5": {
+        "palm_frond_project_original/palm_frond_diff.png": "2a878d2df9a4bb2cccec86199c527f36"
+      },
       "files": [
-        "palm_frond_generated/palm_frond_diff_1k.png",
-        "palm_frond_generated/palm_frond_nor_gl_1k.png",
-        "palm_frond_generated/palm_frond_arm_1k.png",
-        "palm_frond_generated/palm_frond_juvenile_diff_1k.png",
-        "palm_frond_generated/palm_frond_torn_diff_1k.png",
-        "palm_frond_generated/palm_frond_partial_diff_1k.png",
-        "palm_frond_generated/palm_frond_diff_2k.png",
-        "palm_frond_generated/palm_frond_nor_gl_2k.png",
-        "palm_frond_generated/palm_frond_arm_2k.png",
-        "palm_frond_generated/palm_frond_juvenile_diff_2k.png",
-        "palm_frond_generated/palm_frond_torn_diff_2k.png",
-        "palm_frond_generated/palm_frond_partial_diff_2k.png"
+        "palm_frond_project_original/palm_frond_diff.png"
       ]
     }
   ]

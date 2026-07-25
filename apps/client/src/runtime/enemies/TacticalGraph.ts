@@ -1,5 +1,13 @@
-import type { RuntimeAnchor, RuntimeAnchorsSpec, RuntimeBlockoutSpec, RuntimeBlockoutZone } from "../map/types";
+import type {
+  RuntimeAnchor,
+  RuntimeAnchorsSpec,
+  RuntimeBlockoutSpec,
+  RuntimeBlockoutZone,
+  RuntimeExplicitConnectivityEdge,
+  RuntimeTraversalSurface,
+} from "../map/types";
 import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
+import { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
 
 export type TacticalLane = "west" | "main" | "east";
 
@@ -19,6 +27,7 @@ export type TacticalNode = {
   lane: TacticalLane;
   nodeType: TacticalNodeType;
   x: number;
+  y: number;
   z: number;
   coverScore: number;
   flankScore: number;
@@ -34,6 +43,8 @@ export type TacticalGraph = {
   zoneCenterNodeIds: Map<string, string>;
   zoneAdjacency: Map<string, string[]>;
   zoneById: Map<string, RuntimeBlockoutZone>;
+  surfaceResolver: TraversalSurfaceResolver;
+  edgeCosts: Map<string, number>;
 };
 
 const ZONE_TYPES = new Set([
@@ -72,6 +83,9 @@ function laneFromRect(rect: RuntimeBlockoutZone["rect"]): TacticalLane {
 }
 
 function laneFromZone(zone: RuntimeBlockoutZone): TacticalLane {
+  if (zone.macroLane === "west" || zone.macroLane === "main" || zone.macroLane === "east") {
+    return zone.macroLane;
+  }
   if (zone.id.includes("_W") || zone.id.startsWith("SH_W")) return "west";
   if (zone.id.includes("_E") || zone.id.startsWith("SH_E")) return "east";
   return laneFromRect(zone.rect);
@@ -174,15 +188,38 @@ function resolveDerivedNodeType(zone: RuntimeBlockoutZone): TacticalNodeType {
   return "pre_peek";
 }
 
-function resolveExposureYawRad(zone: RuntimeBlockoutZone, anchor: RuntimeAnchor | null): number {
+function resolveExposureYawRad(
+  zone: RuntimeBlockoutZone,
+  anchor: RuntimeAnchor | null,
+  mapCenter: { x: number; y: number },
+): number {
   if (anchor && typeof anchor.yawDeg === "number") {
     return designYawDegToWorldYawRad(anchor.yawDeg);
   }
 
   const center = zoneCenter(zone);
-  const targetX = 25;
-  const targetZ = 41;
+  const targetX = mapCenter.x;
+  const targetZ = mapCenter.y;
   return Math.atan2(targetX - center.x, targetZ - center.z);
+}
+
+function surfaceYForZone(
+  resolver: TraversalSurfaceResolver,
+  zone: RuntimeBlockoutZone,
+  x: number,
+  z: number,
+  fallbackY = 0,
+): number {
+  const exact = resolver.surfaces.find((surface) => surface.id === zone.surfaceId);
+  if (exact) {
+    const exactResolver = new TraversalSurfaceResolver([exact]);
+    return exactResolver.sample(x, z)?.elevationM ?? fallbackY;
+  }
+  return resolver.sample(x, z, fallbackY)?.elevationM ?? fallbackY;
+}
+
+function nodeEdgeKey(a: string, b: string): string {
+  return a < b ? `${a}\u0000${b}` : `${b}\u0000${a}`;
 }
 
 function anchorToNodeType(anchor: RuntimeAnchor): TacticalNodeType | null {
@@ -323,24 +360,61 @@ function resolveTransitionPoints(
   };
 }
 
+function resolveAuthoredTransition(
+  edge: RuntimeExplicitConnectivityEdge | undefined,
+  a: RuntimeBlockoutZone,
+  b: RuntimeBlockoutZone,
+  surfacesById: ReadonlyMap<string, RuntimeTraversalSurface>,
+): { point: { x: number; z: number }; elevationM: number } | null {
+  if (!edge?.transitionSurfaceId) return null;
+  const surface = surfacesById.get(edge.transitionSurfaceId);
+  if (!surface) return null;
+
+  const surfaceZone = surface.zoneId === a.id ? a : surface.zoneId === b.id ? b : null;
+  if (!surfaceZone) return null;
+  const otherZone = surfaceZone.id === a.id ? b : a;
+  const otherCenter = zoneCenter(otherZone);
+  const point = {
+    x: clamp(otherCenter.x, surface.rect.x, surface.rect.x + surface.rect.w),
+    z: clamp(otherCenter.z, surface.rect.y, surface.rect.y + surface.rect.h),
+  };
+  const resolver = new TraversalSurfaceResolver([surface]);
+  const sample = resolver.sample(point.x, point.z);
+  if (!sample) return null;
+  return { point, elevationM: sample.elevationM };
+}
+
 export function buildTacticalGraph(
   blockout: RuntimeBlockoutSpec,
   anchorsSpec: RuntimeAnchorsSpec | null,
 ): TacticalGraph {
   const zoneById = new Map(blockout.zones.map((zone) => [zone.id, zone]));
   const zoneAdjacency = new Map<string, string[]>();
+  const surfaceResolver = new TraversalSurfaceResolver(blockout.traversalSurfaces ?? []);
+  const surfacesById = new Map((blockout.traversalSurfaces ?? []).map((surface) => [surface.id, surface]));
+  const mapCenter = blockout.mapCenter ?? {
+    x: blockout.playable_boundary.x + blockout.playable_boundary.w * 0.5,
+    y: blockout.playable_boundary.y + blockout.playable_boundary.h * 0.5,
+  };
+  const explicitEdges = blockout.explicitConnectivity ?? [];
 
   for (const zone of blockout.zones) {
     if (!ZONE_TYPES.has(zone.type)) continue;
-    const neighbors: string[] = [];
-    for (const other of blockout.zones) {
-      if (zone.id === other.id || !ZONE_TYPES.has(other.type)) continue;
-      if (zonesTouch(zone, other)) {
-        neighbors.push(other.id);
+    const neighbors = new Set<string>();
+    if (explicitEdges.length > 0) {
+      for (const edge of explicitEdges) {
+        if (edge.fromZoneId === zone.id) neighbors.add(edge.toZoneId);
+        if (edge.toZoneId === zone.id) neighbors.add(edge.fromZoneId);
+      }
+    } else {
+      for (const other of blockout.zones) {
+        if (zone.id === other.id || !ZONE_TYPES.has(other.type)) continue;
+        if (zonesTouch(zone, other)) {
+          neighbors.add(other.id);
+        }
       }
     }
-    neighbors.sort((a, b) => a.localeCompare(b));
-    zoneAdjacency.set(zone.id, neighbors);
+    zoneAdjacency.set(zone.id, [...neighbors].sort((a, b) => a.localeCompare(b)));
   }
 
   const nodes: MutableNode[] = [];
@@ -357,10 +431,11 @@ export function buildTacticalGraph(
       lane: laneFromZone(zone),
       nodeType: "zone_center",
       x: center.x,
+      y: surfaceYForZone(surfaceResolver, zone, center.x, center.z),
       z: center.z,
       coverScore: scores.coverScore,
       flankScore: scores.flankScore,
-      exposureYawRad: resolveExposureYawRad(zone, null),
+      exposureYawRad: resolveExposureYawRad(zone, null, mapCenter),
       tags: [zone.type, "zone-center"],
     });
     nodes.push(node);
@@ -382,10 +457,11 @@ export function buildTacticalGraph(
       lane: laneFromZone(zone),
       nodeType,
       x: anchorPoint.x,
+      y: surfaceYForZone(surfaceResolver, zone, anchorPoint.x, anchorPoint.z, anchor.pos.z),
       z: anchorPoint.z,
       coverScore: scores.coverScore,
       flankScore: scores.flankScore,
-      exposureYawRad: resolveExposureYawRad(zone, anchor),
+      exposureYawRad: resolveExposureYawRad(zone, anchor, mapCenter),
       tags: [anchor.type, zone.type],
     });
     nodes.push(node);
@@ -404,7 +480,18 @@ export function buildTacticalGraph(
       const neighbor = zoneById.get(neighborId);
       if (!zone || !neighbor) continue;
 
-      const { aPoint, bPoint } = resolveTransitionPoints(zone, neighbor);
+      const explicitEdge = explicitEdges.find((edge) => (
+        (edge.fromZoneId === zone.id && edge.toZoneId === neighbor.id)
+        || (edge.fromZoneId === neighbor.id && edge.toZoneId === zone.id)
+      ));
+      const authoredTransition = resolveAuthoredTransition(explicitEdge, zone, neighbor, surfacesById);
+      const inferredTransition = authoredTransition ? null : resolveTransitionPoints(zone, neighbor);
+      const aPoint = authoredTransition?.point ?? inferredTransition!.aPoint;
+      const bPoint = authoredTransition?.point ?? inferredTransition!.bPoint;
+      const aElevationM = authoredTransition?.elevationM
+        ?? surfaceYForZone(surfaceResolver, zone, aPoint.x, aPoint.z);
+      const bElevationM = authoredTransition?.elevationM
+        ?? surfaceYForZone(surfaceResolver, neighbor, bPoint.x, bPoint.z);
       const zoneNodeType = resolveDerivedNodeType(zone);
       const neighborNodeType = resolveDerivedNodeType(neighbor);
       const zoneScores = scoreDerivedNode(zone, neighbor, zoneNodeType);
@@ -416,6 +503,7 @@ export function buildTacticalGraph(
         lane: laneFromZone(zone),
         nodeType: zoneNodeType,
         x: aPoint.x,
+        y: aElevationM,
         z: aPoint.z,
         coverScore: zoneScores.coverScore,
         flankScore: zoneScores.flankScore,
@@ -428,6 +516,7 @@ export function buildTacticalGraph(
         lane: laneFromZone(neighbor),
         nodeType: neighborNodeType,
         x: bPoint.x,
+        y: bElevationM,
         z: bPoint.z,
         coverScore: neighborScores.coverScore,
         flankScore: neighborScores.flankScore,
@@ -476,6 +565,24 @@ export function buildTacticalGraph(
     }))
     .sort((a, b) => a.id.localeCompare(b.id));
   const nodeById = new Map(finalizedNodes.map((node) => [node.id, node]));
+  const explicitZoneCosts = new Map<string, number>();
+  for (const edge of explicitEdges) {
+    explicitZoneCosts.set(nodeEdgeKey(edge.fromZoneId, edge.toZoneId), Math.max(0.01, edge.cost ?? 1));
+  }
+  const edgeCosts = new Map<string, number>();
+  for (const node of finalizedNodes) {
+    for (const neighborId of node.adjacency) {
+      const neighbor = nodeById.get(neighborId);
+      if (!neighbor) continue;
+      const authoredCost = node.zoneId === neighbor.zoneId
+        ? null
+        : explicitZoneCosts.get(nodeEdgeKey(node.zoneId, neighbor.zoneId)) ?? null;
+      edgeCosts.set(
+        nodeEdgeKey(node.id, neighbor.id),
+        authoredCost ?? Math.max(0.01, Math.hypot(node.x - neighbor.x, node.y - neighbor.y, node.z - neighbor.z)),
+      );
+    }
+  }
   const finalizedZoneNodes = new Map<string, TacticalNode[]>();
   for (const [zoneId, entries] of zoneNodes.entries()) {
     finalizedZoneNodes.set(
@@ -494,6 +601,8 @@ export function buildTacticalGraph(
     zoneCenterNodeIds,
     zoneAdjacency,
     zoneById,
+    surfaceResolver,
+    edgeCosts,
   };
 }
 
@@ -501,15 +610,25 @@ export function findZoneForPoint(
   graph: TacticalGraph | null,
   x: number,
   z: number,
+  y?: number,
 ): RuntimeBlockoutZone | null {
   if (!graph) return null;
 
   let bestMatch: RuntimeBlockoutZone | null = null;
   let bestArea = Number.POSITIVE_INFINITY;
+  let bestVerticalDelta = Number.POSITIVE_INFINITY;
   for (const zone of graph.zoneById.values()) {
+    if (!ZONE_TYPES.has(zone.type)) continue;
     if (!pointInRect(zone, x, z)) continue;
     const area = zone.rect.w * zone.rect.h;
-    if (area < bestArea) {
+    const verticalDelta = typeof y === "number"
+      ? Math.abs(surfaceYForZone(graph.surfaceResolver, zone, x, z) - y)
+      : 0;
+    if (
+      verticalDelta < bestVerticalDelta - 0.05
+      || (Math.abs(verticalDelta - bestVerticalDelta) <= 0.05 && area < bestArea)
+    ) {
+      bestVerticalDelta = verticalDelta;
       bestArea = area;
       bestMatch = zone;
     }
@@ -550,31 +669,46 @@ export function findTacticalPath(
   if (!graph || !startNodeId || !goalNodeId) return [];
   if (startNodeId === goalNodeId) return [startNodeId];
 
-  const queue: string[] = [startNodeId];
-  const visited = new Set<string>([startNodeId]);
+  const unvisited = new Set<string>(graph.nodes.map((node) => node.id));
+  const distance = new Map<string, number>([[startNodeId, 0]]);
   const prev = new Map<string, string | null>([[startNodeId, null]]);
 
-  while (queue.length > 0) {
-    const currentId = queue.shift()!;
+  while (unvisited.size > 0) {
+    let currentId: string | null = null;
+    let currentDistance = Number.POSITIVE_INFINITY;
+    for (const candidateId of unvisited) {
+      const candidateDistance = distance.get(candidateId) ?? Number.POSITIVE_INFINITY;
+      if (candidateDistance < currentDistance) {
+        currentId = candidateId;
+        currentDistance = candidateDistance;
+      }
+    }
+    if (!currentId || !Number.isFinite(currentDistance)) break;
+    unvisited.delete(currentId);
+    if (currentId === goalNodeId) break;
     const current = graph.nodeById.get(currentId);
     if (!current) continue;
 
     for (const neighborId of current.adjacency) {
-      if (visited.has(neighborId)) continue;
-      visited.add(neighborId);
-      prev.set(neighborId, currentId);
-      if (neighborId === goalNodeId) {
-        const path = [goalNodeId];
-        let cursor: string | null = currentId;
-        while (cursor) {
-          path.push(cursor);
-          cursor = prev.get(cursor) ?? null;
-        }
-        path.reverse();
-        return path;
+      if (!unvisited.has(neighborId)) continue;
+      const candidateDistance = currentDistance
+        + (graph.edgeCosts.get(nodeEdgeKey(currentId, neighborId)) ?? 1);
+      if (candidateDistance < (distance.get(neighborId) ?? Number.POSITIVE_INFINITY)) {
+        distance.set(neighborId, candidateDistance);
+        prev.set(neighborId, currentId);
       }
-      queue.push(neighborId);
     }
+  }
+
+  if (prev.has(goalNodeId)) {
+    const path = [goalNodeId];
+    let cursor = prev.get(goalNodeId) ?? null;
+    while (cursor) {
+      path.push(cursor);
+      cursor = prev.get(cursor) ?? null;
+    }
+    path.reverse();
+    return path;
   }
 
   return [startNodeId];

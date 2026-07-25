@@ -2,15 +2,25 @@
   "materials": [
     {
       "id": "large_sandstone_blocks_01",
-      "tileSizeM": 4,
-      "tintHex": "#e8d4b0",
-      "albedoBoost": 1.05,
-      "albedoGamma": 0.90,
-      "dustStrength": 0.30,
-      "roughness": 0.97,
-      "normalScale": 0.30,
-      "aoIntensity": 0.40,
+      "tileSizeM": 2.6,
+      "tintHex": "#d2c8b5",
+      "albedoBoost": 1.02,
+      "albedoGamma": 0.96,
+      "dustStrength": 0.28,
+      "roughness": 0.94,
+      "normalScale": 0.18,
+      "aoIntensity": 0.28,
       "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
         "4k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
@@ -29,6 +39,16 @@
       "normalScale": 0.28,
       "aoIntensity": 0.35,
       "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
         "4k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
@@ -38,15 +58,20 @@
     },
     {
       "id": "cobblestone_pavement",
-      "tileSizeM": 3,
-      "tintHex": "#d0c0a8",
-      "albedoBoost": 0.95,
-      "albedoGamma": 0.92,
-      "dustStrength": 0.18,
-      "roughness": 0.96,
-      "normalScale": 0.35,
-      "aoIntensity": 0.45,
+      "tileSizeM": 2.2,
+      "tintHex": "#c9c1b4",
+      "albedoBoost": 1.02,
+      "albedoGamma": 0.96,
+      "dustStrength": 0.32,
+      "roughness": 0.94,
+      "normalScale": 0.30,
+      "aoIntensity": 0.35,
       "textures": {
+        "1k": {
+          "albedo": "./cobblestone_floor_04/cobblestone_floor_04_diff_1k.jpg",
+          "normal": "./cobblestone_floor_04/cobblestone_floor_04_nor_gl_1k.jpg",
+          "arm": "./cobblestone_floor_04/cobblestone_floor_04_arm_1k.jpg"
+        },
         "2k": {
           "albedo": "./cobblestone_floor_04/cobblestone_floor_04_diff_2k.jpg",
           "normal": "./cobblestone_floor_04/cobblestone_floor_04_nor_gl_2k.jpg",
@@ -56,19 +81,101 @@
     },
     {
       "id": "cobblestone_color",
-      "tileSizeM": 4,
-      "tintHex": "#ddd0b8",
-      "albedoBoost": 1.00,
-      "albedoGamma": 0.93,
-      "dustStrength": 0.25,
-      "roughness": 0.96,
-      "normalScale": 0.28,
-      "aoIntensity": 0.38,
+      "tileSizeM": 2.6,
+      "tintHex": "#d8c7aa",
+      "albedoBoost": 1.05,
+      "albedoGamma": 0.94,
+      "dustStrength": 0.24,
+      "roughness": 0.92,
+      "normalScale": 0.50,
+      "aoIntensity": 0.50,
       "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
         "4k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
+        }
+      }
+    },
+    {
+      "id": "red_sandstone_pavement",
+      "tileSizeM": 2.15,
+      "tintHex": "#d8c4a4",
+      "albedoBoost": 1.06,
+      "albedoGamma": 0.95,
+      "dustStrength": 0.24,
+      "roughness": 0.90,
+      "normalScale": 0.65,
+      "aoIntensity": 0.55,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "red_sandstone_pavement",
+        "url": "https://polyhaven.com/a/red_sandstone_pavement",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 2.15, "height": 2.15 },
+        "downloadedResolution": "2k",
+        "md5": {
+          "albedo": "a1259b901bce5c5b428ca1fdbb5c8ac7",
+          "normal": "331f734509e5354c74012364d1c19faa",
+          "arm": "39b7314228c5066f0b9342502d69b769"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./red_sandstone_pavement/red_sandstone_pavement_diff_1k.jpg",
+          "normal": "./red_sandstone_pavement/red_sandstone_pavement_nor_gl_1k.jpg",
+          "arm": "./red_sandstone_pavement/red_sandstone_pavement_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./red_sandstone_pavement/red_sandstone_pavement_diff_2k.jpg",
+          "normal": "./red_sandstone_pavement/red_sandstone_pavement_nor_gl_2k.jpg",
+          "arm": "./red_sandstone_pavement/red_sandstone_pavement_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "patterned_cobblestone",
+      "tileSizeM": 2.5,
+      "tintHex": "#d6c3a8",
+      "albedoBoost": 1.06,
+      "albedoGamma": 0.95,
+      "dustStrength": 0.24,
+      "roughness": 0.90,
+      "normalScale": 0.65,
+      "aoIntensity": 0.55,
+      "source": {
+        "provider": "Poly Haven",
+        "assetId": "patterned_cobblestone",
+        "url": "https://polyhaven.com/a/patterned_cobblestone",
+        "license": "CC0",
+        "nativeDimensionsM": { "width": 2.5, "height": 2.5 },
+        "downloadedResolution": "2k",
+        "md5": {
+          "albedo": "7517f9498721d3d265bf499d37067ece",
+          "normal": "caaa933e8b753a4cd21402b71d5a33df",
+          "arm": "9452875b2a417596d4ca3f0cd685f1cf"
+        }
+      },
+      "textures": {
+        "1k": {
+          "albedo": "./patterned_cobblestone/patterned_cobblestone_diff_1k.jpg",
+          "normal": "./patterned_cobblestone/patterned_cobblestone_nor_gl_1k.jpg",
+          "arm": "./patterned_cobblestone/patterned_cobblestone_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./patterned_cobblestone/patterned_cobblestone_diff_2k.jpg",
+          "normal": "./patterned_cobblestone/patterned_cobblestone_nor_gl_2k.jpg",
+          "arm": "./patterned_cobblestone/patterned_cobblestone_arm_2k.jpg"
         }
       }
     },
@@ -83,6 +190,16 @@
       "normalScale": 0.15,
       "aoIntensity": 0.20,
       "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
         "4k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",

@@ -58,13 +58,9 @@ export function applyWindowGlassShaderTweaks(
   const borderFadeOuter = 0.13;
   const gridRoughnessBoost = 0.05;
   const smudgeRoughnessBoost = highVis ? 0.045 : 0.055;
-  const smudgeStrength = highVis ? 0.48 : 0.58;
-  const fresnelPower = highVis ? 3.5 : 4.0;
-  const reflectStrength = highVis ? 0.52 : 0.58;
+  const smudgeStrength = highVis ? 0.24 : 0.3;
   const paneDarkening = highVis ? 0.08 : 0.10;
   const grimeDarkening = highVis ? 0.03 : 0.04;
-  const groundColor: readonly [number, number, number] = highVis ? [0.82, 0.75, 0.63] : [0.78, 0.70, 0.58];
-  const skyColor: readonly [number, number, number] = highVis ? [0.82, 0.90, 0.98] : [0.74, 0.85, 0.97];
 
   const previousOnBeforeCompile = material.onBeforeCompile;
   material.onBeforeCompile = (shader: MaterialShader, renderer: WebGLRenderer): void => {
@@ -116,9 +112,7 @@ float glassSmudge = 0.0;
 
   float smudgeLo = glassValueNoise(glassUv * 14.0 + vec2(3.1, 9.7));
   float smudgeHi = glassValueNoise(glassUv * 31.0 + vec2(-4.7, 12.4));
-  float streakNoise = glassValueNoise(vec2(glassUv.x * 19.0 + smudgeHi * 1.8, glassUv.y * 3.8 + 27.1));
-  float streaks = smoothstep(0.68, 0.97, streakNoise) * (1.0 - smoothstep(0.0, 0.22, glassUv.y));
-  glassSmudge = clamp((smudgeLo * 0.55 + smudgeHi * 0.28 + streaks * 0.72) * ${smudgeStrength.toFixed(3)}, 0.0, 1.0);
+  glassSmudge = clamp((smudgeLo * 0.55 + smudgeHi * 0.28) * ${smudgeStrength.toFixed(3)}, 0.0, 1.0);
 #endif
 roughnessFactor = clamp(
   roughnessFactor + glassGridMask * ${gridRoughnessBoost.toFixed(3)} + glassSmudge * ${smudgeRoughnessBoost.toFixed(3)},
@@ -128,24 +122,15 @@ roughnessFactor = clamp(
       );
     }
 
-    if (!shader.fragmentShader.includes("vec3 worldV = normalize(cameraPosition - vGlassWorldPos);")) {
+    if (!shader.fragmentShader.includes("float paneOcclusion = clamp(")) {
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <opaque_fragment>",
-        `vec3 worldN = normalize(vGlassWorldNormal);
-vec3 worldV = normalize(cameraPosition - vGlassWorldPos);
-float fresnel = pow(1.0 - saturate(dot(worldN, worldV)), ${fresnelPower.toFixed(3)});
-vec3 reflectionDir = reflect(-worldV, worldN);
-float reflectionMix = clamp(reflectionDir.y * 0.5 + 0.5, 0.0, 1.0);
-vec3 groundColor = vec3(${groundColor[0].toFixed(3)}, ${groundColor[1].toFixed(3)}, ${groundColor[2].toFixed(3)});
-vec3 skyColor = vec3(${skyColor[0].toFixed(3)}, ${skyColor[1].toFixed(3)}, ${skyColor[2].toFixed(3)});
-vec3 fakeReflection = mix(groundColor, skyColor, reflectionMix);
-float paneOcclusion = clamp(
+        `float paneOcclusion = clamp(
   1.0 - glassGridMask * ${paneDarkening.toFixed(3)} - glassSmudge * ${grimeDarkening.toFixed(3)},
   0.72,
   1.0
 );
 outgoingLight *= paneOcclusion;
-outgoingLight = mix(outgoingLight, fakeReflection, fresnel * ${reflectStrength.toFixed(3)});
 #include <opaque_fragment>`,
       );
     }
@@ -158,8 +143,6 @@ outgoingLight = mix(outgoingLight, fakeReflection, fresnel * ${reflectStrength.t
     `${gridCols}x${gridRows}`,
     toFiniteNumber(lineWidth, 0).toFixed(3),
     toFiniteNumber(lineFeather, 0).toFixed(3),
-    toFiniteNumber(reflectStrength, 0).toFixed(3),
-    toFiniteNumber(fresnelPower, 0).toFixed(3),
     toFiniteNumber(gridRoughnessBoost, 0).toFixed(3),
     toFiniteNumber(smudgeRoughnessBoost, 0).toFixed(3),
     toFiniteNumber(paneDarkening, 0).toFixed(3),

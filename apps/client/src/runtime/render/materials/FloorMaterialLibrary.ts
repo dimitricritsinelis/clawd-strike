@@ -10,10 +10,33 @@ import {
 
 export type FloorTextureQuality = "1k" | "2k" | "4k";
 
-type FloorTextureSet = {
+export type FloorTextureSet = {
   albedo: string;
   normal: string;
   arm: string;
+};
+
+export type FloorTextureResolution = {
+  materialId: string;
+  requestedQuality: FloorTextureQuality;
+  resolvedQuality: FloorTextureQuality;
+  urls: readonly string[];
+};
+
+export type FloorMaterialLoadOptions = {
+  materialIds?: ReadonlySet<string>;
+  requestObserver?: FloorTexturePreloadOptions["requestObserver"];
+};
+
+export type FloorTexturePreloadOptions = {
+  materialIds?: ReadonlySet<string>;
+  allowUpscale?: boolean;
+  requestObserver?: {
+    expectChild?: (id: string) => void;
+    start: (id: string) => void;
+    complete: (id: string) => void;
+    fail: (id: string, error: unknown) => void;
+  };
 };
 
 type FloorMaterialEntry = {
@@ -52,9 +75,22 @@ function asNumber(value: unknown, context: string): number {
   return value;
 }
 
-function asOptionalNumber(value: unknown, context: string): number | undefined {
+function asNumberInRange(value: unknown, context: string, min: number, max: number): number {
+  const parsed = asNumber(value, context);
+  if (parsed < min || parsed > max) {
+    throw new Error(`${context}: expected number in range [${min}, ${max}]`);
+  }
+  return parsed;
+}
+
+function asOptionalNumberInRange(
+  value: unknown,
+  context: string,
+  min: number,
+  max: number,
+): number | undefined {
   if (value === undefined) return undefined;
-  return asNumber(value, context);
+  return asNumberInRange(value, context, min, max);
 }
 
 function asOptionalString(value: unknown, context: string): string | undefined {
@@ -75,19 +111,28 @@ function parseOptionalTextureSet(value: unknown, context: string): FloorTextureS
   return parseTextureSet(value, context);
 }
 
-function resolveTextureSetForQuality(
+export function resolveFloorTextureSetForQuality(
   textures: Partial<Record<FloorTextureQuality, FloorTextureSet>>,
   quality: FloorTextureQuality,
-): FloorTextureSet {
-  return (
-    textures[quality] ??
-    textures["4k"] ??
-    textures["2k"] ??
-    textures["1k"] ??
-    (() => {
-      throw new Error("Material is missing all supported texture variants");
-    })()
-  );
+  allowUpscale = true,
+): { quality: FloorTextureQuality; textures: FloorTextureSet } {
+  const preferredQualities: readonly FloorTextureQuality[] = allowUpscale
+    ? quality === "1k"
+      ? ["1k", "4k", "2k"]
+      : quality === "2k"
+        ? ["2k", "4k", "1k"]
+        : ["4k", "2k", "1k"]
+    : quality === "1k"
+      ? ["1k"]
+      : quality === "2k"
+        ? ["2k", "1k"]
+        : ["4k", "2k", "1k"];
+  for (const candidate of preferredQualities) {
+    const resolved = textures[candidate];
+    if (resolved) return { quality: candidate, textures: resolved };
+  }
+  const policy = allowUpscale ? "supported" : "equal-or-lower";
+  throw new Error(`Material is missing an ${policy} texture variant for requested quality '${quality}'`);
 }
 
 function parseEntry(value: unknown, index: number): FloorMaterialEntry {
@@ -95,12 +140,12 @@ function parseEntry(value: unknown, index: number): FloorMaterialEntry {
   const record = asRecord(value, context);
   const texturesRaw = asRecord(record.textures, `${context}.textures`);
   const tintHexRaw = asOptionalString(record.tintHex, `${context}.tintHex`);
-  const albedoBoostRaw = asOptionalNumber(record.albedoBoost, `${context}.albedoBoost`);
-  const albedoGammaRaw = asOptionalNumber(record.albedoGamma, `${context}.albedoGamma`);
-  const dustStrengthRaw = asOptionalNumber(record.dustStrength, `${context}.dustStrength`);
-  const roughnessRaw = asOptionalNumber(record.roughness, `${context}.roughness`);
-  const normalScaleRaw = asOptionalNumber(record.normalScale, `${context}.normalScale`);
-  const aoIntensityRaw = asOptionalNumber(record.aoIntensity, `${context}.aoIntensity`);
+  const albedoBoostRaw = asOptionalNumberInRange(record.albedoBoost, `${context}.albedoBoost`, 0, 2);
+  const albedoGammaRaw = asOptionalNumberInRange(record.albedoGamma, `${context}.albedoGamma`, 0.65, 1.25);
+  const dustStrengthRaw = asOptionalNumberInRange(record.dustStrength, `${context}.dustStrength`, 0, 0.8);
+  const roughnessRaw = asOptionalNumberInRange(record.roughness, `${context}.roughness`, 0, 1);
+  const normalScaleRaw = asOptionalNumberInRange(record.normalScale, `${context}.normalScale`, 0, 1);
+  const aoIntensityRaw = asOptionalNumberInRange(record.aoIntensity, `${context}.aoIntensity`, 0, 1);
   if (tintHexRaw !== undefined && !/^#[0-9a-fA-F]{6}$/.test(tintHexRaw)) {
     throw new Error(`${context}.tintHex: expected #RRGGBB hex color`);
   }
@@ -115,7 +160,7 @@ function parseEntry(value: unknown, index: number): FloorMaterialEntry {
 
   const entry: FloorMaterialEntry = {
     id: asString(record.id, `${context}.id`),
-    tileSizeM: Math.max(0.05, asNumber(record.tileSizeM, `${context}.tileSizeM`)),
+    tileSizeM: asNumberInRange(record.tileSizeM, `${context}.tileSizeM`, 0.05, 64),
     textures,
   };
 
@@ -123,24 +168,32 @@ function parseEntry(value: unknown, index: number): FloorMaterialEntry {
     throw new Error(`${context}.textures: expected at least one of 1k, 2k, or 4k`);
   }
 
-  if (albedoBoostRaw !== undefined) entry.albedoBoost = Math.max(0, Math.min(2, albedoBoostRaw));
-  if (albedoGammaRaw !== undefined) entry.albedoGamma = Math.max(0.65, Math.min(1.25, albedoGammaRaw));
-  if (dustStrengthRaw !== undefined) entry.dustStrength = Math.max(0, Math.min(0.8, dustStrengthRaw));
-  if (roughnessRaw !== undefined) entry.roughness = Math.max(0, Math.min(1, roughnessRaw));
-  if (normalScaleRaw !== undefined) entry.normalScale = Math.max(0, Math.min(1, normalScaleRaw));
-  if (aoIntensityRaw !== undefined) entry.aoIntensity = Math.max(0, Math.min(1, aoIntensityRaw));
+  if (albedoBoostRaw !== undefined) entry.albedoBoost = albedoBoostRaw;
+  if (albedoGammaRaw !== undefined) entry.albedoGamma = albedoGammaRaw;
+  if (dustStrengthRaw !== undefined) entry.dustStrength = dustStrengthRaw;
+  if (roughnessRaw !== undefined) entry.roughness = roughnessRaw;
+  if (normalScaleRaw !== undefined) entry.normalScale = normalScaleRaw;
+  if (aoIntensityRaw !== undefined) entry.aoIntensity = aoIntensityRaw;
   if (tintHexRaw !== undefined) entry.tintHex = tintHexRaw;
 
   return entry;
 }
 
-function parseManifest(value: unknown): FloorMaterialEntry[] {
+export function parseFloorMaterialManifest(value: unknown): FloorMaterialEntry[] {
   const root = asRecord(value, "materials.json");
   const materials = root.materials;
   if (!Array.isArray(materials) || materials.length === 0) {
     throw new Error("materials.json.materials must be a non-empty array");
   }
-  return materials.map((entry, index) => parseEntry(entry, index));
+  const parsed = materials.map((entry, index) => parseEntry(entry, index));
+  const seenIds = new Set<string>();
+  for (const entry of parsed) {
+    if (seenIds.has(entry.id)) {
+      throw new Error(`materials.json.materials: duplicate material id '${entry.id}'`);
+    }
+    seenIds.add(entry.id);
+  }
+  return parsed;
 }
 
 export class FloorMaterialLibrary {
@@ -156,11 +209,24 @@ export class FloorMaterialLibrary {
     }
   }
 
-  static async load(manifestUrl: string): Promise<FloorMaterialLibrary> {
+  static async load(
+    manifestUrl: string,
+    options: FloorMaterialLoadOptions = {},
+  ): Promise<FloorMaterialLibrary> {
     const resolvedManifestUrl = new URL(manifestUrl, window.location.href);
-    const response = await fetch(resolvedManifestUrl.toString());
-    if (!response.ok) {
-      throw new Error(`Failed to fetch floor manifest (${response.status} ${response.statusText})`);
+    const requestId = `floor-manifest:${resolvedManifestUrl.toString()}`;
+    options.requestObserver?.expectChild?.(requestId);
+    options.requestObserver?.start(requestId);
+    let response: Response;
+    try {
+      response = await fetch(resolvedManifestUrl.toString());
+      if (!response.ok) {
+        throw new Error(`Failed to fetch floor manifest (${response.status} ${response.statusText})`);
+      }
+      options.requestObserver?.complete(requestId);
+    } catch (error) {
+      options.requestObserver?.fail(requestId, error);
+      throw error;
     }
 
     let manifestJson: unknown;
@@ -172,7 +238,17 @@ export class FloorMaterialLibrary {
       );
     }
 
-    const materials = parseManifest(manifestJson);
+    const parsedMaterials = parseFloorMaterialManifest(manifestJson);
+    const materials = options.materialIds
+      ? parsedMaterials.filter((entry) => options.materialIds?.has(entry.id))
+      : parsedMaterials;
+    if (options.materialIds) {
+      const selectedIds = new Set(materials.map((entry) => entry.id));
+      const missingIds = [...options.materialIds].filter((id) => !selectedIds.has(id));
+      if (missingIds.length > 0) {
+        throw new Error(`Required floor materials are missing: ${missingIds.sort().join(", ")}`);
+      }
+    }
     const baseDirUrl = new URL("./", resolvedManifestUrl).toString();
     return new FloorMaterialLibrary(baseDirUrl, materials);
   }
@@ -185,30 +261,60 @@ export class FloorMaterialLibrary {
     return Array.from(this.materialsById.keys());
   }
 
-  async preloadAllTextures(quality: FloorTextureQuality): Promise<void> {
+  async preloadAllTextures(
+    quality: FloorTextureQuality,
+    options: FloorTexturePreloadOptions = {},
+  ): Promise<readonly FloorTextureResolution[]> {
     const seenUrls = new Set<string>();
     const preloadTasks: Promise<Texture>[] = [];
+    const resolutions: FloorTextureResolution[] = [];
 
     const enqueueTexture = (relativeOrAbsoluteUrl: string, colorSpace: Texture["colorSpace"], aniso: number): void => {
       const resolvedUrl = this.resolveTextureUrl(relativeOrAbsoluteUrl);
       if (seenUrls.has(resolvedUrl)) return;
       seenUrls.add(resolvedUrl);
-      preloadTasks.push(this.loadTexture(relativeOrAbsoluteUrl, colorSpace, aniso));
+      const requestId = `floor-texture:${resolvedUrl}`;
+      options.requestObserver?.expectChild?.(requestId);
+      options.requestObserver?.start(requestId);
+      preloadTasks.push(
+        this.loadTexture(relativeOrAbsoluteUrl, colorSpace, aniso)
+          .then((texture) => {
+            options.requestObserver?.complete(requestId);
+            return texture;
+          })
+          .catch((error: unknown) => {
+            options.requestObserver?.fail(requestId, error);
+            throw error;
+          }),
+      );
     };
 
     for (const entry of this.materialsById.values()) {
-      const maps = resolveTextureSetForQuality(entry.textures, quality);
+      if (options.materialIds && !options.materialIds.has(entry.id)) continue;
+      const resolution = resolveFloorTextureSetForQuality(
+        entry.textures,
+        quality,
+        options.allowUpscale !== false,
+      );
+      const maps = resolution.textures;
+      resolutions.push({
+        materialId: entry.id,
+        requestedQuality: quality,
+        resolvedQuality: resolution.quality,
+        urls: [maps.albedo, maps.normal, maps.arm].map((url) => this.resolveTextureUrl(url)),
+      });
       enqueueTexture(maps.albedo, SRGBColorSpace, 8);
       enqueueTexture(maps.normal, NoColorSpace, 1);
       enqueueTexture(maps.arm, NoColorSpace, 1);
     }
 
     await Promise.all(preloadTasks);
+    return resolutions;
   }
 
   createStandardMaterial(materialId: string, quality: FloorTextureQuality): MeshStandardMaterial {
     const entry = this.requireMaterial(materialId);
-    const maps = resolveTextureSetForQuality(entry.textures, quality);
+    const maps = resolveFloorTextureSetForQuality(entry.textures, quality).textures;
     const roughness = entry.roughness ?? 0.96;
     const normalScale = entry.normalScale ?? 0.7;
     const albedoBoost = entry.albedoBoost ?? 1;

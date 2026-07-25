@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "cells": [
+    {
+      "id": "spice-west-merchant",
+      "label": "Spice Street west merchant frontage",
+      "shotIds": [
+        "SHOT_11_SPICE_CANOPY",
+        "SHOT_13_CLOSEUP_MERCHANT_FACADE",
+        "SHOT_14_CLOSEUP_PROP_GROUNDING",
+        "SHOT_15_CLOSEUP_CANOPY_ATTACHMENT"
+      ],
+      "references": [
+        {
+          "path": "docs/map-design/refs/cs2_daylight_ref_1.png",
+          "role": "Primary daylight and value target"
+        },
+        {
+          "path": "docs/map-design/refs/cs2_daylight_ref_3.png",
+          "role": "Luminous shade and directional-shadow target"
+        },
+        {
+          "path": "docs/map-design/refs/cs2_daylight_ref_5.png",
+          "role": "Close-range material-finish target"
+        },
+        {
+          "path": "docs/map-design/refs/bazaar_main_hall_reference.png",
+          "role": "Theme and content only; mood, darkness, and saturation are not targets"
+        }
+      ],
+      "hardChecks": [
+        "No rendered intersection between windows, canopies, signs, awnings, doors, and dressing",
+        "No blocked door or shop threshold",
+        "No floating or unsupported geometry",
+        "Canopy and sign supports have visible load paths",
+        "No placeholder or procedural-proxy representation",
+        "No console errors",
+        "No camera drift",
+        "No layout, collision, route, spawn, cover, or sightline changes",
+        "Performance remains inside shared hard budgets"
+      ],
+      "performanceBudget": {
+        "source": "apps/client/scripts/lib/performanceAcceptance.mjs#BAZAAR_PERFORMANCE_BUDGET",
+        "profile": "desktop"
+      },
+      "lockedSystems": [
+        "layout",
+        "collision",
+        "routes",
+        "spawns",
+        "cover",
+        "sightlines",
+        "player movement",
+        "combat"
+      ],
+      "requiredSemanticChecks": [
+        "canopy-versus-opening",
+        "sign-or-awning-versus-opening",
+        "decoration-versus-door-service-volume",
+        "dressing-versus-route-clearance-volume",
+        "unrelated-visual-assets-intersecting",
+        "unsupported-or-ungrounded-placement"
+      ],
+      "requiredQaTags": [
+        "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
+        "PLACE_SPICE_COVER_CORE_COVER_SPICE_01",
+        "ARCH_FRONTAGE_SPICE_STREET_WEST_GROUND_02",
+        "canopy_wall_ring"
+      ],
+      "forbiddenArtifactTags": [
+        "duplicate-representation",
+        "exposed-shell",
+        "floor-gap",
+        "interpenetration",
+        "invalid-scale",
+        "placeholder",
+        "procedural-proxy",
+        "unsupported-slab"
+      ],
+      "audit": {
+        "placementPrefixes": [
+          "PLACE_SPICE_",
+          "ARCH_FRONTAGE_SPICE_STREET_WEST_"
+        ],
+        "routeClearanceVolumes": [
+          {
+            "placementId": "ROUTE_CLEARANCE_MAIN_SPICE",
+            "semanticClass": "route_clearance_volume",
+            "bounds": {
+              "min": { "x": 25.8, "y": 0, "z": 10 },
+              "max": { "x": 28.2, "y": 2.2, "z": 33 }
+            }
+          }
+        ],
+        "doorServiceDepthM": 0.9,
+        "assemblyContacts": []
+      },
+      "optionalTargetedTests": [
+        "apps/client/src/runtime/map/buildProps.test.ts",
+        "apps/client/src/runtime/map/v3Architecture.test.ts"
+      ]
+    }
+  ]
+}

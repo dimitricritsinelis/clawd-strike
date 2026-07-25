@@ -1,11 +1,15 @@
 import type { RuntimeRect } from "../../map/types";
+import {
+  TraversalSurfaceResolver,
+  type TraversalSurfaceLike,
+} from "../TraversalSurfaceResolver";
 import type { MutableAabb } from "./Aabb";
 
 const BROADPHASE_CELL_SIZE_M = 4;
 const CELL_KEY_OFFSET = 1 << 15;
 const CELL_KEY_STRIDE = 1 << 16;
 
-export type WorldColliderKind = "wall" | "floor_slab" | "prop";
+export type WorldColliderKind = "wall" | "floor_slab" | "prop" | "traversal_surface";
 
 export type RuntimeColliderAabb = {
   id: string;
@@ -58,11 +62,17 @@ function toCellKey(cellX: number, cellZ: number): number {
 export class WorldColliders {
   readonly colliders: readonly WorldColliderEntry[];
   readonly playableBounds: PlayableBounds;
+  readonly traversalSurfaces: TraversalSurfaceResolver;
+  readonly hasTraversalSurfaces: boolean;
   private readonly broadphaseBuckets: ReadonlyMap<number, readonly number[]>;
   private readonly broadphaseVisited: Uint32Array;
   private broadphaseStamp = 1;
 
-  constructor(colliders: RuntimeColliderAabb[], playableBoundary: RuntimeRect) {
+  constructor(
+    colliders: RuntimeColliderAabb[],
+    playableBoundary: RuntimeRect,
+    traversalSurfaces: readonly TraversalSurfaceLike[] = [],
+  ) {
     this.colliders = colliders.map(toEntry);
     this.broadphaseBuckets = this.buildBroadphaseBuckets(this.colliders);
     this.broadphaseVisited = new Uint32Array(this.colliders.length);
@@ -72,6 +82,8 @@ export class WorldColliders {
       minZ: playableBoundary.y,
       maxZ: playableBoundary.y + playableBoundary.h,
     };
+    this.traversalSurfaces = new TraversalSurfaceResolver(traversalSurfaces);
+    this.hasTraversalSurfaces = traversalSurfaces.length > 0;
   }
 
   queryCandidates(aabb: MutableAabb, out: WorldColliderEntry[]): number {

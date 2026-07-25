@@ -1,6 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { compileMapSpec } from "./gen-map-runtime.mjs";
+import { normalizeCompositionWaiverRegistry } from "./lib/composition-waivers.mjs";
 
 const MAP_ID = "bazaar-map";
 const STORY_HEIGHT_M = 3.0;
@@ -47,11 +49,14 @@ const scriptDir = path.dirname(scriptFile);
 const repoRoot = path.resolve(scriptDir, "../../..");
 
 const mapSpecPath = path.join(repoRoot, "docs/map-design/specs/map_spec.json");
-const calloutsPath = path.join(repoRoot, "docs/map-design/specs/callouts.csv");
-const objectCatalogPath = path.join(repoRoot, "docs/map-design/specs/object_catalog.csv");
+const compositionWaiversPath = path.join(
+  repoRoot,
+  "docs/map-design/specs/composition_waivers.json",
+);
 const docsOutDir = path.join(repoRoot, "docs/map-design");
 const markdownOutPath = path.join(docsOutDir, "layout-reference.md");
 const svgOutPath = path.join(docsOutDir, "layout-reference.svg");
+const topdownOutPath = path.join(docsOutDir, "blockout", "topdown_layout.svg");
 
 function fail(message) {
   throw new Error(`[gen:layout-reference] ${message}`);
@@ -103,6 +108,59 @@ function formatFace(face) {
 
 function formatType(value) {
   return value.replaceAll("_", " ");
+}
+
+function titleFromId(value) {
+  return value
+    .toLowerCase()
+    .split(/[_-]+/u)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+/**
+ * Derive the human-facing callout inventory from authored map anchors. Anchors
+ * are the geometry-aware source of truth; unlike the retired CSV, they cannot
+ * silently describe a landmark that no longer exists in the map spec.
+ */
+export function deriveDesignCalloutsByZoneId(anchors) {
+  const result = new Map();
+  for (const anchor of anchors) {
+    const list = result.get(anchor.zone) ?? [];
+    list.push({
+      id: anchor.id,
+      name: titleFromId(anchor.type),
+      description: anchor.notes ?? "",
+    });
+    result.set(anchor.zone, list);
+  }
+  return result;
+}
+
+/**
+ * Prefer v3 stable frontages while retaining the embedded v2 layout-reference
+ * form during migration. Generated labels are deterministic and exist only in
+ * this generated catalog; stable authored IDs remain unchanged.
+ */
+export function resolveAuthoredFrontages(specRaw, layoutReference) {
+  const stableFrontages = Array.isArray(specRaw.frontages) ? specRaw.frontages : [];
+  if (stableFrontages.length > 0) {
+    return stableFrontages.map((entry, index) => ({
+      buildingId: entry.id,
+      zoneId: entry.zoneId,
+      face: entry.face,
+      label: entry.label ?? titleFromId(entry.id),
+      shortLabel: entry.shortLabel ?? `F${index + 1}`,
+      humanLabel: entry.humanLabel ?? entry.label ?? titleFromId(entry.id),
+      notes: entry.notes ?? "",
+      start: entry.start ?? 0,
+      end: entry.end ?? 1,
+    }));
+  }
+  return Array.isArray(layoutReference.building_frontages)
+    ? layoutReference.building_frontages
+    : [];
 }
 
 function normalizeUint32(value) {
@@ -162,74 +220,10 @@ async function readJson(filePath) {
   }
 }
 
-async function readOptionalText(filePath) {
-  try {
-    return await readFile(filePath, "utf8");
-  } catch {
-    return null;
-  }
-}
-
 async function writeText(filePath, contents) {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, contents, "utf8");
   console.log(`[gen:layout-reference] wrote ${path.relative(repoRoot, filePath)}`);
-}
-
-function parseCsv(text) {
-  const rows = [];
-  let row = [];
-  let cell = "";
-  let inQuotes = false;
-
-  for (let index = 0; index < text.length; index += 1) {
-    const char = text[index];
-    const next = text[index + 1];
-
-    if (char === "\"") {
-      if (inQuotes && next === "\"") {
-        cell += "\"";
-        index += 1;
-      } else {
-        inQuotes = !inQuotes;
-      }
-      continue;
-    }
-
-    if (char === "," && !inQuotes) {
-      row.push(cell);
-      cell = "";
-      continue;
-    }
-
-    if ((char === "\n" || char === "\r") && !inQuotes) {
-      if (char === "\r" && next === "\n") index += 1;
-      row.push(cell);
-      if (row.length > 1 || row[0] !== "") {
-        rows.push(row);
-      }
-      row = [];
-      cell = "";
-      continue;
-    }
-
-    cell += char;
-  }
-
-  if (cell.length > 0 || row.length > 0) {
-    row.push(cell);
-    rows.push(row);
-  }
-
-  if (rows.length === 0) return [];
-  const headers = rows[0].map((value) => value.trim());
-  return rows.slice(1).map((columns) => {
-    const record = {};
-    for (let index = 0; index < headers.length; index += 1) {
-      record[headers[index]] = (columns[index] ?? "").trim();
-    }
-    return record;
-  });
 }
 
 function normalizeRect(rect, label) {
@@ -1818,11 +1812,13 @@ function wallLabelPoint(wall) {
   return { x: weightedMid, y: wall.zone.rect.y + wall.zone.rect.h + 0.9, rotate: 0 };
 }
 
-function buildingLabelPoint(zone, face) {
-  if (face === "west") return { x: zone.rect.x + 0.9, y: zone.rect.y + zone.rect.h * 0.5 };
-  if (face === "east") return { x: zone.rect.x + zone.rect.w - 0.9, y: zone.rect.y + zone.rect.h * 0.5 };
-  if (face === "south") return { x: zone.rect.x + zone.rect.w * 0.5, y: zone.rect.y + 0.9 };
-  return { x: zone.rect.x + zone.rect.w * 0.5, y: zone.rect.y + zone.rect.h - 0.9 };
+function buildingLabelPoint(building) {
+  const { zone, face } = building;
+  const along = (building.start + building.end) * 0.5;
+  if (face === "west") return { x: zone.rect.x + 0.9, y: zone.rect.y + zone.rect.h * along };
+  if (face === "east") return { x: zone.rect.x + zone.rect.w - 0.9, y: zone.rect.y + zone.rect.h * along };
+  if (face === "south") return { x: zone.rect.x + zone.rect.w * along, y: zone.rect.y + 0.9 };
+  return { x: zone.rect.x + zone.rect.w * along, y: zone.rect.y + zone.rect.h - 0.9 };
 }
 
 function calloutPoint(callout, zonesById) {
@@ -1913,8 +1909,7 @@ function renderSvg(spec, areaAssets, calloutAssets, buildingAssets, wallAssets) 
   }
 
   for (const building of buildingAssets) {
-    const zone = building.zone;
-    const point = buildingLabelPoint(zone, building.face);
+    const point = buildingLabelPoint(building);
     lines.push(
       `<g id="${escapeXml(building.id)}">`,
       `<circle cx="${worldToSvgX(boundary, point.x).toFixed(1)}" cy="${worldToSvgY(boundary, point.y).toFixed(1)}" r="10" fill="#111827" stroke="#38bdf8" stroke-width="2"/>`,
@@ -2011,7 +2006,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
       lines.push(`- Floor surface: ${area.floorSummary}`);
       lines.push(`- Wall material summary: ${area.wallMaterialSummary}`);
       lines.push(`- Constraints: ${area.constraintSummary}`);
-      lines.push(`- Notes: ${area.notes}`);
+      lines.push(`- Notes: ${area.notes || "None."}`);
     } else {
       lines.push(`- Type: custom corner callout`);
       lines.push(`- Short label: \`${area.shortLabel}\``);
@@ -2020,7 +2015,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
       lines.push(`- Surface summary: ${area.floorSummary}`);
       lines.push(`- Linked walls: ${area.linkedWallIds.length > 0 ? area.linkedWallIds.map((id) => `\`${id}\``).join(", ") : "none"}`);
       lines.push(`- Anchors: none authored directly; use adjacent zone entries for placed anchors.`);
-      lines.push(`- Notes: ${area.notes}`);
+      lines.push(`- Notes: ${area.notes || "None."}`);
     }
     lines.push("");
   }
@@ -2043,7 +2038,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
     lines.push(`- Anchor summary: ${building.anchorSummary.text}`);
     lines.push(`- Texture logic: ${building.textureLogic}`);
     lines.push(`- Trim logic: ${building.trimLogic}`);
-    lines.push(`- Notes: ${building.notes}`);
+    lines.push(`- Notes: ${building.notes || "None."}`);
     lines.push("");
   }
 
@@ -2080,7 +2075,7 @@ function renderMarkdown(spec, areaAssets, calloutAssets, buildingAssets, wallAss
       lines.push(`  - #${segment.segmentNumber}: usable=${segment.summary.usableLength.toFixed(2)}m, bays=${segment.summary.bayCount}, pattern=${segment.summary.columnPattern}, doors=${segment.summary.groundDoorCount}/${segment.summary.upperDoorCount}, balconies=${segment.summary.balconyCount}, windows=${segment.summary.windowCounts.glass} glass / ${segment.summary.windowCounts.dark} dark / ${segment.summary.windowCounts.shuttered} shuttered`);
       lines.push(`    logic: ${segment.summary.specNotes} ${segment.summary.doorNotes} ${segment.summary.windowNotes} ${segment.summary.balconyNotes}`);
     }
-    lines.push(`- Notes: ${wall.notes}`);
+    lines.push(`- Notes: ${wall.notes || "None."}`);
     lines.push("");
   }
 
@@ -2123,8 +2118,155 @@ function resolveWallMaterialSummary(linkedWalls, floorSummary) {
   return `Walls ${wallIds.map((id) => `\`${id}\``).join(", ")} with heavy trims ${trimHeavy.map((id) => `\`${id}\``).join(", ")} and light trims ${trimLight.map((id) => `\`${id}\``).join(", ")}.`;
 }
 
-async function main() {
-  const specRaw = await readJson(mapSpecPath);
+function v3SvgY(boundary, worldY) {
+  return boundary.y + boundary.h - worldY;
+}
+
+function v3PlacementRect(placement) {
+  const alongVertical = placement.face === "west" || placement.face === "east";
+  const width = alongVertical ? placement.sizeM.depth : placement.sizeM.width;
+  const height = alongVertical ? placement.sizeM.width : placement.sizeM.depth;
+  return {
+    x: placement.center.x - width * 0.5,
+    y: placement.center.y - height * 0.5,
+    w: width,
+    h: height,
+  };
+}
+
+/**
+ * V3 references are deliberately rendered from the compiler output. This path
+ * contains no facade/material resolution of its own: the same absolute
+ * placements consumed by runtime are the only visual catalog authority.
+ */
+export function renderCompiledV3LayoutReference(compiledSpec) {
+  const boundary = compiledSpec.playable_boundary;
+  const svg = [];
+  svg.push(
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${boundary.x} ${boundary.y} ${boundary.w} ${boundary.h}" role="img" aria-labelledby="title desc">`,
+    `<title id="title">Bazaar Map v3 compiled layout reference</title>`,
+    `<desc id="desc">Authoritative walkable zones, architecture placements, facade modules, and dressing placements.</desc>`,
+    `<rect x="${boundary.x}" y="${boundary.y}" width="${boundary.w}" height="${boundary.h}" fill="#181713"/>`,
+  );
+  const floorColors = new Map([
+    ["large_sandstone_blocks_01", "#d6b77c"],
+    ["cobblestone_pavement", "#a88b67"],
+  ]);
+  for (const zone of compiledSpec.zones) {
+    const fill = floorColors.get(zone.floorMaterialId) ?? "#b7a58a";
+    svg.push(
+      `<g id="ZONE_${escapeXml(zone.id)}">`,
+      `<rect x="${zone.rect.x}" y="${v3SvgY(boundary, zone.rect.y + zone.rect.h)}" width="${zone.rect.w}" height="${zone.rect.h}" fill="${fill}" stroke="#342f27" stroke-width="0.12"/>`,
+      `</g>`,
+    );
+  }
+  for (const placement of compiledSpec.architecturePlacements ?? []) {
+    if (placement.kind === "massing") {
+      const rect = v3PlacementRect(placement);
+      svg.push(
+        `<g id="${escapeXml(placement.id)}" data-kind="massing" data-profile="${escapeXml(placement.profileId)}">`,
+        `<rect x="${rect.x.toFixed(3)}" y="${v3SvgY(boundary, rect.y + rect.h).toFixed(3)}" width="${rect.w.toFixed(3)}" height="${rect.h.toFixed(3)}" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>`,
+        `</g>`,
+      );
+    } else {
+      svg.push(
+        `<g id="${escapeXml(placement.id)}" data-kind="facade_module" data-module="${escapeXml(placement.moduleId)}">`,
+        `<circle cx="${placement.center.x.toFixed(3)}" cy="${v3SvgY(boundary, placement.center.y).toFixed(3)}" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>`,
+        `</g>`,
+      );
+    }
+  }
+  for (const placement of compiledSpec.dressingPlacements ?? []) {
+    if (placement.assetId === "ASSET_CLOTH_CANOPY") {
+      const yawRad = placement.yawDeg * Math.PI / 180;
+      const halfSpanM = placement.dimensionsM.depth * 0.5;
+      const deltaX = Math.sin(yawRad) * halfSpanM;
+      const deltaY = Math.cos(yawRad) * halfSpanM;
+      svg.push(
+        `<g id="${escapeXml(placement.id)}" data-kind="dressing" data-asset="${escapeXml(placement.assetId)}" data-span-m="${placement.dimensionsM.depth.toFixed(3)}" data-width-m="${placement.dimensionsM.width.toFixed(3)}">`,
+        `<line x1="${(placement.position.x - deltaX).toFixed(3)}" y1="${v3SvgY(boundary, placement.position.y - deltaY).toFixed(3)}" x2="${(placement.position.x + deltaX).toFixed(3)}" y2="${v3SvgY(boundary, placement.position.y + deltaY).toFixed(3)}" stroke="#c66832" stroke-width="${placement.dimensionsM.width.toFixed(3)}" stroke-linecap="butt" opacity="0.72"/>`,
+        `</g>`,
+      );
+    } else {
+      svg.push(
+        `<g id="${escapeXml(placement.id)}" data-kind="dressing" data-asset="${escapeXml(placement.assetId)}">`,
+        `<rect x="${(placement.position.x - 0.16).toFixed(3)}" y="${(v3SvgY(boundary, placement.position.y) - 0.16).toFixed(3)}" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>`,
+        `</g>`,
+      );
+    }
+  }
+  for (const zone of compiledSpec.zones) {
+    const x = zone.rect.x + zone.rect.w * 0.5;
+    const y = v3SvgY(boundary, zone.rect.y + zone.rect.h * 0.5);
+    svg.push(`<text x="${x.toFixed(3)}" y="${y.toFixed(3)}" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">${escapeXml(zone.label || zone.id)}</text>`);
+  }
+  svg.push(`</svg>`, "");
+
+  const markdown = [
+    "# Bazaar Map v3 — Compiled Layout Reference",
+    "",
+    "Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compiler. Runtime and this reference consume the same absolute placements; this document performs no facade or material inference.",
+    "",
+    `- Format: \`${compiledSpec.formatVersion}\``,
+    `- Zones: ${compiledSpec.zones.length}`,
+    `- Frontages: ${compiledSpec.frontages?.length ?? 0}`,
+    `- Architecture placements: ${compiledSpec.architecturePlacements?.length ?? 0}`,
+    `- Dressing placements: ${compiledSpec.dressingPlacements?.length ?? 0}`,
+    "",
+    "## Facade Profiles",
+    "",
+  ];
+  for (const profile of compiledSpec.facadeProfiles ?? []) {
+    markdown.push(
+      `### \`${profile.id}\` — ${profile.label}`,
+      "",
+      `- Family: \`${profile.family}\``,
+      `- Massing: \`${profile.massingProfileId}\``,
+      `- Materials: wall \`${profile.materialSlots.wall}\`, trim \`${profile.materialSlots.trim}\`, roof \`${profile.materialSlots.roof}\`, timber \`${profile.materialSlots.timber}\`, metal \`${profile.materialSlots.metal}\`, accent \`${profile.materialSlots.accent}\``,
+      `- Modules: ${profile.moduleIds.map((id) => `\`${id}\``).join(", ")}`,
+      "",
+    );
+  }
+  markdown.push("## Frontage Placements", "");
+  for (const frontage of compiledSpec.frontages ?? []) {
+    const placements = (compiledSpec.architecturePlacements ?? []).filter((placement) => placement.frontageId === frontage.id);
+    markdown.push(
+      `### \`${frontage.id}\``,
+      "",
+      `- Zone/face: \`${frontage.zoneId}\` / \`${frontage.face}\``,
+      `- Profile/massing: \`${frontage.facadeProfileId}\` / \`${frontage.massingProfileId}\``,
+      `- Explicit bays: ${(frontage.bays ?? []).map((bay) => `\`${bay.id}:${bay.moduleId}@${bay.along.toFixed(2)}\``).join(", ")}`,
+      `- Compiled placements: ${placements.map((placement) => `\`${placement.id}\``).join(", ")}`,
+      "",
+    );
+  }
+  markdown.push("## Dressing Placements", "");
+  for (const placement of compiledSpec.dressingPlacements ?? []) {
+    markdown.push(`- \`${placement.id}\`: \`${placement.assetId}\` at \`${placement.anchorId}\` (${placement.position.x.toFixed(2)}, ${placement.position.y.toFixed(2)}, ${placement.position.z.toFixed(2)}), size ${placement.dimensionsM.width.toFixed(2)}×${placement.dimensionsM.depth.toFixed(2)}×${placement.dimensionsM.height.toFixed(2)}m, yaw ${placement.yawDeg.toFixed(2)}deg`);
+  }
+  markdown.push("");
+  return { svg: svg.join("\n"), markdown: markdown.join("\n") };
+}
+
+export async function generateLayoutReference({ write = true } = {}) {
+  const [specRaw, compositionWaiversRaw] = await Promise.all([
+    readJson(mapSpecPath),
+    readJson(compositionWaiversPath),
+  ]);
+  const compiledSpec = compileMapSpec(
+    specRaw,
+    normalizeCompositionWaiverRegistry(compositionWaiversRaw),
+  );
+  if (String(compiledSpec.formatVersion ?? "").startsWith("3")) {
+    const result = renderCompiledV3LayoutReference(compiledSpec);
+    if (write) {
+      await writeText(svgOutPath, result.svg);
+      await writeText(topdownOutPath, result.svg);
+      await writeText(markdownOutPath, result.markdown);
+    }
+    return result;
+  }
   const spec = {
     ...asObject(specRaw, "map_spec"),
     global_dimensions: asObject(specRaw.global_dimensions, "global_dimensions"),
@@ -2141,21 +2283,20 @@ async function main() {
         rect: normalizeRect(object.rect, `zones[${index}].rect`),
       };
     }),
-    anchors: asArray(specRaw.anchors, "anchors").map((anchor, index) => {
-      const object = asObject(anchor, `anchors[${index}]`);
+    anchors: compiledSpec.anchors.map((object, index) => {
       return {
         id: asString(object.id, `anchors[${index}].id`),
         type: asString(object.type, `anchors[${index}].type`),
         zone: asString(object.zone, `anchors[${index}].zone`),
-        x: asNumber(object.x, `anchors[${index}].x`),
-        y: asNumber(object.y, `anchors[${index}].y`),
-        z: asNumber(object.z, `anchors[${index}].z`),
-        yawDeg: typeof object.yaw_deg === "number" ? object.yaw_deg : null,
-        endX: typeof object.end_x === "number" ? object.end_x : null,
-        endY: typeof object.end_y === "number" ? object.end_y : null,
-        endZ: typeof object.end_z === "number" ? object.end_z : null,
-        widthM: typeof object.width_m === "number" ? object.width_m : null,
-        heightM: typeof object.height_m === "number" ? object.height_m : null,
+        x: asNumber(object.pos.x, `anchors[${index}].pos.x`),
+        y: asNumber(object.pos.y, `anchors[${index}].pos.y`),
+        z: asNumber(object.pos.z, `anchors[${index}].pos.z`),
+        yawDeg: typeof object.yawDeg === "number" ? object.yawDeg : null,
+        endX: typeof object.endPos?.x === "number" ? object.endPos.x : null,
+        endY: typeof object.endPos?.y === "number" ? object.endPos.y : null,
+        endZ: typeof object.endPos?.z === "number" ? object.endPos.z : null,
+        widthM: typeof object.widthM === "number" ? object.widthM : null,
+        heightM: typeof object.heightM === "number" ? object.heightM : null,
         notes: typeof object.notes === "string" ? object.notes : "",
       };
     }),
@@ -2195,7 +2336,8 @@ async function main() {
     }
   }
 
-  const buildingFrontages = asArray(layoutReference.building_frontages, "layout_reference.building_frontages").map((entry, index) => {
+  const authoredFrontages = resolveAuthoredFrontages(specRaw, layoutReference);
+  const buildingFrontages = asArray(authoredFrontages, "frontages or layout_reference.building_frontages").map((entry, index) => {
     const object = asObject(entry, `layout_reference.building_frontages[${index}]`);
     const zoneId = asString(object.zoneId, `layout_reference.building_frontages[${index}].zoneId`);
     const zone = spec.zoneById.get(zoneId);
@@ -2209,6 +2351,11 @@ async function main() {
     if (!TARGET_WALL_ZONE_TYPES.has(zone.type)) {
       fail(`Building frontage ${zoneId}:${face} must target a wall-bearing zone`);
     }
+    const start = typeof object.start === "number" ? object.start : 0;
+    const end = typeof object.end === "number" ? object.end : 1;
+    if (start < 0 || end > 1 || end - start <= EPS) {
+      fail(`frontage ${index} must satisfy 0 <= start < end <= 1`);
+    }
     return {
       id: asString(object.buildingId, `layout_reference.building_frontages[${index}].buildingId`),
       zone,
@@ -2217,10 +2364,12 @@ async function main() {
       shortLabel: asString(object.shortLabel, `layout_reference.building_frontages[${index}].shortLabel`),
       humanLabel: typeof object.humanLabel === "string" ? object.humanLabel : asString(object.label, `layout_reference.building_frontages[${index}].label`),
       notes: typeof object.notes === "string" ? object.notes : "",
+      start,
+      end,
     };
   });
 
-  const customCallouts = asArray(layoutReference.custom_callouts, "layout_reference.custom_callouts").map((entry, index) => {
+  const customCallouts = asArray(layoutReference.custom_callouts ?? [], "layout_reference.custom_callouts").map((entry, index) => {
     const object = asObject(entry, `layout_reference.custom_callouts[${index}]`);
     const spawnZoneId = asString(object.spawnZoneId, `layout_reference.custom_callouts[${index}].spawnZoneId`);
     const hallZoneId = asString(object.hallZoneId, `layout_reference.custom_callouts[${index}].hallZoneId`);
@@ -2262,22 +2411,7 @@ async function main() {
     seenShortLabels.set(asset.shortLabel, asset.id);
   }
 
-  const calloutCsvText = await readOptionalText(calloutsPath);
-  const objectCatalogText = await readOptionalText(objectCatalogPath);
-  const calloutsCsv = calloutCsvText ? parseCsv(calloutCsvText) : [];
-  const objectCatalog = objectCatalogText ? parseCsv(objectCatalogText) : [];
-  const designCalloutsByZoneId = new Map();
-  for (const row of calloutsCsv) {
-    const zoneId = row["Zone ID"];
-    if (!zoneId) continue;
-    const list = designCalloutsByZoneId.get(zoneId) ?? [];
-    list.push({
-      id: row["Callout ID"] ?? "",
-      name: row.Name ?? "",
-      description: row.Description ?? "",
-    });
-    designCalloutsByZoneId.set(zoneId, list);
-  }
+  const designCalloutsByZoneId = deriveDesignCalloutsByZoneId(spec.anchors);
 
   const walkableZones = spec.zones.filter((zone) => WALKABLE_ZONE_TYPES.has(zone.type));
   const walkableRects = walkableZones.map((zone) => zone.rect);
@@ -2433,7 +2567,11 @@ async function main() {
   }
   const cornerKeys = createCornerKeys(exposedSegments);
 
-  const buildingByFaceKey = new Map(buildingFrontages.map((building) => [`${building.zone.id}:${building.face}`, building]));
+  const buildingByFaceKey = new Map();
+  for (const building of buildingFrontages) {
+    const key = `${building.zone.id}:${building.face}`;
+    if (!buildingByFaceKey.has(key)) buildingByFaceKey.set(key, building);
+  }
   const areaByZoneId = new Map(zoneAliases.map((area) => [area.zoneId, area]));
   const wallAssets = [];
   const wallAssetsByZoneFace = new Map();
@@ -2683,15 +2821,18 @@ async function main() {
   const markdown = renderMarkdown(spec, [...areaAssets, ...calloutAssets], calloutAssets, buildingAssets, wallAssets);
   validateAssetCoverage(markdown, svg, [...areaAssets, ...calloutAssets, ...buildingAssets, ...wallAssets]);
 
-  if (objectCatalog.length === 0) {
-    console.warn("[gen:layout-reference] note: object_catalog.csv unavailable or empty; continuing without optional prose enrichment");
+  if (write) {
+    await writeText(svgOutPath, svg);
+    await writeText(topdownOutPath, svg);
+    await writeText(markdownOutPath, markdown);
   }
-
-  await writeText(svgOutPath, svg);
-  await writeText(markdownOutPath, markdown);
+  return { svg, markdown };
 }
 
-main().catch((error) => {
-  console.error(error instanceof Error ? error.message : String(error));
-  process.exit(1);
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === scriptFile) {
+  const write = !process.argv.includes("--validate-only");
+  generateLayoutReference({ write }).catch((error) => {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  });
+}

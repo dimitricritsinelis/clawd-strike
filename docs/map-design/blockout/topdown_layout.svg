@@ -1,51 +1,499 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="540" height="860" viewBox="0 0 540 860">
-<rect x="0" y="0" width="540" height="860" fill="#0b1220"/>
-<rect x="20" y="20" width="500" height="820" rx="0" ry="0" style="stroke:#eab308;fill:none;stroke-width:3;opacity:1.0;"/>
-<rect x="160" y="700" width="220" height="140" rx="6" ry="6" style="stroke:#93c5fd;fill:#1f2a44;stroke-width:2;opacity:0.9;"/>
-<text x="270.0" y="770.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">SPAWN A
-COURTYARD</text>
-<rect x="160" y="20" width="220" height="140" rx="6" ry="6" style="stroke:#93c5fd;fill:#1f2a44;stroke-width:2;opacity:0.9;"/>
-<text x="270.0" y="90.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">SPAWN B
-GATE</text>
-<rect x="222.5" y="520" width="95.0" height="180" rx="6" ry="6" style="stroke:#cbd5e1;fill:#1b253a;stroke-width:2;opacity:0.9;"/>
-<text x="270.0" y="610.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">BZ-M1</text>
-<rect x="247.5" y="340" width="85.0" height="180" rx="6" ry="6" style="stroke:#cbd5e1;fill:#1b253a;stroke-width:2;opacity:0.9;"/>
-<text x="290.0" y="430.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">BZ-M2
-(JOG)</text>
-<rect x="222.5" y="160" width="95.0" height="180" rx="6" ry="6" style="stroke:#cbd5e1;fill:#1b253a;stroke-width:2;opacity:0.9;"/>
-<text x="270.0" y="250.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">BZ-M3</text>
-<rect x="240" y="520" width="60" height="180" rx="6" ry="6" style="stroke:#22c55e;fill:none;stroke-width:2;opacity:0.9;stroke-dasharray:6,4;"/>
-<text x="270.0" y="610.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">6.0m CLEAR</text>
-<rect x="260" y="340" width="60" height="180" rx="6" ry="6" style="stroke:#22c55e;fill:none;stroke-width:2;opacity:0.9;stroke-dasharray:6,4;"/>
-<text x="290.0" y="430.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">6.0m CLEAR</text>
-<rect x="240" y="160" width="60" height="180" rx="6" ry="6" style="stroke:#22c55e;fill:none;stroke-width:2;opacity:0.9;stroke-dasharray:6,4;"/>
-<text x="270.0" y="250.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">6.0m CLEAR</text>
-<rect x="67.5" y="120" width="45.0" height="620" rx="6" ry="6" style="stroke:#cbd5e1;fill:#111827;stroke-width:2;opacity:0.9;"/>
-<text x="90.0" y="430.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">WEST
-HALL</text>
-<rect x="427.5" y="120" width="45.0" height="620" rx="6" ry="6" style="stroke:#cbd5e1;fill:#111827;stroke-width:2;opacity:0.9;"/>
-<text x="450.0" y="430.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">EAST
-HALL</text>
-<rect x="112.5" y="720" width="47.5" height="40" rx="6" ry="6" style="stroke:#f97316;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="136.25" y="740.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">CONN</text>
-<rect x="380" y="720" width="47.5" height="40" rx="6" ry="6" style="stroke:#f97316;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="403.75" y="740.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">CONN</text>
-<rect x="112.5" y="100" width="47.5" height="40" rx="6" ry="6" style="stroke:#f97316;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="136.25" y="120.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">CONN</text>
-<rect x="380" y="100" width="47.5" height="40" rx="6" ry="6" style="stroke:#f97316;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="403.75" y="120.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">CONN</text>
-<rect x="112.5" y="565.0" width="110" height="30" rx="6" ry="6" style="stroke:#f472b6;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="167.5" y="580.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">MID CUT</text>
-<rect x="317.5" y="565.0" width="110" height="30" rx="6" ry="6" style="stroke:#f472b6;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="372.5" y="580.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">MID CUT</text>
-<rect x="112.5" y="250" width="110" height="30" rx="6" ry="6" style="stroke:#f472b6;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="167.5" y="265.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">N CUT</text>
-<rect x="317.5" y="250" width="110" height="30" rx="6" ry="6" style="stroke:#f472b6;fill:#0f172a;stroke-width:2;opacity:0.9;"/>
-<text x="372.5" y="265.0" fill="#ffffff" font-size="14" font-family="Arial" font-weight="bold" text-anchor="middle">N CUT</text>
-<circle cx="270" cy="160" r="6" fill="#f59e0b"/>
-<text x="280" y="150" fill="#f59e0b" font-size="12" font-family="Arial" font-weight="bold" text-anchor="start">HERO ARCH</text>
-<circle cx="290" cy="430" r="6" fill="#38bdf8"/>
-<text x="300" y="420" fill="#38bdf8" font-size="12" font-family="Arial" font-weight="bold" text-anchor="start">MID WELL</text>
-<text x="270.0" y="24" fill="#ffffff" font-size="18" font-family="Arial" font-weight="bold" text-anchor="middle">Bazaar Slice v2.3 — Topdown Blockout (SVG)</text>
-<text x="270.0" y="44" fill="#9ca3af" font-size="12" font-family="Arial" font-weight="normal" text-anchor="middle">Units: meters (scaled 10px/m). Origin: SW corner. North is up.</text>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 92" role="img" aria-labelledby="title desc">
+<title id="title">Bazaar Map v3 compiled layout reference</title>
+<desc id="desc">Authoritative walkable zones, architecture placements, facade modules, and dressing placements.</desc>
+<rect x="0" y="0" width="56" height="92" fill="#181713"/>
+<g id="ZONE_CARAVAN_COURT">
+<rect x="3" y="44" width="12" height="18" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_COVERED_SOUK">
+<rect x="41" y="44" width="12" height="16" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_DYERS_ALLEY">
+<rect x="46" y="60" width="7" height="22" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_DYERS_DOGLEG">
+<rect x="46" y="30" width="7" height="14" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_FOUNTAIN_COURT">
+<rect x="20" y="44" width="16" height="16" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_EAST_MID">
+<rect x="36" y="48" width="5" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_EAST_UPPER">
+<rect x="34" y="20" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_NORTH_EAST">
+<rect x="39" y="11" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_NORTH_WEST">
+<rect x="10" y="11" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_SOUTH_EAST">
+<rect x="39" y="79" width="7" height="5" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_SOUTH_WEST">
+<rect x="10" y="79" width="7" height="5" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_WEST_MID">
+<rect x="15" y="51" width="5" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_LINK_WEST_UPPER">
+<rect x="19" y="16" width="2" height="4" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_NORTH_COURT">
+<rect x="41" y="12" width="12" height="18" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_RUG_GATE">
+<rect x="21" y="14" width="13" height="14" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_SERVICE_NORTH">
+<rect x="3" y="12" width="7" height="32" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_SERVICE_SOUTH">
+<rect x="3" y="62" width="7" height="20" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_SPAWN_A_COURTYARD">
+<rect x="17" y="78" width="22" height="14" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_SPAWN_B_COURTYARD">
+<rect x="17" y="0" width="22" height="14" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_SPICE_STREET">
+<rect x="21" y="60" width="12" height="18" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_TEA_LANDING">
+<rect x="11" y="16" width="8" height="4" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_TEA_RAMP">
+<rect x="11" y="36" width="8" height="8" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_TEA_STAIRS">
+<rect x="11" y="20" width="8" height="6" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_TEA_TERRACE">
+<rect x="11" y="26" width="8" height="10" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ZONE_TEXTILE_ARCADE">
+<rect x="24" y="28" width="11" height="16" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_DOOR_01" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="3.125" cy="56.326" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING" data-kind="massing" data-profile="service_storage">
+<rect x="-1.200" y="45.440" width="4.200" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_NICHE_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="3.090" cy="48.162" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_VENT_01" data-kind="facade_module" data-module="vent_service">
+<circle cx="3.090" cy="51.186" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_ARCH_01" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="52.790" cy="54.150" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_ARCH_02" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="52.790" cy="49.312" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_COLUMN_01" data-kind="facade_module" data-module="column_arcade">
+<circle cx="52.790" cy="57.376" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_COLUMN_02" data-kind="facade_module" data-module="column_arcade">
+<circle cx="52.790" cy="46.086" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_MASSING" data-kind="massing" data-profile="covered_arcade">
+<rect x="53.000" y="45.280" width="4.200" height="13.440" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_ARCH_01" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="41.210" cy="57.350" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_ARCH_02" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="41.210" cy="54.450" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_MASSING" data-kind="massing" data-profile="covered_arcade">
+<rect x="36.200" y="53.000" width="4.800" height="5.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_ARCH_03" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="41.210" cy="46.640" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_MASSING" data-kind="massing" data-profile="covered_arcade">
+<rect x="36.200" y="45.280" width="4.800" height="2.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_DOOR_01" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="46.125" cy="75.620" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_MASSING" data-kind="massing" data-profile="service_storage">
+<rect x="41.200" y="61.760" width="4.800" height="17.240" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_NICHE_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="46.090" cy="65.456" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_VENT_01" data-kind="facade_module" data-module="vent_service">
+<circle cx="46.090" cy="69.522" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="36.000" y="53.000" width="4.800" height="5.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="36.000" y="45.280" width="4.800" height="2.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_WINDOW_03" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="35.860" cy="46.640" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_WINDOW_01" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="35.860" cy="55.494" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_WINDOW_02" data-kind="facade_module" data-module="window_screened">
+<circle cx="35.880" cy="55.494" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_ARCH_01" data-kind="facade_module" data-module="arch_hero_courtyard">
+<circle cx="20.250" cy="48.850" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_DOOR_01" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="20.100" cy="45.900" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="14.600" y="45.280" width="5.400" height="5.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="14.600" y="56.000" width="5.400" height="2.720" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_SCREEN_01" data-kind="facade_module" data-module="window_screened">
+<circle cx="20.120" cy="57.360" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_WINDOW_01" data-kind="facade_module" data-module="window_landmark_stained">
+<circle cx="20.125" cy="45.950" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_WEST_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="36.200" y="16.000" width="4.800" height="4.000" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_WEST_SOUTH_DOOR_01" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="41.100" cy="27.750" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_WEST_SOUTH_MASSING" data-kind="massing" data-profile="hero_courtyard">
+<rect x="36.200" y="25.000" width="4.800" height="3.560" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_WEST_SOUTH_WINDOW_01" data-kind="facade_module" data-module="window_screened">
+<circle cx="41.120" cy="25.850" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_WEST_WINDOW_02" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="41.140" cy="16.464" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_MASSING" data-kind="massing" data-profile="active_merchant">
+<rect x="34.000" y="15.120" width="4.200" height="4.880" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SHOP_01" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="33.775" cy="18.648" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_DOOR_01" data-kind="facade_module" data-module="door_shop_timber">
+<circle cx="33.890" cy="26.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING" data-kind="massing" data-profile="active_merchant">
+<rect x="34.000" y="25.000" width="4.200" height="1.880" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_WEST_MASSING" data-kind="massing" data-profile="active_merchant">
+<rect x="16.200" y="20.000" width="4.800" height="6.880" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_WEST_SHOP_01" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="21.225" cy="24.058" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_WEST_SHOP_02" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="21.225" cy="21.300" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_WEST_WINDOW_01" data-kind="facade_module" data-module="window_shuttered">
+<circle cx="21.120" cy="24.058" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_WEST_WINDOW_02" data-kind="facade_module" data-module="window_screened">
+<circle cx="21.120" cy="21.300" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MASSING" data-kind="massing" data-profile="service_storage">
+<rect x="10.000" y="16.032" width="0.960" height="27.936" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_NICHE_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="25.251" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_VENT_01" data-kind="facade_module" data-module="vent_service">
+<circle cx="9.910" cy="34.749" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_EAST_DOOR_01" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="32.900" cy="72.024" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_EAST_MASSING" data-kind="massing" data-profile="quiet_residential">
+<rect x="33.000" y="61.440" width="4.200" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_EAST_NICHE_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="32.910" cy="65.976" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_EAST_WINDOW_01" data-kind="facade_module" data-module="window_screened">
+<circle cx="32.880" cy="72.024" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_EAST_WINDOW_02" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="32.860" cy="65.976" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_DOOR_01" data-kind="facade_module" data-module="door_shop_timber">
+<circle cx="21.110" cy="67.942" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_MASSING" data-kind="massing" data-profile="active_merchant">
+<rect x="16.200" y="61.440" width="4.800" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_SCREEN_01" data-kind="facade_module" data-module="window_screened">
+<circle cx="21.120" cy="64.162" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_SHOP_01" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="21.225" cy="72.326" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_WINDOW_01" data-kind="facade_module" data-module="window_shuttered">
+<circle cx="21.120" cy="72.326" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SPICE_STREET_WEST_WINDOW_02" data-kind="facade_module" data-module="window_shuttered">
+<circle cx="21.120" cy="67.942" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEA_TERRACE_EAST_DOOR_01" data-kind="facade_module" data-module="door_shop_timber">
+<circle cx="18.890" cy="30.580" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEA_TERRACE_EAST_MASSING" data-kind="massing" data-profile="active_merchant">
+<rect x="19.000" y="26.800" width="4.800" height="8.400" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_TEA_TERRACE_EAST_SHOP_01" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="18.775" cy="33.352" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEA_TERRACE_EAST_SHOP_02" data-kind="facade_module" data-module="shop_recess_market">
+<circle cx="18.775" cy="28.312" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_ARCH_01" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="34.790" cy="38.150" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_ARCH_02" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="34.790" cy="33.312" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_COLUMN_01" data-kind="facade_module" data-module="column_arcade">
+<circle cx="34.790" cy="41.376" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_COLUMN_02" data-kind="facade_module" data-module="column_arcade">
+<circle cx="34.790" cy="30.086" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_MASSING" data-kind="massing" data-profile="covered_arcade">
+<rect x="35.000" y="29.280" width="4.200" height="13.440" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_ARCH_01" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="24.210" cy="40.301" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_ARCH_02" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="24.210" cy="36.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_ARCH_03" data-kind="facade_module" data-module="arch_arcade">
+<circle cx="24.210" cy="31.699" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_MASSING" data-kind="massing" data-profile="covered_arcade">
+<rect x="19.200" y="29.280" width="4.800" height="13.440" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
+<g id="PLACE_CARAVAN_COVER_COVER_CARAVAN_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="4.840" y="57.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_CARAVAN_LOAD_NORTH_LMK_CARAVAN_DISTRICT" data-kind="dressing" data-asset="ASSET_CARAVAN_LOAD_CRATE">
+<rect x="5.460" y="47.920" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_CARAVAN_LOAD_SOUTH_LMK_CARAVAN_DISTRICT" data-kind="dressing" data-asset="ASSET_CARAVAN_LOAD_CRATE">
+<rect x="4.640" y="48.120" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_CARAVAN_LOAD_TOP_LMK_CARAVAN_DISTRICT" data-kind="dressing" data-asset="ASSET_CARAVAN_LOAD_CRATE">
+<rect x="5.010" y="48.040" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_CANOPY_CANOPY_DYERS_01" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="12.000" data-width-m="4.400">
+<line x1="41.000" y1="46.640" x2="53.000" y2="46.640" stroke="#c66832" stroke-width="4.400" stroke-linecap="butt" opacity="0.72"/>
+</g>
+<g id="PLACE_DYERS_CERAMIC_VESSEL_LMK_DYERS_DISTRICT" data-kind="dressing" data-asset="ASSET_DYERS_CERAMIC_VESSEL">
+<rect x="43.260" y="47.960" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_COVER_COVER_DYERS_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="50.340" y="48.240" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_LANTERN_LANTERN_DYERS_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="52.340" y="51.340" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_SIGNS_DYE_E_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="52.720" y="52.915" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_SIGNS_DYE_E_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="52.720" y="47.539" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_SIGNS_DYE_W_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="40.960" y="55.334" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_SIGNS_DYE_W_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="40.960" y="46.480" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_VAT_EAST_LMK_DYERS_DISTRICT" data-kind="dressing" data-asset="ASSET_DYERS_SEALED_VAT">
+<rect x="43.320" y="47.340" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_DYERS_VAT_WEST_LMK_DYERS_DISTRICT" data-kind="dressing" data-asset="ASSET_DYERS_SEALED_VAT">
+<rect x="42.560" y="47.420" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_FOUNTAIN_COVER_COVER_FOUNTAIN_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="33.640" y="56.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_FOUNTAIN_LANTERN_LANTERN_FOUNTAIN_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="35.290" y="52.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_FOUNTAIN_LMK_FOUNTAIN_01" data-kind="dressing" data-asset="ASSET_FOUNTAIN">
+<rect x="23.340" y="52.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01" data-kind="dressing" data-asset="ASSET_PALM">
+<rect x="22.240" y="46.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_NORTH_COVER_COVER_NORTH_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="43.040" y="25.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_NORTH_PALM_PALM_NORTH_01" data-kind="dressing" data-asset="ASSET_PALM">
+<rect x="50.440" y="14.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_ARCH_LMK_RUG_GATE_01" data-kind="dressing" data-asset="ASSET_HERO_ARCH">
+<rect x="27.340" y="15.540" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_COVER_COVER_RUG_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="22.840" y="23.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_LANTERN_LANTERN_RUG_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="32.340" y="21.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_SIGNS_RUG_E_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="33.720" y="18.488" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_SIGNS_RUG_W_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="20.960" y="23.427" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_RUG_SIGNS_RUG_W_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="20.960" y="21.140" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPAWN_A_COVER_SPAWN_A_COVER_01" data-kind="dressing" data-asset="ASSET_SPAWN_COVER">
+<rect x="20.040" y="86.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPAWN_B_COVER_SPAWN_B_COVER_01" data-kind="dressing" data-asset="ASSET_SPAWN_COVER">
+<rect x="35.040" y="5.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_BARREL_COVER_SPICE_01" data-kind="dressing" data-asset="ASSET_CC0_BARREL">
+<rect x="21.740" y="64.190" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_BASKET_COVER_SPICE_01" data-kind="dressing" data-asset="ASSET_CC0_BASKET">
+<rect x="23.620" y="63.860" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_CANOPIES_CANOPY_SPICE_01" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="12.000" data-width-m="3.600">
+<line x1="21.000" y1="71.419" x2="33.000" y2="71.419" stroke="#c66832" stroke-width="3.600" stroke-linecap="butt" opacity="0.72"/>
+</g>
+<g id="PLACE_SPICE_CANOPIES_CANOPY_SPICE_02" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="12.000" data-width-m="3.200">
+<line x1="21.000" y1="65.522" x2="33.000" y2="65.522" stroke="#c66832" stroke-width="3.200" stroke-linecap="butt" opacity="0.72"/>
+</g>
+<g id="PLACE_SPICE_COVER_CORE_COVER_SPICE_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="22.840" y="64.240" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANDMARK_BASKET_LMK_SPICE_DISTRICT" data-kind="dressing" data-asset="ASSET_CC0_BASKET">
+<rect x="21.220" y="71.140" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT" data-kind="dressing" data-asset="ASSET_CC0_BRASS_POT">
+<rect x="21.000" y="72.340" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANDMARK_GOODS_LMK_SPICE_DISTRICT" data-kind="dressing" data-asset="ASSET_SPICE_GOODS">
+<rect x="21.940" y="71.440" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANDMARK_SACK_SHORT_LMK_SPICE_DISTRICT" data-kind="dressing" data-asset="ASSET_CC0_SPICE_SACK">
+<rect x="21.790" y="71.960" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT" data-kind="dressing" data-asset="ASSET_CC0_SPICE_SACK">
+<rect x="21.790" y="71.100" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_LANTERN_LANTERN_SPICE_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="21.290" y="75.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_POTTERY_COVER_SPICE_01" data-kind="dressing" data-asset="ASSET_CC0_POTTERY">
+<rect x="23.600" y="64.620" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_SIGNS_SPICE_W_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="20.960" y="72.166" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_SIGNS_SPICE_W_SIGN_3" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="20.960" y="67.782" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_SPICE_STALLS_SPICE_W_SHOP_1" data-kind="dressing" data-asset="ASSET_MARKET_STALL">
+<rect x="21.000" y="72.166" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_COVER_COVER_TEA_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="12.040" y="28.040" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_LANTERN_LANTERN_TEA_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="18.340" y="31.340" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_EAST" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="18.590" y="37.540" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_WEST" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="11.090" y="40.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01" data-kind="dressing" data-asset="ASSET_TEA_SERVICE">
+<rect x="18.390" y="29.190" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_SIGNS_TEA_E_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="18.720" y="32.688" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_SIGNS_TEA_E_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="18.720" y="28.992" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_STOOL_EAST_LMK_TEA_TERRACE_01" data-kind="dressing" data-asset="ASSET_CC0_TEA_STOOL">
+<rect x="17.720" y="30.540" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_STOOL_WEST_NORTH_LMK_TEA_TERRACE_01" data-kind="dressing" data-asset="ASSET_CC0_TEA_STOOL">
+<rect x="16.290" y="30.090" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_STOOL_WEST_SOUTH_LMK_TEA_TERRACE_01" data-kind="dressing" data-asset="ASSET_CC0_TEA_STOOL">
+<rect x="16.290" y="30.990" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEA_TABLE_LMK_TEA_TERRACE_01" data-kind="dressing" data-asset="ASSET_CC0_TEA_TABLE">
+<rect x="16.990" y="30.540" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="11.000" data-width-m="4.000">
+<line x1="24.000" y1="37.613" x2="35.000" y2="37.613" stroke="#c66832" stroke-width="4.000" stroke-linecap="butt" opacity="0.72"/>
+</g>
+<g id="PLACE_TEXTILE_COVER_COVER_TEXTILE_01" data-kind="dressing" data-asset="ASSET_COVER_GOODS">
+<rect x="32.440" y="33.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_LANTERN_LANTERN_TEXTILE_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
+<rect x="24.290" y="36.640" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_SIGNS_TEXTILE_E_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="34.720" y="37.184" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_SIGNS_TEXTILE_E_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="34.720" y="31.539" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_SIGNS_TEXTILE_W_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="23.960" y="39.200" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<g id="PLACE_TEXTILE_SIGNS_TEXTILE_W_SIGN_2" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
+<rect x="23.960" y="33.152" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
+<text x="9.000" y="53.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Caravan Court</text>
+<text x="47.000" y="52.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Covered Dyers Souk</text>
+<text x="49.500" y="71.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Dyers Alley</text>
+<text x="49.500" y="37.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Dyers Dogleg</text>
+<text x="28.000" y="52.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Fountain Court</text>
+<text x="38.500" y="50.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">East Mid Link</text>
+<text x="37.500" y="22.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">East Upper Link</text>
+<text x="42.500" y="13.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">North East Link</text>
+<text x="13.500" y="13.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">North West Link</text>
+<text x="42.500" y="81.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">South East Link</text>
+<text x="13.500" y="81.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">South West Link</text>
+<text x="17.500" y="53.500" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">West Mid Link</text>
+<text x="20.000" y="18.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">West Upper Link</text>
+<text x="47.000" y="21.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">North Court</text>
+<text x="27.500" y="21.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Rug Gate</text>
+<text x="6.500" y="28.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Service North</text>
+<text x="6.500" y="72.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Service South</text>
+<text x="28.000" y="85.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Spawn A Courtyard</text>
+<text x="28.000" y="7.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Spawn B Courtyard</text>
+<text x="27.000" y="69.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Spice Street</text>
+<text x="15.000" y="18.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Tea Terrace Landing</text>
+<text x="15.000" y="40.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Tea Terrace Ramp</text>
+<text x="15.000" y="23.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Tea Terrace Stairs</text>
+<text x="15.000" y="31.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Tea Terrace</text>
+<text x="29.500" y="36.000" text-anchor="middle" font-family="sans-serif" font-size="0.62" font-weight="700" fill="#17130f">Textile Arcade</text>
 </svg>

@@ -1,7 +1,7 @@
 import { sanitizeValidatedPlayerName } from "../../../../shared/playerName";
 
 const DEFAULT_MAP_ID = "bazaar-map";
-const DEFAULT_PROP_PROFILE = "subtle";
+const DEFAULT_PROP_PROFILE = "medium";
 const DEFAULT_FLOOR_QUALITY = "1k";
 
 export type RuntimeSpawnId = "A" | "B";
@@ -40,10 +40,12 @@ export type RuntimeUrlParams = {
   wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
   lightingPreset: RuntimeLightingPreset;
+  environmentLighting: boolean;
   propVisuals: RuntimePropVisualMode;
   propChaos: RuntimePropChaosOptions;
   unlimitedHealth: boolean;
   ao: boolean;
+  post: boolean;
 };
 
 function parseBooleanFlag(value: string | null): boolean {
@@ -123,7 +125,7 @@ function parseLightingPreset(value: string | null): RuntimeLightingPreset {
 }
 
 function parsePropVisualMode(value: string | null): RuntimePropVisualMode {
-  return value?.trim().toLowerCase() === "bazaar" ? "bazaar" : "blockout";
+  return value?.trim().toLowerCase() === "blockout" ? "blockout" : "bazaar";
 }
 
 function getParam(params: URLSearchParams, ...keys: string[]): string | null {
@@ -174,6 +176,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const rawWalls = getParam(params, "walls");
   const rawFloorRes = getParam(params, "floorRes", "floor-res");
   const rawLighting = getParam(params, "lighting");
+  const rawEnvironmentLighting = getParam(params, "ibl", "environmentLighting", "environment-lighting");
   const rawWallDetails = getParam(params, "wallDetails", "wall-details");
   const rawWallDetailDensity = getParam(params, "wallDetailDensity", "wall-detail-density");
   const rawProps = getParam(params, "props", "propVisuals", "prop-visuals");
@@ -183,6 +186,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const rawPropDensity = getParam(params, "prop-density", "propDensity");
   const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god", "godMode");
   const rawAo = getParam(params, "ao");
+  const rawPost = getParam(params, "post");
 
   const mapId = rawMapId && rawMapId.trim().length > 0 ? rawMapId.trim() : DEFAULT_MAP_ID;
   const controlMode = parseControlMode(rawControlMode, rawAutostart);
@@ -204,6 +208,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const wallDetailDensity = parseDensityScale(rawWallDetailDensity);
   const floorQuality = parseFloorQuality(rawFloorRes);
   const lightingPreset = parseLightingPreset(rawLighting);
+  const environmentLighting = parseBooleanFlagWithDefault(rawEnvironmentLighting, true);
   const propVisuals = parsePropVisualMode(rawProps);
   const propChaos: RuntimePropChaosOptions = {
     profile: parsePropProfile(rawPropProfile),
@@ -212,7 +217,8 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     density: parseUnitFloat(rawPropDensity),
   };
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
-  const ao = parseBooleanFlagWithDefault(rawAo, false);
+  const ao = parseBooleanFlagWithDefault(rawAo, true);
+  const post = parseBooleanFlagWithDefault(rawPost, true);
 
   return {
     mapId,
@@ -235,9 +241,11 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     wallDetailDensity,
     floorQuality,
     lightingPreset,
+    environmentLighting,
     propVisuals,
     propChaos,
     unlimitedHealth,
     ao,
+    post,
   };
 }
