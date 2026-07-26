@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "migrationId": "composition-waivers-v1",
   "sourcePath": "docs/map-design/specs/map_spec.json",
-  "sourceSha256": "eab59ebb389d4c93e97e2725563b2e2b94823cfe9141a1984fb2fcb4eb741d56",
+  "sourceSha256": "5c157c0679df65628cec3bc26ce9f64365ce44f5503c2f206189487b49da9f74",
   "generatedMapPath": "apps/client/public/maps/bazaar-map/map_spec.json",
   "hashAlgorithm": "sha256-json-v1",
   "sections": [
@@ -31,7 +31,7 @@
     "dressingPlacements",
     "anchors"
   ],
-  "semanticSha256": "4422048634465197a2df8685aeac64eaff1fa8a9d2f93e85f40b39b60fab493c",
-  "recordedFrom": "pre-migration normalized runtime output",
-  "purpose": "Seals every normalized runtime-map field except generated provenance, proving that the composition-waiver metadata migration does not alter geometry, collision, traversal, spawns, sightlines, materials, placements, or anchors."
+  "semanticSha256": "d6e6fa838690bd9923207e64f667a3fa05d696e54722c1ae6e70d4a54f31e2c0",
+  "recordedFrom": "re-recorded after the authored composition fix: upper-storey openings realigned onto the ground columns and Spice overhead spans raised above the upper-window heads",
+  "purpose": "Seals every normalized runtime-map field except generated provenance. Re-record only alongside a deliberate, reviewed change to authored composition; it must never be re-recorded to absorb an unintended geometry change."
 }

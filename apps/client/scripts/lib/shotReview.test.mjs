@@ -226,7 +226,7 @@ test("rejects missing tags, forbidden tags, asset mismatch, and console warnings
 });
 
 function validShotInventory() {
-  const shots = Array.from({ length: 22 }, (_, index) => ({
+  const shots = Array.from({ length: 23 }, (_, index) => ({
     id: `SHOT_${String(index + 1).padStart(2, "0")}_TEST`,
     captureKind: index < 12 ? "core" : index < 16 ? "closeup" : "audit",
     camera: {
@@ -237,7 +237,7 @@ function validShotInventory() {
   }));
   return {
     metadata: {
-      shotCount: 22,
+      shotCount: 23,
       coreShotCount: 12,
       closeupShotCount: 4,
       compareShotId: shots[1].id,
@@ -271,11 +271,19 @@ test("keeps audit shots outside signoff selection and exposes them only when exp
   const shotsSpec = validShotInventory();
   const inventory = validateReviewShotInventory(shotsSpec);
   assert.equal(inventory.passed, true, inventory.errors.join(" | "));
-  assert.equal(inventory.allShotIds.length, 22);
+  assert.equal(inventory.allShotIds.length, 23);
   assert.equal(inventory.reviewShotIds.length, 16);
   assert.deepEqual(
     inventory.auditShotIds,
-    ["SHOT_17_TEST", "SHOT_18_TEST", "SHOT_19_TEST", "SHOT_20_TEST", "SHOT_21_TEST", "SHOT_22_TEST"],
+    [
+      "SHOT_17_TEST",
+      "SHOT_18_TEST",
+      "SHOT_19_TEST",
+      "SHOT_20_TEST",
+      "SHOT_21_TEST",
+      "SHOT_22_TEST",
+      "SHOT_23_TEST",
+    ],
   );
   assert.deepEqual(selectReviewShotIds(shotsSpec), inventory.reviewShotIds);
   assert.deepEqual(
@@ -283,7 +291,7 @@ test("keeps audit shots outside signoff selection and exposes them only when exp
     inventory.auditShotIds,
   );
 
-  shotsSpec.shots[21].captureKind = "diagnostic";
+  shotsSpec.shots[22].captureKind = "diagnostic";
   const unsupported = validateReviewShotInventory(shotsSpec);
   assert.equal(unsupported.passed, false);
   assert.match(unsupported.errors.join(" | "), /missing\/unsupported captureKind/);

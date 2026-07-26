@@ -2540,6 +2540,12 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         wallHeightM: spec.defaults.wall_height,
         fortifiedDoorModelAvailable: Boolean(options.doorModels),
         experimentalVisualCutoutMassing: useV3AuthoredVisualWallOwnership,
+        // Bays whose recess already houses an authored merchant stall.
+        stallSeatedPlacementIds: new Set(
+          (options.anchors?.anchors ?? [])
+            .filter((anchor) => anchor.type === "shopfront_anchor" && anchor.servedBayId && anchor.frontageId)
+            .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
+        ),
       })
     : buildWallDetailPlacements({
         segments: wallSegments,

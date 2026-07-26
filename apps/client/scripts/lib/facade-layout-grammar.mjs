@@ -126,6 +126,14 @@ function centeredColumns(lengthM, moduleWidthM, count) {
   ));
 }
 
+function columnsClearEdgeMargin(columns, lengthM, moduleWidthM) {
+  return columns.every((along) => {
+    const centerM = along * lengthM;
+    return centerM - moduleWidthM * 0.5 >= EDGE_MARGIN_M - EPSILON
+      && centerM + moduleWidthM * 0.5 <= lengthM - EDGE_MARGIN_M + EPSILON;
+  });
+}
+
 function resolveStoryCount(heightM) {
   if (heightM >= 8.4) return 3;
   if (heightM >= 5.4) return 2;
@@ -280,7 +288,16 @@ export function generateFacadeLayout({
       ? 1
       : Math.max(groundCount, Math.ceil(lengthM / 4.6));
     const upperCount = Math.min(upperCapacity, preferredUpperCount);
-    const upperColumns = centeredColumns(lengthM, upperModule.dimensionsM.width, upperCount);
+    // Each row's spacing is derived from its own module width, so a ground row
+    // of 2.40m bays and an upper row of 1.60m windows produce different series
+    // even at equal counts and coincide only at the centre of the wall. The
+    // upper row must sit over the bays below it, so inherit the ground columns
+    // whenever the counts match and the narrower upper module still clears the
+    // edge margin.
+    const upperColumns = upperCount === groundCount
+      && columnsClearEdgeMargin(groundColumns, lengthM, upperModule.dimensionsM.width)
+      ? groundColumns
+      : centeredColumns(lengthM, upperModule.dimensionsM.width, upperCount);
     for (let storyIndex = 1; storyIndex < storyCount; storyIndex += 1) {
       const sillM = family === "covered_arcade"
         ? (storyIndex === 1 ? 4.15 : 6.45)

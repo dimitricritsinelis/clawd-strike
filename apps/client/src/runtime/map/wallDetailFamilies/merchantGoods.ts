@@ -5,6 +5,19 @@ function merge(parts: BufferGeometry[], label: string): BufferGeometry {
   const geometry = mergeGeometries(parts, false);
   for (const part of parts) part.dispose();
   if (!geometry) throw new Error("[wall-detail-kit] failed to merge " + label);
+  // Callers place these on a shelf, counter or plinth by putting the instance
+  // centre half its authored height above the supporting surface, which only
+  // grounds the object if its geometry is vertically centred in the unit box.
+  // These profiles are authored around their belly, not their footprint, so an
+  // uncentred merge lifts the whole family clear of whatever carries it — the
+  // storage jar floated 60 mm above its plinth, twice the grounding tolerance.
+  // Recentre without rescaling so silhouettes and proportions are unchanged.
+  geometry.computeBoundingBox();
+  const bounds = geometry.boundingBox;
+  if (bounds) {
+    const centerY = (bounds.min.y + bounds.max.y) * 0.5;
+    if (Math.abs(centerY) > 1e-4) geometry.translate(0, -centerY, 0);
+  }
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
   return geometry;

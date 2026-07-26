@@ -68,7 +68,7 @@ export type InstanceBatch = {
   normalTextureUrl: string | null;
   armTextureUrl: string | null;
   textureRepeat: readonly [number, number];
-  textureGenerator: "painted-wood-sign-a" | "painted-wood-sign-b" | "painted-wood-sign-c" | "glazed-fountain-tile" | null;
+  textureGenerator: "painted-wood-sign-a" | "painted-wood-sign-b" | "painted-wood-sign-c" | "glazed-fountain-tile" | "prop-ground-contact" | null;
   materialId: string | null;
   materialStyle: "standard" | "water";
   roughness: number;
@@ -101,7 +101,7 @@ export function createBatch(
     normalTextureUrl?: string;
     armTextureUrl?: string;
     textureRepeat?: readonly [number, number];
-    textureGenerator?: "painted-wood-sign-a" | "painted-wood-sign-b" | "painted-wood-sign-c" | "glazed-fountain-tile";
+    textureGenerator?: "painted-wood-sign-a" | "painted-wood-sign-b" | "painted-wood-sign-c" | "glazed-fountain-tile" | "prop-ground-contact";
     materialId?: string;
     materialStyle?: "standard" | "water";
     roughness?: number;

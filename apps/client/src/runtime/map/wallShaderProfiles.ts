@@ -22,10 +22,16 @@ const AGED_PLASTER_IDS = new Set([
   "ph_aged_plaster_ochre",
   "ph_plastered_wall",
   "ph_beige_wall_002",
+  // The merchant frontages are surfaced in this plaster, and without a profile
+  // it fell through to the generic defaults: no streaks, chips, repair patches
+  // or dust, so the largest surface on the street carried only a broad blotch
+  // pattern and read unfinished at two metres.
+  "ph_painted_plaster_warm",
 ]);
 
 const SOFT_TRIM_IDS = new Set([
   "ph_trim_sanded_01",
+  "ph_stone_trim_sandstone",
   "ph_band_lime_soft",
   "ph_band_beige_001",
   "ph_band_beige_002",

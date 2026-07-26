@@ -43,8 +43,10 @@ export type KitMappedMaterialRecipe = {
 
 export type KitMaterialFinish =
   | "merchant-plaster"
+  | "recess-plaster"
   | "timber-door"
   | "timber-window"
+  | "timber-screen"
   | "timber-surface"
   | "aged-metal";
 
@@ -123,7 +125,17 @@ export function resolveKitMaterialFinish(
     case "facade_shell_open_front":
     case "facade_wall_shell":
     case "facade_wall_infill":
+    // A merchant bay's back lining is a plastered interior wall seen through an
+    // open front at player height. Left without a finish it renders as a bare
+    // tinted gradient — the largest placeholder-reading surface on the frontage
+    // — while the plaster it abuts carries full aggregate and grime.
+    // A recessed wall panel is a facade feature, not an interior: it keeps the
+    // wall's own plaster so it does not sink to interior value at player height.
+    case "recessed_panel_back":
       return "merchant-plaster";
+    case "shop_recess_back":
+    case "niche_recess_back":
+      return "recess-plaster";
     default:
       break;
   }
@@ -138,12 +150,13 @@ export function resolveKitMaterialFinish(
   ) {
     return "timber-door";
   }
-  if (
-    meshId === "window_shutter"
-    || meshId === "window_recess_timber"
-    || meshId === "window_screen"
-    || meshId === "window_screen_bar"
-  ) {
+  // Security bars are ironwork even when an authored profile hands them a
+  // timber source id. Sharing the shutter finish made the grilles read as a
+  // painted lattice in the same hue as the frame around them.
+  if (meshId === "window_screen" || meshId === "window_screen_bar") {
+    return "timber-screen";
+  }
+  if (meshId === "window_shutter" || meshId === "window_recess_timber") {
     return "timber-window";
   }
   return "timber-surface";
@@ -163,6 +176,7 @@ export function applyKitMaterialFinish(
   if (
     finish === "timber-door"
     || finish === "timber-window"
+    || finish === "timber-screen"
     || finish === "timber-surface"
   ) {
     material.emissive.setHex(0x000000);
@@ -225,11 +239,20 @@ float kitValueNoise(vec2 p) {
       );
     }
 
-    if (finish === "merchant-plaster") {
+    if (finish === "merchant-plaster" || finish === "recess-plaster") {
+      // A recess reads as an interior only if it keeps its value below the
+      // sunlit wall around it. It still needs aggregate and grime so it is not
+      // a flat card, but the sun-bleached fleck and mottle that sell an
+      // exterior wall would lift it straight back out of shadow.
+      const isRecess = finish === "recess-plaster";
+      const paleFleckMix = isRecess ? "0.04" : "0.27";
+      const warmMottleMix = isRecess ? "0.05" : "0.13";
+      const coolMottleMix = isRecess ? "0.14" : "0.10";
+      const grimeMix = isRecess ? "0.58" : "0.43";
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <map_fragment>",
         `#include <map_fragment>
-// kit-merchant-plaster-finish
+// kit-${finish}-finish
 vec2 kitPlasterPlane = vec2(vKitWorldPos.x + vKitWorldPos.z, vKitWorldPos.y);
 float kitBroadAggregate = kitValueNoise(kitPlasterPlane * 0.82 + vec2(-5.2, 9.6));
 float kitAggregate = kitValueNoise(kitPlasterPlane * 5.8 + vec2(2.7, -1.4));
@@ -252,9 +275,9 @@ float kitPaleFleck = smoothstep(0.68, 0.91, kitFineAggregate)
   * smoothstep(0.51, 0.78, kitMicroAggregate);
 float kitDarkFleck = smoothstep(0.68, 0.92, 1.0 - kitMicroAggregate)
   * smoothstep(0.42, 0.69, kitAggregate);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.69, 0.48, 0.28), kitWarmMottle * 0.13);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.43, 0.38, 0.31), kitCoolMottle * 0.10);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.82, 0.68, 0.49), kitPaleFleck * 0.27);
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.69, 0.48, 0.28), kitWarmMottle * ${warmMottleMix});
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.43, 0.38, 0.31), kitCoolMottle * ${coolMottleMix});
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.82, 0.68, 0.49), kitPaleFleck * ${paleFleckMix});
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.37, 0.245, 0.135), kitDarkFleck * 0.19);
 
 // Dirt is tied to plausible collection points: base, reveals/corners, and the
@@ -285,7 +308,24 @@ vec3 kitGrimeColor = mix(
   vec3(0.22, 0.16, 0.10),
   kitBaseGrime
 );
-diffuseColor.rgb = mix(diffuseColor.rgb, kitGrimeColor, kitGrime * 0.43);`,
+diffuseColor.rgb = mix(diffuseColor.rgb, kitGrimeColor, kitGrime * ${grimeMix});
+${isRecess ? "diffuseColor.rgb *= 0.62;" : `
+// Close range needs damage, not just tone. Rendered plaster carries chipped
+// arrises exposing a warmer render coat, fine craze lines, and a splash band
+// where the wall meets the pavement; without them the largest surface on the
+// street is a smooth value gradient and reads unfinished at two metres.
+float kitChipField = kitValueNoise(kitPlasterPlane * 12.5 + vec2(-3.9, 7.4));
+float kitChipFine = kitValueNoise(kitPlasterPlane * 46.0 + vec2(11.2, -5.6));
+float kitChip = smoothstep(0.74, 0.93, kitChipField * 0.68 + kitChipFine * 0.32);
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.55, 0.38, 0.24), kitChip * 0.42);
+float kitCraze = smoothstep(0.80, 0.97, kitValueNoise(vec2(
+  (vKitWorldPos.x + vKitWorldPos.z) * 62.0,
+  vKitWorldPos.y * 26.0
+) + vec2(-6.3, 2.2)));
+diffuseColor.rgb *= 1.0 - kitCraze * 0.14;
+float kitSplash = (1.0 - smoothstep(0.0, 0.55, vKitWorldPos.y))
+  * smoothstep(0.42, 0.78, kitValueNoise(kitPlasterPlane * 17.0 + vec2(5.5, -9.1)));
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.31, 0.24, 0.16), kitSplash * 0.30);`}`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
@@ -312,29 +352,65 @@ float kitVerdigrisMask = smoothstep(0.62, 0.9, kitMetalFine)
 diffuseColor.rgb *= 0.94 + (kitMetalFine - 0.5) * 0.16;
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.39, 0.175, 0.065), kitOxideMask * 0.48);
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.29, 0.31, 0.255), kitVerdigrisMask * 0.18);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.43, 0.37, 0.275), kitRubbedEdge * 0.22);`,
+diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.43, 0.37, 0.275), kitRubbedEdge * 0.22);
+// Struts, brackets and hinges are small, high-frequency shapes read against a
+// lit wall. Left at the bright rusty-metal albedo they turn into pale sticks
+// with blown bolt caps that draw more attention than the openings they carry.
+diffuseColor.rgb = mix(
+  vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))),
+  diffuseColor.rgb,
+  0.62
+);
+diffuseColor.rgb *= 0.45;`,
       );
     } else {
       const wearStrength = finish === "timber-door" ? "0.34" : "0.29";
       const hasHardwareMask = finish !== "timber-surface";
-      const wearColor = finish === "timber-door" || finish === "timber-surface"
-        ? "vec3(0.71, 0.52, 0.34)"
-        : "vec3(0.55, 0.64, 0.50)";
-      const familyLiftColor = finish === "timber-door" || finish === "timber-surface"
-        ? "vec3(0.53, 0.37, 0.23)"
-        : "vec3(0.36, 0.50, 0.40)";
+      const wearColor = finish === "timber-screen"
+        ? "vec3(0.40, 0.38, 0.35)"
+        : finish === "timber-door" || finish === "timber-surface"
+          ? "vec3(0.71, 0.52, 0.34)"
+          : "vec3(0.55, 0.64, 0.50)";
+      const familyLiftColor = finish === "timber-screen"
+        ? "vec3(0.25, 0.24, 0.23)"
+        : finish === "timber-door" || finish === "timber-surface"
+          ? "vec3(0.53, 0.37, 0.23)"
+          : "vec3(0.36, 0.50, 0.40)";
       const familyLiftAmount = finish === "timber-door"
         ? "0.18"
-        : finish === "timber-surface"
-          ? "0.14"
-          : "0.15";
+        : finish === "timber-screen"
+          ? "0.55"
+          : finish === "timber-surface"
+            ? "0.14"
+            : "0.15";
+      // The authored tints and the manifest albedo boost were both set while
+      // this family rendered black, so together they now sit a full stop above
+      // the plaster around them. Settle the joinery back under the wall so the
+      // facade keeps its wall > joinery > opening value ordering in shade, and
+      // separate it into three tiers so the frontage is not one flat hue:
+      // structural posts and lintels sit darkest, painted shutters and leaves
+      // hold the warm mid-tone, and grilles drop to dark iron.
+      const familyValueScale = finish === "timber-door"
+        ? "0.88"
+        : finish === "timber-screen"
+          ? "0.40"
+          : finish === "timber-window"
+            ? "1.0"
+            : "0.17";
+      // Sun-bleached joinery holds less chroma than the authored tints carry;
+      // grilles are iron and keep almost none.
+      const familyChromaScale = finish === "timber-screen" ? "0.30" : "0.84";
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <map_fragment>",
         `#include <map_fragment>
 // kit-${finish}-finish
 float kitVertexValue = dot(vColor.rgb, vec3(0.333333));
 float kitHardwareMask = ${hasHardwareMask ? "1.0 - smoothstep(0.27, 0.40, kitVertexValue)" : "0.0"};
-float kitOuterEdge = smoothstep(0.38, 0.50, max(abs(vKitLocalPos.x), abs(vKitLocalPos.y)));
+// Every face of a unit-box trim piece sits at |x| or |y| == 0.5, so an edge
+// mask built from max() saturates across the whole face and turns the paint-
+// loss and wear lifts into a flat repaint. Requiring proximity on both axes
+// keeps the lift on the corners and arrises that actually rub.
+float kitOuterEdge = smoothstep(0.30, 0.50, min(abs(vKitLocalPos.x), abs(vKitLocalPos.y)));
 vec2 kitTimberPlane = vec2(vKitWorldPos.x + vKitWorldPos.z, vKitWorldPos.y);
 float kitWearNoise = kitValueNoise(kitTimberPlane * 7.5);
 float kitLongGrain = kitValueNoise(vec2(
@@ -362,18 +438,28 @@ diffuseColor.rgb = mix(diffuseColor.rgb, ${wearColor}, kitWearMask * (${wearStre
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.205, 0.15, 0.095), kitLowerGrime * 0.24);
 float kitHardwareOxide = smoothstep(0.45, 0.78, kitValueNoise(kitTimberPlane * 18.0 + vec2(6.1, -2.6)));
 vec3 kitHardwareColor = mix(
-  vec3(0.23, 0.215, 0.18),
-  vec3(0.39, 0.17, 0.065),
+  vec3(0.33, 0.305, 0.255),
+  vec3(0.44, 0.21, 0.09),
   kitHardwareOxide * 0.66
 );
-diffuseColor.rgb = mix(diffuseColor.rgb, kitHardwareColor, kitHardwareMask * 0.82);`,
+diffuseColor.rgb = mix(diffuseColor.rgb, kitHardwareColor, kitHardwareMask * 0.82);
+diffuseColor.rgb *= mix(${familyValueScale}, 0.82, kitHardwareMask);
+diffuseColor.rgb = mix(
+  vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))),
+  diffuseColor.rgb,
+  ${familyChromaScale}
+);
+// A shaded street still gets warm bounce off the sunlit paving. Without a
+// floor the darkest tier crushes into the window voids behind it and the
+// frame profile disappears; this keeps the joinery readable against black.
+diffuseColor.rgb += vec3(0.016, 0.0135, 0.0105) * (1.0 - kitHardwareMask);`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
 float kitRoughVertexValue = dot(vColor.rgb, vec3(0.333333));
 float kitRoughHardwareMask = ${hasHardwareMask ? "1.0 - smoothstep(0.27, 0.40, kitRoughVertexValue)" : "0.0"};
-float kitRoughOuterEdge = smoothstep(0.38, 0.50, max(abs(vKitLocalPos.x), abs(vKitLocalPos.y)));
+float kitRoughOuterEdge = smoothstep(0.30, 0.50, min(abs(vKitLocalPos.x), abs(vKitLocalPos.y)));
 roughnessFactor = mix(roughnessFactor + kitRoughOuterEdge * 0.055, 0.43, kitRoughHardwareMask);`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
@@ -381,13 +467,16 @@ roughnessFactor = mix(roughnessFactor + kitRoughOuterEdge * 0.055, 0.43, kitRoug
         `#include <metalnessmap_fragment>
 float kitMetalVertexValue = dot(vColor.rgb, vec3(0.333333));
 float kitMetalHardwareMask = ${hasHardwareMask ? "1.0 - smoothstep(0.27, 0.40, kitMetalVertexValue)" : "0.0"};
-metalnessFactor = mix(metalnessFactor, 0.72, kitMetalHardwareMask);`,
+// Hinges and straps on a bazaar facade are painted or oxidised, not polished.
+// Full metal here has no diffuse and only a low-intensity sky probe to
+// reflect, which renders hardware as a black hole punched through the wood.
+metalnessFactor = mix(metalnessFactor, 0.26, kitMetalHardwareMask);`,
       );
     }
   };
 
   const previousProgramCacheKey = material.customProgramCacheKey.bind(material);
-  material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|kit-finish:${finish}:v7`;
+  material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|kit-finish:${finish}:v8`;
   material.needsUpdate = true;
 }
 

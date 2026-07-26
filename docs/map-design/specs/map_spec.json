@@ -976,7 +976,10 @@
       "districtId": "DISTRICT_SPICE",
       "facadeProfileId": "active_merchant",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "merchant" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "merchant"
+      }
     },
     {
       "id": "FRONTAGE_SPICE_STREET_EAST",
@@ -987,7 +990,10 @@
       "districtId": "DISTRICT_SPICE",
       "facadeProfileId": "quiet_residential",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_FOUNTAIN_COURT_WEST",
@@ -998,7 +1004,11 @@
       "districtId": "DISTRICT_FOUNTAIN",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_TALL_HERO",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero", "accentModuleId": "window_landmark_stained" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero",
+        "accentModuleId": "window_landmark_stained"
+      }
     },
     {
       "id": "FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH",
@@ -1009,7 +1019,10 @@
       "districtId": "DISTRICT_FOUNTAIN",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_TALL_HERO",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero"
+      }
     },
     {
       "id": "FRONTAGE_FOUNTAIN_COURT_EAST",
@@ -1020,7 +1033,10 @@
       "districtId": "DISTRICT_FOUNTAIN",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero"
+      }
     },
     {
       "id": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
@@ -1031,7 +1047,10 @@
       "districtId": "DISTRICT_FOUNTAIN",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero"
+      }
     },
     {
       "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
@@ -1042,7 +1061,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_SERVICE_SPINE",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_TEXTILE_ARCADE_WEST",
@@ -1053,7 +1075,10 @@
       "districtId": "DISTRICT_TEXTILE",
       "facadeProfileId": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "arcade" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "arcade"
+      }
     },
     {
       "id": "FRONTAGE_TEXTILE_ARCADE_EAST",
@@ -1064,7 +1089,10 @@
       "districtId": "DISTRICT_TEXTILE",
       "facadeProfileId": "covered_arcade_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "arcade" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "arcade"
+      }
     },
     {
       "id": "FRONTAGE_RUG_GATE_WEST",
@@ -1075,7 +1103,10 @@
       "districtId": "DISTRICT_RUG",
       "facadeProfileId": "active_merchant_warmwash",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "merchant" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "merchant"
+      }
     },
     {
       "id": "FRONTAGE_RUG_GATE_EAST",
@@ -1086,7 +1117,10 @@
       "districtId": "DISTRICT_RUG",
       "facadeProfileId": "active_merchant_ochre",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "merchant" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "merchant"
+      }
     },
     {
       "id": "FRONTAGE_RUG_GATE_EAST_SOUTH",
@@ -1097,7 +1131,10 @@
       "districtId": "DISTRICT_RUG",
       "facadeProfileId": "active_merchant",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "merchant" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "merchant"
+      }
     },
     {
       "id": "FRONTAGE_CARAVAN_COURT_WEST",
@@ -1108,7 +1145,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_TEA_TERRACE_EAST",
@@ -1119,7 +1159,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "active_merchant_ochre",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "merchant" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "merchant"
+      }
     },
     {
       "id": "FRONTAGE_COVERED_SOUK_WEST",
@@ -1130,7 +1173,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "arcade" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "arcade"
+      }
     },
     {
       "id": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
@@ -1141,7 +1187,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "covered_arcade_wash",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "arcade" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "arcade"
+      }
     },
     {
       "id": "FRONTAGE_COVERED_SOUK_EAST",
@@ -1152,7 +1201,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "covered_arcade_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "layoutIntent": { "mode": "generated", "rhythm": "arcade" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "arcade"
+      }
     },
     {
       "id": "FRONTAGE_DYERS_ALLEY_WEST",
@@ -1163,7 +1215,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_NORTH_COURT_WEST",
@@ -1174,7 +1229,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero"
+      }
     },
     {
       "id": "FRONTAGE_NORTH_COURT_WEST_SOUTH",
@@ -1185,7 +1243,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_MID_MIXED",
-      "layoutIntent": { "mode": "generated", "rhythm": "hero" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "hero"
+      }
     },
     {
       "id": "FRONTAGE_NORTH_COURT_NORTH",
@@ -1196,7 +1257,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_NORTH_COURT_EAST",
@@ -1207,7 +1271,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_ochre_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_LINK_NORTH_EAST_NORTH",
@@ -1218,7 +1285,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_SPAWN_A_NORTH_WEST",
@@ -1229,7 +1299,10 @@
       "districtId": "DISTRICT_SPICE",
       "facadeProfileId": "quiet_residential_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_SPAWN_A_NORTH_EAST",
@@ -1240,7 +1313,10 @@
       "districtId": "DISTRICT_SPICE",
       "facadeProfileId": "quiet_residential_ochre_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_SPAWN_B_SOUTH_WEST",
@@ -1251,7 +1327,10 @@
       "districtId": "DISTRICT_RUG",
       "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_SPAWN_B_SOUTH_EAST",
@@ -1262,7 +1341,10 @@
       "districtId": "DISTRICT_RUG",
       "facadeProfileId": "quiet_residential_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_SERVICE_SOUTH_EAST",
@@ -1273,7 +1355,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "quiet_residential_warmwash_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
@@ -1284,7 +1369,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "quiet_residential_ochre_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_CARAVAN_COURT_EAST_NORTH",
@@ -1295,7 +1383,10 @@
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_DYERS_ALLEY_EAST",
@@ -1306,7 +1397,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "service" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "service"
+      }
     },
     {
       "id": "FRONTAGE_NORTH_COURT_SOUTH",
@@ -1317,7 +1411,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     },
     {
       "id": "FRONTAGE_COVERED_SOUK_SOUTH",
@@ -1328,7 +1425,10 @@
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "layoutIntent": { "mode": "generated", "rhythm": "residential_dense" }
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense"
+      }
     }
   ],
   "frontage_exemptions": [
@@ -1879,24 +1979,241 @@
     }
   ],
   "facade_modules": [
-    { "id": "shop_recess_market", "label": "Deep recessed timber merchant shop", "kind": "shop_recess", "openingType": "recess", "dimensionsM": { "width": 2.4, "depth": 1.35, "height": 2.7 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "door_shop_timber", "label": "Ordinary timber shop door", "kind": "door", "openingType": "door_void", "dimensionsM": { "width": 1.15, "depth": 0.22, "height": 2.7 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "door_residential_timber", "label": "Quiet residential timber door", "kind": "door", "openingType": "door_void", "dimensionsM": { "width": 1.05, "depth": 0.2, "height": 2.25 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "door_storage_heavy", "label": "Heavy storage door", "kind": "door", "openingType": "door_void", "dimensionsM": { "width": 1.35, "depth": 0.25, "height": 2.5 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "door_fortified_gate", "label": "Fortified north gateway", "kind": "door", "openingType": "door_void", "dimensionsM": { "width": 2.012, "depth": 0.339, "height": 2.965 }, "materialSlot": "timber", "collisionOpening": false, "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR" },
-    { "id": "window_shuttered", "label": "Shuttered merchant window", "kind": "window", "openingType": "window_void", "dimensionsM": { "width": 1.6, "depth": 0.24, "height": 1.65 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "window_dark_recess", "label": "Dark residential recess", "kind": "window", "openingType": "window_void", "dimensionsM": { "width": 0.9, "depth": 0.28, "height": 1.25 }, "materialSlot": "metal", "collisionOpening": false },
-    { "id": "window_screened", "label": "Timber-screened residential window", "kind": "window", "openingType": "window_void", "dimensionsM": { "width": 1, "depth": 0.24, "height": 1.4 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "window_landmark_stained", "label": "Single landmark stained-glass window", "kind": "window", "openingType": "window_void", "dimensionsM": { "width": 1.2, "depth": 0.25, "height": 1.75 }, "materialSlot": "accent", "collisionOpening": false },
-    { "id": "vent_service", "label": "Small service vent", "kind": "vent", "openingType": "recess", "dimensionsM": { "width": 0.58, "depth": 0.18, "height": 0.48 }, "materialSlot": "metal", "collisionOpening": false },
-    { "id": "arch_arcade", "label": "Covered arcade arch", "kind": "arch", "openingType": "arch_void", "dimensionsM": { "width": 2.6, "depth": 0.42, "height": 3.55 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "column_arcade", "label": "Covered arcade support column", "kind": "column", "openingType": "none", "dimensionsM": { "width": 0.42, "depth": 0.42, "height": 3.55 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "timber_coverage_closure", "label": "Budgeted timber service closure", "kind": "column", "openingType": "none", "dimensionsM": { "width": 1.15, "depth": 0.14, "height": 2.25 }, "materialSlot": "timber", "collisionOpening": false },
-    { "id": "pilaster_coverage", "label": "Coverage opening companion pilaster", "kind": "column", "openingType": "none", "dimensionsM": { "width": 0.42, "depth": 0.24, "height": 2.25 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "pilaster_niche_coverage", "label": "Blind-niche companion pilaster", "kind": "column", "openingType": "none", "dimensionsM": { "width": 0.42, "depth": 0.24, "height": 1.8 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "pilaster_facade", "label": "Grammar-derived facade pilaster", "kind": "column", "openingType": "none", "dimensionsM": { "width": 0.42, "depth": 0.24, "height": 3.4 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "arch_hero_courtyard", "label": "Hero courtyard arch", "kind": "arch", "openingType": "arch_void", "dimensionsM": { "width": 4.2, "depth": 0.5, "height": 4.85 }, "materialSlot": "trim", "collisionOpening": false },
-    { "id": "blind_niche", "label": "Blind plaster niche", "kind": "blind_niche", "openingType": "recess", "dimensionsM": { "width": 1.05, "depth": 0.18, "height": 1.8 }, "materialSlot": "wall", "collisionOpening": false }
+    {
+      "id": "shop_recess_market",
+      "label": "Deep recessed timber merchant shop",
+      "kind": "shop_recess",
+      "openingType": "recess",
+      "dimensionsM": {
+        "width": 2.4,
+        "depth": 1.35,
+        "height": 2.7
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "door_shop_timber",
+      "label": "Ordinary timber shop door",
+      "kind": "door",
+      "openingType": "door_void",
+      "dimensionsM": {
+        "width": 1.15,
+        "depth": 0.22,
+        "height": 2.7
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "door_residential_timber",
+      "label": "Quiet residential timber door",
+      "kind": "door",
+      "openingType": "door_void",
+      "dimensionsM": {
+        "width": 1.05,
+        "depth": 0.2,
+        "height": 2.25
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "door_storage_heavy",
+      "label": "Heavy storage door",
+      "kind": "door",
+      "openingType": "door_void",
+      "dimensionsM": {
+        "width": 1.35,
+        "depth": 0.25,
+        "height": 2.5
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "door_fortified_gate",
+      "label": "Fortified north gateway",
+      "kind": "door",
+      "openingType": "door_void",
+      "dimensionsM": {
+        "width": 2.012,
+        "depth": 0.339,
+        "height": 2.965
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false,
+      "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR"
+    },
+    {
+      "id": "window_shuttered",
+      "label": "Shuttered merchant window",
+      "kind": "window",
+      "openingType": "window_void",
+      "dimensionsM": {
+        "width": 1.6,
+        "depth": 0.24,
+        "height": 1.65
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "window_dark_recess",
+      "label": "Dark residential recess",
+      "kind": "window",
+      "openingType": "window_void",
+      "dimensionsM": {
+        "width": 0.9,
+        "depth": 0.28,
+        "height": 1.25
+      },
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "window_screened",
+      "label": "Timber-screened residential window",
+      "kind": "window",
+      "openingType": "window_void",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "window_landmark_stained",
+      "label": "Single landmark stained-glass window",
+      "kind": "window",
+      "openingType": "window_void",
+      "dimensionsM": {
+        "width": 1.2,
+        "depth": 0.25,
+        "height": 1.75
+      },
+      "materialSlot": "accent",
+      "collisionOpening": false
+    },
+    {
+      "id": "vent_service",
+      "label": "Small service vent",
+      "kind": "vent",
+      "openingType": "recess",
+      "dimensionsM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "arch_arcade",
+      "label": "Covered arcade arch",
+      "kind": "arch",
+      "openingType": "arch_void",
+      "dimensionsM": {
+        "width": 2.6,
+        "depth": 0.42,
+        "height": 3.55
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "column_arcade",
+      "label": "Covered arcade support column",
+      "kind": "column",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 0.42,
+        "depth": 0.42,
+        "height": 3.55
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "timber_coverage_closure",
+      "label": "Budgeted timber service closure",
+      "kind": "column",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 1.15,
+        "depth": 0.14,
+        "height": 2.25
+      },
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "pilaster_coverage",
+      "label": "Coverage opening companion pilaster",
+      "kind": "column",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 0.42,
+        "depth": 0.24,
+        "height": 2.25
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "pilaster_niche_coverage",
+      "label": "Blind-niche companion pilaster",
+      "kind": "column",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 0.42,
+        "depth": 0.24,
+        "height": 1.8
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "pilaster_facade",
+      "label": "Grammar-derived facade pilaster",
+      "kind": "column",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 0.42,
+        "depth": 0.24,
+        "height": 3.4
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "arch_hero_courtyard",
+      "label": "Hero courtyard arch",
+      "kind": "arch",
+      "openingType": "arch_void",
+      "dimensionsM": {
+        "width": 4.2,
+        "depth": 0.5,
+        "height": 4.85
+      },
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "blind_niche",
+      "label": "Blind plaster niche",
+      "kind": "blind_niche",
+      "openingType": "recess",
+      "dimensionsM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "materialSlot": "wall",
+      "collisionOpening": false
+    }
   ],
   "facade_profiles": [
     {
@@ -1904,152 +2221,383 @@
       "label": "Sun-lime active merchant frontage",
       "family": "active_merchant",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_painted_plaster_warm", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_worn_planks", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["shop_recess_market", "door_shop_timber", "window_shuttered", "window_screened", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_painted_plaster_warm",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_worn_planks",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_shuttered",
+        "window_screened",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "active_merchant_warmwash",
       "label": "Warm-washed active merchant frontage",
       "family": "active_merchant",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_plastered_wall", "trim": "ph_trim_sanded_01", "roof": "ph_worn_plaster_ochre", "timber": "ph_worn_planks", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_001" },
-      "moduleIds": ["shop_recess_market", "door_shop_timber", "window_shuttered", "window_screened", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_plastered_wall",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_worn_planks",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_shuttered",
+        "window_screened",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "active_merchant_ochre",
       "label": "Aged-ochre active merchant frontage",
       "family": "active_merchant",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_beige_wall_002", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_sun", "timber": "ph_worn_planks", "metal": "tm_balcony_painted_metal", "accent": "ph_band_plastered" },
-      "moduleIds": ["shop_recess_market", "door_shop_timber", "window_shuttered", "window_screened", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_beige_wall_002",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_worn_planks",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_plastered"
+      },
+      "moduleIds": [
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_shuttered",
+        "window_screened",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "quiet_residential",
       "label": "Dusty limewashed residential frontage",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_whitewashed_brick_dusty", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["door_residential_timber", "window_dark_recess", "window_screened", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_dusty",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "quiet_residential_relief",
       "label": "Dusty limewashed residential relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_dusty", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_dusty",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "quiet_residential_ochre_relief",
       "label": "Aged-ochre residential relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_plastered_wall", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_plastered" },
-      "moduleIds": ["blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_plastered_wall",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_plastered"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "quiet_residential_warmwash_relief",
       "label": "Warm-washed residential relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_warm", "trim": "ph_trim_sanded_01", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_001" },
-      "moduleIds": ["blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_warm",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "quiet_residential_pilaster_relief",
       "label": "Budgeted dusty timber-closure relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_dusty", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["timber_coverage_closure", "pilaster_coverage"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_dusty",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "timber_coverage_closure",
+        "pilaster_coverage"
+      ]
     },
     {
       "id": "quiet_residential_ochre_pilaster_relief",
       "label": "Budgeted aged-ochre timber-closure relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_plastered_wall", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_plastered" },
-      "moduleIds": ["timber_coverage_closure", "pilaster_coverage"]
+      "materialSlots": {
+        "wall": "ph_plastered_wall",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_plastered"
+      },
+      "moduleIds": [
+        "timber_coverage_closure",
+        "pilaster_coverage"
+      ]
     },
     {
       "id": "quiet_residential_warmwash_pilaster_relief",
       "label": "Budgeted warm-washed timber-closure relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_warm", "trim": "ph_trim_sanded_01", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_001" },
-      "moduleIds": ["timber_coverage_closure", "pilaster_coverage"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_warm",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "timber_coverage_closure",
+        "pilaster_coverage"
+      ]
     },
     {
       "id": "quiet_residential_niche_coverage_relief",
       "label": "Budgeted dusty single-niche coverage relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_dusty", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["blind_niche", "pilaster_niche_coverage"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_dusty",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_niche_coverage"
+      ]
     },
     {
       "id": "quiet_residential_ochre_niche_coverage_relief",
       "label": "Budgeted aged-ochre single-niche coverage relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_plastered_wall", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_plastered" },
-      "moduleIds": ["blind_niche", "pilaster_niche_coverage"]
+      "materialSlots": {
+        "wall": "ph_plastered_wall",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_plastered"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_niche_coverage"
+      ]
     },
     {
       "id": "quiet_residential_warmwash_niche_coverage_relief",
       "label": "Budgeted warm-washed single-niche coverage relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
-      "materialSlots": { "wall": "ph_whitewashed_brick_warm", "trim": "ph_trim_sanded_01", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_001" },
-      "moduleIds": ["blind_niche", "pilaster_niche_coverage"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_warm",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "blind_niche",
+        "pilaster_niche_coverage"
+      ]
     },
     {
       "id": "service_storage",
       "label": "Stone service and storage frontage",
       "family": "service_storage",
       "massingProfileId": "MASSING_LOW_MERCHANT",
-      "materialSlots": { "wall": "ph_sandstone_blocks_06", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_002" },
-      "moduleIds": ["door_storage_heavy", "vent_service", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_002"
+      },
+      "moduleIds": [
+        "door_storage_heavy",
+        "vent_service",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "covered_arcade",
       "label": "Aged-ochre covered arcade frontage",
       "family": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_aged_plaster_ochre", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_lime_soft" },
-      "moduleIds": ["arch_arcade", "column_arcade", "shop_recess_market", "door_shop_timber", "window_screened", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_aged_plaster_ochre",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "moduleIds": [
+        "arch_arcade",
+        "column_arcade",
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "covered_arcade_lime",
       "label": "Sun-lime covered arcade frontage",
       "family": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_painted_plaster_warm", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_beige_001" },
-      "moduleIds": ["arch_arcade", "column_arcade", "shop_recess_market", "door_shop_timber", "window_screened", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_painted_plaster_warm",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "arch_arcade",
+        "column_arcade",
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "covered_arcade_wash",
       "label": "Cool-washed covered arcade frontage",
       "family": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
-      "materialSlots": { "wall": "ph_whitewashed_brick_cool", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "ph_band_plastered" },
-      "moduleIds": ["arch_arcade", "column_arcade", "shop_recess_market", "door_shop_timber", "window_screened", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_cool",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_plastered"
+      },
+      "moduleIds": [
+        "arch_arcade",
+        "column_arcade",
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "hero_courtyard",
       "label": "Sandstone hero courtyard frontage",
       "family": "hero_courtyard",
       "massingProfileId": "MASSING_TALL_HERO",
-      "materialSlots": { "wall": "ph_sandstone_blocks_05", "trim": "ph_stone_trim_white", "roof": "ph_worn_plaster_ochre", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "tm_stained_glass_hero" },
-      "moduleIds": ["arch_hero_courtyard", "door_fortified_gate", "door_residential_timber", "window_dark_recess", "window_screened", "window_landmark_stained", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "tm_stained_glass_hero"
+      },
+      "moduleIds": [
+        "arch_hero_courtyard",
+        "door_fortified_gate",
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "window_landmark_stained",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     },
     {
       "id": "hero_courtyard_beige",
       "label": "Beige-plaster hero courtyard frontage",
       "family": "hero_courtyard",
       "massingProfileId": "MASSING_TALL_HERO",
-      "materialSlots": { "wall": "ph_beige_wall_002", "trim": "ph_stone_trim_sandstone", "roof": "ph_worn_plaster_sun", "timber": "ph_rough_pine_door", "metal": "tm_balcony_painted_metal", "accent": "tm_stained_glass_hero" },
-      "moduleIds": ["arch_hero_courtyard", "door_fortified_gate", "door_residential_timber", "window_dark_recess", "window_screened", "window_landmark_stained", "blind_niche", "pilaster_facade"]
+      "materialSlots": {
+        "wall": "ph_beige_wall_002",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "tm_stained_glass_hero"
+      },
+      "moduleIds": [
+        "arch_hero_courtyard",
+        "door_fortified_gate",
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "window_landmark_stained",
+        "blind_niche",
+        "pilaster_facade"
+      ]
     }
   ],
   "dressing_clusters": [
@@ -2148,8 +2696,13 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "classification": "soft_visual",
-      "anchors": ["B4_FOUNTAIN_E_RUG_GROUND_01", "B4_FOUNTAIN_W_RUG_GROUND_01"],
-      "assetIds": ["ASSET_GROUND_RUG"]
+      "anchors": [
+        "B4_FOUNTAIN_E_RUG_GROUND_01",
+        "B4_FOUNTAIN_W_RUG_GROUND_01"
+      ],
+      "assetIds": [
+        "ASSET_GROUND_RUG"
+      ]
     },
     {
       "id": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
@@ -2496,8 +3049,12 @@
       "surfaceId": "SURFACE_SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "classification": "overhead",
-      "anchors": ["LANTERN_SPICE_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_SPICE_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_CARAVAN_LANDMARK",
@@ -2505,8 +3062,12 @@
       "surfaceId": "SURFACE_CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "classification": "soft_visual",
-      "anchors": ["LMK_CARAVAN_DISTRICT"],
-      "assetIds": ["ASSET_CARAVAN_LOAD_CRATE"]
+      "anchors": [
+        "LMK_CARAVAN_DISTRICT"
+      ],
+      "assetIds": [
+        "ASSET_CARAVAN_LOAD_CRATE"
+      ]
     },
     {
       "id": "CLUSTER_FOUNTAIN_LANTERN",
@@ -2514,8 +3075,12 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "classification": "overhead",
-      "anchors": ["LANTERN_FOUNTAIN_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_FOUNTAIN_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_TEXTILE_LANTERN",
@@ -2523,8 +3088,12 @@
       "surfaceId": "SURFACE_TEXTILE_ARCADE",
       "districtId": "DISTRICT_TEXTILE",
       "classification": "overhead",
-      "anchors": ["LANTERN_TEXTILE_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_TEXTILE_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_RUG_LANTERN",
@@ -2532,8 +3101,12 @@
       "surfaceId": "SURFACE_RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "classification": "overhead",
-      "anchors": ["LANTERN_RUG_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_RUG_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_TEA_LANTERN",
@@ -2541,8 +3114,12 @@
       "surfaceId": "SURFACE_TEA_TERRACE",
       "districtId": "DISTRICT_CARAVAN",
       "classification": "overhead",
-      "anchors": ["LANTERN_TEA_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_TEA_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_DYERS_LANTERN",
@@ -2550,8 +3127,12 @@
       "surfaceId": "SURFACE_COVERED_SOUK",
       "districtId": "DISTRICT_DYERS",
       "classification": "overhead",
-      "anchors": ["LANTERN_DYERS_01"],
-      "assetIds": ["ASSET_CC0_LANTERN"]
+      "anchors": [
+        "LANTERN_DYERS_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_LANTERN"
+      ]
     },
     {
       "id": "CLUSTER_L34_SERVICE_SOUTH_EDGE",
@@ -2559,8 +3140,14 @@
       "surfaceId": "SURFACE_SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "classification": "soft_visual",
-      "anchors": ["L34_SERVICE_SOUTH_BASKET_01", "L34_SERVICE_SOUTH_POTTERY_01"],
-      "assetIds": ["ASSET_CC0_BASKET", "ASSET_CC0_POTTERY"]
+      "anchors": [
+        "L34_SERVICE_SOUTH_BASKET_01",
+        "L34_SERVICE_SOUTH_POTTERY_01"
+      ],
+      "assetIds": [
+        "ASSET_CC0_BASKET",
+        "ASSET_CC0_POTTERY"
+      ]
     },
     {
       "id": "CLUSTER_L34_CARAVAN_EDGE",
@@ -2568,8 +3155,14 @@
       "surfaceId": "SURFACE_CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "classification": "soft_visual",
-      "anchors": ["L34_CARAVAN_CART_01", "L34_CARAVAN_PACK_LINE_01"],
-      "assetIds": ["ASSET_MARKET_CART", "ASSET_LAUNDRY_LINE"]
+      "anchors": [
+        "L34_CARAVAN_CART_01",
+        "L34_CARAVAN_PACK_LINE_01"
+      ],
+      "assetIds": [
+        "ASSET_MARKET_CART",
+        "ASSET_LAUNDRY_LINE"
+      ]
     },
     {
       "id": "CLUSTER_L34_TEA_EDGE",
@@ -2577,8 +3170,12 @@
       "surfaceId": "SURFACE_TEA_TERRACE",
       "districtId": "DISTRICT_CARAVAN",
       "classification": "soft_visual",
-      "anchors": ["L34_TEA_STALL_01"],
-      "assetIds": ["ASSET_MARKET_STALL"]
+      "anchors": [
+        "L34_TEA_STALL_01"
+      ],
+      "assetIds": [
+        "ASSET_MARKET_STALL"
+      ]
     },
     {
       "id": "CLUSTER_L34_DYERS_ALLEY_EDGE",
@@ -2586,8 +3183,15 @@
       "surfaceId": "SURFACE_DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
-      "anchors": ["L34_DYERS_ALLEY_VAT_01", "L34_DYERS_ALLEY_VAT_02", "L34_DYERS_ALLEY_POTTERY_01"],
-      "assetIds": ["ASSET_DYERS_SEALED_VAT", "ASSET_DYERS_CERAMIC_VESSEL"]
+      "anchors": [
+        "L34_DYERS_ALLEY_VAT_01",
+        "L34_DYERS_ALLEY_VAT_02",
+        "L34_DYERS_ALLEY_POTTERY_01"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_SEALED_VAT",
+        "ASSET_DYERS_CERAMIC_VESSEL"
+      ]
     },
     {
       "id": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
@@ -2595,8 +3199,17 @@
       "surfaceId": "SURFACE_DYERS_DOGLEG",
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
-      "anchors": ["L34_DOGLEG_WALL_RACK_01", "L34_DOGLEG_VAT_01", "L34_DOGLEG_VAT_02", "L34_DOGLEG_WORKSTATION_01"],
-      "assetIds": ["ASSET_DYERS_HANGING_TEXTILES", "ASSET_DYERS_SEALED_VAT", "ASSET_DYERS_WORKSTATION"]
+      "anchors": [
+        "L34_DOGLEG_WALL_RACK_01",
+        "L34_DOGLEG_VAT_01",
+        "L34_DOGLEG_VAT_02",
+        "L34_DOGLEG_WORKSTATION_01"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_HANGING_TEXTILES",
+        "ASSET_DYERS_SEALED_VAT",
+        "ASSET_DYERS_WORKSTATION"
+      ]
     },
     {
       "id": "CLUSTER_L34_NORTH_EDGE",
@@ -2604,97 +3217,1664 @@
       "surfaceId": "SURFACE_NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
-      "anchors": ["L34_NORTH_WORKSTATION_02", "L34_NORTH_PLANTER_EAST"],
-      "assetIds": ["ASSET_DYERS_WORKSTATION", "ASSET_COURT_PLANTER"]
+      "anchors": [
+        "L34_NORTH_WORKSTATION_02",
+        "L34_NORTH_PLANTER_EAST"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_WORKSTATION",
+        "ASSET_COURT_PLANTER"
+      ]
     }
   ],
   "dressing_placements": [
-    { "id": "PLACE_SPICE_STALLS", "clusterId": "CLUSTER_SPICE_MERCHANTS", "assetId": "ASSET_MARKET_STALL", "anchorIds": ["SPICE_W_SHOP_1"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.82, "y": 0.82, "z": 0.82 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPICE_SIGNS", "clusterId": "CLUSTER_SPICE_MERCHANTS", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["SPICE_W_SIGN_1"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPICE_CANOPIES", "clusterId": "CLUSTER_SPICE_CANOPIES", "assetId": "ASSET_CLOTH_CANOPY", "anchorIds": ["CANOPY_SPICE_01", "CANOPY_SPICE_02"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPICE_COVER_CORE", "clusterId": "CLUSTER_SPICE_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_SPICE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPICE_BARREL", "clusterId": "CLUSTER_SPICE_COVER", "assetId": "ASSET_CC0_BARREL", "anchorIds": ["COVER_SPICE_01"], "offsetM": { "x": -1.1, "y": 0.05, "z": 0 }, "scale": { "x": 0.9, "y": 0.9, "z": 0.9 }, "yawOffsetDeg": -6 },
-    { "id": "PLACE_SPICE_BASKET", "clusterId": "CLUSTER_SPICE_COVER", "assetId": "ASSET_CC0_BASKET", "anchorIds": ["COVER_SPICE_01"], "offsetM": { "x": 0.78, "y": 0.38, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 12 },
-    { "id": "PLACE_SPICE_POTTERY", "clusterId": "CLUSTER_SPICE_COVER", "assetId": "ASSET_CC0_POTTERY", "anchorIds": ["COVER_SPICE_01"], "offsetM": { "x": 0.76, "y": -0.38, "z": 0 }, "scale": { "x": 0.8, "y": 0.8, "z": 0.8 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B4_SPICE_COVER_RUG", "clusterId": "CLUSTER_SPICE_COVER", "assetId": "ASSET_GROUND_RUG", "anchorIds": ["COVER_SPICE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.1, "y": 1.18, "z": 1 }, "yawOffsetDeg": -4 },
-    { "id": "PLACE_SPICE_LANDMARK_GOODS", "clusterId": "CLUSTER_SPICE_LANDMARK", "assetId": "ASSET_SPICE_GOODS", "anchorIds": ["LMK_SPICE_DISTRICT"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 90 },
-    { "id": "PLACE_SPICE_LANDMARK_SACK_TALL", "clusterId": "CLUSTER_SPICE_LANDMARK", "assetId": "ASSET_CC0_SPICE_SACK", "anchorIds": ["LMK_SPICE_DISTRICT"], "offsetM": { "x": 0.35, "y": 0.45, "z": 0 }, "scale": { "x": 0.9, "y": 0.9, "z": 0.9 }, "yawOffsetDeg": 84 },
-    { "id": "PLACE_SPICE_LANDMARK_BRASS_POT", "clusterId": "CLUSTER_SPICE_LANDMARK", "assetId": "ASSET_CC0_BRASS_POT", "anchorIds": ["LMK_SPICE_DISTRICT"], "offsetM": { "x": 0.35, "y": -0.45, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 82 },
-    { "id": "PLACE_FOUNTAIN", "clusterId": "CLUSTER_FOUNTAIN_HERO", "assetId": "ASSET_FOUNTAIN", "anchorIds": ["LMK_FOUNTAIN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_FOUNTAIN_PALM", "clusterId": "CLUSTER_FOUNTAIN_HERO", "assetId": "ASSET_PALM", "anchorIds": ["PALM_FOUNTAIN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_FOUNTAIN_COVER", "clusterId": "CLUSTER_FOUNTAIN_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_FOUNTAIN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEXTILE_SIGNS", "clusterId": "CLUSTER_TEXTILES", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["TEXTILE_W_SIGN_1", "TEXTILE_E_SIGN_1"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEXTILE_CANOPY", "clusterId": "CLUSTER_TEXTILE_CANOPY", "assetId": "ASSET_CLOTH_CANOPY", "anchorIds": ["CANOPY_TEXTILE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B6_SPICE_LAUNDRY", "clusterId": "CLUSTER_B6_SPICE_LAUNDRY", "assetId": "ASSET_LAUNDRY_LINE", "anchorIds": ["B6_LAUNDRY_SPICE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B6_TEXTILE_LAUNDRY", "clusterId": "CLUSTER_B6_TEXTILE_LAUNDRY", "assetId": "ASSET_LAUNDRY_LINE", "anchorIds": ["B6_LAUNDRY_TEXTILE_01", "B6_LAUNDRY_TEXTILE_02"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEXTILE_COVER", "clusterId": "CLUSTER_TEXTILE_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_TEXTILE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_RUG_SIGNS", "clusterId": "CLUSTER_RUG_GATE", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["RUG_W_SIGN_1", "RUG_W_SIGN_2", "RUG_E_SIGN_1"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_RUG_ARCH", "clusterId": "CLUSTER_RUG_GATE", "assetId": "ASSET_HERO_ARCH", "anchorIds": ["LMK_RUG_GATE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_RUG_COVER", "clusterId": "CLUSTER_RUG_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_RUG_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_CARAVAN_COVER", "clusterId": "CLUSTER_CARAVAN_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_CARAVAN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEA_SIGNS", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["TEA_E_SIGN_1", "TEA_E_SIGN_2"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEA_SERVICE", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_TEA_SERVICE", "anchorIds": ["LMK_TEA_TERRACE_01"], "offsetM": { "x": 4.35, "y": 1.35, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 90 },
-    { "id": "PLACE_TEA_TABLE", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_CC0_TEA_TABLE", "anchorIds": ["LMK_TEA_TERRACE_01"], "offsetM": { "x": 2.95, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 90 },
-    { "id": "PLACE_TEA_STOOL_WEST_SOUTH", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_CC0_TEA_STOOL", "anchorIds": ["LMK_TEA_TERRACE_01"], "offsetM": { "x": 2.25, "y": -0.45, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 70 },
-    { "id": "PLACE_TEA_STOOL_WEST_NORTH", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_CC0_TEA_STOOL", "anchorIds": ["LMK_TEA_TERRACE_01"], "offsetM": { "x": 2.25, "y": 0.45, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 110 },
-    { "id": "PLACE_TEA_STOOL_EAST", "clusterId": "CLUSTER_TEA_VISUAL", "assetId": "ASSET_CC0_TEA_STOOL", "anchorIds": ["LMK_TEA_TERRACE_01"], "offsetM": { "x": 3.68, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 270 },
-    { "id": "PLACE_TEA_COVER", "clusterId": "CLUSTER_TEA_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_TEA_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_DYERS_SIGNS", "clusterId": "CLUSTER_DYERS_MERCHANTS", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["DYE_W_SIGN_1", "DYE_W_SIGN_2", "DYE_E_SIGN_1", "DYE_E_SIGN_2"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_DYERS_VAT_WEST", "clusterId": "CLUSTER_DYERS_MERCHANTS", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["LMK_DYERS_DISTRICT"], "offsetM": { "x": -0.38, "y": 0.12, "z": 0 }, "scale": { "x": 0.95, "y": 0.95, "z": 0.95 }, "yawOffsetDeg": -8 },
-    { "id": "PLACE_DYERS_VAT_EAST", "clusterId": "CLUSTER_DYERS_MERCHANTS", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["LMK_DYERS_DISTRICT"], "offsetM": { "x": 0.38, "y": 0.2, "z": 0 }, "scale": { "x": 0.82, "y": 0.82, "z": 0.82 }, "yawOffsetDeg": 11 },
-    { "id": "PLACE_DYERS_CERAMIC_VESSEL", "clusterId": "CLUSTER_DYERS_MERCHANTS", "assetId": "ASSET_DYERS_CERAMIC_VESSEL", "anchorIds": ["LMK_DYERS_DISTRICT"], "offsetM": { "x": 0.32, "y": -0.42, "z": 0 }, "scale": { "x": 0.86, "y": 0.86, "z": 0.86 }, "yawOffsetDeg": -12 },
-    { "id": "PLACE_DYERS_CANOPY", "clusterId": "CLUSTER_DYERS_CANOPY", "assetId": "ASSET_CLOTH_CANOPY", "anchorIds": ["CANOPY_DYERS_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_DYERS_COVER", "clusterId": "CLUSTER_DYERS_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_DYERS_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_NORTH_PALM", "clusterId": "CLUSTER_NORTH_COURT", "assetId": "ASSET_PALM", "anchorIds": ["PALM_NORTH_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L3R0_NORTH_RUG", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_GROUND_RUG", "anchorIds": ["L3R0_NORTH_DYERS_BAY_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.15, "y": 1, "z": 1.05 }, "yawOffsetDeg": -2 },
-    { "id": "PLACE_L3R0_NORTH_STALL", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_MARKET_STALL", "anchorIds": ["L3R0_NORTH_DYERS_BAY_01"], "offsetM": { "x": -0.6, "y": -0.1, "z": 0 }, "scale": { "x": 0.95, "y": 0.95, "z": 0.95 }, "yawOffsetDeg": 90 },
-    { "id": "PLACE_L3R0_NORTH_DYERS_WALL_RACK", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_DYERS_HANGING_TEXTILES", "anchorIds": ["L3R0_NORTH_DYERS_BAY_01"], "offsetM": { "x": 0.72, "y": 0, "z": 1.18 }, "scale": { "x": 1.1, "y": 1.1, "z": 1.1 }, "yawOffsetDeg": 90 },
-    { "id": "PLACE_L3R0_NORTH_VAT_WEST", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["L34_NORTH_DYERS_BAY_02"], "offsetM": { "x": 0.55, "y": -0.45, "z": 0 }, "scale": { "x": 0.82, "y": 0.82, "z": 0.82 }, "yawOffsetDeg": -9 },
-    { "id": "PLACE_L3R0_NORTH_VAT_EAST", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["L3R0_NORTH_DYERS_BAY_01"], "offsetM": { "x": 0.72, "y": 1, "z": 0 }, "scale": { "x": 0.76, "y": 0.76, "z": 0.76 }, "yawOffsetDeg": 11 },
-    { "id": "PLACE_L3R0_NORTH_VESSEL", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_DYERS_CERAMIC_VESSEL", "anchorIds": ["L34_NORTH_DYERS_BAY_02"], "offsetM": { "x": 0.55, "y": 0.45, "z": 0 }, "scale": { "x": 0.82, "y": 0.82, "z": 0.82 }, "yawOffsetDeg": 7 },
-    { "id": "PLACE_L3R0_NORTH_EXIT_SIGN", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["L3R0_NORTH_EXIT_SIGN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L3R0_NORTH_DYERS_LINE", "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY", "assetId": "ASSET_LAUNDRY_LINE", "anchorIds": ["L3R0_NORTH_DYERS_LINE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_NORTH_COVER", "clusterId": "CLUSTER_NORTH_COVER", "assetId": "ASSET_COVER_GOODS", "anchorIds": ["COVER_NORTH_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPAWN_A_COVER", "clusterId": "CLUSTER_SPAWN_A_COVER", "assetId": "ASSET_SPAWN_COVER", "anchorIds": ["SPAWN_A_COVER_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPAWN_B_COVER", "clusterId": "CLUSTER_SPAWN_B_COVER", "assetId": "ASSET_SPAWN_COVER", "anchorIds": ["SPAWN_B_COVER_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEA_RAMP_SIGNS", "clusterId": "CLUSTER_TEA_RAMP_SIGNS", "assetId": "ASSET_SIGNBOARD", "anchorIds": ["TEA_RAMP_SIGN_WEST", "TEA_RAMP_SIGN_EAST"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_SPICE_LANTERN", "clusterId": "CLUSTER_SPICE_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_SPICE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_CARAVAN_LOAD_SOUTH", "clusterId": "CLUSTER_CARAVAN_LANDMARK", "assetId": "ASSET_CARAVAN_LOAD_CRATE", "anchorIds": ["LMK_CARAVAN_DISTRICT"], "offsetM": { "x": -0.4, "y": -0.08, "z": 0 }, "scale": { "x": 1.08, "y": 1.08, "z": 1.08 }, "yawOffsetDeg": -7 },
-    { "id": "PLACE_CARAVAN_LOAD_NORTH", "clusterId": "CLUSTER_CARAVAN_LANDMARK", "assetId": "ASSET_CARAVAN_LOAD_CRATE", "anchorIds": ["LMK_CARAVAN_DISTRICT"], "offsetM": { "x": 0.42, "y": 0.12, "z": 0 }, "scale": { "x": 0.96, "y": 0.96, "z": 0.96 }, "yawOffsetDeg": 9 },
-    { "id": "PLACE_CARAVAN_LOAD_TOP", "clusterId": "CLUSTER_CARAVAN_LANDMARK", "assetId": "ASSET_CARAVAN_LOAD_CRATE", "anchorIds": ["LMK_CARAVAN_DISTRICT"], "offsetM": { "x": -0.03, "y": 0, "z": 0.38 }, "scale": { "x": 0.9, "y": 0.9, "z": 0.9 }, "yawOffsetDeg": 4 },
-    { "id": "PLACE_FOUNTAIN_LANTERN", "clusterId": "CLUSTER_FOUNTAIN_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_FOUNTAIN_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEXTILE_LANTERN", "clusterId": "CLUSTER_TEXTILE_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_TEXTILE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_RUG_LANTERN", "clusterId": "CLUSTER_RUG_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_RUG_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_TEA_LANTERN", "clusterId": "CLUSTER_TEA_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_TEA_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_DYERS_LANTERN", "clusterId": "CLUSTER_DYERS_LANTERN", "assetId": "ASSET_CC0_LANTERN", "anchorIds": ["LANTERN_DYERS_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B4_SPICE_CART", "clusterId": "CLUSTER_B4_SPICE_DRESSING", "assetId": "ASSET_MARKET_CART", "anchorIds": ["B4_SPICE_E_CART_GROUND_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 7 },
-    { "id": "PLACE_B4_FOUNTAIN_RUG", "clusterId": "CLUSTER_B4_FOUNTAIN_DRESSING", "assetId": "ASSET_GROUND_RUG", "anchorIds": ["B4_FOUNTAIN_E_RUG_GROUND_01", "B4_FOUNTAIN_W_RUG_GROUND_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.25, "y": 1.15, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B7_FOUNTAIN_PLANTERS", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_COURT_PLANTER", "anchorIds": ["B7_FOUNTAIN_PLANTER_WEST", "B7_FOUNTAIN_PLANTER_EAST"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_B7_FOUNTAIN_TEA_TABLE", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_CC0_TEA_TABLE", "anchorIds": ["B7_FOUNTAIN_TEA_SPILLOVER"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 8 },
-    { "id": "PLACE_B7_FOUNTAIN_TEA_STOOL_A", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_CC0_TEA_STOOL", "anchorIds": ["B7_FOUNTAIN_TEA_SPILLOVER"], "offsetM": { "x": -0.82, "y": -0.16, "z": 0 }, "scale": { "x": 0.96, "y": 0.96, "z": 0.96 }, "yawOffsetDeg": 82 },
-    { "id": "PLACE_B7_FOUNTAIN_TEA_STOOL_B", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_CC0_TEA_STOOL", "anchorIds": ["B7_FOUNTAIN_TEA_SPILLOVER"], "offsetM": { "x": 0.72, "y": 0.24, "z": 0 }, "scale": { "x": 0.88, "y": 0.88, "z": 0.88 }, "yawOffsetDeg": 264 },
-    { "id": "PLACE_BPL19_FOUNTAIN_MARKET_STALL", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_MARKET_STALL", "anchorIds": ["B7_FOUNTAIN_MARKET_SPILL"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.76, "y": 0.82, "z": 0.76 }, "yawOffsetDeg": -8 },
-    { "id": "PLACE_BPL19_FOUNTAIN_MARKET_RUG", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_GROUND_RUG", "anchorIds": ["B7_FOUNTAIN_MARKET_SPILL"], "offsetM": { "x": 0.04, "y": 0.02, "z": 0 }, "scale": { "x": 1.02, "y": 1.12, "z": 1 }, "yawOffsetDeg": -5 },
-    { "id": "PLACE_B7_FOUNTAIN_MARKET_CRATE", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_DECORATIVE_CRATE", "anchorIds": ["B7_FOUNTAIN_MARKET_SPILL"], "offsetM": { "x": 0.82, "y": 0.38, "z": 0 }, "scale": { "x": 0.86, "y": 0.86, "z": 0.86 }, "yawOffsetDeg": 11 },
-    { "id": "PLACE_B7_FOUNTAIN_MARKET_BASKET", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_CC0_BASKET", "anchorIds": ["B7_FOUNTAIN_MARKET_SPILL"], "offsetM": { "x": -0.58, "y": 0.4, "z": 0 }, "scale": { "x": 1.12, "y": 1.12, "z": 1.12 }, "yawOffsetDeg": -12 },
-    { "id": "PLACE_B7_FOUNTAIN_MARKET_POT", "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE", "assetId": "ASSET_CC0_POTTERY", "anchorIds": ["B7_FOUNTAIN_MARKET_SPILL"], "offsetM": { "x": -0.7, "y": -0.34, "z": 0 }, "scale": { "x": 0.84, "y": 0.84, "z": 0.84 }, "yawOffsetDeg": 7 },
-    { "id": "PLACE_B4_TEXTILE_CART", "clusterId": "CLUSTER_B4_TEXTILE_DRESSING", "assetId": "ASSET_MARKET_CART", "anchorIds": ["BPL16_TEXTILE_E_STOCK_GROUND_04"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.02, "y": 1.02, "z": 1.02 }, "yawOffsetDeg": 8 },
-    { "id": "PLACE_B4_SOUK_CART", "clusterId": "CLUSTER_B4_SOUK_DRESSING", "assetId": "ASSET_MARKET_CART", "anchorIds": ["B4_SOUK_W_CART_GROUND_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.96, "y": 0.96, "z": 0.96 }, "yawOffsetDeg": 8 },
-    { "id": "PLACE_B4_SOUK_PROCESS_VESSEL", "clusterId": "CLUSTER_B4_SOUK_DRESSING", "assetId": "ASSET_DYERS_CERAMIC_VESSEL", "anchorIds": ["B4_SOUK_E_GOODS_GROUND_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.84, "y": 0.84, "z": 0.84 }, "yawOffsetDeg": 7 },
-    { "id": "PLACE_L34_SERVICE_SOUTH_BASKET", "clusterId": "CLUSTER_L34_SERVICE_SOUTH_EDGE", "assetId": "ASSET_CC0_BASKET", "anchorIds": ["L34_SERVICE_SOUTH_BASKET_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.08, "y": 1.08, "z": 1.08 }, "yawOffsetDeg": -8 },
-    { "id": "PLACE_L34_SERVICE_SOUTH_POTTERY", "clusterId": "CLUSTER_L34_SERVICE_SOUTH_EDGE", "assetId": "ASSET_CC0_POTTERY", "anchorIds": ["L34_SERVICE_SOUTH_POTTERY_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.92, "y": 0.92, "z": 0.92 }, "yawOffsetDeg": 11 },
-    { "id": "PLACE_L34_CARAVAN_CART", "clusterId": "CLUSTER_L34_CARAVAN_EDGE", "assetId": "ASSET_MARKET_CART", "anchorIds": ["L34_CARAVAN_CART_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.04, "y": 1.04, "z": 1.04 }, "yawOffsetDeg": -9 },
-    { "id": "PLACE_L34_CARAVAN_PACK_LINE", "clusterId": "CLUSTER_L34_CARAVAN_EDGE", "assetId": "ASSET_LAUNDRY_LINE", "anchorIds": ["L34_CARAVAN_PACK_LINE_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L34_TEA_STALL", "clusterId": "CLUSTER_L34_TEA_EDGE", "assetId": "ASSET_MARKET_STALL", "anchorIds": ["L34_TEA_STALL_01"], "offsetM": { "x": -1.1, "y": 0, "z": 0 }, "scale": { "x": 0.9, "y": 0.9, "z": 0.9 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L34_DYERS_ALLEY_VATS", "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["L34_DYERS_ALLEY_VAT_01", "L34_DYERS_ALLEY_VAT_02"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.76, "y": 0.76, "z": 0.76 }, "yawOffsetDeg": -7 },
-    { "id": "PLACE_L34_DYERS_ALLEY_POTTERY", "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE", "assetId": "ASSET_DYERS_CERAMIC_VESSEL", "anchorIds": ["L34_DYERS_ALLEY_POTTERY_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.82, "y": 0.82, "z": 0.82 }, "yawOffsetDeg": 10 },
-    { "id": "PLACE_L34_COVERED_SOUK_BASKET", "clusterId": "CLUSTER_DYERS_MERCHANTS", "assetId": "ASSET_CC0_BASKET", "anchorIds": ["LMK_DYERS_DISTRICT"], "offsetM": { "x": -0.72, "y": -0.48, "z": 0 }, "scale": { "x": 1.1, "y": 1.1, "z": 1.1 }, "yawOffsetDeg": -12 },
-    { "id": "PLACE_L34_DOGLEG_WALL_RACK", "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE", "assetId": "ASSET_DYERS_HANGING_TEXTILES", "anchorIds": ["L34_DOGLEG_WALL_RACK_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.05, "y": 1.05, "z": 1.05 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L34_DOGLEG_VAT", "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["L34_DOGLEG_VAT_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.75, "y": 0.75, "z": 0.75 }, "yawOffsetDeg": -8 },
-    { "id": "PLACE_L34_DOGLEG_VAT_02", "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE", "assetId": "ASSET_DYERS_SEALED_VAT", "anchorIds": ["L34_DOGLEG_VAT_02"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.75, "y": 0.75, "z": 0.75 }, "yawOffsetDeg": 11 },
-    { "id": "PLACE_L34_DOGLEG_WORKSTATION", "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE", "assetId": "ASSET_DYERS_WORKSTATION", "anchorIds": ["L34_DOGLEG_WORKSTATION_01"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1, "y": 1, "z": 1 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L34_NORTH_WORKSTATION_02", "clusterId": "CLUSTER_L34_NORTH_EDGE", "assetId": "ASSET_DYERS_WORKSTATION", "anchorIds": ["L34_NORTH_WORKSTATION_02"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 1.05, "y": 1.05, "z": 1.05 }, "yawOffsetDeg": 0 },
-    { "id": "PLACE_L34_NORTH_PLANTER_EAST", "clusterId": "CLUSTER_L34_NORTH_EDGE", "assetId": "ASSET_COURT_PLANTER", "anchorIds": ["L34_NORTH_PLANTER_EAST"], "offsetM": { "x": 0, "y": 0, "z": 0 }, "scale": { "x": 0.86, "y": 0.86, "z": 0.86 }, "yawOffsetDeg": 0 }
+    {
+      "id": "PLACE_SPICE_STALLS",
+      "clusterId": "CLUSTER_SPICE_MERCHANTS",
+      "assetId": "ASSET_MARKET_STALL",
+      "anchorIds": [
+        "SPICE_W_SHOP_1"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.82,
+        "y": 0.82,
+        "z": 0.82
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_SIGNS",
+      "clusterId": "CLUSTER_SPICE_MERCHANTS",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "SPICE_W_SIGN_1"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_CANOPIES",
+      "clusterId": "CLUSTER_SPICE_CANOPIES",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorIds": [
+        "CANOPY_SPICE_01",
+        "CANOPY_SPICE_02"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_COVER_CORE",
+      "clusterId": "CLUSTER_SPICE_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_BARREL",
+      "clusterId": "CLUSTER_SPICE_COVER",
+      "assetId": "ASSET_CC0_BARREL",
+      "anchorIds": [
+        "COVER_SPICE_01"
+      ],
+      "offsetM": {
+        "x": -1.1,
+        "y": 0.05,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.9,
+        "y": 0.9,
+        "z": 0.9
+      },
+      "yawOffsetDeg": -6
+    },
+    {
+      "id": "PLACE_SPICE_BASKET",
+      "clusterId": "CLUSTER_SPICE_COVER",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "COVER_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0.78,
+        "y": 0.38,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 12
+    },
+    {
+      "id": "PLACE_SPICE_POTTERY",
+      "clusterId": "CLUSTER_SPICE_COVER",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorIds": [
+        "COVER_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0.76,
+        "y": -0.38,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.8,
+        "y": 0.8,
+        "z": 0.8
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B4_SPICE_COVER_RUG",
+      "clusterId": "CLUSTER_SPICE_COVER",
+      "assetId": "ASSET_GROUND_RUG",
+      "anchorIds": [
+        "COVER_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.1,
+        "y": 1.18,
+        "z": 1
+      },
+      "yawOffsetDeg": -4
+    },
+    {
+      "id": "PLACE_SPICE_LANDMARK_GOODS",
+      "clusterId": "CLUSTER_SPICE_LANDMARK",
+      "assetId": "ASSET_SPICE_GOODS",
+      "anchorIds": [
+        "LMK_SPICE_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 90
+    },
+    {
+      "id": "PLACE_SPICE_LANDMARK_SACK_TALL",
+      "clusterId": "CLUSTER_SPICE_LANDMARK",
+      "assetId": "ASSET_CC0_SPICE_SACK",
+      "anchorIds": [
+        "LMK_SPICE_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0.35,
+        "y": 0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.9,
+        "y": 0.9,
+        "z": 0.9
+      },
+      "yawOffsetDeg": 84
+    },
+    {
+      "id": "PLACE_SPICE_LANDMARK_BRASS_POT",
+      "clusterId": "CLUSTER_SPICE_LANDMARK",
+      "assetId": "ASSET_CC0_BRASS_POT",
+      "anchorIds": [
+        "LMK_SPICE_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0.35,
+        "y": -0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 82
+    },
+    {
+      "id": "PLACE_FOUNTAIN",
+      "clusterId": "CLUSTER_FOUNTAIN_HERO",
+      "assetId": "ASSET_FOUNTAIN",
+      "anchorIds": [
+        "LMK_FOUNTAIN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_FOUNTAIN_PALM",
+      "clusterId": "CLUSTER_FOUNTAIN_HERO",
+      "assetId": "ASSET_PALM",
+      "anchorIds": [
+        "PALM_FOUNTAIN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_FOUNTAIN_COVER",
+      "clusterId": "CLUSTER_FOUNTAIN_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_FOUNTAIN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEXTILE_SIGNS",
+      "clusterId": "CLUSTER_TEXTILES",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "TEXTILE_W_SIGN_1",
+        "TEXTILE_E_SIGN_1"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEXTILE_CANOPY",
+      "clusterId": "CLUSTER_TEXTILE_CANOPY",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorIds": [
+        "CANOPY_TEXTILE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B6_SPICE_LAUNDRY",
+      "clusterId": "CLUSTER_B6_SPICE_LAUNDRY",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorIds": [
+        "B6_LAUNDRY_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B6_TEXTILE_LAUNDRY",
+      "clusterId": "CLUSTER_B6_TEXTILE_LAUNDRY",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorIds": [
+        "B6_LAUNDRY_TEXTILE_01",
+        "B6_LAUNDRY_TEXTILE_02"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEXTILE_COVER",
+      "clusterId": "CLUSTER_TEXTILE_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_TEXTILE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_RUG_SIGNS",
+      "clusterId": "CLUSTER_RUG_GATE",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "RUG_W_SIGN_1",
+        "RUG_W_SIGN_2",
+        "RUG_E_SIGN_1"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_RUG_ARCH",
+      "clusterId": "CLUSTER_RUG_GATE",
+      "assetId": "ASSET_HERO_ARCH",
+      "anchorIds": [
+        "LMK_RUG_GATE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_RUG_COVER",
+      "clusterId": "CLUSTER_RUG_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_RUG_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_CARAVAN_COVER",
+      "clusterId": "CLUSTER_CARAVAN_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_CARAVAN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEA_SIGNS",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "TEA_E_SIGN_1",
+        "TEA_E_SIGN_2"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEA_SERVICE",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_TEA_SERVICE",
+      "anchorIds": [
+        "LMK_TEA_TERRACE_01"
+      ],
+      "offsetM": {
+        "x": 4.35,
+        "y": 1.35,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 90
+    },
+    {
+      "id": "PLACE_TEA_TABLE",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_CC0_TEA_TABLE",
+      "anchorIds": [
+        "LMK_TEA_TERRACE_01"
+      ],
+      "offsetM": {
+        "x": 2.95,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 90
+    },
+    {
+      "id": "PLACE_TEA_STOOL_WEST_SOUTH",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_CC0_TEA_STOOL",
+      "anchorIds": [
+        "LMK_TEA_TERRACE_01"
+      ],
+      "offsetM": {
+        "x": 2.25,
+        "y": -0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 70
+    },
+    {
+      "id": "PLACE_TEA_STOOL_WEST_NORTH",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_CC0_TEA_STOOL",
+      "anchorIds": [
+        "LMK_TEA_TERRACE_01"
+      ],
+      "offsetM": {
+        "x": 2.25,
+        "y": 0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 110
+    },
+    {
+      "id": "PLACE_TEA_STOOL_EAST",
+      "clusterId": "CLUSTER_TEA_VISUAL",
+      "assetId": "ASSET_CC0_TEA_STOOL",
+      "anchorIds": [
+        "LMK_TEA_TERRACE_01"
+      ],
+      "offsetM": {
+        "x": 3.68,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 270
+    },
+    {
+      "id": "PLACE_TEA_COVER",
+      "clusterId": "CLUSTER_TEA_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_TEA_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_SIGNS",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "DYE_W_SIGN_1",
+        "DYE_W_SIGN_2",
+        "DYE_E_SIGN_1",
+        "DYE_E_SIGN_2"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_VAT_WEST",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "LMK_DYERS_DISTRICT"
+      ],
+      "offsetM": {
+        "x": -0.38,
+        "y": 0.12,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.95,
+        "y": 0.95,
+        "z": 0.95
+      },
+      "yawOffsetDeg": -8
+    },
+    {
+      "id": "PLACE_DYERS_VAT_EAST",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "LMK_DYERS_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0.38,
+        "y": 0.2,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.82,
+        "y": 0.82,
+        "z": 0.82
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_DYERS_CERAMIC_VESSEL",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorIds": [
+        "LMK_DYERS_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0.32,
+        "y": -0.42,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.86,
+        "y": 0.86,
+        "z": 0.86
+      },
+      "yawOffsetDeg": -12
+    },
+    {
+      "id": "PLACE_DYERS_CANOPY",
+      "clusterId": "CLUSTER_DYERS_CANOPY",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorIds": [
+        "CANOPY_DYERS_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_COVER",
+      "clusterId": "CLUSTER_DYERS_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_DYERS_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_NORTH_PALM",
+      "clusterId": "CLUSTER_NORTH_COURT",
+      "assetId": "ASSET_PALM",
+      "anchorIds": [
+        "PALM_NORTH_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_RUG",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_GROUND_RUG",
+      "anchorIds": [
+        "L3R0_NORTH_DYERS_BAY_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.15,
+        "y": 1,
+        "z": 1.05
+      },
+      "yawOffsetDeg": -2
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_STALL",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_MARKET_STALL",
+      "anchorIds": [
+        "L3R0_NORTH_DYERS_BAY_01"
+      ],
+      "offsetM": {
+        "x": -0.6,
+        "y": -0.1,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.95,
+        "y": 0.95,
+        "z": 0.95
+      },
+      "yawOffsetDeg": 90
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_DYERS_WALL_RACK",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorIds": [
+        "L3R0_NORTH_DYERS_BAY_01"
+      ],
+      "offsetM": {
+        "x": 0.72,
+        "y": 0,
+        "z": 1.18
+      },
+      "scale": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "yawOffsetDeg": 90
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_VAT_WEST",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "L34_NORTH_DYERS_BAY_02"
+      ],
+      "offsetM": {
+        "x": 0.55,
+        "y": -0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.82,
+        "y": 0.82,
+        "z": 0.82
+      },
+      "yawOffsetDeg": -9
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_VAT_EAST",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "L3R0_NORTH_DYERS_BAY_01"
+      ],
+      "offsetM": {
+        "x": 0.72,
+        "y": 1,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.76,
+        "y": 0.76,
+        "z": 0.76
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_VESSEL",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorIds": [
+        "L34_NORTH_DYERS_BAY_02"
+      ],
+      "offsetM": {
+        "x": 0.55,
+        "y": 0.45,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.82,
+        "y": 0.82,
+        "z": 0.82
+      },
+      "yawOffsetDeg": 7
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_EXIT_SIGN",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "L3R0_NORTH_EXIT_SIGN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L3R0_NORTH_DYERS_LINE",
+      "clusterId": "CLUSTER_L3R0_NORTH_IDENTITY",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorIds": [
+        "L3R0_NORTH_DYERS_LINE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_NORTH_COVER",
+      "clusterId": "CLUSTER_NORTH_COVER",
+      "assetId": "ASSET_COVER_GOODS",
+      "anchorIds": [
+        "COVER_NORTH_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_COVER",
+      "clusterId": "CLUSTER_SPAWN_A_COVER",
+      "assetId": "ASSET_SPAWN_COVER",
+      "anchorIds": [
+        "SPAWN_A_COVER_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_B_COVER",
+      "clusterId": "CLUSTER_SPAWN_B_COVER",
+      "assetId": "ASSET_SPAWN_COVER",
+      "anchorIds": [
+        "SPAWN_B_COVER_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEA_RAMP_SIGNS",
+      "clusterId": "CLUSTER_TEA_RAMP_SIGNS",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorIds": [
+        "TEA_RAMP_SIGN_WEST",
+        "TEA_RAMP_SIGN_EAST"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_LANTERN",
+      "clusterId": "CLUSTER_SPICE_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_SPICE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_CARAVAN_LOAD_SOUTH",
+      "clusterId": "CLUSTER_CARAVAN_LANDMARK",
+      "assetId": "ASSET_CARAVAN_LOAD_CRATE",
+      "anchorIds": [
+        "LMK_CARAVAN_DISTRICT"
+      ],
+      "offsetM": {
+        "x": -0.4,
+        "y": -0.08,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.08,
+        "y": 1.08,
+        "z": 1.08
+      },
+      "yawOffsetDeg": -7
+    },
+    {
+      "id": "PLACE_CARAVAN_LOAD_NORTH",
+      "clusterId": "CLUSTER_CARAVAN_LANDMARK",
+      "assetId": "ASSET_CARAVAN_LOAD_CRATE",
+      "anchorIds": [
+        "LMK_CARAVAN_DISTRICT"
+      ],
+      "offsetM": {
+        "x": 0.42,
+        "y": 0.12,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.96,
+        "y": 0.96,
+        "z": 0.96
+      },
+      "yawOffsetDeg": 9
+    },
+    {
+      "id": "PLACE_CARAVAN_LOAD_TOP",
+      "clusterId": "CLUSTER_CARAVAN_LANDMARK",
+      "assetId": "ASSET_CARAVAN_LOAD_CRATE",
+      "anchorIds": [
+        "LMK_CARAVAN_DISTRICT"
+      ],
+      "offsetM": {
+        "x": -0.03,
+        "y": 0,
+        "z": 0.38
+      },
+      "scale": {
+        "x": 0.9,
+        "y": 0.9,
+        "z": 0.9
+      },
+      "yawOffsetDeg": 4
+    },
+    {
+      "id": "PLACE_FOUNTAIN_LANTERN",
+      "clusterId": "CLUSTER_FOUNTAIN_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_FOUNTAIN_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEXTILE_LANTERN",
+      "clusterId": "CLUSTER_TEXTILE_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_TEXTILE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_RUG_LANTERN",
+      "clusterId": "CLUSTER_RUG_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_RUG_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEA_LANTERN",
+      "clusterId": "CLUSTER_TEA_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_TEA_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_LANTERN",
+      "clusterId": "CLUSTER_DYERS_LANTERN",
+      "assetId": "ASSET_CC0_LANTERN",
+      "anchorIds": [
+        "LANTERN_DYERS_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B4_SPICE_CART",
+      "clusterId": "CLUSTER_B4_SPICE_DRESSING",
+      "assetId": "ASSET_MARKET_CART",
+      "anchorIds": [
+        "B4_SPICE_E_CART_GROUND_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 7
+    },
+    {
+      "id": "PLACE_B4_FOUNTAIN_RUG",
+      "clusterId": "CLUSTER_B4_FOUNTAIN_DRESSING",
+      "assetId": "ASSET_GROUND_RUG",
+      "anchorIds": [
+        "B4_FOUNTAIN_E_RUG_GROUND_01",
+        "B4_FOUNTAIN_W_RUG_GROUND_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.25,
+        "y": 1.15,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_PLANTERS",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_COURT_PLANTER",
+      "anchorIds": [
+        "B7_FOUNTAIN_PLANTER_WEST",
+        "B7_FOUNTAIN_PLANTER_EAST"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_TEA_TABLE",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_CC0_TEA_TABLE",
+      "anchorIds": [
+        "B7_FOUNTAIN_TEA_SPILLOVER"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 8
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_TEA_STOOL_A",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_CC0_TEA_STOOL",
+      "anchorIds": [
+        "B7_FOUNTAIN_TEA_SPILLOVER"
+      ],
+      "offsetM": {
+        "x": -0.82,
+        "y": -0.16,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.96,
+        "y": 0.96,
+        "z": 0.96
+      },
+      "yawOffsetDeg": 82
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_TEA_STOOL_B",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_CC0_TEA_STOOL",
+      "anchorIds": [
+        "B7_FOUNTAIN_TEA_SPILLOVER"
+      ],
+      "offsetM": {
+        "x": 0.72,
+        "y": 0.24,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.88,
+        "y": 0.88,
+        "z": 0.88
+      },
+      "yawOffsetDeg": 264
+    },
+    {
+      "id": "PLACE_BPL19_FOUNTAIN_MARKET_STALL",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_MARKET_STALL",
+      "anchorIds": [
+        "B7_FOUNTAIN_MARKET_SPILL"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.76,
+        "y": 0.82,
+        "z": 0.76
+      },
+      "yawOffsetDeg": -8
+    },
+    {
+      "id": "PLACE_BPL19_FOUNTAIN_MARKET_RUG",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_GROUND_RUG",
+      "anchorIds": [
+        "B7_FOUNTAIN_MARKET_SPILL"
+      ],
+      "offsetM": {
+        "x": 0.04,
+        "y": 0.02,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.02,
+        "y": 1.12,
+        "z": 1
+      },
+      "yawOffsetDeg": -5
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_MARKET_CRATE",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorIds": [
+        "B7_FOUNTAIN_MARKET_SPILL"
+      ],
+      "offsetM": {
+        "x": 0.82,
+        "y": 0.38,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.86,
+        "y": 0.86,
+        "z": 0.86
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_MARKET_BASKET",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "B7_FOUNTAIN_MARKET_SPILL"
+      ],
+      "offsetM": {
+        "x": -0.58,
+        "y": 0.4,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.12,
+        "y": 1.12,
+        "z": 1.12
+      },
+      "yawOffsetDeg": -12
+    },
+    {
+      "id": "PLACE_B7_FOUNTAIN_MARKET_POT",
+      "clusterId": "CLUSTER_B7_FOUNTAIN_COURT_LIFE",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorIds": [
+        "B7_FOUNTAIN_MARKET_SPILL"
+      ],
+      "offsetM": {
+        "x": -0.7,
+        "y": -0.34,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.84,
+        "y": 0.84,
+        "z": 0.84
+      },
+      "yawOffsetDeg": 7
+    },
+    {
+      "id": "PLACE_B4_TEXTILE_CART",
+      "clusterId": "CLUSTER_B4_TEXTILE_DRESSING",
+      "assetId": "ASSET_MARKET_CART",
+      "anchorIds": [
+        "BPL16_TEXTILE_E_STOCK_GROUND_04"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.02,
+        "y": 1.02,
+        "z": 1.02
+      },
+      "yawOffsetDeg": 8
+    },
+    {
+      "id": "PLACE_B4_SOUK_CART",
+      "clusterId": "CLUSTER_B4_SOUK_DRESSING",
+      "assetId": "ASSET_MARKET_CART",
+      "anchorIds": [
+        "B4_SOUK_W_CART_GROUND_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.96,
+        "y": 0.96,
+        "z": 0.96
+      },
+      "yawOffsetDeg": 8
+    },
+    {
+      "id": "PLACE_B4_SOUK_PROCESS_VESSEL",
+      "clusterId": "CLUSTER_B4_SOUK_DRESSING",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorIds": [
+        "B4_SOUK_E_GOODS_GROUND_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.84,
+        "y": 0.84,
+        "z": 0.84
+      },
+      "yawOffsetDeg": 7
+    },
+    {
+      "id": "PLACE_L34_SERVICE_SOUTH_BASKET",
+      "clusterId": "CLUSTER_L34_SERVICE_SOUTH_EDGE",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "L34_SERVICE_SOUTH_BASKET_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.08,
+        "y": 1.08,
+        "z": 1.08
+      },
+      "yawOffsetDeg": -8
+    },
+    {
+      "id": "PLACE_L34_SERVICE_SOUTH_POTTERY",
+      "clusterId": "CLUSTER_L34_SERVICE_SOUTH_EDGE",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorIds": [
+        "L34_SERVICE_SOUTH_POTTERY_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.92,
+        "y": 0.92,
+        "z": 0.92
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_L34_CARAVAN_CART",
+      "clusterId": "CLUSTER_L34_CARAVAN_EDGE",
+      "assetId": "ASSET_MARKET_CART",
+      "anchorIds": [
+        "L34_CARAVAN_CART_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.04,
+        "y": 1.04,
+        "z": 1.04
+      },
+      "yawOffsetDeg": -9
+    },
+    {
+      "id": "PLACE_L34_CARAVAN_PACK_LINE",
+      "clusterId": "CLUSTER_L34_CARAVAN_EDGE",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorIds": [
+        "L34_CARAVAN_PACK_LINE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L34_TEA_STALL",
+      "clusterId": "CLUSTER_L34_TEA_EDGE",
+      "assetId": "ASSET_MARKET_STALL",
+      "anchorIds": [
+        "L34_TEA_STALL_01"
+      ],
+      "offsetM": {
+        "x": -1.1,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.9,
+        "y": 0.9,
+        "z": 0.9
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L34_DYERS_ALLEY_VATS",
+      "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "L34_DYERS_ALLEY_VAT_01",
+        "L34_DYERS_ALLEY_VAT_02"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.76,
+        "y": 0.76,
+        "z": 0.76
+      },
+      "yawOffsetDeg": -7
+    },
+    {
+      "id": "PLACE_L34_DYERS_ALLEY_POTTERY",
+      "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorIds": [
+        "L34_DYERS_ALLEY_POTTERY_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.82,
+        "y": 0.82,
+        "z": 0.82
+      },
+      "yawOffsetDeg": 10
+    },
+    {
+      "id": "PLACE_L34_COVERED_SOUK_BASKET",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "LMK_DYERS_DISTRICT"
+      ],
+      "offsetM": {
+        "x": -0.72,
+        "y": -0.48,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "yawOffsetDeg": -12
+    },
+    {
+      "id": "PLACE_L34_DOGLEG_WALL_RACK",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorIds": [
+        "L34_DOGLEG_WALL_RACK_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.05,
+        "y": 1.05,
+        "z": 1.05
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L34_DOGLEG_VAT",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "L34_DOGLEG_VAT_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.75,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "yawOffsetDeg": -8
+    },
+    {
+      "id": "PLACE_L34_DOGLEG_VAT_02",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "L34_DOGLEG_VAT_02"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.75,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_L34_DOGLEG_WORKSTATION",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_DYERS_WORKSTATION",
+      "anchorIds": [
+        "L34_DOGLEG_WORKSTATION_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L34_NORTH_WORKSTATION_02",
+      "clusterId": "CLUSTER_L34_NORTH_EDGE",
+      "assetId": "ASSET_DYERS_WORKSTATION",
+      "anchorIds": [
+        "L34_NORTH_WORKSTATION_02"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.05,
+        "y": 1.05,
+        "z": 1.05
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_L34_NORTH_PLANTER_EAST",
+      "clusterId": "CLUSTER_L34_NORTH_EDGE",
+      "assetId": "ASSET_COURT_PLANTER",
+      "anchorIds": [
+        "L34_NORTH_PLANTER_EAST"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.86,
+        "y": 0.86,
+        "z": 0.86
+      },
+      "yawOffsetDeg": 0
+    }
   ],
   "exterior_wall_patches": [
     {
@@ -3408,10 +5588,10 @@
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "servedBayId": "GROUND_01",
       "along": 0.11904761904761903,
-      "vertical_offset_m": 3.32,
+      "vertical_offset_m": 3.01,
       "inset_m": 0.12,
       "width_m": 2.2,
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Signboard aligned to the merchant bay. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
     },
     {
       "id": "SPICE_W_SIGN_3",
@@ -3420,10 +5600,10 @@
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "servedBayId": "GROUND_03",
       "along": 0.5000000000000001,
-      "vertical_offset_m": 3.32,
+      "vertical_offset_m": 3.01,
       "inset_m": 0.12,
       "width_m": 2.2,
-      "notes": "Restrained signboard aligned to the ordinary merchant door."
+      "notes": "Restrained signboard aligned to the ordinary merchant door. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
     },
     {
       "id": "TEXTILE_W_SHOP_1",
@@ -3743,12 +5923,12 @@
       "zone": "SPICE_STREET",
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.34,
-      "vertical_offset_m": 5.5,
+      "vertical_offset_m": 5.8,
       "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
       "end_along": 0.34,
-      "end_vertical_offset_m": 5.25,
+      "end_vertical_offset_m": 5.55,
       "width_m": 3.6,
-      "notes": "Ochre shade cloth spanning the southern spice beat."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "CANOPY_SPICE_02",
@@ -3756,12 +5936,12 @@
       "zone": "SPICE_STREET",
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.73,
-      "vertical_offset_m": 5.4,
+      "vertical_offset_m": 5.8,
       "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
       "end_along": 0.73,
-      "end_vertical_offset_m": 5.15,
+      "end_vertical_offset_m": 5.55,
       "width_m": 3.2,
-      "notes": "Second asymmetrical shade span."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "CANOPY_TEXTILE_01",
@@ -3782,12 +5962,12 @@
       "zone": "SPICE_STREET",
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.18,
-      "vertical_offset_m": 4.65,
+      "vertical_offset_m": 6.0,
       "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
       "end_along": 0.18,
-      "end_vertical_offset_m": 4.55,
+      "end_vertical_offset_m": 5.9,
       "width_m": 1.4,
-      "notes": "B6 grammar span between opposing Spice facades; cloth hem remains above 3.5 m and clears the served upper-window datum."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "B6_LAUNDRY_TEXTILE_01",
@@ -3795,12 +5975,12 @@
       "zone": "TEXTILE_ARCADE",
       "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
       "along": 0.18,
-      "vertical_offset_m": 4.8,
+      "vertical_offset_m": 6.2,
       "end_frontage_id": "FRONTAGE_TEXTILE_ARCADE_EAST",
       "end_along": 0.18,
-      "end_vertical_offset_m": 4.7,
+      "end_vertical_offset_m": 6.1,
       "width_m": 1.35,
-      "notes": "B6 south Textile cross-facade line tied above the upper-opening datum; lowest cloth edge remains above 3.5 m."
+      "notes": "Laundry line hung above the arcade's upper-window heads."
     },
     {
       "id": "B6_LAUNDRY_TEXTILE_02",
@@ -3837,7 +6017,7 @@
       "z": 0,
       "width_m": 3,
       "height_m": 1.32,
-      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear."
+      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26\u201332 six-meter rotation lane clear."
     },
     {
       "id": "LMK_SPICE_DISTRICT",
@@ -4867,13 +7047,29 @@
         "uri": "repo://procedural/bazaar/ground-rug"
       },
       "license": "Project-Original",
-      "dimensionsM": { "width": 2.05, "depth": 1.15, "height": 0.04 },
+      "dimensionsM": {
+        "width": 2.05,
+        "depth": 1.15,
+        "height": 0.04
+      },
       "collisionClass": "none",
       "shadowPolicy": "receive_only",
       "lodEligible": true,
       "semanticClass": "textile",
-      "runtime": { "mode": "procedural", "id": "bazaar_ground_rug" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_ground_rug"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_MARKET_CART",
@@ -4883,13 +7079,29 @@
         "uri": "repo://procedural/bazaar/market-cart"
       },
       "license": "Project-Original",
-      "dimensionsM": { "width": 1.25, "depth": 0.78, "height": 0.92 },
+      "dimensionsM": {
+        "width": 1.25,
+        "depth": 0.78,
+        "height": 0.92
+      },
       "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "procedural", "id": "bazaar_market_cart" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_market_cart"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_MARKET_STALL",
@@ -4908,8 +7120,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "procedural", "id": "bazaar_market_stall" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_market_stall"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_SIGNBOARD",
@@ -4928,8 +7152,20 @@
       "shadowPolicy": "none",
       "lodEligible": true,
       "semanticClass": "signage",
-      "runtime": { "mode": "procedural", "id": "bazaar_signboard" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_signboard"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CLOTH_CANOPY",
@@ -4948,8 +7184,20 @@
       "shadowPolicy": "receive_only",
       "lodEligible": true,
       "semanticClass": "overhead",
-      "runtime": { "mode": "procedural", "id": "bazaar_cloth_canopy" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cloth_canopy"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_LAUNDRY_LINE",
@@ -4968,8 +7216,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "overhead",
-      "runtime": { "mode": "procedural", "id": "bazaar_laundry_line" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_laundry_line"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_DYERS_HANGING_TEXTILES",
@@ -4988,8 +7248,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "textile",
-      "runtime": { "mode": "procedural", "id": "bazaar_hanging_textiles" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_DYERS_WORKSTATION",
@@ -5008,8 +7280,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "procedural", "id": "bazaar_dyers_workstation" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_dyers_workstation"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_COVER_GOODS",
@@ -5028,8 +7312,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "cover",
-      "runtime": { "mode": "procedural", "id": "bazaar_cover_goods" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cover_goods"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_DECORATIVE_CRATE",
@@ -5039,13 +7335,30 @@
         "uri": "https://polyhaven.com/a/wooden_crate_01"
       },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.8252729177, "depth": 0.4089537412, "height": 0.3496182831 },
+      "dimensionsM": {
+        "width": 0.8252729177,
+        "depth": 0.4089537412,
+        "height": 0.3496182831
+      },
       "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_wooden_crate_01", "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_SPICE_GOODS",
@@ -5064,34 +7377,86 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "procedural", "id": "bazaar_spice_goods" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_goods"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_SPICE_SACK",
       "label": "3DModelsCC0 open sack of grain",
-      "source": { "kind": "external_cc0", "uri": "https://3dmodelscc0.itch.io/free-cc0-medieval-props" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://3dmodelscc0.itch.io/free-cc0-medieval-props"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.5316592455, "depth": 0.5316592455, "height": 0.5013803095 },
+      "dimensionsM": {
+        "width": 0.5316592455,
+        "depth": 0.5316592455,
+        "height": 0.5013803095
+      },
       "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "cc0_spice_sack", "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "cc0_spice_sack",
+        "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_BRASS_POT",
       "label": "Poly Haven Brass Pot 01",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/brass_pot_01" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/brass_pot_01"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.3019456565, "depth": 0.3016925901, "height": 0.2909476549 },
+      "dimensionsM": {
+        "width": 0.3019456565,
+        "depth": 0.3016925901,
+        "height": 0.2909476549
+      },
       "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_brass_pot_01", "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_brass_pot_01",
+        "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_COURT_PLANTER",
@@ -5110,8 +7475,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "foliage",
-      "runtime": { "mode": "procedural", "id": "bazaar_court_planter" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_court_planter"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_FOUNTAIN",
@@ -5130,8 +7507,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": false,
       "semanticClass": "landmark",
-      "runtime": { "mode": "procedural", "id": "bazaar_fountain_octagonal" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_fountain_octagonal"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_HERO_ARCH",
@@ -5150,8 +7539,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": false,
       "semanticClass": "landmark",
-      "runtime": { "mode": "procedural", "id": "bazaar_rug_gate_arch" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_rug_gate_arch"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_TEA_SERVICE",
@@ -5170,47 +7571,119 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "procedural", "id": "bazaar_tea_service" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_tea_service"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_DYERS_SEALED_VAT",
       "label": "Poly Haven sealed timber dyer's vat",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wine_barrel_01" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wine_barrel_01"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.7419015169, "depth": 0.7560357153, "height": 0.871263355 },
+      "dimensionsM": {
+        "width": 0.7419015169,
+        "depth": 0.7560357153,
+        "height": 0.871263355
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_wine_barrel_01", "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_DYERS_CERAMIC_VESSEL",
       "label": "Poly Haven ceramic dyer's vessel",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/ceramic_pot" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/ceramic_pot"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.656, "depth": 0.502, "height": 0.372 },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
       "collisionClass": "soft",
       "shadowPolicy": "receive_only",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_ceramic_pot", "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CARAVAN_LOAD_CRATE",
       "label": "Poly Haven caravan loading crate",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wooden_crate_01" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wooden_crate_01"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.8252729177, "depth": 0.4089537412, "height": 0.3496182831 },
+      "dimensionsM": {
+        "width": 0.8252729177,
+        "depth": 0.4089537412,
+        "height": 0.3496182831
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_wooden_crate_01", "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_PALM",
@@ -5229,8 +7702,20 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "foliage",
-      "runtime": { "mode": "procedural", "id": "bazaar_date_palm" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_date_palm"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_SPAWN_COVER",
@@ -5249,99 +7734,251 @@
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "cover",
-      "runtime": { "mode": "procedural", "id": "bazaar_spawn_cover" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_cover"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_BARREL",
       "label": "Poly Haven Wine Barrel 01",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wine_barrel_01" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wine_barrel_01"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.7419015169, "depth": 0.7560357153, "height": 0.871263355 },
+      "dimensionsM": {
+        "width": 0.7419015169,
+        "depth": 0.7560357153,
+        "height": 0.871263355
+      },
       "collisionClass": "hard",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "cover",
-      "runtime": { "mode": "model", "id": "ph_wine_barrel_01", "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_BASKET",
       "label": "Poly Haven Wicker Basket 02",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wicker_basket_02" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wicker_basket_02"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.375, "depth": 0.271, "height": 0.218 },
+      "dimensionsM": {
+        "width": 0.375,
+        "depth": 0.271,
+        "height": 0.218
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_wicker_basket_02", "uri": "/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wicker_basket_02",
+        "uri": "/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_POTTERY",
       "label": "Poly Haven Ceramic Pot",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/ceramic_pot" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/ceramic_pot"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.656, "depth": 0.502, "height": 0.372 },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
-      "runtime": { "mode": "model", "id": "ph_ceramic_pot", "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_LANTERN",
       "label": "Poly Haven Wooden Lantern 01",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wooden_lantern_01" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wooden_lantern_01"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.221, "depth": 0.235, "height": 0.53 },
+      "dimensionsM": {
+        "width": 0.221,
+        "depth": 0.235,
+        "height": 0.53
+      },
       "collisionClass": "none",
       "shadowPolicy": "none",
       "lodEligible": true,
       "semanticClass": "lighting",
-      "runtime": { "mode": "model", "id": "ph_wooden_lantern_01", "uri": "/assets/models/environment/bazaar/props/wooden_lantern_01/wooden_lantern_01_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_lantern_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_lantern_01/wooden_lantern_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_TEA_TABLE",
       "label": "Poly Haven Wooden Table 02",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/wooden_table_02" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wooden_table_02"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 1.13441664, "depth": 0.706024826, "height": 0.799542887 },
+      "dimensionsM": {
+        "width": 1.13441664,
+        "depth": 0.706024826,
+        "height": 0.799542887
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "model", "id": "ph_wooden_table_02", "uri": "/assets/models/environment/bazaar/props/wooden_table_02/wooden_table_02_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_table_02",
+        "uri": "/assets/models/environment/bazaar/props/wooden_table_02/wooden_table_02_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_TEA_STOOL",
       "label": "Poly Haven Painted Wooden Stool",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/painted_wooden_stool" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/painted_wooden_stool"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 0.384837434, "depth": 0.4060743, "height": 0.578915085 },
+      "dimensionsM": {
+        "width": 0.384837434,
+        "depth": 0.4060743,
+        "height": 0.578915085
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "furniture",
-      "runtime": { "mode": "model", "id": "ph_painted_wooden_stool", "uri": "/assets/models/environment/bazaar/props/painted_wooden_stool/painted_wooden_stool_1k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_painted_wooden_stool",
+        "uri": "/assets/models/environment/bazaar/props/painted_wooden_stool/painted_wooden_stool_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     },
     {
       "id": "ASSET_CC0_LARGE_CASTLE_DOOR",
       "label": "Poly Haven Large Castle Door",
-      "source": { "kind": "external_cc0", "uri": "https://polyhaven.com/a/large_castle_door" },
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/large_castle_door"
+      },
       "license": "CC0-1.0",
-      "dimensionsM": { "width": 2.012, "depth": 0.339, "height": 2.965 },
+      "dimensionsM": {
+        "width": 2.012,
+        "depth": 0.339,
+        "height": 2.965
+      },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "architecture",
-      "runtime": { "mode": "model", "id": "ph_large_castle_door", "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf" },
-      "transform": { "pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": { "x": 1, "y": 1, "z": 1 } }
+      "runtime": {
+        "mode": "model",
+        "id": "ph_large_castle_door",
+        "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
     }
   ]
 }

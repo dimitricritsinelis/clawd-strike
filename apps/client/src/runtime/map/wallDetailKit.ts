@@ -4,6 +4,7 @@ import {
   BoxGeometry,
   Color,
   CylinderGeometry,
+  Float32BufferAttribute,
   Group,
   InstancedMesh,
   MeshPhysicalMaterial,
@@ -190,11 +191,11 @@ function createTemplates(
     },
     door_void: {
       geometry: new BoxGeometry(1, 1, 1),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.95, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.95, metalness: 0.0 }),
     },
     door_void_arch: {
       geometry: createDoorVoidArchGeometry(),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.95, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.95, metalness: 0.0 }),
     },
     door_panel_timber: {
       geometry: createPaneledDoorGeometry("residential"),
@@ -271,7 +272,7 @@ function createTemplates(
     window_recess_dark: {
       geometry: createInsetWindowRecessGeometry(),
       material: new MeshStandardMaterial({
-        color: options.highVis ? 0x292d2c : 0x202423,
+        color: options.highVis ? 0x343937 : 0x2e332f,
         roughness: 0.96,
         metalness: 0.0,
       }),
@@ -290,7 +291,7 @@ function createTemplates(
     },
     window_pointed_arch_void: {
       geometry: createPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
     },
     window_pointed_arch_glass: {
       geometry: createPointedArchPanelGeometry(),
@@ -302,7 +303,7 @@ function createTemplates(
     },
     spawn_window_pointed_arch_void: {
       geometry: createSpawnPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
     },
     spawn_window_pointed_arch_glass: {
       geometry: createSpawnPointedArchPanelGeometry(),
@@ -314,7 +315,7 @@ function createTemplates(
     },
     hero_window_pointed_arch_void: {
       geometry: createHeroPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
     },
     hero_window_pointed_arch_glass: {
       geometry: createHeroPointedArchPanelGeometry(),
@@ -326,7 +327,7 @@ function createTemplates(
     },
     spawn_hero_window_pointed_arch_void: {
       geometry: createSpawnHeroPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x20252a, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
     },
     spawn_hero_window_pointed_arch_glass: {
       geometry: createSpawnHeroPointedArchPanelGeometry(),
@@ -423,6 +424,19 @@ function createTemplateMaterialOverrides(
   ): MeshStandardMaterial => (
     pbrOptions ? createMappedKitMaterial(pbrOptions, recipe) : fallback
   );
+  // Recess interiors are seen through open bays and window grilles at player
+  // height. Mapped alone they still resolve to one flat dim value across the
+  // whole panel, which reads as a dark card pasted behind the bars instead of
+  // a room; the plaster finish gives them aggregate, mottle and corner grime
+  // at the same value.
+  const mappedInterior = (
+    recipe: KitMappedMaterialRecipe,
+    fallback: MeshStandardMaterial,
+  ): MeshStandardMaterial => {
+    const material = mapped(recipe, fallback);
+    applyKitMaterialFinish(material, "recess-plaster");
+    return material;
+  };
   return {
     tm_balcony_wood_dark: mapped({
       materialId: "ph_rough_pine_door",
@@ -451,9 +465,9 @@ function createTemplateMaterialOverrides(
     tm_stained_glass_bright: createStainedGlassMaterial("bright"),
     tm_stained_glass_dim: createStainedGlassMaterial("dim"),
     tm_stained_glass_hero: createStainedGlassMaterial("hero"),
-    tm_window_interior_merchant: mapped({
+    tm_window_interior_merchant: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x554d45 : 0x413b35,
+      tintHex: highVis ? 0x241f19 : 0x18150f,
       roughness: 0.94,
       metalness: 0,
       albedoBoost: highVis ? 1.0 : 0.92,
@@ -463,9 +477,9 @@ function createTemplateMaterialOverrides(
       roughness: 0.94,
       metalness: 0,
     })),
-    tm_window_interior_residential: mapped({
+    tm_window_interior_residential: mappedInterior({
       materialId: "ph_beige_wall_002",
-      tintHex: highVis ? 0x454846 : 0x343735,
+      tintHex: highVis ? 0x1f211d : 0x151713,
       roughness: 0.96,
       metalness: 0,
       albedoBoost: highVis ? 0.98 : 0.9,
@@ -475,7 +489,7 @@ function createTemplateMaterialOverrides(
       roughness: 0.96,
       metalness: 0,
     })),
-    tm_window_interior_hero: mapped({
+    tm_window_interior_hero: mappedInterior({
       materialId: "ph_beige_wall_002",
       tintHex: highVis ? 0x3f4849 : 0x303839,
       roughness: 0.94,
@@ -487,9 +501,9 @@ function createTemplateMaterialOverrides(
       roughness: 0.94,
       metalness: 0,
     })),
-    tm_shop_interior_lining: mapped({
+    tm_shop_interior_lining: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x62584e : 0x494139,
+      tintHex: highVis ? 0x2d271f : 0x1f1a14,
       roughness: 0.93,
       metalness: 0,
       albedoBoost: highVis ? 1.04 : 0.94,
@@ -501,7 +515,7 @@ function createTemplateMaterialOverrides(
       roughness: 0.93,
       metalness: 0,
     })),
-    tm_shop_interior_shadow: mapped({
+    tm_shop_interior_shadow: mappedInterior({
       materialId: "ph_beige_wall_002",
       tintHex: highVis ? 0x3f3c38 : 0x302e2a,
       roughness: 0.97,
@@ -513,7 +527,7 @@ function createTemplateMaterialOverrides(
       roughness: 0.97,
       metalness: 0,
     })),
-    tm_arch_interior_warm: mapped({
+    tm_arch_interior_warm: mappedInterior({
       materialId: "ph_plastered_wall",
       tintHex: highVis ? 0x575149 : 0x423d37,
       roughness: 0.96,
@@ -577,7 +591,7 @@ function createTemplateMaterialOverrides(
       roughness: 0.96,
       metalness: 0,
     })),
-    tm_service_interior: mapped({
+    tm_service_interior: mappedInterior({
       materialId: "ph_beige_wall_002",
       tintHex: highVis ? 0x3d3a35 : 0x2f2c29,
       roughness: 0.97,
@@ -630,18 +644,57 @@ function resolveGeometryVariantKey(instance: WallDetailInstance): string {
   ].join(":");
 }
 
+/**
+ * Kit finishes turn `vertexColors` on for every material they touch, and the
+ * batched/instanced paths carry each instance's authored tint in the vertex
+ * color channel. A geometry with no `color` attribute therefore samples the
+ * WebGL default generic attribute — black — which multiplies both the PBR
+ * albedo and the authored tint down to zero and leaves only dielectric
+ * specular. That is what turns whole families of plain box trim (jambs,
+ * lintels, counters, awning poles and brackets) into a flat near-black
+ * silhouette. Seeding an explicit white attribute makes the tint path a
+ * no-op multiply for authored geometry and restores the material read for
+ * everything else.
+ */
+function ensureVertexColorAttribute(geometry: BufferGeometry): BufferGeometry {
+  if (geometry.hasAttribute("color")) return geometry;
+  const vertexCount = geometry.getAttribute("position").count;
+  geometry.setAttribute("color", new Float32BufferAttribute(new Float32Array(vertexCount * 3).fill(1), 3));
+  return geometry;
+}
+
+const FACADE_WALL_SURFACE_IDS = new Set<WallDetailMeshId>([
+  "facade_wall_shell",
+  "facade_shell_open_front",
+  "facade_wall_infill",
+]);
+
+/** These meshes are the building's wall planes, not trim on top of one. The
+ * wall shader profiles gate streaks, chips and repair patches on the "wall"
+ * surface kind, so classifying the frontage as detail left the largest surface
+ * in every camera with only broad mottle and no close-range finish. */
+function resolveWallShaderSurfaceKind(
+  meshId: WallDetailMeshId,
+  isBalconySurface: boolean,
+): "wall" | "detail" | "balcony" {
+  if (isBalconySurface) return "balcony";
+  return FACADE_WALL_SURFACE_IDS.has(meshId) ? "wall" : "detail";
+}
+
 function resolveBucketGeometry(
   template: DetailTemplate,
   instance: WallDetailInstance,
 ): BufferGeometry {
-  if (instance.meshId !== "facade_boundary_chamfer") return template.geometry;
+  if (instance.meshId !== "facade_boundary_chamfer") return ensureVertexColorAttribute(template.geometry);
   const spec = instance.boundaryChamfer;
   if (!spec) {
     throw new Error(
       `[wall-detail-kit] '${instance.placementId ?? instance.meshId}' is missing its boundary chamfer profile`,
     );
   }
-  return createFacadeBoundaryChamferGeometry(instance.scale.x, instance.scale.y, instance.scale.z, spec);
+  return ensureVertexColorAttribute(
+    createFacadeBoundaryChamferGeometry(instance.scale.x, instance.scale.y, instance.scale.z, spec),
+  );
 }
 
 function buildBlockoutDetailMeshes(
@@ -835,7 +888,7 @@ function buildPbrDetailMeshes(
   const surfaceMaterialCache = new Map<string, MeshStandardMaterial>();
   const getSurfaceMaterial = (
     materialId: string,
-    surfaceKind: "detail" | "balcony",
+    surfaceKind: "wall" | "detail" | "balcony",
     stabilityClass: DetailStabilityClass,
     materialRole: DetailMaterialRole | null,
     meshId: WallDetailMeshId,
@@ -868,7 +921,14 @@ function buildPbrDetailMeshes(
     material.emissive.setHex(0x000000);
     material.emissiveIntensity = 0;
     material.emissiveMap = null;
-    const tileSizeM = wallMaterials.getTileSizeM(materialId);
+    // Facade ironwork is drawn at member scale — a strut is ~85 mm across and a
+    // bracket smaller still. Sampling the shared one-metre metal tile leaves
+    // each of them showing a single near-uniform patch, so they read as
+    // untextured primitives at two metres however they are valued. Give the
+    // role a member-scale texel density instead.
+    const tileSizeM = materialRole === "iron"
+      ? wallMaterials.getTileSizeM(materialId) * 0.12
+      : wallMaterials.getTileSizeM(materialId);
     const uvOffset = resolveMaterialUvOffset(options.seed, materialId);
     applyWallShaderTweaks(material, {
       albedoBoost: resolvedAlbedoBoost,
@@ -923,7 +983,7 @@ function buildPbrDetailMeshes(
         bucket.materialSource === "manifest" && bucket.materialId
           ? getSurfaceMaterial(
               bucket.materialId,
-              isBalconySurface ? "balcony" : "detail",
+              resolveWallShaderSurfaceKind(bucket.meshId, isBalconySurface),
               stabilityClass,
               bucket.materialRole,
               bucket.meshId,
@@ -1066,7 +1126,7 @@ function buildPbrDetailMeshes(
       bucket.materialSource === "manifest" && bucket.materialId
         ? getSurfaceMaterial(
             bucket.materialId,
-            isBalconySurface ? "balcony" : "detail",
+            resolveWallShaderSurfaceKind(bucket.meshId, isBalconySurface),
             stabilityClass,
             bucket.materialRole,
             bucket.meshId,

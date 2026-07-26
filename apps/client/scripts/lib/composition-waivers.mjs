@@ -14,8 +14,8 @@ const LEGACY_STATUS = "legacy-migrated";
 const APPROVED_STATUS = "approved";
 const SEALED_LEGACY_MIGRATION = Object.freeze({
   id: "visual-overhaul-roadmap-archive-2026-07-25",
-  recordCount: 35,
-  recordsSha256: "65b077b7bb085fd57ddd7b0e21f3c5e82a375232954fcad1bdc94f99f41036c0",
+  recordCount: 28,
+  recordsSha256: "6d9301a5598ff678dadfebdb238b68f38615b8939573ef44189fd48ea8716edd",
 });
 
 function fail(message) {
@@ -201,7 +201,7 @@ export function normalizeCompositionWaiverRegistry(raw, options = {}) {
       || legacyMigration.recordCount !== SEALED_LEGACY_MIGRATION.recordCount
       || legacyMigration.recordsSha256 !== SEALED_LEGACY_MIGRATION.recordsSha256
     ) {
-      fail("legacyMigration must match the immutable 35-record migration seal");
+      fail("legacyMigration must match the immutable 28-record migration seal");
     }
   }
   if (legacyMigration.recordCount !== legacyRecords.length) {

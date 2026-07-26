@@ -95,6 +95,13 @@ export type BuildV3ArchitectureOptions = {
    * massing does not span connector openings; collision remains independent.
    */
   experimentalVisualCutoutMassing?: boolean;
+  /**
+   * Bays that already have a merchant stall seated in them. A bay serves one
+   * function: where a stall occupies the recess, the bay must not also render
+   * its own counter, shelving, display posts and shutters, or the frontage
+   * reads as two competing shops stacked in one opening.
+   */
+  stallSeatedPlacementIds?: ReadonlySet<string>;
 };
 
 export type V3ArchitectureBuildResult = {
@@ -1024,13 +1031,15 @@ function pushMerchantUpperScreen(
       moduleId: "active_merchant_upper_screen",
       semanticClass: "active_merchant_upper_screen_support",
       meshId: "balcony_bracket",
+      // Kept short so the corbel stays clear of the sign/awning band below it;
+      // a corbel that reaches the signboard reads as being carried by it.
       position: offsetPosition(
-        { ...center, y: slabY - 0.18 },
+        { ...center, y: slabY - 0.15 },
         placement.face,
         candidate.alongM + side * widthM * 0.31,
         facadeDepthM + projectionM * 0.35,
       ),
-      scale: { x: 0.085, y: 0.24, z: 0.3 },
+      scale: { x: 0.085, y: 0.18, z: 0.3 },
       yawRad,
       detailMaterialId: timberMaterialId,
       detailTintHex: timberTintHex,
@@ -3066,7 +3075,10 @@ function pushSupportedAwning(
         : awningVariant < 0.67
           ? 0xb19361
           : 0x739089;
-  const metalTintHex = awningVariant < 0.5 ? 0x8d8374 : 0x74868a;
+  // Weathered wrought fixings, not pale stone. The authored light values
+  // made every strut and bolt cap the brightest element on a shaded
+  // frontage, pulling the eye off the openings they carry.
+  const metalTintHex = awningVariant < 0.5 ? 0x544c42 : 0x474f52;
   pushInstance(instances, {
     placementId: `${placement.id}:awning-ledger`,
     moduleId: "awning_wall_ledger",
@@ -3117,9 +3129,12 @@ function pushSupportedAwning(
   });
   for (const side of [-1, 1] as const) {
     const wallAnchorInwardM = 0.045;
-    const edgeSocketInwardM = awningDepthM * 0.9;
+    // The socket has to land on the awning frame it carries. Sitting 160 mm
+    // below the slab and 90% of the way to the drip edge, the strut ran past
+    // the awning's visible edge and stopped in open air with no tie.
+    const edgeSocketInwardM = awningDepthM * 0.76;
     const wallAnchorY = canopyY - 0.52;
-    const edgeSocketY = canopyY - 0.16;
+    const edgeSocketY = canopyY - 0.055;
     const supportDepthM = edgeSocketInwardM - wallAnchorInwardM;
     const supportRiseM = edgeSocketY - wallAnchorY;
     const supportLengthM = Math.hypot(supportDepthM, supportRiseM);
@@ -3509,11 +3524,15 @@ function pushDoor(
       + displayWidthM * 0.5
       + 0.12
     );
+    // A doorside stock plinth is a built stone block, not a painted timber
+    // slab. Reading it as sandstone gives it real texel detail at the two
+    // metres this camera inspects it from, and separates it from the joinery
+    // family that surrounds it.
     const displayTintHex = marketUnit < 0.34
-      ? 0x9e704f
+      ? 0xc9b48d
       : marketUnit < 0.67
-        ? 0x6b9184
-        : 0xa38a5d;
+        ? 0xbfae90
+        : 0xcbb896;
     pushInstance(instances, {
       placementId: `${placement.id}:closed-shop-display`,
       moduleId: "active_merchant_closed_shop_display",
@@ -3525,9 +3544,28 @@ function pushDoor(
         displayAlongM,
         0.1,
       ),
-      scale: { x: displayWidthM, y: displayHeightM, z: 0.28 },
+      scale: { x: displayWidthM, y: displayHeightM, z: 0.34 },
       yawRad,
-      trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+      trimMaterialId: "ph_stone_trim_sandstone",
+      detailTintHex: displayTintHex,
+      uvProjection: "world",
+    });
+    // A capping course reads the block as masonry and gives the stock a
+    // finished surface to sit on instead of a bare slab top.
+    pushInstance(instances, {
+      placementId: `${placement.id}:closed-shop-display-cap`,
+      moduleId: "active_merchant_closed_shop_display",
+      semanticClass: "active_merchant_generic_door_display",
+      meshId: "door_lintel",
+      position: offsetPosition(
+        { ...center, y: bottomY + displayHeightM + 0.03 },
+        placement.face,
+        displayAlongM,
+        0.095,
+      ),
+      scale: { x: displayWidthM + 0.07, y: 0.06, z: 0.38 },
+      yawRad,
+      trimMaterialId: "ph_stone_trim_sandstone",
       detailTintHex: displayTintHex,
       uvProjection: "world",
     });
@@ -3543,7 +3581,7 @@ function pushDoor(
       semanticClass: "active_merchant_generic_door_stock",
       meshId: stockMeshId,
       position: offsetPosition(
-        { ...center, y: bottomY + displayHeightM + stockSize.y * 0.5 },
+        { ...center, y: bottomY + displayHeightM + 0.06 + stockSize.y * 0.5 },
         placement.face,
         displayAlongM,
         0.06,
@@ -4727,6 +4765,7 @@ function pushFacadeModule(
   doorModelPlacements: DoorModelPlacement[],
   fortifiedDoorModelAvailable: boolean,
   experimentalVisualCutouts: boolean,
+  stallSeated: boolean,
 ): void {
   // Connector collision is owned by the compiled traversal/collision layer.
   // Its façade aperture is already removed by pushMassingVisualShell; emitting
@@ -4993,6 +5032,10 @@ function pushFacadeModule(
       const counterWidthFactor = experimentalVisualCutouts
         ? 0.7 + shopVariant * 0.12
         : 0.8 + shopVariant * 0.1;
+      // A bay serves one function. Where a stall is seated in this recess the
+      // bay is the stall's alcove, so it must not also render its own counter,
+      // shelving, display posts, stock and shutters competing with it.
+      if (!stallSeated) {
       pushInstance(instances, {
         placementId: `${placement.id}:counter-front`,
         moduleId: placement.moduleId,
@@ -5109,6 +5152,10 @@ function pushFacadeModule(
           uvProjection: "world",
         });
       }
+      }
+      // The alcove still stocks the stall it houses: shelving and stored goods
+      // stay so the bay reads as an occupied merchant space rather than an
+      // empty void behind the stall.
       const shelfElevationsM = (experimentalVisualCutouts ? [1.18, 1.72] : [1.16, 1.72])
         .filter((elevationM) => elevationM < placement.sizeM.height - 0.3);
       for (const [index, shelfElevationM] of shelfElevationsM.entries()) {
@@ -5201,6 +5248,9 @@ function pushFacadeModule(
           detailTintHex: shopKitTintHex,
         });
       }
+      // The display frontage is the shopfront the stall replaces, so it stays
+      // suppressed where a stall is seated in the bay.
+      if (!stallSeated) {
       const displayPostBottomM = counterHeightM + 0.12;
       const displayHeaderM = placement.sizeM.height - 0.28;
       const displayPostHeightM = displayHeaderM - displayPostBottomM;
@@ -5278,6 +5328,7 @@ function pushFacadeModule(
           detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
           detailTintHex: shopShutterTintHex,
         });
+      }
       }
       pushSupportedAwning(
         placement,
@@ -6523,6 +6574,7 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         doorModelPlacements,
         options.fortifiedDoorModelAvailable,
         experimentalVisualCutoutMassing,
+        options.stallSeatedPlacementIds?.has(placement.id) ?? false,
       );
     }
   }

@@ -178,14 +178,21 @@ export const DETAIL_MATERIAL_ROLES: Readonly<Record<DetailMaterialRole, DetailMa
     roughness: 0.88,
     metalness: 0.01,
   },
-  "painted-wood": { materialId: "ph_worn_planks", tintHex: 0x9ac1ad, roughness: 0.8, metalness: 0.01 },
+  // Untinted painted-wood instances (window frames, sills, joinery pushed
+  // without an authored tint) take this value directly, so it has to sit in a
+  // painted-timber band rather than the near-white it reads as in sunlight.
+  "painted-wood": { materialId: "ph_worn_planks", tintHex: 0x7f9a8d, roughness: 0.8, metalness: 0.01 },
   "stone-trim": { materialId: "ph_stone_trim_sandstone", tintHex: 0xd0b58c, roughness: 0.86, metalness: 0.01 },
   "plaster-trim": { materialId: "ph_trim_sanded_01", tintHex: 0xd8c29d, roughness: 0.9, metalness: 0 },
+  // Facade ironwork is painted and oxidised, so it keeps a diffuse response.
+  // At high metalness it loses diffuse entirely and can only return the
+  // low-intensity sky probe, which reads as a black cutout in shade and blows
+  // the small bolt caps out to white where the sun does catch them.
   iron: {
     materialId: "ph_rusty_metal_02",
-    tintHex: 0x8b7b67,
-    roughness: 0.58,
-    metalness: 0.68,
+    tintHex: 0x6d6154,
+    roughness: 0.79,
+    metalness: 0.2,
   },
   cloth: { materialId: "ph_plastered_wall", tintHex: 0xa96743, roughness: 0.96, metalness: 0 },
   glass: { materialId: "ph_whitewashed_brick_cool", tintHex: 0x71858b, roughness: 0.2, metalness: 0 },

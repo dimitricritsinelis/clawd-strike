@@ -354,6 +354,33 @@ test("seeded decoration-opening violation rejects a fixture intersecting an open
   );
 });
 
+test("a fixture may occupy the one opening its anchor declares it serves", () => {
+  const call = (openingId) => validateDecorationOpeningBuffers({
+    anchors: [{
+      id: "FIXTURE",
+      type: "dressing_anchor",
+      frontageId: "COURT_WEST",
+      servedBayId: "GROUND_01",
+    }],
+    architecturePlacements: [{
+      id: openingId,
+      kind: "facade_module",
+      moduleKind: "door",
+      zoneId: "COURT",
+      center: { x: 1, y: 1, z: 1.2 },
+      sizeM: { width: 1.2, depth: 0.2, height: 2.4 },
+      yawDeg: 0,
+    }],
+    dressingPlacements: [fixturePlacement("FIXTURE_PLACE", "FIXTURE", 1, 1)],
+    rules: makeRules(),
+  });
+  // The served bay is the fixture's own opening: a stall seated in its merchant
+  // recess is the intended composition, not a conflict.
+  assert.deepEqual(call("ARCH_COURT_WEST_GROUND_01"), []);
+  // Any other opening on the same wall still has to be cleared.
+  assert.throws(() => call("ARCH_COURT_WEST_GROUND_02"), /violate measured opening buffers/);
+});
+
 test("seeded canopy violation rejects an overhead span crossing an upper opening", () => {
   const anchors = [{
     id: "CANOPY",

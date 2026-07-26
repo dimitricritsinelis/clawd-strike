@@ -47,20 +47,20 @@ function approvedWaiver(overrides = {}) {
   };
 }
 
-test("the sealed legacy registry contains exactly the migrated 35 conflicts", async () => {
+test("the sealed legacy registry contains exactly the migrated 28 conflicts", async () => {
   const raw = JSON.parse(await readFile(
     new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
     "utf8",
   ));
   const registry = normalizeCompositionWaiverRegistry(raw);
-  assert.equal(registry.waivers.length, 35);
+  assert.equal(registry.waivers.length, 28);
   assert.equal(
     registry.waivers.every((waiver) => waiver.approval.status === "legacy-migrated"),
     true,
   );
-  assert.equal(registry.byKind["canopy-opening"].length, 7);
+  assert.equal(registry.byKind["canopy-opening"].length, 4);
   assert.equal(registry.byKind["opening-service"].length, 4);
-  assert.equal(registry.byKind["decoration-opening"].length, 7);
+  assert.equal(registry.byKind["decoration-opening"].length, 3);
   assert.equal(registry.byKind.fenestration.length, 13);
   assert.equal(registry.byKind["wall-budget"].length, 3);
   assert.equal(registry.byKind["hard-overlap"].length, 1);
@@ -128,7 +128,7 @@ test("the one-time legacy migration seal rejects changed or newly resealed legac
   }]);
   assert.throws(
     () => normalizeCompositionWaiverRegistry(raw),
-    /immutable 35-record migration seal/,
+    /immutable 28-record migration seal/,
   );
 });
 

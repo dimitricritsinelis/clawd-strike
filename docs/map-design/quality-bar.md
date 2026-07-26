@@ -47,6 +47,22 @@ These budgets are hard requirements at final signoff, not per-iteration rejectio
 - Render-only changes must not alter player or bot grounding, navigation, projectile collision, LOS, opening clearance, or route width.
 - Fixed-camera polish does not justify moving gameplay geometry.
 
+## Composition and semantics
+
+Composition failures are hard failures, and they outrank finish. A frontage with correct
+materials and incorrect composition does not pass.
+
+- Datum ordering: overhead spans, canopies, banners, cables, and signs attach above the head of the openings on the wall they land on, never across or into them.
+- Vertical alignment: ground-floor bay centerlines align with upper-storey opening centerlines on the same frontage within 0.15 m, unless the offset is authored and reads as deliberate.
+- Rhythm: bay widths, pier widths, and spacings form a readable repeating series rather than arbitrary values.
+- Semantic exclusivity: one bay serves one function. A merchant stall bay does not also carry a shop door, a shuttered window, or window hardware, and every fixture serves exactly one identifiable opening.
+- Load path and hierarchy: what carries what is legible, and heavier elements are not carried by lighter ones.
+
+The composition validators enforce volume clearance and door service space, not this
+grammar, so passing generation is not evidence that a frontage composes. When a
+composition failure would have passed those validators, name the missing rule; add it
+beside the existing rules with a test when it is cheap and deterministic.
+
 ## Production-quality close-range finish
 
 Production quality means real textured PBR materials with world-scaled UVs; correct physical scale; readable roughness, normal, and material separation; grounded contact; finished edges, backs, supports, fasteners, and attachments; and clean junctions without gaps or halos. Repeated families must retain deterministic, parameterized variation and plausible architectural placement. Flat-color or placeholder-reading surfaces at player height do not meet the bar.

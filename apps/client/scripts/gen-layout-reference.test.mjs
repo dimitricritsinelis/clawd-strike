@@ -71,7 +71,7 @@ test("validates the authoritative map spec without writing generated outputs", a
   );
   assert.match(
     result.markdown,
-    /PLACE_SPICE_CANOPIES_CANOPY_SPICE_01.*\(27\.00, 20\.58, 5\.38\), size 3\.60×12\.00×0\.18m, yaw 90\.00deg/u,
+    /PLACE_SPICE_CANOPIES_CANOPY_SPICE_01.*\(27\.00, 20\.58, 5\.67\), size 3\.60×12\.00×0\.18m, yaw 90\.00deg/u,
   );
   assert.doesNotMatch(result.markdown, /procedural door grid/u);
 });

@@ -28,8 +28,9 @@ Visible improvement in the named fixed-camera screenshots is the primary objecti
 
 ## Diagnosis
 
-- Use a read-only visual critic to inspect the current screenshots against the relevant reference images.
-- Ask for the three most visible quality defects, the causal mechanism behind each, and the single highest-impact coherent visual objective.
+- Run the computed composition audit first and treat its findings as the area's composition defect list. Clear them before opening any finish objective.
+- Use two separate read-only critics, never one merged prompt. The first sees only the elevation camera and is asked only about composition and semantics, given the quality bar's composition list verbatim. The second sees the remaining cameras and is asked only about finish. A single critic asked for "the most visible defects" reports large-area material problems and reliably misses alignment, datum ordering, and semantic conflicts.
+- Ask each for the three most visible defects in its class, the causal mechanism behind each, and the single highest-impact coherent objective.
 - When source ownership is already obvious, proceed directly.
 - Only when source ownership is unclear, use a read-only technical scout to locate the responsible source files, map-spec fields, asset definitions, materials, or geometry builders and recommend the smallest coherent implementation approach.
 - A technical scout may run in parallel with the critic, but it must not edit files.
@@ -54,7 +55,7 @@ After each edit batch:
 2. Recapture the exact same cameras with the exact same settings.
 3. Launch a new read-only visual critic.
 4. Give the critic the previous accepted screenshots, candidate screenshots, relevant reference images, and bounded-area goal. Give no code diff and no indication which set is newer.
-5. Ask whether A or B is clearly closer to the reference quality bar and why.
+5. Ask it to score composition and finish separately and name the winner on each. A candidate that improves finish while regressing composition is a rejection.
 6. Use the comparison as strong evidence, then make the acceptance decision. Do not require unanimous subagent agreement.
 7. Keep a clearly better candidate.
 8. On a tie or ambiguous result, Claude may make one focused revision and compare again before reverting.

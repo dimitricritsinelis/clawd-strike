@@ -40,8 +40,9 @@ Last updated: 2026-07-25
 
 ## Map safety
 
-- Treat layout, collision, traversal surfaces, spawns, sightlines, cover, authored routes, player movement, and combat as locked unless the user explicitly authorizes the relevant change.
+- Treat layout, collision, traversal surfaces, spawns, sightlines, cover, authored routes, opening clearance widths, player movement, and combat as locked unless the user explicitly authorizes the relevant change.
 - Within those locks, map-visual work may change render-only geometry, placement, materials, textures, lighting response, attachments, and authored one-off assets. Ordinary visual edits within the user-defined area do not require additional permission.
+- Authored facade composition is not part of the layout lock. Which facade module occupies which bay, opening and fixture positions and centerlines, span and sign attachment heights, and facade rhythm may change when composition requires it, through map authority and its owning generators, provided collision, route width, and sightlines are unchanged. Do not defer a composition defect on the assumption that the spec is immutable.
 - Render-only work must use render-only paths and must not silently change gameplay geometry or navigation.
 - Player, bot, projectile, LOS, grounding, and elevation behavior must remain consistent with the authored map contract.
 - Keep routes and openings usable and visually legible. Do not occlude doors or windows, float geometry, leave unsupported structures, or introduce visible intersections.
@@ -53,7 +54,8 @@ Last updated: 2026-07-25
 Use one primary change tag: `map-geometry`, `map-visual`, `movement-sim`, `combat-gameplay`, `bot-ai`, `ui-flow`, `public-contract`, `perf`, `tooling`, or `docs`.
 
 - `map-geometry`: read map authority; regenerate maps; verify the generated-map diff; run targeted geometry tests, all authored traversal routes, manual traversal, deterministic reference review, and `pnpm qa:completion`.
-- `map-visual`: the user prompt defines the bounded area, allowed scope, and fixed cameras. Visible improvement in those cameras is the primary objective. Use the map-polish skill and quality bar for the iteration method and final validation.
+- `map-visual`: the user prompt defines the bounded area, allowed scope, and fixed cameras. Visible improvement in those cameras is the primary objective. Resolve composition before finish: run the computed composition audit below and clear its findings before any material, lighting, or dressing work on that area. The camera set must include one near-flat-on elevation of the whole area at a distance where bay rhythm, datum lines, and alignment are legible; add it through the authored shot schema when the existing set has none. Use the map-polish skill and quality bar for the iteration method and final validation.
+- Composition audit (map-visual, map-geometry): compute it from map authority, never by eye. For the bounded frontage, tabulate every architecture and dressing placement with its centerline, width, sill height, and head height, plus the attachment height of every span, sign, and cable, then report attachments at or below an opening head, bays whose centerline misses the nearest upper-storey opening centerline by more than 0.15 m, bays carrying more than one primary function, fixtures with an ambiguous or absent served opening, and outliers in the bay-width and spacing series. Oblique and close-range cameras cannot show these defects; do not substitute them for the audit.
 - `movement-sim`, `combat-gameplay`, `ui-flow`: run the smallest targeted tests plus `pnpm smoke:game`; add human pointer-lock/menu/input smoke when feel or UX changes.
 - `bot-ai`: run targeted tests, `pnpm --filter @clawd-strike/client bot:smoke`, and `pnpm smoke:game`.
 - `perf`: record comparable before/after measurements and run the owning runtime smoke.

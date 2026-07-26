@@ -13,7 +13,7 @@
       },
       "yaw_degrees": "0=+Y(north), 90=+X(east), 180=-Y(south), 270=-X(west)"
     },
-    "shotCount": 22,
+    "shotCount": 23,
     "coreShotCount": 12,
     "closeupShotCount": 4,
     "compareShotId": "SHOT_02_SPAWN_A_TO_BAZAAR",
@@ -112,17 +112,17 @@
       "label": "V3 topdown establishing",
       "description": "High oblique overview of all three routes and the raised west loop.",
       "camera": {
-      "pos": {
-        "x": 28,
-        "y": 46,
-        "z": 95
-      },
-      "lookAt": {
-        "x": 28,
-        "y": 46,
-        "z": 0
-      },
-      "fovDeg": 55
+        "pos": {
+          "x": 28,
+          "y": 46,
+          "z": 95
+        },
+        "lookAt": {
+          "x": 28,
+          "y": 46,
+          "z": 0
+        },
+        "fovDeg": 55
       },
       "durationSec": 4,
       "tags": [
@@ -496,10 +496,10 @@
           "y": 44,
           "z": 1.7
         },
-      "lookAt": {
-        "x": 15,
-        "y": 54,
-        "z": 2.4
+        "lookAt": {
+          "x": 15,
+          "y": 54,
+          "z": 2.4
         },
         "fovDeg": 72
       },
@@ -874,10 +874,10 @@
           "y": 18,
           "z": 1.7
         },
-      "lookAt": {
-        "x": 22.1,
-        "y": 20.4,
-        "z": 2.2
+        "lookAt": {
+          "x": 22.1,
+          "y": 20.4,
+          "z": 2.2
         },
         "fovDeg": 72
       },
@@ -921,9 +921,9 @@
           "lmk-spice-district"
         ],
         "visualTelemetry": {
-        "requiredVisibleAssets": [
-          {
-            "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
+          "requiredVisibleAssets": [
+            {
+              "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
               "assetId": "ASSET_CLOTH_CANOPY",
               "semanticClass": "overhead",
               "representations": [
@@ -935,69 +935,69 @@
               ],
               "screenAreaRatio": {
                 "min": 0.004,
-              "max": 0.6
+                "max": 0.6
+              }
+            },
+            {
+              "placementId": "PLACE_SPICE_STALLS_SPICE_W_SHOP_1",
+              "assetId": "ASSET_MARKET_STALL",
+              "moduleId": "bazaar_market_stall",
+              "semanticClass": "furniture",
+              "representations": [
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.015,
+                "max": 0.4
+              }
+            },
+            {
+              "placementId": "PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT",
+              "assetId": "ASSET_CC0_SPICE_SACK",
+              "moduleId": "cc0_spice_sack",
+              "semanticClass": "container",
+              "representations": [
+                "model"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.002,
+                "max": 0.12
+              }
+            },
+            {
+              "placementId": "PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT",
+              "assetId": "ASSET_CC0_BRASS_POT",
+              "moduleId": "ph_brass_pot_01",
+              "semanticClass": "container",
+              "representations": [
+                "model"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "screenAreaRatio": {
+                "min": 0.0007,
+                "max": 0.08
+              }
             }
-          },
-          {
-            "placementId": "PLACE_SPICE_STALLS_SPICE_W_SHOP_1",
-            "assetId": "ASSET_MARKET_STALL",
-            "moduleId": "bazaar_market_stall",
-            "semanticClass": "furniture",
-            "representations": [
-              "module"
-            ],
-            "materialModes": [
-              "pbr"
-            ],
-            "shadowModes": [
-              "cast_receive"
-            ],
-            "maxGroundingGapM": 0.03,
-            "screenAreaRatio": {
-              "min": 0.015,
-              "max": 0.4
-            }
-          },
-          {
-            "placementId": "PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT",
-            "assetId": "ASSET_CC0_SPICE_SACK",
-            "moduleId": "cc0_spice_sack",
-            "semanticClass": "container",
-            "representations": [
-              "model"
-            ],
-            "materialModes": [
-              "pbr"
-            ],
-            "shadowModes": [
-              "cast_receive"
-            ],
-            "maxGroundingGapM": 0.03,
-            "screenAreaRatio": {
-              "min": 0.002,
-              "max": 0.12
-            }
-          },
-          {
-            "placementId": "PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT",
-            "assetId": "ASSET_CC0_BRASS_POT",
-            "moduleId": "ph_brass_pot_01",
-            "semanticClass": "container",
-            "representations": [
-              "model"
-            ],
-            "materialModes": [
-              "pbr"
-            ],
-            "shadowModes": [
-              "cast_receive"
-            ],
-            "screenAreaRatio": {
-              "min": 0.0007,
-              "max": 0.08
-            }
-          }
-        ]
+          ]
         }
       }
     },
@@ -1068,17 +1068,17 @@
       "label": "Merchant door facade closeup",
       "description": "Close inspection of an ordinary timber shop door, shuttered window, trim, and wall junction.",
       "camera": {
-      "pos": {
-        "x": 25.2,
-        "y": 18.5,
-        "z": 1.55
-      },
-      "lookAt": {
-        "x": 21.1,
-        "y": 21.8,
-        "z": 2.2
-      },
-      "fovDeg": 52
+        "pos": {
+          "x": 25.2,
+          "y": 18.5,
+          "z": 1.55
+        },
+        "lookAt": {
+          "x": 21.1,
+          "y": 21.8,
+          "z": 2.2
+        },
+        "fovDeg": 52
       },
       "durationSec": 4,
       "tags": [
@@ -1111,9 +1111,9 @@
                 "pbr"
               ],
               "maxGroundingGapM": 0.03,
-            "screenAreaRatio": {
-              "min": 0.04,
-              "max": 0.85
+              "screenAreaRatio": {
+                "min": 0.04,
+                "max": 0.85
               },
               "dimensionsM": {
                 "width": {
@@ -1140,46 +1140,46 @@
                 "pbr"
               ],
               "maxGroundingGapM": 0.03,
-            "screenAreaRatio": {
-              "min": 0.03,
-              "max": 0.4
-            }
-          },
-          {
-            "moduleId": "window_shuttered_dark",
-            "semanticClass": "window_shutter",
-            "representations": [
-              "module"
-            ],
-            "materialModes": [
-              "pbr"
-            ],
-            "screenAreaRatio": {
-              "min": 0.015,
-              "max": 0.35
-            }
-          },
-          {
-            "moduleId": "shop_recess_market",
-            "semanticClass": "active_merchant_bay",
-            "representations": [
-              "module"
-            ],
-            "materialModes": [
-              "pbr"
-            ],
-            "screenAreaRatio": {
-              "min": 0.03,
-              "max": 0.65
+              "screenAreaRatio": {
+                "min": 0.03,
+                "max": 0.4
+              }
             },
-            "dimensionsM": {
-              "depth": {
-                "min": 1,
-                "max": 2
+            {
+              "moduleId": "window_shuttered_dark",
+              "semanticClass": "window_shutter",
+              "representations": [
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "screenAreaRatio": {
+                "min": 0.015,
+                "max": 0.35
+              }
+            },
+            {
+              "moduleId": "shop_recess_market",
+              "semanticClass": "active_merchant_bay",
+              "representations": [
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "screenAreaRatio": {
+                "min": 0.03,
+                "max": 0.65
+              },
+              "dimensionsM": {
+                "depth": {
+                  "min": 1,
+                  "max": 2
+                }
               }
             }
-          }
-        ]
+          ]
         }
       }
     },
@@ -1271,17 +1271,17 @@
       "label": "Canopy attachment closeup",
       "description": "Upward close inspection of supported cloth, finished edges, and its wall/pole attachments.",
       "camera": {
-      "pos": {
-        "x": 25.2,
-        "y": 18.2,
-        "z": 3
-      },
-      "lookAt": {
-        "x": 21.05,
-        "y": 20.2,
-        "z": 5.4
-      },
-      "fovDeg": 50
+        "pos": {
+          "x": 25.2,
+          "y": 18.2,
+          "z": 3
+        },
+        "lookAt": {
+          "x": 21.05,
+          "y": 20.2,
+          "z": 5.4
+        },
+        "fovDeg": 50
       },
       "durationSec": 4,
       "tags": [
@@ -1307,35 +1307,35 @@
         },
         "visualTelemetry": {
           "requiredVisibleAssets": [
-          {
-            "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
-            "assetId": "ASSET_CLOTH_CANOPY",
-            "moduleId": "bazaar_cloth_canopy",
-            "semanticClass": "overhead",
-            "representations": [
-              "module"
-            ],
-              "materialModes": [
-                "pbr"
-            ],
-            "screenAreaRatio": {
-              "min": 0.01,
-              "max": 0.8
-            }
-          },
-          {
-            "moduleId": "canopy_wall_ring",
-            "semanticClass": "canopy_support",
+            {
+              "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
+              "assetId": "ASSET_CLOTH_CANOPY",
+              "moduleId": "bazaar_cloth_canopy",
+              "semanticClass": "overhead",
               "representations": [
                 "module"
               ],
               "materialModes": [
                 "pbr"
-            ],
-            "screenAreaRatio": {
-              "min": 0.004,
-              "max": 0.2
-            }
+              ],
+              "screenAreaRatio": {
+                "min": 0.01,
+                "max": 0.8
+              }
+            },
+            {
+              "moduleId": "canopy_wall_ring",
+              "semanticClass": "canopy_support",
+              "representations": [
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "screenAreaRatio": {
+                "min": 0.004,
+                "max": 0.2
+              }
             }
           ]
         }
@@ -1429,19 +1429,33 @@
       "label": "Spawn A north frontage coverage",
       "description": "Player-eye audit of the two previously bare wall runs framing the Spice Street entry.",
       "camera": {
-        "pos": { "x": 28, "y": 5.5, "z": 1.7 },
-        "lookAt": { "x": 28, "y": 13.2, "z": 2.25 },
+        "pos": {
+          "x": 28,
+          "y": 5.5,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 28,
+          "y": 13.2,
+          "z": 2.25
+        },
         "fovDeg": 84
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "spawn-a"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "spawn-a"
+      ],
       "reviewFocus": [
         "both north wall returns carry generated architectural relief",
         "opening rhythm frames rather than narrows the central route",
         "distinct wall materials separate the two building identities"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.7,
           "minNonSkyRatio": 0.3,
@@ -1456,19 +1470,33 @@
       "label": "Spawn B south frontage coverage",
       "description": "Player-eye audit of the two previously bare wall runs framing the Rug Gate exit.",
       "camera": {
-        "pos": { "x": 28, "y": 86.5, "z": 1.7 },
-        "lookAt": { "x": 28, "y": 78.8, "z": 2.25 },
+        "pos": {
+          "x": 28,
+          "y": 86.5,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 28,
+          "y": 78.8,
+          "z": 2.25
+        },
         "fovDeg": 84
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "spawn-b"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "spawn-b"
+      ],
       "reviewFocus": [
         "both south wall returns carry generated architectural relief",
         "opening rhythm frames rather than narrows the central route",
         "distinct wall materials separate the two building identities"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.7,
           "minNonSkyRatio": 0.3,
@@ -1483,19 +1511,33 @@
       "label": "Service South east frontage coverage",
       "description": "Oblique player-eye audit of the long east service wall and its transition into Caravan Court.",
       "camera": {
-        "pos": { "x": 6, "y": 20, "z": 1.7 },
-        "lookAt": { "x": 9.75, "y": 24, "z": 2.2 },
+        "pos": {
+          "x": 6,
+          "y": 20,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 9.75,
+          "y": 24,
+          "z": 2.2
+        },
         "fovDeg": 78
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "service-south"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "service-south"
+      ],
       "reviewFocus": [
         "the long wall has measured, datum-aligned relief",
         "service rhythm stays calmer than the market core",
         "the north traversal opening remains visually unblocked"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.62,
           "minNonSkyRatio": 0.38,
@@ -1510,19 +1552,33 @@
       "label": "Caravan Court east frontage coverage",
       "description": "Player-eye audit of the split east wall around the authored mid connector.",
       "camera": {
-        "pos": { "x": 7.2, "y": 39, "z": 1.7 },
-        "lookAt": { "x": 14.7, "y": 39, "z": 2.2 },
+        "pos": {
+          "x": 7.2,
+          "y": 39,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 14.7,
+          "y": 39,
+          "z": 2.2
+        },
         "fovDeg": 86
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "caravan-court"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "caravan-court"
+      ],
       "reviewFocus": [
         "both supported wall runs carry generated architectural relief",
         "the five-metre connector gap remains explicit",
         "the two facade identities do not collapse into one material"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.62,
           "minNonSkyRatio": 0.38,
@@ -1537,19 +1593,33 @@
       "label": "Dyers Alley east frontage coverage",
       "description": "Oblique player-eye audit of the previously bare full-height east alley wall.",
       "camera": {
-        "pos": { "x": 49, "y": 20, "z": 1.7 },
-        "lookAt": { "x": 52.75, "y": 24, "z": 2.2 },
+        "pos": {
+          "x": 49,
+          "y": 20,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 52.75,
+          "y": 24,
+          "z": 2.2
+        },
         "fovDeg": 78
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "dyers-alley"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "dyers-alley"
+      ],
       "reviewFocus": [
         "the long alley wall has repeated but non-blank relief",
         "service articulation retains a readable route edge",
         "relief remains grounded on the unchanged collision wall"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.62,
           "minNonSkyRatio": 0.38,
@@ -1564,23 +1634,80 @@
       "label": "Covered Souk south frontage coverage",
       "description": "Player-eye audit of the previously bare south return beside the covered market route.",
       "camera": {
-        "pos": { "x": 47, "y": 38, "z": 1.7 },
-        "lookAt": { "x": 44, "y": 32.25, "z": 2.2 },
+        "pos": {
+          "x": 47,
+          "y": 38,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 44,
+          "y": 32.25,
+          "z": 2.2
+        },
         "fovDeg": 76
       },
       "durationSec": 4,
-      "tags": ["audit", "frontage-coverage", "covered-souk"],
+      "tags": [
+        "audit",
+        "frontage-coverage",
+        "covered-souk"
+      ],
       "reviewFocus": [
         "the supported south wall run carries generated architectural relief",
         "the return reads as part of the bazaar rather than a blank blockout cap",
         "the adjacent route opening and arcade remain legible"
       ],
       "acceptance": {
-        "forbiddenSceneTags": ["sky-only"],
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
         "screenCoverage": {
           "maxSkyRatio": 0.62,
           "minNonSkyRatio": 0.38,
           "minDetailRatio": 0.07
+        }
+      }
+    },
+    {
+      "id": "AUDIT_07_SPICE_WEST_ELEVATION",
+      "captureKind": "audit",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Spice Street west frontage elevation",
+      "description": "Near-flat-on elevation of the whole west merchant frontage at a distance where bay rhythm, datum lines and vertical alignment are legible. Composition camera; oblique and close-range views cannot show these defects.",
+      "camera": {
+        "pos": {
+          "x": 27.9,
+          "y": 20.12,
+          "z": 3.5
+        },
+        "lookAt": {
+          "x": 21.0,
+          "y": 20.12,
+          "z": 3.5
+        },
+        "fovDeg": 60
+      },
+      "durationSec": 4,
+      "tags": [
+        "audit",
+        "composition",
+        "elevation",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "overhead spans and signs attach above the opening heads, never across them",
+        "ground bay centerlines align with the upper-storey window centerlines",
+        "bay widths, pier widths and spacings read as a repeating series",
+        "one bay serves one function; no stall sharing a bay with a door or shutters"
+      ],
+      "acceptance": {
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.45,
+          "minNonSkyRatio": 0.55,
+          "minDetailRatio": 0.08
         }
       }
     }

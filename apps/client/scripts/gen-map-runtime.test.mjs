@@ -628,10 +628,10 @@ test("compiles authored cloth spans at their true midpoint, span, width, and yaw
   assert.equal(first.id, second?.id, "compiled placement identity must remain stable");
   assert.ok(Math.abs(first.position.x - 27) < 1e-9);
   assert.ok(Math.abs(first.position.y - 20.5808) < 1e-9);
-  assert.ok(Math.abs(first.position.z - 5.375) < 1e-9);
+  assert.ok(Math.abs(first.position.z - 5.675) < 1e-9);
   assert.deepEqual(first.spanSeats, {
-    start: { x: 21, y: 20.5808, z: 5.5 },
-    end: { x: 33, y: 20.5808, z: 5.25 },
+    start: { x: 21, y: 20.5808, z: 5.8 },
+    end: { x: 33, y: 20.5808, z: 5.55 },
   });
   assert.ok(Math.abs(first.dimensionsM.depth - 12) < 1e-9);
   assert.equal(first.dimensionsM.width, 3.6);

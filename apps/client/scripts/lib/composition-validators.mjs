@@ -479,7 +479,17 @@ export function validateDecorationOpeningBuffers({
   const deferredConflicts = [];
   const unexemptedConflicts = [];
   for (const fixture of fixtures) {
+    const servedBayId = anchorById.get(fixture.anchorId)?.servedBayId;
+    const servedOpeningId = servedBayId
+      ? `ARCH_${anchorById.get(fixture.anchorId)?.frontageId}_${servedBayId}`
+      : null;
     for (const opening of openings) {
+      // A fixture is allowed to occupy the one opening its anchor declares it
+      // serves: a stall seated in its own merchant bay, or a sign hung in its
+      // own shopfront, is the intended composition rather than a conflict. It
+      // still has to clear every other opening on the wall. This mirrors the
+      // served-bay carve-out in validateOpeningServiceability.
+      if (servedOpeningId && opening.id === servedOpeningId) continue;
       if (
         !overlaps(
           placementAabb(fixture, rules.clearances.fixtureBufferM),

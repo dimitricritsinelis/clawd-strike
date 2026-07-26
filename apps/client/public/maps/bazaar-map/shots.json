@@ -13,7 +13,7 @@
       },
       "yaw_degrees": "0=+Y(north), 90=+X(east), 180=-Y(south), 270=-X(west)"
     },
-    "shotCount": 22,
+    "shotCount": 23,
     "coreShotCount": 12,
     "closeupShotCount": 4,
     "compareShotId": "SHOT_02_SPAWN_A_TO_BAZAAR",
@@ -106,7 +106,7 @@
     "generatedFrom": {
       "schemaVersion": 1,
       "path": "docs/map-design/shots.json",
-      "sha256": "3b9f78dde782d1889c170ac61772a3481f6417aafd0c1fbced8db7349ddb3985",
+      "sha256": "ec3eb34e7e164b63445078ea6c6286fbd23c2e282c7037692046a509ccf3e784",
       "generator": "apps/client/scripts/gen-map-runtime.mjs"
     }
   },
@@ -1674,6 +1674,49 @@
           "maxSkyRatio": 0.62,
           "minNonSkyRatio": 0.38,
           "minDetailRatio": 0.07
+        }
+      }
+    },
+    {
+      "id": "AUDIT_07_SPICE_WEST_ELEVATION",
+      "captureKind": "audit",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Spice Street west frontage elevation",
+      "description": "Near-flat-on elevation of the whole west merchant frontage at a distance where bay rhythm, datum lines and vertical alignment are legible. Composition camera; oblique and close-range views cannot show these defects.",
+      "camera": {
+        "pos": {
+          "x": 27.9,
+          "y": 20.12,
+          "z": 3.5
+        },
+        "lookAt": {
+          "x": 21,
+          "y": 20.12,
+          "z": 3.5
+        },
+        "fovDeg": 60
+      },
+      "durationSec": 4,
+      "tags": [
+        "audit",
+        "composition",
+        "elevation",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "overhead spans and signs attach above the opening heads, never across them",
+        "ground bay centerlines align with the upper-storey window centerlines",
+        "bay widths, pier widths and spacings read as a repeating series",
+        "one bay serves one function; no stall sharing a bay with a door or shutters"
+      ],
+      "acceptance": {
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.45,
+          "minNonSkyRatio": 0.55,
+          "minDetailRatio": 0.08
         }
       }
     }

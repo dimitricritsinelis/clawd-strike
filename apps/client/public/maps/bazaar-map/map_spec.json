@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "eab59ebb389d4c93e97e2725563b2e2b94823cfe9141a1984fb2fcb4eb741d56",
+    "sha256": "5c157c0679df65628cec3bc26ce9f64365ce44f5503c2f206189487b49da9f74",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -1826,7 +1826,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "vent_service",
-          "along": 0.05162412993039442,
+          "along": 0.07395591647331785,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -1835,7 +1835,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "vent_service",
-          "along": 0.35054137664346474,
+          "along": 0.3579853054911059,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -1844,7 +1844,7 @@
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "vent_service",
-          "along": 0.6494586233565351,
+          "along": 0.6420146945088939,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_03",
@@ -1853,7 +1853,7 @@
         {
           "id": "STORY_1_WINDOW_04",
           "moduleId": "vent_service",
-          "along": 0.9483758700696056,
+          "along": 0.926044083526682,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_04",
@@ -2397,7 +2397,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "window_shuttered",
-          "along": 0.20348837209302328,
+          "along": 0.2616279069767442,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -2406,7 +2406,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "window_shuttered",
-          "along": 0.7965116279069769,
+          "along": 0.7383720930232558,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -2502,7 +2502,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "vent_service",
-          "along": 0.03185853379152348,
+          "along": 0.045640034364261166,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -2511,7 +2511,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "vent_service",
-          "along": 0.18790568919434897,
+          "along": 0.1970933562428408,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -2520,7 +2520,7 @@
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "vent_service",
-          "along": 0.34395284459717446,
+          "along": 0.3485466781214204,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_03",
@@ -2529,7 +2529,7 @@
         {
           "id": "STORY_1_WINDOW_04",
           "moduleId": "vent_service",
-          "along": 0.49999999999999994,
+          "along": 0.5,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_04",
@@ -2538,7 +2538,7 @@
         {
           "id": "STORY_1_WINDOW_05",
           "moduleId": "vent_service",
-          "along": 0.6560471554028254,
+          "along": 0.6514533218785795,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_05",
@@ -2547,7 +2547,7 @@
         {
           "id": "STORY_1_WINDOW_06",
           "moduleId": "vent_service",
-          "along": 0.8120943108056511,
+          "along": 0.802906643757159,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_06",
@@ -2556,7 +2556,7 @@
         {
           "id": "STORY_1_WINDOW_07",
           "moduleId": "vent_service",
-          "along": 0.9681414662084764,
+          "along": 0.9543599656357388,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_07",
@@ -2883,7 +2883,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "window_shuttered",
-          "along": 0.09259259259259259,
+          "along": 0.11904761904761903,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -2892,7 +2892,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "window_shuttered",
-          "along": 0.2962962962962963,
+          "along": 0.30952380952380953,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -2901,7 +2901,7 @@
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "window_shuttered",
-          "along": 0.5,
+          "along": 0.5000000000000001,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_03",
@@ -2910,7 +2910,7 @@
         {
           "id": "STORY_1_WINDOW_04",
           "moduleId": "window_shuttered",
-          "along": 0.7037037037037037,
+          "along": 0.6904761904761905,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_04",
@@ -2919,7 +2919,7 @@
         {
           "id": "STORY_1_WINDOW_05",
           "moduleId": "window_shuttered",
-          "along": 0.9074074074074074,
+          "along": 0.8809523809523812,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_05",
@@ -2970,7 +2970,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "window_shuttered",
-          "along": 0.16666666666666666,
+          "along": 0.21428571428571425,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -2979,7 +2979,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "window_shuttered",
-          "along": 0.8333333333333335,
+          "along": 0.7857142857142857,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -3106,7 +3106,7 @@
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "window_screened",
-          "along": 0.0818452380952381,
+          "along": 0.1413690476190476,
           "baseElevationM": 4.15,
           "datumId": "STORY_1_SILL_4.15",
           "columnId": "UPPER_COLUMN_01",
@@ -3115,7 +3115,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "window_screened",
-          "along": 0.3606150793650794,
+          "along": 0.3804563492063492,
           "baseElevationM": 4.15,
           "datumId": "STORY_1_SILL_4.15",
           "columnId": "UPPER_COLUMN_02",
@@ -3124,7 +3124,7 @@
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "window_screened",
-          "along": 0.6393849206349207,
+          "along": 0.6195436507936507,
           "baseElevationM": 4.15,
           "datumId": "STORY_1_SILL_4.15",
           "columnId": "UPPER_COLUMN_03",
@@ -3133,7 +3133,7 @@
         {
           "id": "STORY_1_WINDOW_04",
           "moduleId": "window_screened",
-          "along": 0.918154761904762,
+          "along": 0.8586309523809523,
           "baseElevationM": 4.15,
           "datumId": "STORY_1_SILL_4.15",
           "columnId": "UPPER_COLUMN_04",
@@ -6213,7 +6213,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 46.09,
-        "y": 13.889999999999999,
+        "y": 14.274999999999999,
         "z": 3.92
       },
       "sizeM": {
@@ -6241,7 +6241,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 46.09,
-        "y": 19.043333333333333,
+        "y": 19.171666666666667,
         "z": 3.92
       },
       "sizeM": {
@@ -6269,7 +6269,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 46.09,
-        "y": 24.196666666666665,
+        "y": 24.06833333333333,
         "z": 3.92
       },
       "sizeM": {
@@ -6297,7 +6297,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 46.09,
-        "y": 29.349999999999998,
+        "y": 28.964999999999996,
         "z": 3.92
       },
       "sizeM": {
@@ -7521,7 +7521,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 66.52,
+        "y": 66.92,
         "z": 4.505
       },
       "sizeM": {
@@ -7549,7 +7549,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 70.6,
+        "y": 70.2,
         "z": 4.505
       },
       "sizeM": {
@@ -7809,7 +7809,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 48.922,
+        "y": 49.307,
         "z": 3.92
       },
       "sizeM": {
@@ -7837,7 +7837,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 53.281333333333336,
+        "y": 53.538,
         "z": 3.92
       },
       "sizeM": {
@@ -7865,7 +7865,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 57.64066666666667,
+        "y": 57.769,
         "z": 3.92
       },
       "sizeM": {
@@ -7921,7 +7921,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 66.35933333333332,
+        "y": 66.231,
         "z": 3.92
       },
       "sizeM": {
@@ -7949,7 +7949,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 70.71866666666666,
+        "y": 70.46199999999999,
         "z": 3.92
       },
       "sizeM": {
@@ -7977,7 +7977,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 75.078,
+        "y": 74.693,
         "z": 3.92
       },
       "sizeM": {
@@ -8761,7 +8761,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 16.84,
+        "y": 17.24,
         "z": 4.505
       },
       "sizeM": {
@@ -8789,7 +8789,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 19.92,
+        "y": 20.12,
         "z": 4.505
       },
       "sizeM": {
@@ -8845,7 +8845,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 26.08,
+        "y": 25.880000000000003,
         "z": 4.505
       },
       "sizeM": {
@@ -8873,7 +8873,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 21.12,
-        "y": 29.160000000000004,
+        "y": 28.760000000000005,
         "z": 4.505
       },
       "sizeM": {
@@ -8993,7 +8993,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 18.88,
-        "y": 58.2,
+        "y": 58.6,
         "z": 5.905
       },
       "sizeM": {
@@ -9021,7 +9021,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 18.88,
-        "y": 63.800000000000004,
+        "y": 63.4,
         "z": 5.905
       },
       "sizeM": {
@@ -9345,7 +9345,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 24.12,
-        "y": 50.38,
+        "y": 51.18,
         "z": 4.8500000000000005
       },
       "sizeM": {
@@ -9373,7 +9373,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 24.12,
-        "y": 54.126666666666665,
+        "y": 54.39333333333333,
         "z": 4.8500000000000005
       },
       "sizeM": {
@@ -9401,7 +9401,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 24.12,
-        "y": 57.873333333333335,
+        "y": 57.60666666666667,
         "z": 4.8500000000000005
       },
       "sizeM": {
@@ -9429,7 +9429,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 24.12,
-        "y": 61.620000000000005,
+        "y": 60.82,
         "z": 4.8500000000000005
       },
       "sizeM": {
@@ -10313,19 +10313,19 @@
       "position": {
         "x": 27,
         "y": 18.1616,
-        "z": 4.6
+        "z": 5.95
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
           "x": 21,
           "y": 18.1616,
-          "z": 4.65
+          "z": 6
         },
         "end": {
           "x": 33,
           "y": 18.1616,
-          "z": 4.55
+          "z": 5.9
         }
       },
       "scale": {
@@ -10358,19 +10358,19 @@
       "position": {
         "x": 29.5,
         "y": 51.6992,
-        "z": 4.75
+        "z": 6.15
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
           "x": 24,
           "y": 51.6992,
-          "z": 4.8
+          "z": 6.2
         },
         "end": {
           "x": 35,
           "y": 51.6992,
-          "z": 4.7
+          "z": 6.1
         }
       },
       "scale": {
@@ -12591,19 +12591,19 @@
       "position": {
         "x": 27,
         "y": 20.5808,
-        "z": 5.375
+        "z": 5.675
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
           "x": 21,
           "y": 20.5808,
-          "z": 5.5
+          "z": 5.8
         },
         "end": {
           "x": 33,
           "y": 20.5808,
-          "z": 5.25
+          "z": 5.55
         }
       },
       "scale": {
@@ -12636,19 +12636,19 @@
       "position": {
         "x": 27,
         "y": 26.477600000000002,
-        "z": 5.275
+        "z": 5.675
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
           "x": 21,
           "y": 26.477600000000002,
-          "z": 5.4
+          "z": 5.8
         },
         "end": {
           "x": 33,
           "y": 26.477600000000002,
-          "z": 5.15
+          "z": 5.55
         }
       },
       "scale": {
@@ -12883,7 +12883,7 @@
       "position": {
         "x": 21.12,
         "y": 17.24,
-        "z": 3.32
+        "z": 3.01
       },
       "yawDeg": 90,
       "scale": {
@@ -13673,20 +13673,20 @@
       "pos": {
         "x": 21,
         "y": 18.1616,
-        "z": 4.65
+        "z": 6
       },
       "yawDeg": 90,
       "endPos": {
         "x": 33,
         "y": 18.1616,
-        "z": 4.55
+        "z": 5.9
       },
       "widthM": 1.4,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.18,
       "endFrontageId": "FRONTAGE_SPICE_STREET_EAST",
       "endAlong": 0.18,
-      "notes": "B6 grammar span between opposing Spice facades; cloth hem remains above 3.5 m and clears the served upper-window datum."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "B6_LAUNDRY_TEXTILE_01",
@@ -13695,20 +13695,20 @@
       "pos": {
         "x": 24,
         "y": 51.6992,
-        "z": 4.8
+        "z": 6.2
       },
       "yawDeg": 90,
       "endPos": {
         "x": 35,
         "y": 51.6992,
-        "z": 4.7
+        "z": 6.1
       },
       "widthM": 1.35,
       "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
       "along": 0.18,
       "endFrontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
       "endAlong": 0.18,
-      "notes": "B6 south Textile cross-facade line tied above the upper-opening datum; lowest cloth edge remains above 3.5 m."
+      "notes": "Laundry line hung above the arcade's upper-window heads."
     },
     {
       "id": "B6_LAUNDRY_TEXTILE_02",
@@ -13869,20 +13869,20 @@
       "pos": {
         "x": 21,
         "y": 20.5808,
-        "z": 5.5
+        "z": 5.8
       },
       "yawDeg": 90,
       "endPos": {
         "x": 33,
         "y": 20.5808,
-        "z": 5.25
+        "z": 5.55
       },
       "widthM": 3.6,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.34,
       "endFrontageId": "FRONTAGE_SPICE_STREET_EAST",
       "endAlong": 0.34,
-      "notes": "Ochre shade cloth spanning the southern spice beat."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "CANOPY_SPICE_02",
@@ -13891,20 +13891,20 @@
       "pos": {
         "x": 21,
         "y": 26.477600000000002,
-        "z": 5.4
+        "z": 5.8
       },
       "yawDeg": 90,
       "endPos": {
         "x": 33,
         "y": 26.477600000000002,
-        "z": 5.15
+        "z": 5.55
       },
       "widthM": 3.2,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.73,
       "endFrontageId": "FRONTAGE_SPICE_STREET_EAST",
       "endAlong": 0.73,
-      "notes": "Second asymmetrical shade span."
+      "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
       "id": "CANOPY_TEXTILE_01",
@@ -14771,14 +14771,14 @@
       "pos": {
         "x": 21.12,
         "y": 17.24,
-        "z": 3.32
+        "z": 3.01
       },
       "yawDeg": 90,
       "widthM": 2.2,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.11904761904761903,
       "servedBayId": "GROUND_01",
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Signboard aligned to the merchant bay. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
     },
     {
       "id": "SPICE_W_SIGN_3",
@@ -14787,14 +14787,14 @@
       "pos": {
         "x": 21.12,
         "y": 23,
-        "z": 3.32
+        "z": 3.01
       },
       "yawDeg": 90,
       "widthM": 2.2,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.5000000000000001,
       "servedBayId": "GROUND_03",
-      "notes": "Restrained signboard aligned to the ordinary merchant door."
+      "notes": "Restrained signboard aligned to the ordinary merchant door. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
     },
     {
       "id": "TEA_E_SHOP_1",

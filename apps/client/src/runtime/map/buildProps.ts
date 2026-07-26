@@ -4,8 +4,10 @@ import {
   BufferGeometry,
   Color,
   CylinderGeometry,
+  DataTexture,
   DoubleSide,
   ExtrudeGeometry,
+  Float32BufferAttribute,
   Group,
   InstancedMesh,
   Matrix4,
@@ -14,6 +16,9 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Object3D,
+  PlaneGeometry,
+  RGBAFormat,
+  SRGBColorSpace,
   SphereGeometry,
   Shape,
   TorusGeometry,
@@ -1067,6 +1072,20 @@ function resolveForwardPlacementOffset(placement: PropPlacement): number {
   return 0;
 }
 
+/**
+ * A batch that declares `vertexColors` gets its per-instance tint through the
+ * vertex color channel. Procedural geometry that never authored a `color`
+ * attribute then samples the WebGL default — black — which multiplies both the
+ * texture and the authored tint to zero. That is what renders the cover-goods
+ * tarp as an untextured black wedge instead of striped cloth.
+ */
+function ensureBatchVertexColors(geometry: BufferGeometry, vertexColors: boolean): BufferGeometry {
+  if (!vertexColors || geometry.hasAttribute("color")) return geometry;
+  const vertexCount = geometry.getAttribute("position").count;
+  geometry.setAttribute("color", new Float32BufferAttribute(new Float32Array(vertexCount * 3).fill(1), 3));
+  return geometry;
+}
+
 function buildDressedGroup(
   placements: PropPlacement[],
   propModels: PropModelLibrary,
@@ -1320,6 +1339,47 @@ function instanceSharedStaticModelMeshes(
     }
   };
   pruneEmptyGroups(root);
+}
+
+/**
+ * Objects resting on the pavement have no ambient occlusion of their own: the
+ * sun is high, so a shaded cluster casts almost nothing, and every crate, pot
+ * and rug meets the flagstones on a hard unshaded seam that reads as a decal
+ * pasted onto the ground. A soft radial occlusion quad under each grounded
+ * dressing footprint supplies the contact the lighting rig cannot.
+ */
+function createGroundContactTexture(): DataTexture {
+  const size = 64;
+  const data = new Uint8Array(size * size * 4);
+  for (let y = 0; y < size; y += 1) {
+    for (let x = 0; x < size; x += 1) {
+      const nx = (x + 0.5) / size - 0.5;
+      const ny = (y + 0.5) / size - 0.5;
+      const radial = Math.min(1, Math.hypot(nx, ny) / 0.5);
+      // Hold the occlusion across the footprint and release it over the outer
+      // third, so the darkening still reads where an object actually meets the
+      // ground instead of fading out before it clears the object's silhouette.
+      const t = Math.max(0, Math.min(1, (1 - radial) / 0.42));
+      const core = t * t * (3 - 2 * t);
+      const alpha = Math.max(0, Math.min(0.54, core * 0.54));
+      const offset = (y * size + x) * 4;
+      data[offset] = 34;
+      data[offset + 1] = 27;
+      data[offset + 2] = 20;
+      data[offset + 3] = Math.round(alpha * 255);
+    }
+  }
+  const texture = new DataTexture(data, size, size, RGBAFormat);
+  texture.name = "prop-ground-contact-occlusion";
+  texture.colorSpace = SRGBColorSpace;
+  texture.needsUpdate = true;
+  return texture;
+}
+
+function createGroundContactGeometry(): BufferGeometry {
+  const geometry = new PlaneGeometry(1, 1, 1, 1);
+  geometry.rotateX(-Math.PI * 0.5);
+  return geometry;
 }
 
 function buildCompiledDressing(
@@ -1666,6 +1726,14 @@ function buildCompiledDressing(
       normalScale: 0.34,
       albedoBoost: 0.78,
       vertexColors: true,
+    }),
+    groundContact: createBatch("v3-prop-ground-contact", 0xffffff, "thresholdRug", createGroundContactGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      metalness: 0,
+      albedoBoost: 1,
+      textureGenerator: "prop-ground-contact",
     }),
     groundRug: createBatch("v3-main-lane-ground-rugs", 0xffffff, "thresholdRug", () => createGroundRugGeometry(0), {
       receiveShadow: true,
@@ -2104,6 +2172,23 @@ function buildCompiledDressing(
       z: world.z,
     };
 
+    // Ground-resting dressing gets a contact-occlusion footprint. Overhead and
+    // wall-mounted placements are excluded: they have nothing to sit on.
+    if (!centeredAtAnchor && placement.classification !== "overhead") {
+      const footprintM = Math.max(width, depth);
+      if (footprintM >= 0.34) {
+        batches.groundContact.instances.push({
+          x: world.x,
+          y: world.y + 0.012,
+          z: world.z,
+          yawRad,
+          sx: width * 1.6,
+          sy: 1,
+          sz: depth * 1.6,
+        });
+      }
+    }
+
     if (placement.runtime.id === "bazaar_cover_goods") {
       const placementRoot = new Group();
       placementRoot.name = `v3-dressing-${placement.id}`;
@@ -2114,7 +2199,10 @@ function buildCompiledDressing(
       const mirror = coverVariant === 1 ? -1 : 1;
       const crateSpecs = [
         { x: mirror * -width * (0.22 + coverVariant * 0.025), y: 0, z: depth * (coverVariant === 2 ? -0.04 : 0.02), yaw: mirror * (0.035 + coverVariant * 0.035), width: width * (0.52 - coverVariant * 0.025), height: height * (0.38 + coverVariant * 0.018), depth: depth * 0.8, tintHex: [0xa99b88, 0x91aa9e, 0xb79a7c][coverVariant]! },
-        { x: mirror * width * (0.34 + coverVariant * 0.025), y: 0, z: -depth * (0.28 - coverVariant * 0.035), yaw: mirror * (0.18 - coverVariant * 0.035), width: width * (0.3 + coverVariant * 0.018), height: height * (0.22 + coverVariant * 0.016), depth: depth * (0.5 + coverVariant * 0.045), tintHex: [0xd4bb91, 0xb9c9bd, 0xd0a77f][coverVariant]! },
+        // Tucked inboard and back of the sack it used to pass through. The
+        // sack is the cluster's authored cover volume, so the crate moves
+        // rather than the sack.
+        { x: mirror * width * (0.24 + coverVariant * 0.02), y: 0, z: -depth * (0.36 - coverVariant * 0.03), yaw: mirror * (0.18 - coverVariant * 0.035), width: width * (0.26 + coverVariant * 0.016), height: height * (0.22 + coverVariant * 0.016), depth: depth * (0.44 + coverVariant * 0.04), tintHex: [0xd4bb91, 0xb9c9bd, 0xd0a77f][coverVariant]! },
         { x: mirror * width * (coverVariant === 2 ? 0.18 : -0.03), y: height * (0.39 + coverVariant * 0.018), z: depth * (coverVariant === 1 ? -0.08 : -0.02), yaw: mirror * (0.09 + coverVariant * 0.055), width: width * (0.36 + coverVariant * 0.025), height: height * (0.22 - coverVariant * 0.012), depth: depth * (0.52 - coverVariant * 0.035), tintHex: [0xb7d1c5, 0xc6a783, 0x9fb8ae][coverVariant]! },
       ];
       const crateBatches = [batches.coverCrateBraced, batches.coverCrateHorizontal, batches.coverCratePainted] as const;
@@ -2709,9 +2797,39 @@ function buildCompiledDressing(
             {
               x: 0,
               y: supportDropM * 0.5,
-              z: edgeSide * depth * 0.49,
+              z: edgeSide * depth * 0.485,
             },
             { x: 0.018, y: supportDropM, z: 0.018 },
+            spanPitchRad,
+            0,
+          );
+          // The rope is authored to the exact seat-to-seat span, so its cut end
+          // sits in open air in front of whatever trim stands proud of the wall
+          // plane. Cap that terminal with the eye it should be tied to, and
+          // keep the ring on the rope line rather than a support-drop above it.
+          pushLocalInstance(
+            batches.canopyFixtures,
+            world,
+            yawRad,
+            {
+              x: 0,
+              y: 0.02,
+              z: edgeSide * depth * 0.5,
+              yaw: edgeSide === -1 ? -Math.PI * 0.5 : Math.PI * 0.5,
+              visualQa: {
+                placementId: `${placement.id}:laundry-line-eye:${edgeSide === -1 ? "near" : "far"}`,
+                anchorId: placement.anchorId,
+                assetId: placement.assetId,
+                moduleId: "laundry_wall_ring",
+                semanticClass: "laundry_line_support",
+                representation: "module",
+                materialMode: "pbr",
+                groundedGapM: 0,
+                dimensions: { x: 0.3, y: 0.3, z: 0.18 },
+                shadowMode: "cast_only",
+              },
+            },
+            { x: 0.5, y: 0.5, z: 0.5 },
             spanPitchRad,
             0,
           );
@@ -2722,7 +2840,7 @@ function buildCompiledDressing(
             {
               x: 0,
               y: supportDropM,
-              z: edgeSide * depth * 0.49,
+              z: edgeSide * depth * 0.485,
               yaw: edgeSide === -1 ? -Math.PI * 0.5 : Math.PI * 0.5,
               visualQa: {
                 placementId: `${placement.id}:laundry-wall-ring:${edgeSide === -1 ? "near" : "far"}`,
@@ -3187,7 +3305,7 @@ function buildCompiledDressing(
   const dummy = new Object3D();
   for (const batch of compiledBatches) {
     if (batch.instances.length === 0) continue;
-    const geometry = batch.createGeometry();
+    const geometry = ensureBatchVertexColors(batch.createGeometry(), batch.vertexColors);
     const textureMap = batch.textureUrl
       ? loadTiledTexture(batch.textureUrl, batch.textureRepeat)
       : batch.textureGenerator === "painted-wood-sign-a"
@@ -3198,6 +3316,8 @@ function buildCompiledDressing(
             ? createPaintedWoodSignTexture("c")
           : batch.textureGenerator === "glazed-fountain-tile"
             ? createGlazedFountainTileTexture()
+          : batch.textureGenerator === "prop-ground-contact"
+            ? createGroundContactTexture()
             : null;
     const normalMap = batch.normalTextureUrl
       ? loadTiledTexture(batch.normalTextureUrl, batch.textureRepeat, "normal")
@@ -3299,6 +3419,15 @@ function buildCompiledDressing(
         fresnelStrength: FOUNTAIN_WATER_MATERIAL_INPUTS.fresnelStrength,
         rippleNormal: "procedural-scrolling",
       };
+    }
+    if (batch.textureGenerator === "prop-ground-contact" && material instanceof MeshStandardMaterial) {
+      material.transparent = true;
+      material.depthWrite = false;
+      material.alphaTest = 0.004;
+      material.polygonOffset = true;
+      material.polygonOffsetFactor = -1;
+      material.polygonOffsetUnits = -3;
+      material.needsUpdate = true;
     }
     if (material instanceof MeshStandardMaterial && batch.albedoBoost !== 1) {
       material.color.multiplyScalar(batch.albedoBoost);
