@@ -3,13 +3,13 @@ Authority: normative
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: durable internal decisions that future tasks should not rediscover
 Do not use for: current task status, temporary bug lists, per-task notes, public browser-agent behavior details
-Last updated: 2026-07-25
+Last updated: 2026-07-26
 
 # Durable Decisions
 
 ## DEC-001: Authority surfaces are role-based
-- `AGENTS.md` is the only normative internal implementation doc.
-- `docs/decisions.md` owns durable internal decisions, while the current user prompt owns the bounded visual task.
+- `AGENTS.md` owns the durable repository-wide implementation safeguards.
+- `docs/decisions.md` owns durable internal decisions, while the current user prompt owns the bounded task.
 - `README.md` is quick start only, `docs/map-design/layout-reference.md` is generated reference evidence, and `apps/client/public/skills.md` is the public browser-only contract.
 - Tool shims such as `CLAUDE.md` may point to authority surfaces, but they may not restate or redefine policy.
 
@@ -29,15 +29,15 @@ Last updated: 2026-07-25
 - `apps/client/public/skills.md` is a browser-only public contract and must remain separate from internal process docs.
 - The public contract must not expose coordinates, hidden enemy state, routes, seeds, landmark IDs, or other repo-only tactical truth.
 
-## DEC-005: Validation routing is policy, not durable rationale
-- `AGENTS.md` owns change-tag validation routing; package scripts and CI own the executable command surface.
-- The map quality bar owns visual and map-safety hard failures plus final-signoff performance requirements. The public browser contract owns its own compatibility boundary.
+## DEC-005: Visual cadence and repository validation have separate owners
+- Package scripts and CI own the executable validation surface.
+- The map-polish skill owns section-iteration and final-check cadence. The map quality bar owns the visual target and screenshot acceptance, while `AGENTS.md` contains only durable repository safeguards.
 - Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
-## DEC-006: Play-facing quality bar
-- Use Dust II-level production polish as the benchmark for play-facing work, without copying its layout.
-- Favor readability over clutter, honest critique over comfort, and practical high-impact changes over vague ambition.
-- Separate quick wins from larger rework when that distinction helps prioritization.
+## DEC-006: The Bazaar target is a finished Middle Eastern market
+- Play-facing map work should read as a high-quality shipped Middle Eastern bazaar, with complete architecture, stalls, openings, overhead cloth, attachments, props, and material finish.
+- Preserve overall map identity and general layout by default, but allow local rebuilding and changes to directly coupled visual systems when they materially improve the bounded section. This does not imply a map-wide overhaul.
+- Rendered comparisons from the same fixed cameras are the primary evidence of improvement.
 
 ## DEC-007: Agent tooling stays out of the repo root surface
 - Repo-local agent tooling is not game runtime code and is not part of the public `apps/client/public/skills.md` contract.
@@ -104,12 +104,11 @@ Last updated: 2026-07-25
 - Exterior perimeter façades remain sealed. Inward openings are noninteractive dressing unless the spec identifies a connector footprint as a real passage.
 - Runtime maps, layout references, topdown SVG, and review shots are generated evidence. The public map ID, ten-enemy wave/scoring contract, controls, and `/skills.md` payload remain unchanged.
 
-## DEC-019: CS2 daylight references replace the dusk painting as the visual quality bar
-- 2026-07-23 owner decision: the five measured CS2 screenshots `docs/map-design/refs/cs2_daylight_ref_1..5.png` are the PRIMARY reference for lighting, value discipline, clarity, and finish; per-reference roles and measured luma/contrast/saturation bands live in [`map-design/quality-bar.md`](map-design/quality-bar.md).
-- `bazaar_main_hall_reference.png` is theme/content reference only (architecture vocabulary, dressing); its dusk mood, darkness, and saturation are explicitly not targets. All painting-calibrated metered targets (e.g. saturation >=0.55) are revoked.
+## DEC-019: Daylight and Bazaar references have distinct roles
+- The five CS2 screenshots `docs/map-design/refs/cs2_daylight_ref_1..5.png` are references for bright daylight, value discipline, clarity, material response, and shipped-game finish.
+- `bazaar_main_hall_reference.png` is the identity and content reference for layered architecture, market density, stalls, facade vocabulary, and hanging cloth. Its dusk mood, darkness, and saturation are not targets.
+- Evaluate rendered screenshots holistically rather than steering the map toward a metered color target.
 
-## DEC-020: Map quality targets and budgets have one durable owner
-- [`map-design/quality-bar.md`](map-design/quality-bar.md) owns current visual targets, final-signoff performance budgets, map locks, and finish failures.
-- Historical score targets, staged budgets, iteration cadence, card identifiers, and residual handling belong only to the [archived roadmap](map-design/archive/visual_overhaul_roadmap-2026-07-24.md).
-- The current user prompt owns the bounded visual task, the map-polish skill owns the iteration method, and the quality bar owns quality and performance targets.
-- Historical roadmap files are archived evidence, not active instructions; neither workflow nor current task state belongs in this durable decision log.
+## DEC-020: Historical map-process artifacts are not live instructions
+- Historical map planning and process documents are evidence only. They do not define the current task or hold active workflow state.
+- Current map work runs directly from the user prompt and the live authority surfaces identified in DEC-005, without a persistent task-state layer.

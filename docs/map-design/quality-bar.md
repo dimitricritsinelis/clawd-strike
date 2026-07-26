@@ -1,70 +1,51 @@
 Audience: implementation-agent
 Authority: visual quality contract
 Read when: map-visual or map-geometry work
-Owns: reference roles, measured image bands, budgets, map locks, and finish failures
+Owns: Bazaar reference roles, finish criteria, and screenshot acceptance
 Do not use for: task status, iteration procedure, or historical scores
-Last updated: 2026-07-25
+Last updated: 2026-07-26
 
 # Bazaar Map Quality Bar
 
-## Reference roles
+## Visual target
 
-The five CS2 daylight images are the primary references for lighting, value discipline, clarity, and finish:
+The target is a high-quality shipped Middle Eastern bazaar, not a collection of loosely placed procedural decorations. Preserve the map's overall identity and general layout by default, while allowing a bounded section to be refined, rebuilt, or locally redesigned when that clearly improves the result.
 
-- [`cs2_daylight_ref_1.png`](refs/cs2_daylight_ref_1.png): Mirage A site; primary daylight and value target. Luma 0.602, contrast 0.213, saturation 0.319.
-- [`cs2_daylight_ref_2.png`](refs/cs2_daylight_ref_2.png): Anubis lane at player height; open-lane readability. Luma 0.534, contrast 0.163, saturation 0.396.
-- [`cs2_daylight_ref_3.png`](refs/cs2_daylight_ref_3.png): Anubis hard shadows; luminous-shade and directional-shadow bar. Luma 0.370, contrast 0.195, saturation 0.282.
-- [`cs2_daylight_ref_4.png`](refs/cs2_daylight_ref_4.png): Inferno shaded lane; covered-corridor readability. Luma 0.361, contrast 0.159, saturation 0.346.
-- [`cs2_daylight_ref_5.png`](refs/cs2_daylight_ref_5.png): Inferno wall at close range; two-metre material-finish bar. Luma 0.435, contrast 0.140, saturation 0.307.
+Use [`bazaar_main_hall_reference.png`](refs/bazaar_main_hall_reference.png) for bazaar identity: layered architecture, market density, hanging cloth, stalls, facade vocabulary, and the feeling of a place built as a whole. Its dusk darkness and saturation are not lighting targets.
 
-Classify each review frame by what it visibly shows and compare it only with the matching band:
+Use the five [`cs2_daylight_ref_1.png`](refs/cs2_daylight_ref_1.png) through [`cs2_daylight_ref_5.png`](refs/cs2_daylight_ref_5.png) images for bright desert daylight, readable shade, value separation, material clarity, and shipped-game finish. Judge the references holistically; a metric or source declaration does not outrank a visibly stronger render.
 
-| Frame class | Luma | Contrast | Saturation |
-| --- | ---: | ---: | ---: |
-| Sunlit wide | 0.53–0.62 | 0.14–0.22 | 0.30–0.40 |
-| Shaded scene | 0.34–0.40 | 0.14–0.22 | 0.26–0.36 |
-| Close-up | 0.40–0.47 | 0.14–0.22 | 0.28–0.34 |
+## Complete visual assemblies
 
-Moderate contrast is intentional. Clarity must come from value separation and clean planes rather than contrast cranking. The target is bright, high-sun desert daylight with readable luminous shade and distance haze only.
+Architecture and dressing should feel intentionally built together. Walls, openings, reveals, frames, windows, doors, stalls, banners, awnings, canopies, supports, thresholds, plinths, props, and ground contact should form complete assemblies.
 
-[`bazaar_main_hall_reference.png`](refs/bazaar_main_hall_reference.png) is for theme and content only: architectural vocabulary, layered facades, dense market dressing, and hanging cloth. Its dusk mood, darkness, and saturation are not targets.
+Incomplete props and decoration systems are a major current weakness. In particular:
 
-## Final-signoff performance budgets
+- Windows must feel fully framed and integrated, with resolved jambs, heads, sills, reveals, glazing or closures, and surrounding wall junctions.
+- Stalls must feel complete and functional, with a credible structure, counter or display, cover, stock or dressing, support, and ground contact.
+- Overhead banners, awnings, and canopies must feel attached, supported, tensioned, and finished at their edges and connection points.
+- Signs, fixtures, goods, and incidental dressing must belong to the architecture or stall they serve instead of reading as disconnected add-ons.
 
-Measure the fixed review cameras with the ship profile. FPS is not a substitute for frame time.
+Reject decoration that looks pasted on, under-supported, floating, clipped, paper-thin, or only partially resolved. Prefer real depth, thickness, bevels, reveals, supports, seams, fasteners, grounding, and believable load paths over flat cards or endless parameter tuning.
 
-| Profile | Draw calls | Triangles | Median frame time | Boot-ready time |
-| --- | ---: | ---: | ---: | ---: |
-| Desktop | ≤ 1,500 | ≤ 2.2M | ≤ 12.5 ms | < 10 s |
-| Mobile | ≤ 500 | ≤ 1.3M | No separate absolute cap; pass the focused mobile gate | < 10 s |
+## Composition
 
-These budgets are hard requirements at final signoff, not per-iteration rejection criteria. A modest temporary overage may be retained while a visibly superior candidate converges, followed by a focused optimization pass before final validation. Crossing any applicable budget at final signoff is a hard failure.
+Each fixed-camera view should have a deliberate foreground, middle ground, and background; clear visual anchors; useful vertical breakup; and intentional framing. Facade rhythm, overhead elements, stalls, openings, and prop clusters should reinforce one another rather than compete or leave accidental dead zones.
 
-## Locked gameplay surfaces
+Local structural changes are allowed when composition needs them. Do not preserve every local shape or prop arrangement at the expense of quality, and do not infer a map-wide redesign from a bounded section task. A directly coupled shared visual system may change when it is the real cause of the visible weakness.
 
-- Layout, collision, traversal surfaces, spawns, sightlines, cover, and authored routes are locked during map-visual work.
-- Changing a locked surface requires an explicit map-geometry scope and its full validation route.
-- Render-only changes must not alter player or bot grounding, navigation, projectile collision, LOS, opening clearance, or route width.
-- Fixed-camera polish does not justify moving gameplay geometry.
+## Materials, assets, and detail
 
-## Composition and semantics
+- Materials need correct world scale plus visible variation at large, medium, and fine scales.
+- Color shifts or renamed materials do not create real diversity when they reuse the same weak source texture or surface response.
+- Close-range surfaces need readable texture, roughness, normal response, edge treatment, clean junctions, and intentional wear.
+- Authored hero assets, rebuilt local assemblies, higher-resolution textures, more geometry, and reasonable render-cost increases are welcome when the fixed-camera screenshots clearly improve.
+- Reuse, parameterization, and instancing are useful tools, but they must not force a visibly worse result.
 
-Composition failures are hard failures, and they outrank finish. A frontage with correct
-materials and incorrect composition does not pass.
+## Acceptance and final validation
 
-- Datum ordering: overhead spans, canopies, banners, cables, and signs attach above the head of the openings on the wall they land on, never across or into them.
-- Vertical alignment: ground-floor bay centerlines align with upper-storey opening centerlines on the same frontage within 0.15 m, unless the offset is authored and reads as deliberate.
-- Rhythm: bay widths, pier widths, and spacings form a readable repeating series rather than arbitrary values.
-- Semantic exclusivity: one bay serves one function. A merchant stall bay does not also carry a shop door, a shuttered window, or window hardware, and every fixture serves exactly one identifiable opening.
-- Load path and hierarchy: what carries what is legible, and heavier elements are not carried by lighter ones.
+Rendered before/after screenshots from the same fixed cameras are the primary quality signal. Accept a change when the section reads more clearly as a finished bazaar and the camera set shows a material improvement in composition, assembly, depth, and finish.
 
-The composition validators enforce volume clearance and door service space, not this
-grammar, so passing generation is not evidence that a frontage composes. When a
-composition failure would have passed those validators, name the missing rule; add it
-beside the existing rules with a test when it is cheap and deterministic.
+Floating or intersecting geometry, blocked openings, unsupported structures, broken load paths, exposed unfinished surfaces, placeholder-looking materials, and disconnected dressing block visual acceptance when visible in the review cameras.
 
-## Production-quality close-range finish
-
-Production quality means real textured PBR materials with world-scaled UVs; correct physical scale; readable roughness, normal, and material separation; grounded contact; finished edges, backs, supports, fasteners, and attachments; and clean junctions without gaps or halos. Repeated families must retain deterministic, parameterized variation and plausible architectural placement. Flat-color or placeholder-reading surfaces at player height do not meet the bar.
-
-Judge the final rendered result, not just source declarations or placement metadata. Visible mesh intersections, floating geometry, blocked doors or windows, unsupported structures, broken load paths, and exposed unfinished geometry are hard failures.
+Complete the visual loop before final smoke and completion QA. Performance may be checked and optimized after the section is visually finished, but it is not an intermediate veto and optimization must preserve the accepted visible improvement.
