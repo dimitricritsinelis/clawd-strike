@@ -2286,7 +2286,8 @@ test("v3 merchant modules emit supported awnings, ordinary timber doors, and dar
   assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_handle_backplate").length, 1);
   assert.equal(
     result.instances.filter((instance) => instance.semanticClass === "active_merchant_generic_door_display").length,
-    1,
+    2,
+    "closed shop display should include its masonry base and capping course",
   );
   assert.equal(
     result.instances.filter((instance) => instance.semanticClass === "active_merchant_generic_door_stock").length,

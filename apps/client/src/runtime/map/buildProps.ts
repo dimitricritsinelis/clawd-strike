@@ -73,6 +73,35 @@ import {
   createHeroGateDressingTextileGeometry,
 } from "./propFamilies/gateDressing";
 import {
+  createSpiceGateFixtureGeometry,
+  createSpiceGateStoneGeometry,
+  createSpiceGateVoidGeometry,
+} from "./propFamilies/spiceGate";
+import {
+  createSpawnAGateFixtureGeometry,
+  createSpawnAGateStoneGeometry,
+  createSpawnAGateVoidGeometry,
+} from "./propFamilies/spawnAGate";
+import {
+  createSpawnAExitEastReturnFixtureGeometry,
+  createSpawnAExitEastReturnStoneGeometry,
+  createSpawnAExitEastReturnVoidGeometry,
+  createSpawnAExitWestReturnFixtureGeometry,
+  createSpawnAExitWestReturnStoneGeometry,
+  createSpawnAExitWestReturnVoidGeometry,
+} from "./propFamilies/spawnAExitReturns";
+import {
+  createSpawnAEastDyeWorksClothGeometry,
+  createSpawnAEastDyeWorksFixtureGeometry,
+  createSpawnAEastDyeWorksStoneGeometry,
+  createSpawnAEastDyeWorksVoidGeometry,
+} from "./propFamilies/spawnAEastDyeWorks";
+import {
+  createSpawnAWestBacksFixtureGeometry,
+  createSpawnAWestBacksStoneGeometry,
+  createSpawnAWestBacksVoidGeometry,
+} from "./propFamilies/spawnAWestBacks";
+import {
   createDyersWorkstationDrainGeometry,
   createDyersWorkstationIndigoGeometry,
   createDyersWorkstationIndigoBasinGeometry,
@@ -106,7 +135,6 @@ import {
   type PropPlacementKind,
 } from "./propFamilies/propsCore";
 import {
-  CANOPY_SPAN_STATIONS,
   createCanopyFixtureGeometry,
   createCanopyScallopedValanceGeometry,
   createCanopyTrestleGeometry,
@@ -1359,13 +1387,21 @@ function createGroundContactTexture(): DataTexture {
       // Hold the occlusion across the footprint and release it over the outer
       // third, so the darkening still reads where an object actually meets the
       // ground instead of fading out before it clears the object's silhouette.
-      const t = Math.max(0, Math.min(1, (1 - radial) / 0.42));
+      // A real contact seam is dark and short: it holds full strength right up
+      // to the silhouette and dies within a fraction of the object's own size.
+      // A wide, weak apron only reads under a zoom and looks like a decal at
+      // playing distance.
+      const t = Math.max(0, Math.min(1, (1 - radial) / 0.28));
       const core = t * t * (3 - 2 * t);
-      const alpha = Math.max(0, Math.min(0.54, core * 0.54));
+      // Dust and sweepings gather in a broken ring around anything that has sat
+      // still, so the outer falloff carries a little grain rather than fading
+      // as a perfect circle.
+      const drift = 0.88 + 0.12 * Math.sin(Math.atan2(ny, nx) * 5.5 + radial * 7.3);
+      const alpha = Math.max(0, Math.min(0.82, core * 0.82 * drift));
       const offset = (y * size + x) * 4;
-      data[offset] = 34;
-      data[offset + 1] = 27;
-      data[offset + 2] = 20;
+      data[offset] = 38;
+      data[offset + 1] = 30;
+      data[offset + 2] = 22;
       data[offset + 3] = Math.round(alpha * 255);
     }
   }
@@ -1900,15 +1936,28 @@ function buildCompiledDressing(
       roughness: 0.34,
       metalness: 0.68,
     }),
-    fountainCourtAccent: createBatch("v3-fountain-court-tile-apron", 0xb89a6b, "thresholdRug", createFountainCourtAccentGeometry, {
+    // The apron is the court floor immediately around the basin, wetted by the
+    // fountain — not a separate object set on top of it. It previously carried a
+    // wall-block texture whose horizontal courses read as plank grain, over a
+    // base tint darkened three times (base colour, then vertex tint, then
+    // albedo boost), which landed it on a red-brown that belongs to no other
+    // material in the court. It now uses the court's own paving at the court's
+    // own world scale, held in the same hue and dropped in value the way damp
+    // stone actually is.
+    fountainCourtAccent: createBatch("v3-fountain-court-tile-apron", 0xd6c5a4, "thresholdRug", createFountainCourtAccentGeometry, {
       receiveShadow: true,
-      roughness: 0.86,
-      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
-      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
-      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
-      textureRepeat: [2.8, 2.8],
+      // Damp stone is glossier than the dry court around it. Dropping value
+      // alone reads as shade; the sheen is what says water.
+      roughness: 0.62,
+      textureUrl: "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
+      // The apron geometry is world-UV'd at 1.25 m, so this repeat resolves the
+      // 4 m flagstone tile at the same size the court floor draws it. Any other
+      // value makes the apron read as a different, smaller paving.
+      textureRepeat: [0.3125, 0.3125],
       normalScale: 0.52,
-      albedoBoost: 0.82,
+      albedoBoost: 0.92,
       vertexColors: true,
     }),
     courtPlanterStone: createBatch("v3-fountain-court-planter-stone", 0xb9a27b, "filler", createCourtPlanterStoneGeometry, {
@@ -2027,6 +2076,225 @@ function buildCompiledDressing(
       roughness: 0.89,
       normalScale: 0.52,
       albedoBoost: 1.28,
+      vertexColors: true,
+    }),
+    // Tinted and boosted to the authored ph_sandstone_blocks_05 values so the
+    // gate sits in the same warm ochre family as the courtyard walls it lands
+    // against, instead of reading as a cool grey module.
+    spiceGateStone: createBatch("v3-spice-gate-stone", 0xdfc69a, "heroLintel", createSpiceGateStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      // The kit already carries metre-projected UVs at the material's authored
+      // 2.0 m tile, so the batch must not re-tile them.
+      textureRepeat: [1, 1],
+      roughness: 0.88,
+      normalScale: 0.78,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spiceGateFixtures: createBatch("v3-spice-gate-fixtures", 0xffffff, "heroLintel", createSpiceGateFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.8,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    spiceGateVoid: createBatch("v3-spice-gate-void", 0xffffff, "heroLintel", createSpiceGateVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
+      vertexColors: true,
+    }),
+    // Bab al-Suq shares the Spice Gate's masonry and timber so the two authored
+    // portals that bracket Spawn A read as one kit rather than two props.
+    spawnAGateStone: createBatch("v3-spawn-a-gate-stone", 0xdfc69a, "heroLintel", createSpawnAGateStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      // The kit carries metre-projected UVs at the material's authored 2.0 m
+      // tile, so the batch must not re-tile them.
+      textureRepeat: [1, 1],
+      roughness: 0.88,
+      normalScale: 0.78,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spawnAGateFixtures: createBatch("v3-spawn-a-gate-fixtures", 0xffffff, "heroLintel", createSpawnAGateFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.8,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    spawnAGateVoid: createBatch("v3-spawn-a-gate-void", 0xffffff, "heroLintel", createSpawnAGateVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
+      vertexColors: true,
+    }),
+    // The west courtyard backs share Bab al-Suq's masonry and timber: one corner
+    // of one courtyard should not be built out of two unrelated material sets.
+    spawnAWestBacksStone: createBatch("v3-spawn-a-west-backs-stone", 0xdfc69a, "heroLintel", createSpawnAWestBacksStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      textureRepeat: [1, 1],
+      roughness: 0.88,
+      normalScale: 0.78,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spawnAWestBacksFixtures: createBatch("v3-spawn-a-west-backs-fixtures", 0xffffff, "heroLintel", createSpawnAWestBacksFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.8,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    spawnAWestBacksVoid: createBatch("v3-spawn-a-west-backs-void", 0xffffff, "heroLintel", createSpawnAWestBacksVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
+      vertexColors: true,
+    }),
+    // The dye works shares the courtyard's masonry and timber; its ochre
+    // plaster and dye colours come from vertex tint, not a second texture set.
+    spawnAEastWorksStone: createBatch("v3-spawn-a-east-works-stone", 0xdfc69a, "heroLintel", createSpawnAEastDyeWorksStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      textureRepeat: [1, 1],
+      roughness: 0.9,
+      normalScale: 0.74,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spawnAEastWorksFixtures: createBatch("v3-spawn-a-east-works-fixtures", 0xffffff, "heroLintel", createSpawnAEastDyeWorksFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.82,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    // Untextured, because any timber or stone diffuse multiplies the dye tints
+    // down into the same brown. Untextured alone is not enough though: a white
+    // base at full albedo under this sun returns pastel bunting whatever the
+    // tint, so the boost is pulled well below 1 to put the cloth back at the
+    // value dyed fabric actually sits at outdoors.
+    spawnAEastWorksCloth: createBatch("v3-spawn-a-east-works-cloth", 0xffffff, "heroLintel", createSpawnAEastDyeWorksClothGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      roughness: 0.97,
+      metalness: 0,
+      albedoBoost: 0.46,
+      vertexColors: true,
+    }),
+    spawnAEastWorksVoid: createBatch("v3-spawn-a-east-works-void", 0xffffff, "heroLintel", createSpawnAEastDyeWorksVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
+      vertexColors: true,
+    }),
+    // The exit returns flanking the Spice Gate, sharing the courtyard's kit.
+    spawnAExitWestStone: createBatch("v3-spawn-a-exit-west-stone", 0xdfc69a, "heroLintel", createSpawnAExitWestReturnStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      textureRepeat: [1, 1],
+      roughness: 0.89,
+      normalScale: 0.76,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spawnAExitWestFixtures: createBatch("v3-spawn-a-exit-west-fixtures", 0xffffff, "heroLintel", createSpawnAExitWestReturnFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.81,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    spawnAExitWestVoid: createBatch("v3-spawn-a-exit-west-void", 0xffffff, "heroLintel", createSpawnAExitWestReturnVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
+      vertexColors: true,
+    }),
+    spawnAExitEastStone: createBatch("v3-spawn-a-exit-east-stone", 0xdfc69a, "heroLintel", createSpawnAExitEastReturnStoneGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      textureRepeat: [1, 1],
+      roughness: 0.89,
+      normalScale: 0.76,
+      albedoBoost: 1.08,
+      vertexColors: true,
+    }),
+    spawnAExitEastFixtures: createBatch("v3-spawn-a-exit-east-fixtures", 0xffffff, "heroLintel", createSpawnAExitEastReturnFixtureGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      materialId: "ph_rough_pine_door",
+      textureRepeat: [1, 1],
+      roughness: 0.81,
+      normalScale: 0.5,
+      albedoBoost: 1.14,
+      vertexColors: true,
+    }),
+    spawnAExitEastVoid: createBatch("v3-spawn-a-exit-east-void", 0xffffff, "heroLintel", createSpawnAExitEastReturnVoidGeometry, {
+      castShadow: false,
+      receiveShadow: false,
+      roughness: 1,
+      albedoBoost: 1,
       vertexColors: true,
     }),
     teaService: createBatch("v3-tea-service", 0x65452e, "shopfront", createTeaServiceGeometry, { castShadow: true, roughness: 0.76 }),
@@ -2174,6 +2442,12 @@ function buildCompiledDressing(
 
     // Ground-resting dressing gets a contact-occlusion footprint. Overhead and
     // wall-mounted placements are excluded: they have nothing to sit on.
+    //
+    // The fountain keeps this even though it also authors its own wetted apron.
+    // Removing it was tried and reverted: the generic disc is what actually
+    // seats the basin, and without it the apron's own octagonal mesh edge
+    // becomes a hard dashed outline on the floor — a straight high-frequency
+    // artifact that, unlike an over-soft wash, does not fall off with distance.
     if (!centeredAtAnchor && placement.classification !== "overhead") {
       const footprintM = Math.max(width, depth);
       if (footprintM >= 0.34) {
@@ -2182,9 +2456,9 @@ function buildCompiledDressing(
           y: world.y + 0.012,
           z: world.z,
           yawRad,
-          sx: width * 1.6,
+          sx: width * 1.55,
           sy: 1,
-          sz: depth * 1.6,
+          sz: depth * 1.55,
         });
       }
     }
@@ -2966,26 +3240,11 @@ function buildCompiledDressing(
             0,
           );
         }
-        for (const side of [-1, 1] as const) {
-          pushLocalInstance(
-            batches.canopyEdgeRopes,
-            world,
-            yawRad,
-            { x: side * width * 0.46, y: height * 0.08, z: 0 },
-            { x: 0.026, y: 0.026, z: depth * 0.92 },
-            spanPitchRad,
-          );
-        }
-        for (const station of CANOPY_SPAN_STATIONS) {
-          pushLocalInstance(
-            batches.canopyCrossRopes,
-            world,
-            yawRad,
-            { x: 0, y: height * 0.08, z: depth * station * 0.97 },
-            { x: width, y: 0.026, z: 0.026 },
-            spanPitchRad,
-          );
-        }
+        // The carrying cords, sewn seams and mid-span battens are sampled from
+        // the same catenary as the sheet inside the cloth module. A straight
+        // instanced rope cannot follow that curve, so the span's longitudinal
+        // cordage is no longer duplicated here.
+
         for (const wallSide of [-1, 1] as const) {
           const fixtureZ = wallSide * (depth * 0.5 - 0.025);
           const suspensionRiseM = Math.max(0.34, Math.min(0.58, height * 0.46));
@@ -3281,6 +3540,99 @@ function buildCompiledDressing(
         });
         break;
       }
+      case "bazaar_spice_gate": {
+        // One authored kit, three material batches, all sharing the gate's
+        // base-centred envelope. Every solid element below the springing stays
+        // outside the 12 m throat, so the portal is silhouette and shade only:
+        // route width, collision, and sightlines are untouched.
+        const gateTransform = {
+          x: world.x,
+          y: world.y + height * 0.5,
+          z: world.z,
+          sx: width,
+          sy: height,
+          sz: depth,
+          yawRad,
+        };
+        batches.spiceGateStone.instances.push(gateTransform);
+        batches.spiceGateFixtures.instances.push(gateTransform);
+        batches.spiceGateVoid.instances.push(gateTransform);
+        break;
+      }
+      case "bazaar_spawn_a_gate": {
+        // Render-only re-facing of the sealed south boundary. The kit adds no
+        // collision and nothing it places below head height stands more than
+        // 0.28 m off the wall plane, so the courtyard's walkable envelope,
+        // grounding, and sightlines are exactly as they were.
+        const boundaryTransform = {
+          x: world.x,
+          y: world.y + height * 0.5,
+          z: world.z,
+          sx: width,
+          sy: height,
+          sz: depth,
+          yawRad,
+        };
+        batches.spawnAGateStone.instances.push(boundaryTransform);
+        batches.spawnAGateFixtures.instances.push(boundaryTransform);
+        batches.spawnAGateVoid.instances.push(boundaryTransform);
+        break;
+      }
+      case "bazaar_spawn_a_west_backs": {
+        // Same contract as the gate: render-only re-facing of a sealed
+        // perimeter run, adding no collision and nothing that stands proud of
+        // the wall plane within reach of a player's camera.
+        const backsTransform = {
+          x: world.x,
+          y: world.y + height * 0.5,
+          z: world.z,
+          sx: width,
+          sy: height,
+          sz: depth,
+          yawRad,
+        };
+        batches.spawnAWestBacksStone.instances.push(backsTransform);
+        batches.spawnAWestBacksFixtures.instances.push(backsTransform);
+        batches.spawnAWestBacksVoid.instances.push(backsTransform);
+        break;
+      }
+      case "bazaar_spawn_a_exit_west_return":
+      case "bazaar_spawn_a_exit_east_return": {
+        // Render-only re-facing of the two sealed returns that frame the exit.
+        const west = placement.runtime.id === "bazaar_spawn_a_exit_west_return";
+        const returnTransform = {
+          x: world.x,
+          y: world.y + height * 0.5,
+          z: world.z,
+          sx: width,
+          sy: height,
+          sz: depth,
+          yawRad,
+        };
+        (west ? batches.spawnAExitWestStone : batches.spawnAExitEastStone).instances.push(returnTransform);
+        (west ? batches.spawnAExitWestFixtures : batches.spawnAExitEastFixtures).instances.push(returnTransform);
+        (west ? batches.spawnAExitWestVoid : batches.spawnAExitEastVoid).instances.push(returnTransform);
+        break;
+      }
+      case "bazaar_spawn_a_east_dye_works": {
+        // Same contract as the other two courtyard edges: render-only, no
+        // collision, and nothing within reach of a player's camera stands proud
+        // of the wall plane.
+        const worksTransform = {
+          x: world.x,
+          y: world.y + height * 0.5,
+          z: world.z,
+          sx: width,
+          sy: height,
+          sz: depth,
+          yawRad,
+        };
+        batches.spawnAEastWorksStone.instances.push(worksTransform);
+        batches.spawnAEastWorksFixtures.instances.push(worksTransform);
+        batches.spawnAEastWorksCloth.instances.push(worksTransform);
+        batches.spawnAEastWorksVoid.instances.push(worksTransform);
+        break;
+      }
       case "bazaar_tea_service":
         batches.teaService.instances.push(transform);
         batches.teaVessels.instances.push(transform);
@@ -3338,7 +3690,7 @@ function buildCompiledDressing(
         roughness: FOUNTAIN_WATER_MATERIAL_INPUTS.roughness,
         metalness: FOUNTAIN_WATER_MATERIAL_INPUTS.metalness,
         transmission: FOUNTAIN_WATER_MATERIAL_INPUTS.transmission,
-        transparent: true,
+        transparent: FOUNTAIN_WATER_MATERIAL_INPUTS.transparent,
         opacity: FOUNTAIN_WATER_MATERIAL_INPUTS.opacity,
         depthWrite: false,
         clearcoat: FOUNTAIN_WATER_MATERIAL_INPUTS.clearcoat,
@@ -3427,6 +3779,18 @@ function buildCompiledDressing(
       material.polygonOffset = true;
       material.polygonOffsetFactor = -1;
       material.polygonOffsetUnits = -3;
+      material.needsUpdate = true;
+    }
+    // The fountain collar carries its fade in the alpha channel of its vertex
+    // colours, which only reaches the frame through a blended material. Depth
+    // writes stay off so the court paving keeps resolving through the thinning
+    // edge instead of being punched out by it.
+    if (batch.id === "v3-fountain-court-tile-apron" && material instanceof MeshStandardMaterial) {
+      material.transparent = true;
+      material.depthWrite = false;
+      material.polygonOffset = true;
+      material.polygonOffsetFactor = -1;
+      material.polygonOffsetUnits = -2;
       material.needsUpdate = true;
     }
     if (material instanceof MeshStandardMaterial && batch.albedoBoost !== 1) {

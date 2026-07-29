@@ -786,8 +786,8 @@ test("B6 laundry spans remain collisionless above head height and vary their tex
   } | null>;
   assert.equal(
     fixtureQa.filter((instance) => instance?.moduleId === "laundry_wall_ring").length,
-    placements.length * 2,
-    "laundry ropes lost their two facade endpoint fixtures",
+    placements.length * 4,
+    "laundry ropes lost the eye and wall ring at each of their two facade endpoints",
   );
 });
 
@@ -910,7 +910,12 @@ test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spou
   assert.ok(waterMaterial instanceof MeshPhysicalMaterial);
   assert.ok(waterMaterial.transmission >= 0.15 && waterMaterial.opacity <= 0.65, "fountain water is no longer shallow and restrained");
   assert.ok(waterMaterial.normalMap instanceof DataTexture, "fountain water lost its procedural ripple normal");
-  assert.ok(waterMaterial.clearcoat >= 0.95 && waterMaterial.specularIntensity >= 0.95, "fountain water lost its specular surface response");
+  // Guards that the water keeps a specular surface response, without pinning it
+  // to near-mirror. At clearcoat 1 / specularIntensity 1 the pool returned one
+  // uniform sheet of sky and read as a flat cyan lid; the floor here is what
+  // stops it becoming a dead matte plane, which is what the check is actually
+  // protecting against.
+  assert.ok(waterMaterial.clearcoat >= 0.25 && waterMaterial.specularIntensity >= 0.4, "fountain water lost its specular surface response");
   assert.deepEqual(waterMaterial.userData.fountainWaterShader, {
     response: "view-dependent-fresnel",
     fresnelStrength: 0.42,
@@ -983,7 +988,10 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const qaInstances = fixtures.userData.visualQaInstances as Array<{ shadowMode?: string } | null>;
   assert.ok(qaInstances.every((instance) => instance?.shadowMode === "cast_only"));
 
-  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, 24, "corner ties are not batched with the canopy edge ropes");
+  // The span's longitudinal cordage is sampled into the cloth module so it can
+  // follow the catenary; this batch now carries only the four wall corner ties
+  // per span that a straight instanced rope can still describe honestly.
+  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, 16, "corner ties are not batched with the canopy edge ropes");
   const cloth = mesh(root, "v3-canopy-cloth");
   const positions = cloth.geometry.getAttribute("position");
   const minYNear = (z: number): number => {
@@ -1004,12 +1012,14 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const centerlineZ = Array.from({ length: positions.count }, (_, index) => index)
     .filter((index) => Math.abs(positions.getX(index)) <= 0.01)
     .map((index) => positions.getZ(index));
-  for (const seamZ of [-0.1665, 0.1665]) {
-    const below = Math.max(...centerlineZ.filter((z) => z <= seamZ));
-    const above = Math.min(...centerlineZ.filter((z) => z >= seamZ));
+  // The sheet is one continuous surface, so the invariant is that a vertex row
+  // lands exactly on each authored batten station and the panels either side
+  // share it. A row that misses the station is a sliver of open sky.
+  for (const seamZ of [-1 / 6, 1 / 6]) {
+    const nearestOffset = Math.min(...centerlineZ.map((z) => Math.abs(z - seamZ)));
     assert.ok(
-      above - below <= 0.012,
-      `covered-souk cloth seam reopened to sky: ${(above - below).toFixed(3)} normalized`,
+      nearestOffset <= 0.001,
+      `covered-souk cloth seam reopened to sky: no row on station ${seamZ.toFixed(4)} (nearest ${nearestOffset.toFixed(4)})`,
     );
   }
   const hangRopes = mesh(root, "v3-canopy-hang-ropes");
@@ -1017,13 +1027,13 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const trestles = mesh(root, "v3-canopy-wall-trestles");
   assert.equal(trestles.count, 8, "each full-street cloth span needs one trestle on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.equal(root.children.length, 61, "served-souk canopy families drifted from their deterministic batch budget");
+  assert.equal(root.children.length, 62, "served-souk canopy families drifted from their deterministic batch budget");
 });
 
 test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
   const { placement, result, root } = await buildRugGateFixture();
   assert.equal(result.colliders.length, 0, "visual Rug Gate placement introduced gameplay collision");
-  assert.equal(root.children.length, 7, "Rug Gate draw families drifted from its open arch and four-batch textile kit");
+  assert.equal(root.children.length, 8, "Rug Gate draw families drifted from its open arch, four-batch textile kit and ground contact");
   assert.equal(mesh(root, "v3-rug-gate-pillars").count, 2);
   assert.equal(mesh(root, "v3-rug-gate-crown").count, 1);
   assert.equal(mesh(root, "v3-rug-gate-cool-textile-kit").count, 1);
@@ -1035,7 +1045,14 @@ test("Rug Gate stays collider-neutral and inside its exact authored telemetry en
   assert.equal(root.getObjectByName("v3-rug-gate-timber-leaves"), undefined);
   assert.equal(root.getObjectByName("v3-rug-gate-ironwork"), undefined);
 
-  const bounds = new Box3().setFromObject(root);
+  // Measured over the gate's own draw families. The ground-contact decal is a
+  // soft floor shadow rather than gate geometry, so it is deliberately outside
+  // the authored massing envelope this guard protects.
+  const bounds = new Box3();
+  for (const child of root.children) {
+    if (child.name === "v3-prop-ground-contact") continue;
+    bounds.expandByObject(child);
+  }
   const size = bounds.getSize(new Vector3());
   assert.ok(size.x <= placement.dimensionsM.width + 0.001, `gate exceeded authored width: ${size.x}m`);
   assert.ok(size.y <= placement.dimensionsM.height + 0.001, `gate exceeded authored height: ${size.y}m`);

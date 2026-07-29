@@ -1,4 +1,12 @@
-import { BoxGeometry, BufferGeometry, CylinderGeometry, PlaneGeometry, TorusGeometry } from "three";
+import {
+  BoxGeometry,
+  BufferAttribute,
+  BufferGeometry,
+  CylinderGeometry,
+  Float32BufferAttribute,
+  PlaneGeometry,
+  TorusGeometry,
+} from "three";
 import { applyGeometryTint, boxPart, mergeProceduralGeometry, tintGeometry } from "./propsCore";
 
 export interface SignFrameGeometryOptions {
@@ -100,90 +108,273 @@ export function createSignRigGeometry(): BufferGeometry {
   return mergeProceduralGeometry(parts);
 }
 
+/**
+ * Y scale every caller applies to the unit cloth: `ASSET_CLOTH_CANOPY`'s
+ * authored `dimensionsM.height`. The unit sheet is otherwise dimensionless, so
+ * every vertical figure below is authored in metres and converted through this
+ * one constant instead of being tuned blind in unit space.
+ */
+export const CLOTH_CANOPY_UNIT_HEIGHT_M = 0.18;
+/** Representative authored cloth width. Only cord and batten sections use it. */
+const CLOTH_CANOPY_NOMINAL_WIDTH_M = 3.7;
+/** Mid-span dip of the carrying cords below their two wall seats. */
+export const CLOTH_CANOPY_SPAN_SAG_M = 0.54;
+/** Cloth droop between battens, measured on the lane centreline. */
+const CLOTH_CANOPY_BATTEN_SAG_M = 0.15;
+/** Extra droop of the free cloth outboard of the carrying cords. */
+const CLOTH_CANOPY_FLAP_DROP_M = 0.19;
+/** Hanging scalloped valance below each long free edge. */
+const CLOTH_CANOPY_VALANCE_DROP_M = 0.32;
+/** Where the two carrying cords sit inboard of the free edges. */
+const CLOTH_CANOPY_CORD_U = 0.415;
+const CLOTH_CANOPY_CORD_RADIUS_M = 0.032;
+const CLOTH_CANOPY_BATTEN_DEPTH_M = 0.085;
+const CLOTH_CANOPY_BATTEN_THICKNESS_M = 0.055;
+/** Representative authored span, used only for batten section thickness. */
+const CLOTH_CANOPY_NOMINAL_SPAN_M = 11;
+
+const CLOTH_PANEL_SAG_FACTORS = [1.06, 1.24, 0.95] as const;
+const CLOTH_PANEL_TINTS = [
+  [1, 0.95, 0.87],
+  [0.91, 0.98, 0.93],
+  [0.98, 0.9, 0.84],
+] as const;
+const CLOTH_U_DIVISIONS = 14;
+const CLOTH_PANEL_V_DIVISIONS = 9;
+
+const clampUnit = (value: number): number => Math.max(0, Math.min(1, value));
+const toUnitY = (metres: number): number => metres / CLOTH_CANOPY_UNIT_HEIGHT_M;
+
+/**
+ * Dip of the carrying cords, in metres below their wall seats, at a normalized
+ * position across the span. Shared so the wall trestles, lashings and any
+ * mid-span batten placed in world space land on the same curve the cloth uses.
+ */
+export function clothCanopySpanDropM(spanFraction: number): number {
+  const t = Math.min(1, Math.abs(spanFraction) * 2);
+  return CLOTH_CANOPY_SPAN_SAG_M * (1 - t * t);
+}
+
+function clothPanelIndex(v: number): number {
+  for (let index = 0; index < CANOPY_SPAN_STATIONS.length - 1; index += 1) {
+    if (v <= CANOPY_SPAN_STATIONS[index + 1]!) return index;
+  }
+  return CANOPY_SPAN_STATIONS.length - 2;
+}
+
+/** Height of the hung sheet, in unit space, at a point on the (lane, span) grid. */
+function clothSurfaceUnitY(u: number, v: number): number {
+  const panelIndex = clothPanelIndex(v);
+  const panelStart = CANOPY_SPAN_STATIONS[panelIndex]!;
+  const panelEnd = CANOPY_SPAN_STATIONS[panelIndex + 1]!;
+  const t = clampUnit((v - panelStart) / Math.max(1e-6, panelEnd - panelStart));
+  const battenPhase = Math.sin(t * Math.PI);
+  const inboard = Math.min(1, Math.abs(u) / CLOTH_CANOPY_CORD_U);
+  const betweenCords = 1 - inboard * inboard;
+  const flap = Math.max(0, (Math.abs(u) - CLOTH_CANOPY_CORD_U) / (0.5 - CLOTH_CANOPY_CORD_U));
+  // The sheet is lashed flat across its full width where it meets each wall
+  // seat, so the free-edge flap fades out before the trestle.
+  const endFade = clampUnit((0.5 - Math.abs(v)) / 0.07);
+  const weave = 0.014 * Math.sin(u * Math.PI * 3 + v * Math.PI * 6.5) * betweenCords * battenPhase;
+  const dropM = clothCanopySpanDropM(v)
+    + CLOTH_CANOPY_BATTEN_SAG_M * CLOTH_PANEL_SAG_FACTORS[panelIndex]! * betweenCords * battenPhase
+    + CLOTH_CANOPY_FLAP_DROP_M * Math.pow(flap, 1.4) * endFade
+    + weave;
+  return -toUnitY(dropM);
+}
+
+/** Span samples that always land exactly on every authored station. */
+function clothSpanSamples(divisionsPerPanel = CLOTH_PANEL_V_DIVISIONS): number[] {
+  const samples: number[] = [CANOPY_SPAN_STATIONS[0]!];
+  for (let panel = 0; panel < CANOPY_SPAN_STATIONS.length - 1; panel += 1) {
+    const start = CANOPY_SPAN_STATIONS[panel]!;
+    const end = CANOPY_SPAN_STATIONS[panel + 1]!;
+    for (let step = 1; step <= divisionsPerPanel; step += 1) {
+      samples.push(start + (end - start) * (step / divisionsPerPanel));
+    }
+  }
+  return samples;
+}
+
+/** Indexed grid over an authored (u, v) lattice with per-vertex tint and UVs. */
+function buildClothSurface(
+  uSamples: readonly number[],
+  vSamples: readonly number[],
+  height: (u: number, v: number) => number,
+  tint: (u: number, v: number) => readonly [number, number, number],
+): BufferGeometry {
+  const positions: number[] = [];
+  const uvs: number[] = [];
+  const colors: number[] = [];
+  const indices: number[] = [];
+  for (let vIndex = 0; vIndex < vSamples.length; vIndex += 1) {
+    const v = vSamples[vIndex]!;
+    for (let uIndex = 0; uIndex < uSamples.length; uIndex += 1) {
+      const u = uSamples[uIndex]!;
+      positions.push(u, height(u, v), v);
+      uvs.push(u + 0.5, v + 0.5);
+      colors.push(...tint(u, v));
+    }
+  }
+  for (let vIndex = 0; vIndex < vSamples.length - 1; vIndex += 1) {
+    for (let uIndex = 0; uIndex < uSamples.length - 1; uIndex += 1) {
+      const a = vIndex * uSamples.length + uIndex;
+      const b = a + 1;
+      const c = a + uSamples.length;
+      const d = c + 1;
+      indices.push(a, c, b, b, c, d);
+    }
+  }
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  geometry.setIndex(new BufferAttribute(new Uint32Array(indices), 1));
+  geometry.computeVertexNormals();
+  return geometry;
+}
+
+/** Collapses a part's UVs onto one texel so shared-batch timber and cordage do
+ * not pick up the cloth's stripe pattern. */
+function flattenUv(geometry: BufferGeometry, u: number, v: number): BufferGeometry {
+  const positions = geometry.getAttribute("position");
+  const uvs = new Float32Array(positions.count * 2);
+  for (let index = 0; index < positions.count; index += 1) {
+    uvs[index * 2] = u;
+    uvs[index * 2 + 1] = v;
+  }
+  geometry.setAttribute("uv", new Float32BufferAttribute(uvs, 2));
+  return geometry;
+}
+
+/**
+ * A cloth span hung between two wall seats: the two carrying cords dip on a
+ * shared catenary, the sheet droops again between its battens, and the free
+ * edges roll off into a scalloped valance instead of ending on a hard plate
+ * edge. Every strand of the assembly is sampled from one surface function, so
+ * the cords, seams, battens and valance cannot drift off the cloth they carry.
+ */
 export function createClothGeometry(): BufferGeometry {
-  // One station table owns both panel extents and the support grid. Adjacent
-  // bays meet exactly at the reinforced hems, so no duplicate sliver or open
-  // sky gap can survive when an authored span scales to street width.
-  const panelLength = 1 / 3;
-  const panelCenters = CANOPY_SPAN_STATIONS.slice(0, -1).map(
-    (station, index) => (station + CANOPY_SPAN_STATIONS[index + 1]!) * 0.5,
+  const uSamples = Array.from(
+    { length: CLOTH_U_DIVISIONS + 1 },
+    (_unused, index) => -0.5 + index / CLOTH_U_DIVISIONS,
   );
-  const panelSags = [1.28, 1.5, 1.18] as const;
-  const panelLifts = [0.02, -0.035, 0.015] as const;
-  const panelTints = [
-    [1, 0.95, 0.87],
-    [0.91, 0.98, 0.93],
-    [0.98, 0.9, 0.84],
-  ] as const;
-  const parts: BufferGeometry[] = [];
+  // The cords and the free edges must be exact rows, and the short run of cloth
+  // outboard of each cord needs its own rows or the edge fold reads as a crease.
+  for (const forced of [-0.5, -CLOTH_CANOPY_CORD_U, CLOTH_CANOPY_CORD_U, 0.5]) {
+    if (!uSamples.some((sample) => Math.abs(sample - forced) < 1e-6)) uSamples.push(forced);
+  }
+  for (const outboard of [0.44, 0.462, 0.481, 0.493]) {
+    uSamples.push(-outboard, outboard);
+  }
+  uSamples.sort((left, right) => left - right);
+  const vSamples = clothSpanSamples();
+  const panelTint = (_u: number, v: number): readonly [number, number, number] =>
+    CLOTH_PANEL_TINTS[clothPanelIndex(v)]!;
 
-  for (let panelIndex = 0; panelIndex < panelCenters.length; panelIndex += 1) {
-    const panel = new PlaneGeometry(1, panelLength, 8, 5);
-    panel.rotateX(-Math.PI * 0.5);
-    const positions = panel.attributes.position;
-    if (positions) {
-      for (let index = 0; index < positions.count; index += 1) {
-        const across = Math.min(1, Math.abs(positions.getX(index)) * 2);
-        const along = positions.getZ(index) / panelLength + 0.5;
-        const acrossTension = 1 - across * across;
-        const centerTension = Math.sin(along * Math.PI);
-        const sharedEdgeSag = 0.12 * acrossTension;
-        const shallowRipple = Math.sin(along * Math.PI * 2 + panelIndex * 0.65)
-          * 0.025
-          * acrossTension
-          * centerTension;
-        positions.setY(
-          index,
-          panelLifts[panelIndex]! * centerTension
-            - sharedEdgeSag
-            - panelSags[panelIndex]! * acrossTension * centerTension * 0.72
-            - shallowRipple,
-        );
-      }
-      positions.needsUpdate = true;
+  const parts: BufferGeometry[] = [
+    buildClothSurface(uSamples, vSamples, clothSurfaceUnitY, panelTint),
+  ];
+
+  // Free-edge valance. It grows out of the sheet edge, so it inherits the
+  // catenary and never reads as a separate strip pinned to a flat plate.
+  const skirtSamples = clothSpanSamples(CLOTH_PANEL_V_DIVISIONS * 3);
+  for (const edgeSide of [-1, 1] as const) {
+    const edgeU = edgeSide * 0.5;
+    const skirt = buildClothSurface(
+      [0, 0.42, 1],
+      skirtSamples,
+      (rowFraction, v) => {
+        const scallop = 0.62 + 0.38 * Math.cos(v * Math.PI * 9 + (edgeSide < 0 ? 0.7 : 0));
+        const endFade = clampUnit((0.5 - Math.abs(v)) / 0.05);
+        // The skirt leaves the sheet on a curve rather than a knife fold, so the
+        // hem reads as cloth turning over its cord instead of a cut polygon.
+        const drop = CLOTH_CANOPY_VALANCE_DROP_M * scallop * endFade * Math.pow(rowFraction, 1.35);
+        return clothSurfaceUnitY(edgeU, v) - toUnitY(drop);
+      },
+      panelTint,
+    );
+    // The skirt is authored in a (row, v) lattice; move it out onto the edge and
+    // let its stripes march along the span the way the wall-end valance does.
+    const skirtPositions = skirt.getAttribute("position");
+    const skirtUvs = skirt.getAttribute("uv");
+    for (let index = 0; index < skirtPositions.count; index += 1) {
+      const row = skirtPositions.getX(index);
+      const bowOut = 0.016 * Math.sin(row * Math.PI * 0.85);
+      skirtPositions.setX(index, edgeU + edgeSide * bowOut);
+      skirtUvs.setXY(index, (skirtPositions.getZ(index) + 0.5) * 4, row);
     }
-    panel.translate(0, 0, panelCenters[panelIndex]!);
-    panel.computeVertexNormals();
-    applyGeometryTint(panel, panelTints[panelIndex]!);
-    parts.push(panel);
-
-    const hemY = panelLifts[panelIndex]! - 0.035;
-    // Reinforced longitudinal seams communicate how each bay is sewn without
-    // widening the authored canopy envelope.
-    for (const seamX of [-0.25, 0, 0.25]) {
-      const seam = boxPart(0.012, 0.018, panelLength, seamX, hemY - 0.01, panelCenters[panelIndex]!);
-      applyGeometryTint(seam, [0.68, 0.5, 0.34]);
-      parts.push(seam);
-    }
-
-    const leftHem = boxPart(0.014, 0.1, panelLength, -0.493, hemY, panelCenters[panelIndex]!);
-    const rightHem = boxPart(0.014, 0.1, panelLength, 0.493, hemY, panelCenters[panelIndex]!);
-    applyGeometryTint(leftHem, panelTints[panelIndex]!);
-    applyGeometryTint(rightHem, panelTints[panelIndex]!);
-    parts.push(leftHem, rightHem);
+    skirtPositions.needsUpdate = true;
+    skirtUvs.needsUpdate = true;
+    skirt.computeVertexNormals();
+    parts.push(skirt);
   }
 
-  // Exactly one hem occupies each authored station. Internal stations are no
-  // longer doubled by the two adjacent panels, and their shared profile is the
-  // same profile used by both panel edges.
-  for (const [stationIndex, station] of CANOPY_SPAN_STATIONS.entries()) {
-    const hem = new PlaneGeometry(1, 0.024, 8, 1);
-    hem.rotateX(-Math.PI * 0.5);
-    const hemPositions = hem.attributes.position;
-    if (hemPositions) {
-      for (let index = 0; index < hemPositions.count; index += 1) {
-        const across = Math.min(1, Math.abs(hemPositions.getX(index)) * 2);
-        hemPositions.setY(index, -0.12 * (1 - across * across) - 0.018);
-      }
-      hemPositions.needsUpdate = true;
+  // Two carrying cords and three sewn seams ride the sheet they belong to.
+  const cordHalfX = CLOTH_CANOPY_CORD_RADIUS_M / CLOTH_CANOPY_NOMINAL_WIDTH_M;
+  const cordHalfY = toUnitY(CLOTH_CANOPY_CORD_RADIUS_M);
+  for (const cordSide of [-1, 1] as const) {
+    const cordU = cordSide * CLOTH_CANOPY_CORD_U;
+    const cord = buildClothSurface(
+      [-1, 0, 1, 2],
+      vSamples,
+      (corner, v) => clothSurfaceUnitY(cordU, v)
+        + cordHalfY * (corner === -1 || corner === 2 ? 0.35 : 1.55),
+      () => [0.62, 0.44, 0.28] as const,
+    );
+    const cordPositions = cord.getAttribute("position");
+    for (let index = 0; index < cordPositions.count; index += 1) {
+      const corner = cordPositions.getX(index);
+      cordPositions.setX(index, cordU + (corner === -1 || corner === 0 ? -cordHalfX : cordHalfX));
     }
-    hem.translate(0, 0, station);
-    hem.computeVertexNormals();
-    applyGeometryTint(hem, panelTints[Math.min(panelTints.length - 1, Math.max(0, stationIndex - 1))]!);
-    parts.push(hem);
-    const hemUnderside = hem.clone();
-    hemUnderside.translate(0, -0.055, 0);
-    parts.push(hemUnderside);
+    cordPositions.needsUpdate = true;
+    cord.computeVertexNormals();
+    parts.push(flattenUv(cord, 0.5, 0.5));
+  }
+  for (const seamU of [-0.22, 0, 0.22]) {
+    const seam = buildClothSurface(
+      [-1, 1],
+      vSamples,
+      (_corner, v) => clothSurfaceUnitY(seamU, v) - toUnitY(0.012),
+      () => [0.72, 0.56, 0.4] as const,
+    );
+    const seamPositions = seam.getAttribute("position");
+    for (let index = 0; index < seamPositions.count; index += 1) {
+      seamPositions.setX(index, seamU + seamPositions.getX(index) * 0.006);
+    }
+    seamPositions.needsUpdate = true;
+    seam.computeVertexNormals();
+    parts.push(flattenUv(seam, 0.5, 0.5));
+  }
+
+  // Mid-span battens. They stop at the cords because that is what carries them,
+  // and they sit proud of the cloth so the load path reads from the lane.
+  const battenHalfZ = CLOTH_CANOPY_BATTEN_DEPTH_M / CLOTH_CANOPY_NOMINAL_SPAN_M * 0.5;
+  const battenHeight = toUnitY(CLOTH_CANOPY_BATTEN_THICKNESS_M);
+  for (const station of CANOPY_SPAN_STATIONS.slice(1, -1)) {
+    const battenY = clothSurfaceUnitY(0, station) + battenHeight * 0.5;
+    const batten = boxPart(
+      (CLOTH_CANOPY_CORD_U + 0.045) * 2,
+      battenHeight,
+      battenHalfZ * 2,
+      0,
+      battenY,
+      station,
+    );
+    applyGeometryTint(batten, [0.66, 0.47, 0.29]);
+    parts.push(flattenUv(batten, 0.5, 0.5));
+    for (const cordSide of [-1, 1] as const) {
+      const lashing = boxPart(
+        cordHalfX * 3.4,
+        battenHeight * 1.9,
+        battenHalfZ * 3.2,
+        cordSide * CLOTH_CANOPY_CORD_U,
+        battenY,
+        station,
+      );
+      applyGeometryTint(lashing, [0.5, 0.36, 0.24]);
+      parts.push(flattenUv(lashing, 0.5, 0.5));
+    }
   }
 
   return mergeProceduralGeometry(parts);

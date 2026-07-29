@@ -3,13 +3,13 @@
     {
       "id": "large_sandstone_blocks_01",
       "tileSizeM": 2.6,
-      "tintHex": "#d2c8b5",
-      "albedoBoost": 1.02,
-      "albedoGamma": 0.96,
-      "dustStrength": 0.28,
+      "tintHex": "#c9b083",
+      "albedoBoost": 1.05,
+      "albedoGamma": 0.98,
+      "dustStrength": 0.06,
       "roughness": 0.94,
-      "normalScale": 0.18,
-      "aoIntensity": 0.28,
+      "normalScale": 0.85,
+      "aoIntensity": 0.45,
       "textures": {
         "1k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
@@ -34,7 +34,7 @@
       "tintHex": "#c8c4be",
       "albedoBoost": 0.85,
       "albedoGamma": 0.95,
-      "dustStrength": 0.10,
+      "dustStrength": 0.1,
       "roughness": 0.94,
       "normalScale": 0.28,
       "aoIntensity": 0.35,
@@ -64,7 +64,7 @@
       "albedoGamma": 0.96,
       "dustStrength": 0.32,
       "roughness": 0.94,
-      "normalScale": 0.30,
+      "normalScale": 0.3,
       "aoIntensity": 0.35,
       "textures": {
         "1k": {
@@ -81,14 +81,14 @@
     },
     {
       "id": "cobblestone_color",
-      "tileSizeM": 2.6,
-      "tintHex": "#d8c7aa",
-      "albedoBoost": 1.05,
-      "albedoGamma": 0.94,
-      "dustStrength": 0.24,
+      "tileSizeM": 3.1,
+      "tintHex": "#c2ab84",
+      "albedoBoost": 0.88,
+      "albedoGamma": 1.0,
+      "dustStrength": 0.05,
       "roughness": 0.92,
-      "normalScale": 0.50,
-      "aoIntensity": 0.50,
+      "normalScale": 0.8,
+      "aoIntensity": 0.45,
       "textures": {
         "1k": {
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
@@ -114,7 +114,7 @@
       "albedoBoost": 1.06,
       "albedoGamma": 0.95,
       "dustStrength": 0.24,
-      "roughness": 0.90,
+      "roughness": 0.9,
       "normalScale": 0.65,
       "aoIntensity": 0.55,
       "source": {
@@ -122,7 +122,10 @@
         "assetId": "red_sandstone_pavement",
         "url": "https://polyhaven.com/a/red_sandstone_pavement",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 2.15, "height": 2.15 },
+        "nativeDimensionsM": {
+          "width": 2.15,
+          "height": 2.15
+        },
         "downloadedResolution": "2k",
         "md5": {
           "albedo": "a1259b901bce5c5b428ca1fdbb5c8ac7",
@@ -145,65 +148,69 @@
     },
     {
       "id": "patterned_cobblestone",
-      "tileSizeM": 2.5,
-      "tintHex": "#d6c3a8",
-      "albedoBoost": 1.06,
-      "albedoGamma": 0.95,
-      "dustStrength": 0.24,
-      "roughness": 0.90,
-      "normalScale": 0.65,
+      "tileSizeM": 4.0,
+      "tintHex": "#c8b48f",
+      "albedoBoost": 0.95,
+      "albedoGamma": 1.0,
+      "dustStrength": 0.04,
+      "roughness": 0.9,
+      "normalScale": 0.9,
       "aoIntensity": 0.55,
       "source": {
-        "provider": "Poly Haven",
-        "assetId": "patterned_cobblestone",
-        "url": "https://polyhaven.com/a/patterned_cobblestone",
-        "license": "CC0",
-        "nativeDimensionsM": { "width": 2.5, "height": 2.5 },
-        "downloadedResolution": "2k",
-        "md5": {
-          "albedo": "7517f9498721d3d265bf499d37067ece",
-          "normal": "caaa933e8b753a4cd21402b71d5a33df",
-          "arm": "9452875b2a417596d4ca3f0cd685f1cf"
-        }
+        "provider": "Project-Original",
+        "assetId": "court_flagstone_01",
+        "license": "Project-Original",
+        "notes": "Authored tileable dressed-limestone flagstone laid in courses. Replaces a Poly Haven source whose albedo carried almost no structure (p5-p95 range 0.166, saturation 0.053), which made every court using it render as a flat pale sheet.",
+        "nativeDimensionsM": {
+          "width": 4.0,
+          "height": 4.0
+        },
+        "downloadedResolution": "2k"
       },
       "textures": {
         "1k": {
-          "albedo": "./patterned_cobblestone/patterned_cobblestone_diff_1k.jpg",
-          "normal": "./patterned_cobblestone/patterned_cobblestone_nor_gl_1k.jpg",
-          "arm": "./patterned_cobblestone/patterned_cobblestone_arm_1k.jpg"
+          "albedo": "./court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+          "arm": "./court_flagstone_01/court_flagstone_01_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./patterned_cobblestone/patterned_cobblestone_diff_2k.jpg",
-          "normal": "./patterned_cobblestone/patterned_cobblestone_nor_gl_2k.jpg",
-          "arm": "./patterned_cobblestone/patterned_cobblestone_arm_2k.jpg"
+          "albedo": "./court_flagstone_01/court_flagstone_01_diff_2k.jpg",
+          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_2k.jpg",
+          "arm": "./court_flagstone_01/court_flagstone_01_arm_2k.jpg"
         }
       }
     },
     {
       "id": "sand_01",
-      "tileSizeM": 5,
-      "tintHex": "#e5c88e",
-      "albedoBoost": 1.15,
-      "albedoGamma": 0.88,
-      "dustStrength": 0.55,
+      "tileSizeM": 3.2,
+      "tintHex": "#d6bd93",
+      "albedoBoost": 0.82,
+      "albedoGamma": 1.05,
+      "dustStrength": 0.0,
       "roughness": 0.99,
-      "normalScale": 0.15,
-      "aoIntensity": 0.20,
+      "normalScale": 0.9,
+      "aoIntensity": 0.55,
+      "source": {
+        "provider": "Project-Original",
+        "assetId": "sand_drift_01",
+        "license": "Project-Original",
+        "notes": "Authored tileable wind-rippled desert sand for the wall-base accumulation layer. Replaces a stand-in that pointed at medieval_blocks_05, which made drifted sand render as paving.",
+        "nativeDimensionsM": {
+          "width": 3.2,
+          "height": 3.2
+        },
+        "downloadedResolution": "2k"
+      },
       "textures": {
         "1k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+          "albedo": "./sand_drift_01/sand_drift_01_diff_1k.jpg",
+          "normal": "./sand_drift_01/sand_drift_01_nor_gl_1k.jpg",
+          "arm": "./sand_drift_01/sand_drift_01_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
+          "albedo": "./sand_drift_01/sand_drift_01_diff_2k.jpg",
+          "normal": "./sand_drift_01/sand_drift_01_nor_gl_2k.jpg",
+          "arm": "./sand_drift_01/sand_drift_01_arm_2k.jpg"
         }
       }
     }

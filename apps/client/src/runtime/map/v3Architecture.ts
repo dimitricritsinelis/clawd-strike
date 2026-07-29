@@ -305,12 +305,24 @@ type BuildingMaterialIdentity = {
   roofTintHex: number;
 };
 
+/**
+ * Per-building wall tints.
+ *
+ * Each palette spans saturation as well as value, so neighbouring buildings
+ * differ in the mix their render was made from, not merely in exposure. The
+ * previous sets varied almost entirely in value — quiet_residential spanned a
+ * single point of saturation across all six entries — so a street of them
+ * resolved into one continuous painted surface with pilasters on it, where the
+ * daylight references break hard at every party wall. Every entry stays inside
+ * the sand/ochre register; the spread is between neighbours, not away from the
+ * palette.
+ */
 const BUILDING_WALL_TINTS: Readonly<Record<V3FacadeProfile["family"], readonly number[]>> = {
-  active_merchant: [0xd8c9ae, 0xcdbda1, 0xd4c5ab, 0xc7b79e, 0xdcd0bb, 0xcbbfa8],
-  quiet_residential: [0xd9d2c4, 0xc8c1b4, 0xe0d9cc, 0xbfb8aa, 0xd2cbbd, 0xe4ddd0],
-  service_storage: [0xc4bbaa, 0xb9b09f, 0xafa695, 0xc9c0ae, 0xb7ae9f, 0xd0c8b8],
-  covered_arcade: [0xc8bdac, 0xbeb2a1, 0xd3c8b5, 0xb4aa9b, 0xd9d0c0, 0xc1b7a6],
-  hero_courtyard: [0xd8ccb8, 0xcabca6, 0xe0d4c2, 0xb9ad9c, 0xd2c5b2, 0xe5dccd],
+  active_merchant: [0xe0d3b6, 0xc9b28f, 0xd7cdbe, 0xbcae96, 0xdccdaa, 0xcfc8bd],
+  quiet_residential: [0xe4ddd0, 0xcbb99b, 0xd8d3ca, 0xbfae94, 0xdcd4c2, 0xc6bfb4],
+  service_storage: [0xc7bda8, 0xb3a288, 0xaea79b, 0xd0c1a2, 0xb8b2a8, 0xd4ccbb],
+  covered_arcade: [0xcdbfa6, 0xb9ac97, 0xd6cdbd, 0xb0a793, 0xdbcfb4, 0xc0bab0],
+  hero_courtyard: [0xdccdb0, 0xc9b697, 0xe4ddd2, 0xbcae9a, 0xd6c8ac, 0xd0cac1],
 };
 
 /**
@@ -327,7 +339,7 @@ function resolveBuildingMaterialIdentity(
   const palette = BUILDING_WALL_TINTS[family];
   const paletteUnit = stableUnitInterval(`${placement.id}:building-palette`);
   const paletteIndex = Math.min(palette.length - 1, Math.floor(paletteUnit * palette.length));
-  const brightness = 0.965 + stableUnitInterval(`${placement.id}:building-brightness`) * 0.07;
+  const brightness = 0.92 + stableUnitInterval(`${placement.id}:building-brightness`) * 0.16;
   const wallTintHex = scaleHexColor(palette[paletteIndex]!, brightness);
   const trimBase = family === "active_merchant" || family === "covered_arcade"
     ? 0xc2b69f
@@ -1099,6 +1111,435 @@ function pushMerchantUpperScreen(
  * column centerlines as their ground bays. This is render-only relief: the
  * backing shell and every gameplay envelope remain untouched.
  */
+/**
+ * Merchant elevation order: base course, bay piers, opening head beams, and
+ * projecting upper sills.
+ *
+ * Without these the frontage is a single flat plane with holes cut in it — no
+ * load path, nothing for the awnings and signs to cast onto, and no physical
+ * reason for the wall base to collect dirt. Every element here is derived from
+ * the authored bay centrelines, so the existing rhythm and its deliberate
+ * slight irregularity are preserved rather than regularised into a grid.
+ *
+ * Render-only: all of it projects from the facade face into the zone, well
+ * inside the massing's authored depth, and none of it touches collision.
+ */
+function pushMerchantElevationOrder(
+  placement: V3ArchitectureMassingPlacement,
+  modules: readonly V3ArchitectureModulePlacement[],
+  instances: WallDetailInstance[],
+  profile: V3FacadeProfile,
+  center: { x: number; y: number; z: number },
+  yawRad: number,
+  backingPlacementId: string,
+): void {
+  if (profile.family !== "active_merchant") return;
+  if (placement.sizeM.width < 3) return;
+
+  const identity = resolveBuildingMaterialIdentity(placement, profile.family);
+  const bottomY = center.y - placement.sizeM.height * 0.5;
+  const faceInwardM = placement.sizeM.depth * 0.5;
+  const halfWidthM = placement.sizeM.width * 0.5;
+
+  const resolveModules = (prefix: string) => modules
+    .filter((module) => module.datumId.startsWith(prefix) && createsVisualFacadeCutout(module))
+    .map((module) => {
+      const moduleCenter = designToWorldVec3(module.center);
+      const alongM = resolveFacadeModuleOffset(placement, module);
+      return {
+        module,
+        alongM,
+        leftM: alongM - module.sizeM.width * 0.5,
+        rightM: alongM + module.sizeM.width * 0.5,
+        centerY: moduleCenter.y,
+      };
+    })
+    .sort((left, right) => left.alongM - right.alongM);
+
+  const groundModules = resolveModules("GROUND_");
+  const upperModules = resolveModules("STORY_");
+  if (groundModules.length === 0) return;
+
+  const shadowTint = scaleHexColor(identity.wallTintHex, 0.34);
+
+  // 1. Continuous base course. It runs the full frontage so the wall lands on
+  // something instead of being sliced off by the paving.
+  const plinthHeightM = 0.46;
+  const plinthProjectionM = 0.11;
+  pushInstance(instances, {
+    placementId: `${placement.id}:merchant-base-course`,
+    moduleId: "active_merchant_base_course",
+    semanticClass: "active_merchant_base_course",
+    meshId: "plinth_strip",
+    position: offsetPosition(
+      { ...center, y: bottomY + plinthHeightM * 0.5 },
+      placement.face,
+      0,
+      faceInwardM + plinthProjectionM * 0.5,
+    ),
+    scale: { x: placement.sizeM.width, y: plinthHeightM, z: plinthProjectionM },
+    backingPlacementId,
+    structurallyBacked: true,
+    yawRad,
+    trimMaterialId: placement.materialSlots.trim,
+    detailTintHex: scaleHexColor(identity.trimTintHex, 0.92),
+    uvProjection: "world",
+  });
+  // Grime line where the base course meets the paving. This band sits in open
+  // daylight, unlike the reveals `shadowTint` was mixed for, so it takes a
+  // soiled-trim tone instead: at recess darkness it reads as a black bar ruled
+  // along the foot of every frontage rather than as dirt. It is also kept
+  // nearly flush with the base course, because a strip that stands proud reads
+  // as an applied moulding and casts its own second hard edge.
+  const contactGrimeTint = scaleHexColor(identity.trimTintHex, 0.62);
+  pushInstance(instances, {
+    placementId: `${placement.id}:merchant-base-contact`,
+    moduleId: "active_merchant_base_course",
+    semanticClass: "active_merchant_base_contact",
+    meshId: "string_course_strip",
+    position: offsetPosition(
+      { ...center, y: bottomY + 0.045 },
+      placement.face,
+      0,
+      faceInwardM + plinthProjectionM - 0.012,
+    ),
+    scale: { x: placement.sizeM.width, y: 0.09, z: 0.05 },
+    backingPlacementId,
+    structurallyBacked: true,
+    yawRad,
+    trimMaterialId: placement.materialSlots.trim,
+    detailTintHex: contactGrimeTint,
+    uvProjection: "world",
+  });
+
+  // 2. Bay piers, one per gap between adjacent ground openings, plus the two
+  // ends. They run from the base course to the story datum so the elevation
+  // finally has verticals carrying the load.
+  const sharedHeadY = Math.max(
+    ...groundModules.map((entry) => entry.centerY + entry.module.sizeM.height * 0.5),
+  );
+  const pierTopY = upperModules.length > 0
+    ? Math.min(...upperModules.map((entry) => entry.centerY - entry.module.sizeM.height * 0.5)) - 0.18
+    : sharedHeadY + 0.6;
+  const pierBottomY = bottomY + plinthHeightM;
+  if (pierTopY - pierBottomY > 0.8) {
+    const gaps: { centerM: number; widthM: number }[] = [];
+    let cursorM = -halfWidthM;
+    for (const ground of groundModules) {
+      gaps.push({ centerM: (cursorM + ground.leftM) * 0.5, widthM: ground.leftM - cursorM });
+      cursorM = ground.rightM;
+    }
+    gaps.push({ centerM: (cursorM + halfWidthM) * 0.5, widthM: halfWidthM - cursorM });
+
+    for (const [index, gap] of gaps.entries()) {
+      // Leave a visible margin of plaster either side so the pier reads as
+      // masonry standing proud between infill panels, not as the whole gap
+      // being filled with stone.
+      const pierWidthM = Math.min(0.68, gap.widthM - 0.36);
+      if (pierWidthM < 0.34) continue;
+      // 0.11 m keeps the pier face inside the zone the authored sill goods
+      // occupy; at 0.14 m the stone cut across a jar standing at the door.
+      const projectionM = 0.11;
+      // Coursed stone piers against plaster infill panels. Building the pier
+      // from the same smooth plaster as the field made it invisible: with no
+      // cast shadow on this east-facing wall, only a material change gives the
+      // load path anything to read against.
+      pushInstance(instances, {
+        placementId: `${placement.id}:merchant-pier:${index}`,
+        moduleId: "active_merchant_bay_pier",
+        semanticClass: "active_merchant_bay_pier",
+        meshId: "pilaster",
+        position: offsetPosition(
+          { ...center, y: (pierBottomY + pierTopY) * 0.5 },
+          placement.face,
+          gap.centerM,
+          faceInwardM + projectionM * 0.5,
+        ),
+        scale: { x: pierWidthM, y: pierTopY - pierBottomY, z: projectionM },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
+        trimMaterialId: placement.materialSlots.trim,
+        detailTintHex: scaleHexColor(identity.trimTintHex, index % 2 === 0 ? 1.04 : 0.95),
+        uvProjection: "world",
+      });
+      // Recess shadow down both arrises. Nothing else on this elevation defines
+      // a plane change, so the pier needs its own contact occlusion.
+      for (const side of [-1, 1] as const) {
+        pushInstance(instances, {
+          placementId: `${placement.id}:merchant-pier-arris:${index}:${side}`,
+          moduleId: "active_merchant_bay_pier",
+          semanticClass: "active_merchant_bay_pier_arris",
+          meshId: "string_course_strip",
+          position: offsetPosition(
+            { ...center, y: (pierBottomY + pierTopY) * 0.5 },
+            placement.face,
+            gap.centerM + side * (pierWidthM * 0.5 + 0.045),
+            faceInwardM + 0.015,
+          ),
+          scale: { x: 0.09, y: pierTopY - pierBottomY, z: 0.03 },
+          backingPlacementId,
+          structurallyBacked: true,
+          yawRad,
+          trimMaterialId: placement.materialSlots.trim,
+          detailTintHex: shadowTint,
+          uvProjection: "world",
+        });
+      }
+      // Capital under the story datum, and its shadow.
+      pushInstance(instances, {
+        placementId: `${placement.id}:merchant-pier-cap:${index}`,
+        moduleId: "active_merchant_bay_pier",
+        semanticClass: "active_merchant_bay_pier_cap",
+        meshId: "string_course_strip",
+        position: offsetPosition(
+          { ...center, y: pierTopY - 0.07 },
+          placement.face,
+          gap.centerM,
+          faceInwardM + projectionM * 0.5 + 0.03,
+        ),
+        scale: { x: pierWidthM + 0.14, y: 0.14, z: projectionM + 0.06 },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
+        trimMaterialId: placement.materialSlots.trim,
+        detailTintHex: identity.trimTintHex,
+        uvProjection: "world",
+      });
+      pushInstance(instances, {
+        placementId: `${placement.id}:merchant-pier-cap-shade:${index}`,
+        moduleId: "active_merchant_bay_pier",
+        semanticClass: "active_merchant_bay_pier_shade",
+        meshId: "string_course_strip",
+        position: offsetPosition(
+          { ...center, y: pierTopY - 0.17 },
+          placement.face,
+          gap.centerM,
+          faceInwardM + projectionM * 0.5 + 0.01,
+        ),
+        scale: { x: pierWidthM + 0.1, y: 0.07, z: projectionM + 0.02 },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
+        trimMaterialId: placement.materialSlots.trim,
+        detailTintHex: shadowTint,
+        uvProjection: "world",
+      });
+    }
+  }
+
+  // 3. Masonry that acknowledges its openings: quoined jambs up both sides of
+  // every ground opening, and a flat-arch relieving course over the narrow
+  // ones. Real masonry always tells you where a hole was made; a single tiled
+  // ashlar sheet running past the door reads as wallpaper.
+  for (const ground of groundModules) {
+    const openingBottomY = ground.centerY - ground.module.sizeM.height * 0.5;
+    const openingTopY = ground.centerY + ground.module.sizeM.height * 0.5;
+    const quoinCourseM = 0.38;
+    const quoinCount = Math.max(2, Math.floor((openingTopY - openingBottomY) / quoinCourseM));
+    for (const side of [-1, 1] as const) {
+      const jambM = side < 0 ? ground.leftM : ground.rightM;
+      for (let course = 0; course < quoinCount; course += 1) {
+        const long = course % 2 === 0;
+        const quoinWidthM = long ? 0.34 : 0.22;
+        const courseY = openingBottomY + quoinCourseM * (course + 0.5);
+        if (courseY + quoinCourseM * 0.5 > openingTopY) break;
+        pushInstance(instances, {
+          placementId: `${placement.id}:merchant-jamb:${ground.module.columnId}:${side}:${course}`,
+          moduleId: "active_merchant_opening_quoin",
+          semanticClass: "active_merchant_opening_quoin",
+          meshId: "pilaster",
+          position: offsetPosition(
+            { ...center, y: courseY },
+            placement.face,
+            jambM + side * quoinWidthM * 0.5,
+            faceInwardM + (long ? 0.06 : 0.035),
+          ),
+          scale: {
+            x: quoinWidthM,
+            y: quoinCourseM - 0.035,
+            z: long ? 0.12 : 0.07,
+          },
+          backingPlacementId,
+          structurallyBacked: true,
+          yawRad,
+          trimMaterialId: placement.materialSlots.trim,
+          detailTintHex: scaleHexColor(identity.trimTintHex, long ? 1.22 : 1.12),
+          uvProjection: "world",
+        });
+        // Arris shadow on the outer edge of each long quoin.
+        if (!long) continue;
+        pushInstance(instances, {
+          placementId: `${placement.id}:merchant-jamb-arris:${ground.module.columnId}:${side}:${course}`,
+          moduleId: "active_merchant_opening_quoin",
+          semanticClass: "active_merchant_opening_quoin_arris",
+          meshId: "string_course_strip",
+          position: offsetPosition(
+            { ...center, y: courseY },
+            placement.face,
+            jambM + side * (quoinWidthM + 0.035),
+            faceInwardM + 0.03,
+          ),
+          scale: { x: 0.06, y: quoinCourseM - 0.035, z: 0.05 },
+          backingPlacementId,
+          structurallyBacked: true,
+          yawRad,
+          trimMaterialId: placement.materialSlots.trim,
+          detailTintHex: shadowTint,
+          uvProjection: "world",
+        });
+      }
+    }
+    // Flat-arch relieving course over the narrow openings, where a stone head
+    // would actually be needed to carry the wall above.
+    if (ground.module.sizeM.width <= 1.6) {
+      const voussoirCount = 5;
+      const archWidthM = ground.module.sizeM.width + 0.5;
+      for (let index = 0; index < voussoirCount; index += 1) {
+        const t = (index + 0.5) / voussoirCount - 0.5;
+        pushInstance(instances, {
+          placementId: `${placement.id}:merchant-flat-arch:${ground.module.columnId}:${index}`,
+          moduleId: "active_merchant_opening_quoin",
+          semanticClass: "active_merchant_relieving_course",
+          meshId: "pilaster",
+          position: offsetPosition(
+            { ...center, y: openingTopY + 0.19 },
+            placement.face,
+            ground.alongM + t * archWidthM,
+            faceInwardM + 0.055,
+          ),
+          scale: {
+            x: archWidthM / voussoirCount - 0.03,
+            y: 0.34,
+            z: 0.11,
+          },
+          backingPlacementId,
+          structurallyBacked: true,
+          yawRad,
+          // The centre stone is the widest and lightest so the head reads.
+          trimMaterialId: placement.materialSlots.trim,
+          detailTintHex: scaleHexColor(
+            identity.trimTintHex,
+            index === (voussoirCount - 1) / 2 ? 1.3 : index % 2 === 0 ? 1.2 : 1.1,
+          ),
+          uvProjection: "world",
+        });
+      }
+    }
+  }
+
+  // 4. One timber head beam per ground opening, all on a shared soffit datum so
+  // the run reads as a single spanning structure rather than per-bay trim.
+  for (const ground of groundModules) {
+    const beamHeightM = 0.24;
+    const beamY = sharedHeadY + beamHeightM * 0.5 + 0.02;
+    if (beamY + beamHeightM * 0.5 > pierTopY) continue;
+    pushInstance(instances, {
+      placementId: `${placement.id}:merchant-head-beam:${ground.module.columnId}`,
+      moduleId: "active_merchant_head_beam",
+      semanticClass: "active_merchant_head_beam",
+      meshId: "door_lintel",
+      position: offsetPosition(
+        { ...center, y: beamY },
+        placement.face,
+        ground.alongM,
+        faceInwardM + 0.09,
+      ),
+      scale: { x: ground.module.sizeM.width + 0.42, y: beamHeightM, z: 0.26 },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+      detailTintHex: scaleHexColor(identity.timberTintHex, 0.9),
+      uvProjection: "world",
+    });
+    pushInstance(instances, {
+      placementId: `${placement.id}:merchant-head-shade:${ground.module.columnId}`,
+      moduleId: "active_merchant_head_beam",
+      semanticClass: "active_merchant_head_shade",
+      meshId: "string_course_strip",
+      position: offsetPosition(
+        { ...center, y: beamY - beamHeightM * 0.5 - 0.035 },
+        placement.face,
+        ground.alongM,
+        faceInwardM + 0.06,
+      ),
+      scale: { x: ground.module.sizeM.width + 0.34, y: 0.07, z: 0.2 },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: placement.materialSlots.trim,
+      detailTintHex: shadowTint,
+      uvProjection: "world",
+    });
+  }
+
+  // 5. Projecting sill with a drip and a weather stain under each upper window.
+  for (const upper of upperModules) {
+    const sillY = upper.centerY - upper.module.sizeM.height * 0.5;
+    pushInstance(instances, {
+      placementId: `${placement.id}:merchant-upper-sill:${upper.module.columnId}`,
+      moduleId: "active_merchant_upper_sill",
+      semanticClass: "active_merchant_upper_sill",
+      meshId: "string_course_strip",
+      position: offsetPosition(
+        { ...center, y: sillY - 0.09 },
+        placement.face,
+        upper.alongM,
+        faceInwardM + 0.08,
+      ),
+      scale: { x: upper.module.sizeM.width + 0.5, y: 0.15, z: 0.22 },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: placement.materialSlots.trim,
+      detailTintHex: identity.trimTintHex,
+      uvProjection: "world",
+    });
+    pushInstance(instances, {
+      placementId: `${placement.id}:merchant-upper-drip:${upper.module.columnId}`,
+      moduleId: "active_merchant_upper_sill",
+      semanticClass: "active_merchant_upper_drip",
+      meshId: "string_course_strip",
+      position: offsetPosition(
+        { ...center, y: sillY - 0.2 },
+        placement.face,
+        upper.alongM,
+        faceInwardM + 0.04,
+      ),
+      scale: { x: upper.module.sizeM.width + 0.4, y: 0.08, z: 0.13 },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: placement.materialSlots.trim,
+      detailTintHex: shadowTint,
+      uvProjection: "world",
+    });
+    // Weather staining washed down the wall from each sill end.
+    for (const side of [-1, 1] as const) {
+      pushInstance(instances, {
+        placementId: `${placement.id}:merchant-upper-stain:${upper.module.columnId}:${side}`,
+        moduleId: "active_merchant_upper_sill",
+        semanticClass: "active_merchant_upper_stain",
+        meshId: "string_course_strip",
+        position: offsetPosition(
+          { ...center, y: sillY - 0.62 },
+          placement.face,
+          upper.alongM + side * (upper.module.sizeM.width * 0.5 + 0.16),
+          faceInwardM + 0.012,
+        ),
+        scale: { x: 0.17, y: 0.78, z: 0.02 },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
+        trimMaterialId: placement.materialSlots.trim,
+        detailTintHex: scaleHexColor(identity.wallTintHex, 0.66),
+        uvProjection: "world",
+      });
+    }
+  }
+}
+
 function pushFacadeStoryDatumGrammar(
   placement: V3ArchitectureMassingPlacement,
   modules: readonly V3ArchitectureModulePlacement[],
@@ -2414,6 +2855,15 @@ function pushMassing(
 
   if (hasFacadeCutouts) {
     pushFacadeStoryDatumGrammar(
+      placement,
+      frontageModules,
+      instances,
+      profile,
+      center,
+      yawRad,
+      backingPlacementId,
+    );
+    pushMerchantElevationOrder(
       placement,
       frontageModules,
       instances,

@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "5c157c0679df65628cec3bc26ce9f64365ce44f5503c2f206189487b49da9f74",
+    "sha256": "7995824b6e94f2ea5b053f9b028c35eba280ecdf0d46e29945e75c058263df32",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -4458,6 +4458,166 @@
       }
     },
     {
+      "id": "ASSET_SPAWN_A_EAST_DYE_WORKS",
+      "label": "Spawn A east dye works kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-east-dye-works"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.4,
+        "height": 12.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_east_dye_works"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EXIT_EAST_RETURN",
+      "label": "Spawn A exit east return kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-exit-east-return"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 5.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_east_return"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EXIT_WEST_RETURN",
+      "label": "Spawn A exit west return kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-exit-west-return"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_west_return"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_GATE",
+      "label": "Bab al-Suq south boundary kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-gate"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 21.9,
+        "depth": 2.2,
+        "height": 12
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_gate"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_WEST_BACKS",
+      "label": "Spawn A west courtyard backs kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-west-backs"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.2,
+        "height": 9.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_west_backs"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_SPAWN_COVER",
       "label": "Spawn courtyard cover module",
       "source": {
@@ -4477,6 +4637,38 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_cover"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_GATE",
+      "label": "Spice Gate portal kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spice-gate"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 12.8,
+        "depth": 1.9,
+        "height": 9.1
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_gate"
       },
       "transform": {
         "pivot": "base_center",
@@ -9505,7 +9697,9 @@
       "districtId": "DISTRICT_SPICE",
       "classification": "overhead",
       "anchors": [
-        "B6_LAUNDRY_SPICE_01"
+        "B6_LAUNDRY_SPICE_01",
+        "B6_LAUNDRY_SPICE_02",
+        "B6_LAUNDRY_SPICE_03"
       ],
       "assetIds": [
         "ASSET_LAUNDRY_LINE"
@@ -9871,6 +10065,71 @@
       ]
     },
     {
+      "id": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EAST_WORKS_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EAST_DYE_WORKS"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EXIT_EAST_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EXIT_EAST_RETURN"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_EXIT_WEST",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EXIT_WEST_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EXIT_WEST_RETURN"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_GATE",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_GATE_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_GATE"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_WEST_BACKS_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_WEST_BACKS"
+      ]
+    },
+    {
       "id": "CLUSTER_SPAWN_B_COVER",
       "zoneId": "SPAWN_B_COURTYARD",
       "surfaceId": "SURFACE_SPAWN_B_COURTYARD",
@@ -9912,6 +10171,19 @@
         "ASSET_CC0_BASKET",
         "ASSET_CC0_POTTERY",
         "ASSET_GROUND_RUG"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPICE_GATE",
+      "zoneId": "SPICE_STREET",
+      "surfaceId": "SURFACE_SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPICE_GATE_01"
+      ],
+      "assetIds": [
+        "ASSET_SPICE_GATE"
       ]
     },
     {
@@ -10335,6 +10607,96 @@
       },
       "dimensionsM": {
         "width": 1.4,
+        "depth": 12,
+        "height": 0.85
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_laundry_line"
+      }
+    },
+    {
+      "id": "PLACE_B6_SPICE_LAUNDRY_B6_LAUNDRY_SPICE_02",
+      "clusterId": "CLUSTER_B6_SPICE_LAUNDRY",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorId": "B6_LAUNDRY_SPICE_02",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "overhead",
+      "position": {
+        "x": 27,
+        "y": 23.756,
+        "z": 6
+      },
+      "yawDeg": 90,
+      "spanSeats": {
+        "start": {
+          "x": 21,
+          "y": 23.756,
+          "z": 6.05
+        },
+        "end": {
+          "x": 33,
+          "y": 23.756,
+          "z": 5.95
+        }
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.55,
+        "depth": 12,
+        "height": 0.85
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_laundry_line"
+      }
+    },
+    {
+      "id": "PLACE_B6_SPICE_LAUNDRY_B6_LAUNDRY_SPICE_03",
+      "clusterId": "CLUSTER_B6_SPICE_LAUNDRY",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorId": "B6_LAUNDRY_SPICE_03",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "overhead",
+      "position": {
+        "x": 27,
+        "y": 28.745600000000003,
+        "z": 6.15
+      },
+      "yawDeg": 90,
+      "spanSeats": {
+        "start": {
+          "x": 21,
+          "y": 28.745600000000003,
+          "z": 6.2
+        },
+        "end": {
+          "x": 33,
+          "y": 28.745600000000003,
+          "z": 6.1
+        }
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.2,
         "depth": 12,
         "height": 0.85
       },
@@ -12480,6 +12842,171 @@
       }
     },
     {
+      "id": "PLACE_SPAWN_A_EAST_WORKS_LMK_SPAWN_A_EAST_WORKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_SPAWN_A_EAST_DYE_WORKS",
+      "anchorId": "LMK_SPAWN_A_EAST_WORKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.2,
+        "y": 4,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.4,
+        "height": 12.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_east_dye_works"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EXIT_EAST_LMK_SPAWN_A_EXIT_EAST_01",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "assetId": "ASSET_SPAWN_A_EXIT_EAST_RETURN",
+      "anchorId": "LMK_SPAWN_A_EXIT_EAST_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 36.25,
+        "y": 13,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 5.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_east_return"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EXIT_WEST_LMK_SPAWN_A_EXIT_WEST_01",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_WEST",
+      "assetId": "ASSET_SPAWN_A_EXIT_WEST_RETURN",
+      "anchorId": "LMK_SPAWN_A_EXIT_WEST_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 18.75,
+        "y": 13,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_west_return"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_GATE_LMK_SPAWN_A_GATE_01",
+      "clusterId": "CLUSTER_SPAWN_A_GATE",
+      "assetId": "ASSET_SPAWN_A_GATE",
+      "anchorId": "LMK_SPAWN_A_GATE_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 28,
+        "y": 0.85,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 21.9,
+        "depth": 2.2,
+        "height": 12
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_gate"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_WEST_BACKS_LMK_SPAWN_A_WEST_BACKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "assetId": "ASSET_SPAWN_A_WEST_BACKS",
+      "anchorId": "LMK_SPAWN_A_WEST_BACKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.8,
+        "y": 4,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.2,
+        "height": 9.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_west_backs"
+      }
+    },
+    {
       "id": "PLACE_SPAWN_B_COVER_SPAWN_B_COVER_01",
       "clusterId": "CLUSTER_SPAWN_B_COVER",
       "assetId": "ASSET_SPAWN_COVER",
@@ -12701,6 +13228,39 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_cover_goods"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_GATE_LMK_SPICE_GATE_01",
+      "clusterId": "CLUSTER_SPICE_GATE",
+      "assetId": "ASSET_SPICE_GATE",
+      "anchorId": "LMK_SPICE_GATE_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 27,
+        "y": 14.95,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 12.8,
+        "depth": 1.9,
+        "height": 9.1
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_gate"
       }
     },
     {
@@ -13689,6 +14249,50 @@
       "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
     },
     {
+      "id": "B6_LAUNDRY_SPICE_02",
+      "type": "cloth_canopy_span",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 23.756,
+        "z": 6.05
+      },
+      "yawDeg": 90,
+      "endPos": {
+        "x": 33,
+        "y": 23.756,
+        "z": 5.95
+      },
+      "widthM": 1.55,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.55,
+      "endFrontageId": "FRONTAGE_SPICE_STREET_EAST",
+      "endAlong": 0.55,
+      "notes": "Mid-lane line between the two cloth spans. Hung above the upper-window heads so the overhead layer reads as one continuous rhythm instead of two isolated sheets."
+    },
+    {
+      "id": "B6_LAUNDRY_SPICE_03",
+      "type": "cloth_canopy_span",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 28.745600000000003,
+        "z": 6.2
+      },
+      "yawDeg": 90,
+      "endPos": {
+        "x": 33,
+        "y": 28.745600000000003,
+        "z": 6.1
+      },
+      "widthM": 1.2,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.88,
+      "endFrontageId": "FRONTAGE_SPICE_STREET_EAST",
+      "endAlong": 0.88,
+      "notes": "North line closes the lane sequence at the Fountain Court transition. Hung above the upper-window heads."
+    },
+    {
       "id": "B6_LAUNDRY_TEXTILE_01",
       "type": "cloth_canopy_span",
       "zone": "TEXTILE_ARCADE",
@@ -14538,6 +15142,76 @@
       "notes": "Lane-spanning northern gate arch tied into both inward-facing frontage walls without opening the exterior perimeter."
     },
     {
+      "id": "LMK_SPAWN_A_EAST_WORKS_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "pos": {
+        "x": 38.2,
+        "y": 4,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "widthM": 8,
+      "heightM": 12.8,
+      "notes": "Dye-works back re-facing the sealed 8 m east wall run of the A spawn courtyard between its south-east corner and the connector mouth. Its boiler stack is the edge's skyline event and its drying rails carry the courtyard's only saturated colour. Render-only; nothing below head height stands more than 0.28 m off the x=39 wall plane, and the rails and cloth hang well above it, so collision, route width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_EXIT_EAST_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "pos": {
+        "x": 36.25,
+        "y": 13,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "widthM": 5.5,
+      "heightM": 7.6,
+      "notes": "Merchant re-facing of the sealed east return that frames the main exit. Render-only; nothing below head height stands more than 0.28 m off the y=14 wall plane, so collision, exit width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_EXIT_WEST_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "pos": {
+        "x": 18.75,
+        "y": 13,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "widthM": 3.5,
+      "heightM": 7.6,
+      "notes": "Merchant re-facing of the sealed west return that frames the main exit. Render-only; nothing below head height stands more than 0.28 m off the y=14 wall plane, so collision, exit width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_GATE_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "pos": {
+        "x": 28,
+        "y": 0.85,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "widthM": 21.9,
+      "heightM": 12,
+      "notes": "Bab al-Suq: the sealed south gate re-facing the whole 22 m rear boundary of the A spawn courtyard. Render-only; nothing below head height stands more than 0.28 m off the y=0 wall plane, so the courtyard's walkable envelope, collision, grounding, and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_WEST_BACKS_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "pos": {
+        "x": 17.8,
+        "y": 4,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 8,
+      "heightM": 9.8,
+      "notes": "Three house backs re-facing the sealed 8 m west wall run of the A spawn courtyard between its south-west corner and the connector mouth. Render-only; nothing below head height stands more than 0.28 m off the x=17 wall plane, so collision, route width and sightlines are unchanged."
+    },
+    {
       "id": "LMK_SPICE_DISTRICT",
       "type": "landmark",
       "zone": "SPICE_STREET",
@@ -14549,6 +15223,20 @@
       "widthM": 1.5,
       "heightM": 0.85,
       "notes": "Authored Ground 03 override: the spice display is centered inside the 2.4 m west merchant recess, with its sack and brass pot grounded at the two front corners and the adjacent door service volume left clear."
+    },
+    {
+      "id": "LMK_SPICE_GATE_01",
+      "type": "hero_landmark",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 27,
+        "y": 14.95,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "widthM": 12.8,
+      "heightM": 9.1,
+      "notes": "Lane-spanning southern gate that terminates Spawn A and opens Spice Street. Its front elevation sits on the y=14 courtyard wall plane and its abutments occupy the solid corner nubs outside the 12 m throat, so the arch adds silhouette, soffit shade, and threshold without narrowing the route or altering collision."
     },
     {
       "id": "LMK_TEA_TERRACE_01",

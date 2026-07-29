@@ -33,8 +33,18 @@ const UV_OFFSET_V = 0;
 const V3_FORMAT = /^3(?:\.|$)/;
 const EDGE_EPSILON_M = 1e-4;
 const ELEVATION_EPSILON_M = 0.015;
-const MATERIAL_THRESHOLD_WIDTH_M = 0.24;
-const MATERIAL_THRESHOLD_RISE_M = 0.012;
+// A change of paving between two districts is a built joint, and a mason lays a
+// real course of dressed stone across it, not a 24 cm sliver. At the width
+// below the threshold reads as construction from the approach a player actually
+// walks, which is what makes a court entrance a threshold rather than the point
+// where one texture stops.
+const MATERIAL_THRESHOLD_WIDTH_M = 0.86;
+// A laid threshold course stands slightly proud of the paving it divides; at
+// 1.2 cm it read as a texture band rather than construction, so a district
+// transition announced itself only by the point at which one material stopped.
+// Held at 3.5 cm: enough to catch a kerb highlight and its own shadow line,
+// well under a step a player would notice against the flat collision surface.
+const MATERIAL_THRESHOLD_RISE_M = 0.035;
 const ELEVATION_THRESHOLD_WIDTH_M = 0.12;
 const ELEVATION_THRESHOLD_RISE_M = 0.002;
 const ELEVATED_FASCIA_DEPTH_M = 0.18;
@@ -115,10 +125,15 @@ const FLOOR_MACRO_SETTINGS: Record<
   FloorMaterialId,
   { colorAmplitude: number; roughnessAmplitude: number; frequency: number }
 > = {
+  // The lane paving is the largest single surface in most review cameras, so it
+  // needs variation far coarser than its 2.6 m tile or it resolves into even
+  // noise. At this frequency the two octaves land near 20 m and 42 m, which
+  // breaks a whole street into a few large weathered regions rather than
+  // dusting every stone equally.
   large_sandstone_blocks_01: {
-    colorAmplitude: 0.04,
-    roughnessAmplitude: 0.035,
-    frequency: 0.035,
+    colorAmplitude: 0.17,
+    roughnessAmplitude: 0.15,
+    frequency: 0.05,
   },
   grey_tiles: {
     colorAmplitude: 0.03,
@@ -130,20 +145,26 @@ const FLOOR_MACRO_SETTINGS: Record<
     roughnessAmplitude: 0.03,
     frequency: 0.04,
   },
+  // Shares medieval_blocks_05 with the Spice lane, so it earns its own read
+  // from tile scale, tint and a coarser weathering field rather than from a
+  // grey dust wash — which only ever desaturated it toward the sky.
   cobblestone_color: {
-    colorAmplitude: 0.14,
+    colorAmplitude: 0.15,
     roughnessAmplitude: 0.13,
-    frequency: 0.14,
+    frequency: 0.075,
   },
   red_sandstone_pavement: {
     colorAmplitude: 0.18,
     roughnessAmplitude: 0.16,
     frequency: 0.16,
   },
+  // Court paving covers a 16 m square in one view, so its weathering has to be
+  // coarser than its 4 m tile to read as regions of a floor rather than
+  // per-slab noise.
   patterned_cobblestone: {
-    colorAmplitude: 0.18,
-    roughnessAmplitude: 0.16,
-    frequency: 0.14,
+    colorAmplitude: 0.16,
+    roughnessAmplitude: 0.14,
+    frequency: 0.055,
   },
   sand_01: {
     colorAmplitude: 0.06,

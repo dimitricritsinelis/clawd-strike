@@ -40,23 +40,6 @@
         }
       }
     },
-    "patterned_cobblestone": {
-      "source": "https://polyhaven.com/a/patterned_cobblestone",
-      "license": "CC0-1.0",
-      "originalResolution": "2k",
-      "md5": {
-        "1k": {
-          "albedo": "0b9f0fd1d8e2b7ae55a8cac1194d81b5",
-          "normal": "7ae8c0f236d7ff7af811c0cfd1ab5584",
-          "arm": "6c30e849495acba92589ae9e69ea2cde"
-        },
-        "2k": {
-          "albedo": "7517f9498721d3d265bf499d37067ece",
-          "normal": "caaa933e8b753a4cd21402b71d5a33df",
-          "arm": "9452875b2a417596d4ca3f0cd685f1cf"
-        }
-      }
-    },
     "red_sandstone_pavement": {
       "source": "https://polyhaven.com/a/red_sandstone_pavement",
       "license": "CC0-1.0",
@@ -71,6 +54,42 @@
           "albedo": "a1259b901bce5c5b428ca1fdbb5c8ac7",
           "normal": "331f734509e5354c74012364d1c19faa",
           "arm": "39b7314228c5066f0b9342502d69b769"
+        }
+      }
+    },
+    "sand_drift_01": {
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "originalResolution": "2k",
+      "notes": "Project-authored tileable wind-rippled desert sand (albedo/nor_gl/arm) for the wall-base and corner accumulation layer.",
+      "md5": {
+        "1k": {
+          "albedo": "2ceaba9013e8763e7ee91a54a53335ea",
+          "normal": "fb698ea01374ae4834586d3383945a94",
+          "arm": "e8aedf461bc99d22eb99fe7cfa739589"
+        },
+        "2k": {
+          "albedo": "ca9ce8ad297daa22e94593029853f4b3",
+          "normal": "d03575bb38e4a5dadddd253b7127fa6b",
+          "arm": "6c56355702f221e9014ee6bbd7e30eb5"
+        }
+      }
+    },
+    "court_flagstone_01": {
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "originalResolution": "2k",
+      "notes": "Project-authored tileable dressed-limestone flagstone (albedo/nor_gl/arm) laid in courses, for court paving. Serves the patterned_cobblestone material id.",
+      "md5": {
+        "1k": {
+          "albedo": "53eb0148a7c9f715c1a0b224437cdd20",
+          "normal": "365ee0ec717ada90854c8c8ff3fe2f55",
+          "arm": "8205d0f68013e381ec941bb21561a9cf"
+        },
+        "2k": {
+          "albedo": "acad27c55f433ffe59a5d6515b375c91",
+          "normal": "feb25573bca463167db440520f80e556",
+          "arm": "ddbe3396f9ad989796ff4ed2c3903ee9"
         }
       }
     }

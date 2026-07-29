@@ -1899,7 +1899,7 @@
       "small_wall_max_fixtures": 1
     },
     "zone_density_budgets": {
-      "SPAWN_A_COURTYARD": 2,
+      "SPAWN_A_COURTYARD": 7,
       "SPICE_STREET": 18,
       "FOUNTAIN_COURT": 18,
       "TEXTILE_ARCADE": 12,
@@ -2631,6 +2631,19 @@
       ]
     },
     {
+      "id": "CLUSTER_SPICE_GATE",
+      "zoneId": "SPICE_STREET",
+      "surfaceId": "SURFACE_SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPICE_GATE_01"
+      ],
+      "assetIds": [
+        "ASSET_SPICE_GATE"
+      ]
+    },
+    {
       "id": "CLUSTER_SPICE_COVER",
       "zoneId": "SPICE_STREET",
       "surfaceId": "SURFACE_SPICE_STREET",
@@ -2802,7 +2815,9 @@
       "districtId": "DISTRICT_SPICE",
       "classification": "overhead",
       "anchors": [
-        "B6_LAUNDRY_SPICE_01"
+        "B6_LAUNDRY_SPICE_01",
+        "B6_LAUNDRY_SPICE_02",
+        "B6_LAUNDRY_SPICE_03"
       ],
       "assetIds": [
         "ASSET_LAUNDRY_LINE"
@@ -3001,6 +3016,71 @@
       ],
       "assetIds": [
         "ASSET_COVER_GOODS"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_EXIT_WEST",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EXIT_WEST_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EXIT_WEST_RETURN"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EXIT_EAST_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EXIT_EAST_RETURN"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_EAST_WORKS_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_EAST_DYE_WORKS"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_WEST_BACKS_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_WEST_BACKS"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_A_GATE",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "LMK_SPAWN_A_GATE_01"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_A_GATE"
       ]
     },
     {
@@ -3287,6 +3367,25 @@
       "yawOffsetDeg": 0
     },
     {
+      "id": "PLACE_SPICE_GATE",
+      "clusterId": "CLUSTER_SPICE_GATE",
+      "assetId": "ASSET_SPICE_GATE",
+      "anchorIds": [
+        "LMK_SPICE_GATE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
       "id": "PLACE_SPICE_COVER_CORE",
       "clusterId": "CLUSTER_SPICE_COVER",
       "assetId": "ASSET_COVER_GOODS",
@@ -3539,7 +3638,9 @@
       "clusterId": "CLUSTER_B6_SPICE_LAUNDRY",
       "assetId": "ASSET_LAUNDRY_LINE",
       "anchorIds": [
-        "B6_LAUNDRY_SPICE_01"
+        "B6_LAUNDRY_SPICE_01",
+        "B6_LAUNDRY_SPICE_02",
+        "B6_LAUNDRY_SPICE_03"
       ],
       "offsetM": {
         "x": 0,
@@ -4098,6 +4199,101 @@
       "assetId": "ASSET_COVER_GOODS",
       "anchorIds": [
         "COVER_NORTH_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_EXIT_WEST",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_WEST",
+      "assetId": "ASSET_SPAWN_A_EXIT_WEST_RETURN",
+      "anchorIds": [
+        "LMK_SPAWN_A_EXIT_WEST_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_EXIT_EAST",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "assetId": "ASSET_SPAWN_A_EXIT_EAST_RETURN",
+      "anchorIds": [
+        "LMK_SPAWN_A_EXIT_EAST_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_EAST_WORKS",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_SPAWN_A_EAST_DYE_WORKS",
+      "anchorIds": [
+        "LMK_SPAWN_A_EAST_WORKS_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_WEST_BACKS",
+      "clusterId": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "assetId": "ASSET_SPAWN_A_WEST_BACKS",
+      "anchorIds": [
+        "LMK_SPAWN_A_WEST_BACKS_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPAWN_A_GATE",
+      "clusterId": "CLUSTER_SPAWN_A_GATE",
+      "assetId": "ASSET_SPAWN_A_GATE",
+      "anchorIds": [
+        "LMK_SPAWN_A_GATE_01"
       ],
       "offsetM": {
         "x": 0,
@@ -5962,12 +6158,38 @@
       "zone": "SPICE_STREET",
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.18,
-      "vertical_offset_m": 6.0,
+      "vertical_offset_m": 6,
       "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
       "end_along": 0.18,
       "end_vertical_offset_m": 5.9,
       "width_m": 1.4,
       "notes": "Hung above the upper-window heads so the span reads over the openings, not across them."
+    },
+    {
+      "id": "B6_LAUNDRY_SPICE_02",
+      "type": "cloth_canopy_span",
+      "zone": "SPICE_STREET",
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.55,
+      "vertical_offset_m": 6.05,
+      "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
+      "end_along": 0.55,
+      "end_vertical_offset_m": 5.95,
+      "width_m": 1.55,
+      "notes": "Mid-lane line between the two cloth spans. Hung above the upper-window heads so the overhead layer reads as one continuous rhythm instead of two isolated sheets."
+    },
+    {
+      "id": "B6_LAUNDRY_SPICE_03",
+      "type": "cloth_canopy_span",
+      "zone": "SPICE_STREET",
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.88,
+      "vertical_offset_m": 6.2,
+      "end_frontage_id": "FRONTAGE_SPICE_STREET_EAST",
+      "end_along": 0.88,
+      "end_vertical_offset_m": 6.1,
+      "width_m": 1.2,
+      "notes": "North line closes the lane sequence at the Fountain Court transition. Hung above the upper-window heads."
     },
     {
       "id": "B6_LAUNDRY_TEXTILE_01",
@@ -6017,7 +6239,7 @@
       "z": 0,
       "width_m": 3,
       "height_m": 1.32,
-      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26\u201332 six-meter rotation lane clear."
+      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear."
     },
     {
       "id": "LMK_SPICE_DISTRICT",
@@ -6029,6 +6251,78 @@
       "width_m": 1.5,
       "height_m": 0.85,
       "notes": "Authored Ground 03 override: the spice display is centered inside the 2.4 m west merchant recess, with its sack and brass pot grounded at the two front corners and the adjacent door service volume left clear."
+    },
+    {
+      "id": "LMK_SPAWN_A_EXIT_WEST_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "x": 18.75,
+      "y": 13,
+      "z": 0,
+      "yaw_deg": 180,
+      "width_m": 3.5,
+      "height_m": 7.6,
+      "notes": "Merchant re-facing of the sealed west return that frames the main exit. Render-only; nothing below head height stands more than 0.28 m off the y=14 wall plane, so collision, exit width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_EXIT_EAST_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "x": 36.25,
+      "y": 13,
+      "z": 0,
+      "yaw_deg": 180,
+      "width_m": 5.5,
+      "height_m": 7.6,
+      "notes": "Merchant re-facing of the sealed east return that frames the main exit. Render-only; nothing below head height stands more than 0.28 m off the y=14 wall plane, so collision, exit width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_EAST_WORKS_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "x": 38.2,
+      "y": 4,
+      "z": 0,
+      "yaw_deg": 90,
+      "width_m": 8,
+      "height_m": 12.8,
+      "notes": "Dye-works back re-facing the sealed 8 m east wall run of the A spawn courtyard between its south-east corner and the connector mouth. Its boiler stack is the edge's skyline event and its drying rails carry the courtyard's only saturated colour. Render-only; nothing below head height stands more than 0.28 m off the x=39 wall plane, and the rails and cloth hang well above it, so collision, route width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_WEST_BACKS_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "x": 17.8,
+      "y": 4,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 8,
+      "height_m": 9.8,
+      "notes": "Three house backs re-facing the sealed 8 m west wall run of the A spawn courtyard between its south-west corner and the connector mouth. Render-only; nothing below head height stands more than 0.28 m off the x=17 wall plane, so collision, route width and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPAWN_A_GATE_01",
+      "type": "hero_landmark",
+      "zone": "SPAWN_A_COURTYARD",
+      "x": 28,
+      "y": 0.85,
+      "z": 0,
+      "yaw_deg": 180,
+      "width_m": 21.9,
+      "height_m": 12,
+      "notes": "Bab al-Suq: the sealed south gate re-facing the whole 22 m rear boundary of the A spawn courtyard. Render-only; nothing below head height stands more than 0.28 m off the y=0 wall plane, so the courtyard's walkable envelope, collision, grounding, and sightlines are unchanged."
+    },
+    {
+      "id": "LMK_SPICE_GATE_01",
+      "type": "hero_landmark",
+      "zone": "SPICE_STREET",
+      "x": 27,
+      "y": 14.95,
+      "z": 0,
+      "yaw_deg": 180,
+      "width_m": 12.8,
+      "height_m": 9.1,
+      "notes": "Lane-spanning southern gate that terminates Spawn A and opens Spice Street. Its front elevation sits on the y=14 courtyard wall plane and its abutments occupy the solid corner nubs outside the 12 m throat, so the arch adds silhouette, soffit shade, and threshold without narrowing the route or altering collision."
     },
     {
       "id": "LMK_RUG_GATE_01",
@@ -6061,7 +6355,7 @@
       "y": 46,
       "z": 0,
       "width_m": 1.8,
-      "height_m": 1.0,
+      "height_m": 1,
       "notes": "L3.4 authored east loading-bay override: the grounded crate stack joins the basket and pottery supply beat south of the ramp mouth, outside the 4.5 m court lane."
     },
     {
@@ -6072,7 +6366,7 @@
       "y": 44.3,
       "z": 0,
       "width_m": 1.5,
-      "height_m": 1.0,
+      "height_m": 1,
       "notes": "Sealed timber vats and a correctly scaled ceramic vessel identify the covered dyers route."
     },
     {
@@ -7040,619 +7334,6 @@
   },
   "asset_registry": [
     {
-      "id": "ASSET_GROUND_RUG",
-      "label": "Low-profile Levantine merchant ground rug",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/ground-rug"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.05,
-        "depth": 1.15,
-        "height": 0.04
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "receive_only",
-      "lodEligible": true,
-      "semanticClass": "textile",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_ground_rug"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_MARKET_CART",
-      "label": "Rough-pine merchant handcart",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/market-cart"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.25,
-        "depth": 0.78,
-        "height": 0.92
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_market_cart"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_MARKET_STALL",
-      "label": "Canonical timber-and-cloth bazaar market stall",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/market-stall-prefab"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.2,
-        "depth": 1.35,
-        "height": 2.2
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_market_stall"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SIGNBOARD",
-      "label": "Painted timber signboard",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/signboard"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.8,
-        "depth": 0.12,
-        "height": 0.38
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "none",
-      "lodEligible": true,
-      "semanticClass": "signage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_signboard"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_CLOTH_CANOPY",
-      "label": "Tensioned cloth canopy span",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/cloth-canopy"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 4,
-        "depth": 8,
-        "height": 0.18
-      },
-      "collisionClass": "overhead",
-      "shadowPolicy": "receive_only",
-      "lodEligible": true,
-      "semanticClass": "overhead",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_cloth_canopy"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_LAUNDRY_LINE",
-      "label": "Cross-facade rope with varied hanging textiles",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/laundry-line"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.4,
-        "depth": 8,
-        "height": 0.85
-      },
-      "collisionClass": "overhead",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "overhead",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_laundry_line"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_DYERS_HANGING_TEXTILES",
-      "label": "Dyers workshop wall-mounted textile rack",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/dyers-hanging-textiles"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.25,
-        "depth": 0.16,
-        "height": 1.55
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "textile",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_hanging_textiles"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_DYERS_WORKSTATION",
-      "label": "Reusable open-basin Dyers wet-workstation",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/dyers-workstation"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.8,
-        "depth": 1.45,
-        "height": 2.2
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_dyers_workstation"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_COVER_GOODS",
-      "label": "Poly Haven wooden crate 01 cover composition",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/wooden_crate_01"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 1.5,
-        "depth": 0.75,
-        "height": 1
-      },
-      "collisionClass": "hard",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "cover",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_cover_goods"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_DECORATIVE_CRATE",
-      "label": "Collisionless Poly Haven merchant display crate",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/wooden_crate_01"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 0.8252729177,
-        "depth": 0.4089537412,
-        "height": 0.3496182831
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_wooden_crate_01",
-        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPICE_GOODS",
-      "label": "Shallow spice bins and merchant balance",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/spice-goods"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.5,
-        "depth": 0.75,
-        "height": 0.85
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_spice_goods"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_CC0_SPICE_SACK",
-      "label": "3DModelsCC0 open sack of grain",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://3dmodelscc0.itch.io/free-cc0-medieval-props"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 0.5316592455,
-        "depth": 0.5316592455,
-        "height": 0.5013803095
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "cc0_spice_sack",
-        "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_CC0_BRASS_POT",
-      "label": "Poly Haven Brass Pot 01",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/brass_pot_01"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 0.3019456565,
-        "depth": 0.3016925901,
-        "height": 0.2909476549
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_brass_pot_01",
-        "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_COURT_PLANTER",
-      "label": "Textured carved-stone court planter with soil and foliage",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/court-planter"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.05,
-        "depth": 1.05,
-        "height": 1.2
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "foliage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_court_planter"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_FOUNTAIN",
-      "label": "Blue-tiled courtyard fountain",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/fountain"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 3,
-        "depth": 3,
-        "height": 1.32
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "landmark",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_fountain_octagonal"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_HERO_ARCH",
-      "label": "Rug Gate hero arch kit",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/hero-arch"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 13,
-        "depth": 0.8,
-        "height": 6.8
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "landmark",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_rug_gate_arch"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_TEA_SERVICE",
-      "label": "Low tea terrace service sideboard",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/tea-service"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.2,
-        "depth": 0.55,
-        "height": 0.9
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_tea_service"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_DYERS_SEALED_VAT",
-      "label": "Poly Haven sealed timber dyer's vat",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/wine_barrel_01"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 0.7419015169,
-        "depth": 0.7560357153,
-        "height": 0.871263355
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_wine_barrel_01",
-        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_DYERS_CERAMIC_VESSEL",
-      "label": "Poly Haven ceramic dyer's vessel",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/ceramic_pot"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 0.656,
-        "depth": 0.502,
-        "height": 0.372
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "receive_only",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_ceramic_pot",
-        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
       "id": "ASSET_CARAVAN_LOAD_CRATE",
       "label": "Poly Haven caravan loading crate",
       "source": {
@@ -7673,70 +7354,6 @@
         "mode": "model",
         "id": "ph_wooden_crate_01",
         "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_PALM",
-      "label": "Instanced decorative palm",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://generated/bazaar/palm-frond"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 3.8,
-        "depth": 3.8,
-        "height": 7.8
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "foliage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_date_palm"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPAWN_COVER",
-      "label": "Spawn courtyard cover module",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/spawn-cover"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.2,
-        "depth": 1.1,
-        "height": 1.3
-      },
-      "collisionClass": "hard",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "cover",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_spawn_cover"
       },
       "transform": {
         "pivot": "base_center",
@@ -7816,26 +7433,26 @@
       }
     },
     {
-      "id": "ASSET_CC0_POTTERY",
-      "label": "Poly Haven Ceramic Pot",
+      "id": "ASSET_CC0_BRASS_POT",
+      "label": "Poly Haven Brass Pot 01",
       "source": {
         "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/ceramic_pot"
+        "uri": "https://polyhaven.com/a/brass_pot_01"
       },
       "license": "CC0-1.0",
       "dimensionsM": {
-        "width": 0.656,
-        "depth": 0.502,
-        "height": 0.372
+        "width": 0.3019456565,
+        "depth": 0.3016925901,
+        "height": 0.2909476549
       },
-      "collisionClass": "soft",
+      "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
       "semanticClass": "container",
       "runtime": {
         "mode": "model",
-        "id": "ph_ceramic_pot",
-        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+        "id": "ph_brass_pot_01",
+        "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf"
       },
       "transform": {
         "pivot": "base_center",
@@ -7882,26 +7499,92 @@
       }
     },
     {
-      "id": "ASSET_CC0_TEA_TABLE",
-      "label": "Poly Haven Wooden Table 02",
+      "id": "ASSET_CC0_LARGE_CASTLE_DOOR",
+      "label": "Poly Haven Large Castle Door",
       "source": {
         "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/wooden_table_02"
+        "uri": "https://polyhaven.com/a/large_castle_door"
       },
       "license": "CC0-1.0",
       "dimensionsM": {
-        "width": 1.13441664,
-        "depth": 0.706024826,
-        "height": 0.799542887
+        "width": 2.012,
+        "depth": 0.339,
+        "height": 2.965
       },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
-      "semanticClass": "furniture",
+      "semanticClass": "architecture",
       "runtime": {
         "mode": "model",
-        "id": "ph_wooden_table_02",
-        "uri": "/assets/models/environment/bazaar/props/wooden_table_02/wooden_table_02_1k.gltf"
+        "id": "ph_large_castle_door",
+        "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_CC0_POTTERY",
+      "label": "Poly Haven Ceramic Pot",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/ceramic_pot"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_CC0_SPICE_SACK",
+      "label": "3DModelsCC0 open sack of grain",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://3dmodelscc0.itch.io/free-cc0-medieval-props"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.5316592455,
+        "depth": 0.5316592455,
+        "height": 0.5013803095
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "cc0_spice_sack",
+        "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf"
       },
       "transform": {
         "pivot": "base_center",
@@ -7948,26 +7631,829 @@
       }
     },
     {
-      "id": "ASSET_CC0_LARGE_CASTLE_DOOR",
-      "label": "Poly Haven Large Castle Door",
+      "id": "ASSET_CC0_TEA_TABLE",
+      "label": "Poly Haven Wooden Table 02",
       "source": {
         "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/large_castle_door"
+        "uri": "https://polyhaven.com/a/wooden_table_02"
       },
       "license": "CC0-1.0",
       "dimensionsM": {
-        "width": 2.012,
-        "depth": 0.339,
-        "height": 2.965
+        "width": 1.13441664,
+        "depth": 0.706024826,
+        "height": 0.799542887
       },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
-      "semanticClass": "architecture",
+      "semanticClass": "furniture",
       "runtime": {
         "mode": "model",
-        "id": "ph_large_castle_door",
-        "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf"
+        "id": "ph_wooden_table_02",
+        "uri": "/assets/models/environment/bazaar/props/wooden_table_02/wooden_table_02_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_CLOTH_CANOPY",
+      "label": "Tensioned cloth canopy span",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/cloth-canopy"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 4,
+        "depth": 8,
+        "height": 0.18
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cloth_canopy"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_COURT_PLANTER",
+      "label": "Textured carved-stone court planter with soil and foliage",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/court-planter"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.05,
+        "depth": 1.05,
+        "height": 1.2
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "foliage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_court_planter"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_COVER_GOODS",
+      "label": "Poly Haven wooden crate 01 cover composition",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wooden_crate_01"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 1.5,
+        "depth": 0.75,
+        "height": 1
+      },
+      "collisionClass": "hard",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "cover",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cover_goods"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DECORATIVE_CRATE",
+      "label": "Collisionless Poly Haven merchant display crate",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wooden_crate_01"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.8252729177,
+        "depth": 0.4089537412,
+        "height": 0.3496182831
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_CERAMIC_VESSEL",
+      "label": "Poly Haven ceramic dyer's vessel",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/ceramic_pot"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_HANGING_TEXTILES",
+      "label": "Dyers workshop wall-mounted textile rack",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/dyers-hanging-textiles"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.25,
+        "depth": 0.16,
+        "height": 1.55
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_SEALED_VAT",
+      "label": "Poly Haven sealed timber dyer's vat",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wine_barrel_01"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.7419015169,
+        "depth": 0.7560357153,
+        "height": 0.871263355
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_WORKSTATION",
+      "label": "Reusable open-basin Dyers wet-workstation",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/dyers-workstation"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.8,
+        "depth": 1.45,
+        "height": 2.2
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_dyers_workstation"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_FOUNTAIN",
+      "label": "Blue-tiled courtyard fountain",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/fountain"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3,
+        "depth": 3,
+        "height": 1.32
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_fountain_octagonal"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_GROUND_RUG",
+      "label": "Low-profile Levantine merchant ground rug",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/ground-rug"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.05,
+        "depth": 1.15,
+        "height": 0.04
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_ground_rug"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_HERO_ARCH",
+      "label": "Rug Gate hero arch kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/hero-arch"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 13,
+        "depth": 0.8,
+        "height": 6.8
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_rug_gate_arch"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_LAUNDRY_LINE",
+      "label": "Cross-facade rope with varied hanging textiles",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/laundry-line"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.4,
+        "depth": 8,
+        "height": 0.85
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_laundry_line"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_MARKET_CART",
+      "label": "Rough-pine merchant handcart",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/market-cart"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.25,
+        "depth": 0.78,
+        "height": 0.92
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_market_cart"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_MARKET_STALL",
+      "label": "Canonical timber-and-cloth bazaar market stall",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/market-stall-prefab"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.2,
+        "depth": 1.35,
+        "height": 2.2
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_market_stall"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_PALM",
+      "label": "Instanced decorative palm",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://generated/bazaar/palm-frond"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.8,
+        "depth": 3.8,
+        "height": 7.8
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "foliage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_date_palm"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SIGNBOARD",
+      "label": "Painted timber signboard",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/signboard"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 0.12,
+        "height": 0.38
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "none",
+      "lodEligible": true,
+      "semanticClass": "signage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_signboard"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EAST_DYE_WORKS",
+      "label": "Spawn A east dye works kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-east-dye-works"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.4,
+        "height": 12.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_east_dye_works"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EXIT_EAST_RETURN",
+      "label": "Spawn A exit east return kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-exit-east-return"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 5.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_east_return"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EXIT_WEST_RETURN",
+      "label": "Spawn A exit west return kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-exit-west-return"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.5,
+        "depth": 2,
+        "height": 7.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_exit_west_return"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_GATE",
+      "label": "Bab al-Suq south boundary kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-gate"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 21.9,
+        "depth": 2.2,
+        "height": 12
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_gate"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_WEST_BACKS",
+      "label": "Spawn A west courtyard backs kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-a-west-backs"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 8,
+        "depth": 2.2,
+        "height": 9.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_a_west_backs"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_COVER",
+      "label": "Spawn courtyard cover module",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spawn-cover"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.2,
+        "depth": 1.1,
+        "height": 1.3
+      },
+      "collisionClass": "hard",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "cover",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spawn_cover"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_GATE",
+      "label": "Spice Gate portal kit",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spice-gate"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 12.8,
+        "depth": 1.9,
+        "height": 9.1
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_gate"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_GOODS",
+      "label": "Shallow spice bins and merchant balance",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/spice-goods"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.5,
+        "depth": 0.75,
+        "height": 0.85
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_goods"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_TEA_SERVICE",
+      "label": "Low tea terrace service sideboard",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://procedural/bazaar/tea-service"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.2,
+        "depth": 0.55,
+        "height": 0.9
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_tea_service"
       },
       "transform": {
         "pivot": "base_center",

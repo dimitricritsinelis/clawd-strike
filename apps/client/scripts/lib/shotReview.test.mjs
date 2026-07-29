@@ -5,6 +5,9 @@ import path from "node:path";
 import test from "node:test";
 import sharp from "sharp";
 import {
+  REQUIRED_AUDIT_SHOT_COUNT,
+  REQUIRED_CLOSEUP_SHOT_COUNT,
+  REQUIRED_CORE_SHOT_COUNT,
   evaluateRuntimeShotCameraPose,
   readScreenshotCoverage,
   selectReviewShotIds,
@@ -225,10 +228,17 @@ test("rejects missing tags, forbidden tags, asset mismatch, and console warnings
   );
 });
 
+const FIXTURE_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
+const FIXTURE_SHOT_COUNT = FIXTURE_REVIEW_SHOT_COUNT + REQUIRED_AUDIT_SHOT_COUNT;
+
 function validShotInventory() {
-  const shots = Array.from({ length: 23 }, (_, index) => ({
+  const shots = Array.from({ length: FIXTURE_SHOT_COUNT }, (_, index) => ({
     id: `SHOT_${String(index + 1).padStart(2, "0")}_TEST`,
-    captureKind: index < 12 ? "core" : index < 16 ? "closeup" : "audit",
+    captureKind: index < REQUIRED_CORE_SHOT_COUNT
+      ? "core"
+      : index < FIXTURE_REVIEW_SHOT_COUNT
+        ? "closeup"
+        : "audit",
     camera: {
       pos: { x: index, y: 2, z: 3 },
       lookAt: { x: index, y: 2, z: 4 },
@@ -237,9 +247,9 @@ function validShotInventory() {
   }));
   return {
     metadata: {
-      shotCount: 23,
-      coreShotCount: 12,
-      closeupShotCount: 4,
+      shotCount: FIXTURE_SHOT_COUNT,
+      coreShotCount: REQUIRED_CORE_SHOT_COUNT,
+      closeupShotCount: REQUIRED_CLOSEUP_SHOT_COUNT,
       compareShotId: shots[1].id,
     },
     aliases: { compare: shots[1].id },
@@ -271,19 +281,11 @@ test("keeps audit shots outside signoff selection and exposes them only when exp
   const shotsSpec = validShotInventory();
   const inventory = validateReviewShotInventory(shotsSpec);
   assert.equal(inventory.passed, true, inventory.errors.join(" | "));
-  assert.equal(inventory.allShotIds.length, 23);
-  assert.equal(inventory.reviewShotIds.length, 16);
+  assert.equal(inventory.allShotIds.length, FIXTURE_SHOT_COUNT);
+  assert.equal(inventory.reviewShotIds.length, FIXTURE_REVIEW_SHOT_COUNT);
   assert.deepEqual(
     inventory.auditShotIds,
-    [
-      "SHOT_17_TEST",
-      "SHOT_18_TEST",
-      "SHOT_19_TEST",
-      "SHOT_20_TEST",
-      "SHOT_21_TEST",
-      "SHOT_22_TEST",
-      "SHOT_23_TEST",
-    ],
+    shotsSpec.shots.slice(FIXTURE_REVIEW_SHOT_COUNT).map((shot) => shot.id),
   );
   assert.deepEqual(selectReviewShotIds(shotsSpec), inventory.reviewShotIds);
   assert.deepEqual(
@@ -291,7 +293,7 @@ test("keeps audit shots outside signoff selection and exposes them only when exp
     inventory.auditShotIds,
   );
 
-  shotsSpec.shots[22].captureKind = "diagnostic";
+  shotsSpec.shots[FIXTURE_SHOT_COUNT - 1].captureKind = "diagnostic";
   const unsupported = validateReviewShotInventory(shotsSpec);
   assert.equal(unsupported.passed, false);
   assert.match(unsupported.errors.join(" | "), /missing\/unsupported captureKind/);

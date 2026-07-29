@@ -21,12 +21,18 @@ test("floor wear planning is deterministic and respects restrained per-zone dens
   const countByZone = new Map<string, number>();
   for (const plan of first) {
     countByZone.set(plan.zoneId, (countByZone.get(plan.zoneId) ?? 0) + 1);
-    assert.ok(plan.widthM >= 0.9 && plan.widthM <= 1.8);
-    assert.ok(plan.lengthM >= 2.6 && plan.lengthM <= 5.4);
+    assert.ok(plan.widthM >= 1.1 && plan.widthM <= 3.8);
+    assert.ok(plan.lengthM >= 2.6 && plan.lengthM <= 9.5);
   }
 
+  // A small zone still gets one restrained patch. A long lane gets a four-patch
+  // traffic axis, one threshold patch at each of its four edges so the wear
+  // carries through a district junction instead of stopping at it, and three
+  // grime runs banked against each of its two frontages — because a lane that
+  // is only worn in its middle reads as a floor nobody has ever swept dirt to
+  // the sides of.
   assert.equal(countByZone.get("SPAWN_A_COURTYARD"), 1);
   assert.equal(countByZone.get("SERVICE_SOUTH"), 1);
-  assert.equal(countByZone.get("SPICE_STREET"), 2);
-  assert.ok([...countByZone.values()].every((count) => count <= 2));
+  assert.equal(countByZone.get("SPICE_STREET"), 14);
+  assert.ok([...countByZone.values()].every((count) => count === 1 || count === 14));
 });

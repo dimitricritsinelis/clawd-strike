@@ -31,6 +31,7 @@ import type { RuntimeFloorMode, RuntimeFloorQuality, RuntimeLightingPreset, Runt
 import { buildPbrFloors } from "./buildPbrFloors";
 import { buildFloorWearDecals } from "./floorWearDecals";
 import { buildSandAccumulation } from "./buildSandAccumulation";
+import { buildWallBaseDebris } from "./buildWallBaseDebris";
 import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
@@ -2425,6 +2426,15 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         quality: options.floorQuality,
       });
       root.add(sandAccumulation);
+
+      const wallBaseDebris = buildWallBaseDebris({
+        wallSegments,
+        seed: options.seed,
+        floorTopY,
+        manifest: options.floorMaterials,
+        quality: options.floorQuality,
+      });
+      root.add(wallBaseDebris);
     }
   } else {
     const walkableFloor = traversalSurfaces.length > 0

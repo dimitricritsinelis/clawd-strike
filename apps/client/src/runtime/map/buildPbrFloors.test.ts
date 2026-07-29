@@ -114,8 +114,12 @@ test("v3 caps a material boundary without moving either authored traversal surfa
   const thresholdMesh = root.getObjectByName("floor-large_sandstone_blocks_01") as Mesh;
   const extents = positionExtents(thresholdMesh);
   assert.equal(extents.minX, 0);
-  assert.ok(Math.abs(extents.maxX - 4.12) < 1e-5);
-  assert.ok(Math.abs(extents.maxY - 0.012) < 1e-6);
+  // The dressed course reaches half the threshold width past the shared edge.
+  assert.ok(Math.abs(extents.maxX - 4.43) < 1e-5);
+  // Tracks MATERIAL_THRESHOLD_RISE_M: the course stands proud of the paving it
+  // divides, so the transition reads as a laid kerb rather than the point where
+  // one texture stops. Raised from 12 mm after fixed-camera review.
+  assert.ok(Math.abs(extents.maxY - 0.035) < 1e-6);
   const cobble = root.getObjectByName("floor-cobblestone_pavement") as Mesh;
   assert.equal(positionExtents(cobble).maxX, 8);
   assert.equal(root.children.some((child) => child.name.startsWith("floor-edge-fascia-")), false);

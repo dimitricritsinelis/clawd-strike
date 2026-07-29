@@ -30,22 +30,33 @@ export const FOUNTAIN_STONE_MATERIAL_ID = "ph_stone_trim_white";
  * adds a view-dependent Fresnel response.
  */
 export const FOUNTAIN_WATER_MATERIAL_INPUTS = {
-  color: 0x2f7476,
+  // A shallow desert basin takes almost all of its colour from the stone under
+  // it. The previous saturated teal, mirror-smooth and lit by a full-strength
+  // sky probe, resolved into one flat cyan lid: the highest-chroma object in a
+  // tan scene, with no depth behind it and a drawn line where it met the rim.
+  color: 0x767469,
+  // The pool and the falling jets share this material, and the jets are thin
+  // ribbons. Driving see-through purely through transmission turns them into
+  // near-opaque dark rods against the sky, so the alpha blend stays: it is what
+  // keeps falling water reading as bright and translucent.
   opacity: 0.34,
-  transmission: 0.78,
-  roughness: 0.1,
+  transparent: true,
+  transmission: 0.92,
+  // Enough roughness that ripples break the reflection into moving highlights
+  // instead of returning one uniform sheet of sky.
+  roughness: 0.24,
   metalness: 0,
-  clearcoat: 1,
-  clearcoatRoughness: 0.08,
+  clearcoat: 0.32,
+  clearcoatRoughness: 0.2,
   ior: 1.333,
-  reflectivity: 1,
-  normalScale: 0.42,
+  reflectivity: 0.55,
+  normalScale: 0.75,
   thickness: 0.16,
-  attenuationColor: 0x487f78,
+  attenuationColor: 0x87857a,
   attenuationDistance: 1.25,
-  envMapIntensity: 0.92,
-  specularIntensity: 1,
-  specularColor: 0xe8ffff,
+  envMapIntensity: 0.22,
+  specularIntensity: 0.5,
+  specularColor: 0xdfe8e2,
   fresnelStrength: 0.42,
   rippleScrollPerFrame: { x: 0.00045, y: 0.00031 },
   emissiveIntensity: 0,
@@ -386,11 +397,14 @@ export function createModularFountainStoneGeometry(): BufferGeometry {
 
 export function createModularFountainTileGeometry(): BufferGeometry {
   const parts: BufferGeometry[] = [];
+  // Glazed tile, but pitched to sit inside the map's tan/ochre band. Pushed
+  // toward blue it becomes the highest-chroma thing in the court the moment the
+  // water above it is transparent enough to show it.
   const glazePalette = [
-    [0.08, 0.28, 0.34],
-    [0.16, 0.4, 0.38],
-    [0.48, 0.43, 0.29],
-    [0.1, 0.33, 0.39],
+    [0.14, 0.24, 0.23],
+    [0.21, 0.33, 0.29],
+    [0.45, 0.41, 0.29],
+    [0.16, 0.28, 0.26],
   ] as const;
   const basinFloor = toNonIndexedGeometry(new CircleGeometry(0.61, 32));
   basinFloor.rotateX(-Math.PI * 0.5);
@@ -589,38 +603,94 @@ export function createFountainBronzeGeometry(): BufferGeometry {
   return geometry;
 }
 
+/**
+ * Widen the collar's vertex colour to RGBA and fade the alpha to nothing before
+ * the mesh's own outer edge.
+ *
+ * A wetted zone that ends where its geometry ends draws a hard octagonal
+ * outline on the floor, and a straight high-frequency edge does not soften with
+ * distance the way an over-broad tonal wash does — it stays legible at the
+ * review camera and reads as a decal laid under the fountain. Fading inside the
+ * boundary means the silhouette never coincides with a polygon edge, so the
+ * collar has no shape of its own.
+ */
+function applyRadialCollarFade(geometry: BufferGeometry): BufferGeometry {
+  const positions = geometry.getAttribute("position");
+  const colors = geometry.getAttribute("color");
+  const FADE_START_M = 1.2;
+  const FADE_END_M = 1.34;
+  const rgba = new Float32Array(positions.count * 4);
+  for (let index = 0; index < positions.count; index += 1) {
+    const radiusM = Math.hypot(positions.getX(index), positions.getZ(index));
+    const t = clamp01((radiusM - FADE_START_M) / (FADE_END_M - FADE_START_M));
+    const smooth = t * t * (3 - 2 * t);
+    rgba[index * 4] = colors ? colors.getX(index) : 1;
+    rgba[index * 4 + 1] = colors ? colors.getY(index) : 1;
+    rgba[index * 4 + 2] = colors ? colors.getZ(index) : 1;
+    rgba[index * 4 + 3] = 1 - smooth;
+  }
+  geometry.setAttribute("color", new Float32BufferAttribute(rgba, 4));
+  return geometry;
+}
+
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
+}
+
 export function createFountainCourtAccentGeometry(): BufferGeometry {
   const parts: BufferGeometry[] = [];
+  // These multiply the batch colour and its albedo boost, so anything much
+  // below 1 compounds into a ring markedly darker than the court it belongs to.
+  // Held near neutral, the apron stays the court's paving; the damp reading
+  // comes from the modest drop below, not from tinting it brown.
   const apronTints = [
-    [0.74, 0.62, 0.45],
-    [0.69, 0.56, 0.4],
-    [0.77, 0.66, 0.49],
-    [0.66, 0.53, 0.38],
+    [0.9, 0.86, 0.8],
+    [0.85, 0.81, 0.75],
+    [0.94, 0.9, 0.84],
+    [0.82, 0.78, 0.72],
+  ] as const;
+  // Kept nearly flush with the court. At the previous 1.8 cm and 2.6 cm the
+  // ring stood proud enough to draw its own hard silhouette and cast a shadow
+  // line onto the pavers, which is what made it read as a plate the fountain
+  // was set down on rather than as the floor it is wetting.
+  //
+  // Three bands, darkest against the basin and falling off fast. Splash wets
+  // the stone it lands on and little else, so an evenly tinted ring reads as a
+  // smudge under the fountain; the gradient is what makes it read as water.
+  // The previous ordering had its darkest course on the OUTSIDE, which is the
+  // opposite of how a wetted collar actually behaves.
+  const dampBands = [
+    { outerM: 1.17, innerM: 1.075, riseM: 0.0025, tint: [0.63, 0.6, 0.55] },
+    { outerM: 1.28, innerM: 1.17, riseM: 0.0022, tint: [0.79, 0.76, 0.71] },
+    // Outer edge held at 1.36: the instanced footprint scales these radii by
+    // 3 / 2.2, and the course is required to stay a tight basin-seated octagon
+    // rather than spreading into the court.
+    { outerM: 1.36, innerM: 1.28, riseM: 0.002, tint: [0.93, 0.91, 0.87] },
   ] as const;
   for (let index = 0; index < FOUNTAIN_SEGMENT_COUNT; index += 1) {
     const center = fountainSegmentCenterAngle(index);
-    parts.push(tintGeometry(createAnnularWedgeGeometry(
-      center,
-      Math.PI * 0.125 - 0.012,
-      1.28,
-      1.075,
-      0.001,
-      0.018,
-      0.003,
-      0.002,
-      1,
-    ), apronTints[index % apronTints.length]!));
-    parts.push(tintGeometry(createAnnularWedgeGeometry(
-      center,
-      Math.PI * 0.125 - 0.012,
-      1.34,
-      1.28,
-      0.001,
-      0.026,
-      0.002,
-      0.001,
-      1,
-    ), [0.48, 0.39, 0.29]));
+    for (const [bandIndex, band] of dampBands.entries()) {
+      // Per-segment jitter on the innermost band only, so the wet edge is
+      // irregular the way splash is, while the outer falloff stays quiet.
+      const segmentTint = bandIndex === 0
+        ? apronTints[index % apronTints.length]!
+        : [1, 1, 1] as const;
+      parts.push(tintGeometry(createAnnularWedgeGeometry(
+        center,
+        Math.PI * 0.125 - 0.012,
+        band.outerM,
+        band.innerM,
+        0.001,
+        band.riseM,
+        0.003,
+        0.002,
+        1,
+      ), [
+        band.tint[0]! * segmentTint[0]!,
+        band.tint[1]! * segmentTint[1]!,
+        band.tint[2]! * segmentTint[2]!,
+      ]));
+    }
   }
   for (let index = 0; index < 4; index += 1) {
     const stain = new CircleGeometry(0.11 + index * 0.008, 12);
@@ -628,9 +698,12 @@ export function createFountainCourtAccentGeometry(): BufferGeometry {
     stain.scale(1.35, 1, 0.58);
     const stainAngle = index * Math.PI * 0.5 + Math.PI * 0.22;
     stain.translate(Math.cos(stainAngle) * 1.24, 0.003, Math.sin(stainAngle) * 1.24);
-    parts.push(tintGeometry(toNonIndexedGeometry(stain), [0.29, 0.27, 0.22]));
+    // Damp patches, not soot: a wet slab loses value, it does not go black.
+    parts.push(tintGeometry(toNonIndexedGeometry(stain), [0.62, 0.58, 0.52]));
   }
-  const geometry = applyWorldScaledBoxUv(mergeProceduralGeometry(parts), 1.25);
+  const geometry = applyRadialCollarFade(
+    applyWorldScaledBoxUv(mergeProceduralGeometry(parts), 1.25),
+  );
   geometry.userData.fountainCourtAccent = {
     apronSegments: FOUNTAIN_SEGMENT_COUNT,
     borderCourseSegments: FOUNTAIN_SEGMENT_COUNT,

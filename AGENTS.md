@@ -3,7 +3,7 @@ Authority: normative
 Read when: implementation work
 Owns: durable repository-wide safeguards
 Do not use for: task status, map-polish procedure, or historical rationale
-Last updated: 2026-07-26
+Last updated: 2026-07-27
 
 # AGENTS.md — Clawd Strike Operating Contract
 
@@ -30,3 +30,13 @@ Last updated: 2026-07-26
 - During map-visual work, broadly preserve layout, collision, traversal surfaces, spawns, routes, cover, sightlines, player movement, and combat unless the current user prompt explicitly changes that scope.
 - Local structural composition, render-only geometry, materials, openings, attachments, props, dressing, and directly coupled shared visual systems may change when those safeguards remain intact.
 - Render-only work must not silently change navigation, player or bot grounding, projectile collision, line of sight, opening clearance, or practical route width.
+
+## Movement paths stay clear
+
+Preserving traversal is not enough on its own. Anything placed in or near a route must also leave the path a player actually walks genuinely clear.
+
+- Keep the walking envelope clear of geometry, props, and dressing. The authored clearances in `constraints` in `docs/map-design/specs/map_spec.json` are the floor, not the target; `no_block_zone` also requires dressing clusters to sit at authored edges.
+- This applies whether or not the object collides. A colliding prop snags movement; a non-colliding one lets the player walk through it, which is a worse visual failure than not placing it at all.
+- Clearance is measured through the whole body volume a player occupies while moving, not just at the object's own footprint: check standing and crouched height, the swept path through doorways, corners, and stair or ramp transitions, and the inside line of every turn.
+- None of this is a reason to under-dress a section. Density belongs against wall bases, in recesses and alcoves, on counters and sills, on the outside of turns, and above head height. Push dressing to the edges rather than removing it.
+- Fixed-camera review cannot detect this class of defect, because a still frame does not move through the space. Confirm clearance by traversal — the canonical route smoke run, an agent traversal pass, or moving through the section in the running game — before treating a section as finished.

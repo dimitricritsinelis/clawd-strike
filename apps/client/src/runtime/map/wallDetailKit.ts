@@ -467,13 +467,13 @@ function createTemplateMaterialOverrides(
     tm_stained_glass_hero: createStainedGlassMaterial("hero"),
     tm_window_interior_merchant: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x241f19 : 0x18150f,
+      tintHex: highVis ? 0x5c5248 : 0x4f4841,
       roughness: 0.94,
       metalness: 0,
       albedoBoost: highVis ? 1.0 : 0.92,
       macroColorAmplitude: 0.025,
     }, new MeshStandardMaterial({
-      color: highVis ? 0x554d45 : 0x413b35,
+      color: highVis ? 0x62574c : 0x554d45,
       roughness: 0.94,
       metalness: 0,
     })),
