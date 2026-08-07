@@ -734,7 +734,32 @@ function buildBlockoutDetailMeshes(
       || bucket.meshId === "hero_window_pointed_arch_glass"
       || bucket.meshId === "spawn_hero_window_pointed_arch_glass";
     mesh.castShadow = !isGlassMesh && !NON_SHADOW_DETAIL_IDS.has(bucket.meshId);
-    mesh.receiveShadow = false;
+    // Wall detail receives shadow, like every other system in the scene
+    // (buildPbrWalls, buildPbrFloors, the prop batches). Leaving it off meant
+    // every massing shell and relief module was lit as if nothing occluded it.
+    //
+    // Every other system in the scene receives shadow (buildPbrWalls,
+    // buildPbrFloors, the prop batches); the frontage kit is the sole exception,
+    // so every massing shell and relief module is lit as if nothing occludes it.
+    // That is why this map holds only 6.9% of pixels below luminance 60 on the
+    // Spawn-A approach where its target holds 29.1%, and why raising the key,
+    // cutting the fill and moving shadow bias in both directions were all
+    // measured no-ops — none of them touch surfaces that never sample the map.
+    //
+    // Enabling it was tried and measured. It improves the west-frontage
+    // elevation clearly (MAE 28.67 vs 29.47, bay interiors 48 -> 39 against a
+    // target of 29, relative contrast 0.458 -> 0.468) and costs only 0.3 ms of
+    // desktop frame time. But on the Spawn-A approach it blankets the whole
+    // west frontage plane to luminance 71 where the target has it SUNLIT at
+    // 148, with a hard shadow edge only at x~130. The dimming is binary ~0.47x
+    // with no penumbra and every boundary on a mesh edge, and raising bias to
+    // 0.05 did not move it — so those planes are resolving as genuinely
+    // occluded, not self-shadowing.
+    //
+    // Re-enable once that is understood: find what the shadow map thinks is
+    // occluding that plane. The exit-west return kit standing ~1 m proud of the
+    // y=14 wall plane is the prime suspect.
+    mesh.receiveShadow = true;
     mesh.frustumCulled = true;
     mesh.renderOrder = isGlassMesh ? WINDOW_GLASS_RENDER_ORDER : WALL_DETAIL_RENDER_ORDER;
     attachVisualQaMetadata(mesh, bucket.instances, bucket.meshId, "blockout");
@@ -911,10 +936,18 @@ function buildPbrDetailMeshes(
       typeof material.userData.wallAlbedoBoost === "number" && Number.isFinite(material.userData.wallAlbedoBoost)
         ? material.userData.wallAlbedoBoost
         : 1;
+    // Timber is CAPPED here, not floored. The soft-saturation boost is
+    // f(x,b) = xb / (1 + (b-1)x), which at b=2 lifts a 0.10 albedo to 0.18
+    // while pulling 0.90 down to 0.95 — it compresses the whole range toward
+    // white. Flooring timber at 2.16 therefore erased the plank texture's own
+    // grain contrast and chroma and rendered every shelf, post and counter as
+    // the same pale pink film, which no amount of tinting or tiling downstream
+    // could put back. Ironwork keeps its floor: it is genuinely dark and small,
+    // and needs the lift to stay readable.
     const resolvedAlbedoBoost = materialId === "ph_rough_pine_door"
-      ? Math.max(2.16, albedoBoost)
+      ? Math.min(1.18, albedoBoost)
       : materialId === "ph_worn_planks"
-        ? Math.max(1.72, albedoBoost)
+        ? Math.min(1.12, albedoBoost)
         : materialId === "ph_rusty_metal_02"
           ? Math.max(1.3, albedoBoost)
           : albedoBoost;
@@ -926,9 +959,36 @@ function buildPbrDetailMeshes(
     // each of them showing a single near-uniform patch, so they read as
     // untextured primitives at two metres however they are valued. Give the
     // role a member-scale texel density instead.
+    // Timber joinery has exactly the same problem the iron factor was written
+    // for, and it covers far more of the frontage. A window grille bar is
+    // 52-65 mm across and a frame jamb 140 mm, but they sample the shared
+    // 1.4 m plank tile, so each member shows one near-constant patch of
+    // albedo and normal — no grain, no board joint, no edge relief. They read
+    // as painted plastic sticks at two metres however they are tinted. Scale
+    // texel density to the member, keyed off the finish because that is what
+    // already distinguishes a 52 mm bar from a 700 mm shutter leaf.
+    // Member-scale texel density, same reasoning as the `iron` factor above:
+    // a 52 mm grille bar sampling the shared 1.4 m plank tile shows one
+    // near-constant patch of albedo and normal. Keyed off the finish because
+    // that is what distinguishes a 52 mm bar from a 700 mm shutter leaf.
+    //
+    // These values are a measured floor, not a starting point — do not push
+    // them lower. At 0.13 for `timber-window` the leaves lost detail rather
+    // than gaining it (high-frequency detail 3.0% -> 2.4%) and saturation
+    // collapsed to 0.01, because tiling far below screen texel density just
+    // resolves to the flat mip average.
+    const kitFinishTileScale = kitFinish === "timber-screen"
+      ? 0.1
+      : kitFinish === "timber-surface"
+        ? 0.14
+        : kitFinish === "timber-window"
+          ? 0.45
+          : kitFinish === "timber-door"
+            ? 0.55
+            : 1;
     const tileSizeM = materialRole === "iron"
       ? wallMaterials.getTileSizeM(materialId) * 0.12
-      : wallMaterials.getTileSizeM(materialId);
+      : wallMaterials.getTileSizeM(materialId) * kitFinishTileScale;
     const uvOffset = resolveMaterialUvOffset(options.seed, materialId);
     applyWallShaderTweaks(material, {
       albedoBoost: resolvedAlbedoBoost,
@@ -1048,7 +1108,7 @@ function buildPbrDetailMeshes(
       );
       mesh.name = `wall-detail-batched-${batchIndex++}-${entries[0]!.bucket.materialId ?? "template"}`;
       mesh.castShadow = entries[0]!.castShadow;
-      mesh.receiveShadow = false;
+      mesh.receiveShadow = true;
       mesh.renderOrder = entries[0]!.renderOrder;
       mesh.frustumCulled = true;
       mesh.perObjectFrustumCulled = true;
@@ -1147,7 +1207,7 @@ function buildPbrDetailMeshes(
       ? `wall-detail-${bucket.meshId}-${bucket.geometryVariantKey}-${bucket.materialSource}-${bucket.materialId}`
       : `wall-detail-${bucket.meshId}-${bucket.geometryVariantKey}-template`;
     mesh.castShadow = !isStainedGlassMaterialId(bucket.materialId) && !NON_SHADOW_DETAIL_IDS.has(bucket.meshId);
-    mesh.receiveShadow = false;
+    mesh.receiveShadow = true;
     mesh.frustumCulled = true;
     mesh.renderOrder = bucket.meshId === "window_pointed_arch_glass" || isStainedGlassMaterialId(bucket.materialId)
       ? WINDOW_GLASS_RENDER_ORDER

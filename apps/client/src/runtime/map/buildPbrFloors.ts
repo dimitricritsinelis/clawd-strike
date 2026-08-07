@@ -25,6 +25,7 @@ export type FloorMaterialId =
   | "cobblestone_color"
   | "red_sandstone_pavement"
   | "patterned_cobblestone"
+  | "court_limestone_flags_01"
   | "sand_01";
 
 const UV_QUARTER_TURNS: 0 | 1 | 2 | 3 = 0;
@@ -118,6 +119,7 @@ const MATERIAL_ORDER: FloorMaterialId[] = [
   "cobblestone_color",
   "red_sandstone_pavement",
   "patterned_cobblestone",
+  "court_limestone_flags_01",
   "sand_01",
 ];
 
@@ -165,6 +167,15 @@ const FLOOR_MACRO_SETTINGS: Record<
     colorAmplitude: 0.16,
     roughnessAmplitude: 0.14,
     frequency: 0.055,
+  },
+  // Fountain Court and the other rotation pockets are read as one large laid
+  // floor, so this shares the Spice lane's dressed-block source at a much
+  // bigger tile and needs its weathering field coarser again to stay regional
+  // rather than per-slab.
+  court_limestone_flags_01: {
+    colorAmplitude: 0.15,
+    roughnessAmplitude: 0.13,
+    frequency: 0.042,
   },
   sand_01: {
     colorAmplitude: 0.06,

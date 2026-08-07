@@ -181,6 +181,17 @@ export const DETAIL_MATERIAL_ROLES: Readonly<Record<DetailMaterialRole, DetailMa
   // Untinted painted-wood instances (window frames, sills, joinery pushed
   // without an authored tint) take this value directly, so it has to sit in a
   // painted-timber band rather than the near-white it reads as in sunlight.
+  // Do not warm this to chase the pale upper-storey window channels: three
+  // attempts moved their saturation by 0.00-0.02 against a gap of 0.29.
+  //
+  // The reason is NOT that those members divide this tint back out — they are
+  // untinted `door_jamb` instances whose instanceColor is (1,1,1). This value
+  // is simply overwritten downstream. Their base albedo lands near 0.06 linear,
+  // while the `timber-surface` tier mixes toward wear and lift constants at
+  // 0.23-0.71 linear — 5-12x brighter — so a 14% lift mix alone supplies over
+  // half the final red before any tint stage runs. Warming this hex cannot
+  // reach past that. The levers that can are the tier's own constants in
+  // kitMaterials.ts and a per-instance tint applied after them.
   "painted-wood": { materialId: "ph_worn_planks", tintHex: 0x7f9a8d, roughness: 0.8, metalness: 0.01 },
   "stone-trim": { materialId: "ph_stone_trim_sandstone", tintHex: 0xd0b58c, roughness: 0.86, metalness: 0.01 },
   "plaster-trim": { materialId: "ph_trim_sanded_01", tintHex: 0xd8c29d, roughness: 0.9, metalness: 0 },

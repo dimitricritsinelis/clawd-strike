@@ -4,14 +4,16 @@
       "id": "bazaar_project_original_textiles",
       "source": "repo://generated/bazaar/textiles",
       "license": "Project-Original",
-      "notes": "Project-owned canopy stripe and Levantine rug albedo textures authored for Clawd Strike.",
+      "notes": "Project-owned canopy stripe, plain shade cloth and Levantine rug albedo textures authored for Clawd Strike.",
       "md5": {
         "project_original/canopy_stripe_albedo_v1.jpg": "b99e482c87fc3f34269c0c6ba124c9f1",
-        "project_original/levantine_rug_albedo_v1.jpg": "748db3341007442fdf290851da01f8e7"
+        "project_original/levantine_rug_albedo_v1.jpg": "748db3341007442fdf290851da01f8e7",
+        "project_original/shade_cloth_albedo_v1.jpg": "df9447fda8505e0d2ca8786bc4529ab8"
       },
       "files": [
         "project_original/canopy_stripe_albedo_v1.jpg",
-        "project_original/levantine_rug_albedo_v1.jpg"
+        "project_original/levantine_rug_albedo_v1.jpg",
+        "project_original/shade_cloth_albedo_v1.jpg"
       ]
     }
   ]

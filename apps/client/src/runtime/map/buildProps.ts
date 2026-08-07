@@ -460,10 +460,122 @@ function createHeroGateCrownGeometry(): BufferGeometry {
     }
   }
 
+  // Surface articulation on the approach face. The gable carried its mass and
+  // its raking coping but nothing that told a viewer it was cut stone: no arch
+  // ring, no bearing course, no inlay. At the authored 13 m x 7 m envelope it
+  // read as one smooth pale slab. Everything below is thin relief seated on the
+  // existing faces, keyed to the same normalized pointed profile as the ring, so
+  // no member spans the portal or leaves the authored depth envelope.
+  //
+  // Unit space is scaled 13 m in x against 7 m in y, so any member that has to
+  // stay square in world space is authored with that 13:7 ratio pre-divided out.
+  const UNIT_X_M = 13;
+  const UNIT_Y_M = 7;
+  const crownRelief: BufferGeometry[] = [];
+  const innerArchProfile: ReadonlyArray<readonly [number, number]> = [
+    [0.25, -0.02],
+    [0.23, 0.0313],
+    [0.175, 0.1082],
+    [0.1, 0.1852],
+    [0, 0.265],
+  ];
+  for (const faceZ of [-0.497, 0.497] as const) {
+    const faceSign = faceZ < 0 ? -1 : 1;
+    // Voussoir ring. Each segment of the pointed profile carries three wedge
+    // stones offset along its own outward normal, so the course follows the
+    // arch instead of stepping across it.
+    for (const mirror of [-1, 1] as const) {
+      let voussoir = 0;
+      for (let segment = 0; segment < innerArchProfile.length - 1; segment += 1) {
+        const [x0, y0] = innerArchProfile[segment]!;
+        const [x1, y1] = innerArchProfile[segment + 1]!;
+        const spanX = (x1 - x0) * mirror;
+        const spanY = y1 - y0;
+        const segmentLength = Math.hypot(spanX, spanY);
+        const angleRad = Math.atan2(spanY, spanX);
+        const normalX = -spanY / segmentLength;
+        const normalY = spanX / segmentLength;
+        const outwardSign = normalX * mirror >= 0 ? 1 : -1;
+        const perStone = 3;
+        for (let stone = 0; stone < perStone; stone += 1) {
+          const t = (stone + 0.5) / perStone;
+          const bandM = 0.042;
+          const centerX = x0 * mirror + spanX * t + normalX * outwardSign * bandM;
+          const centerY = y0 + spanY * t + normalY * outwardSign * bandM;
+          crownRelief.push(tintGeometry(
+            createNonIndexedAngledBoxPart(
+              segmentLength / perStone - 0.004,
+              0.062,
+              0.019,
+              centerX,
+              centerY,
+              faceZ + faceSign * 0.008,
+              angleRad,
+            ),
+            voussoir % 2 === 0 ? [1, 0.95, 0.84] : [0.83, 0.75, 0.61],
+          ));
+          voussoir += 1;
+        }
+      }
+    }
+    // Keyed bearing course across the pediment, the corbel row that carries it,
+    // and a glazed inlay band - the three devices that give this facade its
+    // horizontal datum either side of the arch.
+    for (const mirror of [-1, 1] as const) {
+      crownRelief.push(tintGeometry(
+        createNonIndexedBoxPart(0.18, 0.024, 0.018, mirror * 0.345, 0.093, faceZ + faceSign * 0.008),
+        [0.98, 0.92, 0.8],
+      ));
+      crownRelief.push(tintGeometry(
+        createNonIndexedBoxPart(0.18, 0.019, 0.02, mirror * 0.345, 0.065, faceZ + faceSign * 0.009),
+        [0.32, 0.58, 0.62],
+      ));
+      for (let corbel = 0; corbel < 5; corbel += 1) {
+        crownRelief.push(tintGeometry(
+          createNonIndexedBoxPart(
+            0.019,
+            0.03,
+            0.026,
+            mirror * (0.272 + corbel * 0.037),
+            0.126,
+            faceZ + faceSign * 0.012,
+          ),
+          corbel % 2 === 0 ? [0.74, 0.65, 0.51] : [0.86, 0.78, 0.63],
+        ));
+      }
+      // Glazed impost band turning down the pier below the arch springing.
+      crownRelief.push(tintGeometry(
+        createNonIndexedBoxPart(0.05, 0.02, 0.02, mirror * 0.3, -0.008, faceZ + faceSign * 0.009),
+        [0.32, 0.58, 0.62],
+      ));
+      // Rosette medallion in the spandrel. Authored round in world space by
+      // dividing the 13:7 unit anisotropy back out of its radii.
+      const rosetteRadiusM = 0.42;
+      // One disc, eight-sided: the gate is held to a focused triangle budget and
+      // a second concentric ring plus finer segmentation spent it without reading
+      // any differently at the authored approach distance.
+      for (const [radiusScale, tone] of [
+        [1, [0.35, 0.6, 0.63]] as const,
+      ]) {
+        const disc = new CylinderGeometry(1, 1, 1, 8);
+        disc.rotateX(Math.PI * 0.5);
+        disc.scale(
+          (rosetteRadiusM * radiusScale) / UNIT_X_M,
+          (rosetteRadiusM * radiusScale) / UNIT_Y_M,
+          0.016 + (1 - radiusScale) * 0.006,
+        );
+        disc.translate(mirror * 0.372, 0.028, faceZ + faceSign * 0.01);
+        crownRelief.push(tintGeometry(disc.toNonIndexed(), tone));
+        disc.dispose();
+      }
+    }
+  }
+
   return mergeProceduralGeometry([
     tintGeometry(mainRing, [0.92, 0.86, 0.74]),
     tintGeometry(frontTrim, [1, 0.93, 0.8]),
     tintGeometry(rearTrim, [1, 0.93, 0.8]),
+    ...crownRelief,
     tintGeometry(frontKeystone, [0.76, 0.67, 0.54]),
     tintGeometry(rearKeystone, [0.76, 0.67, 0.54]),
     ...rakingCopings.map((geometry) => tintGeometry(geometry, [0.84, 0.76, 0.62])),
@@ -1566,12 +1678,36 @@ function buildCompiledDressing(
       roughness: 0.97,
       vertexColors: true,
     }),
+    // Plain undyed duck, for the long lane spans. Every overhead sheet used to
+    // draw the same woven stripe, which at span scale put a wide band of
+    // saturated ochre across the top of the street; the reference hangs plain
+    // sun-bleached canvas over the lane and keeps the stripe for the small shop
+    // awnings under it. Alternating the two restores that hierarchy and stops
+    // the run of spans reading as one repeated bolt of cloth.
+    canopyPlain: createBatch("v3-canopy-cloth-plain", 0xffffff, "canopy", createClothGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      doubleSided: true,
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_albedo_v1.jpg",
+      textureRepeat: [1.6, 2.1],
+      roughness: 0.97,
+      vertexColors: true,
+    }),
     canopyValance: createBatch("v3-canopy-scalloped-valance", 0xffffff, "canopy", createCanopyScallopedValanceGeometry, {
       castShadow: true,
       receiveShadow: true,
       doubleSided: true,
       textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/canopy_stripe_albedo_v1.jpg",
       textureRepeat: [0.75, 0.32],
+      roughness: 0.97,
+      vertexColors: true,
+    }),
+    canopyPlainValance: createBatch("v3-canopy-scalloped-valance-plain", 0xffffff, "canopy", createCanopyScallopedValanceGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      doubleSided: true,
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_albedo_v1.jpg",
+      textureRepeat: [1.6, 0.68],
       roughness: 0.97,
       vertexColors: true,
     }),
@@ -1813,7 +1949,11 @@ function buildCompiledDressing(
       materialId: "ph_rough_pine_door",
       roughness: 0.9,
       normalScale: 0.34,
-      albedoBoost: 1.03,
+      // Crate albedo was left at the source texture's dim interior exposure, so
+      // the bazaar's most repeated cover prop read as charcoal against sunlit
+      // limestone. Lifted to the honey softwood the reference shows; the
+      // texture, wear and normal response are unchanged.
+      albedoBoost: 1.58,
       emissiveIntensity: 0,
       vertexColors: true,
     }),
@@ -1827,7 +1967,7 @@ function buildCompiledDressing(
       materialId: "ph_wooden_crate_02",
       roughness: 0.84,
       normalScale: 0.38,
-      albedoBoost: 1.04,
+      albedoBoost: 2.05,
       emissiveIntensity: 0,
       vertexColors: true,
     }),
@@ -1841,7 +1981,7 @@ function buildCompiledDressing(
       materialId: "ph_wooden_crate_01",
       roughness: 0.94,
       normalScale: 0.3,
-      albedoBoost: 1.02,
+      albedoBoost: 2.3,
       emissiveIntensity: 0,
       vertexColors: true,
     }),
@@ -2092,7 +2232,17 @@ function buildCompiledDressing(
       textureRepeat: [1, 1],
       roughness: 0.88,
       normalScale: 0.78,
-      albedoBoost: 1.08,
+      // The gate is the foreground frame of the Spawn-A approach and has to read as
+      // heavy dark stone silhouetting a hot street. It measured the largest single
+      // regional error in that frame: inner jamb luminance 139 against a target of
+      // 73, soffit 98 against 65, giving the shot a sun:shade ratio near 1.6:1
+      // where the target runs about 4:1.
+      //
+      // Sizing note, measured on this map: pixel ratio = linear ratio^(1/2.2), so
+      // halving rendered luminance needs roughly a 4.6x linear cut. Boost alone
+      // cannot get there without absurd values, so this pairs a moderate cut here
+      // with deeper field/pier/trim tones in spiceGate.ts.
+      albedoBoost: 0.55,
       vertexColors: true,
     }),
     spiceGateFixtures: createBatch("v3-spice-gate-fixtures", 0xffffff, "heroLintel", createSpiceGateFixtureGeometry, {
@@ -2117,6 +2267,12 @@ function buildCompiledDressing(
     }),
     // Bab al-Suq shares the Spice Gate's masonry and timber so the two authored
     // portals that bracket Spawn A read as one kit rather than two props.
+    // Note: reducing albedoBoost on these three Spawn-A batches (gate stone,
+    // west backs, east works) was measured as a total no-op on the Spawn-A
+    // approach camera — every region byte-identical. They do NOT own the bright
+    // framing surfaces in that view. The exit-west return does (its boost is
+    // deliberately 0.58); the arch return at screen x 1080-1145 is the SPICE
+    // gate, a different family. Identify the owner before adjusting these.
     spawnAGateStone: createBatch("v3-spawn-a-gate-stone", 0xdfc69a, "heroLintel", createSpawnAGateStoneGeometry, {
       castShadow: true,
       receiveShadow: true,
@@ -2242,7 +2398,19 @@ function buildCompiledDressing(
       textureRepeat: [1, 1],
       roughness: 0.89,
       normalScale: 0.76,
-      albedoBoost: 1.08,
+      // Correction to an earlier note here: this return is NOT unlit. It sits
+      // yaw 180 on the courtyard's north boundary, so it is a SOUTH-facing wall
+      // directly lit at N.L 0.458, the same as the gate beside it. The reduced
+      // boost still measures correctly, but not for the reason first written.
+      //
+      // Boosting its albedo
+      // above 1 on top of vertex tones that themselves run to 1.2-1.26 put it
+      // at 131 luminance against 67 in the target, so the mass that is supposed
+      // to frame the Spawn-A approach in near-silhouette sat only 6 values below
+      // the sunlit street it frames, and the composition flattened. The kit's
+      // own shade values are authored dark deliberately; the lit values were
+      // never brought down to match a face that is never lit.
+      albedoBoost: 0.58,
       vertexColors: true,
     }),
     spawnAExitWestFixtures: createBatch("v3-spawn-a-exit-west-fixtures", 0xffffff, "heroLintel", createSpawnAExitWestReturnFixtureGeometry, {
@@ -3144,8 +3312,15 @@ function buildCompiledDressing(
         const stoneTints = [0xbfae91, 0xd2c5ae, 0xc8b799, 0xb8ab95, 0xcfbea2] as const;
         const timberTints = [0xa2764f, 0x8c674a, 0x966e4e, 0x84634b, 0xa07858] as const;
         const textileTints = [0xd6b078, 0xcaa06c, 0xb8a776, 0xd19b72, 0xbfae80] as const;
-        const indigoTints = [0x21475e, 0x315b70, 0x285167, 0x294a63, 0x35566b] as const;
-        const madderTints = [0x93443a, 0x763b43, 0x86403f, 0x8c4b43, 0x7e3d3b] as const;
+        // Desaturated. The dye baths are the most saturated thing in Dyers Alley:
+        // at 0x21475e the indigo sits at 0.65 relative saturation and the madder
+        // at 0.61, and standing them up in the alley took pixels above 0.55
+        // saturation from 5.08% of the frame to 14.95% against 7.64% in the
+        // target. Real vat liquor is dark and slightly chalky with suspended
+        // pigment, not a clean pigment colour, so the value stays and the chroma
+        // comes off.
+        const indigoTints = [0x3a4e5c, 0x455e6d, 0x3f5666, 0x3d4f60, 0x475c68] as const;
+        const madderTints = [0x84544c, 0x6f4a4e, 0x7a4e4b, 0x80564f, 0x744b48] as const;
         const moduleTransform = {
           ...transform,
           sx: transform.sx * widthFactors[variant]!,
@@ -3203,11 +3378,23 @@ function buildCompiledDressing(
       case "bazaar_cloth_canopy":
         {
         const canopySeed = [...placement.id].reduce((sum, character) => sum + character.charCodeAt(0), 0);
-        const canopyTints = [0xffcfad, 0xbfd8cc, 0xe4b5a0, 0xd7c598] as const;
+        // The reference street hangs undyed cream and tan sailcloth: value
+        // varies, hue barely does. The pale cyan-green member (0xbfd8cc) put a
+        // cool minty sheet over a warm sunlit lane and, with the sheet's own
+        // per-panel banding, read as striped awning fabric rather than plain
+        // canvas. Kept four members so the run still alternates, all inside the
+        // cream-to-ochre family.
+        const canopyTints = [0xf5efe2, 0xeae2d2, 0xded8c8, 0xd2cfc4] as const;
         const canopyTintHex = placement.id.includes("DYERS")
           ? 0x76a99e
           : canopyTints[canopySeed % canopyTints.length]!;
-        batches.canopy.instances.push({
+        // The dyers' spans keep the woven stripe under their dyed tint, since
+        // that district's identity is dyed cloth; the market lane alternates
+        // striped and plain so no two neighbouring spans share a bolt.
+        const canopyIsPlain = !placement.id.includes("DYERS") && canopySeed % 2 === 1;
+        const canopyClothBatch = canopyIsPlain ? batches.canopyPlain : batches.canopy;
+        const canopyValanceBatch = canopyIsPlain ? batches.canopyPlainValance : batches.canopyValance;
+        canopyClothBatch.instances.push({
           ...transform,
           tintHex: canopyTintHex,
           visualQa: {
@@ -3225,7 +3412,7 @@ function buildCompiledDressing(
         });
         for (const edgeSide of [-1, 1] as const) {
           pushLocalInstance(
-            batches.canopyValance,
+            canopyValanceBatch,
             world,
             yawRad,
             {
@@ -3326,7 +3513,13 @@ function buildCompiledDressing(
         break;
       case "bazaar_ground_rug": {
         const rugSeed = stablePlacementVariantSeed(placement.id);
-        const rugTints = [0xffb783, 0x73b7b0, 0xd5a56f, 0xb66d58, 0x8eb47c] as const;
+        // Two of these were a teal (0x73b7b0) and a sage green (0x8eb47c), which
+        // put saturated cool mats on the ground of a warm sunlit bazaar. The
+        // grounding closeup measured green-dominant pixels at 0.79% of frame
+        // against 0.01% in its target - a 79x excess, and the single most
+        // out-of-palette element in that view. Replaced with warm members so the
+        // run still varies in value and hue without leaving the target's family.
+        const rugTints = [0xffb783, 0x9c5f45, 0xd5a56f, 0xb66d58, 0xc39a63] as const;
         const rugAspect = [0.9, 0.96, 1, 1.06, 1.12][(rugSeed >>> 5) % 5]!;
         batches.groundRug.instances.push({
           ...transform,

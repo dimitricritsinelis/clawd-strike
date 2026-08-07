@@ -556,6 +556,38 @@ function createPbrBackgroundShells(
       z: shell.z + shell.oz + shell.d * (index % 3 === 0 ? 0.15 : -0.12),
     });
 
+    // Roof services. Every shell in the belt carried a coping, a chimney and
+    // nothing else, so from the establishing camera the whole old-city edge read
+    // as a field of empty capped boxes. A stood water tank, a vent hood, a hatch
+    // kerb and - on every third roof - a small shade frame give the belt the
+    // lived-on texture the reference shows. The set is indexed off the shell
+    // ordinal, so it stays deterministic and every member sits inside its own
+    // parapet.
+    // Roof services. Every shell in the belt carried a coping, a chimney and
+    // nothing else, so from the establishing camera the whole old-city edge read
+    // as a field of empty capped boxes. A stood water tank and a vent hood on
+    // every third roof give the belt lived-on texture without pushing the belt's
+    // merged geometry past the budget where the runtime's first frame stalls -
+    // a full set on every shell measurably did, and failed the closeup capture.
+    if (index % 3 === 0) {
+      const serviceInsetX = Math.max(0.55, roofWidthM * 0.5 - parapetThicknessM - 0.6);
+      const serviceInsetZ = Math.max(0.55, roofDepthM * 0.5 - parapetThicknessM - 0.6);
+      const tankSizeM = 0.72 + (index % 4) * 0.07;
+      const tankSide = index % 2 === 0 ? 1 : -1;
+      const tankX = roofCenterX + tankSide * serviceInsetX * (0.42 + (index % 3) * 0.08);
+      const tankZ = roofCenterZ - tankSide * serviceInsetZ * (0.34 + (index % 5) * 0.06);
+      addBox(index, "roof-tank", "ph_whitewashed_brick_cool", {
+        x: tankSizeM,
+        y: tankSizeM * 0.86,
+        z: tankSizeM,
+      }, { x: tankX, y: roofDeckTopY + tankSizeM * 0.43, z: tankZ });
+      addBox(index, "roof-vent", "ph_aged_plaster_ochre", { x: 0.44, y: 0.3, z: 0.44 }, {
+        x: roofCenterX - tankSide * serviceInsetX * (0.4 + (index % 4) * 0.07),
+        y: roofDeckTopY + 0.15,
+        z: roofCenterZ + tankSide * serviceInsetZ * (0.38 + (index % 3) * 0.07),
+      });
+    }
+
   }
   for (const [materialId, batch] of shellBatches) {
     const geometry = mergeGeometries(batch.geometries, false);

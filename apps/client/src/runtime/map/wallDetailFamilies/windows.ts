@@ -75,42 +75,62 @@ function mergeWindowGeometry(parts: BufferGeometry[]): BufferGeometry {
 }
 
 export function createLouveredShutterGeometry(): BufferGeometry {
-  const paintedFrame: readonly [number, number, number] = [0.82, 0.78, 0.66];
-  const wornFrame: readonly [number, number, number] = [0.68, 0.64, 0.54];
-  const agedIron: readonly [number, number, number] = [0.24, 0.25, 0.23];
+  // Boarded ledge-and-brace leaf. The previous louvered blades read at
+  // combat distance as one pale sheet: the blades are thinner than a pixel
+  // once the leaf is scaled to a real 0.4 m shutter, so all that survived was
+  // their vertex colour, and at 0.70-0.82 that colour bleached the pine
+  // albedo into painted metal. Vertical boards with real seams hold their
+  // silhouette at any distance, and the darker weathered range lets the
+  // manifest timber map read instead of being washed out by the vertex term.
+  const stile: readonly [number, number, number] = [0.5, 0.43, 0.34];
+  const ledge: readonly [number, number, number] = [0.33, 0.26, 0.19];
+  const agedIron: readonly [number, number, number] = [0.19, 0.18, 0.17];
   const parts: BufferGeometry[] = [
-    createWindowBoxPart(0.1, 1, 0.72, -0.45, 0, 0, paintedFrame),
-    createWindowBoxPart(0.1, 1, 0.72, 0.45, 0, 0, wornFrame),
-    createWindowBoxPart(0.82, 0.095, 0.72, 0, 0.4525, 0, paintedFrame),
-    createWindowBoxPart(0.82, 0.095, 0.72, 0, -0.4525, 0, wornFrame),
-    createWindowBoxPart(0.82, 0.06, 0.78, 0, 0, 0.015, paintedFrame),
+    // Stiles and rails frame the leaf and give its edge real thickness.
+    createWindowBoxPart(0.09, 1, 0.72, -0.455, 0, 0, stile),
+    createWindowBoxPart(0.09, 1, 0.72, 0.455, 0, 0, stile),
+    createWindowBoxPart(0.83, 0.1, 0.72, 0, 0.45, 0, stile),
+    createWindowBoxPart(0.83, 0.1, 0.72, 0, -0.45, 0, stile),
   ];
 
-  // Two banks of pitched blades sit inside a mortised stile-and-rail frame.
-  // Their real silhouette and self-shadow replace the former vertex-colored
-  // slab while preserving the same unit bounds and placement contract.
-  const louverYs = [-0.39, -0.31, -0.23, -0.15, -0.07, 0.07, 0.15, 0.23, 0.31, 0.39];
-  for (const [index, louverY] of louverYs.entries()) {
-    const tone = index % 3 === 0 ? 0.7 : (index % 3 === 1 ? 0.78 : 0.74);
+  // Seven vertical boards behind the frame. Alternating depth and tone gives
+  // every joint a self-shadowed seam rather than a printed line, and the
+  // per-board variation breaks the repeat across a run of shuttered bays.
+  const boardCount = 7;
+  const boardWidth = 0.83 / boardCount;
+  for (let index = 0; index < boardCount; index += 1) {
+    const x = -0.415 + boardWidth * (index + 0.5);
+    const recessed = index % 2 === 1;
+    const tone = 0.52 + ((index * 7) % 5) * 0.022 - (recessed ? 0.05 : 0);
     parts.push(createWindowBoxPart(
-      0.8,
-      0.055,
-      0.66,
+      boardWidth * 0.94,
+      0.9,
+      recessed ? 0.5 : 0.62,
+      x,
       0,
-      louverY,
-      0.015,
-      [tone, tone * 0.94, tone * 0.82],
-      -0.34,
+      recessed ? -0.04 : 0.02,
+      [tone, tone * 0.86, tone * 0.7],
     ));
   }
 
-  // Two low-profile straps and a latch establish believable shutter hardware
-  // without expanding the normalized family envelope or creating a bright
-  // combat-distance accent.
-  for (const hingeY of [-0.31, 0.31]) {
-    parts.push(createWindowBoxPart(0.18, 0.028, 0.06, -0.34, hingeY, 0.36, agedIron));
+  // Two ledges and a diagonal brace on the face: the load path that stops a
+  // boarded leaf from racking, and the detail that reads first in the target.
+  for (const ledgeY of [-0.29, 0.29]) {
+    parts.push(createWindowBoxPart(0.86, 0.095, 0.18, 0, ledgeY, 0.41, ledge));
   }
-  parts.push(createWindowBoxPart(0.095, 0.032, 0.06, 0.3, 0, 0.36, agedIron));
+  const braceGeometry = new BoxGeometry(0.08, 0.72, 0.16);
+  braceGeometry.rotateZ(0.52);
+  braceGeometry.translate(0, 0, 0.4);
+  applyWindowPartColor(braceGeometry, ledge);
+  parts.push(braceGeometry);
+
+  // Strap hinges wrap the hanging stile, and a ring pull sits on the free
+  // edge, so the leaf reads as hung rather than propped against the reveal.
+  for (const hingeY of [-0.31, 0.31]) {
+    parts.push(createWindowBoxPart(0.3, 0.05, 0.09, -0.3, hingeY, 0.34, agedIron));
+    parts.push(createWindowBoxPart(0.07, 0.075, 0.78, -0.455, hingeY, 0, agedIron));
+  }
+  parts.push(createWindowBoxPart(0.07, 0.075, 0.14, 0.36, 0, 0.36, agedIron));
 
   return mergeWindowGeometry(parts);
 }

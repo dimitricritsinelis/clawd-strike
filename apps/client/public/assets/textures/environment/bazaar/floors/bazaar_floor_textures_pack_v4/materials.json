@@ -4,7 +4,7 @@
       "id": "large_sandstone_blocks_01",
       "tileSizeM": 2.6,
       "tintHex": "#c9b083",
-      "albedoBoost": 1.05,
+      "albedoBoost": 0.7,
       "albedoGamma": 0.98,
       "dustStrength": 0.06,
       "roughness": 0.94,
@@ -148,7 +148,7 @@
     },
     {
       "id": "patterned_cobblestone",
-      "tileSizeM": 4.0,
+      "tileSizeM": 2.6,
       "tintHex": "#c8b48f",
       "albedoBoost": 0.95,
       "albedoGamma": 1.0,
@@ -211,6 +211,34 @@
           "albedo": "./sand_drift_01/sand_drift_01_diff_2k.jpg",
           "normal": "./sand_drift_01/sand_drift_01_nor_gl_2k.jpg",
           "arm": "./sand_drift_01/sand_drift_01_arm_2k.jpg"
+        }
+      }
+    },
+    {
+      "id": "court_limestone_flags_01",
+      "tileSizeM": 4.4,
+      "tintHex": "#cfb68b",
+      "albedoBoost": 0.78,
+      "albedoGamma": 0.98,
+      "dustStrength": 0.09,
+      "roughness": 0.94,
+      "normalScale": 0.72,
+      "aoIntensity": 0.4,
+      "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
+        "4k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     }

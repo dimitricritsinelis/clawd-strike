@@ -4,7 +4,7 @@ This is the single ordered implementation queue for Bazaar visual development. W
 
 ## 01 - Spice Street west merchant frontage
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The continuous west façade from the southern arch return through the last visible merchant bay, including its upper windows, shop openings, stalls, awnings, plinth, and wall-base dressing.
 - Primary camera: `AUDIT_07_SPICE_WEST_ELEVATION`
 - Supporting cameras: `SHOT_11_SPICE_CANOPY`, `SHOT_13_CLOSEUP_MERCHANT_FACADE`
@@ -25,7 +25,7 @@ Complete when: The live primary view materially matches the target’s façade h
 
 ## 02 - Spice Street east frontage and lane entry
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The southern Spice Street threshold and the east-side merchant run visible from A Spawn, ending before Fountain Court.
 - Primary camera: `SHOT_02_SPAWN_A_TO_BAZAAR`
 - Supporting cameras: `SHOT_11_SPICE_CANOPY`, `AUDIT_07_SPICE_WEST_ELEVATION`
@@ -46,7 +46,7 @@ Complete when: The fixed view reads as a finished six-metre bazaar entrance with
 
 ## 03 - Spice Street overhead canopy system
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The overhead cloth, beams, ropes, wires, banners, and their attachment zones along Spice Street, excluding the shop interiors and ground prop clusters below.
 - Primary camera: `SHOT_11_SPICE_CANOPY`
 - Supporting cameras: `SHOT_15_CLOSEUP_CANOPY_ATTACHMENT`, `SHOT_02_SPAWN_A_TO_BAZAAR`
@@ -67,7 +67,7 @@ Complete when: The primary and closeup views show one believable load-bearing sh
 
 ## 04 - Spice Street ground, cover, and thresholds
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The lane floor and its two wall-edge bands from A Spawn’s exit to Fountain Court, including thresholds, gutters, cover clusters, and immediate ground-contact dressing.
 - Primary camera: `SHOT_14_CLOSEUP_PROP_GROUNDING`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_11_SPICE_CANOPY`
@@ -88,7 +88,7 @@ Complete when: The closeup reaches the target’s material and grounding quality
 
 ## 05 - A Spawn main exit façade
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: A Spawn’s complete north face: the monumental main arch, both flanking returns, parapets, base treatment, and the threshold into Spice Street.
 - Primary camera: `AUDIT_01_SPAWN_A_NORTH_FRONTAGES`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`
@@ -109,7 +109,7 @@ Complete when: The exit reads as one monumental but buildable façade matching t
 
 ## 06 - Fountain Court hero composition
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The full Fountain Court release, centered on the off-axis fountain and including the palm, visible enclosing façades, edge life, and the northward frame.
 - Primary camera: `SHOT_03_FOUNTAIN_COURT`
 - Supporting cameras: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`, `SHOT_04_TEXTILE_ARCADE`
@@ -130,7 +130,7 @@ Complete when: The primary view approaches the target’s hero hierarchy and for
 
 ## 07 - Fountain basin material and ground transition
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The fountain basin, water, fittings, planter contact, and the immediate three-to-four-metre paving apron.
 - Primary camera: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`
 - Supporting cameras: `SHOT_03_FOUNTAIN_COURT`
@@ -151,7 +151,7 @@ Complete when: The closeup materially matches the target’s stone, tile, water-
 
 ## 08 - Textile Arcade south compression
 
-- [ ] Ready for owner review
+- [ ] Ready for owner review [REVISIT: primary camera is dominated by tall pale reed/straw-looking wall panels whose emitter was not traced; arcade bays gained racked rug stock but sit outside this camera]
 - Boundary: The covered main-lane segment from Fountain Court’s north threshold to the Rug Gate approach, including both arcade walls and the overhead textile roof.
 - Primary camera: `SHOT_04_TEXTILE_ARCADE`
 - Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_09_RUG_GATE`
@@ -172,7 +172,7 @@ Complete when: The fixed view matches the target’s covered-arcade depth and te
 
 ## 09 - Rug Gate hero approach
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The Rug Gate crown, piers, open throat, flanking rug displays, and immediate southern approach.
 - Primary camera: `SHOT_09_RUG_GATE`
 - Supporting cameras: `SHOT_04_TEXTILE_ARCADE`, `SHOT_12_SPAWN_B_RETURN`
@@ -193,7 +193,7 @@ Complete when: The gate has the target’s hero hierarchy and complete construct
 
 ## 10 - Dyers Alley process wall and drainage
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The east process wall and its lane-edge band from the A south-east connector to the Covered Souk threshold.
 - Primary camera: `AUDIT_05_DYERS_ALLEY_EAST_FRONTAGE`
 - Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`
@@ -214,7 +214,7 @@ Complete when: The wall matches the target’s readable dye-work sequence and ev
 
 ## 11 - Covered Dyers Souk arcade
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The covered souk from its southern threshold through the shaded merchant/process run to the dogleg exit.
 - Primary camera: `SHOT_07_COVERED_DYERS_SOUK`
 - Supporting cameras: `AUDIT_06_COVERED_SOUK_SOUTH_FRONTAGE`, `SHOT_08_DYERS_DOGLEG`
@@ -235,7 +235,7 @@ Complete when: The primary view reaches the target’s enclosed market character
 
 ## 12 - Dyers Dogleg residential turn
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The continuous S-turn from the Covered Souk exit to North Court, including the inner corner, outer residential wall, and turn-edge dressing.
 - Primary camera: `SHOT_08_DYERS_DOGLEG`
 - Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`, `SHOT_10_NORTH_COURT`
@@ -256,7 +256,7 @@ Complete when: The view matches the target’s quiet residential contrast and la
 
 ## 13 - North Court release
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: North Court from its southern threshold to the two B Spawn connectors, including the enclosing façades, palm landmark, court floor, and edge work areas.
 - Primary camera: `SHOT_10_NORTH_COURT`
 - Supporting cameras: `SHOT_08_DYERS_DOGLEG`, `SHOT_12_SPAWN_B_RETURN`
@@ -277,7 +277,7 @@ Complete when: The court matches the target’s release, skyline, and palm hiera
 
 ## 14 - Service South utility frontage
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The long east wall and lane-edge band of Service South from the A south-west connector to Caravan Court.
 - Primary camera: `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`
 - Supporting cameras: `SHOT_06_CARAVAN_RAMP`
@@ -298,7 +298,7 @@ Complete when: The elevation matches the target’s calm service rhythm and no b
 
 ## 15 - Caravan Court ramp and loading composition
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: Caravan Court’s load yard, east and west edges, ramp threshold, retaining faces, and the first visible rise toward Tea Terrace.
 - Primary camera: `SHOT_06_CARAVAN_RAMP`
 - Supporting cameras: `AUDIT_04_CARAVAN_EAST_FRONTAGES`, `SHOT_05_TEA_TERRACE`
@@ -319,7 +319,7 @@ Complete when: The court approaches the target’s load-yard composition and the
 
 ## 16 - Tea Terrace elevated route
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The ramp crest, tea-service frontage, raised terrace, stairs, landing, and north connector as one continuous elevated route.
 - Primary camera: `SHOT_05_TEA_TERRACE`
 - Supporting cameras: `SHOT_06_CARAVAN_RAMP`, `SHOT_12_SPAWN_B_RETURN`
@@ -340,7 +340,7 @@ Complete when: The elevated route matches the target’s tea-service identity an
 
 ## 17 - B Spawn main entrance and return
 
-- [ ] Ready for owner review
+- [ ] Ready for owner review [REVISIT: the tall exposed posts flanking the portal still read as bleached vertical planks; craze anisotropy and the west mass wall material were both corrected without changing them, so the post cladding has its own material path]
 - Boundary: The open southern portal into B Spawn, its immediate returns, edge rug racks, courtyard threshold, and the framed view back through the main route.
 - Primary camera: `SHOT_12_SPAWN_B_RETURN`
 - Supporting cameras: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`, `SHOT_09_RUG_GATE`
@@ -361,7 +361,7 @@ Complete when: The return view matches the target’s northern gate identity and
 
 ## 18 - B Spawn south frontages
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The paired south courtyard walls flanking B Spawn’s gate, including their towers, doors, windows, parapets, plinths, fixtures, and edge cover.
 - Primary camera: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`
 - Supporting cameras: `SHOT_12_SPAWN_B_RETURN`, `SHOT_10_NORTH_COURT`
@@ -382,7 +382,7 @@ Complete when: The paired frontages reach the target’s built northern characte
 
 ## 19 - Perimeter, rooftops, and skyline integration
 
-- [ ] Ready for owner review
+- [x] Ready for owner review
 - Boundary: The continuous sealed perimeter ring, all visible playable roofs, parapets, roof services, and the surrounding non-playable skyline belt; traversable layout and openings are excluded.
 - Primary camera: `SHOT_01_TOPDOWN_ESTABLISHING`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_12_SPAWN_B_RETURN`

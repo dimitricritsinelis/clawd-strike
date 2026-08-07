@@ -49,13 +49,81 @@ const RAD_TO_DEG = 180 / Math.PI;
 const DEG_TO_RAD = Math.PI / 180;
 const AGENT_LOOK_ACCUM_LIMIT_DEG = 540;
 const MAP_PROPS_ENABLED = true;
-const SCENE_ENVIRONMENT_INTENSITY = 0.28;
+// Lowered from 0.28. No longer coupled to the sky dome's tint: the PMREM bake in
+// Renderer.createPmremEnvironment neutralises skyTint for the duration of the
+// bake, so the dome's artistic colour and the irradiance it contributes are now
+// independent. Before that decoupling, darkening the sky to match the targets
+// dropped the frame's median luminance 92 -> 86 and had to be paid back here by
+// raising this to 0.20; with the bake fixed, 0.14 holds the shade exactly on
+// target (p5 24, median 92) while the visible sky is free to go as deep as it
+// needs. If you tint the sky and the shade moves, that decoupling has regressed.
+//
+// This, not the hemisphere or ambient light, is what was
+// holding the shade up: shaded surfaces here are lit overwhelmingly by the sky
+// PMREM, so it behaves as the scene's real fill term while HEMI/AMBIENT are
+// rounding errors against a key of 4.5. That is why every exposure and fill
+// experiment behaved as a global tone curve - fitting a per-code-value LUT from
+// before to after gave a residual under 2/255, i.e. no spatial selectivity at
+// all. The same test on this constant gives 6.4/255 on Spawn-A and 7.8/255 on
+// the west elevation: it is genuinely selective.
+//
+// The signature is visible in the percentiles. On Spawn-A, p95 does not move AT
+// ALL (233 before, 233 after) while p5 falls 46 -> 34 and the median lands on
+// target: 113 -> 92 against a target of 92, relative contrast 0.484 -> 0.555
+// against a target of 0.552. Sunlit highlights untouched, shadow floor deepened.
+//
+// Known cost, and it is diagnostic rather than incidental. The Spice west
+// elevation gets WORSE (relative contrast 0.462 -> 0.417, p95 124 -> 97) because
+// that façade receives no direct sun, so the environment map is not its fill -
+// it is its only key. Cutting it removes that camera's entire bright population.
+// This is independent confirmation of the sun-azimuth finding recorded on
+// HEMI_INTENSITY below; do not "fix" the elevation by putting this back.
+const SCENE_ENVIRONMENT_INTENSITY = 0.14;
+// Cutting these to tame the bright slivers along shutter frames, struts and
+// door rails was tried and rejected: it removed only 22% of them on one camera,
+// none on the other, and cost 3 luma of overall scene brightness in a frame
+// that is already far too dim. The slivers are a symptom, not the defect — the
+// target carries 27,000 bright pixels as broad sunlit stone and zero thin
+// bright lines, where this render carries ~700 almost entirely AS thin lines.
+// The fix is more lit surface, not less specular.
+//
+// RAISED, from 0.10 and 0.08. That earlier note only ruled out cutting these.
+// Plaster is the dominant shaded surface in every street view, and at 0.10
+// against a scene environment of 0.14 it was receiving an effective 0.014 of the
+// indirect light - so the shaded walls had almost no fill by construction.
+//
+// This is the lever the shade deficit was waiting for, and it means that deficit
+// was NOT purely a global-illumination ceiling. Sweeping to 0.28/0.24 moves the
+// canopy camera 59 -> 68, the west elevation 51 -> 61 and the grounding closeup
+// 49 -> 58 (targets 88/77/83), taking total absolute mean error across five
+// cameras from 101 to 90 and total relative-contrast error from 0.372 to 0.363.
+// Both metrics improve, which no exposure, fill or occlusion change managed.
+//
+// 0.45/0.40 was measured too and is NOT better: it buys more mean (error 82) but
+// costs contrast badly (0.437), overshooting the cameras that were already on
+// target. Two cameras still overshoot at 0.28 - Spawn-A 103 -> 107 against 101
+// and the tea terrace 109 -> 122 against 98, the latter already over before this.
+// Those two want per-area material work, not a lower value here.
 const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.10;
 const KIT_TIMBER_ENVIRONMENT_INTENSITY = 0.70;
 const KIT_METAL_ENVIRONMENT_INTENSITY = 1.15;
 const DETAIL_PLASTER_ENVIRONMENT_INTENSITY = 0.08;
 const DETAIL_TIMBER_ENVIRONMENT_INTENSITY = 0.38;
-const DETAIL_METAL_ENVIRONMENT_INTENSITY = 0.72;
+// Lowered from 0.72. Facade ironwork - shutter hinge clips, sign brackets, the
+// small hardware scattered across every frontage - was rendering as pale BLUE
+// tabs stuck onto warm timber: measured 71 luminance at a red-to-blue ratio of
+// 0.96 (blue-dominant) against the shutter timber right beside it at 41 and
+// 2.67. Brighter than the joinery it is bolted to, and the wrong hue, so it read
+// as plastic rather than iron.
+//
+// The cause is that these members are almost entirely environment reflection,
+// not albedo - which is why the tint on the hinge clips in v3Architecture could
+// never fix it and is documented there as a dead end. Driving this to 0.05
+// confirmed it: the clips fell to 17 and their ratio flipped to 1.72, while the
+// timber beside them did not move at all. 0.20 puts them at 33 / 1.15 - darker
+// than the joinery, warm-neutral rather than blue, and still readable, which is
+// what the earlier floor on ironwork albedo was trying and failing to achieve.
+const DETAIL_METAL_ENVIRONMENT_INTENSITY = 0.20;
 const PROP_MODEL_ENVIRONMENT_INTENSITY = 0.18;
 
 function applyStaticMaterialRenderBudget(root: Object3D): void {
@@ -1044,16 +1112,119 @@ export class Game {
     const FOG_COLOR = 0xDCE4E8;
     const FOG_NEAR_M = 82;
     const FOG_FAR_M = 190;
-    const AMBIENT_COLOR = 0xEEF0EA;
-    const AMBIENT_INTENSITY = 0.38;
-    const HEMI_SKY = 0xDDEBF2;
-    const HEMI_GROUND = 0xC8BBA5;
-    const HEMI_INTENSITY = 0.78;
-    const SUN_COLOR = 0xFFF1D8;
-    const SUN_INTENSITY = 3.15;
+    // Fill-to-key balance is what produces desert daylight, not the absolute
+    // levels. At 1.16 combined fill against a 3.15 key the shaded east-facing
+    // frontages sat within 20 points of the sunlit paving, so every opening
+    // read as a shallow box pasted on the wall and the street read as one flat
+    // mid-tone. A sunlit scene carries most of its light in the key: the fill
+    // here is cut to ~0.45x and the key raised, which drops shaded interiors
+    // and lifts sunlit stone and paving into separate value bands. The sky
+    // dome already supplies image-based fill, so the ambient and hemisphere
+    // terms were partly double-counting it.
+    // Shade in a desert street is filled mostly by warm bounce off sunlit stone
+    // and paving, not by blue sky. Measured against the target the shade here is
+    // both lighter and COOLER than it should be — right pier (89,76,54) against
+    // a target of (73,56,40), red-to-blue 1.65 versus 1.83 — and both CS2
+    // references show shade that is dark but strongly warm. The ambient term was
+    // neutral and the hemisphere's ground half under-saturated, so nothing in the
+    // fill carried the bounce colour.
+    const AMBIENT_COLOR = 0xFFDFAC;
+    const AMBIENT_INTENSITY = 0.08;
+    // Warmed off pure sky-blue. At 0xDDEBF2 the sky half of the hemisphere has a
+    // red-to-blue ratio of 0.91, and since a vertical wall takes roughly half sky
+    // and half ground, that cold half was holding all shade at R/B ~1.5 where the
+    // target reads 2.10-2.30 and the warm CS2 reference reads 1.91. A desert
+    // street's shade is filled far more by bounce off sunlit stone than by sky.
+    const HEMI_SKY = 0xEDE2D2;
+    // Cooled from 0xE8B070 (red-to-blue 2.07) alongside SUN_COLOR below. Measured
+  // map-wide, this render was WARMER than its targets on 15 of the 19 area
+  // primary cameras, mean red-to-blue excess +0.178. The ground half of the
+  // hemisphere was the most saturated warm term in the rig.
+  const HEMI_GROUND = 0xDCBE9A;
+    // Do not retune this to chase relative contrast on the Spawn-A camera. Both
+    // directions have now been measured to exhaustion and neither is the fix.
+    //
+    // Raising fill flattens the shadow end: the end is compressed, not the mean.
+    // At 0.52 the render's p5 luminance was 46 against the target's 23 and p1 24
+    // against 11, while the medians nearly matched. Going to 0.70/ambient 0.105,
+    // or further to 0.92, only made that worse.
+    //
+    // Cutting fill grades the frame instead of lighting it. Fill 0.32 with
+    // ambient 0.05 and exposure 1.58 -> 1.28 did land Spawn-A almost exactly on
+    // its target (relative contrast 0.484 -> 0.554 against 0.552, mean 122 -> 107
+    // against 101), but a blind A/B fitted a per-code-value LUT from the old
+    // render to the new one and got a residual under 0.8/255 on all three
+    // cameras with the SAME curve — proof it was a global tone curve with no
+    // spatial selectivity, not a change in light transport. It was reverted: it
+    // cost the Spice west elevation 2.1x on mean error and drove the sunlit
+    // stone pier's std/mean from 0.247 to 0.231 against a target of 0.496, the
+    // only measurement in the set that moved away from target. A sunlit surface
+    // stopped reading as sunlit.
+    //
+    // The actual deficit is an absent lit population, and it is visible on the
+    // primary camera, not just the elevation. On the west frontage the target is
+    // bimodal — direct sun on stone at median 106 / p95 176, punched through by
+    // cast shadow at p5 24, std/mean 0.507. This render is a single ambient-lit
+    // plane at median 50 / p95 109 with p5 only 15 levels under the median. That
+    // gap is roughly 3.2x the magnitude of the entire grade above, and no value
+    // of fill or exposure can synthesise a lit population that was never
+    // rendered. Fix the sun, then re-derive exposure against the new scene.
+    const HEMI_INTENSITY = 0.52;
+    // Cooled from 0xFFF1D8 (red-to-blue 1.18). Together with HEMI_GROUND this
+    // takes the mean red-to-blue error against target from 0.351 to 0.255 across
+    // six representative cameras, every one improving and none overshooting,
+    // with mean luminance unchanged.
+    //
+    // This does NOT undo the warm-shade result an earlier blind A/B confirmed -
+    // it lands it. On the shaded band (luminance 40-110) that critic judged,
+    // red-minus-blue goes 45.6 -> 42.3 against a target of 42.5 on the Spawn-A
+    // camera and 47.0 -> 44.4 against 44.3 on the west elevation. The shade was
+    // slightly over-warm as well; it is now essentially exact.
+    const SUN_COLOR = 0xFFF7EC;
+    // Do not raise this to chase "lit surfaces falling short" on the Spawn-A
+    // approach. That reading comes from comparing the frame exposure-normalised
+    // against the target; in ABSOLUTE terms this render is already brighter
+    // than the target everywhere on that camera — plaza 178 vs 142, mid-street
+    // 121 vs 102, pier 85 vs 54, arch soffit 133 vs 105. Raising the key to 6.0
+    // was measured: it pushed the plaza to 190, further from target, and moved
+    // relative contrast by 0.001 (0.396 -> 0.397). The deficit is contrast, not
+    // brightness — the shadows sit too high relative to the lights, which reads
+    // as dim on an all-shade camera and washed on a sunlit one.
+    // Do not lower this to pull the over-bright sunlit paving toward target. An
+    // 18% cut (4.5 -> 3.7) moved paving only 176 -> 167 because ACES compresses
+    // the highlights, left shade unchanged at 56, and therefore made the
+    // shade-to-paving RATIO worse (0.318 -> 0.334 against a target of 0.244)
+    // while dimming the west elevation to mean 64 against its target of 77.
+    // Raising it was tested earlier and also rejected. The paving problem is not
+    // key intensity.
+    const SUN_INTENSITY = 4.5;
+    // Do not mirror this in X to "put sun on the west frontage". It was measured
+    // and it is a regression on the binding camera. SUN_POS [88, 105, -22] makes
+    // the sun direction (+0.458, 0.763, -0.458), which does light the west
+    // frontage plane at x = 21 (outward normal +X) - and the Spice west
+    // ELEVATION improves for it, mean 50 -> 62 against a target of 77 and
+    // relative contrast 0.570 -> 0.619 against 0.641.
+    //
+    // But the Spawn-A approach looks up the street toward +Z, so the frontage
+    // filling the left of that frame is the EAST one, and it is the east
+    // frontage the current sun lights. Mirroring took that region from mean 65.7
+    // to 51.2 against a target of 105.0, its std/mean from 0.423 to 0.306 against
+    // 0.507, and its p95 from 127 to 78 against 176 - flatter and darker on every
+    // measure. Globally the frame went to mean 113 / median 120 against a target
+    // of 101 / 92.
+    //
+    // Opposing faces cannot both be lit, so this is a binary art-direction choice
+    // between the two areas, not a bug with a correct answer. The current azimuth
+    // favours the Spawn-A primary camera. Changing it is an owner decision.
     const SUN_POS: [number, number, number] = [-38, 105, -22];
     const SUN_TARGET: [number, number, number] = [25, 0, 41];
     const SHADOW_MAP_SIZE = 4096;
+    // Bias is NOT the lever for the wall-detail shadow problem. Tested at 0.06
+    // and 0.004 while wall detail had receiveShadow=false (pixel-identical, as
+    // expected — those surfaces never sampled the map), and again at 0.05 with
+    // receipt enabled: the blanketed west frontage stayed at 71 against a
+    // target of 148, unmoved. The planes are not self-shadowing; they are
+    // genuinely resolving as occluded.
     const SHADOW_BIAS = -0.00008;
     const SHADOW_NORMAL_BIAS = 0.012;
     const SHADOW_FALLBACK_BOUNDS = 58; // replaced by the authored light-space fit after map load

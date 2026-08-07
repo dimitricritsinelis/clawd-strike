@@ -124,9 +124,9 @@ const MIN_DIMENSION_M = 0.02;
 // this at the reusable architecture seam lets per-opening tints and UV offsets
 // actually separate neighboring shops.
 const MERCHANT_TIMBER_MATERIAL_ID = "ph_worn_planks";
-// The iron detail role supplies the metal response; this loaded manifest
-// surface provides stable world-scale maps instead of the flat metal template.
-const MERCHANT_METAL_BASE_MATERIAL_ID = "ph_stone_trim_white";
+// Retained for reference: the awning support assembly formerly ran on this
+// metal base. Its struts and end fixings are timber in the target, so they now
+// take MERCHANT_TIMBER_MATERIAL_ID and nothing else here needed a metal source.
 // A visible masonry roof edge needs enough depth to read as a supported slab
 // from player height. The former 18 cm wafer disappeared at the North Court
 // camera and exposed the shell/roof junction as a razor line.
@@ -1235,6 +1235,15 @@ function pushMerchantElevationOrder(
       // Leave a visible margin of plaster either side so the pier reads as
       // masonry standing proud between infill panels, not as the whole gap
       // being filled with stone.
+      //
+      // Emitting a pier in the narrow 0.48 m gap between two ADJACENT bays was
+      // tried (proportional margin, 0.24 m floor) and measured WORSE than
+      // leaving the gap bare: continuity breaks down the pier strip went 6 -> 10
+      // against the target's 5, and the strip darkened from 81 to 77 against a
+      // target of 89. Scaling the flanking arrises with the gap did not recover
+      // it either. A 0.29 m pier at this camera is too slight to read as a mass
+      // and only adds vertical noise; the gap needs a different treatment, not a
+      // thinner version of the wide-gap pier.
       const pierWidthM = Math.min(0.68, gap.widthM - 0.36);
       if (pierWidthM < 0.34) continue;
       // 0.11 m keeps the pier face inside the zone the authored sill goods
@@ -1260,7 +1269,13 @@ function pushMerchantElevationOrder(
         structurallyBacked: true,
         yawRad,
         trimMaterialId: placement.materialSlots.trim,
-        detailTintHex: scaleHexColor(identity.trimTintHex, index % 2 === 0 ? 1.04 : 0.95),
+        // The pier is the frontage's load path and has to read as the BRIGHT
+        // mass the bays are cut out of. Measured against the target, the
+        // pier-to-bay luminance ratio here was 0.92 — piers fractionally
+        // DARKER than the openings they flank — where the target reads 3.81.
+        // The alternating factor is kept so the bay series does not flatten
+        // into one continuous band of stone.
+        detailTintHex: scaleHexColor(identity.trimTintHex, index % 2 === 0 ? 1.3 : 1.19),
         uvProjection: "world",
       });
       // Recess shadow down both arrises. Nothing else on this elevation defines
@@ -1535,6 +1550,108 @@ function pushMerchantElevationOrder(
         trimMaterialId: placement.materialSlots.trim,
         detailTintHex: scaleHexColor(identity.wallTintHex, 0.66),
         uvProjection: "world",
+      });
+    }
+  }
+
+  // 6. Canopy carrying course at the wall head. The street's cloth spans are
+  // hung at the top of this elevation, and until now their ropes ended against
+  // bare plaster, so the whole shade system read as unsupported. A continuous
+  // timber ledger with projecting joist ends and iron tie plates gives every
+  // span something built to land on, and it sits above the upper window heads
+  // so no attachment crosses an opening.
+  const massingTopY = center.y + placement.sizeM.height * 0.5;
+  const wallHeadY = upperModules.length > 0
+    ? Math.max(...upperModules.map((entry) => entry.centerY + entry.module.sizeM.height * 0.5))
+    : sharedHeadY;
+  const ledgerHeightM = 0.28;
+  const ledgerY = wallHeadY + 0.34 + ledgerHeightM * 0.5;
+  if (ledgerY + ledgerHeightM * 0.5 <= massingTopY - 0.16) {
+    const ledgerProjectionM = 0.3;
+    pushInstance(instances, {
+      placementId: `${placement.id}:canopy-ledger`,
+      moduleId: "active_merchant_canopy_ledger",
+      semanticClass: "active_merchant_canopy_ledger",
+      meshId: "door_lintel",
+      position: offsetPosition(
+        { ...center, y: ledgerY },
+        placement.face,
+        0,
+        faceInwardM + ledgerProjectionM * 0.5,
+      ),
+      scale: { x: placement.sizeM.width, y: ledgerHeightM, z: ledgerProjectionM },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+      detailTintHex: scaleHexColor(identity.timberTintHex, 0.86),
+      uvProjection: "world",
+    });
+    // Soffit shade so the ledger sits proud of the wall instead of reading as a
+    // painted band.
+    pushInstance(instances, {
+      placementId: `${placement.id}:canopy-ledger-shade`,
+      moduleId: "active_merchant_canopy_ledger",
+      semanticClass: "active_merchant_canopy_ledger_shade",
+      meshId: "string_course_strip",
+      position: offsetPosition(
+        { ...center, y: ledgerY - ledgerHeightM * 0.5 - 0.045 },
+        placement.face,
+        0,
+        faceInwardM + 0.05,
+      ),
+      scale: { x: placement.sizeM.width, y: 0.09, z: 0.08 },
+      backingPlacementId,
+      structurallyBacked: true,
+      yawRad,
+      trimMaterialId: placement.materialSlots.trim,
+      detailTintHex: shadowTint,
+      uvProjection: "world",
+    });
+    const joistCount = Math.max(2, Math.round(placement.sizeM.width / 1.15));
+    const joistPitchM = placement.sizeM.width / joistCount;
+    for (let index = 0; index < joistCount; index += 1) {
+      const joistAlongM = -halfWidthM + joistPitchM * (index + 0.5);
+      pushInstance(instances, {
+        placementId: `${placement.id}:canopy-joist:${index}`,
+        moduleId: "active_merchant_canopy_ledger",
+        semanticClass: "active_merchant_canopy_joist",
+        meshId: "pilaster",
+        position: offsetPosition(
+          { ...center, y: ledgerY - ledgerHeightM * 0.5 - 0.11 },
+          placement.face,
+          joistAlongM,
+          faceInwardM + 0.29,
+        ),
+        scale: { x: 0.17, y: 0.22, z: 0.58 },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
+        trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+        detailTintHex: scaleHexColor(
+          identity.timberTintHex,
+          index % 2 === 0 ? 0.94 : 0.8,
+        ),
+        uvProjection: "world",
+      });
+      // Iron tie plate on every second joist, where a span cable would be
+      // shackled to the head.
+      if (index % 2 !== 0) continue;
+      pushInstance(instances, {
+        placementId: `${placement.id}:canopy-tie-plate:${index}`,
+        moduleId: "active_merchant_canopy_ledger",
+        semanticClass: "active_merchant_canopy_tie_plate",
+        meshId: "sign_bracket",
+        position: offsetPosition(
+          { ...center, y: ledgerY + ledgerHeightM * 0.5 - 0.06 },
+          placement.face,
+          joistAlongM,
+          faceInwardM + ledgerProjectionM + 0.03,
+        ),
+        scale: { x: 0.11, y: 0.16, z: 0.07 },
+        backingPlacementId,
+        structurallyBacked: true,
+        yawRad,
       });
     }
   }
@@ -2837,6 +2954,64 @@ function pushMassing(
         detailTintHex: scaleHexColor(identity.wallTintHex, index === 0 ? 0.94 : 1.02),
         uvProjection: "world",
       });
+      // Cap the stack. Where these piers run past the roofline they were bare
+      // shafts with a cut-off top, so the paired Spawn-B frontages read as four
+      // free-standing posts rather than as two buildings. A corbelled cornice, a
+      // coping and a short pierced screen head turn each one into a finished roof
+      // stack that belongs to the facade it stands on.
+      if (structureHeightM < 2.6) continue;
+      const stackTopY = structureBottomY + structureHeightM;
+      const capWidthM = structureStyle.edgePierWidthM + 0.2;
+      const capDepthM = structureStyle.projectionM + 0.13;
+      for (const [kind, meshId, widthM, heightM, depthM, y] of [
+        ["screen-head", "recessed_panel_back" as const, structureStyle.edgePierWidthM - 0.14,
+          0.34, structureStyle.projectionM + 0.02, stackTopY - 0.52],
+        ["cornice", "cornice_strip" as const, capWidthM, 0.15, capDepthM, stackTopY - 0.17],
+        ["coping", "string_course_strip" as const, capWidthM + 0.09, 0.1,
+          capDepthM + 0.05, stackTopY - 0.05],
+      ] as const) {
+        pushInstance(instances, {
+          placementId: `${placement.id}:facade-edge-stack-${kind}:${index + 1}`,
+          moduleId: `${profile.family}_facade_structure`,
+          semanticClass: `${profile.family}_facade_edge_stack_head`,
+          meshId,
+          position: offsetPosition(
+            { ...center, y },
+            placement.face,
+            alongM,
+            placement.sizeM.depth * 0.5 + structureStyle.projectionM * 0.42,
+          ),
+          scale: { x: widthM, y: heightM, z: depthM },
+          yawRad,
+          ...(kind === "screen-head"
+            ? { detailMaterialId: "tm_arch_screen_dark" }
+            : {
+              trimMaterialId: placement.materialSlots.trim,
+              detailTintHex: scaleHexColor(identity.trimTintHex, kind === "coping" ? 1.06 : 0.96),
+              uvProjection: "world" as const,
+            }),
+        });
+      }
+      // Corbels carrying the cornice out over the shaft.
+      for (const corbelSide of [-1, 1] as const) {
+        pushInstance(instances, {
+          placementId: `${placement.id}:facade-edge-stack-corbel:${index + 1}:${corbelSide}`,
+          moduleId: `${profile.family}_facade_structure`,
+          semanticClass: `${profile.family}_facade_edge_stack_head`,
+          meshId: "pilaster",
+          position: offsetPosition(
+            { ...center, y: stackTopY - 0.32 },
+            placement.face,
+            alongM + corbelSide * (structureStyle.edgePierWidthM * 0.5 - 0.06),
+            placement.sizeM.depth * 0.5 + structureStyle.projectionM * 0.42 + 0.04,
+          ),
+          scale: { x: 0.11, y: 0.16, z: structureStyle.projectionM + 0.06 },
+          yawRad,
+          trimMaterialId: placement.materialSlots.trim,
+          detailTintHex: scaleHexColor(identity.trimTintHex, 0.88),
+          uvProjection: "world",
+        });
+      }
     }
   }
 
@@ -3490,7 +3665,6 @@ function pushSupportedAwning(
   center: { x: number; y: number; z: number },
   yawRad: number,
   timberMaterialId: string,
-  metalMaterialId: string,
 ): void {
   // Awnings derive from the served opening and retain a small drip edge, but
   // must not merge into the next bay's canopy at gameplay distance.
@@ -3525,10 +3699,23 @@ function pushSupportedAwning(
         : awningVariant < 0.67
           ? 0xb19361
           : 0x739089;
-  // Weathered wrought fixings, not pale stone. The authored light values
-  // made every strut and bolt cap the brightest element on a shaded
-  // frontage, pulling the eye off the openings they carry.
-  const metalTintHex = awningVariant < 0.5 ? 0x544c42 : 0x474f52;
+  // The diagonal struts and their end fixings are TIMBER, not steel. Carried on
+  // the iron source they took the metal role's high environment intensity and
+  // reflected the sky as pale blue-grey cylinders — the brightest, coolest
+  // objects on a warm shaded frontage — so the assembly read as galvanised pipe
+  // hung off the wall and its end brackets were too faint to register as
+  // terminations at all. The target carries these as dark weathered timber
+  // braces landing on a visible bracket, which is what makes the load path
+  // legible.
+  // Where a brace crosses a shaded bay its lower half loses silhouette against
+  // the shop interior behind it. Warming the albedo to recover that was tried
+  // (0x6a5340 / 0x5d4835) and measured as noise — edge energy 6.41 -> 6.55 on
+  // one brace and 5.55 -> 5.51 on another. The lower contrast is inherent to
+  // timber being darker than the steel it replaced, and matches the target's
+  // own low-contrast braces; recovering it needs a lit top arris, not a warmer
+  // body.
+  const strutMaterialId = timberMaterialId;
+  const strutTintHex = awningVariant < 0.5 ? 0x574433 : 0x4b3a2b;
   pushInstance(instances, {
     placementId: `${placement.id}:awning-ledger`,
     moduleId: "awning_wall_ledger",
@@ -3603,8 +3790,8 @@ function pushSupportedAwning(
       scale: { x: 0.085, y: supportLengthM, z: 0.085 },
       yawRad,
       pitchRad: -Math.atan2(supportDepthM, supportRiseM),
-      detailMaterialId: metalMaterialId,
-      detailTintHex: metalTintHex,
+      detailMaterialId: strutMaterialId,
+      detailTintHex: strutTintHex,
     });
     pushInstance(instances, {
       placementId: `${placement.id}:awning-bracket:${side}`,
@@ -3619,8 +3806,8 @@ function pushSupportedAwning(
       ),
       scale: { x: 0.21, y: 0.28, z: 0.18 },
       yawRad,
-      detailMaterialId: metalMaterialId,
-      detailTintHex: metalTintHex,
+      detailMaterialId: strutMaterialId,
+      detailTintHex: strutTintHex,
     });
     pushInstance(instances, {
       placementId: `${placement.id}:awning-edge-socket:${side}`,
@@ -3635,8 +3822,8 @@ function pushSupportedAwning(
       ),
       scale: { x: 0.17, y: 0.2, z: 0.16 },
       yawRad,
-      detailMaterialId: metalMaterialId,
-      detailTintHex: metalTintHex,
+      detailMaterialId: strutMaterialId,
+      detailTintHex: strutTintHex,
     });
   }
 }
@@ -3659,6 +3846,22 @@ function pushDoor(
     : 0;
   // Door leaves sit immediately behind the trim plane. The reveal construction
   // remains visible on the jambs/head, but cannot expose a black cutout moat.
+  //
+  // Do not try to recess the leaf to give the doorway depth. faceInward points
+  // into the building, so 0.12 seats it deeper - and that was measured as a
+  // clear regression: the doorway went from mean luminance 84 to 97 against a
+  // target of 49, std/mean fell 0.300 -> 0.202 against a target of 0.832, and
+  // the count of distinct dark code values collapsed from 10 to 2. The leaf did
+  // not move into shadow, it disappeared behind solid wall and left the lit
+  // masonry face showing.
+  //
+  // What that proves: there is NO opening cut in the wall here. The reveal
+  // jambs, head and leaf are all built at negative inward, i.e. they project
+  // outward as an applied surround on unbroken masonry. The door is a decal
+  // with mouldings, which is also why the doorway ignored every lighting change
+  // made this session - at 40 mm proud of the wall nothing can ever occlude it.
+  // Giving these openings real depth means cutting actual voids in the massing
+  // and lining them, not repositioning the leaf.
   const doorPlaneInwardM = experimentalVisualCutouts ? -0.04 : 0.045;
   if (experimentalVisualCutouts) {
     const revealJambWidthM = family === "hero_courtyard" ? 0.11 : 0.085;
@@ -3727,11 +3930,18 @@ function pushDoor(
   // frame rasterize on adjacent planes.
   const leafSeatOverlapM = 0.07;
   const doorVariant = stableUnitInterval(`${placement.id}:door-variant`);
+  // Darkened from 0x7a563f / 0x675b4d / 0x806a47. Because the leaf is an applied
+  // panel on unbroken wall rather than a leaf inside a void (see the note on
+  // doorPlaneInwardM), it catches the same light as the masonry around it and
+  // read as a pale rectangle: the primary camera measured that doorway at mean
+  // luminance 84 where the target reads 49. A real door mouth is the darkest
+  // thing on a sunlit frontage, so until the openings are actually cut the leaf
+  // has to carry that value in its albedo instead of getting it from occlusion.
   const doorTintHex = doorVariant < 0.34
-    ? 0x7a563f
+    ? 0x3f2c20
     : doorVariant < 0.67
-      ? 0x675b4d
-      : 0x806a47;
+      ? 0x352f27
+      : 0x423624;
   pushInstance(instances, {
     placementId: placement.id,
     moduleId: placement.moduleId,
@@ -3958,6 +4168,74 @@ function pushDoor(
     yawRad,
     trimMaterialId: frameMaterialId,
   });
+  // A laid threshold apron in front of the sill. Every opening met the paving
+  // on a single 90 mm lip that is itself half-buried, so a door read as cut
+  // into the wall at lane level with no transition, and the wall/floor junction
+  // collapsed into one dark line — the exact junction the grounding closeup
+  // exists to inspect. These openings sit at lane level for traversal, so the
+  // reference's stepped stoop cannot rise here; what it also shows, and what
+  // does fit, is a band of purpose-laid threshold stone running out from the
+  // jambs with a worn nosing at its outer edge. Total rise is 90 mm, no more
+  // than the sill it replaces, so grounding and the clear opening are unchanged.
+  const apronDepthM = 0.66;
+  const apronWidthM = placement.sizeM.width + 0.5;
+  const apronFloorY = -placement.sizeM.height * 0.5;
+  pushInstance(instances, {
+    placementId: `${placement.id}:threshold-apron`,
+    moduleId: placement.moduleId,
+    semanticClass: "door_threshold_apron",
+    meshId: "door_lintel",
+    position: offsetPosition(
+      center,
+      placement.face,
+      0,
+      apronDepthM * 0.5 - 0.08,
+      apronFloorY + 0.035,
+    ),
+    scale: { x: apronWidthM, y: 0.07, z: apronDepthM },
+    yawRad,
+    trimMaterialId: "ph_stone_trim_sandstone",
+    detailTintHex: 0xb8a68a,
+    uvProjection: "world",
+  });
+  pushInstance(instances, {
+    placementId: `${placement.id}:threshold-apron-nosing`,
+    moduleId: placement.moduleId,
+    semanticClass: "door_threshold_apron_nosing",
+    meshId: "door_lintel",
+    position: offsetPosition(
+      center,
+      placement.face,
+      0,
+      apronDepthM - 0.11,
+      apronFloorY + 0.045,
+    ),
+    scale: { x: apronWidthM + 0.1, y: 0.09, z: 0.11 },
+    yawRad,
+    trimMaterialId: "ph_stone_trim_sandstone",
+    detailTintHex: 0xb8a68a,
+    uvProjection: "world",
+  });
+  for (const side of [-1, 1] as const) {
+    pushInstance(instances, {
+      placementId: `${placement.id}:threshold-apron-return:${side}`,
+      moduleId: placement.moduleId,
+      semanticClass: "door_threshold_apron_return",
+      meshId: "door_lintel",
+      position: offsetPosition(
+        center,
+        placement.face,
+        side * apronWidthM * 0.5,
+        apronDepthM * 0.5 - 0.08,
+        apronFloorY + 0.045,
+      ),
+      scale: { x: 0.1, y: 0.09, z: apronDepthM },
+      yawRad,
+      trimMaterialId: "ph_stone_trim_sandstone",
+    detailTintHex: 0xb8a68a,
+      uvProjection: "world",
+    });
+  }
   if (!fortified && family === "active_merchant" && lowerId.includes("shop")) {
     // Closed shop doors are commercial storage bays, not dead frontage. A
     // low side plinth and its generic stock derive from the served opening but
@@ -4052,7 +4330,6 @@ function pushDoor(
       center,
       yawRad,
       MERCHANT_TIMBER_MATERIAL_ID,
-      MERCHANT_METAL_BASE_MATERIAL_ID,
     );
   } else if (!fortified && family === "service_storage" && lowerId.includes("storage")) {
     // Court-edge storage doors become shallow loading/display bays. All mass
@@ -4120,7 +4397,6 @@ function pushDoor(
       center,
       yawRad,
       MERCHANT_TIMBER_MATERIAL_ID,
-      MERCHANT_METAL_BASE_MATERIAL_ID,
     );
   }
   if (fortified) {
@@ -4278,6 +4554,29 @@ function pushWindow(
       detailMaterialId: interiorMaterialId,
     });
   }
+  // Merchant window frames need an explicit tint. Untinted they inherit only
+  // the `painted-wood` role colour, which the `timber-surface` tier's much
+  // brighter lift and wear constants overwrite long before the tier's own
+  // value and chroma stage runs — so the jambs, mullions and sills across the
+  // whole upper storey render as pale near-neutral channels (saturation 0.10,
+  // hue 33) against a target of saturation 0.50 at hue 28, and read as
+  // galvanised steel rather than the timber surround they are. A per-instance
+  // tint is applied at <color_fragment>, downstream of those mixes, so it is
+  // the only lever that reaches them. Gated to the merchant family: the same
+  // frame call serves courtyard and arcade windows that resolve to stone trim
+  // with no kit finish, where a tint would land at full strength.
+  // Authored ~10 degrees warmer than the intended result: this pipeline shifts
+  // warm tones red on the way out (the same bias measured on the shutter and
+  // lattice tiers), so a 28-degree tint rendered at 18. At 38 it lands near the
+  // target's 30.
+  //
+  // Value trimmed 10%: measured on the five verified jamb columns the frames
+  // rendered at V 0.44 against the target's 0.40, and at 1.87x the shutter
+  // value where the target runs 1.65x — bright enough that the eye lands on the
+  // surrounds before the sunlit masonry. Only 10%: the frames are barely over,
+  // and a deeper pull would drop them well under the target.
+  const MERCHANT_FRAME_TINT_HEX = 0xd8b478;
+  const usesMerchantFrameTint = profile.family === "active_merchant";
   pushFrame(
     placement,
     instances,
@@ -4287,12 +4586,12 @@ function pushWindow(
     `${profile.family}_window_frame`,
     experimentalVisualCutouts
       ? profile.family === "active_merchant"
-        ? { widthM: 0.14, depthM: 0.18, inwardM: 0.02 }
+        ? { widthM: 0.14, depthM: 0.18, inwardM: 0.02, tintHex: MERCHANT_FRAME_TINT_HEX }
         : profile.family === "hero_courtyard"
           ? { widthM: 0.14, depthM: 0.18, inwardM: 0.02 }
           : { widthM: 0.14, depthM: 0.18, inwardM: 0.015 }
       : profile.family === "active_merchant"
-        ? { widthM: 0.14, depthM: 0.24, inwardM: 0.11 }
+        ? { widthM: 0.14, depthM: 0.24, inwardM: 0.11, tintHex: MERCHANT_FRAME_TINT_HEX }
         : profile.family === "hero_courtyard"
           ? { widthM: 0.14, depthM: 0.22, inwardM: 0.1 }
           : { widthM: 0.14, depthM: 0.2, inwardM: 0.085 },
@@ -4322,6 +4621,9 @@ function pushWindow(
       },
     yawRad,
     trimMaterialId: frameMaterialId,
+    // The sill is part of the same frame assembly; left untinted it stays pale
+    // while the jambs and lintel above it warm, which reads worse than either.
+    ...(usesMerchantFrameTint ? { detailTintHex: MERCHANT_FRAME_TINT_HEX } : {}),
   });
   const openingBottomY = center.y - placement.sizeM.height * 0.5;
   if (profile.family === "covered_arcade" && openingBottomY <= 0.75) {
@@ -4431,7 +4733,6 @@ function pushWindow(
       center,
       yawRad,
       MERCHANT_TIMBER_MATERIAL_ID,
-      MERCHANT_METAL_BASE_MATERIAL_ID,
     );
   }
   const moduleId = placement.moduleId.toLowerCase();
@@ -4478,12 +4779,38 @@ function pushWindow(
   const shutterVariant = stableUnitInterval(`${placement.id}:shutter-variant`);
   for (const side of [-1, 1] as const) {
     const sideUnit = stableUnitInterval(`${placement.id}:shutter-side:${side}`);
-    const shutterW = Math.max(0.16, placement.sizeM.width * (0.39 + sideUnit * 0.1));
+    // Leaf width is set off the opening, not off the bay. At the old 0.39-0.49
+    // factor a pair of leaves spanned wider than the pier between two adjacent
+    // upper openings, so on the main-lane elevations the two bays' shutters met
+    // and the masonry pier disappeared entirely: the whole upper storey read as
+    // a timber wall with holes punched in it rather than masonry with shutters.
+    // At 0.30-0.36 each leaf still covers its own reveal when swung to, and the
+    // pier reads between bays the way the reference elevation does.
+    // Leaf width is set off the opening, not off the bay. At the old 0.39-0.49
+    // factor a pair of leaves spanned wider than the pier between two adjacent
+    // upper openings, so on the main-lane elevations the two bays' shutters met
+    // and the masonry pier disappeared entirely: the whole upper storey read as
+    // a timber wall with holes punched in it rather than masonry with shutters.
+    // At 0.36-0.42 each leaf still covers most of its own reveal when swung to,
+    // and the pier reads between bays the way the reference elevation does.
+    const shutterW = Math.max(0.16, placement.sizeM.width * (0.36 + sideUnit * 0.06));
     const shutterAngleRad = 0.08 + sideUnit * 0.5;
+    // The middle variant was a saturated teal (0x699889). Raising the joinery
+    // chroma to reach the target's warm timber amplified it well past anything
+    // in the target: the balcony grille drifted from hue 29 to 41 at saturation
+    // 0.31 where the target reads hue 23 at 0.17 — a desaturated blue-grey, not
+    // a green. Kept as the cool member of the series so the run still varies,
+    // but at a chroma the extrapolation cannot turn green.
+    //
+    // Darkening this series toward walnut (0x6f4d36/0x5d5348/0x6a5738) was
+    // tried and reverted: the same extrapolation that punishes added chroma
+    // also amplifies it as value drops, and the leaves came back crimson. The
+    // leaf's own vertex range in createLouveredShutterGeometry is the lever
+    // that works here; this tint is not.
     const shutterBaseHex = shutterVariant < 0.34
       ? 0xb77f5b
       : shutterVariant < 0.67
-        ? 0x699889
+        ? 0x867d7c
         : 0xa79061;
     const shutterTintHex = scaleHexColor(shutterBaseHex, 0.96 + sideUnit * 0.16);
     pushInstance(instances, {
@@ -4517,6 +4844,22 @@ function pushWindow(
         ),
         scale: { x: 0.16, y: 0.045, z: 0.045 },
         yawRad,
+        // Dark warm iron, to match the target's window hardware. These carried
+        // no tint at all, which was an omission rather than a decision.
+        //
+        // The tint alone only partly lands: measured on a clip at (284,279) it
+        // moved 187 -> 175 where the albedo ratio predicts roughly half that
+        // value. These are `sign_bracket` on the `iron` role, and their rendered
+        // brightness is dominated by environment reflection plus specular,
+        // neither of which an albedo tint scales.
+        //
+        // That diagnosis has now been acted on rather than left standing:
+        // DETAIL_METAL_ENVIRONMENT_INTENSITY went 0.72 -> 0.20 in Game.ts, which
+        // took this hardware from luminance 71 at a red-to-blue ratio of 0.96
+        // (a pale blue tab) to 33 at 1.15 (dark warm iron, sitting below the
+        // timber it is bolted to at 41), with the timber itself unmoved. Do not
+        // reach for the tint here again.
+        detailTintHex: 0x3a3128,
       });
     }
   }
@@ -4580,10 +4923,13 @@ function pushMashrabiyaScreen(
   const railUnit = stableUnitInterval(`${placement.id}:mashrabiya-rail-density`);
   const verticalCount = 4 + Math.floor(densityUnit * 3);
   const horizontalCount = 3 + Math.floor(railUnit * 3);
+  // Same correction as the shutter series: the teal middle variant survives as
+  // the cool member, desaturated so the joinery chroma lift cannot drive it to
+  // green against a target that has no teal on this frontage.
   const timberBaseHex = densityUnit < 0.34
     ? 0xb77f58
     : densityUnit < 0.67
-      ? 0x709789
+      ? 0x827a79
       : 0xa88d61;
   const timberTintHex = scaleHexColor(timberBaseHex, 0.96 + densityUnit * 0.18);
   pushScreenBars(
@@ -4950,7 +5296,12 @@ function pushSimpleModule(
             },
             yawRad,
             detailMaterialId: "ph_rough_pine_door",
-            detailTintHex: 0x8f6043,
+            // The screen is the back of a shaded shop, not a sunlit board. At
+            // its old tone the pine grain read as a bright straw panel filling
+            // the whole bay, which flattened the arcade into a row of boarded
+            // apertures; darkening it puts the stock racked in front of it in
+            // relief instead.
+            detailTintHex: 0x4a3225,
             uvProjection: "world",
           });
         }
@@ -5136,13 +5487,108 @@ function pushSimpleModule(
               uvProjection: "world",
             });
           }
+          // Racked textile stock inside the reveal. The arcade's whole identity
+          // is rugs, and behind the counter these bays showed nothing but their
+          // timber screen, whose plank grain read as a boarded-up straw panel
+          // rather than a shop. Two shelves of rolled bolts standing on end give
+          // the bay depth, colour and a reason to exist; everything stays inside
+          // the reveal so the lane envelope is untouched.
+          const rugTints = [0x8f3f2f, 0x3a4b55, 0xa8662f, 0x74404c, 0x8f7a3c] as const;
+          const shelfWidthM = placement.sizeM.width * 0.68;
+          const shelfDepthM = Math.max(0.16, revealDepthM * 0.52);
+          const rackInwardM = -revealDepthM * 0.34;
+          const rackTopLimitY = bottomY + placement.sizeM.height * 0.76;
+          for (let shelf = 0; shelf < 2; shelf += 1) {
+            const shelfY = bottomY + counterHeightM + 0.34 + shelf * 0.62;
+            if (shelfY + 0.5 > rackTopLimitY) break;
+            pushInstance(instances, {
+              placementId: `${placement.id}:textile-shelf:${shelf}`,
+              moduleId: "covered_arcade_served_kiosk",
+              semanticClass: "covered_arcade_textile_shelf",
+              meshId: "shop_counter",
+              position: offsetPosition(
+                { ...center, y: shelfY },
+                placement.face,
+                0,
+                rackInwardM,
+              ),
+              scale: { x: shelfWidthM, y: 0.07, z: shelfDepthM },
+              yawRad,
+              trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+              detailTintHex: scaleHexColor(timberTintHex, 0.86),
+              uvProjection: "world",
+            });
+            const rollCount = 4;
+            for (let roll = 0; roll < rollCount; roll += 1) {
+              const rollAlongM = shelfWidthM * (-0.36 + (roll * 0.72) / (rollCount - 1));
+              const rollHeightM = 0.4 + ((roll + shelf) % 3) * 0.055;
+              pushInstance(instances, {
+                placementId: `${placement.id}:textile-roll:${shelf}:${roll}`,
+                moduleId: "covered_arcade_served_kiosk",
+                semanticClass: "covered_arcade_textile_roll",
+                meshId: "cable_segment",
+                position: offsetPosition(
+                  { ...center, y: shelfY + 0.035 + rollHeightM * 0.5 },
+                  placement.face,
+                  rollAlongM,
+                  rackInwardM,
+                ),
+                scale: { x: 0.15, y: rollHeightM, z: 0.15 },
+                yawRad,
+                trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+                detailTintHex: rugTints[(roll * 2 + shelf * 3) % rugTints.length]!,
+                uvProjection: "world",
+              });
+            }
+          }
+          // One hung display panel down the inner jamb, so the bay has a large
+          // woven field as well as stock. Held to one side of the centreline and
+          // inside the reveal, clear of the counter and the arch ring.
+          {
+            const panelSide = marketVariant < 0.5 ? -1 : 1;
+            const panelHeightM = Math.min(1.5, placement.sizeM.height * 0.44);
+            pushInstance(instances, {
+              placementId: `${placement.id}:textile-hung-panel`,
+              moduleId: "covered_arcade_served_kiosk",
+              semanticClass: "covered_arcade_textile_hung_panel",
+              meshId: "shop_counter",
+              position: offsetPosition(
+                {
+                  ...center,
+                  y: bottomY + placement.sizeM.height * 0.72 - panelHeightM * 0.5,
+                },
+                placement.face,
+                panelSide * placement.sizeM.width * 0.31,
+                rackInwardM - 0.03,
+              ),
+              scale: { x: placement.sizeM.width * 0.26, y: panelHeightM, z: 0.05 },
+              yawRad,
+              trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
+              detailTintHex: rugTints[marketVariant < 0.5 ? 0 : 3]!,
+              uvProjection: "world",
+            });
+            pushInstance(instances, {
+              placementId: `${placement.id}:textile-hung-rail`,
+              moduleId: "covered_arcade_served_kiosk",
+              semanticClass: "covered_arcade_textile_hung_panel",
+              meshId: "window_screen_bar",
+              position: offsetPosition(
+                { ...center, y: bottomY + placement.sizeM.height * 0.72 + 0.03 },
+                placement.face,
+                panelSide * placement.sizeM.width * 0.31,
+                rackInwardM - 0.03,
+              ),
+              scale: { x: placement.sizeM.width * 0.3, y: 0.05, z: 0.05 },
+              yawRad,
+              detailMaterialId: "tm_arch_screen_dark",
+            });
+          }
           pushSupportedAwning(
             placement,
             instances,
             center,
             yawRad,
             MERCHANT_TIMBER_MATERIAL_ID,
-            MERCHANT_METAL_BASE_MATERIAL_ID,
           );
           const grilleWidthM = placement.sizeM.width * 0.78;
           const grilleHeightM = placement.sizeM.height * 0.72;
@@ -5276,10 +5722,23 @@ function pushFacadeModule(
         : shopVariant < 0.67
           ? 0x79a48f
           : 0xb6a06e;
+      // Everything this bay contains — counter, shelving, uprights, stock and
+      // display frontage — stands 1.35 m inside a shaded room, not out on the
+      // street, and has to be valued that way. Measured against the target this
+      // was the real gap: successive darkening of the recess LINING moved the
+      // bay's dark half (5th percentile 26 -> 24, 25th 37 -> 32) while its
+      // bright half did not move at all (75th 87 -> 87, 95th 152 -> 151)
+      // against target percentiles of 57 and 102. The lining was never what
+      // held the bay light; its contents were, and they carried exterior
+      // values.
+      const INTERIOR_SHADE = 0.62;
       // Continuous value variation keeps two neighboring bays from collapsing
       // to identical material+tint even when they land in the same palette.
       const shopBackTintHex = scaleHexColor(shopBackBaseHex, 0.88 + shopVariant * 0.2);
-      const shopKitTintHex = scaleHexColor(shopKitBaseHex, 0.9 + shopVariant * 0.17);
+      const shopKitTintHex = scaleHexColor(
+        shopKitBaseHex,
+        (0.9 + shopVariant * 0.17) * INTERIOR_SHADE,
+      );
       pushInstance(instances, {
         placementId: placement.id,
         moduleId: placement.moduleId,
@@ -5308,7 +5767,13 @@ function pushFacadeModule(
           scale: { x: recessDepthM, y: interiorHeightM, z: 0.055 },
           yawRad: yawRad + Math.PI * 0.5,
           ...(experimentalVisualCutouts ? { wallMaterialId: profile.materialSlots.wall } : {}),
-          detailTintHex: shopBackTintHex,
+          // The returns run perpendicular to the frontage, so unlike the back
+          // plane they catch raking light: sharing one tint put them at luma
+          // 105 against the back plane's 63, making the inside of a 1.35 m deep
+          // shop BRIGHTER than the pier beside it. They need their own darker
+          // value — scaling the shared recess multiplier instead would drag the
+          // back plane to near-black and flatten the interior.
+          detailTintHex: scaleHexColor(shopBackTintHex, 0.52),
           uvProjection: "world",
         });
       }
@@ -5664,14 +6129,23 @@ function pushFacadeModule(
             ),
             scale: { x: stock.widthM, y: stock.heightM, z: stock.depthM },
             yawRad: yawRad + (index - 1) * 0.035,
+            // Stock sits on the shelves, deepest in the room, so it takes the
+            // same interior shading as the joinery around it. Left at its
+            // authored exterior values it was the brightest thing in the bay
+            // and single-handedly held the opening's upper percentiles up.
             ...(stock.materialKind === "cloth"
-              ? { detailTintHex: index % 2 === 0 ? 0xb9835e : 0x6f9188 }
+              ? {
+                detailTintHex: scaleHexColor(
+                  index % 2 === 0 ? 0xb9835e : 0x6f9188,
+                  INTERIOR_SHADE,
+                ),
+              }
               : {
                 trimMaterialId: stock.materialKind === "stone"
                   ? profile.materialSlots.trim
                   : MERCHANT_TIMBER_MATERIAL_ID,
                 detailTintHex: stock.materialKind === "stone"
-                  ? index % 2 === 0 ? 0xa66f4d : 0x668b83
+                  ? scaleHexColor(index % 2 === 0 ? 0xa66f4d : 0x668b83, INTERIOR_SHADE)
                   : shopKitTintHex,
                 uvProjection: "world" as const,
               }),
@@ -5696,6 +6170,71 @@ function pushFacadeModule(
           yawRad,
           trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
           detailTintHex: shopKitTintHex,
+        });
+      }
+      // Stock spilling out of the shop and onto the pier beside it. Every
+      // merchant bay stopped dead at its own opening: all the goods lived
+      // behind the counter or on interior shelving, so the lane read as a row
+      // of holes in a clean wall instead of a working market street. The
+      // reference elevation's defining feature is the unbroken band of
+      // amphorae, crates, sacks and baskets standing against the wall between
+      // one shopfront and the next, and that band is what was missing.
+      //
+      // The whole group is measured outward from the opening edge and capped
+      // at 0.8 m along the wall and 0.46 m off its face — inside the reach the
+      // counter front already occupies — so it dresses the wall base without
+      // touching the walking envelope or narrowing the lane.
+      const streetStockSide: -1 | 1 = stableUnitInterval(`${placement.id}:street-stock-side`) < 0.5
+        ? -1
+        : 1;
+      const streetStockUnit = stableUnitInterval(`${placement.id}:street-stock`);
+      const streetStockEdgeM = placement.sizeM.width * 0.5 + 0.12;
+      const streetStock: Array<{
+        outM: number;
+        inwardM: number;
+        baseM: number;
+        meshId: "shop_counter" | "merchant_goods_pot" | "merchant_goods_basket" | "merchant_goods_folded_textile";
+        size: { x: number; y: number; z: number };
+        kind: "timber" | "stone" | "cloth";
+      }> = [
+        // A low timber stand keeps the tall jars off wet paving, and reads as
+        // the reason they are standing in a row rather than scattered.
+        { outM: 0.34, inwardM: 0.26, baseM: 0, meshId: "shop_counter", size: { x: 0.66, y: 0.13, z: 0.44 }, kind: "timber" },
+        { outM: 0.2, inwardM: 0.24, baseM: 0.13, meshId: "merchant_goods_pot", size: { x: 0.3, y: 0.44 + streetStockUnit * 0.06, z: 0.3 }, kind: "stone" },
+        { outM: 0.47, inwardM: 0.3, baseM: 0.13, meshId: "merchant_goods_pot", size: { x: 0.25, y: 0.33, z: 0.25 }, kind: "stone" },
+        // Crates stacked against the pier, with folded stock weighted on top.
+        { outM: 0.68, inwardM: 0.24, baseM: 0, meshId: "shop_counter", size: { x: 0.4, y: 0.34, z: 0.38 }, kind: "timber" },
+        { outM: 0.65, inwardM: 0.2, baseM: 0.34, meshId: "shop_counter", size: { x: 0.34, y: 0.26, z: 0.32 }, kind: "timber" },
+        { outM: 0.66, inwardM: 0.19, baseM: 0.6, meshId: "merchant_goods_folded_textile", size: { x: 0.3, y: 0.14, z: 0.28 }, kind: "cloth" },
+        // One basket tucked into the opening's outside corner ties the group
+        // back to the shopfront it belongs to.
+        { outM: 0.04, inwardM: 0.34, baseM: 0, meshId: "merchant_goods_basket", size: { x: 0.34, y: 0.28, z: 0.32 }, kind: "timber" },
+      ];
+      for (const [index, stock] of streetStock.entries()) {
+        pushInstance(instances, {
+          placementId: `${placement.id}:street-stock:${index + 1}`,
+          moduleId: placement.moduleId,
+          semanticClass: "merchant_generic_street_stock",
+          meshId: stock.meshId,
+          position: offsetPosition(
+            { ...center, y: bottomY + stock.baseM + stock.size.y * 0.5 },
+            placement.face,
+            streetStockSide * (streetStockEdgeM + stock.outM),
+            stock.inwardM,
+          ),
+          scale: stock.size,
+          yawRad: yawRad + (index % 3 - 1) * (0.04 + streetStockUnit * 0.05),
+          ...(stock.kind === "cloth"
+            ? { detailTintHex: streetStockUnit < 0.5 ? 0xb9835e : 0x6f9188 }
+            : {
+              trimMaterialId: stock.kind === "stone"
+                ? profile.materialSlots.trim
+                : MERCHANT_TIMBER_MATERIAL_ID,
+              detailTintHex: stock.kind === "stone"
+                ? (index % 2 === 0 ? 0xa66f4d : 0x8d7a5a)
+                : shopKitTintHex,
+              uvProjection: "world" as const,
+            }),
         });
       }
       // The display frontage is the shopfront the stall replaces, so it stays
@@ -5786,7 +6325,6 @@ function pushFacadeModule(
         center,
         yawRad,
         MERCHANT_TIMBER_MATERIAL_ID,
-        MERCHANT_METAL_BASE_MATERIAL_ID,
       );
       return;
     }
@@ -6431,6 +6969,80 @@ function pushRugGateStructuralFinish(
     });
   }
 
+  // Gable tympanum: the solid masonry field between the arch head and the
+  // apex. The crown supplies raking bargeboards and a pitched roof, but the
+  // gable END was never closed, so from the approach camera the hero landmark
+  // showed the underside of its own roof slabs — a chevron of pale planes with
+  // the sealed backdrop wall visible through the gap where the reference has
+  // a metre of carved stone. It is the largest missing mass on the route.
+  //
+  // Built as stepped courses rather than one triangle so the rake reads as
+  // laid masonry, carried on a string course and finished with a restrained
+  // blue inlay band, which is this gate's authored identity accent. It sits in
+  // front of the roof plane and entirely above the arch head, so the portal
+  // throat, its soffit and the route sightline through it are untouched.
+  const gableBaseY = shoulderY + 0.55;
+  const gableCourses = 13;
+  const gableCourseHeight = Math.max(0.16, (apexY - gableBaseY) / gableCourses);
+  for (let course = 0; course < gableCourses; course += 1) {
+    const y0 = gableBaseY + course * gableCourseHeight;
+    const taper = 1 - course / gableCourses;
+    const courseHalfWidth = Math.max(0.26, halfSpanM * (0.06 + 0.88 * taper));
+    pushInstance(instances, {
+      placementId: `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-course:${course}`,
+      moduleId: "rug_gate_constructed_gable_tympanum",
+      semanticClass: "hero_gate_gable_tympanum",
+      meshId: "facade_wall_shell",
+      position: { x: centerX, y: y0 + gableCourseHeight * 0.5, z: frontZ + 0.06 },
+      scale: { x: courseHalfWidth * 2, y: gableCourseHeight, z: 0.34 },
+      yawRad: 0,
+      wallMaterialId: materialOwner.materialSlots.wall,
+      uvProjection: "world",
+    });
+    // Raking cornice: one trim block per course end, stepping up the slope.
+    for (const side of [-1, 1] as const) {
+      pushInstance(instances, {
+        placementId: `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-rake:${course}:${side}`,
+        moduleId: "rug_gate_constructed_gable_tympanum",
+        semanticClass: "hero_gate_gable_raking_cornice",
+        meshId: "plinth_strip",
+        position: {
+          x: centerX + side * (courseHalfWidth + 0.08),
+          y: y0 + gableCourseHeight * 0.5,
+          z: frontZ + 0.02,
+        },
+        scale: { x: 0.22, y: gableCourseHeight, z: 0.46 },
+        yawRad: 0,
+        trimMaterialId,
+        uvProjection: "world",
+      });
+    }
+  }
+  pushInstance(instances, {
+    placementId: "ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-string-course",
+    moduleId: "rug_gate_constructed_gable_tympanum",
+    semanticClass: "hero_gate_gable_string_course",
+    meshId: "plinth_strip",
+    position: { x: centerX, y: gableBaseY - 0.11, z: frontZ - 0.02 },
+    scale: { x: halfSpanM * 1.9, y: 0.22, z: 0.5 },
+    yawRad: 0,
+    trimMaterialId,
+    uvProjection: "world",
+  });
+  pushInstance(instances, {
+    placementId: "ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-inlay-band",
+    moduleId: "rug_gate_constructed_gable_tympanum",
+    semanticClass: "hero_gate_gable_inlay_band",
+    meshId: "plinth_strip",
+    position: { x: centerX, y: gableBaseY + 0.07, z: frontZ - 0.06 },
+    scale: { x: halfSpanM * 1.84, y: 0.16, z: 0.42 },
+    yawRad: 0,
+    trimMaterialId,
+    // Restrained glazed blue, the one non-stone hue the reference gives this
+    // gate. Kept to a single narrow band so it reads as inlay, not paint.
+    detailTintHex: 0x2f6d84,
+    uvProjection: "world",
+  });
 }
 
 type BoundaryFacadeEdge = "north" | "east" | "west";
@@ -6876,7 +7488,6 @@ function pushCoreBoundaryFacadeGrammar(
               openingCenter,
               yawRad,
               MERCHANT_TIMBER_MATERIAL_ID,
-              MERCHANT_METAL_BASE_MATERIAL_ID,
             );
           }
         } else {

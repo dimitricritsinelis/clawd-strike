@@ -172,18 +172,82 @@ function bayHeadY(bay: Bay): number {
   return bay.kind === "shop" ? 2.62 : 2.34;
 }
 
+/**
+ * Quoined pier closing the strip of raw wall between a return and the gate.
+ *
+ * The authored north frontage relief stops at x 20.30 / restarts at x 33.72,
+ * but the walkable opening runs x 21 .. 33, so the wall planner emits a plain
+ * undecorated remainder quad on each side of the portal. These runs cover to
+ * x 20.5 and x 33.5, which leaves a half-metre of bare fallback masonry
+ * standing full height beside the gate — from the courtyard it reads as an
+ * unbuilt grey panel, and it is the first thing the eye finds in the exit view.
+ *
+ * Widening the runs themselves is the path already tried and rejected: at the
+ * full 4 m and 6 m they became coplanar with the portal's own masonry and
+ * combed into z-fighting (see the width constants above). This instead stands
+ * a corner quoin *proud* of that plane, so the bare quad is occluded rather
+ * than fought with, and the junction gains the stepped corner the reference
+ * shows where each flanking mass dies into the gate. Long and short courses
+ * alternate so it reads as laid quoining rather than one pilaster strip.
+ */
+function pushGateEndQuoin(parts: BufferGeometry[], config: ReturnConfig): void {
+  const half = config.widthM * 0.5;
+  const inner = half - 0.02;
+  const courseHeight = 0.52;
+  const courses = Math.ceil(config.parapetY / courseHeight);
+  for (let index = 0; index < courses; index += 1) {
+    const y0 = index * courseHeight;
+    const y1 = Math.min(config.parapetY, y0 + courseHeight);
+    if (y1 <= y0) break;
+    const long = index % 2 === 0;
+    const reach = inner + (long ? 0.58 : 0.42);
+    // Below head height the quoin keeps to the shared low-projection limit;
+    // only the storey a player cannot touch is allowed to stand further out.
+    const zOut = y0 < FREE_PROJECTION_Y_M ? LOW_PROJECTION_MAX_M : UPPER_PIER_Z_M;
+    const x0 = config.gateSide > 0 ? inner : -reach;
+    const x1 = config.gateSide > 0 ? reach : -inner;
+    slab(parts, long ? STONE_PIER : STONE_PIER_ALT, x0, x1, y0, y1, Z_BACK_M, zOut);
+    slab(parts, STONE_CREVICE_SOFT, x0, x1, y1 - 0.03, y1, Z_BACK_M, zOut + 0.008);
+  }
+  // Capped and shaded where it meets the parapet, so the corner terminates.
+  const capReach = inner + 0.66;
+  const capX0 = config.gateSide > 0 ? inner - 0.06 : -capReach;
+  const capX1 = config.gateSide > 0 ? capReach : -inner + 0.06;
+  slab(parts, STONE_TRIM, capX0, capX1, config.parapetY, config.parapetY + 0.16,
+    Z_BACK_M, UPPER_PIER_Z_M + 0.12);
+  pushUndershade(parts, capX0, capX1, config.parapetY - 0.06, UPPER_FIELD_Z_M, UPPER_PIER_Z_M + 0.12);
+  // Base spur, matching the plinth the rest of the run stands on.
+  slab(parts, STONE_PIER_ALT, capX0, capX1, 0, 0.24, Z_BACK_M, LOW_PROJECTION_MAX_M);
+  slab(parts, STONE_TRIM, capX0, capX1, PLINTH_TOP_M - 0.09, PLINTH_TOP_M,
+    Z_BACK_M, LOW_PROJECTION_MAX_M);
+}
+
 function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
   const half = config.widthM * 0.5;
+  // Every member of this run used to terminate on exactly +/-half, which put
+  // the plinth, field, string-course and joint slabs in the SAME plane as the
+  // end quoins. About 15 m2 of the east return alone was exactly-coplanar
+  // quads, and on the Spawn-A approach camera they interleaved into a dense
+  // comb of dashed dark stripes across the whole pier — the dark/light ratio
+  // measured 0.136, matching STONE_CREVICE against STONE_PIER exactly.
+  //
+  // polygonOffset cannot fix it: the whole return is merged into one geometry
+  // on one material, so any offset moves both fighting surfaces together. It
+  // has to be separated geometrically. The quoins keep +/-half because the
+  // quoin IS the corner; everything else is inset behind them, which is also
+  // how the masonry actually reads.
+  const RETURN_INSET_M = 0.005;
+  const inHalf = half - RETURN_INSET_M;
 
   // Plinth, broken by every ground bay so the shopfronts sit at grade the way
   // a shopfront has to.
   const plinthRuns: Array<[number, number]> = [];
-  let cursor = -half;
+  let cursor = -inHalf;
   for (const bay of config.bays) {
     plinthRuns.push([cursor, bay.center - bay.halfWidth]);
     cursor = bay.center + bay.halfWidth;
   }
-  plinthRuns.push([cursor, half]);
+  plinthRuns.push([cursor, inHalf]);
   for (const [x0, x1] of plinthRuns) {
     slab(parts, STONE_PIER_ALT, x0, x1, 0, 0.24, Z_BACK_M, PLINTH_Z_M);
     slab(parts, STONE_PIER, x0, x1, 0.24, PLINTH_TOP_M - 0.09, Z_BACK_M, PLINTH_Z_M - 0.05);
@@ -243,7 +307,7 @@ function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
     }
     fieldCursor = bay.center + bay.halfWidth + 0.14;
   }
-  slab(parts, config.field, fieldCursor, half, PLINTH_TOP_M, STRING_BOTTOM_M,
+  slab(parts, config.field, fieldCursor, inHalf, PLINTH_TOP_M, STRING_BOTTOM_M,
     Z_BACK_M, LOWER_FIELD_Z_M);
 
   // Corbelled string course: the courtyard's shared device for stepping the
@@ -258,13 +322,13 @@ function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
       x, STRING_BOTTOM_M + 0.15, (LOWER_FIELD_Z_M + reach) * 0.5);
     pushUndershade(parts, x - 0.14, x + 0.14, STRING_BOTTOM_M - 0.03, LOWER_FIELD_Z_M, reach);
   }
-  slab(parts, STONE_PIER, -half, half, STRING_BOTTOM_M + 0.13, STRING_BOTTOM_M + 0.28,
+  slab(parts, STONE_PIER, -inHalf, inHalf, STRING_BOTTOM_M + 0.13, STRING_BOTTOM_M + 0.28,
     Z_BACK_M, LOWER_PIER_Z_M + 0.12);
-  slab(parts, STONE_TRIM, -half, half, STRING_BOTTOM_M + 0.28, STRING_BOTTOM_M + 0.42,
+  slab(parts, STONE_TRIM, -inHalf, inHalf, STRING_BOTTOM_M + 0.28, STRING_BOTTOM_M + 0.42,
     Z_BACK_M, UPPER_FIELD_Z_M - 0.06);
-  slab(parts, STONE_PIER, -half, half, STRING_BOTTOM_M + 0.42, STRING_TOP_M, Z_BACK_M, UPPER_PIER_Z_M);
-  pushUndershade(parts, -half, half, STRING_TOP_M - 0.06, UPPER_FIELD_Z_M, UPPER_PIER_Z_M);
-  slab(parts, STONE_CREVICE, -half, half, STRING_BOTTOM_M - 0.1, STRING_BOTTOM_M + 0.13,
+  slab(parts, STONE_PIER, -inHalf, inHalf, STRING_BOTTOM_M + 0.42, STRING_TOP_M, Z_BACK_M, UPPER_PIER_Z_M);
+  pushUndershade(parts, -inHalf, inHalf, STRING_TOP_M - 0.06, UPPER_FIELD_Z_M, UPPER_PIER_Z_M);
+  slab(parts, STONE_CREVICE, -inHalf, inHalf, STRING_BOTTOM_M - 0.1, STRING_BOTTOM_M + 0.13,
     LOWER_FIELD_Z_M, LOWER_FIELD_Z_M + 0.02);
 
   // Upper storey with its shuttered windows left out of the masonry.
@@ -297,7 +361,7 @@ function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
       window.head - 0.04, UPPER_FIELD_Z_M, UPPER_FIELD_Z_M + 0.19);
     upperCursor = window.x + window.halfWidth + 0.16;
   }
-  slab(parts, config.field, upperCursor, half, STRING_TOP_M, config.eavesY,
+  slab(parts, config.field, upperCursor, inHalf, STRING_TOP_M, config.eavesY,
     Z_BACK_M, UPPER_FIELD_Z_M);
 
   // Eaves, parapet and coping.
@@ -312,7 +376,7 @@ function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
     Z_BACK_M, UPPER_FIELD_Z_M + 0.42);
   pushUndershade(parts, -half - 0.06, half + 0.06, config.eavesY - 0.06,
     UPPER_FIELD_Z_M, UPPER_FIELD_Z_M + 0.42);
-  slab(parts, config.field, -half, half, config.eavesY + 0.19, config.parapetY - 0.13,
+  slab(parts, config.field, -inHalf, inHalf, config.eavesY + 0.19, config.parapetY - 0.13,
     Z_BACK_M, UPPER_FIELD_Z_M + 0.18);
   slab(parts, STONE_TRIM, -half - 0.05, half + 0.05, config.parapetY - 0.13, config.parapetY,
     Z_BACK_M, UPPER_FIELD_Z_M + 0.28);
@@ -335,8 +399,10 @@ function pushReturnStone(parts: BufferGeometry[], config: ReturnConfig): void {
       slab(parts, short ? STONE_PIER_ALT : STONE_PIER, qx0, qx0 + width, y0, y1 - 0.03,
         Z_BACK_M, short ? z - 0.05 : z + 0.02);
     }
-    const ex0 = side < 0 ? -half : half - 0.04;
-    const ex1 = side < 0 ? -half + 0.04 : half;
+    // Recessed inside the quoin plane: this is a joint, so it belongs behind
+    // the corner stone rather than flush with it.
+    const ex0 = side < 0 ? -inHalf : inHalf - 0.04;
+    const ex1 = side < 0 ? -inHalf + 0.04 : inHalf;
     slab(parts, STONE_CREVICE, ex0, ex1, 0, STRING_BOTTOM_M, Z_BACK_M, LOWER_PIER_Z_M + 0.005);
     slab(parts, STONE_CREVICE, ex0, ex1, STRING_TOP_M, config.parapetY,
       Z_BACK_M, UPPER_PIER_Z_M + 0.005);
@@ -475,6 +541,7 @@ function pushReturnVoid(parts: BufferGeometry[], config: ReturnConfig): void {
 export function createSpawnAExitWestReturnStoneGeometry(): BufferGeometry {
   const parts: BufferGeometry[] = [];
   pushReturnStone(parts, WEST_RETURN);
+  pushGateEndQuoin(parts, WEST_RETURN);
   return normalize(applyWorldBoxUv(mergeProceduralGeometry(parts), 2), WEST_RETURN.widthM);
 }
 
@@ -493,6 +560,7 @@ export function createSpawnAExitWestReturnVoidGeometry(): BufferGeometry {
 export function createSpawnAExitEastReturnStoneGeometry(): BufferGeometry {
   const parts: BufferGeometry[] = [];
   pushReturnStone(parts, EAST_RETURN);
+  pushGateEndQuoin(parts, EAST_RETURN);
   return normalize(applyWorldBoxUv(mergeProceduralGeometry(parts), 2), EAST_RETURN.widthM);
 }
 

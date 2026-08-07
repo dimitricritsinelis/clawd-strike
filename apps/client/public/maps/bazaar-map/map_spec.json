@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "7995824b6e94f2ea5b053f9b028c35eba280ecdf0d46e29945e75c058263df32",
+    "sha256": "3c7497365d36f94edc08b1e8efe20fff52c68df7bd60775f1fdb4ddc8f85c918",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -313,7 +313,7 @@
       "surfaceId": "SURFACE_COVERED_SOUK",
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
-      "floorMaterialId": "red_sandstone_pavement",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "covered_arcade",
       "clearWidthM": 4.5
     },
@@ -350,7 +350,7 @@
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
       "floorMaterialId": "cobblestone_color",
-      "facadeProfileId": "quiet_residential",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "clearWidthM": 4.5
     },
     {
@@ -367,7 +367,7 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "macroLane": "main",
-      "floorMaterialId": "patterned_cobblestone",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 6
     },
@@ -529,7 +529,7 @@
       "surfaceId": "SURFACE_NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
-      "floorMaterialId": "patterned_cobblestone",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 4.5
     },
@@ -2583,42 +2583,42 @@
       "start": 0.18,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_niche_coverage_relief",
+      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
           "id": "GROUND_01",
-          "moduleId": "blind_niche",
-          "along": 0.07120253164556961,
+          "moduleId": "timber_coverage_closure",
+          "along": 0.07436708860759492,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
+          "datumId": "GROUND_HEAD_2.25",
           "columnId": "COLUMN_01",
           "layoutSource": "generated"
         },
         {
           "id": "GROUND_02",
-          "moduleId": "pilaster_niche_coverage",
-          "along": 0.3570675105485232,
+          "moduleId": "pilaster_coverage",
+          "along": 0.35812236286919835,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
+          "datumId": "GROUND_HEAD_2.25",
           "columnId": "COLUMN_02",
           "layoutSource": "generated"
         },
         {
           "id": "GROUND_03",
-          "moduleId": "pilaster_niche_coverage",
-          "along": 0.6429324894514767,
+          "moduleId": "timber_coverage_closure",
+          "along": 0.6418776371308018,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
+          "datumId": "GROUND_HEAD_2.25",
           "columnId": "COLUMN_03",
           "layoutSource": "generated"
         },
         {
           "id": "GROUND_04",
-          "moduleId": "pilaster_niche_coverage",
-          "along": 0.9287974683544304,
+          "moduleId": "timber_coverage_closure",
+          "along": 0.9256329113924052,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
+          "datumId": "GROUND_HEAD_2.25",
           "columnId": "COLUMN_04",
           "layoutSource": "generated"
         }
@@ -2628,10 +2628,10 @@
         "rhythm": "service",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 1.8,
+        "groundHeadM": 2.25,
         "upperSillDatumsM": [],
-        "signBandBottomM": 1.92,
-        "signBandTopM": 2.52
+        "signBandBottomM": 2.37,
+        "signBandTopM": 2.9699999999999998
       }
     },
     {
@@ -2734,7 +2734,7 @@
       "start": 0.03,
       "end": 0.15,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_cut_stone_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
@@ -2765,7 +2765,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_SPICE",
-      "facadeProfileId": "quiet_residential",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "bays": [
         {
@@ -5222,7 +5222,7 @@
       "family": "quiet_residential",
       "massingProfileId": "MASSING_MID_MIXED",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -5238,12 +5238,51 @@
       ]
     },
     {
+      "id": "quiet_residential_cut_stone",
+      "label": "Sun-bleached cut-limestone residential frontage",
+      "family": "quiet_residential",
+      "massingProfileId": "MASSING_MID_MIXED",
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
+    },
+    {
+      "id": "quiet_residential_cut_stone_pilaster_relief",
+      "label": "Coursed-limestone timber-closure relief",
+      "family": "quiet_residential",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "timber_coverage_closure",
+        "pilaster_coverage"
+      ]
+    },
+    {
       "id": "quiet_residential_niche_coverage_relief",
       "label": "Budgeted dusty single-niche coverage relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -5315,7 +5354,7 @@
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -5333,7 +5372,7 @@
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -6226,7 +6265,7 @@
       },
       "yawDeg": 270,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -7214,7 +7253,7 @@
       },
       "yawDeg": 180,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -8188,25 +8227,25 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_niche_coverage_relief",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
+      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "moduleId": "timber_coverage_closure",
+      "moduleKind": "column",
+      "openingType": "none",
+      "datumId": "GROUND_HEAD_2.25",
       "columnId": "COLUMN_01",
       "layoutSource": "generated",
       "center": {
-        "x": 9.91,
-        "y": 14.725,
-        "z": 0.9
+        "x": 9.93,
+        "y": 14.774999999999999,
+        "z": 1.125
       },
       "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
+        "width": 1.15,
+        "depth": 0.14,
+        "height": 2.25
       },
       "yawDeg": 270,
-      "materialSlot": "wall",
+      "materialSlot": "timber",
       "collisionOpening": false
     },
     {
@@ -8216,22 +8255,22 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
+      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "moduleId": "pilaster_coverage",
       "moduleKind": "column",
       "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
+      "datumId": "GROUND_HEAD_2.25",
       "columnId": "COLUMN_02",
       "layoutSource": "generated",
       "center": {
         "x": 9.88,
-        "y": 19.241666666666667,
-        "z": 0.9
+        "y": 19.258333333333333,
+        "z": 1.125
       },
       "sizeM": {
         "width": 0.42,
         "depth": 0.24,
-        "height": 1.8
+        "height": 2.25
       },
       "yawDeg": 270,
       "materialSlot": "trim",
@@ -8244,25 +8283,25 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
+      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "moduleId": "timber_coverage_closure",
       "moduleKind": "column",
       "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
+      "datumId": "GROUND_HEAD_2.25",
       "columnId": "COLUMN_03",
       "layoutSource": "generated",
       "center": {
-        "x": 9.88,
-        "y": 23.758333333333333,
-        "z": 0.9
+        "x": 9.93,
+        "y": 23.74166666666667,
+        "z": 1.125
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 1.8
+        "width": 1.15,
+        "depth": 0.14,
+        "height": 2.25
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "timber",
       "collisionOpening": false
     },
     {
@@ -8272,25 +8311,25 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
+      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "moduleId": "timber_coverage_closure",
       "moduleKind": "column",
       "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
+      "datumId": "GROUND_HEAD_2.25",
       "columnId": "COLUMN_04",
       "layoutSource": "generated",
       "center": {
-        "x": 9.88,
-        "y": 28.275000000000002,
-        "z": 0.9
+        "x": 9.93,
+        "y": 28.225,
+        "z": 1.125
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 1.8
+        "width": 1.15,
+        "depth": 0.14,
+        "height": 2.25
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "timber",
       "collisionOpening": false
     },
     {
@@ -8300,7 +8339,7 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_niche_coverage_relief",
+      "profileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 10.48,
@@ -8316,7 +8355,7 @@
       "materialSlots": {
         "wall": "ph_whitewashed_brick_warm",
         "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_sun",
+        "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_beige_001"
@@ -8442,7 +8481,7 @@
       },
       "yawDeg": 180,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -8506,7 +8545,7 @@
       },
       "yawDeg": 0,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -8528,7 +8567,7 @@
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_cut_stone_pilaster_relief",
       "moduleId": "timber_coverage_closure",
       "moduleKind": "column",
       "openingType": "none",
@@ -8556,7 +8595,7 @@
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_cut_stone_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 18.98,
@@ -8570,7 +8609,7 @@
       },
       "yawDeg": 0,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_warm",
+        "wall": "ph_sandstone_blocks_05",
         "trim": "ph_trim_sanded_01",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -8592,7 +8631,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "door_residential_timber",
       "moduleKind": "door",
       "openingType": "door_void",
@@ -8620,7 +8659,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
@@ -8648,7 +8687,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "door_residential_timber",
       "moduleKind": "door",
       "openingType": "door_void",
@@ -8676,7 +8715,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "door_residential_timber",
       "moduleKind": "door",
       "openingType": "door_void",
@@ -8704,7 +8743,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
@@ -8732,7 +8771,7 @@
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "face": "east",
-      "profileId": "quiet_residential",
+      "profileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "center": {
         "x": 35.1,
@@ -8746,12 +8785,12 @@
       },
       "yawDeg": 270,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
-        "trim": "ph_stone_trim_sandstone",
-        "roof": "ph_worn_plaster_ochre",
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
-        "accent": "ph_band_lime_soft"
+        "accent": "ph_band_beige_001"
       },
       "roof": {
         "style": "flat_parapet",
@@ -9769,6 +9808,24 @@
       ]
     },
     {
+      "id": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "zoneId": "DYERS_ALLEY",
+      "surfaceId": "SURFACE_DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "anchors": [
+        "DYERS_E_RACK_01",
+        "DYERS_E_RACK_02",
+        "DYERS_E_RACK_03",
+        "DYERS_E_RACK_04"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_HANGING_TEXTILES",
+        "ASSET_DYERS_CERAMIC_VESSEL",
+        "ASSET_DYERS_SEALED_VAT"
+      ]
+    },
+    {
       "id": "CLUSTER_DYERS_CANOPY",
       "zoneId": "COVERED_SOUK",
       "surfaceId": "SURFACE_COVERED_SOUK",
@@ -9876,11 +9933,13 @@
       "classification": "soft_visual",
       "anchors": [
         "L34_CARAVAN_CART_01",
-        "L34_CARAVAN_PACK_LINE_01"
+        "L34_CARAVAN_PACK_LINE_01",
+        "CARAVAN_LOAD_SHADE_01"
       ],
       "assetIds": [
         "ASSET_MARKET_CART",
-        "ASSET_LAUNDRY_LINE"
+        "ASSET_LAUNDRY_LINE",
+        "ASSET_CLOTH_CANOPY"
       ]
     },
     {
@@ -9895,7 +9954,7 @@
         "L34_DYERS_ALLEY_POTTERY_01"
       ],
       "assetIds": [
-        "ASSET_DYERS_SEALED_VAT",
+        "ASSET_DYERS_WORKSTATION",
         "ASSET_DYERS_CERAMIC_VESSEL"
       ]
     },
@@ -10174,6 +10233,27 @@
       ]
     },
     {
+      "id": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "zoneId": "SPICE_STREET",
+      "surfaceId": "SURFACE_SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "SPICE_E_WALLBASE_STOCK_01",
+        "SPICE_E_WALLBASE_STOCK_02",
+        "SPICE_E_WALLBASE_STOCK_03",
+        "SPICE_E_WALLBASE_STOCK_04"
+      ],
+      "assetIds": [
+        "ASSET_DECORATIVE_CRATE",
+        "ASSET_CC0_POTTERY",
+        "ASSET_CC0_BASKET",
+        "ASSET_CC0_SPICE_SACK",
+        "ASSET_CC0_BRASS_POT",
+        "ASSET_SPICE_GOODS"
+      ]
+    },
+    {
       "id": "CLUSTER_SPICE_GATE",
       "zoneId": "SPICE_STREET",
       "surfaceId": "SURFACE_SPICE_STREET",
@@ -10267,6 +10347,19 @@
       ],
       "assetIds": [
         "ASSET_SIGNBOARD"
+      ]
+    },
+    {
+      "id": "CLUSTER_TEA_SHADE",
+      "zoneId": "TEA_TERRACE",
+      "surfaceId": "SURFACE_TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "overhead",
+      "anchors": [
+        "TEA_TERRACE_SHADE_01"
+      ],
+      "assetIds": [
+        "ASSET_CLOTH_CANOPY"
       ]
     },
     {
@@ -11203,6 +11296,51 @@
       }
     },
     {
+      "id": "PLACE_CARAVAN_LOAD_SHADE_CARAVAN_LOAD_SHADE_01",
+      "clusterId": "CLUSTER_L34_CARAVAN_EDGE",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorId": "CARAVAN_LOAD_SHADE_01",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "soft_visual",
+      "position": {
+        "x": 9,
+        "y": 46.6,
+        "z": 4.41
+      },
+      "yawDeg": 90,
+      "spanSeats": {
+        "start": {
+          "x": 4.2,
+          "y": 46.6,
+          "z": 4.5
+        },
+        "end": {
+          "x": 13.8,
+          "y": 46.6,
+          "z": 4.32
+        }
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.2,
+        "depth": 9.600000000000001,
+        "height": 0.18
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cloth_canopy"
+      }
+    },
+    {
       "id": "PLACE_CARAVAN_LOAD_SOUTH_LMK_CARAVAN_DISTRICT",
       "clusterId": "CLUSTER_CARAVAN_LANDMARK",
       "assetId": "ASSET_CARAVAN_LOAD_CRATE",
@@ -11380,6 +11518,240 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_cover_goods"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_01",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorId": "DYERS_E_RACK_01",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.42,
+        "y": 13.4,
+        "z": 1.18
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.25,
+        "depth": 0.16,
+        "height": 1.55
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_02",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorId": "DYERS_E_RACK_02",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.42,
+        "y": 19.1,
+        "z": 1.18
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.25,
+        "depth": 0.16,
+        "height": 1.55
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_03",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorId": "DYERS_E_RACK_03",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.42,
+        "y": 23.7,
+        "z": 1.18
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.25,
+        "depth": 0.16,
+        "height": 1.55
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_04",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorId": "DYERS_E_RACK_04",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.42,
+        "y": 29.2,
+        "z": 1.18
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.25,
+        "depth": 0.16,
+        "height": 1.55
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "textile",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_hanging_textiles"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_VAT_DYERS_E_RACK_04",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorId": "DYERS_E_RACK_04",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.440000000000005,
+        "y": 29.75,
+        "z": 0
+      },
+      "yawDeg": 263,
+      "scale": {
+        "x": 0.94,
+        "y": 0.94,
+        "z": 0.94
+      },
+      "dimensionsM": {
+        "width": 0.6973874258859999,
+        "depth": 0.710673572382,
+        "height": 0.8189875536999999
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_01",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorId": "DYERS_E_RACK_01",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.5,
+        "y": 12.780000000000001,
+        "z": 0
+      },
+      "yawDeg": 281,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_03",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorId": "DYERS_E_RACK_03",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.5,
+        "y": 23.08,
+        "z": 0
+      },
+      "yawDeg": 281,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
       }
     },
     {
@@ -12032,69 +12404,67 @@
     {
       "id": "PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_01",
       "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE",
-      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "assetId": "ASSET_DYERS_WORKSTATION",
       "anchorId": "L34_DYERS_ALLEY_VAT_01",
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
       "position": {
-        "x": 52.45,
+        "x": 52.38,
         "y": 17,
         "z": 0
       },
-      "yawDeg": 263,
+      "yawDeg": 270,
       "scale": {
-        "x": 0.76,
-        "y": 0.76,
-        "z": 0.76
+        "x": 1,
+        "y": 1,
+        "z": 1
       },
       "dimensionsM": {
-        "width": 0.5638451528439999,
-        "depth": 0.574587143628,
-        "height": 0.6621601497999999
+        "width": 2.8,
+        "depth": 1.45,
+        "height": 2.2
       },
-      "collisionClass": "soft",
+      "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
-      "semanticClass": "container",
+      "semanticClass": "furniture",
       "runtime": {
-        "mode": "model",
-        "id": "ph_wine_barrel_01",
-        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+        "mode": "procedural",
+        "id": "bazaar_dyers_workstation"
       }
     },
     {
       "id": "PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_02",
       "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE",
-      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "assetId": "ASSET_DYERS_WORKSTATION",
       "anchorId": "L34_DYERS_ALLEY_VAT_02",
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
       "position": {
-        "x": 52.45,
+        "x": 52.38,
         "y": 21,
         "z": 0
       },
-      "yawDeg": 263,
+      "yawDeg": 270,
       "scale": {
-        "x": 0.76,
-        "y": 0.76,
-        "z": 0.76
+        "x": 1,
+        "y": 1,
+        "z": 1
       },
       "dimensionsM": {
-        "width": 0.5638451528439999,
-        "depth": 0.574587143628,
-        "height": 0.6621601497999999
+        "width": 2.8,
+        "depth": 1.45,
+        "height": 2.2
       },
-      "collisionClass": "soft",
+      "collisionClass": "none",
       "shadowPolicy": "cast_receive",
       "lodEligible": true,
-      "semanticClass": "container",
+      "semanticClass": "furniture",
       "runtime": {
-        "mode": "model",
-        "id": "ph_wine_barrel_01",
-        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+        "mode": "procedural",
+        "id": "bazaar_dyers_workstation"
       }
     },
     {
@@ -13231,6 +13601,345 @@
       }
     },
     {
+      "id": "PLACE_SPICE_E_STOCK_BASKET_MID_SPICE_E_WALLBASE_STOCK_02",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_02",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 31.889999999999997,
+        "y": 22.1,
+        "z": 0
+      },
+      "yawDeg": 262,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.375,
+        "depth": 0.271,
+        "height": 0.218
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wicker_basket_02",
+        "uri": "/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BASKET_NORTH_SPICE_E_WALLBASE_STOCK_04",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_04",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32,
+        "y": 27.98,
+        "z": 0
+      },
+      "yawDeg": 286,
+      "scale": {
+        "x": 1.05,
+        "y": 1.05,
+        "z": 1.05
+      },
+      "dimensionsM": {
+        "width": 0.39375000000000004,
+        "depth": 0.28455,
+        "height": 0.22890000000000002
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wicker_basket_02",
+        "uri": "/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BINS_SPICE_E_WALLBASE_STOCK_02",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_SPICE_GOODS",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_02",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.209999999999994,
+        "y": 21.3,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.5,
+        "depth": 0.75,
+        "height": 0.85
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_spice_goods"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BRASS_POT_SPICE_E_WALLBASE_STOCK_04",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BRASS_POT",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_04",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 31.88,
+        "y": 28.42,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.3019456565,
+        "depth": 0.3016925901,
+        "height": 0.2909476549
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_brass_pot_01",
+        "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_BASE_SPICE_E_WALLBASE_STOCK_01",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.25,
+        "y": 17.76,
+        "z": 0
+      },
+      "yawDeg": 275,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.8252729177,
+        "depth": 0.4089537412,
+        "height": 0.3496182831
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_MID_SPICE_E_WALLBASE_STOCK_03",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_03",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.25,
+        "y": 24.11,
+        "z": 0
+      },
+      "yawDeg": 264,
+      "scale": {
+        "x": 0.94,
+        "y": 0.94,
+        "z": 0.94
+      },
+      "dimensionsM": {
+        "width": 0.775756542638,
+        "depth": 0.384416516728,
+        "height": 0.32864118611399995
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_STACK_SPICE_E_WALLBASE_STOCK_01",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.17,
+        "y": 17.810000000000002,
+        "z": 0.3496
+      },
+      "yawDeg": 259,
+      "scale": {
+        "x": 0.86,
+        "y": 0.86,
+        "z": 0.86
+      },
+      "dimensionsM": {
+        "width": 0.709734709222,
+        "depth": 0.351700217432,
+        "height": 0.30067172346599996
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_POTTERY_NORTH_SPICE_E_WALLBASE_STOCK_04",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_04",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.18,
+        "y": 27.32,
+        "z": 0
+      },
+      "yawDeg": 258,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_POTTERY_SOUTH_SPICE_E_WALLBASE_STOCK_01",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.1,
+        "y": 18.650000000000002,
+        "z": 0
+      },
+      "yawDeg": 284,
+      "scale": {
+        "x": 0.95,
+        "y": 0.95,
+        "z": 0.95
+      },
+      "dimensionsM": {
+        "width": 0.6232,
+        "depth": 0.4769,
+        "height": 0.3534
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_SACK_SPICE_E_WALLBASE_STOCK_03",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_SPICE_SACK",
+      "anchorId": "SPICE_E_WALLBASE_STOCK_03",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.14,
+        "y": 24.89,
+        "z": 0
+      },
+      "yawDeg": 279,
+      "scale": {
+        "x": 0.88,
+        "y": 0.88,
+        "z": 0.88
+      },
+      "dimensionsM": {
+        "width": 0.46786013604,
+        "depth": 0.46786013604,
+        "height": 0.44121467236
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "cc0_spice_sack",
+        "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf"
+      }
+    },
+    {
       "id": "PLACE_SPICE_GATE_LMK_SPICE_GATE_01",
       "clusterId": "CLUSTER_SPICE_GATE",
       "assetId": "ASSET_SPICE_GATE",
@@ -13864,6 +14573,51 @@
         "mode": "model",
         "id": "ph_wooden_table_02",
         "uri": "/assets/models/environment/bazaar/props/wooden_table_02/wooden_table_02_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01",
+      "clusterId": "CLUSTER_TEA_SHADE",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorId": "TEA_TERRACE_SHADE_01",
+      "zoneId": "TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "overhead",
+      "position": {
+        "x": 15,
+        "y": 62.4,
+        "z": 5.7
+      },
+      "yawDeg": 90,
+      "spanSeats": {
+        "start": {
+          "x": 11.6,
+          "y": 62.4,
+          "z": 5.75
+        },
+        "end": {
+          "x": 18.4,
+          "y": 62.4,
+          "z": 5.65
+        }
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.9,
+        "depth": 6.799999999999999,
+        "height": 0.18
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "receive_only",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_cloth_canopy"
       }
     },
     {
@@ -14533,6 +15287,23 @@
       "notes": "Covered textile arcade span."
     },
     {
+      "id": "CARAVAN_LOAD_SHADE_01",
+      "type": "cloth_canopy_span",
+      "zone": "CARAVAN_COURT",
+      "pos": {
+        "x": 4.2,
+        "y": 46.6,
+        "z": 4.5
+      },
+      "endPos": {
+        "x": 13.8,
+        "y": 46.6,
+        "z": 4.32
+      },
+      "widthM": 2.2,
+      "notes": "Loading shade spanning the yard between the two ramp-approach piers, seated in both edge bands above the 4.5 m court route so the caravan bay finally has a supported cover."
+    },
+    {
       "id": "COVER_CARAVAN_01",
       "type": "cover_cluster",
       "zone": "CARAVAN_COURT",
@@ -14777,6 +15548,62 @@
       "notes": "Signboard aligned to the merchant bay."
     },
     {
+      "id": "DYERS_E_RACK_01",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 52.42,
+        "y": 13.4,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 2.25,
+      "heightM": 1.55,
+      "notes": "Dye rack station between the alley mouth and the first vat, held in the east edge band."
+    },
+    {
+      "id": "DYERS_E_RACK_02",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 52.42,
+        "y": 19.1,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 2.25,
+      "heightM": 1.55,
+      "notes": "Dye rack station between the two authored vats."
+    },
+    {
+      "id": "DYERS_E_RACK_03",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 52.42,
+        "y": 23.7,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 2.25,
+      "heightM": 1.55,
+      "notes": "Dye rack station north of the second vat."
+    },
+    {
+      "id": "DYERS_E_RACK_04",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 52.42,
+        "y": 29.2,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 2.25,
+      "heightM": 1.55,
+      "notes": "Dye rack station approaching the Covered Souk threshold."
+    },
+    {
       "id": "L34_CARAVAN_CART_01",
       "type": "dressing_anchor",
       "zone": "CARAVAN_COURT",
@@ -14870,24 +15697,24 @@
       "type": "dressing_anchor",
       "zone": "DYERS_ALLEY",
       "pos": {
-        "x": 52.45,
+        "x": 52.38,
         "y": 17,
         "z": 0
       },
       "yawDeg": 270,
-      "notes": "L3.4 authored dyers edge-band override: a sealed vat occupies the east-wall service bay between generated pilasters, outside the 4.5 m clear lane."
+      "notes": "Dyers Alley process wall: hosts a wet workstation grounded in the east 1.25 m edge band. Rotated half-depth 0.62 m spans x 51.76-53.00, clear of the 4.5 m lane boundary at x=51.75 and flush to the wall."
     },
     {
       "id": "L34_DYERS_ALLEY_VAT_02",
       "type": "dressing_anchor",
       "zone": "DYERS_ALLEY",
       "pos": {
-        "x": 52.45,
+        "x": 52.38,
         "y": 21,
         "z": 0
       },
       "yawDeg": 270,
-      "notes": "L3.4 authored dyers edge-band override: the second seeded-scale vat sits four meters north on the same service datum, clear of openings and circulation."
+      "notes": "Dyers Alley process wall: hosts a wet workstation grounded in the east 1.25 m edge band. Rotated half-depth 0.62 m spans x 51.76-53.00, clear of the 4.5 m lane boundary at x=51.75 and flush to the wall."
     },
     {
       "id": "L34_NORTH_DYERS_BAY_02",
@@ -15436,6 +16263,62 @@
       "notes": "Spawn-side hard cover outside the exits."
     },
     {
+      "id": "SPICE_E_WALLBASE_STOCK_01",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 32.15,
+        "y": 18.1,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 1.6,
+      "heightM": 0.8,
+      "notes": "Free east wall-base stock station between east openings GROUND_01 and GROUND_02; sits inside the 3 m east edge band and clear of the 6 m lane envelope."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_02",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 32.05,
+        "y": 21.3,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 1.9,
+      "heightM": 0.9,
+      "notes": "Free east wall-base bin display between east openings GROUND_02 and GROUND_03, held at the wall edge."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_03",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 32.2,
+        "y": 24.55,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 1.3,
+      "heightM": 0.7,
+      "notes": "Free east wall-base crate-and-sack station between east openings GROUND_03 and GROUND_04."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_04",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 32,
+        "y": 27.8,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "widthM": 1.6,
+      "heightM": 0.7,
+      "notes": "Free east wall-base pottery station between east openings GROUND_04 and GROUND_05."
+    },
+    {
       "id": "SPICE_W_SHOP_1",
       "type": "shopfront_anchor",
       "zone": "SPICE_STREET",
@@ -15577,6 +16460,23 @@
       "widthM": 1.1,
       "heightM": 0.55,
       "notes": "Tea-house sign adds a visual beat on the ramp approach."
+    },
+    {
+      "id": "TEA_TERRACE_SHADE_01",
+      "type": "cloth_canopy_span",
+      "zone": "TEA_TERRACE",
+      "pos": {
+        "x": 11.6,
+        "y": 62.4,
+        "z": 5.75
+      },
+      "endPos": {
+        "x": 18.4,
+        "y": 62.4,
+        "z": 5.65
+      },
+      "widthM": 1.9,
+      "notes": "Tea terrace shade sail slung across the elevated route between both wall faces. Seated 4.2 m above the terrace surface so the hem stays clear of the 4 m route and every stair and landing below it. Narrowed to 1.9 m and lifted: at 3 m across a 4 m terrace the sail read as a ceiling rather than an awning, filling the upper third of the route camera and burying the tea frontage it is meant to shade."
     },
     {
       "id": "TEXTILE_E_SHOP_1",

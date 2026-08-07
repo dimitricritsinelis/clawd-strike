@@ -340,7 +340,25 @@ export function createModularFountainStoneGeometry(): BufferGeometry {
     [0.12, 1.17], [0.15, 1.205], [0.13, 1.245], [0.082, 1.285],
     [0.035, 1.32], [0, 1.32], [0, 0.96],
   ], 24);
+  // Two laid base courses ringing the basin foot. The lathe previously met the
+  // paving on its own batter, so the hero landmark read as a bowl set down on
+  // the court rather than built into it, and from the release camera its
+  // silhouette dissolved into the flags at exactly the height the eye reads
+  // first. The reference seats its basin on a stepped apron; this is that
+  // apron, kept inside the authored 3 m footprint (outer radius 1.3 m) and
+  // 0.115 m tall, so the fountain's own collider and the rotation pocket
+  // around it are unchanged.
+  // Held to a 9 cm projection: the reference steps its basin out by about one
+  // course, not a plate. It also has to stop short of the wetted apron ring in
+  // createFountainCourtAccentGeometry, which starts at radius 1.2 — a wider
+  // base would bury the splash gradient that makes the paving read as wet.
+  const seatedApron = createLathedProfileGeometry([
+    [1.02, 0], [1.19, 0], [1.19, 0.055], [1.16, 0.062],
+    [1.15, 0.07], [1.15, 0.108], [1.115, 0.115],
+    [1.1, 0.122], [1.06, 0.122], [1.02, 0.06], [1.02, 0],
+  ], 24);
   const parts = [
+    tintGeometry(seatedApron, [0.84, 0.82, 0.76]),
     tintGeometry(lowerBasin, [0.91, 0.89, 0.83]),
     tintGeometry(pedestal, [0.86, 0.84, 0.78]),
     tintGeometry(upperBasin, [0.94, 0.92, 0.86]),
@@ -659,13 +677,15 @@ export function createFountainCourtAccentGeometry(): BufferGeometry {
   // smudge under the fountain; the gradient is what makes it read as water.
   // The previous ordering had its darkest course on the OUTSIDE, which is the
   // opposite of how a wetted collar actually behaves.
+  // Inner edge moved 1.075 -> 1.2 so the ring starts where the basin's seated
+  // base course ends rather than underneath it; the gradient is unchanged.
   const dampBands = [
-    { outerM: 1.17, innerM: 1.075, riseM: 0.0025, tint: [0.63, 0.6, 0.55] },
-    { outerM: 1.28, innerM: 1.17, riseM: 0.0022, tint: [0.79, 0.76, 0.71] },
+    { outerM: 1.26, innerM: 1.2, riseM: 0.0025, tint: [0.63, 0.6, 0.55] },
+    { outerM: 1.31, innerM: 1.26, riseM: 0.0022, tint: [0.79, 0.76, 0.71] },
     // Outer edge held at 1.36: the instanced footprint scales these radii by
     // 3 / 2.2, and the course is required to stay a tight basin-seated octagon
     // rather than spreading into the court.
-    { outerM: 1.36, innerM: 1.28, riseM: 0.002, tint: [0.93, 0.91, 0.87] },
+    { outerM: 1.36, innerM: 1.31, riseM: 0.002, tint: [0.93, 0.91, 0.87] },
   ] as const;
   for (let index = 0; index < FOUNTAIN_SEGMENT_COUNT; index += 1) {
     const center = fountainSegmentCenterAngle(index);

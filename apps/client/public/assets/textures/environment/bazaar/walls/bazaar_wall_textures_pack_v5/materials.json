@@ -597,7 +597,7 @@
       "id": "ph_rough_pine_door",
       "tileSizeM": 2.0,
       "tintHex": "#ffffff",
-      "albedoBoost": 1.92,
+      "albedoBoost": 1.16,
       "roughness": 0.86,
       "normalScale": 0.50,
       "aoIntensity": 0.45,

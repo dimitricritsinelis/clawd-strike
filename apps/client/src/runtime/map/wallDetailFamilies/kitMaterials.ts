@@ -121,6 +121,20 @@ export function resolveKitMaterialFinish(
   if (materialId === "ph_rusty_metal_02") {
     return "aged-metal";
   }
+  // A frontage terminal pier is the same plastered masonry as the wall shells
+  // it abuts, and projects 0.26 m in front of them, so it is one of the most
+  // visible surfaces on the elevation. Without a finish it rendered the raw
+  // manifest albedo and nothing else — measured high-frequency detail 2.45
+  // against 6.15-7.09 on the sandstone beside it and 6.40 in the target — which
+  // read as a bare grey slab standing against textured stone. Gated on the
+  // plaster material ids so masonry piers that carry a stone trim source are
+  // left alone.
+  const isPlasterSource = materialId === "ph_painted_plaster_warm"
+    || materialId === "ph_plastered_wall"
+    || materialId === "ph_beige_wall_002";
+  if (meshId === "corner_pier" && isPlasterSource) {
+    return "merchant-plaster";
+  }
   switch (meshId) {
     case "facade_shell_open_front":
     case "facade_wall_shell":
@@ -203,7 +217,18 @@ vKitLocalPos = position;`,
         "#include <worldpos_vertex>",
         `#include <worldpos_vertex>
 {
+  // Must mirror three's own worldpos_vertex, batching branch included. The
+  // compiled map builds enough wall-detail instances to render through
+  // BatchedMesh, and without this branch vKitWorldPos collapsed to unit-box
+  // local coordinates — so every world-space term keyed off it (plaster
+  // aggregate, mottle, fleck, the timber macro grain) went near-constant
+  // across the whole map. That silently defeated several rounds of
+  // procedural-detail work: a large grime change measured 0.6/255 map-wide
+  // and read as "wrong mesh targeted" when the varying was simply wrong.
   vec4 kitWp = vec4(transformed, 1.0);
+  #ifdef USE_BATCHING
+    kitWp = batchingMatrix * kitWp;
+  #endif
   #ifdef USE_INSTANCING
     kitWp = instanceMatrix * kitWp;
   #endif
@@ -309,7 +334,17 @@ vec3 kitGrimeColor = mix(
   kitBaseGrime
 );
 diffuseColor.rgb = mix(diffuseColor.rgb, kitGrimeColor, kitGrime * ${grimeMix});
-${isRecess ? "diffuseColor.rgb *= 0.62;" : `
+${isRecess ? `
+// Interior backing for a merchant bay that is 1.35 m deep. At 0.62 the back
+// plane rendered at luma 63 against a target of 32, so a genuinely deep shop
+// still read as a shallow lit panel and gave the pier nothing to stand against.
+// This multiplier reaches only shop_recess_back and niche_recess_back.
+//
+// Headroom check before lowering further: crushed black inside the bays
+// measured 1.2-9.7% of pixels against 37-49% in the target, and bay highlight
+// p95 is unchanged by this term — it darkens the recessed ambient floor, not
+// the stock, so shelving and goods keep their read.
+diffuseColor.rgb *= 0.34;` : `
 // Close range needs damage, not just tone. Rendered plaster carries chipped
 // arrises exposing a warmer render coat, fine craze lines, and a splash band
 // where the wall meets the pavement; without them the largest surface on the
@@ -318,11 +353,18 @@ float kitChipField = kitValueNoise(kitPlasterPlane * 12.5 + vec2(-3.9, 7.4));
 float kitChipFine = kitValueNoise(kitPlasterPlane * 46.0 + vec2(11.2, -5.6));
 float kitChip = smoothstep(0.74, 0.93, kitChipField * 0.68 + kitChipFine * 0.32);
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.55, 0.38, 0.24), kitChip * 0.42);
+// Craze lines are hairline shrinkage cracks, so they have to be isotropic. At
+// 62:26 the horizontal frequency was 2.4x the vertical one, which turned every
+// tall plaster shell - the Spawn-B corner towers, the Rug Gate flanks, the
+// Textile Arcade panels - into a field of vertical streaks that read as bleached
+// plywood at any range. Matching the two frequencies keeps the damage and
+// removes the grain; the strength comes down because isotropic noise covers far
+// more of the surface than a striped field did at the same amplitude.
 float kitCraze = smoothstep(0.80, 0.97, kitValueNoise(vec2(
-  (vKitWorldPos.x + vKitWorldPos.z) * 62.0,
-  vKitWorldPos.y * 26.0
+  (vKitWorldPos.x + vKitWorldPos.z) * 44.0,
+  vKitWorldPos.y * 44.0
 ) + vec2(-6.3, 2.2)));
-diffuseColor.rgb *= 1.0 - kitCraze * 0.14;
+diffuseColor.rgb *= 1.0 - kitCraze * 0.09;
 float kitSplash = (1.0 - smoothstep(0.0, 0.55, vKitWorldPos.y))
   * smoothstep(0.42, 0.78, kitValueNoise(kitPlasterPlane * 17.0 + vec2(5.5, -9.1)));
 diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.31, 0.24, 0.16), kitSplash * 0.30);`}`,
@@ -366,16 +408,27 @@ diffuseColor.rgb *= 0.45;`,
     } else {
       const wearStrength = finish === "timber-door" ? "0.34" : "0.29";
       const hasHardwareMask = finish !== "timber-surface";
+      // The shutter tier's wear and lift colours were green-grey, and between
+      // them they are mixed over roughly 40% of the surface — enough to drag an
+      // authored warm-brown shutter (saturation 0.50) down to a measured 0.20
+      // and read as chalky mauve. The target's shutters are deep warm timber at
+      // saturation 0.42-0.51, and they are the one element in the frame that
+      // renders BRIGHTER than the target while everything else renders darker.
+      // Weathered timber greys toward its own brown, not toward sage.
+      // Grilles are weathered timber too, not neutral iron. Left grey they
+      // measured hue 12-13 degrees at saturation 0.20 against the target's
+      // 26-28 degrees at 0.47-0.54 — cool, milky and washed out where the
+      // target reads as dark warm wood behind the reveal.
       const wearColor = finish === "timber-screen"
-        ? "vec3(0.40, 0.38, 0.35)"
+        ? "vec3(0.46, 0.34, 0.22)"
         : finish === "timber-door" || finish === "timber-surface"
           ? "vec3(0.71, 0.52, 0.34)"
-          : "vec3(0.55, 0.64, 0.50)";
+          : "vec3(0.66, 0.48, 0.31)";
       const familyLiftColor = finish === "timber-screen"
-        ? "vec3(0.25, 0.24, 0.23)"
+        ? "vec3(0.30, 0.21, 0.13)"
         : finish === "timber-door" || finish === "timber-surface"
           ? "vec3(0.53, 0.37, 0.23)"
-          : "vec3(0.36, 0.50, 0.40)";
+          : "vec3(0.46, 0.32, 0.20)";
       const familyLiftAmount = finish === "timber-door"
         ? "0.18"
         : finish === "timber-screen"
@@ -390,16 +443,70 @@ diffuseColor.rgb *= 0.45;`,
       // separate it into three tiers so the frontage is not one flat hue:
       // structural posts and lintels sit darkest, painted shutters and leaves
       // hold the warm mid-tone, and grilles drop to dark iron.
+      // Measured against the target frontage, the joinery value ordering runs
+      // the opposite way round to the one this family previously encoded. The
+      // target's window surrounds are the BRIGHT element (~123 luma, warm) and
+      // its shutter leaves and lattices are the dark ones (~61 and ~34) — sunlit
+      // frames around deep shadowed openings. The old tiers had that inverted:
+      // frames crushed to 0.17 and shutter leaves left at full 1.0.
       const familyValueScale = finish === "timber-door"
-        ? "0.88"
+        ? "0.85"
+        // Lattices sit deepest in shadow behind the reveal. Held at 0.22 rather
+        // than pushed to the target's measured value: below about 0.2 the cold
+        // hemisphere fill overtakes the warm bounce and the timber turns grey.
+        // Lattices sit deepest in shadow behind the reveal. Now that the tier
+        // carries warm timber wear rather than neutral grey, it can go to the
+        // target's value without the cold fill taking it grey.
         : finish === "timber-screen"
-          ? "0.40"
+          ? "0.10"
+          // Shutter leaves are dark weathered timber in SHADE, not fresh paint
+          // in sun. Measured against the limestone beside them, the target's
+          // leaves sit at 57% of wall luminance; at 0.55 these sat at 94% —
+          // as bright as the sunlit wall — which also pushed them 13 degrees
+          // red of target, because ACES swings warm tones toward red as they
+          // approach blowout. Dropping the value corrects both at once.
           : finish === "timber-window"
-            ? "1.0"
-            : "0.17";
-      // Sun-bleached joinery holds less chroma than the authored tints carry;
-      // grilles are iron and keep almost none.
-      const familyChromaScale = finish === "timber-screen" ? "0.30" : "0.84";
+            ? "0.26"
+            // Frames, jambs, lintels and ledgers are the sunlit surround.
+            : "0.45";
+      // The target's timber is WARM and strongly chromatic — saturation 0.41
+      // to 0.53 across shutters, frames and lattices. Desaturating toward
+      // neutral grey moves away from it, so the family keeps its chroma and
+      // separates on value instead.
+      // Shutters keep their full chroma. Measured at 0.20 against the target's
+      // 0.42-0.51, this family is already far too neutral to be pulled further
+      // toward luminance grey.
+      // Above 1.0 this extrapolates away from luminance rather than mixing
+      // toward it, raising chroma instead of reducing it. The shutter and
+      // lattice tiers need that: measured against the target they carry 0.38
+      // and 0.25 saturation against 0.54 and 0.52 — roughly 55-70% of the
+      // target across every warm element on the facade except the newly warmed
+      // frames, which now read as isolated warm objects on a grey-mauve wall.
+      // This is not an exposure problem; the value histograms already match.
+      const familyChromaScale = finish === "timber-screen"
+        ? "1.70"
+        : finish === "timber-window"
+          ? "1.40"
+          : "0.84";
+      // Only the two tiers measured with a red bias are rotated; the door and
+      // surface tiers already sit in the target's hue band.
+      //
+      // Raised alongside the chroma extrapolation above. Pushing chroma away
+      // from luminance amplifies whatever hue bias the surface already has, so
+      // the same lift that held these tiers at 25 and 15 degrees let them fall
+      // to 22 and 7 once chroma rose. The rotation has to scale with it.
+      const familyGreenLift = finish === "timber-screen"
+        ? "1.28"
+        : finish === "timber-window"
+          ? "1.16"
+          : "1.0";
+      // Cutting blue HERE does nothing: measured, a 0.78 multiplier on the
+      // lattice tier left the bars byte-identical at RGB (71,43,38). The two
+      // additive terms below run after this stage, and on a tier scaled to 0.10
+      // they are larger than the surface value itself, so they restore whatever
+      // blue is removed. Colour on the darkest tiers is set by those constants,
+      // not by anything multiplicative applied before them.
+      const familyBlueCut = "1.0";
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <map_fragment>",
         `#include <map_fragment>
@@ -442,17 +549,73 @@ vec3 kitHardwareColor = mix(
   vec3(0.44, 0.21, 0.09),
   kitHardwareOxide * 0.66
 );
-diffuseColor.rgb = mix(diffuseColor.rgb, kitHardwareColor, kitHardwareMask * 0.82);
-diffuseColor.rgb *= mix(${familyValueScale}, 0.82, kitHardwareMask);
-diffuseColor.rgb = mix(
-  vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))),
-  diffuseColor.rgb,
-  ${familyChromaScale}
+diffuseColor.rgb = mix(diffuseColor.rgb, kitHardwareColor, kitHardwareMask * 0.82);`,
+      );
+      // The family value and chroma hierarchy has to run AFTER the instance
+      // tint, not before it. Three applies per-instance colour in
+      // <color_fragment>, which follows <map_fragment>, so clamping here
+      // previously only ever touched the texture: an authored 0xb77f58 window
+      // grille came through at full saturation with the 0.30 chroma scale
+      // silently bypassed, which is why the lattices read as coral plastic
+      // instead of dark ironwork. Applying the hierarchy downstream of the
+      // tint makes the authored colours land inside the intended
+      // wall > joinery > opening ordering.
+      shader.fragmentShader = shader.fragmentShader.replace(
+        "#include <color_fragment>",
+        `#include <color_fragment>
+// kit-${finish}-hierarchy
+float kitTierVertexValue = dot(vColor.rgb, vec3(0.333333));
+float kitTierHardwareMask = ${hasHardwareMask ? "1.0 - smoothstep(0.27, 0.40, kitTierVertexValue)" : "0.0"};
+diffuseColor.rgb *= mix(${familyValueScale}, 0.82, kitTierHardwareMask);
+// Clamped because this scale runs above 1.0 on the shutter and lattice tiers,
+// which extrapolates away from luminance and can drive a channel negative on
+// an already near-neutral pixel.
+diffuseColor.rgb = clamp(
+  mix(
+    vec3(dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722))),
+    diffuseColor.rgb,
+    ${familyChromaScale}
+  ),
+  0.0,
+  1.0
 );
+// Hue correction toward orange-brown. The shutter and lattice tiers render at
+// 10-20 degrees where the target's weathered timber sits at 26-29 — a red bias
+// the authored tints do not have (they start near 23) and which the wear and
+// lift colours cannot pull back, since those already sit at 28-30 and are only
+// mixed over part of the surface. Lifting green against red rotates the hue
+// without touching luminance or chroma, so the warmth is recovered without
+// paying for it in value the way raising saturation would.
+diffuseColor.g *= ${familyGreenLift};
+diffuseColor.b *= ${familyBlueCut};
 // A shaded street still gets warm bounce off the sunlit paving. Without a
 // floor the darkest tier crushes into the window voids behind it and the
 // frame profile disappears; this keeps the joinery readable against black.
-diffuseColor.rgb += vec3(0.016, 0.0135, 0.0105) * (1.0 - kitHardwareMask);`,
+// Keep this ADDITIVE and unscaled. Two alternatives were measured and both
+// lost: a lift proportional to the pixel's own colour shrinks to nothing on the
+// darkest members and let the cold sky fill (0xDDEBF2) turn the lattices and
+// shutters galvanised blue-grey; scaling it by the tier's value scale instead
+// recovered only 0.02 saturation while pushing the shutter-to-wall luminance
+// ratio from 81% to 75% against a target of 82%. The residual chroma loss on
+// dark joinery is untinted specular, not this term.
+// Blue pulled down from 0.0105. On the darkest tiers this constant exceeds the
+// surface's own value, so its colour IS the member's colour — and at a
+// green-over-blue gap of only 0.003 it was holding the lattice bars at hue 8
+// where the target reads 25. Orange-brown is green above blue; widening that
+// gap here is the only place it can be widened, because every multiplicative
+// stage runs before this addition and gets restored by it.
+diffuseColor.rgb += vec3(0.016, 0.0135, 0.0062) * (1.0 - kitTierHardwareMask);
+// Tight warm arris catch. Flooring roughness correctly removed a broad, white,
+// near-neutral sheen that was making this joinery read galvanised, but it took
+// the board and slat definition with it: high-pass detail fell 25-40% on the
+// shutter panels and lattice bars, entirely at the highlight end, and the
+// lattice stopped reading as battens standing proud of the opening. What
+// belongs there is not the broad specular that was killed but a narrow warm
+// highlight on the arrises themselves, so the edges catch light as timber does
+// without the flat sheen returning across the faces.
+diffuseColor.rgb += vec3(0.058, 0.040, 0.023)
+  * kitOuterEdge
+  * (1.0 - kitTierHardwareMask);`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
@@ -460,7 +623,14 @@ diffuseColor.rgb += vec3(0.016, 0.0135, 0.0105) * (1.0 - kitHardwareMask);`,
 float kitRoughVertexValue = dot(vColor.rgb, vec3(0.333333));
 float kitRoughHardwareMask = ${hasHardwareMask ? "1.0 - smoothstep(0.27, 0.40, kitRoughVertexValue)" : "0.0"};
 float kitRoughOuterEdge = smoothstep(0.30, 0.50, min(abs(vKitLocalPos.x), abs(vKitLocalPos.y)));
-roughnessFactor = mix(roughnessFactor + kitRoughOuterEdge * 0.055, 0.43, kitRoughHardwareMask);`,
+roughnessFactor = mix(roughnessFactor + kitRoughOuterEdge * 0.055, 0.43, kitRoughHardwareMask);
+// Weathered, unfinished timber in shade is very nearly a pure diffuse surface.
+// Left glossier, its specular lobe is white — a dielectric reflects the sky
+// uncoloured — so it is added on top of the diffuse colour and drags the
+// surface toward neutral. That is why four successive albedo-side levers
+// (tint, wear colour, chroma scale, role tint) all failed to lift this
+// joinery's chroma: the term diluting it was never in the albedo.
+roughnessFactor = mix(max(roughnessFactor, 0.97), roughnessFactor, kitRoughHardwareMask);`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <metalnessmap_fragment>",
@@ -476,7 +646,7 @@ metalnessFactor = mix(metalnessFactor, 0.26, kitMetalHardwareMask);`,
   };
 
   const previousProgramCacheKey = material.customProgramCacheKey.bind(material);
-  material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|kit-finish:${finish}:v8`;
+  material.customProgramCacheKey = (): string => `${previousProgramCacheKey()}|kit-finish:${finish}:v10`;
   material.needsUpdate = true;
 }
 

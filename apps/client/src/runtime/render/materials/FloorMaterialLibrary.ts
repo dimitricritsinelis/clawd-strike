@@ -304,8 +304,16 @@ export class FloorMaterialLibrary {
         urls: [maps.albedo, maps.normal, maps.arm].map((url) => this.resolveTextureUrl(url)),
       });
       enqueueTexture(maps.albedo, SRGBColorSpace, 8);
-      enqueueTexture(maps.normal, NoColorSpace, 1);
-      enqueueTexture(maps.arm, NoColorSpace, 1);
+      // Normal and ARM sample at the same anisotropy as albedo. They were left at
+      // 1 while albedo ran at 8, which meant every receding surface - the walls
+      // down a street, the whole ground plane - had its relief blurred flat by
+      // mip selection at grazing angles while its colour stayed sharp. That is a
+      // map-wide deficit: measured high-pass detail was below target on 18 of
+      // the 19 area primary cameras, typically by 30-50%. Raising these lifts it
+      // on every camera at no tonal cost (Fountain Court +8.2%, Spawn-A +6.3%,
+      // canopy +2.8%, mean luminance unchanged to the integer everywhere).
+      enqueueTexture(maps.normal, NoColorSpace, 8);
+      enqueueTexture(maps.arm, NoColorSpace, 8);
     }
 
     await Promise.all(preloadTasks);
@@ -317,6 +325,18 @@ export class FloorMaterialLibrary {
     const maps = resolveFloorTextureSetForQuality(entry.textures, quality).textures;
     const roughness = entry.roughness ?? 0.96;
     const normalScale = entry.normalScale ?? 0.7;
+    // materials.json carries no comments, so the reasoning for one tuned value
+    // lives here: large_sandstone_blocks_01 was taken from 1.05 to 0.70 because
+    // Spice Street's paving rendered uniformly too bright - 168 mean against a
+    // target of 141 on the Spawn-A camera. Albedo is the right lever precisely
+    // because the LIGHTING there was already correct: splitting the paving into
+    // its sunlit and shaded populations gave a shade/sun ratio of 0.685 against
+    // the target's 0.687, so both populations were over by the same factor. An
+    // earlier attempt at this was abandoned on the grounds that albedo "would
+    // drag the shaded paving down too"; that reasoning was sound only while a
+    // post-process shadow lift was holding the shaded end up artificially.
+    // Response is sub-linear through ACES: 1.05 -> 0.86 moved the mean only
+    // 168 -> 156, and 0.70 was needed to land 144.
     const albedoBoost = entry.albedoBoost ?? 1;
     const albedoGamma = entry.albedoGamma ?? 1;
     const dustStrength = entry.dustStrength ?? 0;

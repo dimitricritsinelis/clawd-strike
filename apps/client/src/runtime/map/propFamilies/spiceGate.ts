@@ -157,12 +157,22 @@ type Tone = readonly [number, number, number];
 // #dfc69a). Keeping the field near 1.0 puts the gate in the same warm ochre
 // family as the flanking courtyard pylons instead of reading as a cool grey
 // module snapped onto them.
-const STONE_FIELD: Tone = [1, 0.98, 0.95];
-const STONE_FIELD_ALT: Tone = [0.9, 0.87, 0.83];
-const STONE_PIER: Tone = [1.05, 1.03, 1];
-const STONE_PIER_ALT: Tone = [0.86, 0.83, 0.79];
-const STONE_TRIM: Tone = [1.12, 1.1, 1.06];
-const STONE_KEYSTONE: Tone = [1.18, 1.15, 1.1];
+// Lit values deepened. These sat at 1.00-1.18 — authored as if every face were
+// in sun — while the kit's own shade values below are authored properly dark.
+// On the Spawn-A approach that made the gate the brightest large mass in frame
+// rather than the dark frame the composition needs.
+// Warm-biased at the same luminance. Deepening these uniformly got the gate's
+// VALUE right but took its chroma with it — measured saturation fell to 0.318
+// against the target's 0.518, and its red-to-blue ratio to 1.51 where the
+// target's gate sits at 1.83, matching the sandstone walls beyond it. Dark
+// sandstone in shade is warm brown, not neutral grey, so the red-blue spread
+// is widened here rather than the overall level being raised again.
+const STONE_FIELD: Tone = [0.67, 0.6, 0.5];
+const STONE_FIELD_ALT: Tone = [0.6, 0.53, 0.44];
+const STONE_PIER: Tone = [0.71, 0.64, 0.54];
+const STONE_PIER_ALT: Tone = [0.58, 0.51, 0.42];
+const STONE_TRIM: Tone = [0.77, 0.69, 0.58];
+const STONE_KEYSTONE: Tone = [0.82, 0.73, 0.61];
 /** Shaded masonry: undersides, reveals, and the arch barrel. */
 const STONE_SOFFIT: Tone = [0.3, 0.27, 0.23];
 const STONE_SOFFIT_ALT: Tone = [0.37, 0.33, 0.28];
@@ -1040,6 +1050,71 @@ export function createSpiceGateFixtureGeometry(): BufferGeometry {
       }
     }
     box(parts, IRON_DARK, 0.26, 0.05, 0.26, x, bodyTop - 0.35, 0);
+  }
+
+  // Wall lamps on the bay corbels. The corbel stones were already built into
+  // the haunch wall but carried nothing, so each flank had a bracket that
+  // stopped halfway through its own assembly - the reference hangs an iron lamp
+  // off exactly this stone. The arm reaches out from the corbel top, the hanger
+  // drops from its ring, and the body sits well above head height inside the
+  // gate's existing depth envelope.
+  for (const side of [-1, 1] as const) {
+    const x = side * BAY_CENTER_X_M;
+    const armZ = -(FIELD_Z_M + 0.09);
+    const armReachM = 0.34;
+    const armTipZ = armZ - armReachM;
+    // Horizontal arm off the corbel, with a diagonal stay back to the wall.
+    box(parts, IRON_DARK, 0.06, 0.06, armReachM + 0.1, x, BRACKET_Y_M + 0.13,
+      (armZ + armTipZ) * 0.5);
+    box(parts, IRON_DARK, 0.05, 0.05, 0.05, x, BRACKET_Y_M + 0.13, armTipZ);
+    // Knee brace under the arm, stepped back to the wall face.
+    box(parts, IRON_DARK, 0.045, 0.16, 0.17, x, BRACKET_Y_M + 0.02,
+      armZ - armReachM * 0.28);
+    box(parts, IRON_DARK, 0.045, 0.1, 0.1, x, BRACKET_Y_M - 0.05, armZ - 0.06);
+    // Hanger dropping to the lamp head.
+    const headY = BRACKET_Y_M - 0.24;
+    box(parts, IRON_DARK, 0.03, 0.3, 0.03, x, BRACKET_Y_M - 0.02, armTipZ);
+    box(parts, IRON_DARK, 0.24, 0.05, 0.24, x, headY, armTipZ);
+    box(parts, LANTERN_GLASS, 0.17, 0.26, 0.17, x, headY - 0.16, armTipZ);
+    for (const cornerX of [-1, 1] as const) {
+      for (const cornerZ of [-1, 1] as const) {
+        box(parts, IRON_DARK, 0.03, 0.28, 0.03,
+          x + cornerX * 0.085, headY - 0.15, armTipZ + cornerZ * 0.085);
+      }
+    }
+    box(parts, IRON_DARK, 0.2, 0.045, 0.2, x, headY - 0.31, armTipZ);
+    box(parts, IRON_DARK, 0.05, 0.08, 0.05, x, headY - 0.37, armTipZ);
+  }
+
+  // One hung textile on the west haunch wall. The reference breaks these long
+  // blank stone flanks with a single large cloth rather than repeating trim, and
+  // hanging it on only one side keeps the exit from reading as a mirrored pair.
+  // It is carried on a visible iron pole with two rings, and stops well above
+  // the corbel so it never crosses the bay window or the arch ring.
+  {
+    const bannerX = -(BAY_CENTER_X_M + 1.02);
+    const bannerZ = -(FIELD_Z_M + 0.05);
+    const poleY = 5.02;
+    const bannerHalfW = 0.52;
+    box(parts, IRON_DARK, bannerHalfW * 2 + 0.3, 0.055, 0.055, bannerX, poleY, bannerZ - 0.06);
+    for (const ringSide of [-1, 1] as const) {
+      box(parts, IRON_DARK, 0.05, 0.16, 0.05,
+        bannerX + ringSide * (bannerHalfW + 0.11), poleY - 0.06, bannerZ - 0.03);
+    }
+    box(parts, PENNANT_WARM, bannerHalfW * 2, 1.52, 0.035,
+      bannerX, poleY - 0.82, bannerZ - 0.06);
+    // Woven bands and a fringed hem, so the cloth has an edge instead of
+    // stopping mid-air.
+    for (const [bandIndex, bandY] of [-0.22, 0.24, 0.7].entries()) {
+      box(parts, bandIndex === 1 ? PENNANT_PALE : TIMBER_SHUTTER_EDGE,
+        bannerHalfW * 2 - 0.06, 0.12, 0.045,
+        bannerX, poleY - 0.82 - bandY, bannerZ - 0.065);
+    }
+    for (let fringe = 0; fringe < 7; fringe += 1) {
+      box(parts, PENNANT_PALE, 0.055, 0.13, 0.03,
+        bannerX - bannerHalfW + 0.09 + fringe * ((bannerHalfW * 2 - 0.18) / 6),
+        poleY - 1.64, bannerZ - 0.06);
+    }
   }
 
   pushPennantLine(parts);

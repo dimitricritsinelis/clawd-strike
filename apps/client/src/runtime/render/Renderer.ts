@@ -15,72 +15,92 @@ import {
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { SSAOPass } from "three/examples/jsm/postprocessing/SSAOPass.js";
+import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { resolveBlockoutPalette } from "./BlockoutMaterials";
 import type { RuntimeLightingPreset } from "../utils/UrlParams";
 
 const MAX_PIXEL_RATIO = 1.10;
 
-// ── SSAO tuning constants ───────────────────────────────────────────
-const SSAO_KERNEL_RADIUS = 0.5;
-const SSAO_MIN_DISTANCE = 0.002;
-const SSAO_MAX_DISTANCE = 0.025;
-const SSAO_STRENGTH = 0.68;
-const SSAO_MAX_DETAIL_BATCH_TRIANGLES = 20_000;
-const SSAO_EXCLUDED_MAP_BRANCHES = new Set([
+// ── Ambient-occlusion tuning constants ──────────────────────────────
+// The bazaar's key light is a high south-west sun, so the east-facing
+// merchant frontages that most of the review cameras look at are lit
+// almost entirely by sky and bounce. In that regime occlusion is the only
+// term that separates a reveal side-face from the wall plane, a shop
+// recess from its jamb, or a stall's feet from the paving. The previous
+// SSAO ran at half resolution with a 25 mm falloff over blockout geometry
+// only, which is contact-scale on a wall built at reveal scale — every
+// opening read as a decal and every prop as a cut-out. GTAO resolves the
+// same occlusion at architectural distances without the halo artifacts
+// that forced the SSAO radius down in the first place.
+// Radius is set from the deepest feature that has to read, not the smallest:
+// a merchant bay is 1.0-2.0 m deep, so occlusion has to still be accumulating
+// at a metre or the recess mouth stays as bright as the pier beside it.
+//
+// Held at 1.15 m. Widening to 2.0 m to chase the 1.35 m deep bay interiors was
+// tried and rejected: it bought only +0.3 global std and 3 luma on one bay,
+// and cost the paving 88 -> 85 against a target of 90 — a navigation surface
+// this map cannot afford to dim. The bay interiors are floored by an additive
+// term rather than by unoccluded ambient (a 45% albedo cut moves them 8%), so
+// neither albedo nor occlusion radius is the lever that closes that gap.
+const AO_RADIUS_M = 1.15;
+const AO_THICKNESS_M = 0.5;
+const AO_DISTANCE_EXPONENT = 1.0;
+const AO_DISTANCE_FALLOFF = 1.0;
+const AO_SCALE = 1.0;
+const AO_SAMPLES = 24;
+// Eased from 1.0. The shade-dominated cameras were CRUSHING: the prop-grounding
+// closeup put 3.07% of its pixels below luminance 4 against 0.02% in its target
+// (a 150x excess) and 13.52% below 16 against 4.01%, with the canopy camera at
+// 0.86%/10.77% against 0.03%/0.50%. The black floor itself is right - minimum 0,
+// matching the target - so the fault was how much of the frame bottoms out, and
+// it concentrates exactly where occlusion accumulates: prop clusters in contact.
+//
+// 0.78 improves every camera on that metric (closeup 3.07 -> 2.66 below L4,
+// canopy 0.86 -> 0.62, Spawn-A 2.42 -> 2.19 below L16 against a target of 2.20)
+// and lands the Spawn-A median exactly on 92. Going further to 0.5 helps the
+// crush more but starts pulling Spawn-A off a match it already had.
+//
+// Be honest about what this does and does not fix: it is worth ~13% of the crush
+// gap, and it costs some contact darkening, which is a quality feature this map
+// wants. The dominant cause is that shaded regions are ~35% darker than targets
+// rendered with multi-bounce GI - see SCENE_ENVIRONMENT_INTENSITY in Game.ts.
+//
+// Do not keep easing this to chase the rest, and do not suspect the pass itself.
+// GTAOPass runs in the composer with default output, so it multiplies the
+// composited beauty rather than ambient alone - a reasonable thing to suspect of
+// over-darkening shade. It was measured by taking this constant to 0: the canopy
+// camera moved 59 -> 62 against a target of 88, the west elevation 51 -> 54
+// against 77, and the grounding closeup 49 -> 51 against 83. That is 6-12% of
+// each gap, while the two cameras that were already on target overshot (Spawn-A
+// 103 -> 104 against 101, tea terrace 109 -> 111 against 98). Occlusion is not
+// what is holding the shade down.
+const AO_BLEND_INTENSITY = 0.78;
+// Alpha-tested foliage renders opaque into the AO normal/depth buffer, so a
+// palm crown would occlude as a solid block. The sky dome is far-field and
+// contributes nothing but a spurious backface.
+const AO_EXCLUDED_BRANCHES = new Set([
   "decorative-palms",
+  "desert-sky",
 ]);
 
-type SsaoVisibilityInternals = {
+type GtaoVisibilityInternals = {
   scene: Scene;
   _visibilityCache: Object3D[];
   _overrideVisibility: () => void;
-  copyMaterial: {
-    fragmentShader: string;
-    needsUpdate: boolean;
-    uniforms: Record<string, { value: unknown }>;
-  };
 };
 
-function belongsToStructuralSsaoSurface(object: Object3D): boolean {
-  let insideMapBlockout = false;
-  let insideWallDetails = false;
+function isExcludedFromAo(object: Object3D): boolean {
   let current: Object3D | null = object;
   while (current) {
-    if (SSAO_EXCLUDED_MAP_BRANCHES.has(current.name)) return false;
-    if (current.name === "map-blockout") insideMapBlockout = true;
-    if (current.name === "map-wall-details") insideWallDetails = true;
+    if (AO_EXCLUDED_BRANCHES.has(current.name)) return true;
     current = current.parent;
   }
-  if (insideWallDetails) {
-    const renderable = object as Object3D & {
-      count?: number;
-      geometry?: {
-        index?: { count: number } | null;
-        getAttribute?: (name: string) => { count: number } | undefined;
-      };
-      isInstancedMesh?: boolean;
-    };
-    const vertexCount = renderable.geometry?.index?.count
-      ?? renderable.geometry?.getAttribute?.("position")?.count
-      ?? 0;
-    const instances = renderable.isInstancedMesh ? Math.max(0, renderable.count ?? 0) : 1;
-    if ((vertexCount / 3) * instances > SSAO_MAX_DETAIL_BATCH_TRIANGLES) return false;
-  }
-  return insideMapBlockout;
+  return false;
 }
 
-function constrainSsaoToStructuralSurfaces(pass: SSAOPass): void {
-  const internals = pass as unknown as SsaoVisibilityInternals;
-  internals.copyMaterial.uniforms["aoStrength"] = { value: SSAO_STRENGTH };
-  internals.copyMaterial.fragmentShader = internals.copyMaterial.fragmentShader
-    .replace("uniform float opacity;", "uniform float opacity;\nuniform float aoStrength;")
-    .replace(
-      "vec4 texel = texture2D( tDiffuse, vUv );",
-      "vec4 texel = texture2D( tDiffuse, vUv );\ntexel.rgb = mix(vec3(1.0), texel.rgb, aoStrength);",
-    );
-  internals.copyMaterial.needsUpdate = true;
+function constrainAoOccluders(pass: GTAOPass): void {
+  const internals = pass as unknown as GtaoVisibilityInternals;
   internals._overrideVisibility = (): void => {
     internals.scene.traverse((object) => {
       const renderable = object as Object3D & {
@@ -91,7 +111,7 @@ function constrainSsaoToStructuralSurfaces(pass: SSAOPass): void {
       };
       if (!object.visible) return;
       const unsupportedPrimitive = renderable.isPoints || renderable.isLine || renderable.isLine2;
-      const excludedMesh = renderable.isMesh && !belongsToStructuralSsaoSurface(object);
+      const excludedMesh = renderable.isMesh && isExcludedFromAo(object);
       if (!unsupportedPrimitive && !excludedMesh) return;
       object.visible = false;
       internals._visibilityCache.push(object);
@@ -105,7 +125,30 @@ const GOLDEN_POST_SHADER = {
     resolution: { value: new Vector2(1, 1) },
     bloomStrength: { value: 0.015 },
     bloomThreshold: { value: 0.96 },
-    shadowLift: { value: 0.02 },
+    // Disabled. This was the single largest obstacle to matching the targets and
+    // it hid behind every other lighting experiment for a long time.
+    //
+    // The term adds vec3(0.82, 0.88, 0.92) * shadowLift below luma 0.07. At the
+    // old 0.008 that is ~L24 in sRGB, which is exactly where the render's p1 sat
+    // (24) while both targets reach 0. So NOTHING in the scene could ever be
+    // black: the floor was nailed 24 levels up, and because the added colour is
+    // blue-biased it also pushed the deepest shade cool. Critics kept reporting
+    // deep shade as "too bright, too grey and too cool" and every fix aimed at
+    // the light rig, which could not move a constant added after tone mapping.
+    //
+    // Removing it lands the primary camera's shadow end exactly on target:
+    // min 9 -> 0 (target 0), p5 34 -> 23 (target 23), median unchanged at 92
+    // (target 92), share below L16 0.04% -> 2.68% (target 2.20%). It also
+    // reverses what looked like an unavoidable regression on the two supporting
+    // cameras - west elevation relative contrast 0.417 -> 0.573 and canopy
+    // 0.543 -> 0.668. All three cameras improve.
+    //
+    // Nothing crushes, which was the fear this term existed to prevent: the dark
+    // regions keep 32-33 distinct code values (target 33) and normalised local
+    // gradient RISES in every one of them (shopfront 0.235 -> 0.330 against a
+    // target of 0.398). If crush ever does appear, fix the geometry or material
+    // that is genuinely black rather than lifting the whole frame off zero.
+    shadowLift: { value: 0.0 },
     vignetteStrength: { value: 0.012 },
   },
   vertexShader: `
@@ -203,7 +246,7 @@ export class Renderer {
   private readonly renderer: WebGLRenderer | null;
   private composer: EffectComposer | null = null;
   private worldPass: RenderPass | null = null;
-  private ssaoPass: SSAOPass | null = null;
+  private aoPass: GTAOPass | null = null;
   private goldenPostPass: ShaderPass | null = null;
   private environmentTarget: WebGLRenderTarget | null = null;
   private width = 1;
@@ -245,7 +288,24 @@ export class Renderer {
     if (this.renderer) {
       this.renderer.outputColorSpace = SRGBColorSpace;
       this.renderer.toneMapping = ACESFilmicToneMapping;
-      this.renderer.toneMappingExposure = 1.28;
+      // Sunlit paving does measure hot here — 176 against a target of 142, while
+      // shaded paving is already correct at 88 against 90 — but do not fix that
+      // by lowering this. Dropping to 1.28 alongside a fill cut put the Spawn-A
+      // camera almost exactly on its target (relative contrast 0.554 against
+      // 0.552, mean 107 against 101) and was still reverted, because a blind A/B
+      // fitted a single per-code-value LUT from the old render to the new one
+      // with a residual under 0.8/255 on all three cameras: it was a global tone
+      // curve, not a lighting change, and it cost both supporting cameras. See
+      // the fill note in Game.ts for the full measurements.
+      //
+      // 1.42 was measured too and is not a compromise, just a partial revert —
+      // every metric interpolates back toward the old values (paving 171, relC
+      // 0.492) while fixing nothing. Do not "split the difference" here.
+      //
+      // The paving reads hot relative to the target because the frame is missing
+      // its sunlit vertical surfaces, not because the curve is too high. Re-derive
+      // this only after the west frontage actually receives direct sun.
+      this.renderer.toneMappingExposure = 1.58;
       this.renderer.shadowMap.enabled = !options.disableShadows;
       this.renderer.shadowMap.type = PCFSoftShadowMap;
       this.renderer.shadowMap.autoUpdate = false;
@@ -272,14 +332,22 @@ export class Renderer {
       this.composer.addPass(this.worldPass);
 
       if (options.ao) {
-        const halfW = Math.max(1, Math.floor(this.width / 2));
-        const halfH = Math.max(1, Math.floor(this.height / 2));
-        this.ssaoPass = new SSAOPass(new Scene(), new PerspectiveCamera(), halfW, halfH);
-        this.ssaoPass.kernelRadius = SSAO_KERNEL_RADIUS;
-        this.ssaoPass.minDistance = SSAO_MIN_DISTANCE;
-        this.ssaoPass.maxDistance = SSAO_MAX_DISTANCE;
-        constrainSsaoToStructuralSurfaces(this.ssaoPass);
-        this.composer.addPass(this.ssaoPass);
+        // Full resolution: the occlusion this pass has to deliver is a
+        // 120 mm jamb reveal and a shutter sitting proud of its recess.
+        // Half-res smears both back into the wall plane.
+        this.aoPass = new GTAOPass(new Scene(), new PerspectiveCamera(), this.width, this.height);
+        this.aoPass.blendIntensity = AO_BLEND_INTENSITY;
+        this.aoPass.updateGtaoMaterial({
+          radius: AO_RADIUS_M,
+          distanceExponent: AO_DISTANCE_EXPONENT,
+          thickness: AO_THICKNESS_M,
+          distanceFallOff: AO_DISTANCE_FALLOFF,
+          scale: AO_SCALE,
+          samples: AO_SAMPLES,
+          screenSpaceRadius: false,
+        });
+        constrainAoOccluders(this.aoPass);
+        this.composer.addPass(this.aoPass);
       }
 
       if (options.post) {
@@ -349,10 +417,7 @@ export class Renderer {
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
       this.renderer.setSize(nextWidth, nextHeight, false);
       this.composer?.setSize(nextWidth, nextHeight);
-      this.ssaoPass?.setSize(
-        Math.max(1, Math.floor(nextWidth / 2)),
-        Math.max(1, Math.floor(nextHeight / 2)),
-      );
+      this.aoPass?.setSize(nextWidth, nextHeight);
       const dpr = this.renderer.getPixelRatio();
       this.goldenPostPass?.uniforms["resolution"]!.value.set(nextWidth * dpr, nextHeight * dpr);
       return;
@@ -383,9 +448,9 @@ export class Renderer {
       // Swap scene/camera into the passes for this frame
       this.worldPass.scene = worldScene;
       this.worldPass.camera = worldCamera;
-      if (this.ssaoPass) {
-        this.ssaoPass.scene = worldScene;
-        this.ssaoPass.camera = worldCamera;
+      if (this.aoPass) {
+        this.aoPass.scene = worldScene;
+        this.aoPass.camera = worldCamera;
       }
       this.composer.render();
     } else {
@@ -426,6 +491,24 @@ export class Renderer {
 
     const startedAtMs = performance.now();
     const generator = new PMREMGenerator(this.renderer);
+
+    // Neutralise the sky dome's artistic tint for the duration of this bake.
+    // fromScene() renders the dome into the cubemap, and this map's shade is lit
+    // almost entirely by the resulting PMREM, so any tint applied to the dome
+    // silently became a lighting change: darkening the sky to match the targets
+    // dropped the whole frame's median luminance from 92 to 86 and had to be
+    // paid back by raising SCENE_ENVIRONMENT_INTENSITY. Baking the untinted dome
+    // separates the two - the tint stays a visual property of the sky, while the
+    // irradiance it contributes stays fixed.
+    const skyMaterial = (scene.getObjectByName("desert-sky") as (Object3D & {
+      material?: { uniforms?: Record<string, { value: unknown }> };
+    }) | undefined)?.material;
+    const skyTint = skyMaterial?.uniforms?.["skyTint"]?.value as
+      | { x: number; y: number; z: number; set: (x: number, y: number, z: number) => void }
+      | undefined;
+    const savedTint = skyTint ? { x: skyTint.x, y: skyTint.y, z: skyTint.z } : null;
+    skyTint?.set(1, 1, 1);
+
     try {
       const nextTarget = generator.fromScene(scene, 0, 0.1, 1500, {
         size: 256,
@@ -441,6 +524,7 @@ export class Renderer {
       console.warn("[runtime:ibl] failed to generate desert-sky PMREM; continuing without IBL", error);
       return null;
     } finally {
+      if (skyTint && savedTint) skyTint.set(savedTint.x, savedTint.y, savedTint.z);
       generator.dispose();
     }
   }

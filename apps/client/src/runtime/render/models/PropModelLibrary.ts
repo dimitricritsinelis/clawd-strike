@@ -25,6 +25,28 @@ export type PropModelLoadOptions = {
   };
 };
 
+/**
+ * Warm albedo corrections for CC0 props whose source textures were authored for
+ * a dim interior. The crate and the barrel are the bazaar's most repeated
+ * timber props and both shipped near-black against sunlit limestone paving, so
+ * the grounding closeup read as charcoal boxes rather than the honey-toned
+ * softwood the reference shows. Multiplying the base colour keeps every texture
+ * detail, wear pattern and normal response and only lifts the exposure the
+ * source bakes in. Values stay per-channel so the lift is warm, not grey.
+ */
+const PROP_MODEL_ALBEDO_CORRECTION: Readonly<Record<string, readonly [number, number, number]>> = {
+  ph_wooden_crate_01: [1.92, 1.66, 1.34],
+  ph_wine_barrel_01: [1.86, 1.6, 1.3],
+  // The two door models ship as cool grey-blue weathered timber, which put a
+  // desaturated blue-grey slab in every opening on the map - the highest-contrast
+  // out-of-palette element in seven of the review cameras, reading as painted
+  // sheet metal rather than the dark oiled timber the references show. Scaling
+  // down and warming the base colour keeps the plank joints, ironwork and wear
+  // and only moves the wood species.
+  ph_large_castle_door: [0.72, 0.5, 0.32],
+  ph_rollershutter_window_02: [0.74, 0.53, 0.35],
+};
+
 function asRecord(value: unknown, context: string): UnknownRecord {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${context}: expected object`);
@@ -160,6 +182,8 @@ export class PropModelLibrary {
           source.scale.multiplyScalar(entry.scale);
         }
 
+        const albedoCorrection = PROP_MODEL_ALBEDO_CORRECTION[entry.id];
+        const correctedMaterials = new Set<object>();
         source.traverse((node) => {
           const mesh = node as {
             isMesh?: boolean;
@@ -176,9 +200,19 @@ export class PropModelLibrary {
             const pbrMaterial = material as {
               isMeshStandardMaterial?: boolean;
               userData?: Record<string, unknown>;
+              color?: { r: number; g: number; b: number };
+              needsUpdate?: boolean;
             };
             if (pbrMaterial.isMeshStandardMaterial !== true || !pbrMaterial.userData) continue;
             pbrMaterial.userData.propModelId = entry.id;
+            if (!albedoCorrection || !pbrMaterial.color) continue;
+            // Templates are instanced, so each material is corrected once.
+            if (correctedMaterials.has(pbrMaterial)) continue;
+            correctedMaterials.add(pbrMaterial);
+            pbrMaterial.color.r *= albedoCorrection[0];
+            pbrMaterial.color.g *= albedoCorrection[1];
+            pbrMaterial.color.b *= albedoCorrection[2];
+            pbrMaterial.needsUpdate = true;
           }
         });
 

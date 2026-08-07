@@ -988,7 +988,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_SPICE",
-      "facadeProfileId": "quiet_residential",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
         "mode": "generated",
@@ -1325,7 +1325,7 @@
       "start": 0.03,
       "end": 0.15,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_cut_stone_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
         "mode": "generated",
@@ -1353,7 +1353,7 @@
       "start": 0.18,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_niche_coverage_relief",
+      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
         "mode": "generated",
@@ -1900,19 +1900,19 @@
     },
     "zone_density_budgets": {
       "SPAWN_A_COURTYARD": 7,
-      "SPICE_STREET": 18,
+      "SPICE_STREET": 30,
       "FOUNTAIN_COURT": 18,
       "TEXTILE_ARCADE": 12,
       "RUG_GATE": 8,
       "SPAWN_B_COURTYARD": 2,
       "SERVICE_SOUTH": 2,
-      "CARAVAN_COURT": 6,
+      "CARAVAN_COURT": 10,
       "SERVICE_NORTH": 0,
       "TEA_RAMP": 3,
-      "TEA_TERRACE": 10,
+      "TEA_TERRACE": 13,
       "TEA_STAIRS": 0,
       "TEA_LANDING": 0,
-      "DYERS_ALLEY": 3,
+      "DYERS_ALLEY": 14,
       "COVERED_SOUK": 18,
       "DYERS_DOGLEG": 4,
       "NORTH_COURT": 12,
@@ -2285,7 +2285,7 @@
       "family": "quiet_residential",
       "massingProfileId": "MASSING_MID_MIXED",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -2301,12 +2301,33 @@
       ]
     },
     {
+      "id": "quiet_residential_cut_stone",
+      "label": "Sun-bleached cut-limestone residential frontage",
+      "family": "quiet_residential",
+      "massingProfileId": "MASSING_MID_MIXED",
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade"
+      ]
+    },
+    {
       "id": "quiet_residential_relief",
       "label": "Dusty limewashed residential relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -2360,7 +2381,7 @@
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
@@ -2409,12 +2430,30 @@
       ]
     },
     {
+      "id": "quiet_residential_cut_stone_pilaster_relief",
+      "label": "Coursed-limestone timber-closure relief",
+      "family": "quiet_residential",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "timber_coverage_closure",
+        "pilaster_coverage"
+      ]
+    },
+    {
       "id": "quiet_residential_niche_coverage_relief",
       "label": "Budgeted dusty single-niche coverage relief",
       "family": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_dusty",
+        "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -2701,6 +2740,27 @@
       ],
       "assetIds": [
         "ASSET_MARKET_CART"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "zoneId": "SPICE_STREET",
+      "surfaceId": "SURFACE_SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "SPICE_E_WALLBASE_STOCK_01",
+        "SPICE_E_WALLBASE_STOCK_02",
+        "SPICE_E_WALLBASE_STOCK_03",
+        "SPICE_E_WALLBASE_STOCK_04"
+      ],
+      "assetIds": [
+        "ASSET_DECORATIVE_CRATE",
+        "ASSET_CC0_POTTERY",
+        "ASSET_CC0_BASKET",
+        "ASSET_CC0_SPICE_SACK",
+        "ASSET_CC0_BRASS_POT",
+        "ASSET_SPICE_GOODS"
       ]
     },
     {
@@ -3237,11 +3297,13 @@
       "classification": "soft_visual",
       "anchors": [
         "L34_CARAVAN_CART_01",
-        "L34_CARAVAN_PACK_LINE_01"
+        "L34_CARAVAN_PACK_LINE_01",
+        "CARAVAN_LOAD_SHADE_01"
       ],
       "assetIds": [
         "ASSET_MARKET_CART",
-        "ASSET_LAUNDRY_LINE"
+        "ASSET_LAUNDRY_LINE",
+        "ASSET_CLOTH_CANOPY"
       ]
     },
     {
@@ -3269,7 +3331,7 @@
         "L34_DYERS_ALLEY_POTTERY_01"
       ],
       "assetIds": [
-        "ASSET_DYERS_SEALED_VAT",
+        "ASSET_DYERS_WORKSTATION",
         "ASSET_DYERS_CERAMIC_VESSEL"
       ]
     },
@@ -3304,6 +3366,37 @@
       "assetIds": [
         "ASSET_DYERS_WORKSTATION",
         "ASSET_COURT_PLANTER"
+      ]
+    },
+    {
+      "id": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "zoneId": "DYERS_ALLEY",
+      "surfaceId": "SURFACE_DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "anchors": [
+        "DYERS_E_RACK_01",
+        "DYERS_E_RACK_02",
+        "DYERS_E_RACK_03",
+        "DYERS_E_RACK_04"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_HANGING_TEXTILES",
+        "ASSET_DYERS_CERAMIC_VESSEL",
+        "ASSET_DYERS_SEALED_VAT"
+      ]
+    },
+    {
+      "id": "CLUSTER_TEA_SHADE",
+      "zoneId": "TEA_TERRACE",
+      "surfaceId": "SURFACE_TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "overhead",
+      "anchors": [
+        "TEA_TERRACE_SHADE_01"
+      ],
+      "assetIds": [
+        "ASSET_CLOTH_CANOPY"
       ]
     }
   ],
@@ -4556,6 +4649,196 @@
       "yawOffsetDeg": 7
     },
     {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_BASE",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_01"
+      ],
+      "offsetM": {
+        "x": 0.1,
+        "y": -0.34,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 5
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_STACK",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_01"
+      ],
+      "offsetM": {
+        "x": 0.02,
+        "y": -0.29,
+        "z": 0.3496
+      },
+      "scale": {
+        "x": 0.86,
+        "y": 0.86,
+        "z": 0.86
+      },
+      "yawOffsetDeg": -11
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_POTTERY_SOUTH",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_01"
+      ],
+      "offsetM": {
+        "x": -0.05,
+        "y": 0.55,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.95,
+        "y": 0.95,
+        "z": 0.95
+      },
+      "yawOffsetDeg": 14
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BINS",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_SPICE_GOODS",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_02"
+      ],
+      "offsetM": {
+        "x": 0.16,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BASKET_MID",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_02"
+      ],
+      "offsetM": {
+        "x": -0.16,
+        "y": 0.8,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": -8
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_CRATE_MID",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_03"
+      ],
+      "offsetM": {
+        "x": 0.05,
+        "y": -0.44,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.94,
+        "y": 0.94,
+        "z": 0.94
+      },
+      "yawOffsetDeg": -6
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_SACK",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_SPICE_SACK",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_03"
+      ],
+      "offsetM": {
+        "x": -0.06,
+        "y": 0.34,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.88,
+        "y": 0.88,
+        "z": 0.88
+      },
+      "yawOffsetDeg": 9
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_POTTERY_NORTH",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_POTTERY",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_04"
+      ],
+      "offsetM": {
+        "x": 0.18,
+        "y": -0.48,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": -12
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BASKET_NORTH",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BASKET",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_04"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0.18,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.05,
+        "y": 1.05,
+        "z": 1.05
+      },
+      "yawOffsetDeg": 16
+    },
+    {
+      "id": "PLACE_SPICE_E_STOCK_BRASS_POT",
+      "clusterId": "CLUSTER_SPICE_EAST_WALLBASE_STOCK",
+      "assetId": "ASSET_CC0_BRASS_POT",
+      "anchorIds": [
+        "SPICE_E_WALLBASE_STOCK_04"
+      ],
+      "offsetM": {
+        "x": -0.12,
+        "y": 0.62,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
       "id": "PLACE_B4_FOUNTAIN_RUG",
       "clusterId": "CLUSTER_B4_FOUNTAIN_DRESSING",
       "assetId": "ASSET_GROUND_RUG",
@@ -4902,7 +5185,7 @@
     {
       "id": "PLACE_L34_DYERS_ALLEY_VATS",
       "clusterId": "CLUSTER_L34_DYERS_ALLEY_EDGE",
-      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "assetId": "ASSET_DYERS_WORKSTATION",
       "anchorIds": [
         "L34_DYERS_ALLEY_VAT_01",
         "L34_DYERS_ALLEY_VAT_02"
@@ -4913,11 +5196,11 @@
         "z": 0
       },
       "scale": {
-        "x": 0.76,
-        "y": 0.76,
-        "z": 0.76
+        "x": 1,
+        "y": 1,
+        "z": 1
       },
-      "yawOffsetDeg": -7
+      "yawOffsetDeg": 0
     },
     {
       "id": "PLACE_L34_DYERS_ALLEY_POTTERY",
@@ -5070,6 +5353,105 @@
         "z": 0.86
       },
       "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_CLOTH",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+      "anchorIds": [
+        "DYERS_E_RACK_01",
+        "DYERS_E_RACK_02",
+        "DYERS_E_RACK_03",
+        "DYERS_E_RACK_04"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 1.18
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_VESSEL",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+      "anchorIds": [
+        "DYERS_E_RACK_01",
+        "DYERS_E_RACK_03"
+      ],
+      "offsetM": {
+        "x": 0.08,
+        "y": -0.62,
+        "z": 0
+      },
+      "scale": {
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      },
+      "yawOffsetDeg": 11
+    },
+    {
+      "id": "PLACE_DYERS_E_RACK_VAT",
+      "clusterId": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
+      "assetId": "ASSET_DYERS_SEALED_VAT",
+      "anchorIds": [
+        "DYERS_E_RACK_04"
+      ],
+      "offsetM": {
+        "x": 0.02,
+        "y": 0.55,
+        "z": 0
+      },
+      "scale": {
+        "x": 0.94,
+        "y": 0.94,
+        "z": 0.94
+      },
+      "yawOffsetDeg": -7
+    },
+    {
+      "id": "PLACE_CARAVAN_LOAD_SHADE",
+      "clusterId": "CLUSTER_L34_CARAVAN_EDGE",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorIds": [
+        "CARAVAN_LOAD_SHADE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEA_TERRACE_SHADE",
+      "clusterId": "CLUSTER_TEA_SHADE",
+      "assetId": "ASSET_CLOTH_CANOPY",
+      "anchorIds": [
+        "TEA_TERRACE_SHADE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
     }
   ],
   "exterior_wall_patches": [
@@ -5161,7 +5543,7 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "macroLane": "main",
-      "floorMaterialId": "patterned_cobblestone",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 6,
       "notes": "Fountain Court authored walkable footprint."
@@ -5377,7 +5759,7 @@
       "surfaceId": "SURFACE_COVERED_SOUK",
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
-      "floorMaterialId": "red_sandstone_pavement",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "covered_arcade",
       "clearWidthM": 4.5,
       "notes": "Covered Dyers Souk authored walkable footprint."
@@ -5396,7 +5778,7 @@
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
       "floorMaterialId": "cobblestone_color",
-      "facadeProfileId": "quiet_residential",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "clearWidthM": 4.5,
       "notes": "Dyers Dogleg authored walkable footprint."
     },
@@ -5413,7 +5795,7 @@
       "surfaceId": "SURFACE_NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "macroLane": "east",
-      "floorMaterialId": "patterned_cobblestone",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 4.5,
       "notes": "North Court authored walkable footprint."
@@ -5613,6 +5995,54 @@
       "along": 0.7127976190476191,
       "inset_m": 1.06,
       "notes": "B.PL16 varied spice stock centered on dense-rhythm residential door GROUND_04 inside the east edge band."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_01",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "x": 32.15,
+      "y": 18.1,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 1.6,
+      "height_m": 0.8,
+      "notes": "Free east wall-base stock station between east openings GROUND_01 and GROUND_02; sits inside the 3 m east edge band and clear of the 6 m lane envelope."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_02",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "x": 32.05,
+      "y": 21.3,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 1.9,
+      "height_m": 0.9,
+      "notes": "Free east wall-base bin display between east openings GROUND_02 and GROUND_03, held at the wall edge."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_03",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "x": 32.2,
+      "y": 24.55,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 1.3,
+      "height_m": 0.7,
+      "notes": "Free east wall-base crate-and-sack station between east openings GROUND_03 and GROUND_04."
+    },
+    {
+      "id": "SPICE_E_WALLBASE_STOCK_04",
+      "type": "dressing_anchor",
+      "zone": "SPICE_STREET",
+      "x": 32,
+      "y": 27.8,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 1.6,
+      "height_m": 0.7,
+      "notes": "Free east wall-base pottery station between east openings GROUND_04 and GROUND_05."
     },
     {
       "id": "BPL16_SPICE_W_STOCK_GROUND_02",
@@ -6239,7 +6669,7 @@
       "z": 0,
       "width_m": 3,
       "height_m": 1.32,
-      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear."
+      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26\u201332 six-meter rotation lane clear."
     },
     {
       "id": "LMK_SPICE_DISTRICT",
@@ -6721,6 +7151,19 @@
       "notes": "L3.4 R4 zone-derived caravan pack-textile line spans opposing edge bands above a 3.5 m hem clearance, adding frame-scale loading identity without entering the 4.5 m court route."
     },
     {
+      "id": "CARAVAN_LOAD_SHADE_01",
+      "type": "cloth_canopy_span",
+      "zone": "CARAVAN_COURT",
+      "x": 4.2,
+      "y": 46.6,
+      "z": 4.5,
+      "end_x": 13.8,
+      "end_y": 46.6,
+      "end_z": 4.32,
+      "width_m": 2.2,
+      "notes": "Loading shade spanning the yard between the two ramp-approach piers, seated in both edge bands above the 4.5 m court route so the caravan bay finally has a supported cover."
+    },
+    {
       "id": "L34_TEA_STALL_01",
       "type": "dressing_anchor",
       "zone": "TEA_TERRACE",
@@ -6731,24 +7174,37 @@
       "notes": "L3.4 R3 authored terrace-edge override: a composite tea-market stall replaces the underscaled planter at the east service bay without entering the four-meter raised route."
     },
     {
+      "id": "TEA_TERRACE_SHADE_01",
+      "type": "cloth_canopy_span",
+      "zone": "TEA_TERRACE",
+      "x": 11.6,
+      "y": 62.4,
+      "z": 5.75,
+      "end_x": 18.4,
+      "end_y": 62.4,
+      "end_z": 5.65,
+      "width_m": 1.9,
+      "notes": "Tea terrace shade sail slung across the elevated route between both wall faces. Seated 4.2 m above the terrace surface so the hem stays clear of the 4 m route and every stair and landing below it. Narrowed to 1.9 m and lifted: at 3 m across a 4 m terrace the sail read as a ceiling rather than an awning, filling the upper third of the route camera and burying the tea frontage it is meant to shade."
+    },
+    {
       "id": "L34_DYERS_ALLEY_VAT_01",
       "type": "dressing_anchor",
       "zone": "DYERS_ALLEY",
-      "x": 52.45,
+      "x": 52.38,
       "y": 17,
       "z": 0,
       "yaw_deg": 270,
-      "notes": "L3.4 authored dyers edge-band override: a sealed vat occupies the east-wall service bay between generated pilasters, outside the 4.5 m clear lane."
+      "notes": "Dyers Alley process wall: hosts a wet workstation grounded in the east 1.25 m edge band. Rotated half-depth 0.62 m spans x 51.76-53.00, clear of the 4.5 m lane boundary at x=51.75 and flush to the wall."
     },
     {
       "id": "L34_DYERS_ALLEY_VAT_02",
       "type": "dressing_anchor",
       "zone": "DYERS_ALLEY",
-      "x": 52.45,
+      "x": 52.38,
       "y": 21,
       "z": 0,
       "yaw_deg": 270,
-      "notes": "L3.4 authored dyers edge-band override: the second seeded-scale vat sits four meters north on the same service datum, clear of openings and circulation."
+      "notes": "Dyers Alley process wall: hosts a wet workstation grounded in the east 1.25 m edge band. Rotated half-depth 0.62 m spans x 51.76-53.00, clear of the 4.5 m lane boundary at x=51.75 and flush to the wall."
     },
     {
       "id": "L34_DYERS_ALLEY_POTTERY_01",
@@ -6759,6 +7215,54 @@
       "z": 0,
       "yaw_deg": 270,
       "notes": "L3.4 authored dyers edge-band override: a ceramic process vessel closes the three-beat working-alley rhythm without entering the clear lane."
+    },
+    {
+      "id": "DYERS_E_RACK_01",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "x": 52.42,
+      "y": 13.4,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 2.25,
+      "height_m": 1.55,
+      "notes": "Dye rack station between the alley mouth and the first vat, held in the east edge band."
+    },
+    {
+      "id": "DYERS_E_RACK_02",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "x": 52.42,
+      "y": 19.1,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 2.25,
+      "height_m": 1.55,
+      "notes": "Dye rack station between the two authored vats."
+    },
+    {
+      "id": "DYERS_E_RACK_03",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "x": 52.42,
+      "y": 23.7,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 2.25,
+      "height_m": 1.55,
+      "notes": "Dye rack station north of the second vat."
+    },
+    {
+      "id": "DYERS_E_RACK_04",
+      "type": "dressing_anchor",
+      "zone": "DYERS_ALLEY",
+      "x": 52.42,
+      "y": 29.2,
+      "z": 0,
+      "yaw_deg": 270,
+      "width_m": 2.25,
+      "height_m": 1.55,
+      "notes": "Dye rack station approaching the Covered Souk threshold."
     },
     {
       "id": "L34_DOGLEG_WALL_RACK_01",
