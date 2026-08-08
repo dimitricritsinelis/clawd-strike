@@ -29,6 +29,34 @@
       }
     },
     {
+      "id": "spice_laid_stone_01",
+      "tileSizeM": 3.6,
+      "tintHex": "#c79b63",
+      "albedoBoost": 0.82,
+      "albedoGamma": 1.02,
+      "dustStrength": 0.1,
+      "roughness": 0.94,
+      "normalScale": 0.68,
+      "aoIntensity": 0.32,
+      "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+        },
+        "2k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
+        },
+        "4k": {
+          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
+          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
+          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
+        }
+      }
+    },
+    {
       "id": "grey_tiles",
       "tileSizeM": 3.5,
       "tintHex": "#c8c4be",
@@ -226,19 +254,14 @@
       "aoIntensity": 0.4,
       "textures": {
         "1k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+          "albedo": "./court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+          "arm": "./court_flagstone_01/court_flagstone_01_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
+          "albedo": "./court_flagstone_01/court_flagstone_01_diff_2k.jpg",
+          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_2k.jpg",
+          "arm": "./court_flagstone_01/court_flagstone_01_arm_2k.jpg"
         }
       }
     }

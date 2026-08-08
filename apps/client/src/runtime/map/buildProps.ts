@@ -2169,9 +2169,12 @@ function buildCompiledDressing(
       normalTextureUrl: "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
       armTextureUrl: "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
       // The apron geometry is world-UV'd at 1.25 m, so this repeat resolves the
-      // 4 m flagstone tile at the same size the court floor draws it. Any other
+      // 2.6 m coursed flagstone tile at the same size Fountain Court draws it.
+      // North Court deliberately keeps the broader 4.4 m limestone grid; using
+      // that scale here would collapse the two district floor identities again.
+      // Any other
       // value makes the apron read as a different, smaller paving.
-      textureRepeat: [0.3125, 0.3125],
+      textureRepeat: [0.4808, 0.4808],
       normalScale: 0.52,
       albedoBoost: 0.92,
       vertexColors: true,
@@ -2711,7 +2714,13 @@ function buildCompiledDressing(
     // seats the basin, and without it the apron's own octagonal mesh edge
     // becomes a hard dashed outline on the floor — a straight high-frequency
     // artifact that, unlike an over-soft wash, does not fall off with distance.
-    if (!centeredAtAnchor && placement.classification !== "overhead") {
+    // A ground rug is already the contact plane: it receives the shadows from
+    // the goods resting on it, while those goods retain their own compact
+    // contact decals. Giving the low-profile textile another 1.55x footprint
+    // stacks a broad rectangular wash beneath the whole cluster and exposes a
+    // hard grey apron beyond the rug edge in close review.
+    const isGroundRug = placement.runtime.id === "bazaar_ground_rug";
+    if (!centeredAtAnchor && placement.classification !== "overhead" && !isGroundRug) {
       const footprintM = Math.max(width, depth);
       if (footprintM >= 0.34) {
         batches.groundContact.instances.push({

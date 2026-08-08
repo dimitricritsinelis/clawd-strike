@@ -6,7 +6,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Zones: 25
 - Frontages: 33
 - Architecture placements: 141
-- Dressing placements: 99
+- Dressing placements: 126
 
 ## Facade Profiles
 
@@ -70,14 +70,28 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Family: `quiet_residential`
 - Massing: `MASSING_MID_MIXED`
-- Materials: wall `ph_whitewashed_brick_dusty`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
+- Materials: wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
 - Modules: `door_residential_timber`, `window_dark_recess`, `window_screened`, `blind_niche`, `pilaster_facade`
+
+### `quiet_residential_cut_stone` — Sun-bleached cut-limestone residential frontage
+
+- Family: `quiet_residential`
+- Massing: `MASSING_MID_MIXED`
+- Materials: wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_beige_001`
+- Modules: `door_residential_timber`, `window_dark_recess`, `window_screened`, `blind_niche`, `pilaster_facade`
+
+### `quiet_residential_cut_stone_pilaster_relief` — Coursed-limestone timber-closure relief
+
+- Family: `quiet_residential`
+- Massing: `MASSING_FRONTAGE_RELIEF`
+- Materials: wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_beige_001`
+- Modules: `timber_coverage_closure`, `pilaster_coverage`
 
 ### `quiet_residential_niche_coverage_relief` — Budgeted dusty single-niche coverage relief
 
 - Family: `quiet_residential`
 - Massing: `MASSING_FRONTAGE_RELIEF`
-- Materials: wall `ph_whitewashed_brick_dusty`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
+- Materials: wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
 - Modules: `blind_niche`, `pilaster_niche_coverage`
 
 ### `quiet_residential_ochre_niche_coverage_relief` — Budgeted aged-ochre single-niche coverage relief
@@ -105,14 +119,14 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Family: `quiet_residential`
 - Massing: `MASSING_FRONTAGE_RELIEF`
-- Materials: wall `ph_whitewashed_brick_dusty`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
+- Materials: wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
 - Modules: `timber_coverage_closure`, `pilaster_coverage`
 
 ### `quiet_residential_relief` — Dusty limewashed residential relief
 
 - Family: `quiet_residential`
 - Massing: `MASSING_FRONTAGE_RELIEF`
-- Materials: wall `ph_whitewashed_brick_dusty`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
+- Materials: wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_lime_soft`
 - Modules: `blind_niche`, `pilaster_facade`
 
 ### `quiet_residential_warmwash_niche_coverage_relief` — Budgeted warm-washed single-niche coverage relief
@@ -309,8 +323,8 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 ### `FRONTAGE_SERVICE_SOUTH_EAST`
 
 - Zone/face: `SERVICE_SOUTH` / `east`
-- Profile/massing: `quiet_residential_warmwash_niche_coverage_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:blind_niche@0.07`, `GROUND_02:pilaster_niche_coverage@0.36`, `GROUND_03:pilaster_niche_coverage@0.64`, `GROUND_04:pilaster_niche_coverage@0.93`
+- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `GROUND_01:timber_coverage_closure@0.07`, `GROUND_02:pilaster_coverage@0.36`, `GROUND_03:timber_coverage_closure@0.64`, `GROUND_04:timber_coverage_closure@0.93`
 - Compiled placements: `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_01`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_02`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_03`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_04`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_MASSING`
 
 ### `FRONTAGE_SPAWN_A_NORTH_EAST`
@@ -337,14 +351,14 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 ### `FRONTAGE_SPAWN_B_SOUTH_WEST`
 
 - Zone/face: `SPAWN_B_COURTYARD` / `south`
-- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
+- Profile/massing: `quiet_residential_cut_stone_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
 - Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
 - Compiled placements: `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_GROUND_01`, `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_MASSING`
 
 ### `FRONTAGE_SPICE_STREET_EAST`
 
 - Zone/face: `SPICE_STREET` / `east`
-- Profile/massing: `quiet_residential` / `MASSING_LOW_MERCHANT`
+- Profile/massing: `quiet_residential_cut_stone` / `MASSING_LOW_MERCHANT`
 - Explicit bays: `GROUND_01:door_residential_timber@0.07`, `GROUND_02:blind_niche@0.29`, `GROUND_03:door_residential_timber@0.50`, `GROUND_04:door_residential_timber@0.71`, `GROUND_05:blind_niche@0.93`
 - Compiled placements: `ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_01`, `ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_02`, `ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_03`, `ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_04`, `ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_05`, `ARCH_FRONTAGE_SPICE_STREET_EAST_MASSING`
 
@@ -386,6 +400,8 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_B4_SPICE_COVER_RUG_COVER_SPICE_01`: `ASSET_GROUND_RUG` at `COVER_SPICE_01` (23.00, 27.60, 0.00), size 2.25×1.36×0.04m, yaw 11.00deg
 - `PLACE_B4_TEXTILE_CART_BPL16_TEXTILE_E_STOCK_GROUND_04`: `ASSET_MARKET_CART` at `BPL16_TEXTILE_E_STOCK_GROUND_04` (33.95, 60.82, 0.00), size 1.27×0.80×0.94m, yaw 278.00deg
 - `PLACE_B6_SPICE_LAUNDRY_B6_LAUNDRY_SPICE_01`: `ASSET_LAUNDRY_LINE` at `B6_LAUNDRY_SPICE_01` (27.00, 18.16, 5.95), size 1.40×12.00×0.85m, yaw 90.00deg
+- `PLACE_B6_SPICE_LAUNDRY_B6_LAUNDRY_SPICE_02`: `ASSET_LAUNDRY_LINE` at `B6_LAUNDRY_SPICE_02` (27.00, 23.76, 6.00), size 1.55×12.00×0.85m, yaw 90.00deg
+- `PLACE_B6_SPICE_LAUNDRY_B6_LAUNDRY_SPICE_03`: `ASSET_LAUNDRY_LINE` at `B6_LAUNDRY_SPICE_03` (27.00, 28.75, 6.15), size 1.20×12.00×0.85m, yaw 90.00deg
 - `PLACE_B6_TEXTILE_LAUNDRY_B6_LAUNDRY_TEXTILE_01`: `ASSET_LAUNDRY_LINE` at `B6_LAUNDRY_TEXTILE_01` (29.50, 51.70, 6.15), size 1.35×11.00×0.85m, yaw 90.00deg
 - `PLACE_B6_TEXTILE_LAUNDRY_B6_LAUNDRY_TEXTILE_02`: `ASSET_LAUNDRY_LINE` at `B6_LAUNDRY_TEXTILE_02` (29.50, 58.69, 4.97), size 1.15×11.00×0.85m, yaw 90.00deg
 - `PLACE_B7_FOUNTAIN_MARKET_BASKET_B7_FOUNTAIN_MARKET_SPILL`: `ASSET_CC0_BASKET` at `B7_FOUNTAIN_MARKET_SPILL` (20.77, 37.50, 0.00), size 0.42×0.30×0.24m, yaw -22.00deg
@@ -400,11 +416,19 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_BPL19_FOUNTAIN_MARKET_STALL_B7_FOUNTAIN_MARKET_SPILL`: `ASSET_MARKET_STALL` at `B7_FOUNTAIN_MARKET_SPILL` (21.35, 37.10, 0.00), size 1.67×1.11×1.67m, yaw -18.00deg
 - `PLACE_CARAVAN_COVER_COVER_CARAVAN_01`: `ASSET_COVER_GOODS` at `COVER_CARAVAN_01` (5.00, 34.20, 0.00), size 1.50×0.75×1.00m, yaw 20.00deg
 - `PLACE_CARAVAN_LOAD_NORTH_LMK_CARAVAN_DISTRICT`: `ASSET_CARAVAN_LOAD_CRATE` at `LMK_CARAVAN_DISTRICT` (14.52, 46.12, 0.00), size 0.79×0.39×0.34m, yaw 9.00deg
+- `PLACE_CARAVAN_LOAD_SHADE_CARAVAN_LOAD_SHADE_01`: `ASSET_CLOTH_CANOPY` at `CARAVAN_LOAD_SHADE_01` (9.00, 46.60, 4.41), size 2.20×9.60×0.18m, yaw 90.00deg
 - `PLACE_CARAVAN_LOAD_SOUTH_LMK_CARAVAN_DISTRICT`: `ASSET_CARAVAN_LOAD_CRATE` at `LMK_CARAVAN_DISTRICT` (13.70, 45.92, 0.00), size 0.89×0.44×0.38m, yaw -7.00deg
 - `PLACE_CARAVAN_LOAD_TOP_LMK_CARAVAN_DISTRICT`: `ASSET_CARAVAN_LOAD_CRATE` at `LMK_CARAVAN_DISTRICT` (14.07, 46.00, 0.38), size 0.74×0.37×0.31m, yaw 4.00deg
 - `PLACE_DYERS_CANOPY_CANOPY_DYERS_01`: `ASSET_CLOTH_CANOPY` at `CANOPY_DYERS_01` (47.00, 45.36, 4.25), size 4.40×12.00×0.18m, yaw 90.00deg
 - `PLACE_DYERS_CERAMIC_VESSEL_LMK_DYERS_DISTRICT`: `ASSET_DYERS_CERAMIC_VESSEL` at `LMK_DYERS_DISTRICT` (43.42, 43.88, 0.00), size 0.56×0.43×0.32m, yaw -12.00deg
 - `PLACE_DYERS_COVER_COVER_DYERS_01`: `ASSET_COVER_GOODS` at `COVER_DYERS_01` (50.50, 43.60, 0.00), size 1.50×0.75×1.00m, yaw 75.00deg
+- `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_01`: `ASSET_DYERS_HANGING_TEXTILES` at `DYERS_E_RACK_01` (52.42, 13.40, 1.18), size 2.25×0.16×1.55m, yaw 270.00deg
+- `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_02`: `ASSET_DYERS_HANGING_TEXTILES` at `DYERS_E_RACK_02` (52.42, 19.10, 1.18), size 2.25×0.16×1.55m, yaw 270.00deg
+- `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_03`: `ASSET_DYERS_HANGING_TEXTILES` at `DYERS_E_RACK_03` (52.42, 23.70, 1.18), size 2.25×0.16×1.55m, yaw 270.00deg
+- `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_04`: `ASSET_DYERS_HANGING_TEXTILES` at `DYERS_E_RACK_04` (52.42, 29.20, 1.18), size 2.25×0.16×1.55m, yaw 270.00deg
+- `PLACE_DYERS_E_RACK_VAT_DYERS_E_RACK_04`: `ASSET_DYERS_SEALED_VAT` at `DYERS_E_RACK_04` (52.44, 29.75, 0.00), size 0.70×0.71×0.82m, yaw 263.00deg
+- `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_01`: `ASSET_DYERS_CERAMIC_VESSEL` at `DYERS_E_RACK_01` (52.50, 12.78, 0.00), size 0.66×0.50×0.37m, yaw 281.00deg
+- `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_03`: `ASSET_DYERS_CERAMIC_VESSEL` at `DYERS_E_RACK_03` (52.50, 23.08, 0.00), size 0.66×0.50×0.37m, yaw 281.00deg
 - `PLACE_DYERS_LANTERN_LANTERN_DYERS_01`: `ASSET_CC0_LANTERN` at `LANTERN_DYERS_01` (52.50, 40.50, 4.10), size 0.22×0.23×0.53m, yaw 270.00deg
 - `PLACE_DYERS_SIGNS_DYE_E_SIGN_1`: `ASSET_SIGNBOARD` at `DYE_E_SIGN_1` (52.88, 40.00, 3.85), size 2.20×0.12×0.38m, yaw 270.00deg
 - `PLACE_DYERS_SIGNS_DYE_E_SIGN_2`: `ASSET_SIGNBOARD` at `DYE_E_SIGN_2` (52.88, 44.82, 3.85), size 2.20×0.12×0.38m, yaw 270.00deg
@@ -424,8 +448,8 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_L34_DOGLEG_WALL_RACK_L34_DOGLEG_WALL_RACK_01`: `ASSET_DYERS_HANGING_TEXTILES` at `L34_DOGLEG_WALL_RACK_01` (46.18, 60.40, 1.18), size 2.36×0.17×1.63m, yaw 90.00deg
 - `PLACE_L34_DOGLEG_WORKSTATION_L34_DOGLEG_WORKSTATION_01`: `ASSET_DYERS_WORKSTATION` at `L34_DOGLEG_WORKSTATION_01` (46.60, 60.30, 0.00), size 2.80×1.45×2.20m, yaw 90.00deg
 - `PLACE_L34_DYERS_ALLEY_POTTERY_L34_DYERS_ALLEY_POTTERY_01`: `ASSET_DYERS_CERAMIC_VESSEL` at `L34_DYERS_ALLEY_POTTERY_01` (52.45, 26.50, 0.00), size 0.54×0.41×0.31m, yaw 280.00deg
-- `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_01`: `ASSET_DYERS_SEALED_VAT` at `L34_DYERS_ALLEY_VAT_01` (52.45, 17.00, 0.00), size 0.56×0.57×0.66m, yaw 263.00deg
-- `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_02`: `ASSET_DYERS_SEALED_VAT` at `L34_DYERS_ALLEY_VAT_02` (52.45, 21.00, 0.00), size 0.56×0.57×0.66m, yaw 263.00deg
+- `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_01`: `ASSET_DYERS_WORKSTATION` at `L34_DYERS_ALLEY_VAT_01` (52.38, 17.00, 0.00), size 2.80×1.45×2.20m, yaw 270.00deg
+- `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_02`: `ASSET_DYERS_WORKSTATION` at `L34_DYERS_ALLEY_VAT_02` (52.38, 21.00, 0.00), size 2.80×1.45×2.20m, yaw 270.00deg
 - `PLACE_L34_NORTH_PLANTER_EAST_L34_NORTH_PLANTER_EAST`: `ASSET_COURT_PLANTER` at `L34_NORTH_PLANTER_EAST` (52.00, 76.20, 0.00), size 0.90×0.90×1.03m, yaw 11.00deg
 - `PLACE_L34_NORTH_WORKSTATION_02_L34_NORTH_WORKSTATION_02`: `ASSET_DYERS_WORKSTATION` at `L34_NORTH_WORKSTATION_02` (42.10, 77.00, 0.00), size 2.94×1.52×2.31m, yaw 90.00deg
 - `PLACE_L34_SERVICE_SOUTH_BASKET_L34_SERVICE_SOUTH_BASKET_01`: `ASSET_CC0_BASKET` at `L34_SERVICE_SOUTH_BASKET_01` (9.50, 20.70, 0.00), size 0.41×0.29×0.24m, yaw 262.00deg
@@ -448,12 +472,28 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_RUG_SIGNS_RUG_W_SIGN_1`: `ASSET_SIGNBOARD` at `RUG_W_SIGN_1` (21.12, 66.92, 3.32), size 2.20×0.12×0.38m, yaw 90.00deg
 - `PLACE_RUG_SIGNS_RUG_W_SIGN_2`: `ASSET_SIGNBOARD` at `RUG_W_SIGN_2` (21.12, 70.20, 3.32), size 2.20×0.12×0.38m, yaw 90.00deg
 - `PLACE_SPAWN_A_COVER_SPAWN_A_COVER_01`: `ASSET_SPAWN_COVER` at `SPAWN_A_COVER_01` (20.20, 5.20, 0.00), size 2.20×1.10×1.30m, yaw 0.00deg
+- `PLACE_SPAWN_A_EAST_WORKS_LMK_SPAWN_A_EAST_WORKS_01`: `ASSET_SPAWN_A_EAST_DYE_WORKS` at `LMK_SPAWN_A_EAST_WORKS_01` (38.20, 4.00, 0.00), size 8.00×2.40×12.80m, yaw 90.00deg
+- `PLACE_SPAWN_A_EXIT_EAST_LMK_SPAWN_A_EXIT_EAST_01`: `ASSET_SPAWN_A_EXIT_EAST_RETURN` at `LMK_SPAWN_A_EXIT_EAST_01` (36.25, 13.00, 0.00), size 5.50×2.00×7.60m, yaw 180.00deg
+- `PLACE_SPAWN_A_EXIT_WEST_LMK_SPAWN_A_EXIT_WEST_01`: `ASSET_SPAWN_A_EXIT_WEST_RETURN` at `LMK_SPAWN_A_EXIT_WEST_01` (18.75, 13.00, 0.00), size 3.50×2.00×7.60m, yaw 180.00deg
+- `PLACE_SPAWN_A_GATE_LMK_SPAWN_A_GATE_01`: `ASSET_SPAWN_A_GATE` at `LMK_SPAWN_A_GATE_01` (28.00, 0.85, 0.00), size 21.90×2.20×12.00m, yaw 180.00deg
+- `PLACE_SPAWN_A_WEST_BACKS_LMK_SPAWN_A_WEST_BACKS_01`: `ASSET_SPAWN_A_WEST_BACKS` at `LMK_SPAWN_A_WEST_BACKS_01` (17.80, 4.00, 0.00), size 8.00×2.20×9.80m, yaw 270.00deg
 - `PLACE_SPAWN_B_COVER_SPAWN_B_COVER_01`: `ASSET_SPAWN_COVER` at `SPAWN_B_COVER_01` (35.20, 86.00, 0.00), size 2.20×1.10×1.30m, yaw 180.00deg
 - `PLACE_SPICE_BARREL_COVER_SPICE_01`: `ASSET_CC0_BARREL` at `COVER_SPICE_01` (21.90, 27.65, 0.00), size 0.67×0.68×0.78m, yaw 9.00deg
 - `PLACE_SPICE_BASKET_COVER_SPICE_01`: `ASSET_CC0_BASKET` at `COVER_SPICE_01` (23.78, 27.98, 0.00), size 0.38×0.27×0.22m, yaw 27.00deg
 - `PLACE_SPICE_CANOPIES_CANOPY_SPICE_01`: `ASSET_CLOTH_CANOPY` at `CANOPY_SPICE_01` (27.00, 20.58, 5.67), size 3.60×12.00×0.18m, yaw 90.00deg
 - `PLACE_SPICE_CANOPIES_CANOPY_SPICE_02`: `ASSET_CLOTH_CANOPY` at `CANOPY_SPICE_02` (27.00, 26.48, 5.67), size 3.20×12.00×0.18m, yaw 90.00deg
 - `PLACE_SPICE_COVER_CORE_COVER_SPICE_01`: `ASSET_COVER_GOODS` at `COVER_SPICE_01` (23.00, 27.60, 0.00), size 1.50×0.75×1.00m, yaw 15.00deg
+- `PLACE_SPICE_E_STOCK_BASKET_MID_SPICE_E_WALLBASE_STOCK_02`: `ASSET_CC0_BASKET` at `SPICE_E_WALLBASE_STOCK_02` (31.89, 22.10, 0.00), size 0.38×0.27×0.22m, yaw 262.00deg
+- `PLACE_SPICE_E_STOCK_BASKET_NORTH_SPICE_E_WALLBASE_STOCK_04`: `ASSET_CC0_BASKET` at `SPICE_E_WALLBASE_STOCK_04` (32.00, 27.98, 0.00), size 0.39×0.28×0.23m, yaw 286.00deg
+- `PLACE_SPICE_E_STOCK_BINS_SPICE_E_WALLBASE_STOCK_02`: `ASSET_SPICE_GOODS` at `SPICE_E_WALLBASE_STOCK_02` (32.21, 21.30, 0.00), size 1.50×0.75×0.85m, yaw 270.00deg
+- `PLACE_SPICE_E_STOCK_BRASS_POT_SPICE_E_WALLBASE_STOCK_04`: `ASSET_CC0_BRASS_POT` at `SPICE_E_WALLBASE_STOCK_04` (31.88, 28.42, 0.00), size 0.30×0.30×0.29m, yaw 270.00deg
+- `PLACE_SPICE_E_STOCK_CRATE_BASE_SPICE_E_WALLBASE_STOCK_01`: `ASSET_DECORATIVE_CRATE` at `SPICE_E_WALLBASE_STOCK_01` (32.25, 17.76, 0.00), size 0.83×0.41×0.35m, yaw 275.00deg
+- `PLACE_SPICE_E_STOCK_CRATE_MID_SPICE_E_WALLBASE_STOCK_03`: `ASSET_DECORATIVE_CRATE` at `SPICE_E_WALLBASE_STOCK_03` (32.25, 24.11, 0.00), size 0.78×0.38×0.33m, yaw 264.00deg
+- `PLACE_SPICE_E_STOCK_CRATE_STACK_SPICE_E_WALLBASE_STOCK_01`: `ASSET_DECORATIVE_CRATE` at `SPICE_E_WALLBASE_STOCK_01` (32.17, 17.81, 0.35), size 0.71×0.35×0.30m, yaw 259.00deg
+- `PLACE_SPICE_E_STOCK_POTTERY_NORTH_SPICE_E_WALLBASE_STOCK_04`: `ASSET_CC0_POTTERY` at `SPICE_E_WALLBASE_STOCK_04` (32.18, 27.32, 0.00), size 0.66×0.50×0.37m, yaw 258.00deg
+- `PLACE_SPICE_E_STOCK_POTTERY_SOUTH_SPICE_E_WALLBASE_STOCK_01`: `ASSET_CC0_POTTERY` at `SPICE_E_WALLBASE_STOCK_01` (32.10, 18.65, 0.00), size 0.62×0.48×0.35m, yaw 284.00deg
+- `PLACE_SPICE_E_STOCK_SACK_SPICE_E_WALLBASE_STOCK_03`: `ASSET_CC0_SPICE_SACK` at `SPICE_E_WALLBASE_STOCK_03` (32.14, 24.89, 0.00), size 0.47×0.47×0.44m, yaw 279.00deg
+- `PLACE_SPICE_GATE_LMK_SPICE_GATE_01`: `ASSET_SPICE_GATE` at `LMK_SPICE_GATE_01` (27.00, 14.95, 0.00), size 12.80×1.90×9.10m, yaw 180.00deg
 - `PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT`: `ASSET_CC0_BRASS_POT` at `LMK_SPICE_DISTRICT` (22.03, 22.55, 0.00), size 0.30×0.30×0.29m, yaw 82.00deg
 - `PLACE_SPICE_LANDMARK_GOODS_LMK_SPICE_DISTRICT`: `ASSET_SPICE_GOODS` at `LMK_SPICE_DISTRICT` (21.68, 23.00, 0.00), size 1.50×0.75×0.85m, yaw 90.00deg
 - `PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT`: `ASSET_CC0_SPICE_SACK` at `LMK_SPICE_DISTRICT` (22.03, 23.45, 0.00), size 0.48×0.48×0.45m, yaw 84.00deg
@@ -472,6 +512,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_TEA_STOOL_WEST_NORTH_LMK_TEA_TERRACE_01`: `ASSET_CC0_TEA_STOOL` at `LMK_TEA_TERRACE_01` (16.45, 61.75, 1.40), size 0.38×0.41×0.58m, yaw 110.00deg
 - `PLACE_TEA_STOOL_WEST_SOUTH_LMK_TEA_TERRACE_01`: `ASSET_CC0_TEA_STOOL` at `LMK_TEA_TERRACE_01` (16.45, 60.85, 1.40), size 0.38×0.41×0.58m, yaw 70.00deg
 - `PLACE_TEA_TABLE_LMK_TEA_TERRACE_01`: `ASSET_CC0_TEA_TABLE` at `LMK_TEA_TERRACE_01` (17.15, 61.30, 1.40), size 1.13×0.71×0.80m, yaw 90.00deg
+- `PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01`: `ASSET_CLOTH_CANOPY` at `TEA_TERRACE_SHADE_01` (15.00, 62.40, 5.70), size 1.90×6.80×0.18m, yaw 90.00deg
 - `PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01`: `ASSET_CLOTH_CANOPY` at `CANOPY_TEXTILE_01` (29.50, 54.39, 4.20), size 4.00×11.00×0.18m, yaw 90.00deg
 - `PLACE_TEXTILE_COVER_COVER_TEXTILE_01`: `ASSET_COVER_GOODS` at `COVER_TEXTILE_01` (32.60, 58.20, 0.00), size 1.50×0.75×1.00m, yaw 90.00deg
 - `PLACE_TEXTILE_LANTERN_LANTERN_TEXTILE_01`: `ASSET_CC0_LANTERN` at `LANTERN_TEXTILE_01` (24.45, 55.20, 4.15), size 0.22×0.23×0.53m, yaw 90.00deg

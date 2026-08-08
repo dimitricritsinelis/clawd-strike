@@ -2151,6 +2151,7 @@ export function renderCompiledV3LayoutReference(compiledSpec) {
   );
   const floorColors = new Map([
     ["large_sandstone_blocks_01", "#d6b77c"],
+    ["spice_laid_stone_01", "#bd9258"],
     ["cobblestone_pavement", "#a88b67"],
   ]);
   for (const zone of compiledSpec.zones) {

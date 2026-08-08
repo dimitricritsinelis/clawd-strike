@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "3c7497365d36f94edc08b1e8efe20fff52c68df7bd60775f1fdb4ddc8f85c918",
+    "sha256": "cab7142648e76c24fded4844e4dd77ad4dfabc16f206af2d4aa724062890773a",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -367,7 +367,7 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "macroLane": "main",
-      "floorMaterialId": "court_limestone_flags_01",
+      "floorMaterialId": "patterned_cobblestone",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 6
     },
@@ -637,7 +637,7 @@
       "surfaceId": "SURFACE_SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "macroLane": "main",
-      "floorMaterialId": "large_sandstone_blocks_01",
+      "floorMaterialId": "spice_laid_stone_01",
       "facadeProfileId": "active_merchant",
       "clearWidthM": 6
     },

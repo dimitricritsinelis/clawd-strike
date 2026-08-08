@@ -20,6 +20,7 @@ const INCLUDED_ZONE_TYPES = new Set([
 
 export type FloorMaterialId =
   | "large_sandstone_blocks_01"
+  | "spice_laid_stone_01"
   | "grey_tiles"
   | "cobblestone_pavement"
   | "cobblestone_color"
@@ -114,6 +115,7 @@ type BuildPbrFloorsOptions = {
 
 const MATERIAL_ORDER: FloorMaterialId[] = [
   "large_sandstone_blocks_01",
+  "spice_laid_stone_01",
   "grey_tiles",
   "cobblestone_pavement",
   "cobblestone_color",
@@ -136,6 +138,11 @@ const FLOOR_MACRO_SETTINGS: Record<
     colorAmplitude: 0.17,
     roughnessAmplitude: 0.15,
     frequency: 0.05,
+  },
+  spice_laid_stone_01: {
+    colorAmplitude: 0.08,
+    roughnessAmplitude: 0.06,
+    frequency: 0.045,
   },
   grey_tiles: {
     colorAmplitude: 0.03,

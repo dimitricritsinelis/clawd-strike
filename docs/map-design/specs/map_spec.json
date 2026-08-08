@@ -5525,7 +5525,7 @@
       "surfaceId": "SURFACE_SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "macroLane": "main",
-      "floorMaterialId": "large_sandstone_blocks_01",
+      "floorMaterialId": "spice_laid_stone_01",
       "facadeProfileId": "active_merchant",
       "clearWidthM": 6,
       "notes": "Spice Street authored walkable footprint."
@@ -5543,7 +5543,7 @@
       "surfaceId": "SURFACE_FOUNTAIN_COURT",
       "districtId": "DISTRICT_FOUNTAIN",
       "macroLane": "main",
-      "floorMaterialId": "court_limestone_flags_01",
+      "floorMaterialId": "patterned_cobblestone",
       "facadeProfileId": "hero_courtyard",
       "clearWidthM": 6,
       "notes": "Fountain Court authored walkable footprint."

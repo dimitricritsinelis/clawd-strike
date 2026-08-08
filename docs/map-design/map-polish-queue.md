@@ -264,7 +264,7 @@ median (403 / 1.240M / 6.9 ms mobile), below the authorized 12.5 ms ceiling. Evi
 
 ## P7 - Floor system rebuild
 
-- [ ] Complete
+- [x] Complete
 - Boundary: Lane and court floor materials, macro variation, and zone transitions map-wide.
 - Primary camera: `SHOT_14_CLOSEUP_PROP_GROUNDING`
 - Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_10_NORTH_COURT`, `SHOT_06_CARAVAN_RAMP`
@@ -280,6 +280,23 @@ Direction:
 - Likely ownership: `apps/client/src/runtime/map/buildPbrFloors.ts`; `apps/client/src/runtime/map/floorWearDecals.ts`; texture pack manifests; `apps/client/src/runtime/render/materials/FloorMaterialLibrary.ts`
 
 Complete when: Floors show a laid-stone identity per district with no visible repeat pattern or unauthored hard seam in the cameras.
+
+Done 2026-08-08. The accepted fixed set separates the reviewed districts into three deliberate
+laid-stone systems: Spice Street now owns a warmer, larger-scale `spice_laid_stone_01`; Fountain Court
+uses the tighter coursed flagstone scale; and North Court keeps the calmer broad limestone grid. The
+court manifest now points at the project-owned `court_flagstone_01` source with an honest 2k fallback
+instead of reusing the lane cobble, while the fountain apron matches its surrounding paving scale.
+The prop-grounding closeup also lost the broad grey contact wash beneath its low-profile rug; the rug
+still receives the real shadows and the goods retain their compact contact decals.
+
+Blind review preferred the final Spice pass and marked all four fixed cameras PASS: `SHOT_14` gained a
+clear warm laid-stone identity without an obvious repeat, and `SHOT_03`, `SHOT_10`, and `SHOT_06`
+retained their accepted seams and district identities. `pnpm typecheck`, map generation checks, the
+focused material/contact regressions, and all twelve canonical final traversal checks pass. The
+completion gate passed all three routes and sixteen cameras at 850 desktop draws, 2.110M triangles,
+and 7.4 ms median (403 / 1.240M / 7.2 ms mobile). Evidence:
+`artifacts/playwright/map-shots/P7-a6/` and
+`artifacts/playwright/completion-gate/2026-08-08T19-09-02-453Z/`.
 
 ## P8 - Water and vegetation
 

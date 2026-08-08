@@ -234,6 +234,27 @@ async function buildCoverGoodsResult() {
   });
 }
 
+async function buildSpiceCoverClusterResult() {
+  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
+  const raw = JSON.parse(await readFile(specUrl, "utf8"));
+  const blockout = parseBlockoutSpec(raw, specUrl.pathname);
+  blockout.dressingPlacements = (blockout.dressingPlacements ?? []).filter((placement) => (
+    placement.clusterId === "CLUSTER_SPICE_COVER"
+  ));
+  const anchors = parseAnchorsSpec(raw, specUrl.pathname);
+  anchors.anchors = anchors.anchors.filter((anchor) => anchor.id === "COVER_SPICE_01");
+  return buildProps({
+    mapId: blockout.mapId,
+    blockout,
+    anchors,
+    seedOverride: 73,
+    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
+    propVisuals: "bazaar",
+    propModels: createPropModelFixture(),
+    highVis: false,
+  });
+}
+
 async function buildRugGateFixture() {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
@@ -669,6 +690,20 @@ test("cover goods preserve the authored hard collider while adding sacks and a f
   assert.equal(tarpMaterial.emissiveMap, null, "closeup cover cloth regained a flattening emissive copy");
   assert.equal(tarpMaterial.emissiveIntensity, 0);
   assert.ok(root.getObjectByName("market-stall-goods-cc0_spice_sack"), "cover sack is missing");
+});
+
+test("ground rugs receive cluster shadows without stacking a generic contact apron", async () => {
+  const result = await buildSpiceCoverClusterResult();
+  const root = result.root.getObjectByName("map-props-v3-compiled")!;
+  const contacts = mesh(root, "v3-prop-ground-contact");
+  assert.equal(
+    contacts.count,
+    4,
+    "the low-profile rug should not add a fifth broad contact decal beneath the grounded goods",
+  );
+  const rug = mesh(root, "v3-main-lane-ground-rugs");
+  assert.equal(rug.count, 1);
+  assert.equal(rug.receiveShadow, true, "rug must retain the real shadows and contacts from the goods above it");
 });
 
 test("merchant signs use painted fields with symmetric emblems instead of placeholder strokes", async () => {
