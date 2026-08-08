@@ -388,6 +388,29 @@ Direction:
 
 Complete when: The establishing view reads as one coherent old city under the wave's light, and all captures — including the merchant-facade closeup — still pass.
 
+Stalled 2026-08-08 — no revision was retained. Two separable rounds failed to produce a clear
+fixed-set improvement and were fully restored, triggering the map-polish stop rule. The first moved
+playable roofs into restrained construction-family tint bands and reduced the background roof deck
+to the existing worn-plaster pair; blind review preferred the baseline in `SHOT_01` because the
+result became one dark embossed roof carpet, while `SHOT_02` and `SHOT_12` were visual ties. The
+second kept the perimeter's exact primitive, triangle, material, texture, and draw budgets while
+recomposing its forty two-box service clusters as broad roof hatches and enlarging the sixteen
+existing instanced tanks. The critic found a narrow top-down occupation gain but rejected it as too
+minor and token-like; all three ground/close cameras were ties. It too was restored.
+
+The remaining gap is structural integration: the 120-shell belt still reads as repeated capped
+boxes with low, nearly flat eye-level rooflines, sparse believable occupation, no perimeter shadow
+layering, and an abrupt transition to featureless beige surround. The existing `Fog(82, 190)` was
+left alone because bringing it forward enough to separate the belt would also fog the primary
+camera's ground from its 95 m elevation. Likewise, simply enabling belt shadow casting would not
+work: the sun shadow fit excludes the distant belt, and expanding its 4k bounds would trade away
+resolution across every accepted playable-map camera. A future owner-approved rebuild should start
+with a lean, explicitly budgeted skyline/massing plan rather than another palette adjustment or
+token roof marks. Evidence: `artifacts/playwright/map-shots/P10-before/` (with the exact-state
+`SHOT_13` fallback in `P9-final/`), `artifacts/playwright/map-shots/P10-a1/`, and
+`artifacts/playwright/map-shots/P10-a2/`; the rejected A2 set itself passed all four capture checks in
+one run.
+
 ## After the last card
 
 Run `pnpm qa:completion`, recapture the wave review set — `SHOT_01`–`SHOT_16` plus `AUDIT_01`–`AUDIT_07` (23 cameras, selected via explicit `SHOT_IDS`) — and stop for owner review. That review is the only owner stop in the wave, and it also decides any cards noted as stalled.
