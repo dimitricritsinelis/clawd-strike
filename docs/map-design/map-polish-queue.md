@@ -104,6 +104,26 @@ Direction:
 
 Complete when: No camera shows a flat featureless door slab; every visible door reads as a built, hung assembly.
 
+Stalled 2026-08-08 — partial, and the accepted work is kept: a blind review preferred the result on
+three of the four cameras and found none worse. What landed: the leaf and the reveal now carry
+separate tints, so the jambs and head read as a mouth while the leaf sits at timber value instead of
+absorbing the doorway's darkness into its own albedo (which had crushed every board, rail and fitting
+to the same near-black); strap hinges with pintles on the hanging stile; joinery layers spread across
+the depth envelope so the frame stands ~12 mm proud of the boards rather than 5.6 mm; and a wider
+board-tone spread. The hero door in `SHOT_13` now reads as framed, rail-divided and hung.
+
+Remaining gap: the leaf FACES are still flat. Measured, a leaf panel varies about ±2/255 across its
+whole area, so neither the plank vertex tones nor the board relief in
+`createPaneledDoorGeometry` reach the render at all — three separate changes to those tones and
+offsets moved the rendered leaf by nothing, while changes to the same geometry's hardware and framing
+showed up immediately. That points at the vertex-colour or per-instance-tint path for the
+`door_panel_*` buckets rather than at the geometry, and it is the thing to establish first. Worst
+cases: the `AUDIT_03` centre-left double gate and the narrow gate right of it (both
+`timber_coverage_closure`), and the `SHOT_08` background doors. One caution recorded on the way: the
+first version of the strap hinges used 8-segment cylinder pintles and stalled the runtime's first
+frame — `SHOT_13` froze at frameCounter 16 and failed camera verification. This family instances
+across every frontage, so its per-leaf part count is the budget that matters.
+
 ## P4 - Canopy, awning, and textile system
 
 - [ ] Complete

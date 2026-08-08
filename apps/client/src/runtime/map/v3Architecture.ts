@@ -3863,6 +3863,28 @@ function pushDoor(
   // Giving these openings real depth means cutting actual voids in the massing
   // and lining them, not repositioning the leaf.
   const doorPlaneInwardM = experimentalVisualCutouts ? -0.04 : 0.045;
+  const doorVariant = stableUnitInterval(`${placement.id}:door-variant`);
+  // Darkened from 0x7a563f / 0x675b4d / 0x806a47. Because the leaf is an applied
+  // panel on unbroken wall rather than a leaf inside a void (see the note on
+  // doorPlaneInwardM), it catches the same light as the masonry around it and
+  // read as a pale rectangle: the primary camera measured that doorway at mean
+  // luminance 84 where the target reads 49. A real door mouth is the darkest
+  // thing on a sunlit frontage, so until the openings are actually cut the leaf
+  // has to carry that value in its albedo instead of getting it from occlusion.
+  //
+  // Two tints, not one. The single dark value used before was set to make an
+  // un-occluded leaf carry a doorway's darkness in its own albedo, and it did —
+  // but it took the leaf's construction with it: measured on the primary camera
+  // the leaf sat at luma 16, saturation 0.235, with a 14-value spread, so boards,
+  // rails, muntin and hardware were all the same near-black and the family read
+  // as a flat slab. The reveal keeps that dark value, since the jambs and head
+  // are what should read as a mouth; the leaf goes back to timber so its
+  // construction can be seen against them.
+  const doorRevealTintHex = doorVariant < 0.34
+    ? 0x3f2c20
+    : doorVariant < 0.67
+      ? 0x352f27
+      : 0x423624;
   if (experimentalVisualCutouts) {
     const revealJambWidthM = family === "hero_courtyard" ? 0.11 : 0.085;
     for (const side of [-1, 1] as const) {
@@ -3880,6 +3902,7 @@ function pushDoor(
         scale: { x: revealJambWidthM, y: placement.sizeM.height, z: revealDepthM },
         yawRad,
         trimMaterialId: frameMaterialId,
+        detailTintHex: doorRevealTintHex,
       });
     }
     pushInstance(instances, {
@@ -3897,6 +3920,7 @@ function pushDoor(
       scale: { x: placement.sizeM.width, y: revealJambWidthM, z: revealDepthM },
       yawRad,
       trimMaterialId: frameMaterialId,
+      detailTintHex: doorRevealTintHex,
     });
   }
   if (fortified && fortifiedDoorModelAvailable) {
@@ -3929,19 +3953,11 @@ function pushDoor(
   // grade. A flush-size leaf exposes a light sliver wherever the cutout and
   // frame rasterize on adjacent planes.
   const leafSeatOverlapM = 0.07;
-  const doorVariant = stableUnitInterval(`${placement.id}:door-variant`);
-  // Darkened from 0x7a563f / 0x675b4d / 0x806a47. Because the leaf is an applied
-  // panel on unbroken wall rather than a leaf inside a void (see the note on
-  // doorPlaneInwardM), it catches the same light as the masonry around it and
-  // read as a pale rectangle: the primary camera measured that doorway at mean
-  // luminance 84 where the target reads 49. A real door mouth is the darkest
-  // thing on a sunlit frontage, so until the openings are actually cut the leaf
-  // has to carry that value in its albedo instead of getting it from occlusion.
   const doorTintHex = doorVariant < 0.34
-    ? 0x3f2c20
+    ? 0x6b4a33
     : doorVariant < 0.67
-      ? 0x352f27
-      : 0x423624;
+      ? 0x5b4c3c
+      : 0x70573a;
   pushInstance(instances, {
     placementId: placement.id,
     moduleId: placement.moduleId,
@@ -3980,7 +3996,7 @@ function pushDoor(
     yawRad,
     frameMaterialId,
     fortified ? "fortified_gate" : `${family}_door_frame`,
-    { ...frameDimensions, tintHex: doorTintHex },
+    { ...frameDimensions, tintHex: doorRevealTintHex },
   );
 
   // A lighter inset frame sits proud of the alternating plank leaf. These
