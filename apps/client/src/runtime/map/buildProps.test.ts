@@ -1033,9 +1033,10 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
 test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
   const { placement, result, root } = await buildRugGateFixture();
   assert.equal(result.colliders.length, 0, "visual Rug Gate placement introduced gameplay collision");
-  assert.equal(root.children.length, 8, "Rug Gate draw families drifted from its open arch, four-batch textile kit and ground contact");
+  assert.equal(root.children.length, 9, "Rug Gate draw families drifted from its open arch, tiled crown, four-batch textile kit and ground contact");
   assert.equal(mesh(root, "v3-rug-gate-pillars").count, 2);
   assert.equal(mesh(root, "v3-rug-gate-crown").count, 1);
+  assert.equal(mesh(root, "v3-rug-gate-crown-inlay").count, 1);
   assert.equal(mesh(root, "v3-rug-gate-cool-textile-kit").count, 1);
   assert.equal(mesh(root, "v3-rug-gate-cool-timber-kit").count, 1);
   assert.equal(mesh(root, "v3-rug-gate-warm-textile-kit").count, 1);
@@ -1078,7 +1079,12 @@ test("Rug Gate stays collider-neutral and inside its exact authored telemetry en
     const triangles = (batch.geometry.index?.count ?? batch.geometry.getAttribute("position").count) / 3;
     return total + triangles * batch.count;
   }, 0);
-  assert.ok(renderedTriangles <= 4_200, `Rug Gate exceeded its focused triangle budget: ${renderedTriangles}`);
+  // P6's authored tiled crown adds a separate glazed inlay surface and stone
+  // bezels. The fixed hero camera clearly kept that material separation, so
+  // the queue's pre-approved geometry waiver raises only this measured gate
+  // ceiling (5,118 triangles at acceptance), with final performance still
+  // required to remain below the 12.5 ms completion median.
+  assert.ok(renderedTriangles <= 5_200, `Rug Gate exceeded its focused triangle budget: ${renderedTriangles}`);
 });
 
 test("Rug Gate spans the lane with a pointed crown, wall-buried returns, and no fake floor threshold", async () => {
@@ -1122,9 +1128,13 @@ test("Rug Gate spans the lane with a pointed crown, wall-buried returns, and no 
 
   const pillarMaterial = pillars.material as MeshStandardMaterial;
   const crownMaterial = crown.material as MeshStandardMaterial;
+  const inlay = mesh(root, "v3-rug-gate-crown-inlay");
+  const inlayMaterial = inlay.material as MeshStandardMaterial;
   assert.ok(pillarMaterial.map, "pillar PBR sandstone was disconnected");
   assert.ok(crownMaterial.map, "crown PBR sandstone was disconnected");
   assert.ok(crownMaterial.roughness >= 0.85, "Rug Gate crown lost its weathered sandstone response");
+  assert.ok(inlayMaterial.map instanceof DataTexture, "Rug Gate inlay lost its deterministic glazed-tile surface");
+  assert.ok(inlayMaterial.roughness >= 0.5, "Rug Gate inlay regained a synthetic glossy decal response");
   const pillarColors = uniqueVertexColors(pillars);
   const crownColors = uniqueVertexColors(crown);
   const coolTextileColors = uniqueVertexColors(coolTextiles);
@@ -1134,6 +1144,14 @@ test("Rug Gate spans the lane with a pointed crown, wall-buried returns, and no 
   assert.ok(crownColors.has("0.84:0.76:0.62"), "gable slopes lost their datum-fitted coping stones");
   assert.ok(crownColors.has("0.70:0.61:0.47"), "gable shoulders lost their eave and terminal arris finish");
   assert.ok(!crownColors.has("0.12:0.36:0.38"), "pediment regained the disconnected teal tablet plane");
+  assert.ok(uniqueVertexColors(inlay).size >= 3, "Rug Gate mosaic collapsed to one flat teal accent");
+  crown.geometry.computeBoundingBox();
+  inlay.geometry.computeBoundingBox();
+  assert.ok(
+    crown.geometry.boundingBox!.max.z > inlay.geometry.boundingBox!.max.z
+      && crown.geometry.boundingBox!.min.z < inlay.geometry.boundingBox!.min.z,
+    "Rug Gate tile infill escaped its stone lips",
+  );
   assert.ok(coolTextileColors.has("0.27:0.50:0.52"), "cool indigo gate textile is missing");
   assert.ok(warmTextileColors.has("0.72:0.27:0.16"), "warm madder gate textile is missing");
   assert.notEqual(

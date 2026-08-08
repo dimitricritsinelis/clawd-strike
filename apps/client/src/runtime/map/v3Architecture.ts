@@ -7001,10 +7001,10 @@ function pushRugGateStructuralFinish(
   // a metre of carved stone. It is the largest missing mass on the route.
   //
   // Built as stepped courses rather than one triangle so the rake reads as
-  // laid masonry, carried on a string course and finished with a restrained
-  // blue inlay band, which is this gate's authored identity accent. It sits in
-  // front of the roof plane and entirely above the arch head, so the portal
-  // throat, its soffit and the route sightline through it are untouched.
+  // laid masonry, carried on a string course and closed by a continuous stone
+  // cap. It sits in front of the roof plane and entirely above the arch head,
+  // so the portal throat, its soffit and the route sightline through it are
+  // untouched.
   const gableBaseY = shoulderY + 0.55;
   const gableCourses = 13;
   const gableCourseHeight = Math.max(0.16, (apexY - gableBaseY) / gableCourses);
@@ -7020,10 +7020,19 @@ function pushRugGateStructuralFinish(
       position: { x: centerX, y: y0 + gableCourseHeight * 0.5, z: frontZ + 0.06 },
       scale: { x: courseHalfWidth * 2, y: gableCourseHeight, z: 0.34 },
       yawRad: 0,
-      wallMaterialId: materialOwner.materialSlots.wall,
+      // This tympanum belongs to the freestanding hero gate, not to the west
+      // frontage whose profile happens to supply the structural returns. The
+      // inherited plaster finish washed the thirteen stepped courses into one
+      // pale sheet; use the same coursed sandstone as the gate below so the
+      // gable reads as laid masonry at the authored approach distance.
+      wallMaterialId: "ph_sandstone_blocks_05",
       uvProjection: "world",
     });
     // Raking cornice: one trim block per course end, stepping up the slope.
+    // The former centre sat 0.08 m beyond the course end, leaving only 0.03 m
+    // of bearing under a 0.22 m stone. Seat the whole terminal stone inside the
+    // course, match its depth and material, and let the backed course own the
+    // exact stepped silhouette instead of outlining it with perched teeth.
     for (const side of [-1, 1] as const) {
       pushInstance(instances, {
         placementId: `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-rake:${course}:${side}`,
@@ -7031,17 +7040,82 @@ function pushRugGateStructuralFinish(
         semanticClass: "hero_gate_gable_raking_cornice",
         meshId: "plinth_strip",
         position: {
-          x: centerX + side * (courseHalfWidth + 0.08),
+          x: centerX + side * (courseHalfWidth - 0.17),
           y: y0 + gableCourseHeight * 0.5,
-          z: frontZ + 0.02,
+          z: frontZ + 0.06,
         },
-        scale: { x: 0.22, y: gableCourseHeight, z: 0.46 },
+        scale: { x: 0.34, y: gableCourseHeight, z: 0.34 },
         yawRad: 0,
-        trimMaterialId,
+        detailMaterialId: "ph_sandstone_blocks_05",
         uvProjection: "world",
       });
     }
   }
+  // A pair of continuous raking caps bridges the stepped course ends without
+  // changing their silhouette. Both bars are inset by their full half-width,
+  // project only at the established trim face, and land directly on the
+  // string-course shoulders. This supplies the load path the detached teeth
+  // never communicated.
+  const gableBaseHalfWidthM = halfSpanM * 0.94;
+  const gableTopHalfWidthM = Math.max(
+    0.26,
+    halfSpanM * (0.06 + 0.88 / gableCourses),
+  );
+  const rakeCapInsetM = 0.16;
+  const fullRakeRunM = gableBaseHalfWidthM - gableTopHalfWidthM;
+  const fullRakeRiseM = apexY - gableBaseY;
+  const endpointInsetY = 0.2;
+  const endpointInsetRatio = endpointInsetY / fullRakeRiseM;
+  const rakeBaseHalfWidthM = gableBaseHalfWidthM - fullRakeRunM * endpointInsetRatio;
+  const rakeTopHalfWidthM = gableTopHalfWidthM + fullRakeRunM * endpointInsetRatio;
+  const rakeRunM = rakeBaseHalfWidthM - rakeTopHalfWidthM;
+  const rakeRiseM = fullRakeRiseM - endpointInsetY * 2;
+  const rakeCapLengthM = Math.hypot(rakeRunM, rakeRiseM);
+  const rakeCapRollRad = Math.atan2(rakeRiseM, rakeRunM);
+  for (const side of [-1, 1] as const) {
+    pushInstance(instances, {
+      placementId: `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-continuous-cap:${side}`,
+      moduleId: "rug_gate_constructed_gable_tympanum",
+      semanticClass: "hero_gate_gable_continuous_raking_cap",
+      meshId: "plinth_strip",
+      position: {
+        x: centerX + side * ((rakeBaseHalfWidthM + rakeTopHalfWidthM) * 0.5 - rakeCapInsetM),
+        y: (gableBaseY + apexY) * 0.5,
+        z: frontZ - 0.02,
+      },
+      scale: { x: rakeCapLengthM, y: 0.26, z: 0.5 },
+      yawRad: 0,
+      rollRad: side === -1 ? rakeCapRollRad : -rakeCapRollRad,
+      detailMaterialId: trimMaterialId,
+      uvProjection: "world",
+    });
+    pushInstance(instances, {
+      placementId: `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-cap-shoulder-bond:${side}`,
+      moduleId: "rug_gate_constructed_gable_tympanum",
+      semanticClass: "hero_gate_gable_raking_cap_bond",
+      meshId: "plinth_strip",
+      position: {
+        x: centerX + side * (rakeBaseHalfWidthM - rakeCapInsetM),
+        y: gableBaseY + 0.14,
+        z: frontZ - 0.02,
+      },
+      scale: { x: 0.44, y: 0.3, z: 0.5 },
+      yawRad: 0,
+      detailMaterialId: trimMaterialId,
+      uvProjection: "world",
+    });
+  }
+  pushInstance(instances, {
+    placementId: "ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-cap-apex-bond",
+    moduleId: "rug_gate_constructed_gable_tympanum",
+    semanticClass: "hero_gate_gable_raking_cap_bond",
+    meshId: "plinth_strip",
+    position: { x: centerX, y: apexY - 0.13, z: frontZ - 0.02 },
+    scale: { x: 0.56, y: 0.26, z: 0.5 },
+    yawRad: 0,
+    detailMaterialId: trimMaterialId,
+    uvProjection: "world",
+  });
   pushInstance(instances, {
     placementId: "ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-string-course",
     moduleId: "rug_gate_constructed_gable_tympanum",
@@ -7051,20 +7125,6 @@ function pushRugGateStructuralFinish(
     scale: { x: halfSpanM * 1.9, y: 0.22, z: 0.5 },
     yawRad: 0,
     trimMaterialId,
-    uvProjection: "world",
-  });
-  pushInstance(instances, {
-    placementId: "ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-inlay-band",
-    moduleId: "rug_gate_constructed_gable_tympanum",
-    semanticClass: "hero_gate_gable_inlay_band",
-    meshId: "plinth_strip",
-    position: { x: centerX, y: gableBaseY + 0.07, z: frontZ - 0.06 },
-    scale: { x: halfSpanM * 1.84, y: 0.16, z: 0.42 },
-    yawRad: 0,
-    trimMaterialId,
-    // Restrained glazed blue, the one non-stone hue the reference gives this
-    // gate. Kept to a single narrow band so it reads as inlay, not paint.
-    detailTintHex: 0x2f6d84,
     uvProjection: "world",
   });
 }

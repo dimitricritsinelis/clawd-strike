@@ -520,17 +520,33 @@ function createHeroGateCrownGeometry(): BufferGeometry {
       }
     }
     // Keyed bearing course across the pediment, the corbel row that carries it,
-    // and a glazed inlay band - the three devices that give this facade its
+    // and a framed inlay channel - the three devices that give this facade its
     // horizontal datum either side of the arch.
     for (const mirror of [-1, 1] as const) {
       crownRelief.push(tintGeometry(
-        createNonIndexedBoxPart(0.18, 0.024, 0.018, mirror * 0.345, 0.093, faceZ + faceSign * 0.008),
+        createNonIndexedBoxPart(0.18, 0.02, 0.018, mirror * 0.345, 0.118, faceZ + faceSign * 0.008),
         [0.98, 0.92, 0.8],
       ));
+      // Dark grout bed and a proud four-sided stone lip. The glazed pieces are
+      // emitted by the dedicated inlay batch below, between this bed and lip,
+      // so the accent has a measurable recess instead of being a teal stone
+      // bar painted onto the sandstone batch.
       crownRelief.push(tintGeometry(
-        createNonIndexedBoxPart(0.18, 0.019, 0.02, mirror * 0.345, 0.065, faceZ + faceSign * 0.009),
-        [0.32, 0.58, 0.62],
+        createNonIndexedBoxPart(0.19, 0.04, 0.008, mirror * 0.345, 0.084, faceZ + faceSign * 0.003),
+        [0.22, 0.28, 0.27],
       ));
+      for (const railY of [0.062, 0.106]) {
+        crownRelief.push(tintGeometry(
+          createNonIndexedBoxPart(0.205, 0.008, 0.028, mirror * 0.345, railY, faceZ + faceSign * 0.012),
+          [0.76, 0.66, 0.51],
+        ));
+      }
+      for (const endX of [0.248, 0.442]) {
+        crownRelief.push(tintGeometry(
+          createNonIndexedBoxPart(0.009, 0.046, 0.028, mirror * endX, 0.084, faceZ + faceSign * 0.012),
+          [0.7, 0.59, 0.44],
+        ));
+      }
       for (let corbel = 0; corbel < 5; corbel += 1) {
         crownRelief.push(tintGeometry(
           createNonIndexedBoxPart(
@@ -538,37 +554,26 @@ function createHeroGateCrownGeometry(): BufferGeometry {
             0.03,
             0.026,
             mirror * (0.272 + corbel * 0.037),
-            0.126,
+            0.145,
             faceZ + faceSign * 0.012,
           ),
           corbel % 2 === 0 ? [0.74, 0.65, 0.51] : [0.86, 0.78, 0.63],
         ));
       }
-      // Glazed impost band turning down the pier below the arch springing.
-      crownRelief.push(tintGeometry(
-        createNonIndexedBoxPart(0.05, 0.02, 0.02, mirror * 0.3, -0.008, faceZ + faceSign * 0.009),
-        [0.32, 0.58, 0.62],
-      ));
-      // Rosette medallion in the spandrel. Authored round in world space by
-      // dividing the 13:7 unit anisotropy back out of its radii.
-      const rosetteRadiusM = 0.42;
-      // One disc, eight-sided: the gate is held to a focused triangle budget and
-      // a second concentric ring plus finer segmentation spent it without reading
-      // any differently at the authored approach distance.
-      for (const [radiusScale, tone] of [
-        [1, [0.35, 0.6, 0.63]] as const,
-      ]) {
-        const disc = new CylinderGeometry(1, 1, 1, 8);
-        disc.rotateX(Math.PI * 0.5);
-        disc.scale(
-          (rosetteRadiusM * radiusScale) / UNIT_X_M,
-          (rosetteRadiusM * radiusScale) / UNIT_Y_M,
-          0.016 + (1 - radiusScale) * 0.006,
-        );
-        disc.translate(mirror * 0.372, 0.028, faceZ + faceSign * 0.01);
-        crownRelief.push(tintGeometry(disc.toNonIndexed(), tone));
-        disc.dispose();
-      }
+      // Rosette medallion: a dark cut bed and a real stone bezel stand ahead
+      // of the smaller glazed infill emitted by the inlay batch. The previous
+      // single octagonal teal disc had no edge or depth cue.
+      const recessDisc = new CylinderGeometry(1, 1, 1, 12);
+      recessDisc.rotateX(Math.PI * 0.5);
+      recessDisc.scale(0.36 / UNIT_X_M, 0.36 / UNIT_Y_M, 0.008);
+      recessDisc.translate(mirror * 0.372, 0.018, faceZ + faceSign * 0.003);
+      crownRelief.push(tintGeometry(recessDisc.toNonIndexed(), [0.2, 0.25, 0.24]));
+      recessDisc.dispose();
+      const bezel = new TorusGeometry(0.76, 0.24, 4, 12);
+      bezel.scale(0.38 / UNIT_X_M, 0.38 / UNIT_Y_M, 0.014);
+      bezel.translate(mirror * 0.372, 0.018, faceZ + faceSign * 0.012);
+      crownRelief.push(tintGeometry(bezel.toNonIndexed(), [0.74, 0.63, 0.48]));
+      bezel.dispose();
     }
   }
 
@@ -585,6 +590,47 @@ function createHeroGateCrownGeometry(): BufferGeometry {
     tintGeometry(rightArris, [0.7, 0.61, 0.47]),
     ...pedimentReliefs,
   ]);
+}
+
+function createHeroGateInlayGeometry(): BufferGeometry {
+  const UNIT_X_M = 13;
+  const UNIT_Y_M = 7;
+  const parts: BufferGeometry[] = [];
+  const tileTones = [
+    [0.4, 0.53, 0.54],
+    [0.33, 0.47, 0.5],
+    [0.46, 0.57, 0.54],
+  ] as const;
+  for (const faceZ of [-0.497, 0.497] as const) {
+    const faceSign = faceZ < 0 ? -1 : 1;
+    for (const mirror of [-1, 1] as const) {
+      const bandWidth = 0.18;
+      const tileCount = 7;
+      const gap = 0.004;
+      const tileWidth = (bandWidth - gap * (tileCount - 1)) / tileCount;
+      for (let tile = 0; tile < tileCount; tile += 1) {
+        const positiveX = 0.255 + tileWidth * 0.5 + tile * (tileWidth + gap);
+        parts.push(tintGeometry(
+          createNonIndexedBoxPart(
+            tileWidth,
+            0.021,
+            0.012,
+            mirror * positiveX,
+            0.084,
+            faceZ + faceSign * 0.007,
+          ),
+          tileTones[tile % tileTones.length]!,
+        ));
+      }
+      const rosette = new CylinderGeometry(1, 1, 1, 12);
+      rosette.rotateX(Math.PI * 0.5);
+      rosette.scale(0.22 / UNIT_X_M, 0.22 / UNIT_Y_M, 0.012);
+      rosette.translate(mirror * 0.372, 0.018, faceZ + faceSign * 0.007);
+      parts.push(tintGeometry(rosette.toNonIndexed(), tileTones[1]));
+      rosette.dispose();
+    }
+  }
+  return mergeProceduralGeometry(parts);
 }
 
 function createHeroGatePillarGeometry(): BufferGeometry {
@@ -2180,6 +2226,14 @@ function buildCompiledDressing(
       roughness: 0.89,
       normalScale: 0.62,
       albedoBoost: 0.78,
+      vertexColors: true,
+    }),
+    heroCrownInlay: createBatch("v3-rug-gate-crown-inlay", 0xffffff, "heroLintel", createHeroGateInlayGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      textureGenerator: "glazed-fountain-tile",
+      roughness: 0.58,
+      albedoBoost: 0.66,
       vertexColors: true,
     }),
     heroGateCoolTextile: createBatch("v3-rug-gate-cool-textile-kit", 0xffffff, "thresholdRug", () => (
@@ -3789,7 +3843,7 @@ function buildCompiledDressing(
         batches.heroGateCoolFrame.instances.push(gateDressingTransform);
         batches.heroGateWarmTextile.instances.push(gateDressingTransform);
         batches.heroGateWarmFrame.instances.push(gateDressingTransform);
-        batches.heroCrown.instances.push({
+        const crownTransform = {
           x: world.x,
           y: world.y + height * 0.5,
           z: world.z,
@@ -3799,7 +3853,9 @@ function buildCompiledDressing(
           // finished trim, not just the base extrusion, inside authored depth.
           sz: depth * 0.93,
           yawRad,
-        });
+        };
+        batches.heroCrown.instances.push(crownTransform);
+        batches.heroCrownInlay.instances.push(crownTransform);
         // The open portal and its finished inner frame derive from the same
         // 13 m gate bay. No recess, door leaf, grille, or other visual closure
         // is allowed inside this already-traversable opening.

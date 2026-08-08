@@ -1756,6 +1756,52 @@ test("the three compiled skyline regressions are absorbed into authored massing 
   assert.deepEqual(fullRuntimeInput, fullRuntimeSnapshot);
   assert.equal("colliders" in fullRuntime, false);
   assert.equal("lineOfSight" in fullRuntime, false);
+
+  const rugGableCourses = fullRuntime.instances.filter(
+    (instance) => instance.semanticClass === "hero_gate_gable_tympanum",
+  );
+  assert.equal(rugGableCourses.length, 13, "Rug Gate lost its deterministic stepped masonry courses");
+  assert.ok(rugGableCourses.every((instance) => (
+    instance.wallMaterialId === "ph_sandstone_blocks_05"
+    && instance.uvProjection === "world"
+  )), "Rug Gate tympanum regained the frontage's pale plaster finish");
+  const rugRakeCaps = fullRuntime.instances.filter(
+    (instance) => instance.semanticClass === "hero_gate_gable_raking_cornice",
+  );
+  assert.equal(rugRakeCaps.length, 26);
+  for (const cap of rugRakeCaps) {
+    const courseIndex = Number(cap.placementId?.split(":")[2]);
+    const course = rugGableCourses.find(
+      (candidate) => candidate.placementId === `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-course:${courseIndex}`,
+    );
+    assert.ok(course, `${cap.placementId} lost its supporting gable course`);
+    assert.ok(
+      cap.position.x - cap.scale.x * 0.5 >= course.position.x - course.scale.x * 0.5 - 0.001
+        && cap.position.x + cap.scale.x * 0.5 <= course.position.x + course.scale.x * 0.5 + 0.001,
+      `${cap.placementId} regained its floating three-centimetre bearing`,
+    );
+    assert.equal(cap.scale.z, course.scale.z);
+    assert.equal(cap.detailMaterialId, "ph_sandstone_blocks_05");
+  }
+  const continuousRakeCaps = fullRuntime.instances.filter(
+    (instance) => instance.semanticClass === "hero_gate_gable_continuous_raking_cap",
+  );
+  assert.equal(continuousRakeCaps.length, 2, "Rug Gate lost its paired continuous pediment cap");
+  assert.ok(continuousRakeCaps.every((instance) => (
+    typeof instance.rollRad === "number"
+    && Math.abs(instance.rollRad) > 0.1
+    && instance.detailMaterialId?.startsWith("ph_") === true
+  )));
+  assert.equal(
+    fullRuntime.instances.filter((instance) => instance.semanticClass === "hero_gate_gable_raking_cap_bond").length,
+    3,
+    "Rug Gate cornice lost its two shoulder bonds or apex bond",
+  );
+  assert.equal(
+    fullRuntime.instances.some((instance) => instance.semanticClass === "hero_gate_gable_inlay_band"),
+    false,
+    "Rug Gate regained the flat full-width teal decal",
+  );
   let localizedSkylineCopingCount = 0;
   for (const massingId of requiredMassingIds) {
     const massing = fullRuntimeInput.placements.find((placement) => placement.id === massingId);

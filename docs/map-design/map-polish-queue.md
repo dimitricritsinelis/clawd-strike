@@ -236,6 +236,32 @@ Direction:
 
 Complete when: Both gates read as authored stone hero assemblies from their cameras, with no untextured face, floating cap, or pasted-on accent.
 
+Stalled 2026-08-08 — partial; the accepted work is kept. The Spawn A / Spice gate already passed
+the fixed review as a textured, open-throated stone assembly. On the Rug Gate, all thirteen pale
+plaster-inherited tympanum courses now use world-projected `sandstone_blocks_05`; the per-course rake
+stones sit fully on their supports; and a continuous projecting cornice, two shoulder bonds, and an
+apex bond close the stepped pediment. Blind review clearly preferred the coursed gable and then the
+bonded cornice in `SHOT_09`, with both support cameras unchanged and both throats preserved.
+
+The broad flat teal shapes were also split into one restrained deterministic glazed-tile draw,
+jointed bands, dark beds, and smaller stone-bezeled medallions. This was the best retained inlay state,
+but it still reads too shallow against the chalk-pale lower fascia to clear the pasted-accent clause.
+The next two revisions both failed and were restored, triggering the map-polish stop rule: a deep
+rectangular stone frame read as two attached placards, while true cut-through recesses made the tile
+band convincing but clipped the medallions into turquoise crescents and lost the round motif. The
+remaining owner decision is whether to accept the restrained relief or fund a deeper rebuild of the
+lower crown/entablature so the mosaic can be cut into newly authored masonry rather than layered on
+the current radial spandrel.
+
+The retained tile family raises the focused Rug Gate from the former 4,200-triangle ceiling to a
+measured 5,118 (tight pre-approved ceiling: 5,200) and adds one draw. `pnpm typecheck`, the focused Rug
+Gate/runtime regressions, and all five `smoke:game` checks pass, including canonical traversal. A
+transient `SHOT_13` runtime-state timeout failed the first completion run and its required solo retry;
+the clean rerun passed all 3 routes and 16 shots at 847 desktop draws, 2.110M triangles, and 7.3 ms
+median (403 / 1.240M / 6.9 ms mobile), below the authorized 12.5 ms ceiling. Evidence:
+`artifacts/playwright/map-shots/P6-best-stalled/` and
+`artifacts/playwright/completion-gate/2026-08-08T18-22-30-654Z/`.
+
 ## P7 - Floor system rebuild
 
 - [ ] Complete
