@@ -149,6 +149,11 @@ export function resolveKitMaterialFinish(
       return "merchant-plaster";
     case "shop_recess_back":
     case "niche_recess_back":
+    // An arcade bay behind an arch is as deep as a shop recess and reads under
+    // the same cloth shade, so it takes the same interior value. Without a
+    // finish it rendered the raw exterior albedo and lifted the bay back to
+    // sunlit-wall value, which flattened the arcade into a row of bright panels.
+    case "arch_recess_back":
       return "recess-plaster";
     default:
       break;

@@ -39,6 +39,22 @@ Direction:
 
 Complete when: No pier, post, or trim in the four cameras reads as unfinished pale planking, and both archived REVISIT notes are visibly resolved.
 
+Stalled 2026-08-08 — partial. Resolved and confirmed by blind critic on all four cameras: the whole
+boundary-finish trim family (corner piers, gate corners, terminal returns, copings, base courses,
+cornice fascias) was instancing one unit-box UV set at wildly different scales, which squeezed the
+coursing into vertical streaks and produced the pale straw planking on every tall thin member —
+including the B Spawn portal post cladding REVISIT note, now coursed masonry. Both Rug Gate throat
+posts were also fixed (projected UVs plus a sandstone-family tint and boost); a second critic pass
+confirmed the family and course scale, and a third round lifted them out of the shade muddiness that
+pass found. Remaining gap: the Textile Arcade bay faces (`SHOT_04`, frame-left and each bay down the
+left arcade) still read as vertically smeared pale planking. The emitter is confirmed by material
+substitution to be the `arch_pointed_frame` surface of `ARCH_FRONTAGE_TEXTILE_ARCADE_*_GROUND_*`, but
+two attempts failed to move it: swapping its source to `ph_sandstone_blocks_05` with a seeded per-bay
+tone, and reserving the shader's plan-projection branch for genuinely horizontal faces. Both were
+restored. The striping is constant down the surface's height while the macro noise varies with it,
+which points at the UV path for that one bucket rather than at the material. Worth a fresh look with
+the frame's normals and batch UVs inspected directly in the running game.
+
 ## P2 - Kit timber surface response
 
 - [ ] Complete

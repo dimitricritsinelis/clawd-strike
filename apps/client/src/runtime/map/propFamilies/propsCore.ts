@@ -151,6 +151,44 @@ export function mergeProceduralGeometry(parts: BufferGeometry[]): BufferGeometry
   return merged;
 }
 
+/**
+ * Replace per-part 0..1 UVs with a box projection taken from the merged
+ * geometry's own coordinates.
+ *
+ * A kit assembled from `boxPart` calls gives every part its own 0..1 UV square,
+ * so a 0.1-unit course block and a full-height jamb each stretch one whole
+ * texture tile across their own face. On a coursed stone assembly that reads as
+ * soft featureless ribs at any distance. Projecting from position instead makes
+ * texel density uniform across the whole kit, and the batch's `textureRepeat`
+ * then sets that density once: pass the instance's world size divided by the
+ * material's authored tile size.
+ */
+export function applyBoxProjectedUv(geometry: BufferGeometry): BufferGeometry {
+  const position = geometry.getAttribute("position");
+  const normal = geometry.getAttribute("normal");
+  const uv = new Float32Array(position.count * 2);
+  for (let index = 0; index < position.count; index += 1) {
+    const absX = Math.abs(normal.getX(index));
+    const absY = Math.abs(normal.getY(index));
+    const absZ = Math.abs(normal.getZ(index));
+    const x = position.getX(index);
+    const y = position.getY(index);
+    const z = position.getZ(index);
+    if (absY >= absX && absY >= absZ) {
+      uv[index * 2] = x;
+      uv[index * 2 + 1] = z;
+    } else if (absX >= absZ) {
+      uv[index * 2] = z;
+      uv[index * 2 + 1] = y;
+    } else {
+      uv[index * 2] = x;
+      uv[index * 2 + 1] = y;
+    }
+  }
+  geometry.setAttribute("uv", new Float32BufferAttribute(uv, 2));
+  return geometry;
+}
+
 export function boxPart(
   width: number,
   height: number,

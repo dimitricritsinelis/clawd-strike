@@ -5295,13 +5295,15 @@ function pushSimpleModule(
               z: revealDepthM,
             },
             yawRad,
-            detailMaterialId: "ph_rough_pine_door",
-            // The screen is the back of a shaded shop, not a sunlit board. At
-            // its old tone the pine grain read as a bright straw panel filling
-            // the whole bay, which flattened the arcade into a row of boarded
-            // apertures; darkening it puts the stock racked in front of it in
-            // relief instead.
-            detailTintHex: 0x4a3225,
+            // The back of an arcade bay is the shop's own plastered wall, not a
+            // boarded panel. On the timber source it kept the plank grain of a
+            // 2 m tile stretched across a 2.2 x 3.1 m plane, so in sun every bay
+            // down the arcade read as a sheet of pale straw planking - the
+            // single largest placeholder-reading surface in the Textile Arcade.
+            // Take the frontage's own wall material so the bay back belongs to
+            // the architecture around it, and let the recess finish hold it at
+            // interior value so racked stock reads in front of it.
+            detailMaterialId: wallMaterialId,
             uvProjection: "world",
           });
         }

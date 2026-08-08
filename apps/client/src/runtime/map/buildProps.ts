@@ -121,6 +121,7 @@ import {
 import {
   BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
   angledBoxPart,
+  applyBoxProjectedUv,
   boxPart,
   createBatch,
   createGlazedFountainTileTexture,
@@ -721,7 +722,12 @@ function createHeroGateInnerFrameGeometry(): BufferGeometry {
     ));
   }
 
-  return mergeProceduralGeometry(parts);
+  // Every voussoir, jamb course and impost above was its own 0..1 UV square, so
+  // each one crammed the whole sandstone tile into a 0.1-unit block. The gate's
+  // flanking posts came out as pale cream slabs with soft horizontal ribs and no
+  // readable joint. Projected UVs plus the batch's world-scale repeat give the
+  // whole frame one coursing density.
+  return applyBoxProjectedUv(mergeProceduralGeometry(parts));
 }
 
 function pushInstance(
@@ -2206,16 +2212,27 @@ function buildCompiledDressing(
       albedoBoost: 1.2,
       vertexColors: true,
     }),
-    heroInnerFrame: createBatch("v3-rug-gate-inner-frame", 0xffffff, "heroLintel", createHeroGateInnerFrameGeometry, {
+    // Tinted into the authored ph_sandstone_blocks_05 family for the same reason
+    // spiceGateStone is: untinted at boost 1.28 the flanking posts rendered as
+    // bleached cream, a different material from the warm coursed stone of the
+    // walls they land against. The repeat is the instance's world size (7.0 x
+    // 5.6 m) over the material's 2 m tile, now that the kit carries projected
+    // UVs rather than one tile per part.
+    // Boost and tint measured against the stone beside the posts in the two
+    // shaded cameras: at 1.02 on the warmer 0xdfc69a the shafts came out 19-25
+    // luma BELOW the arch ring they spring from and read chocolate against honey
+    // stone. This pair keeps them inside the sandstone family in sun while
+    // holding their own in shade.
+    heroInnerFrame: createBatch("v3-rug-gate-inner-frame", 0xe4cfa9, "heroLintel", createHeroGateInnerFrameGeometry, {
       castShadow: true,
       receiveShadow: true,
       textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
       normalTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
       armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
-      textureRepeat: [3.4, 3.8],
+      textureRepeat: [3.5, 2.8],
       roughness: 0.89,
-      normalScale: 0.52,
-      albedoBoost: 1.28,
+      normalScale: 0.72,
+      albedoBoost: 1.2,
       vertexColors: true,
     }),
     // Tinted and boosted to the authored ph_sandstone_blocks_05 values so the

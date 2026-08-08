@@ -40,6 +40,9 @@ import { buildDecorativePalms } from "./buildDecorativePalms";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildV3Architecture } from "./v3Architecture";
 import { planV3VisualWallSegments } from "./v3VisualWallSegments";
+import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
+import { resolveWallShaderProfile } from "./wallShaderProfiles";
+import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 
 const WALKABLE_ZONE_TYPES = new Set([
   "spawn_plaza",
@@ -2139,6 +2142,7 @@ function createV3BoundaryFinishTrim(
   segmentBaseYs: readonly number[],
   wallThicknessM: number,
   material: MeshStandardMaterial,
+  seed: number,
 ): Group | null {
   if (segments.length === 0) return null;
   const copings: V3BoundaryFinishBox[] = [];
@@ -2363,6 +2367,12 @@ function createV3BoundaryFinishTrim(
         chunkBoxes.length,
       );
       const dummy = new Object3D();
+      // Repeated members are cut from the same quarry but not the same block.
+      // Without per-instance tone every pier and coping in a run rendered as
+      // one continuous extruded ribbon; a narrow seeded band breaks that while
+      // staying inside the material's own value range.
+      const toneRng = new DeterministicRng(deriveSubSeed(seed, `boundary-finish-tone:${name}:${geometryClass}`));
+      const tone = new Color();
       for (let index = 0; index < chunkBoxes.length; index += 1) {
         const box = chunkBoxes[index]!;
         dummy.position.set(box.position.x, box.position.y, box.position.z);
@@ -2375,8 +2385,13 @@ function createV3BoundaryFinishTrim(
         }
         dummy.updateMatrix();
         mesh.setMatrixAt(index, dummy.matrix);
+        const value = 0.94 + toneRng.next() * 0.12;
+        const warmth = (toneRng.next() - 0.5) * 0.03;
+        tone.setRGB(value * (1 + warmth), value, value * (1 - warmth));
+        mesh.setColorAt(index, tone);
       }
       mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.name = `map-pbr-boundary-${name}-${geometryClass}`;
       mesh.castShadow = castShadow;
       mesh.receiveShadow = true;
@@ -2683,17 +2698,38 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     root.add(pbrWalls);
 
     if (isV3) {
+      const boundaryFinishMaterialId = "ph_stone_trim_sandstone";
       const boundaryFinishMaterial = options.wallMaterials.createStandardMaterial(
-        "ph_stone_trim_sandstone",
+        boundaryFinishMaterialId,
         wallTextureQuality,
       );
-      boundaryFinishMaterial.userData.materialId = "ph_stone_trim_sandstone";
+      boundaryFinishMaterial.userData.materialId = boundaryFinishMaterialId;
+      // The finish family is instanced from unit boxes at wildly different
+      // scales — a 92 m coping run and a 0.39 x 6.5 m corner pier share one
+      // geometry. Without world projection each instance stretched a single
+      // 2 m tile across its own box, which squeezed the coursing into vertical
+      // streaks on every tall thin member and read as pale straw planking on
+      // the piers, gate corners and portal posts. Project in world meters so
+      // one course is one course everywhere.
+      boundaryFinishMaterial.userData.wallUvProjection = "world";
+      applyWallShaderTweaks(boundaryFinishMaterial, {
+        albedoBoost:
+          typeof boundaryFinishMaterial.userData.wallAlbedoBoost === "number"
+          && Number.isFinite(boundaryFinishMaterial.userData.wallAlbedoBoost)
+            ? boundaryFinishMaterial.userData.wallAlbedoBoost
+            : 1,
+        tileSizeM: options.wallMaterials.getTileSizeM(boundaryFinishMaterialId),
+        uvOffset: { x: 0, y: 0 },
+        floorTopY,
+        ...resolveWallShaderProfile(boundaryFinishMaterialId, "detail"),
+      });
       const boundaryFinish = createV3BoundaryFinishTrim(
         primaryVisualSegments,
         visualSegmentHeights,
         visualSegmentBaseYs,
         wallThicknessM,
         boundaryFinishMaterial,
+        options.seed,
       );
       if (boundaryFinish) root.add(boundaryFinish);
     }

@@ -2434,7 +2434,10 @@ test("noninteractive arches are shallow masonry-framed recesses, never deep blac
   const recess = result.instances.find((instance) => instance.placementId === "MOD_ARCH");
   assert.equal(recess?.meshId, "arch_recess_back");
   assert.equal(recess?.semanticClass, "screened_arch_interior");
-  assert.equal(recess?.detailMaterialId, "ph_rough_pine_door");
+  // The bay back is the frontage's own plastered wall, not a boarded timber
+  // panel: on the timber source a 2 m tile stretched across the whole plane and
+  // read as pale straw planking wherever the arcade caught sun.
+  assert.equal(recess?.detailMaterialId, materialSlots.wall);
   assert.ok((recess?.scale.z ?? 1) <= 0.1, "arch recess became a deep protruding volume");
   assert.ok((recess?.scale.y ?? Infinity) < 2.2, "default fixture backing unexpectedly fills the full arch height");
   assert.equal(result.instances.some((instance) => instance.meshId === "door_void_arch"), false);
@@ -2506,7 +2509,7 @@ test("noninteractive apertures emit explicit readable closures with bounded reve
   assert.ok(windowScreenBars.length >= 5 && windowScreenBars.length <= 12);
 
   const archBacking = arch.instances.find((instance) => instance.placementId === "CLOSED_ARCH");
-  assert.equal(archBacking?.detailMaterialId, "ph_rough_pine_door");
+  assert.equal(archBacking?.detailMaterialId, materialSlots.wall);
   assert.ok((archBacking?.scale.y ?? Infinity) < 2.1, "arch backing regressed to a full-height tan slab");
   assert.ok((archBacking?.visualQaDimensions?.z ?? 0) >= 0.4);
   const returns = arch.instances.filter((instance) => instance.semanticClass === "arcade_arch_masonry_return");
