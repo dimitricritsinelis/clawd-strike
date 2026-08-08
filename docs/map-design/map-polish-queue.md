@@ -203,6 +203,21 @@ barrels and carts still sit without a contact seam). `pnpm qa:completion` passes
 casters added, so direction 1 still has its full frame-time headroom: 838 draws, 2.096M tris,
 7.6 ms median against a 12.5 ms budget.
 
+Resumed and stalled 2026-08-08 — partial; the accepted work is kept. The plaster environment
+response had a source mismatch: the measured `0.28` / `0.24` kit/detail values documented beside
+the constants had never replaced the old `0.10` / `0.08` values. Correcting that was preferred by
+a blind critic on all four fixed cameras (decisively in `SHOT_07` and `SHOT_13`): shaded plaster and
+storefront planes now carry readable midtones while the bright desert key remains unchanged.
+
+The next two separable rounds both failed to improve the fixed set and were restored, triggering the
+skill stop rule: sizing the palm contact decal from its planter support instead of its crown envelope
+was visually indistinguishable, and restoring the renderer's bounded three-frame shadow refresh did
+not change any cast-shadow shape. The review confirms that canopy, palm, fountain, cart, and barrel
+casters are already present; the remaining gap is articulation, not missing flags. Openings in
+`SHOT_13` still approach black because foreground timber closures cover the authored lining, and the
+Fountain Court palm/building/contact shadows still merge into one broad dark mass. Those gaps and
+stronger local prop grounding remain for the final owner decision.
+
 ## P6 - Hero gate dressing
 
 - [ ] Complete

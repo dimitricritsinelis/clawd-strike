@@ -104,7 +104,7 @@ const SCENE_ENVIRONMENT_INTENSITY = 0.14;
 // target. Two cameras still overshoot at 0.28 - Spawn-A 103 -> 107 against 101
 // and the tea terrace 109 -> 122 against 98, the latter already over before this.
 // Those two want per-area material work, not a lower value here.
-const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.10;
+const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.28;
 // Timber was carrying 7-9x the plaster's environment response. Dry weathered
 // wood is a rough dielectric: its specular lobe is small, and against a warm
 // desert PMREM a lobe that size renders as a pink-copper film laid over the
@@ -115,7 +115,7 @@ const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.10;
 // shade while its own grain and tone decide its colour.
 const KIT_TIMBER_ENVIRONMENT_INTENSITY = 0.18;
 const KIT_METAL_ENVIRONMENT_INTENSITY = 1.15;
-const DETAIL_PLASTER_ENVIRONMENT_INTENSITY = 0.08;
+const DETAIL_PLASTER_ENVIRONMENT_INTENSITY = 0.24;
 const DETAIL_TIMBER_ENVIRONMENT_INTENSITY = 0.12;
 // Lowered from 0.72. Facade ironwork - shutter hinge clips, sign brackets, the
 // small hardware scattered across every frontage - was rendering as pale BLUE
