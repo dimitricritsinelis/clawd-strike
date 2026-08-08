@@ -478,9 +478,14 @@ diffuseColor.rgb *= 0.45;`,
       // the map-wide shade deficit, which belongs to the light-model card.
       const familyValueScale = finish === "timber-door"
         ? "0.85"
-        // Lattices sit deepest in shadow behind the reveal.
+        // Lattices sit deepest in shadow behind the reveal, but not so deep that
+        // the opening they fill stops reading as one. At 0.10 the screens, grilles
+        // and closures behind every reveal on the map crushed to black, and the
+        // "black-void openings" the light-model card names are these surfaces —
+        // not missing interior geometry. 0.20 is the value that showed depth
+        // without the tier going copper when the whole family was swept.
         : finish === "timber-screen"
-          ? "0.10"
+          ? "0.20"
           // Shutter leaves are dark weathered timber in SHADE, not fresh paint in
           // sun: measured against the limestone beside them the target's leaves
           // sit at 57% of wall luminance.
@@ -509,7 +514,9 @@ diffuseColor.rgb *= 0.45;`,
       // is chromatic but nowhere near this saturated. Values at or just below
       // 1.0 keep the authored warmth without manufacturing any.
       const familyChromaScale = finish === "timber-screen"
-        ? "1.02"
+        // Held under 1.0 with the value lift: extrapolated chroma on a small,
+        // now-brighter batten is what turns a lattice copper-orange.
+        ? "0.86"
         : finish === "timber-window"
           ? "1.0"
           : "0.88";

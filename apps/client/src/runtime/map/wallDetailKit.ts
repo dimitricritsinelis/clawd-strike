@@ -189,13 +189,17 @@ function createTemplates(
       geometry: new CylinderGeometry(0.5, 0.5, 1, 14, 1, false, 0, Math.PI),
       material: frameTrim,
     },
+    // Opening voids carry a warm interior value rather than the cool near-black
+    // they shared before. Nothing behind these is lit, so at 0x2c3138 they
+    // resolved to pure black rectangles in a sunlit frontage — a hole, not a
+    // room. The value is dim enough to stay well under the wall it sits in.
     door_void: {
       geometry: new BoxGeometry(1, 1, 1),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.95, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.95, metalness: 0.0 }),
     },
     door_void_arch: {
       geometry: createDoorVoidArchGeometry(),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.95, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.95, metalness: 0.0 }),
     },
     door_panel_timber: {
       geometry: createPaneledDoorGeometry("residential"),
@@ -272,7 +276,10 @@ function createTemplates(
     window_recess_dark: {
       geometry: createInsetWindowRecessGeometry(),
       material: new MeshStandardMaterial({
-        color: options.highVis ? 0x343937 : 0x2e332f,
+        // A window reveal is a lit room behind a grille, not a black slot. The
+        // old value was cool and near-black, so every screened window on the map
+        // punched a hole in its frontage instead of showing depth behind it.
+        color: options.highVis ? 0x565046 : 0x4b453c,
         roughness: 0.96,
         metalness: 0.0,
       }),
@@ -291,7 +298,7 @@ function createTemplates(
     },
     window_pointed_arch_void: {
       geometry: createPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.96, metalness: 0.0 }),
     },
     window_pointed_arch_glass: {
       geometry: createPointedArchPanelGeometry(),
@@ -303,7 +310,7 @@ function createTemplates(
     },
     spawn_window_pointed_arch_void: {
       geometry: createSpawnPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.96, metalness: 0.0 }),
     },
     spawn_window_pointed_arch_glass: {
       geometry: createSpawnPointedArchPanelGeometry(),
@@ -315,7 +322,7 @@ function createTemplates(
     },
     hero_window_pointed_arch_void: {
       geometry: createHeroPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.96, metalness: 0.0 }),
     },
     hero_window_pointed_arch_glass: {
       geometry: createHeroPointedArchPanelGeometry(),
@@ -327,7 +334,7 @@ function createTemplates(
     },
     spawn_hero_window_pointed_arch_void: {
       geometry: createSpawnHeroPointedArchPanelGeometry(),
-      material: new MeshStandardMaterial({ color: 0x2c3138, roughness: 0.96, metalness: 0.0 }),
+      material: new MeshStandardMaterial({ color: 0x4a3f33, roughness: 0.96, metalness: 0.0 }),
     },
     spawn_hero_window_pointed_arch_glass: {
       geometry: createSpawnHeroPointedArchPanelGeometry(),
@@ -425,7 +432,14 @@ function createTemplateMaterialOverrides(
     pbrOptions ? createMappedKitMaterial(pbrOptions, recipe) : fallback
   );
   // Recess interiors are seen through open bays and window grilles at player
-  // height. Mapped alone they still resolve to one flat dim value across the
+  // height. Their tints are LIT interior values, not shadow values: the recess
+  // finish already multiplies them by 0.34 to hold a bay under the sunlit wall
+  // around it, and the previous tints — one of them 0x151713 — went through that
+  // multiplier to essentially zero. Every shop opening and doorway on the map
+  // rendered as a pure black rectangle punched in a bright frontage, which reads
+  // as a hole rather than a room. These values are what a room lit only by its
+  // own doorway actually reflects; the darkness still comes from the multiplier
+  // and the recess depth, not from the albedo. Mapped alone they still resolve to one flat dim value across the
   // whole panel, which reads as a dark card pasted behind the bars instead of
   // a room; the plaster finish gives them aggregate, mottle and corner grime
   // at the same value.
@@ -467,7 +481,7 @@ function createTemplateMaterialOverrides(
     tm_stained_glass_hero: createStainedGlassMaterial("hero"),
     tm_window_interior_merchant: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x5c5248 : 0x4f4841,
+      tintHex: highVis ? 0x8a7a66 : 0x7a6b58,
       roughness: 0.94,
       metalness: 0,
       albedoBoost: highVis ? 1.0 : 0.92,
@@ -479,7 +493,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_window_interior_residential: mappedInterior({
       materialId: "ph_beige_wall_002",
-      tintHex: highVis ? 0x1f211d : 0x151713,
+      tintHex: highVis ? 0x585349 : 0x4a463c,
       roughness: 0.96,
       metalness: 0,
       albedoBoost: highVis ? 0.98 : 0.9,
@@ -491,7 +505,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_window_interior_hero: mappedInterior({
       materialId: "ph_beige_wall_002",
-      tintHex: highVis ? 0x3f4849 : 0x303839,
+      tintHex: highVis ? 0x6a706d : 0x5a5f5c,
       roughness: 0.94,
       metalness: 0,
       albedoBoost: highVis ? 0.98 : 0.9,
@@ -503,7 +517,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_shop_interior_lining: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x2d271f : 0x1f1a14,
+      tintHex: highVis ? 0x7d6a52 : 0x6b5a45,
       roughness: 0.93,
       metalness: 0,
       albedoBoost: highVis ? 1.04 : 0.94,
@@ -517,7 +531,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_shop_interior_shadow: mappedInterior({
       materialId: "ph_beige_wall_002",
-      tintHex: highVis ? 0x3f3c38 : 0x302e2a,
+      tintHex: highVis ? 0x665e52 : 0x574f45,
       roughness: 0.97,
       metalness: 0,
       albedoBoost: highVis ? 0.96 : 0.88,
@@ -529,7 +543,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_arch_interior_warm: mappedInterior({
       materialId: "ph_plastered_wall",
-      tintHex: highVis ? 0x575149 : 0x423d37,
+      tintHex: highVis ? 0x847969 : 0x6e6355,
       roughness: 0.96,
       metalness: 0,
       albedoBoost: highVis ? 1.0 : 0.91,
@@ -593,7 +607,7 @@ function createTemplateMaterialOverrides(
     })),
     tm_service_interior: mappedInterior({
       materialId: "ph_beige_wall_002",
-      tintHex: highVis ? 0x3d3a35 : 0x2f2c29,
+      tintHex: highVis ? 0x5f5a52 : 0x4e4941,
       roughness: 0.97,
       metalness: 0,
       albedoBoost: highVis ? 0.95 : 0.87,

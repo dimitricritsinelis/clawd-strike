@@ -179,6 +179,30 @@ Direction:
 
 Complete when: Shade zones read as luminous occupied shadow rather than grey mud, openings show interior depth instead of pure black, and props sit in their own contact shadows.
 
+Stopped mid-card 2026-08-08 at the owner's request; the wave was halted here, so P6-P10 were not
+started. What landed on this card:
+
+- The most useful finding: the "black-void openings" are **not** missing interior geometry. Probed
+  live in `SHOT_07`, every black rectangle is a *timber* surface — `ordinary_door`, `window_screen`,
+  `covered_arcade_return_screen`, `grammar_served_boundary_varied_closure` — crushed to black by the
+  kit timber tier value scales. The voids and recess interiors sit behind them and were never what
+  the camera was seeing. This card's third direction and P2's carried-forward shade-value gap are one
+  problem, not two.
+- Acting on that, the `timber-screen` tier went 0.10 -> 0.20 with its chroma held at 0.86 — the
+  pairing P2 had already validated as the point where the tier shows depth without going copper.
+  Screened windows in `SHOT_07` now read as grilles with depth behind them instead of black slots.
+- Interior backing values were raised out of the near-black they sat at (one was `0x151713`, which the
+  recess finish's 0.34 multiplier took to effectively zero), and the six shared opening-void materials
+  moved off one cool near-black to a warm dim interior value. Correct in principle, but they did not
+  move the review cameras, for the reason above.
+
+Not started: cast shadows for the remaining shade-makers (direction 1) and contact darkening for
+props that are not compiled dressing placements (direction 2 — the existing `prop-ground-contact`
+disc only reaches compiled placements with a footprint over 0.34 m, which is why the fountain, palms,
+barrels and carts still sit without a contact seam). `pnpm qa:completion` passes with no shadow
+casters added, so direction 1 still has its full frame-time headroom: 838 draws, 2.096M tris,
+7.6 ms median against a 12.5 ms budget.
+
 ## P6 - Hero gate dressing
 
 - [ ] Complete
