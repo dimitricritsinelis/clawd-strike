@@ -1,402 +1,207 @@
-# Bazaar Target-Driven Visual Development Queue
+Audience: implementation-agent
+Authority: active implementation queue
+Read when: executing the current Bazaar polish wave
+Owns: the ordered system-driven polish queue and its wave authorizations
+Do not use for: workflow policy (see the map-polish skill), quality criteria (see quality-bar.md), or history (see archive/)
+Last updated: 2026-08-08
 
-This is the single ordered implementation queue for Bazaar visual development. Work one focus area at a time, compare the live result with its fixed-camera target, and leave the checkbox clear until the area is visually ready for owner review. The order establishes reusable merchant, attachment, ground, gate, and landmark systems first, then moves through the map geographically.
+# Bazaar System-Driven Polish Queue
 
-## 01 - Spice Street west merchant frontage
+The 2026-08-05 final-gate audit of the completed [section queue](archive/map-polish-queue-sections-2026-08-05.md) found that the remaining gap to the quality bar is carried by a small set of shared visual systems, not by any one section: independent per-area critics converged on the same causes in every district. This queue works those systems directly, ordered by map-wide impact. Fixing one card improves every camera that system serves.
 
-- [x] Ready for owner review
-- Boundary: The continuous west façade from the southern arch return through the last visible merchant bay, including its upper windows, shop openings, stalls, awnings, plinth, and wall-base dressing.
-- Primary camera: `AUDIT_07_SPICE_WEST_ELEVATION`
-- Supporting cameras: `SHOT_11_SPICE_CANOPY`, `SHOT_13_CLOSEUP_MERCHANT_FACADE`
-- Target: [target.jpg](visual-targets/01-spice-street-west-merchant-frontage/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/01-spice-street-west-merchant-frontage/current-target.jpg)
+Work one card at a time, in order, using the map-polish skill loop with the card's named cameras as the fixed review set. A card's boundary is the system wherever it appears in the map — touching every section a system serves is the point of this wave, while layout, traversal, and gameplay remain protected by `AGENTS.md`. Leave the checkbox clear until the card's complete-when line is met in the rendered evidence. If a card stalls under the skill's stop rule before that line is met, record the remaining gap in a short note under the card, leave its box unchecked, and move to the next card; stalled cards are decided at the final owner review, not by grinding further rounds.
 
-Implementation:
+## Wave authorizations
 
-1. Recompose the frontage on one legible bay rhythm, keeping each bay to one door, shop opening, or shuttered window function.
-2. Give every shop and door real reveal depth, dark backing, finished jambs, heads, sills, thresholds, and closures.
-3. Rebuild the merchant stalls and awnings as complete timber assemblies with counters, shelves, stock, ledgers, braces, wall plates, bolts, and grounded feet.
-4. Coordinate upper shutters, screens, projecting sills, canopy sockets, and horizontal datums so no attachment intersects an opening.
-5. Carry the stone plinth and material scale through the whole run, then group restrained goods at the wall edge with clean floor contact.
+These owner decisions are pre-approved for this wave. They remove known blockers; use them when a card needs them.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{shops,windows,doors,awningsFixtures,merchantGoods,structuralTrims}.ts`; `apps/client/src/runtime/map/propFamilies/{marketStalls,signsAwnings,goods}.ts`
+- Performance budgets serve the frame, not the reverse. Triangle and draw-call ceilings in the QA acceptance config, and per-prop unit-test budgets, may be raised when the change visibly improves the review cameras and the `qa:completion` frame-time median stays within 12.5 ms (currently 7.2 ms).
+- Selective texture promotion to 2k is approved for any material where 1k is the visible ceiling in a review camera. Both 1k enforcement points may be updated with the same explicit allowlist — the capture harness's 1k policy and the model-variant quality pin in `apps/client/scripts/lib/asset-provenance.test.mjs`. The map-wide default stays 1k.
+- Exiting the sealed legacy composition-waiver archive is approved. When a card must change a waived frontage, perform the supported wholesale exit: convert all legacy waivers in `docs/map-design/specs/composition_waivers.json` to `approval.status: "approved"` with the approver recorded as the owner and this queue as the ticket reference, set `legacyMigration.recordCount` to zero, and update `legacyMigration.recordsSha256` to the hash of the now-empty legacy record set (sha256 of an empty JSON array: `4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945`), keeping `legacyMigration.closed` true, per the schema and `apps/client/scripts/lib/composition-waivers.mjs`.
+- Sun direction is settled. The azimuth trade-off was measured both ways; leave `SUN_POS` as is and do not spend rounds re-tuning it.
+- Capture reliability: a shot that fails inside a batch capture must be retried solo before it is treated as a map regression, and builds must not run concurrently with captures.
 
-Complete when: The live primary view materially matches the target’s façade hierarchy and every visible opening, stall, awning, and wall-base junction reads as a finished assembly.
+## P1 - Pier, post, and trim material identity
 
-## 02 - Spice Street east frontage and lane entry
-
-- [x] Ready for owner review
-- Boundary: The southern Spice Street threshold and the east-side merchant run visible from A Spawn, ending before Fountain Court.
-- Primary camera: `SHOT_02_SPAWN_A_TO_BAZAAR`
-- Supporting cameras: `SHOT_11_SPICE_CANOPY`, `AUDIT_07_SPICE_WEST_ELEVATION`
-- Target: [target.jpg](visual-targets/02-spice-street-east-frontage-and-lane-entry/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/02-spice-street-east-frontage-and-lane-entry/current-target.jpg)
-
-Implementation:
-
-1. Resolve the southern arch, soffit, jambs, threshold, and both short returns as one deep entrance assembly around the unchanged lane opening.
-2. Rebuild the east merchant bays with varied but aligned shop recesses, timber closures, framed windows, and continuous plinth and sill datums.
-3. Replace pasted-on awnings and signs with supported wall ledgers, arms, braces, fasteners, finished cloth edges, and clear separation from openings.
-4. Establish a deliberate foreground threshold, mid-lane shop rhythm, and distant landmark frame without introducing center-lane decoration.
-5. Normalize stone, plaster, timber, cloth, and metal scale and carry the lane-edge curb, threshold, and wall contact consistently into the distance.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/propFamilies/{spiceGate,signsAwnings,marketStalls}.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{facadeShells,doors,windows,structuralTrims}.ts`
-
-Complete when: The fixed view reads as a finished six-metre bazaar entrance with a coherent east frontage and no unresolved opening, attachment, or lane-edge seam.
-
-## 03 - Spice Street overhead canopy system
-
-- [x] Ready for owner review
-- Boundary: The overhead cloth, beams, ropes, wires, banners, and their attachment zones along Spice Street, excluding the shop interiors and ground prop clusters below.
-- Primary camera: `SHOT_11_SPICE_CANOPY`
-- Supporting cameras: `SHOT_15_CLOSEUP_CANOPY_ATTACHMENT`, `SHOT_02_SPAWN_A_TO_BAZAAR`
-- Target: [target.jpg](visual-targets/03-spice-street-overhead-canopy-system/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/03-spice-street-overhead-canopy-system/current-target.jpg)
-
-Implementation:
-
-1. Establish a continuous sequence of long, short, high, and low shade spans that breaks the sky without obscuring the lane or distant route.
-2. Replace thin cloth cards with static shaped panels that have believable sag, thickness, stitched hems, reinforced corners, and finished valances.
-3. Carry every span through visible ropes or cables to timber beams, wall rings, plates, brackets, braces, and fasteners at both ends.
-4. Re-key attachment heights against the existing windows, doors, signs, and stall roofs so no support crosses an opening.
-5. Tune the cloth palette, roughness, translucency response, and cast-shadow density to create readable shade while preserving bright navigation surfaces.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/propFamilies/signsAwnings.ts`; `apps/client/src/runtime/map/wallDetailFamilies/awningsFixtures.ts`; `apps/client/src/runtime/map/buildProps.ts`
-
-Complete when: The primary and closeup views show one believable load-bearing shade system with no floating pole, unsupported cloth edge, clipped opening, or isolated banner.
-
-## 04 - Spice Street ground, cover, and thresholds
-
-- [x] Ready for owner review
-- Boundary: The lane floor and its two wall-edge bands from A Spawn’s exit to Fountain Court, including thresholds, gutters, cover clusters, and immediate ground-contact dressing.
-- Primary camera: `SHOT_14_CLOSEUP_PROP_GROUNDING`
-- Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_11_SPICE_CANOPY`
-- Target: [target.jpg](visual-targets/04-spice-street-ground-cover-and-thresholds/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/04-spice-street-ground-cover-and-thresholds/current-target.jpg)
-
-Implementation:
-
-1. Recompose the paving as laid stone courses with intentional joint rhythm, curb and threshold changes, shallow gutters, and localized repair patches.
-2. Resolve each doorway and shop opening with a sill, step or flush threshold, plinth return, and clean material transition into the lane.
-3. Rebuild cover and stock clusters as compact edge compositions with credible crate construction, baskets, pottery, folded textiles, scale, pivots, and contact.
-4. Consolidate wear, sand, drainage staining, and wall-base debris into authored bands rather than uniform noise across the route.
-5. Remove floating, interpenetrating, duplicated, or center-lane props while preserving a strong foreground and useful cover silhouettes at authored edges.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/{buildPbrFloors,floorWearDecals,buildSandAccumulation,buildWallBaseDebris}.ts`; `apps/client/src/runtime/map/propFamilies/{coverDressing,goods}.ts`
-
-Complete when: The closeup reaches the target’s material and grounding quality and the supporting views retain an uncluttered central walking envelope.
-
-## 05 - A Spawn main exit façade
-
-- [x] Ready for owner review
-- Boundary: A Spawn’s complete north face: the monumental main arch, both flanking returns, parapets, base treatment, and the threshold into Spice Street.
-- Primary camera: `AUDIT_01_SPAWN_A_NORTH_FRONTAGES`
-- Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`
-- Target: [target.jpg](visual-targets/05-a-spawn-main-exit-facade/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/05-a-spawn-main-exit-facade/current-target.jpg)
-
-Implementation:
-
-1. Unify the arch and its flanking returns into one exit composition with continuous datums, stepped massing, and a clear dominant center.
-2. Build the arch with layered voussoirs, deep jambs, a finished soffit, spring-line blocks, threshold stone, and complete wall thickness around the unchanged throat.
-3. Turn the sealed side masses into finished architecture with shallow windows or niches, dark backing, coping, cornice, and restrained carved accents.
-4. Attach lanterns, banners, canopy lines, signs, and base dressing through visible brackets, plates, sockets, and grounded supports.
-5. Match stone course scale, plaster wear, shadow depth, and paving contact across the gate, returns, and courtyard threshold.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/propFamilies/{spawnAGate,spawnAExitReturns,boundaryKit}.ts`; `apps/client/src/runtime/map/buildProps.ts`; `apps/client/src/runtime/map/v3Architecture.ts`
-
-Complete when: The exit reads as one monumental but buildable façade matching the target, with the original three-route access and central throat visibly unchanged.
-
-## 06 - Fountain Court hero composition
-
-- [x] Ready for owner review
-- Boundary: The full Fountain Court release, centered on the off-axis fountain and including the palm, visible enclosing façades, edge life, and the northward frame.
-- Primary camera: `SHOT_03_FOUNTAIN_COURT`
-- Supporting cameras: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`, `SHOT_04_TEXTILE_ARCADE`
-- Target: [target.jpg](visual-targets/06-fountain-court-hero-composition/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/06-fountain-court-hero-composition/current-target.jpg)
-
-Implementation:
-
-1. Strengthen the existing off-center fountain as the hero silhouette with a layered octagonal basin, readable rim thickness, restrained tile, and a clearly seated base.
-2. Complete the visible court walls with coherent plinth, string, sill, and coping datums plus deep framed openings and dark closures.
-3. Rebuild the palm and planter relationship so the trunk, soil, rim, drain, and paving contact read as one grounded landmark assembly.
-4. Compose the existing stalls, planters, tea pieces, and cover into two restrained edge clusters that frame rather than fill the rotation pocket.
-5. Balance sun, canopy shade, wall value separation, and material scale to preserve the fountain, north exit, and lateral routes as distinct visual layers.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/propFamilies/fountain.ts`; `apps/client/src/runtime/map/{buildDecorativePalms,v3Architecture,buildPbrFloors}.ts`; `apps/client/src/runtime/map/propFamilies/{marketStalls,teaService}.ts`
-
-Complete when: The primary view approaches the target’s hero hierarchy and foreground-to-background depth while the court remains visually open around the unchanged fountain footprint.
-
-## 07 - Fountain basin material and ground transition
-
-- [x] Ready for owner review
-- Boundary: The fountain basin, water, fittings, planter contact, and the immediate three-to-four-metre paving apron.
-- Primary camera: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`
-- Supporting cameras: `SHOT_03_FOUNTAIN_COURT`
-- Target: [target.jpg](visual-targets/07-fountain-basin-material-and-ground-transition/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/07-fountain-basin-material-and-ground-transition/current-target.jpg)
-
-Implementation:
-
-1. Rebuild the basin profile as cut and laid stone with stepped courses, consistent radial joints, carved edge bands, real rim thickness, and a grounded plinth.
-2. Give the shallow water a restrained normal and Fresnel response with a darkened wetted edge, preserving the static surface and existing fill level.
-3. Resolve the tile band, dry outlets, drain, overflow, and metal fittings as small complete assemblies without simulated jets or fluid effects.
-4. Author the apron as purpose-laid paving with radial or keyed cuts, drainage fall, damp staining, mineral deposits, and localized foot wear.
-5. Correct the nearby planter and wall contacts so stone, water, soil, vegetation, and floor meet without gaps, clipping, or mismatched material scale.
-
-- Likely ownership: `apps/client/src/runtime/map/propFamilies/fountain.ts`; `apps/client/src/runtime/map/{buildPbrFloors,floorWearDecals}.ts`; `apps/client/src/runtime/render/materials/{FloorMaterialLibrary,applyFloorShaderTweaks}.ts`
-
-Complete when: The closeup materially matches the target’s stone, tile, water-edge, fitting, and apron finish with no primitive silhouette or unresolved seam.
-
-## 08 - Textile Arcade south compression
-
-- [ ] Ready for owner review [REVISIT: primary camera is dominated by tall pale reed/straw-looking wall panels whose emitter was not traced; arcade bays gained racked rug stock but sit outside this camera]
-- Boundary: The covered main-lane segment from Fountain Court’s north threshold to the Rug Gate approach, including both arcade walls and the overhead textile roof.
+- [ ] Complete
+- Boundary: The pale straw/plank-reading trim material family wherever it wraps piers, pilasters, arcade posts, gate corners, and portal-flanking posts across the map — including the Textile Arcade's tall reed-looking wall panels and the B Spawn portal post cladding (the two REVISIT notes carried over from the section queue).
 - Primary camera: `SHOT_04_TEXTILE_ARCADE`
-- Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_09_RUG_GATE`
-- Target: [target.jpg](visual-targets/08-textile-arcade-south-compression/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/08-textile-arcade-south-compression/current-target.jpg)
+- Supporting cameras: `SHOT_12_SPAWN_B_RETURN`, `SHOT_09_RUG_GATE`, `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`
+- Targets: [08](visual-targets/08-textile-arcade-south-compression/target.jpg), [17](visual-targets/17-b-spawn-main-entrance-and-return/target.jpg), [09](visual-targets/09-rug-gate-hero-approach/target.jpg)
 
-Implementation:
+Direction:
 
-1. Establish a legible arcade order with real columns, arch recesses, spandrels, spring lines, plinths, and a continuous roof datum.
-2. Turn the wall bays into deep textile shops with finished frames, dark backing, timber closures, counters, and clearly separated circulation openings.
-3. Build rug and textile displays as framed racks, rolls, shelves, and hanging panels attached to the architecture instead of flat wall cards.
-4. Replace the roof cover with layered battens, beams, ropes, and static cloth panels that have seams, thickness, sag, tension, and supported edges.
-5. Coordinate shade, material value, floor wear, and the bright Rug Gate sightline so the six-metre route remains readable through the compression.
+1. Trace the actual emitters first — the section queue twice corrected adjacent materials without moving these surfaces, so the cladding has its own assignment path.
+2. Replace the source with masonry, plaster, or timber that matches the architecture each element belongs to, at correct world scale.
+3. Keep seeded variation between repeated members so no two adjacent piers read identical.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/arches.ts`; `apps/client/src/runtime/map/propFamilies/{textilesWallArt,signsAwnings,marketStalls}.ts`
+- Likely ownership: `apps/client/src/runtime/map/wallDetailFamilies/kitMaterials.ts`; `apps/client/src/runtime/map/wallDetailKit.ts`; `apps/client/src/runtime/map/v3Architecture.ts`; the prop family that clads the B Spawn portal posts
 
-Complete when: The fixed view matches the target’s covered-arcade depth and textile identity, with no thin cloth, incomplete bay, or ambiguous route opening.
+Complete when: No pier, post, or trim in the four cameras reads as unfinished pale planking, and both archived REVISIT notes are visibly resolved.
 
-## 09 - Rug Gate hero approach
+## P2 - Kit timber surface response
 
-- [x] Ready for owner review
-- Boundary: The Rug Gate crown, piers, open throat, flanking rug displays, and immediate southern approach.
+- [ ] Complete
+- Boundary: Every kit-built timber element map-wide — lattices, shutters, screens, window frames, pergola members — whose surface response, not shape, is the defect.
+- Primary camera: `SHOT_13_CLOSEUP_MERCHANT_FACADE`
+- Supporting cameras: `SHOT_11_SPICE_CANOPY`, `AUDIT_07_SPICE_WEST_ELEVATION`
+- Targets: [01](visual-targets/01-spice-street-west-merchant-frontage/target.jpg), [03](visual-targets/03-spice-street-overhead-canopy-system/target.jpg)
+
+Direction:
+
+1. Remove the metallic/low-roughness response that currently reads as copper-pink plastic under sun.
+2. Fix the vertically smeared UVs so grain follows each member's length at a believable scale.
+3. Add restrained tone variation between members so assemblies read as built, not extruded.
+
+- Likely ownership: `apps/client/src/runtime/map/wallDetailFamilies/kitMaterials.ts`; `apps/client/src/runtime/map/wallDetailFamilies/windows.ts`
+
+Complete when: Closeup timber reads as dry weathered or painted wood with directional grain, in sun and in shade.
+
+## P3 - Door family rebuild
+
+- [ ] Complete
+- Boundary: The shared ground-floor door meshes and materials everywhere they instance — currently flat grey slabs with no construction.
+- Primary camera: `SHOT_13_CLOSEUP_MERCHANT_FACADE`
+- Supporting cameras: `SHOT_08_DYERS_DOGLEG`, `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`, `AUDIT_05_DYERS_ALLEY_EAST_FRONTAGE`
+- Targets: [01](visual-targets/01-spice-street-west-merchant-frontage/target.jpg), [12](visual-targets/12-dyers-dogleg-residential-turn/target.jpg), [14](visual-targets/14-service-south-utility-frontage/target.jpg)
+
+Direction:
+
+1. Rebuild the family as planked timber doors with battens, edge framing, and visible hardware, seated in their existing jambs and thresholds.
+2. Give each instance seeded variation in tone and wear so repeated doors along a lane differ.
+3. Keep recess depth and dark backing so closed doors still read as openings, not wall decals.
+
+- Likely ownership: `apps/client/src/runtime/map/wallDetailFamilies/kitCore.ts`; `apps/client/src/runtime/map/wallDetailFamilies/doors.ts`
+
+Complete when: No camera shows a flat featureless door slab; every visible door reads as a built, hung assembly.
+
+## P4 - Canopy, awning, and textile system
+
+- [ ] Complete
+- Boundary: All overhead cloth — canopies, awnings, banners — plus the rigging that carries it, map-wide.
+- Primary camera: `SHOT_15_CLOSEUP_CANOPY_ATTACHMENT`
+- Supporting cameras: `SHOT_11_SPICE_CANOPY`, `SHOT_04_TEXTILE_ARCADE`, `SHOT_02_SPAWN_A_TO_BAZAAR`
+- Targets: [03](visual-targets/03-spice-street-overhead-canopy-system/target.jpg), [08](visual-targets/08-textile-arcade-south-compression/target.jpg)
+
+Direction:
+
+1. Replace the single blank cream cloth source with a small woven/striped family (CC0, recorded with provenance in the owning manifest), assigned with seeded variety.
+2. Give spans thickness, stitched hems, and believable sag; kill the paper-card read.
+3. Carry every span through visible ropes, rings, or timber to real anchor points — the primary camera exists to prove attachment and currently fails on its own subject.
+
+- Likely ownership: texture pack manifests; `apps/client/src/runtime/map/propFamilies/signsAwnings.ts`; `apps/client/src/runtime/map/wallDetailFamilies/awningsFixtures.ts`; `apps/client/src/runtime/map/buildProps.ts`
+
+Complete when: The attachment closeup shows a supported, tensioned, finished span, and no blank cream sail remains in any camera.
+
+## P5 - Shade, occlusion, and grounding light pass
+
+- [ ] Complete
+- Boundary: The global light model as it affects shade readability — ambient/environment balance, occlusion, prop-cast shadows, opening interiors, and contact darkening. This is a light-model card, not a per-section tuning card.
+- Primary camera: `SHOT_03_FOUNTAIN_COURT`
+- Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`, `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_13_CLOSEUP_MERCHANT_FACADE`
+- Targets: [06](visual-targets/06-fountain-court-hero-composition/target.jpg), [11](visual-targets/11-covered-dyers-souk-arcade/target.jpg)
+
+Direction:
+
+1. Extend cast shadows to the major shade-makers — canopies, palms, large props — so sunlit ground carries their shapes; watch the frame-time median per change, since shadow casters are the one cost class in this wave that can move it. Running `pnpm qa:completion` mid-card to read that median is the intended exception to the skill's finish-checks-once rule.
+2. Add contact darkening where objects meet the ground so nothing floats on bright paving.
+3. Resolve black-void shop openings with lit interior backing values and depth, not emissive surfaces.
+4. Keep the bright desert key and current sun direction; the goal is luminous, occupied shadow, not a darker map.
+
+- Likely ownership: `apps/client/src/runtime/game/Game.ts`; `apps/client/src/runtime/render/Renderer.ts`; `apps/client/src/runtime/render/models/PropModelLibrary.ts` shadow flags; opening-backing geometry in `v3Architecture.ts`
+
+Complete when: Shade zones read as luminous occupied shadow rather than grey mud, openings show interior depth instead of pure black, and props sit in their own contact shadows.
+
+## P6 - Hero gate dressing
+
+- [ ] Complete
+- Boundary: The dressing of both hero gates — the Spawn A / Spice gate and the Rug Gate — gables, crenellation, and inlay, inside their existing silhouettes and open throats.
 - Primary camera: `SHOT_09_RUG_GATE`
-- Supporting cameras: `SHOT_04_TEXTILE_ARCADE`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](visual-targets/09-rug-gate-hero-approach/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/09-rug-gate-hero-approach/current-target.jpg)
+- Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `AUDIT_01_SPAWN_A_NORTH_FRONTAGES`
+- Targets: [09](visual-targets/09-rug-gate-hero-approach/target.jpg), [05](visual-targets/05-a-spawn-main-exit-facade/target.jpg)
 
-Implementation:
+Direction:
 
-1. Rebuild the gate silhouette with a layered stone crown, articulated voussoirs, piers, corbels, cornice, and restrained blue inlay inside the existing mass.
-2. Give the open throat real jamb, spring-line, soffit, floor-threshold, and rear-edge depth without adding a leaf, grille, or closure.
-3. Replace loose rugs with braced racks, shelves, hanging bars, rolled stock, feet, and wall ties positioned outside the portal envelope.
-4. Add one asymmetric supported awning or sign assembly to break symmetry without competing with the gate crown.
-5. Resolve gate-to-wall joints, plinth returns, paving cuts, material scale, and contact shadows across the whole approach.
+1. Texture the pale untextured gable faces to match their stone coursing and material scale.
+2. Seat the crenellation so it belongs to the parapet instead of hovering above it.
+3. Replace the flat teal decal accents with recessed carved or tiled inlay that has real depth and restrained color.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/propFamilies/gateDressing.ts`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/propFamilies/{textilesWallArt,signsAwnings}.ts`
+- Likely ownership: `apps/client/src/runtime/map/propFamilies/spiceGate.ts`; `apps/client/src/runtime/map/propFamilies/gateDressing.ts`
 
-Complete when: The gate has the target’s hero hierarchy and complete construction while the original portal throat remains fully open and visually unchanged in width.
+Complete when: Both gates read as authored stone hero assemblies from their cameras, with no untextured face, floating cap, or pasted-on accent.
 
-## 10 - Dyers Alley process wall and drainage
+## P7 - Floor system rebuild
 
-- [x] Ready for owner review
-- Boundary: The east process wall and its lane-edge band from the A south-east connector to the Covered Souk threshold.
-- Primary camera: `AUDIT_05_DYERS_ALLEY_EAST_FRONTAGE`
-- Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`
-- Target: [target.jpg](visual-targets/10-dyers-alley-process-wall-and-drainage/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/10-dyers-alley-process-wall-and-drainage/current-target.jpg)
+- [ ] Complete
+- Boundary: Lane and court floor materials, macro variation, and zone transitions map-wide.
+- Primary camera: `SHOT_14_CLOSEUP_PROP_GROUNDING`
+- Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_10_NORTH_COURT`, `SHOT_06_CARAVAN_RAMP`
+- Targets: [04](visual-targets/04-spice-street-ground-cover-and-thresholds/target.jpg), [13](visual-targets/13-north-court-release/target.jpg), [15](visual-targets/15-caravan-court-ramp-and-loading/target.jpg)
 
-Implementation:
+Direction:
 
-1. Replace the blank run with a measured service rhythm of shallow recesses, timber doors, screened vents, small windows, plinth, cornice, and wall returns.
-2. Build timber dye racks with posts, cross-bracing, pegs, wall plates, and static dyed cloth that hangs clear of doors and the walking envelope.
-3. Compose vats, ceramic vessels, a work shelf, baskets, and barrels into compact process stations grounded against the wall.
-4. Add a narrow drain, wet apron, splash staining, mineral deposits, and worn paving that visibly connect each process station to the floor.
-5. Support the sparse shade and fixtures with ledgers, arms, rings, fasteners, and coherent ochre plaster, stone, timber, metal, and cloth response.
+1. Rebalance the sunlit cobble so it reads as warm laid stone instead of bleached noise.
+2. Break visible tiling repeats with macro variation and authored wear rather than uniform grime.
+3. Move courts to a calm flagstone-class material so courts and lanes have distinct floor identities.
+4. Author zone seams as curbs, thresholds, or material steps instead of hard texture edges.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/propFamilies/{dyersWorkstation,textilesWallArt,signsAwnings,goods}.ts`; `apps/client/src/runtime/map/{buildPbrFloors,floorWearDecals}.ts`
+- Likely ownership: `apps/client/src/runtime/map/buildPbrFloors.ts`; `apps/client/src/runtime/map/floorWearDecals.ts`; texture pack manifests; `apps/client/src/runtime/render/materials/FloorMaterialLibrary.ts`
 
-Complete when: The wall matches the target’s readable dye-work sequence and every prop, rack, drain, and opening is complete without entering the clear route.
+Complete when: Floors show a laid-stone identity per district with no visible repeat pattern or unauthored hard seam in the cameras.
 
-## 11 - Covered Dyers Souk arcade
+## P8 - Water and vegetation
 
-- [x] Ready for owner review
-- Boundary: The covered souk from its southern threshold through the shaded merchant/process run to the dogleg exit.
-- Primary camera: `SHOT_07_COVERED_DYERS_SOUK`
-- Supporting cameras: `AUDIT_06_COVERED_SOUK_SOUTH_FRONTAGE`, `SHOT_08_DYERS_DOGLEG`
-- Target: [target.jpg](visual-targets/11-covered-dyers-souk-arcade/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/11-covered-dyers-souk-arcade/current-target.jpg)
+- [ ] Complete
+- Boundary: The fountain water surface and every palm and planter planting map-wide.
+- Primary camera: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`
+- Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_10_NORTH_COURT`
+- Targets: [07](visual-targets/07-fountain-basin-material-and-ground-transition/target.jpg), [06](visual-targets/06-fountain-court-hero-composition/target.jpg)
 
-Implementation:
+Direction:
 
-1. Define the covered run with structural columns, arch or lintel bays, spandrels, plinths, and a continuous overhead bearing line.
-2. Give the merchant and dye-process openings deep reveals, finished frames, dark backing, closures, counters, shelves, and thresholds.
-3. Rebuild the overhead cover as beams, battens, supported static cloth, edge hems, tension lines, wall sockets, and deliberate light gaps.
-4. Consolidate vats, dye baskets, hanging cloth, racks, carts, and stock into a few grounded edge workstations with clear purpose.
-5. Unify ochre plaster, limestone, dark timber, colored cloth, paving wear, drainage, and readable shade toward the bright exit.
+1. Rework the water as shaded basin water — darker, desaturated, with a subtle normal response, Fresnel, a wetted edge, and no visible UV seam.
+2. Add at least one more palm silhouette variant and seed rotation and scale so no two identical palms share a frame.
+3. Resolve planter soil, rim, and trunk contact so plantings read as grounded assemblies.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/arches.ts`; `apps/client/src/runtime/map/propFamilies/{dyersWorkstation,textilesWallArt,signsAwnings,goods}.ts`
+- Likely ownership: `apps/client/src/runtime/map/propFamilies/fountain.ts`; `apps/client/src/runtime/map/buildDecorativePalms.ts`; `apps/client/src/runtime/render/models/PropModelLibrary.ts`
 
-Complete when: The primary view reaches the target’s enclosed market character and every bay, cover span, workstation, and floor junction reads as purpose-built.
+Complete when: The water closeup reads as believable still basin water and no camera contains two identical palm instances.
 
-## 12 - Dyers Dogleg residential turn
+## P9 - Named finish defects
 
-- [x] Ready for owner review
-- Boundary: The continuous S-turn from the Covered Souk exit to North Court, including the inner corner, outer residential wall, and turn-edge dressing.
-- Primary camera: `SHOT_08_DYERS_DOGLEG`
-- Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`, `SHOT_10_NORTH_COURT`
-- Target: [target.jpg](visual-targets/12-dyers-dogleg-residential-turn/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/12-dyers-dogleg-residential-turn/current-target.jpg)
-
-Implementation:
-
-1. Complete the inner corner and outer wall as interlocking plaster-and-stone masses with finished caps, returns, bases, and a deliberate S-shaped reveal.
-2. Replace shallow openings with modest residential doors and windows that have real depth, timber screens or shutters, dark backing, and clean thresholds.
-3. Add one small supported overhang, ledge, or screen assembly plus restrained utility lines fixed through visible brackets and wall anchors.
-4. Keep dyed textiles, pottery, baskets, planters, and a small work surface in sparse clusters on the outside of turns.
-5. Shift the district toward quiet sun-faded plaster, restrained timber, fine wall wear, and continuous ground drainage without weakening the corner silhouettes.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{windows,doors,facadeShells,structuralTrims}.ts`; `apps/client/src/runtime/map/propFamilies/{textilesWallArt,goods}.ts`
-
-Complete when: The view matches the target’s quiet residential contrast and layered turn while the inside line and full swept walking envelope remain visually clear.
-
-## 13 - North Court release
-
-- [x] Ready for owner review
-- Boundary: North Court from its southern threshold to the two B Spawn connectors, including the enclosing façades, palm landmark, court floor, and edge work areas.
+- [ ] Complete
+- Boundary: Four located defects plus a like-kind sweep: the North Court checkerboard floor patch, the Tea Terrace z-fighting streaks, the Covered Souk floating rug, and the Service South bright metallic flashing band.
 - Primary camera: `SHOT_10_NORTH_COURT`
-- Supporting cameras: `SHOT_08_DYERS_DOGLEG`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](visual-targets/13-north-court-release/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/13-north-court-release/current-target.jpg)
+- Supporting cameras: `SHOT_05_TEA_TERRACE`, `SHOT_07_COVERED_DYERS_SOUK`, `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`
+- Targets: [13](visual-targets/13-north-court-release/target.jpg), [16](visual-targets/16-tea-terrace-elevated-route/target.jpg)
 
-Implementation:
+Direction:
 
-1. Compose the enclosing walls into a low-mid-tall skyline with finished parapets, copings, stepped masses, and one dominant palm-backed anchor.
-2. Build a coherent residential/service bay rhythm with deep doors, screened windows, shaded stoops, plinths, and continuous horizontal datums.
-3. Resolve the south threshold and both north connector mouths with real jambs, heads, returns, floor cuts, and clear route hierarchy.
-4. Group the existing dye workstation, rug stall, planters, vessels, and cover into restrained edge clusters that frame the rotation space.
-5. Carry purposeful paving, drainage, wall-base wear, material scale, and sun/shade separation across the court without flattening the exits.
+1. Fix each named defect at its cause (coplanar surfaces, misassigned material, unseated prop) rather than hiding it with dressing.
+2. Then capture the wave review set once (`SHOT_01`–`SHOT_16` plus `AUDIT_01`–`AUDIT_07`, selected via explicit `SHOT_IDS`) and sweep it for the same defect classes — z-fighting, floating props, material misassignments — fixing what the sweep finds.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/{buildDecorativePalms,buildPbrFloors,floorWearDecals}.ts`; `apps/client/src/runtime/map/propFamilies/{dyersWorkstation,textilesWallArt,marketStalls,goods}.ts`
+- Likely ownership: follows each defect; expect `buildPbrFloors.ts`, `v3Architecture.ts`, and the owning prop families
 
-Complete when: The court matches the target’s release, skyline, and palm hierarchy while all three exits and the central rotation area remain immediately legible.
+Complete when: All four named defects are gone and the sweep finds no remaining defect of the same classes.
 
-## 14 - Service South utility frontage
+## P10 - Skyline and top-down integration
 
-- [x] Ready for owner review
-- Boundary: The long east wall and lane-edge band of Service South from the A south-west connector to Caravan Court.
-- Primary camera: `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`
-- Supporting cameras: `SHOT_06_CARAVAN_RAMP`
-- Target: [target.jpg](visual-targets/14-service-south-utility-frontage/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/14-service-south-utility-frontage/current-target.jpg)
-
-Implementation:
-
-1. Replace the blank wall with a quiet repeated service order of buttresses, plinths, string courses, cornice, and finished end returns.
-2. Build recessed storage doors, screened vents, and small windows with full frames, dark backing, thresholds, and believable hardware.
-3. Add timber ledgers, brackets, plates, fasteners, and one shallow load alcove integrated into the bay rhythm.
-4. Carry a continuous curb, drain, gutter staining, and wall-base wear along the lane edge and into the Caravan threshold.
-5. Ground baskets, pottery, crates, and utility pieces in a few recess clusters without narrowing the north opening or central route.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{doors,windows,structuralTrims}.ts`; `apps/client/src/runtime/map/propFamilies/goods.ts`; `apps/client/src/runtime/map/{buildPbrFloors,floorWearDecals}.ts`
-
-Complete when: The elevation matches the target’s calm service rhythm and no blank panel, unresolved opening, floating prop, or obstructed lane edge remains.
-
-## 15 - Caravan Court ramp and loading composition
-
-- [x] Ready for owner review
-- Boundary: Caravan Court’s load yard, east and west edges, ramp threshold, retaining faces, and the first visible rise toward Tea Terrace.
-- Primary camera: `SHOT_06_CARAVAN_RAMP`
-- Supporting cameras: `AUDIT_04_CARAVAN_EAST_FRONTAGES`, `SHOT_05_TEA_TERRACE`
-- Target: [target.jpg](visual-targets/15-caravan-court-ramp-and-loading/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/15-caravan-court-ramp-and-loading/current-target.jpg)
-
-Implementation:
-
-1. Finish the ramp approach with capped retaining faces, plinth returns, clean elevation transitions, threshold cuts, and a readable crest.
-2. Complete both service frontages with deep storage doors, modest windows, wall returns, coping, and coherent plaster-and-stone datums.
-3. Build one supported loading shade with posts or wall arms, beams, cross-bracing, ropes, fasteners, and static textile cover.
-4. Compose carts, crates, bundled goods, pack lines, and tying hardware into secured edge load groups with grounded wheels and feet.
-5. Add wheel wear, drainage, sand accumulation, contact shadows, and material seams that connect the yard, façades, and ramp.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/propFamilies/{carts,goods,signsAwnings}.ts`; `apps/client/src/runtime/map/{buildPbrFloors,floorWearDecals,buildSandAccumulation}.ts`
-
-Complete when: The court approaches the target’s load-yard composition and the ramp remains the dominant, clear route through fully grounded edge dressing.
-
-## 16 - Tea Terrace elevated route
-
-- [x] Ready for owner review
-- Boundary: The ramp crest, tea-service frontage, raised terrace, stairs, landing, and north connector as one continuous elevated route.
-- Primary camera: `SHOT_05_TEA_TERRACE`
-- Supporting cameras: `SHOT_06_CARAVAN_RAMP`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](visual-targets/16-tea-terrace-elevated-route/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/16-tea-terrace-elevated-route/current-target.jpg)
-
-Implementation:
-
-1. Rebuild the tea frontage with deep framed openings, dark backing, timber screens, a built-in counter or sideboard, shelves, and complete thresholds.
-2. Turn the existing stall into a braced timber tea-service assembly with grounded feet, canopy ledger, wall sockets, fasteners, trays, cups, and vessels.
-3. Add a modest static shade panel with finished edges, sag, tension, wall plates, ropes, and arms that stays above the clear route.
-4. Resolve ramp crest, terrace parapet or railing edges, retaining caps, stair treads, risers, landings, and floor-material transitions as one construction.
-5. Place stools, tables, crates, and folded textiles only at the terrace edges and unify stone, plaster, timber, brass, cloth, wear, and contact shadows.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/{v3Architecture,buildPbrFloors}.ts`; `apps/client/src/runtime/map/propFamilies/{teaService,marketStalls,signsAwnings,goods}.ts`
-
-Complete when: The elevated route matches the target’s tea-service identity and every stall, shade, railing, tread, landing, and wall contact reads as finished.
-
-## 17 - B Spawn main entrance and return
-
-- [ ] Ready for owner review [REVISIT: the tall exposed posts flanking the portal still read as bleached vertical planks; craze anisotropy and the west mass wall material were both corrected without changing them, so the post cladding has its own material path]
-- Boundary: The open southern portal into B Spawn, its immediate returns, edge rug racks, courtyard threshold, and the framed view back through the main route.
-- Primary camera: `SHOT_12_SPAWN_B_RETURN`
-- Supporting cameras: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`, `SHOT_09_RUG_GATE`
-- Target: [target.jpg](visual-targets/17-b-spawn-main-entrance-and-return/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/17-b-spawn-main-entrance-and-return/current-target.jpg)
-
-Implementation:
-
-1. Finish the existing pointed portal inside its current contour with cut-stone courses, a layered arch ring, real jamb depth, soffit, base blocks, and threshold.
-2. Complete both returns with cooler northern stone and plaster, recessed timber doors and screens, dark backing, plinths, sill datums, and copings.
-3. Replace the edge displays with braced rug racks, shelves, rolled textiles, grounded feet, and restrained stock outside the passage.
-4. Add modest lantern brackets, wall fixtures, shallow carved insets, and indigo accents attached through believable plates and fasteners.
-5. Carry paving joints, wall-base seams, material scale, and readable daylight through the portal to the distant main-route anchor.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{arches,doors,windows,structuralTrims}.ts`; `apps/client/src/runtime/map/propFamilies/{gateDressing,textilesWallArt,lanternsFixtures}.ts`
-
-Complete when: The return view matches the target’s northern gate identity and the original portal silhouette, width, and background route remain recognizable and open.
-
-## 18 - B Spawn south frontages
-
-- [x] Ready for owner review
-- Boundary: The paired south courtyard walls flanking B Spawn’s gate, including their towers, doors, windows, parapets, plinths, fixtures, and edge cover.
-- Primary camera: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`
-- Supporting cameras: `SHOT_12_SPAWN_B_RETURN`, `SHOT_10_NORTH_COURT`
-- Target: [target.jpg](visual-targets/18-b-spawn-south-frontages/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/18-b-spawn-south-frontages/current-target.jpg)
-
-Implementation:
-
-1. Recompose the paired masses with shared plinth, string, sill, cornice, and coping datums while preserving controlled left-right variation.
-2. Convert the tall exposed posts into connected pilasters, buttresses, or capped roof stacks that visibly belong to each façade.
-3. Build deep timber doors, screened windows, and shallow supported oriel assemblies with finished reveals, backing, sills, heads, and brackets.
-4. Attach lanterns, drains, restrained textile accents, and northern identity details through visible hardware rather than flat decoration.
-5. Consolidate rug rolls, racks, crates, pottery, and plants into grounded edge groups and resolve the gate, façade, and courtyard-floor seams.
-
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/v3Architecture.ts`; `apps/client/src/runtime/map/wallDetailFamilies/{facadeShells,windows,doors,structuralTrims}.ts`; `apps/client/src/runtime/map/propFamilies/{gateDressing,textilesWallArt,goods}.ts`
-
-Complete when: The paired frontages reach the target’s built northern character and no tower, opening, attachment, cover cluster, or ground junction reads as unfinished.
-
-## 19 - Perimeter, rooftops, and skyline integration
-
-- [x] Ready for owner review
-- Boundary: The continuous sealed perimeter ring, all visible playable roofs, parapets, roof services, and the surrounding non-playable skyline belt; traversable layout and openings are excluded.
+- [ ] Complete
+- Boundary: The perimeter belt, visible roofs, fog depth, and establishing composition — a final integration pass after the wave's material and light changes, with traversable layout excluded as always.
 - Primary camera: `SHOT_01_TOPDOWN_ESTABLISHING`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](visual-targets/19-perimeter-rooftops-and-skyline-integration/target.jpg)
-- Current → Target: [current-target.jpg](visual-targets/19-perimeter-rooftops-and-skyline-integration/current-target.jpg)
+- Targets: [19](visual-targets/19-perimeter-rooftops-and-skyline-integration/target.jpg)
 
-Implementation:
+Direction:
 
-1. Replace the repeated outer shell field with a deliberate layered old-city belt that follows the existing footprints while varying height, setback, roof class, and material.
-2. Finish every visible playable roof with coherent parapets, copings, drainage edges, roof-access hatches, and clean junctions to adjacent masses.
-3. Distribute a restrained deterministic set of water tanks, vents, chimney pots, shade frames, utility lines, and service clusters with believable support.
-4. Establish a low-mid-tall skyline rhythm with a few distant minaret, palm, and chimney silhouettes that frame rather than replace the sealed perimeter.
-5. Unify district roof palettes, large-to-small material variation, sun/shade separation, fog depth, and contact shadows without flattening the three route identities.
+1. Rebalance roof and perimeter palettes against the wave's corrected materials so districts stay distinct from above.
+2. Tune fog and depth layering so the skyline frames the play space at eye level without flattening it.
+3. Keep perimeter-shell detail lean — background roof clutter has previously stalled the runtime's first frame, and only the merchant-facade closeup capture catches it, so recapture `SHOT_13_CLOSEUP_MERCHANT_FACADE` after any perimeter geometry change.
 
-- Likely ownership: `docs/map-design/specs/map_spec.json`; `apps/client/src/runtime/map/{buildBlockout,v3Architecture,buildPbrWalls,buildDecorativePalms}.ts`; `apps/client/src/runtime/render/{DesertSky,Renderer}.ts`; `apps/client/src/runtime/game/Game.ts`
+- Likely ownership: `apps/client/src/runtime/map/buildBlockout.ts`; `apps/client/src/runtime/render/DesertSky.ts`; `apps/client/src/runtime/render/Renderer.ts`; `apps/client/src/runtime/game/Game.ts`
 
-Complete when: The top-down view approaches the target’s finished roof and city-edge composition while the authored map footprint, all routes, and every opening remain directly traceable.
+Complete when: The establishing view reads as one coherent old city under the wave's light, and all captures — including the merchant-facade closeup — still pass.
+
+## After the last card
+
+Run `pnpm qa:completion`, recapture the wave review set — `SHOT_01`–`SHOT_16` plus `AUDIT_01`–`AUDIT_07` (23 cameras, selected via explicit `SHOT_IDS`) — and stop for owner review. That review is the only owner stop in the wave, and it also decides any cards noted as stalled.

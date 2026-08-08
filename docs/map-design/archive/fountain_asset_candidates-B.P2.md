@@ -1,9 +1,14 @@
 Audience: implementation-agent
-Authority: context
-Read when: executing roadmap card B.P2 (fountain hero asset)
-Owns: pre-scouted CC0 fountain asset sources, selection constraints, water-material spec, fallback plan
-Do not use for: anything outside B.P2
-Last updated: 2026-07-14 (owner-side scouting, done in parallel with B.R1)
+Authority: archive
+Read when: tracing the retired roadmap's fountain work, or hunting CC0 fountain/water sources
+Owns: the completed B.P2 scouting record (CC0 source list, superseded constraints)
+Do not use for: active instructions — B.P2 shipped and its budgets/bans are superseded; current water and fountain direction is card P8 of `../map-polish-queue.md`
+Last updated: 2026-08-08
+
+> **Archived.** Roadmap card B.P2 was completed and the roadmap retired. The constraint
+> lines below (restyle ban, 1.6M scene cap, per-asset tri/texture caps) reflect that era's
+> budgets and are NOT current policy — the active queue's wave authorizations govern now.
+> The CC0 source-hunting list may still be useful reference for card P8.
 
 # B.P2 fountain asset scouting brief
 
