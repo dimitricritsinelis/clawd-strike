@@ -123,6 +123,8 @@ export const QA_RENDERER_DIRECT_TEXTURE_URLS = [
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/canopy_stripe_albedo_v1.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
+  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
+  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",

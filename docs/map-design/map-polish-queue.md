@@ -142,6 +142,24 @@ Direction:
 
 Complete when: The attachment closeup shows a supported, tensioned, finished span, and no blank cream sail remains in any camera.
 
+Stalled 2026-08-08 — the cloth clause is met, the attachment clause is not; the accepted work is kept
+(blind review preferred it on all four cameras). Two woven shade-cloth bolts replace the single blank
+sheet the long spans drew — project-original, provenance recorded in the textiles `sources.json`, with
+warp, weft, slub and narrow selvedge stripes, assigned so neighbouring plain spans never share a bolt.
+The review counted 16-20 legible stripe lines per span against 3-7 before, and confirmed `SHOT_15` and
+`SHOT_11` no longer read as blank sails. Adding the two cloth URLs to the QA direct-texture inventory
+also cleared a pre-existing `test:map-runtime` failure, since the sheet they replaced had never been
+listed there.
+
+Remaining gap on attachment: the intermediate lashings added along each wall edge do read as cordage
+over the ledger, but the review still finds nothing that visibly *ties* the cloth's hem to the timber
+corbels, no point-load pucker anywhere on the span, and the near/left free edge in `SHOT_15`
+terminating in mid-air with no batten or anchor — that edge is the most exposed and least finished
+thing in the frame. Also carried forward: overhead cloth is monochrome cream/ochre map-wide where the
+targets alternate saturated bolts against the cream, and the free edges are clean geometric arcs with
+no weighted hem, fringe or repair. Note `buildProps.test.ts` still expects 16 canopy corner ties and
+the fixture now builds 24 — a stale count from before this card, worth reconciling in the sweep.
+
 ## P5 - Shade, occlusion, and grounding light pass
 
 - [ ] Complete

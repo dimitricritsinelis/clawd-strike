@@ -1690,12 +1690,27 @@ function buildCompiledDressing(
     // sun-bleached canvas over the lane and keeps the stripe for the small shop
     // awnings under it. Alternating the two restores that hierarchy and stops
     // the run of spans reading as one repeated bolt of cloth.
+    // Two woven bolts replace the blank sheet these long spans used to draw. The
+    // hierarchy the note above describes is kept — these are still sun-bleached
+    // undyed duck, not the saturated shop-awning stripe — but the cloth now has
+    // warp, weft, slub and a narrow selvedge stripe, so a span reads as a bolt of
+    // cloth rather than a cream sail. Two members so neighbouring plain spans do
+    // not share one.
     canopyPlain: createBatch("v3-canopy-cloth-plain", 0xffffff, "canopy", createClothGeometry, {
       castShadow: true,
       receiveShadow: true,
       doubleSided: true,
-      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_albedo_v1.jpg",
-      textureRepeat: [1.6, 2.1],
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
+      textureRepeat: [1.15, 1.6],
+      roughness: 0.97,
+      vertexColors: true,
+    }),
+    canopyPlainAlt: createBatch("v3-canopy-cloth-plain-alt", 0xffffff, "canopy", createClothGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      doubleSided: true,
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [0.9, 1.35],
       roughness: 0.97,
       vertexColors: true,
     }),
@@ -1712,8 +1727,17 @@ function buildCompiledDressing(
       castShadow: true,
       receiveShadow: true,
       doubleSided: true,
-      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_albedo_v1.jpg",
-      textureRepeat: [1.6, 0.68],
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
+      textureRepeat: [1.15, 0.5],
+      roughness: 0.97,
+      vertexColors: true,
+    }),
+    canopyPlainAltValance: createBatch("v3-canopy-scalloped-valance-plain-alt", 0xffffff, "canopy", createCanopyScallopedValanceGeometry, {
+      castShadow: true,
+      receiveShadow: true,
+      doubleSided: true,
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [0.9, 0.42],
       roughness: 0.97,
       vertexColors: true,
     }),
@@ -3409,8 +3433,15 @@ function buildCompiledDressing(
         // that district's identity is dyed cloth; the market lane alternates
         // striped and plain so no two neighbouring spans share a bolt.
         const canopyIsPlain = !placement.id.includes("DYERS") && canopySeed % 2 === 1;
-        const canopyClothBatch = canopyIsPlain ? batches.canopyPlain : batches.canopy;
-        const canopyValanceBatch = canopyIsPlain ? batches.canopyPlainValance : batches.canopyValance;
+        // Plain spans alternate between the two woven bolts as well, so a run of
+        // lane spans never repeats the same cloth twice over.
+        const canopyPlainAlt = canopyIsPlain && (canopySeed >> 1) % 2 === 1;
+        const canopyClothBatch = canopyIsPlain
+          ? canopyPlainAlt ? batches.canopyPlainAlt : batches.canopyPlain
+          : batches.canopy;
+        const canopyValanceBatch = canopyIsPlain
+          ? canopyPlainAlt ? batches.canopyPlainAltValance : batches.canopyPlainValance
+          : batches.canopyValance;
         canopyClothBatch.instances.push({
           ...transform,
           tintHex: canopyTintHex,
@@ -3517,6 +3548,41 @@ function buildCompiledDressing(
                 },
               },
               { x: 1, y: 1, z: 1 },
+              spanPitchRad,
+              0,
+            );
+          }
+          // Intermediate lashings. The corner ties above are the only cordage the
+          // span had, and they sit at x = +/-0.46 of the width — outside the frame
+          // of the attachment closeup, which looks up at the middle of the span.
+          // So the one camera whose job is to prove attachment showed cloth
+          // meeting a beam with nothing holding it. These are the same rope
+          // batches, so they add no draw call: a short tie from the cloth edge
+          // back to the ledger, and a wrap over the ledger at each tie.
+          for (const alongFraction of [-0.26, 0, 0.26] as const) {
+            const clothEdgeZ = wallSide * depth * 0.46;
+            pushLocalInstance(
+              batches.canopyEdgeRopes,
+              world,
+              yawRad,
+              {
+                x: width * alongFraction,
+                y: height * 0.045,
+                z: (clothEdgeZ + fixtureZ) * 0.5,
+              },
+              { x: 0.022, y: 0.022, z: Math.abs(fixtureZ - clothEdgeZ) },
+              spanPitchRad,
+            );
+            pushLocalInstance(
+              batches.canopyHangRopes,
+              world,
+              yawRad,
+              {
+                x: width * alongFraction,
+                y: suspensionRiseM - 0.09,
+                z: fixtureZ,
+              },
+              { x: 0.034, y: 0.2, z: 0.034 },
               spanPitchRad,
               0,
             );
