@@ -25,10 +25,10 @@
 <rect x="34" y="20" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
 </g>
 <g id="ZONE_LINK_NORTH_EAST">
-<rect x="39" y="11" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+<rect x="39" y="11" width="7" height="5" fill="#b7a58a" stroke="#342f27" stroke-width="0.12"/>
 </g>
 <g id="ZONE_LINK_NORTH_WEST">
-<rect x="10" y="11" width="7" height="5" fill="#a88b67" stroke="#342f27" stroke-width="0.12"/>
+<rect x="10" y="11" width="7" height="5" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>
 </g>
 <g id="ZONE_LINK_SOUTH_EAST">
 <rect x="39" y="79" width="7" height="5" fill="#d6b77c" stroke="#342f27" stroke-width="0.12"/>

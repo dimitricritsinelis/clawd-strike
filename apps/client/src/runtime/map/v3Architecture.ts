@@ -119,6 +119,11 @@ export type V3ArchitectureBuildResult = {
 };
 
 const MIN_DIMENSION_M = 0.02;
+// Flat elevated paving is rendered by buildPbrFloors at the authoritative
+// traversal elevation. A closed retaining box must stop just below that plane;
+// sharing its exact height creates full-footprint coplanar z-fighting across
+// Tea Terrace. The PBR edge fascia hides this visual-only recess.
+const ELEVATION_FOUNDATION_TOP_CLEARANCE_M = 0.02;
 // Merchant joinery must resolve through the loaded rough-pine PBR family even
 // when an older facade profile still names the flat balcony template. Keeping
 // this at the reusable architecture seam lets per-opening tints and UV offsets
@@ -2891,11 +2896,17 @@ function pushMassing(
 
   const corniceHeightM = profile.family === "active_merchant" ? 0.18 : 0.12;
   if (!hasFacadeCutouts) {
+    // Quiet residential rooflines are simple masonry courses. Reusing the
+    // three-part molded plinth here produced bright parallel rails across long
+    // service frontages, which read as metal flashing instead of wall finish.
+    const rooflineMeshId = profile.family === "quiet_residential"
+      ? "facade_wall_shell"
+      : "plinth_strip";
     pushInstance(instances, {
       placementId: `${placement.id}:roofline-cornice`,
       moduleId: `${profile.family}_roofline_cornice`,
       semanticClass: `${profile.family}_roofline`,
-      meshId: "plinth_strip",
+      meshId: rooflineMeshId,
       position: offsetPosition(
         { ...center, y: center.y + placement.sizeM.height * 0.5 - corniceHeightM * 0.5 },
         placement.face,
@@ -6398,6 +6409,10 @@ function pushElevationFoundations(
   for (const surface of surfaces) {
     if (surface.kind === "flat") {
       if (surface.elevationM <= MIN_DIMENSION_M) continue;
+      const foundationHeightM = Math.max(
+        MIN_DIMENSION_M,
+        surface.elevationM - ELEVATION_FOUNDATION_TOP_CLEARANCE_M,
+      );
       pushInstance(instances, {
         placementId: `ELEVATION_FOUNDATION:${surface.id}`,
         moduleId: "elevation_foundation",
@@ -6405,12 +6420,12 @@ function pushElevationFoundations(
         meshId: "facade_wall_shell",
         position: {
           x: surface.rect.x + surface.rect.w * 0.5,
-          y: surface.elevationM * 0.5,
+          y: foundationHeightM * 0.5,
           z: surface.rect.y + surface.rect.h * 0.5,
         },
         scale: {
           x: surface.rect.w,
-          y: surface.elevationM,
+          y: foundationHeightM,
           z: surface.rect.h,
         },
         yawRad: 0,

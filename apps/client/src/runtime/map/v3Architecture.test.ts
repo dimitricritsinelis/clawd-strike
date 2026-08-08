@@ -1974,6 +1974,10 @@ test("merchant-mid and quiet-low massing have distinct repaired bases and roofli
   const residentialCornice = residential.instances.find((instance) => instance.semanticClass === "quiet_residential_roofline");
   assert.ok(merchantCornice && residentialCornice);
   assert.ok(merchantCornice.scale.y > residentialCornice.scale.y);
+  assert.equal(merchantCornice.meshId, "plinth_strip");
+  assert.equal(residentialCornice.meshId, "facade_wall_shell");
+  assert.equal(residentialCornice.wallMaterialId, materialSlots.wall);
+  assert.equal(residentialCornice.trimMaterialId, null);
   assert.equal(merchant.instances.filter((instance) => instance.semanticClass === "active_merchant_parapet_silhouette").length, 1);
   assert.equal(
     residential.instances.filter((instance) => instance.semanticClass === "quiet_residential_parapet_silhouette").length,
@@ -2264,6 +2268,14 @@ test("elevated terrace and ramp foundations close visible under-surface gaps wit
   assert.equal(foundations.filter((instance) => instance.semanticClass === "terrace_retaining_mass").length, 1);
   assert.equal(foundations.filter((instance) => instance.semanticClass === "ramp_foundation").length, 9);
   assert.ok(foundations.every((instance) => instance.meshId === "facade_wall_shell"));
+  const terraceFoundation = foundations.find((instance) => instance.semanticClass === "terrace_retaining_mass")!;
+  const terraceBottomM = terraceFoundation.position.y - terraceFoundation.scale.y * 0.5;
+  const terraceTopM = terraceFoundation.position.y + terraceFoundation.scale.y * 0.5;
+  assert.ok(Math.abs(terraceBottomM) < 1e-6, "terrace retaining mass must remain grounded at y=0");
+  assert.ok(
+    terraceTopM < 1.39 && terraceTopM > 1.36,
+    `terrace retaining top must clear the authored 1.4m paving plane, got ${terraceTopM}`,
+  );
   const cheeks = result.instances.filter((instance) => instance.semanticClass === "ramp_retaining_cheek");
   const caps = result.instances.filter((instance) => instance.semanticClass === "ramp_retaining_cap");
   assert.equal(cheeks.length, 18);

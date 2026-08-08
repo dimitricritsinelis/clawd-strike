@@ -5921,7 +5921,7 @@
       "surfaceId": "SURFACE_LINK_NORTH_WEST",
       "districtId": "DISTRICT_RUG",
       "macroLane": "west",
-      "floorMaterialId": "cobblestone_pavement",
+      "floorMaterialId": "large_sandstone_blocks_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5,
       "notes": "Authored collision opening; keep fully traversable."
@@ -5939,7 +5939,7 @@
       "surfaceId": "SURFACE_LINK_NORTH_EAST",
       "districtId": "DISTRICT_RUG",
       "macroLane": "east",
-      "floorMaterialId": "cobblestone_pavement",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5,
       "notes": "Authored collision opening; keep fully traversable."

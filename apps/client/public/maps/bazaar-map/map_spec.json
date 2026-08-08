@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "cab7142648e76c24fded4844e4dd77ad4dfabc16f206af2d4aa724062890773a",
+    "sha256": "95dcb0d99bc70730e695cab8f27f9a1485ca89274b207fa70302c29ac03df942",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -421,7 +421,7 @@
       "surfaceId": "SURFACE_LINK_NORTH_EAST",
       "districtId": "DISTRICT_RUG",
       "macroLane": "east",
-      "floorMaterialId": "cobblestone_pavement",
+      "floorMaterialId": "court_limestone_flags_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5
     },
@@ -439,7 +439,7 @@
       "surfaceId": "SURFACE_LINK_NORTH_WEST",
       "districtId": "DISTRICT_RUG",
       "macroLane": "west",
-      "floorMaterialId": "cobblestone_pavement",
+      "floorMaterialId": "large_sandstone_blocks_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5
     },

@@ -2740,8 +2740,8 @@ function buildCompiledDressing(
       placementRoot.name = `v3-dressing-${placement.id}`;
       placementRoot.position.set(world.x, world.y, world.z);
       placementRoot.rotation.y = yawRad;
-      const coverUnit = stablePlacementVariantSeed(`${placement.id}:cover-layout`);
-      const coverVariant = Math.min(2, Math.floor(coverUnit * 3));
+      const coverSeed = stablePlacementVariantSeed(`${placement.id}:cover-layout`);
+      const coverVariant = coverSeed % 3;
       const mirror = coverVariant === 1 ? -1 : 1;
       const crateSpecs = [
         { x: mirror * -width * (0.22 + coverVariant * 0.025), y: 0, z: depth * (coverVariant === 2 ? -0.04 : 0.02), yaw: mirror * (0.035 + coverVariant * 0.035), width: width * (0.52 - coverVariant * 0.025), height: height * (0.38 + coverVariant * 0.018), depth: depth * 0.8, tintHex: [0xa99b88, 0x91aa9e, 0xb79a7c][coverVariant]! },
@@ -2798,9 +2798,15 @@ function buildCompiledDressing(
           placement.shadowPolicy,
         );
       }
-      const tarpCenterX = mirror * -width * (0.1 + coverVariant * 0.025);
-      const tarpCenterY = height * (0.54 + coverVariant * 0.025);
-      const tarpCenterZ = -depth * (0.02 + coverVariant * 0.025);
+      const tarpSupport = crateSpecs[2]!;
+      const tarpScale = { x: width * 0.39, y: height * 0.32, z: depth * 0.55 };
+      // The tarp surface is authored around local y=.18. Seat that datum on
+      // the selected upper crate so its draped edges overlap a real support;
+      // the former independent offset left variant 2 hovering 96 mm above the
+      // lower crate and almost entirely beside the upper one.
+      const tarpCenterX = tarpSupport.x;
+      const tarpCenterY = tarpSupport.y + tarpSupport.height - tarpScale.y * 0.18;
+      const tarpCenterZ = tarpSupport.z;
       pushLocalInstance(
         batches.coverTarp,
         world,
@@ -2809,10 +2815,10 @@ function buildCompiledDressing(
           x: tarpCenterX,
           y: tarpCenterY,
           z: tarpCenterZ,
-          yaw: mirror * (0.035 + coverVariant * 0.045),
+          yaw: tarpSupport.yaw,
           tintHex: [0xd88f62, 0x78aaa0, 0xc6a04e][coverVariant]!,
         },
-        { x: width * 0.39, y: height * 0.32, z: depth * 0.55 },
+        tarpScale,
       );
       for (const side of [-1, 1] as const) {
         const tieX = tarpCenterX + side * width * 0.13;

@@ -127,8 +127,24 @@ test("Fountain and North courts keep distinct authored flagstone scales", () => 
   };
   const fountain = runtimeSpec.zones.find((zone) => zone.id === "FOUNTAIN_COURT");
   const north = runtimeSpec.zones.find((zone) => zone.id === "NORTH_COURT");
+  const northEastLink = runtimeSpec.zones.find((zone) => zone.id === "LINK_NORTH_EAST");
+  const teaLanding = runtimeSpec.zones.find((zone) => zone.id === "TEA_LANDING");
+  const spawnB = runtimeSpec.zones.find((zone) => zone.id === "SPAWN_B_COURTYARD");
+  const northWestLink = runtimeSpec.zones.find((zone) => zone.id === "LINK_NORTH_WEST");
   assert.equal(fountain?.floorMaterialId, "patterned_cobblestone");
   assert.equal(north?.floorMaterialId, "court_limestone_flags_01");
+  assert.equal(
+    northEastLink?.floorMaterialId,
+    north?.floorMaterialId,
+    "the overlapping North-East connector must not expose a checked cobblestone tongue inside North Court",
+  );
+  assert.equal(teaLanding?.floorMaterialId, "large_sandstone_blocks_01");
+  assert.equal(spawnB?.floorMaterialId, teaLanding?.floorMaterialId);
+  assert.equal(
+    northWestLink?.floorMaterialId,
+    teaLanding?.floorMaterialId,
+    "the overlapping North-West connector must not expose a checked cobblestone tongue beside Tea Landing",
+  );
 
   const floors = parseFloorMaterialManifest(readJson(FLOOR_MANIFEST_URL));
   const fountainMaterial = floors.find((entry) => entry.id === fountain?.floorMaterialId);

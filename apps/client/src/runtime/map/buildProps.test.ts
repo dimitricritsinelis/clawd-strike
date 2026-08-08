@@ -213,15 +213,15 @@ async function buildB4DressingResult() {
   });
 }
 
-async function buildCoverGoodsResult() {
+async function buildCoverGoodsResult(anchorId: string | null = "COVER_SPICE_01") {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
   blockout.dressingPlacements = (blockout.dressingPlacements ?? []).filter((placement) => (
-    placement.assetId === "ASSET_COVER_GOODS" && placement.anchorId === "COVER_SPICE_01"
+    placement.assetId === "ASSET_COVER_GOODS" && (anchorId === null || placement.anchorId === anchorId)
   ));
   const anchors = parseAnchorsSpec(raw, specUrl.pathname);
-  anchors.anchors = anchors.anchors.filter((anchor) => anchor.id === "COVER_SPICE_01");
+  if (anchorId !== null) anchors.anchors = anchors.anchors.filter((anchor) => anchor.id === anchorId);
   return buildProps({
     mapId: blockout.mapId,
     blockout,
@@ -307,6 +307,13 @@ function instanceScale(target: InstancedMesh, index: number): Vector3 {
   const scale = new Vector3();
   matrix.decompose(new Vector3(), new Quaternion(), scale);
   return scale;
+}
+
+function instanceBounds(target: InstancedMesh, index: number): Box3 {
+  target.geometry.computeBoundingBox();
+  const matrix = new Matrix4();
+  target.getMatrixAt(index, matrix);
+  return target.geometry.boundingBox!.clone().applyMatrix4(matrix);
 }
 
 function texturePixel(texture: DataTexture, u: number, v: number): readonly number[] {
@@ -690,6 +697,32 @@ test("cover goods preserve the authored hard collider while adding sacks and a f
   assert.equal(tarpMaterial.emissiveMap, null, "closeup cover cloth regained a flattening emissive copy");
   assert.equal(tarpMaterial.emissiveIntensity, 0);
   assert.ok(root.getObjectByName("market-stall-goods-cc0_spice_sack"), "cover sack is missing");
+});
+
+test("cover-goods layouts vary deterministically and every tarp intersects a support crate", async () => {
+  const result = await buildCoverGoodsResult(null);
+  const root = result.root.getObjectByName("map-props-v3-compiled")!;
+  const tarp = mesh(root, "v3-cover-goods-draped-tarp");
+  const crateMeshes = [
+    mesh(root, "v3-cover-crate-horizontal-slat"),
+    mesh(root, "v3-cover-crate-painted-vertical-slat"),
+    mesh(root, "v3-cover-crate-diagonal-braced"),
+  ];
+  assert.equal(tarp.count, 8);
+  assert.ok(crateMeshes.every((crate) => crate.count === tarp.count));
+
+  const tarpTints = new Set<string>();
+  for (let index = 0; index < tarp.count; index += 1) {
+    const color = new Color();
+    tarp.getColorAt(index, color);
+    tarpTints.add(color.getHexString());
+    const tarpBox = instanceBounds(tarp, index);
+    assert.ok(
+      crateMeshes.some((crate) => tarpBox.intersectsBox(instanceBounds(crate, index))),
+      `cover tarp ${index} has no supporting crate overlap`,
+    );
+  }
+  assert.equal(tarpTints.size, 3, "uint32 cover seed collapsed all placements onto one layout variant");
 });
 
 test("ground rugs receive cluster shadows without stacking a generic contact apron", async () => {

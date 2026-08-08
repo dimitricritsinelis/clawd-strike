@@ -337,7 +337,7 @@ global optical nudging. Evidence: `artifacts/playwright/map-shots/P8-before/`,
 
 ## P9 - Named finish defects
 
-- [ ] Complete
+- [x] Complete
 - Boundary: Four located defects plus a like-kind sweep: the North Court checkerboard floor patch, the Tea Terrace z-fighting streaks, the Covered Souk floating rug, and the Service South bright metallic flashing band.
 - Primary camera: `SHOT_10_NORTH_COURT`
 - Supporting cameras: `SHOT_05_TEA_TERRACE`, `SHOT_07_COVERED_DYERS_SOUK`, `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`
@@ -351,6 +351,24 @@ Direction:
 - Likely ownership: follows each defect; expect `buildPbrFloors.ts`, `v3Architecture.ts`, and the owning prop families
 
 Complete when: All four named defects are gone and the sweep finds no remaining defect of the same classes.
+
+Done 2026-08-08. Each defect was repaired at its owning cause. The overlapping North-East connector
+now inherits North Court's flagstone instead of exposing an L-shaped checked cobble remainder; the
+Tea Terrace's render-only retaining volume stops 2 cm below its authoritative paving plane, removing
+the coplanar streaks without changing elevation or collision; and all eight cover-goods layouts now
+use deterministic seed variants with their flexible tarps seated on supporting crates. Quiet-
+residential rooflines use one wall-material masonry course rather than a three-part molded plinth, so
+the long Service South cornice no longer reads as bright metal flashing.
+
+The required 23-camera sweep found one like-kind authority error at the North-West connector. It now
+matches the large sandstone shared by Tea Landing and Spawn B Courtyard, removing the second isolated
+checked material tongue. Fresh blind review marked all 23 final sweep cameras PASS for z-fighting,
+floating props, and accidental material islands. `pnpm typecheck`, generated-map freshness, the
+focused material/architecture/cover regressions, and all twelve canonical final traversal checks
+pass. The completion gate passed all three routes and sixteen shots at 841 desktop draws, 2.109M
+triangles, and 7.3 ms median (403 / 1.239M / 7.3 ms mobile). Evidence:
+`artifacts/playwright/map-shots/P9-final/` and
+`artifacts/playwright/completion-gate/2026-08-08T20-12-48-988Z/`.
 
 ## P10 - Skyline and top-down integration
 
