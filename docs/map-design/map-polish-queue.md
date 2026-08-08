@@ -316,6 +316,25 @@ Direction:
 
 Complete when: The water closeup reads as believable still basin water and no camera contains two identical palm instances.
 
+Stalled 2026-08-08 — no revision was retained. The current water path already has a scrolling
+procedural normal, view-dependent Fresnel, transmission, restrained specular response, and a separate
+wetted basin contact. Each fixed camera also contains at most one palm, and the two authored palms
+already receive anchor-ID-seeded trunk, crown, frond, rotation, and scale variation. The fixed set
+therefore does not expose an identical pair, but the close review remains split on whether the bright
+cyan/mosaic pool reads as shaded water or as the lining seen through a nearly clear lid.
+
+Two water-only revisions were captured and restored as visual ties, triggering the map-polish stop
+rule. The first conservatively lowered transmission and saturation; the second made absorption and
+surface tint strong enough to change the light path. Neither produced a clear preference in
+`SHOT_16`, while both support cameras were unchanged. The remaining causes are now narrow: the
+procedural ripple uses non-periodic wave terms despite repeat wrapping, so its normal field has a
+measurable wrap-edge discontinuity; pools and thin jets share one material, constraining deeper basin
+absorption; and the two palms still share one fixed 14/12/10-frond whole-crown recipe even though their
+individual matrices differ. Their soil top also stops 17.5 mm below the trunk base. A future pass
+should start with a seam-safe toroidal normal and two deterministic whole-crown profiles, not more
+global optical nudging. Evidence: `artifacts/playwright/map-shots/P8-before/`,
+`artifacts/playwright/map-shots/P8-a1/`, and `artifacts/playwright/map-shots/P8-a2/`.
+
 ## P9 - Named finish defects
 
 - [ ] Complete
