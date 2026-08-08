@@ -105,10 +105,18 @@ const SCENE_ENVIRONMENT_INTENSITY = 0.14;
 // and the tea terrace 109 -> 122 against 98, the latter already over before this.
 // Those two want per-area material work, not a lower value here.
 const KIT_PLASTER_ENVIRONMENT_INTENSITY = 0.10;
-const KIT_TIMBER_ENVIRONMENT_INTENSITY = 0.70;
+// Timber was carrying 7-9x the plaster's environment response. Dry weathered
+// wood is a rough dielectric: its specular lobe is small, and against a warm
+// desert PMREM a lobe that size renders as a pink-copper film laid over the
+// whole member. That film — not the albedo, and not gloss, since the shader
+// already floors roughness at 0.97 — is why every shutter, lattice, frame and
+// display post in the merchant closeup read as oxidised metal or plastic rather
+// than wood. Pulled to just above plaster so timber still picks up sky bounce in
+// shade while its own grain and tone decide its colour.
+const KIT_TIMBER_ENVIRONMENT_INTENSITY = 0.18;
 const KIT_METAL_ENVIRONMENT_INTENSITY = 1.15;
 const DETAIL_PLASTER_ENVIRONMENT_INTENSITY = 0.08;
-const DETAIL_TIMBER_ENVIRONMENT_INTENSITY = 0.38;
+const DETAIL_TIMBER_ENVIRONMENT_INTENSITY = 0.12;
 // Lowered from 0.72. Facade ironwork - shutter hinge clips, sign brackets, the
 // small hardware scattered across every frontage - was rendering as pale BLUE
 // tabs stuck onto warm timber: measured 71 luminance at a red-to-blue ratio of

@@ -4575,7 +4575,13 @@ function pushWindow(
   // value where the target runs 1.65x — bright enough that the eye lands on the
   // surrounds before the sunlit masonry. Only 10%: the frames are barely over,
   // and a deeper pull would drop them well under the target.
-  const MERCHANT_FRAME_TINT_HEX = 0xd8b478;
+  //
+  // Darkened and cooled from 0xd8b478. Both the warm over-authoring and the
+  // value above were set while kit timber carried a heavy warm environment
+  // reflection; with that film removed the frames were the brightest, most
+  // saturated element on the shaded west elevation and read as copper pipe
+  // against the shutters they surround.
+  const MERCHANT_FRAME_TINT_HEX = 0xb2916a;
   const usesMerchantFrameTint = profile.family === "active_merchant";
   pushFrame(
     placement,

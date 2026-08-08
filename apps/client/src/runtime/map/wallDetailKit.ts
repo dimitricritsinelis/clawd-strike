@@ -1019,6 +1019,35 @@ function buildPbrDetailMeshes(
   const dummy = new Object3D();
   const tintColor = new Color();
   const instanceColor = new Color();
+  // Repeated timber members are cut from different boards. Without this, a run
+  // of shutters, posts or shelves shares one albedo exactly and the assembly
+  // reads as extruded rather than built. Seeded off the placement id so the
+  // variation is stable and reproducible, and kept narrow enough that no member
+  // leaves its tier's value band.
+  const applyTimberMemberVariation = (
+    color: Color,
+    meshId: WallDetailMeshId,
+    materialId: string | null,
+    placementId: string,
+  ): void => {
+    const finish = resolveKitMaterialFinish(meshId, materialId);
+    if (
+      finish !== "timber-door"
+      && finish !== "timber-window"
+      && finish !== "timber-screen"
+      && finish !== "timber-surface"
+    ) {
+      return;
+    }
+    const rng = new DeterministicRng(deriveSubSeed(options.seed, `kit-timber-member:${placementId}`));
+    const value = 0.88 + rng.next() * 0.24;
+    const warmth = (rng.next() - 0.5) * 0.06;
+    color.setRGB(
+      color.r * value * (1 + warmth),
+      color.g * value,
+      color.b * value * (1 - warmth),
+    );
+  };
   // Large compiled maps contain many distinct detail geometries but far fewer
   // compatible material/shadow states. BatchedMesh preserves the individual
   // transforms and per-instance colors while issuing one draw per compatible
@@ -1139,6 +1168,12 @@ function buildPbrDetailMeshes(
           } else {
             instanceColor.setRGB(1, 1, 1);
           }
+          applyTimberMemberVariation(
+            instanceColor,
+            entry.bucket.meshId,
+            entry.bucket.materialId,
+            instance.placementId ?? `${entry.bucket.meshId}:${instanceId}`,
+          );
           mesh.setColorAt(instanceId, instanceColor);
           visualQaInstances.push({
             placementId: instance.placementId ?? `${mesh.name}:${instanceId}`,
@@ -1232,6 +1267,12 @@ function buildPbrDetailMeshes(
       } else {
         instanceColor.setRGB(1, 1, 1);
       }
+      applyTimberMemberVariation(
+        instanceColor,
+        bucket.meshId,
+        bucket.materialId,
+        instance.placementId ?? `${bucket.meshId}:${index}`,
+      );
       mesh.setColorAt(index, instanceColor);
     }
 

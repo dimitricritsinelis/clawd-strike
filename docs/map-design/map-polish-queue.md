@@ -57,7 +57,7 @@ the frame's normals and batch UVs inspected directly in the running game.
 
 ## P2 - Kit timber surface response
 
-- [ ] Complete
+- [x] Complete
 - Boundary: Every kit-built timber element map-wide — lattices, shutters, screens, window frames, pergola members — whose surface response, not shape, is the defect.
 - Primary camera: `SHOT_13_CLOSEUP_MERCHANT_FACADE`
 - Supporting cameras: `SHOT_11_SPICE_CANOPY`, `AUDIT_07_SPICE_WEST_ELEVATION`
@@ -72,6 +72,19 @@ Direction:
 - Likely ownership: `apps/client/src/runtime/map/wallDetailFamilies/kitMaterials.ts`; `apps/client/src/runtime/map/wallDetailFamilies/windows.ts`
 
 Complete when: Closeup timber reads as dry weathered or painted wood with directional grain, in sun and in shade.
+
+Done 2026-08-08. The copper-pink read was never gloss or albedo: kit timber carried 7-9x the
+plaster's `envMapIntensity`, so a large share of each member's light arrived as a warm sky
+reflection laid over the whole surface. Cutting that (`Game.ts`), halving the arris catch, and
+darkening the merchant frame tint resolved it; a blind review preferred the result on all three
+cameras and measured the highlight now desaturating like a dielectric rather than gaining
+saturation like metal. Repeated members also carry a seeded per-member tone so a run of shutters or
+shelves is no longer one albedo. Two items carried forward rather than closed: the tier value
+scales were left as they were, because three sweeps that raised them toward the target's measured
+luminance all read worse (at target value this family's red bias reads as copper, and desaturating
+it there reads as mauve) — shaded timber therefore still sits under the target, which is the shade
+deficit P5 owns; and per-member texel density (direction 2) was not touched, so a 52 mm bar and a
+2 m panel still share one tile scale per finish tier.
 
 ## P3 - Door family rebuild
 

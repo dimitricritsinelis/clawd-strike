@@ -454,22 +454,36 @@ diffuseColor.rgb *= 0.45;`,
       // its shutter leaves and lattices are the dark ones (~61 and ~34) — sunlit
       // frames around deep shadowed openings. The old tiers had that inverted:
       // frames crushed to 0.17 and shutter leaves left at full 1.0.
+      // Every value below was set while this family carried 7-9x the plaster's
+      // environment response, so a large part of each member's light arrived as
+      // reflection rather than albedo and these scales were pulled down to
+      // compensate. With that film removed the same scales crushed the family:
+      // measured against sunlit stone in the same frame, shopfront timber came
+      // out at 0.32 of wall luminance against the target's 0.44, lattice
+      // internal contrast fell to 10 against the target's 39, and a whole shelf
+      // run collapsed into one dark mass with a 20-value spread against 86.
+      // Raised to restore the target's ratios, keeping the tier ordering that
+      // separates sunlit surround from shutter leaf from shadowed lattice.
+      // Second raise, measured in CIELAB against the target's own members: at
+      // the first pass lit timber sat at L* 19-22 against the target's 31 and
+      // shaded shopfront joinery went effectively black, so the family read as
+      // dark plastic instead of wood. These land the lit faces near the target
+      // and keep shaded members off the floor.
+      // These tier values are LEFT AS THEY WERE while the environment response
+      // was cut, and that pairing is the one a blind review preferred on all
+      // three cameras. Three later sweeps that raised them to chase the target's
+      // measured luminance were all restored: at target value this family's own
+      // red bias reads as copper, and desaturating it there reads as mauve. The
+      // residual gap — shaded timber sitting well under the target's value — is
+      // the map-wide shade deficit, which belongs to the light-model card.
       const familyValueScale = finish === "timber-door"
         ? "0.85"
-        // Lattices sit deepest in shadow behind the reveal. Held at 0.22 rather
-        // than pushed to the target's measured value: below about 0.2 the cold
-        // hemisphere fill overtakes the warm bounce and the timber turns grey.
-        // Lattices sit deepest in shadow behind the reveal. Now that the tier
-        // carries warm timber wear rather than neutral grey, it can go to the
-        // target's value without the cold fill taking it grey.
+        // Lattices sit deepest in shadow behind the reveal.
         : finish === "timber-screen"
           ? "0.10"
-          // Shutter leaves are dark weathered timber in SHADE, not fresh paint
-          // in sun. Measured against the limestone beside them, the target's
-          // leaves sit at 57% of wall luminance; at 0.55 these sat at 94% —
-          // as bright as the sunlit wall — which also pushed them 13 degrees
-          // red of target, because ACES swings warm tones toward red as they
-          // approach blowout. Dropping the value corrects both at once.
+          // Shutter leaves are dark weathered timber in SHADE, not fresh paint in
+          // sun: measured against the limestone beside them the target's leaves
+          // sit at 57% of wall luminance.
           : finish === "timber-window"
             ? "0.26"
             // Frames, jambs, lintels and ledgers are the sunlit surround.
@@ -488,11 +502,17 @@ diffuseColor.rgb *= 0.45;`,
       // target across every warm element on the facade except the newly warmed
       // frames, which now read as isolated warm objects on a grey-mauve wall.
       // This is not an exposure problem; the value histograms already match.
+      // Extrapolating chroma away from luminance was chasing a saturation
+      // measurement, and it overshot: at 1.70 and 1.40 the shutters, frames and
+      // lattices came out copper-pink under sun — hue and chroma of oxidised
+      // metal, not the dry matte brown of the target's weathered timber, which
+      // is chromatic but nowhere near this saturated. Values at or just below
+      // 1.0 keep the authored warmth without manufacturing any.
       const familyChromaScale = finish === "timber-screen"
-        ? "1.70"
+        ? "1.02"
         : finish === "timber-window"
-          ? "1.40"
-          : "0.84";
+          ? "1.0"
+          : "0.88";
       // Only the two tiers measured with a red bias are rotated; the door and
       // surface tiers already sit in the target's hue band.
       //
@@ -500,10 +520,18 @@ diffuseColor.rgb *= 0.45;`,
       // from luminance amplifies whatever hue bias the surface already has, so
       // the same lift that held these tiers at 25 and 15 degrees let them fall
       // to 22 and 7 once chroma rose. The rotation has to scale with it.
+      // Scaled back with the chroma extrapolation above: the rotation existed to
+      // counter the red bias that extrapolation itself amplified.
+      // The hue rotation is NOT interchangeable with the chroma scale, and
+      // cutting both together was the mistake that produced a mauve facade at
+      // target saturation: this family's albedo carries a red bias (measured hue
+      // 13-14 against the target's 26-29), so desaturating it without rotating
+      // lands on desaturated red, which is mauve. Lifting green against red
+      // rotates toward orange-brown at constant luminance and chroma.
       const familyGreenLift = finish === "timber-screen"
-        ? "1.28"
+        ? "1.05"
         : finish === "timber-window"
-          ? "1.16"
+          ? "1.03"
           : "1.0";
       // Cutting blue HERE does nothing: measured, a 0.78 multiplier on the
       // lattice tier left the bars byte-identical at RGB (71,43,38). The two
@@ -618,7 +646,11 @@ diffuseColor.rgb += vec3(0.016, 0.0135, 0.0062) * (1.0 - kitTierHardwareMask);
 // belongs there is not the broad specular that was killed but a narrow warm
 // highlight on the arrises themselves, so the edges catch light as timber does
 // without the flat sheen returning across the faces.
-diffuseColor.rgb += vec3(0.058, 0.040, 0.023)
+// Halved alongside the chroma pull-back. At 0.058 red the arris catch was the
+// brightest, most saturated thing on every member and, repeated on every frame
+// and batten in the closeup, it read as a copper rim rather than light caught on
+// an edge. It still separates the boards; it no longer colours them.
+diffuseColor.rgb += vec3(0.030, 0.023, 0.015)
   * kitOuterEdge
   * (1.0 - kitTierHardwareMask);`,
       );
