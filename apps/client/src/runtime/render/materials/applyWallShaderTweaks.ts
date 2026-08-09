@@ -79,14 +79,14 @@ uniform vec2 uWallUvOffset;`,
   wallWp = modelMatrix * wallWp;
   vWallWorldPos = wallWp.xyz;
 }
-vec3 wallObjectNormal = normal;
-#ifdef USE_BATCHING
-wallObjectNormal = mat3(batchingMatrix) * wallObjectNormal;
-#endif
-#ifdef USE_INSTANCING
-wallObjectNormal = mat3(instanceMatrix) * wallObjectNormal;
-#endif
-vec3 wallWorldNormal = normalize(mat3(modelMatrix) * wallObjectNormal);
+// transformedNormal has already passed through Three's normal-matrix path.
+// Crucially, that path applies the inverse-scale correction required for
+// non-uniform BatchedMesh and InstancedMesh transforms. Re-applying the forward
+// object matrices here made a 4 m x 6 m x 0.2 m arch classify most of its front
+// faces from the wrong dominant axis, squeezing masonry courses into vertical
+// streaks. View matrices carry rotation only, so Three's own inverse-direction
+// helper safely returns the corrected normal to world space.
+vec3 wallWorldNormal = normalize(inverseTransformDirection(transformedNormal, viewMatrix));
 float wallNormalY = abs(wallWorldNormal.y);
 float wallNormalX = abs(wallWorldNormal.x);
 float wallNormalZ = abs(wallWorldNormal.z);

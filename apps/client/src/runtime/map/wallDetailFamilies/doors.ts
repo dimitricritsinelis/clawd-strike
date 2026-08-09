@@ -39,7 +39,13 @@ function boxPart(
 ): DoorPart {
   const part = new BoxGeometry(width, height, depth);
   if (rollRad !== 0) part.rotateZ(rollRad);
-  part.translate(x, y, z);
+  // Wall-detail placement uses negative local Z for the playable/exterior
+  // face. Keeping the construction-depth notation positive makes the joinery
+  // layering below readable, but the actual part has to be seated on that
+  // exterior side. The old positive translation put every board, rail and
+  // fitting behind the continuous anti-halo backer, so cameras saw only the
+  // backer's flat rear face while separately placed facade rails remained.
+  part.translate(x, y, -z);
   return tintPart(part, tint);
 }
 
@@ -53,7 +59,7 @@ function studPart(
 ): DoorPart {
   const part = new CylinderGeometry(radius, radius * 0.84, depth, 8, 1, false);
   part.rotateX(Math.PI * 0.5);
-  part.translate(x, y, z);
+  part.translate(x, y, -z);
   return tintPart(part, tint);
 }
 

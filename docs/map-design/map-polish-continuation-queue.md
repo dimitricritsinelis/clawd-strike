@@ -24,7 +24,7 @@ All cards are render-only system work. `docs/map-design/specs/map_spec.json` rem
 
 ## C1 — Batched facade surface-attribute integrity
 
-- [ ] Complete
+- [x] Complete
 - Visual boundary: The compiled wall-detail surface-data path wherever it renders non-uniformly scaled, world-projected architectural detail or paneled door leaves: projection basis, geometry vertex attributes, per-instance tint composition, and the affected `arch_pointed_frame` and `door_panel_*` buckets map-wide.
 - Protected gameplay boundary: No placement transform, authored dimension, facade opening, reveal depth, threshold, collision mesh, navigation surface, sightline, route width, or movement envelope may change. This card repairs render data, not facade layout or door/opening state.
 - Primary fixed camera: `SHOT_04_TEXTILE_ARCADE`
@@ -36,10 +36,11 @@ All cards are render-only system work. `docs/map-design/specs/map_spec.json` rem
 
 ### Evidence and outcome
 
-- Fresh before:
-- Attempt 1 after / blind result:
-- Attempt 2 after / blind result:
-- Final status / commit:
+- Fresh before: `artifacts/playwright/map-shots/continuation-C1-before/` — all four authored cameras passed at their exact poses with no capture findings.
+- Attempt 1 after / blind result: `continuation-C1-a1-projection/`, completed after the required clean solo retries in `continuation-C1-a1-projection-SHOT13-retry/` and `continuation-C1-a1-projection-AUDIT03-retry/`. The shader now derives projection orientation from Three's inverse-scale-corrected `transformedNormal` instead of applying the non-uniform batch transform a second time. A fresh blind critic strongly preferred the result: `SHOT_04` decisive and `SHOT_08` moderate for coherent horizontal masonry, with both door cameras tied and no regression. This clear partial improvement was retained.
+- Attempt 2 after / blind result: Before implementation, `continuation-C1-door-role-diagnostic/` applied impossible RGB role colors. They still resolved as one black face while separately emitted rails remained visible, proving the camera saw the continuous anti-halo backer rather than the constructed board side; CPU `BatchedMesh` probing had already shown the color attribute survived batching. The reusable door part-depth convention was reversed so its boards, rails, and fittings occupy the exterior negative-local-Z side. Final exact set: `continuation-C1-a2-door-face/`. A fresh blind critic preferred it 4–0: decisive in `SHOT_04` and `AUDIT_03`, clear in `SHOT_08` and `SHOT_13`, with constructed leaves now distinct from their reveals and no lost facade/opening/material read.
+- Checks: `pnpm typecheck`; the focused world-projection shader regression in `v3Architecture.test.ts`; and the new exterior-face raycast regression in `wallDetailFamilies/doors.test.ts` all pass. The diagnostic role colors were fully restored before final capture.
+- Final status / commit: Complete 2026-08-08. The full acceptance bar is met in the fixed set; coarse distant coursing and a few deep gaps on the darkest `SHOT_13` leaf remain finish caveats, not regressions or failures of the card bar. The card checkpoint is the commit containing this record.
 
 ## C2 — Canopy span load path and finished-edge topology
 

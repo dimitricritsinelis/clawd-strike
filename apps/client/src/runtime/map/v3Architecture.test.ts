@@ -1226,6 +1226,16 @@ test("segmented infill is forced through the continuous world-projected PBR path
     material.onBeforeCompile(shader as never, {} as never);
     assert.match(shader.vertexShader, /wallProjectedUv/);
     assert.match(shader.vertexShader, /vWallWorldPos/);
+    assert.match(
+      shader.vertexShader,
+      /inverseTransformDirection\(transformedNormal, viewMatrix\)/,
+      "world projection must reuse Three's inverse-scale-corrected normal",
+    );
+    assert.doesNotMatch(
+      shader.vertexShader,
+      /mat3\(batchingMatrix\) \* wallObjectNormal/,
+      "world projection must not reapply a non-uniform batch transform to normals",
+    );
   } finally {
     if (typeof previousWindow === "undefined") Reflect.deleteProperty(globalThis, "window");
     else Reflect.set(globalThis, "window", previousWindow);
