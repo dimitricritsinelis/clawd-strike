@@ -62,8 +62,18 @@ function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
 }
 
-type BackgroundShellPlacement = {
+export type BackgroundMassingProfile = "party" | "terrace" | "rearStep" | "tower";
+
+export type BackgroundShellPlacement = {
   shellIndex: number;
+  side: "south" | "north" | "west" | "east" | "corner";
+  ring: number;
+  slotIndex: number;
+  clusterIndex: number;
+  clusterMemberIndex: number;
+  clusterSize: number;
+  alongAxis: "x" | "z";
+  profile: BackgroundMassingProfile;
   x: number;
   z: number;
   w: number;
@@ -75,9 +85,50 @@ type BackgroundShellPlacement = {
   minaret: boolean;
 };
 
-function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShellPlacement[] {
+const BACKGROUND_CLUSTER_PARTITIONS: Readonly<Record<number, readonly number[]>> = {
+  4: [2, 2],
+  5: [2, 3],
+  6: [3, 3],
+  7: [2, 3, 2],
+  8: [3, 2, 3],
+  9: [3, 3, 3],
+};
+
+const BACKGROUND_PROFILE_CYCLE: readonly BackgroundMassingProfile[] = [
+  "party",
+  "terrace",
+  "rearStep",
+  "tower",
+];
+
+const BACKGROUND_PROFILE_HEIGHT_M: Readonly<Record<BackgroundMassingProfile, number>> = {
+  party: 9.5,
+  terrace: 11.15,
+  rearStep: 8.35,
+  tower: 13.45,
+};
+
+const BACKGROUND_PROFILE_DEPTH_SCALE: Readonly<Record<BackgroundMassingProfile, number>> = {
+  party: 1.08,
+  terrace: 0.94,
+  rearStep: 1.14,
+  tower: 0.8,
+};
+
+const BACKGROUND_RING_BASE_DEPTH_M = [6.9, 7.1, 6.9, 7.1] as const;
+const BACKGROUND_RING_GAP_M = 0.18;
+
+function resolveBackgroundRingInnerOffsetM(ring: number): number {
+  let offsetM = 0.36;
+  for (let index = 0; index < ring; index += 1) {
+    offsetM += BACKGROUND_RING_BASE_DEPTH_M[index]! * BACKGROUND_PROFILE_DEPTH_SCALE.rearStep;
+    offsetM += BACKGROUND_RING_GAP_M;
+  }
+  return offsetM;
+}
+
+export function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShellPlacement[] {
   const placements: BackgroundShellPlacement[] = [];
-  const heightsM = [8.4, 10.7, 9.2, 11.8, 8.9, 10.1] as const;
   const pushEdge = (
     side: "south" | "north" | "west" | "east",
     slots: number,
@@ -85,50 +136,77 @@ function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShel
   ): void => {
     const horizontal = side === "south" || side === "north";
     const span = horizontal ? boundary.w : boundary.h;
-    const slotSpan = span / slots;
     const outward = side === "south" || side === "west" ? -1 : 1;
-    const shellDepthM = 7.2 + (ring % 2) * 0.6;
-    const ringStepM = 8;
-    const ringCenterOffsetM = shellDepthM * 0.55 + ring * ringStepM;
-    const alleyWidthM = ring === 0 ? 0.42 : 0.68;
-    for (let index = 0; index < slots; index += 1) {
-      const along = (index + 0.5) * slotSpan;
-      const heightIndex = (
-        index
-        + ring * 2
-        + (side === "north" ? 2 : side === "east" ? 4 : 0)
-      ) % heightsM.length;
-      const minaret = ring === 0 && ((side === "north" && index === slots - 1)
-        || (side === "east" && index === slots - 2)
-        || (side === "south" && index === 1));
-      placements.push({
-        shellIndex: placements.length,
-        x: horizontal
-          ? boundary.x + along
-          : (
-            side === "west"
-              ? boundary.x - ringCenterOffsetM
-              : boundary.x + boundary.w + ringCenterOffsetM
-          ),
-        z: horizontal
-          ? (
-            side === "south"
-              ? boundary.y - ringCenterOffsetM
-              : boundary.y + boundary.h + ringCenterOffsetM
-          )
-          : boundary.y + along,
-        w: horizontal ? Math.max(4, slotSpan - alleyWidthM) : shellDepthM,
-        d: horizontal ? shellDepthM : Math.max(4, slotSpan - alleyWidthM),
-        h: Math.max(5.8, heightsM[heightIndex]! - ring * 0.72),
-        ox: horizontal
-          ? (index + ring) % 2 === 0 ? 0.65 : -0.65
-          : -outward * (0.5 + ring * 0.08),
-        oz: horizontal
-          ? -outward * (0.5 + ring * 0.08)
-          : (index + ring) % 2 === 0 ? -0.65 : 0.65,
-        waterTank: !minaret && ring <= 1 && (index + ring) % 3 === 1,
-        minaret,
-      });
+    const sideOrdinal = side === "south" ? 0 : side === "north" ? 1 : side === "west" ? 2 : 3;
+    const partition = BACKGROUND_CLUSTER_PARTITIONS[slots];
+    if (!partition) throw new Error(`[background-shells] unsupported edge slot count '${slots}'`);
+    const alleyWidthM = 0.72 + ring * 0.1;
+    const usableSpanM = span - alleyWidthM * (partition.length - 1);
+    const clusterWeights = partition.map((_count, clusterIndex) => (
+      [1.08, 0.9, 1.03, 0.96][(clusterIndex + ring + sideOrdinal) % 4]!
+    ));
+    const clusterWeightTotal = clusterWeights.reduce((sum, weight) => sum + weight, 0);
+    let edgeCursorM = 0;
+    let edgeMemberIndex = 0;
+    for (let clusterIndex = 0; clusterIndex < partition.length; clusterIndex += 1) {
+      const memberCount = partition[clusterIndex]!;
+      const clusterSpanM = usableSpanM * clusterWeights[clusterIndex]! / clusterWeightTotal;
+      const memberWeights = memberCount === 2
+        ? (clusterIndex + ring + sideOrdinal) % 2 === 0 ? [1.18, 0.82] : [0.88, 1.12]
+        : (clusterIndex + ring + sideOrdinal) % 2 === 0 ? [0.82, 1.28, 0.9] : [1.16, 0.76, 1.08];
+      const memberWeightTotal = memberWeights.reduce((sum, weight) => sum + weight, 0);
+      let clusterCursorM = edgeCursorM;
+      for (let clusterMemberIndex = 0; clusterMemberIndex < memberCount; clusterMemberIndex += 1) {
+        const alongSpanM = clusterSpanM * memberWeights[clusterMemberIndex]! / memberWeightTotal;
+        const alongCenterM = clusterCursorM + alongSpanM * 0.5;
+        const profile = BACKGROUND_PROFILE_CYCLE[
+          (edgeMemberIndex + ring * 2 + sideOrdinal + clusterIndex) % BACKGROUND_PROFILE_CYCLE.length
+        ]!;
+        const baseDepthM = BACKGROUND_RING_BASE_DEPTH_M[ring]!;
+        const shellDepthM = baseDepthM * BACKGROUND_PROFILE_DEPTH_SCALE[profile];
+        const ringCenterOffsetM = shellDepthM * 0.5 + resolveBackgroundRingInnerOffsetM(ring);
+        const minaret = ring === 0 && ((side === "north" && edgeMemberIndex === slots - 1)
+          || (side === "east" && edgeMemberIndex === slots - 2)
+          || (side === "south" && edgeMemberIndex === 1));
+        const heightJitterM = ((edgeMemberIndex + clusterIndex + sideOrdinal) % 3 - 1) * 0.52;
+        const alongNudgeM = ((edgeMemberIndex + ring) % 3 - 1) * Math.min(0.32, alongSpanM * 0.07);
+        const inwardNudgeM = 0.28 + (profile === "terrace" ? 0.16 : profile === "tower" ? -0.06 : 0.06);
+        placements.push({
+          shellIndex: placements.length,
+          side,
+          ring,
+          slotIndex: edgeMemberIndex,
+          clusterIndex,
+          clusterMemberIndex,
+          clusterSize: memberCount,
+          alongAxis: horizontal ? "x" : "z",
+          profile,
+          x: horizontal
+            ? boundary.x + alongCenterM
+            : (
+              side === "west"
+                ? boundary.x - ringCenterOffsetM
+                : boundary.x + boundary.w + ringCenterOffsetM
+            ),
+          z: horizontal
+            ? (
+              side === "south"
+                ? boundary.y - ringCenterOffsetM
+                : boundary.y + boundary.h + ringCenterOffsetM
+            )
+            : boundary.y + alongCenterM,
+          w: horizontal ? alongSpanM : shellDepthM,
+          d: horizontal ? shellDepthM : alongSpanM,
+          h: Math.max(6.2, BACKGROUND_PROFILE_HEIGHT_M[profile] - ring * 1.02 + heightJitterM),
+          ox: horizontal ? alongNudgeM : -outward * inwardNudgeM,
+          oz: horizontal ? -outward * inwardNudgeM : alongNudgeM,
+          waterTank: !minaret && ring <= 1 && (edgeMemberIndex + ring + clusterIndex) % 4 === 1,
+          minaret,
+        });
+        clusterCursorM += alongSpanM;
+        edgeMemberIndex += 1;
+      }
+      edgeCursorM += clusterSpanM + alleyWidthM;
     }
   };
 
@@ -141,9 +219,9 @@ function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShel
     pushEdge("north", 4 + ring, ring);
     pushEdge("west", 6 + ring, ring);
     pushEdge("east", 6 + ring, ring);
-    const shellDepthM = 7.2 + (ring % 2) * 0.6;
-    const ringCenterOffsetM = shellDepthM * 0.55 + ring * 8;
-    const cornerSizeM = shellDepthM * 0.94;
+    const shellDepthM = BACKGROUND_RING_BASE_DEPTH_M[ring]!;
+    const cornerSizeM = shellDepthM * (ring % 2 === 0 ? 1.16 : 0.92);
+    const ringCenterOffsetM = cornerSizeM * 0.5 + resolveBackgroundRingInnerOffsetM(ring);
     const corners = [
       { x: boundary.x - ringCenterOffsetM, z: boundary.y - ringCenterOffsetM },
       { x: boundary.x + boundary.w + ringCenterOffsetM, z: boundary.y - ringCenterOffsetM },
@@ -152,13 +230,22 @@ function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShel
     ] as const;
     for (let cornerIndex = 0; cornerIndex < corners.length; cornerIndex += 1) {
       const corner = corners[cornerIndex]!;
+      const profile = BACKGROUND_PROFILE_CYCLE[(ring + cornerIndex * 2 + 2) % BACKGROUND_PROFILE_CYCLE.length]!;
       placements.push({
         shellIndex: placements.length,
+        side: "corner",
+        ring,
+        slotIndex: cornerIndex,
+        clusterIndex: cornerIndex,
+        clusterMemberIndex: 0,
+        clusterSize: 1,
+        alongAxis: cornerIndex % 2 === 0 ? "x" : "z",
+        profile,
         x: corner.x,
         z: corner.z,
         w: cornerSizeM,
         d: cornerSizeM,
-        h: Math.max(6.2, heightsM[(ring * 2 + cornerIndex) % heightsM.length]! - ring * 0.68),
+        h: Math.max(6.2, BACKGROUND_PROFILE_HEIGHT_M[profile] - ring * 1.04 + (cornerIndex % 2 === 0 ? 0.38 : -0.34)),
         ox: cornerIndex % 2 === 0 ? 0.38 : -0.38,
         oz: cornerIndex < 2 ? 0.38 : -0.38,
         waterTank: ring <= 1 && cornerIndex === (ring % 2),
@@ -167,6 +254,99 @@ function resolveBackgroundShellPlacements(boundary: RuntimeRect): BackgroundShel
     }
   }
   return placements;
+}
+
+export type BackgroundMassingPlan = {
+  lowerH: number;
+  crown: {
+    x: number;
+    z: number;
+    w: number;
+    d: number;
+    h: number;
+    baseY: number;
+    topY: number;
+  };
+};
+
+/**
+ * Resolves the bearing lower block and one genuinely profile-specific crown.
+ * Keeping two structural volumes per bay holds the merged triangle budget flat;
+ * the map-wide variety comes from footprint, seating and height rather than a
+ * new layer of token roof props.
+ */
+export function resolveBackgroundMassingPlan(shell: BackgroundShellPlacement): BackgroundMassingPlan {
+  const profile = {
+    party: { lowerRatio: 0.58, alongScale: 0.96, outwardScale: 0.94 },
+    terrace: { lowerRatio: 0.55, alongScale: 0.58, outwardScale: 0.84 },
+    rearStep: { lowerRatio: 0.72, alongScale: 0.86, outwardScale: 0.56 },
+    tower: { lowerRatio: 0.48, alongScale: 0.5, outwardScale: 0.58 },
+  }[shell.profile];
+  const lowerH = shell.h * profile.lowerRatio;
+  const alongSizeM = shell.alongAxis === "x" ? shell.w : shell.d;
+  const outwardSizeM = shell.alongAxis === "x" ? shell.d : shell.w;
+  const crownAlongM = alongSizeM * profile.alongScale;
+  const crownOutwardM = outwardSizeM * profile.outwardScale;
+  const phase = (shell.slotIndex + shell.clusterIndex + shell.ring) % 2 === 0 ? -1 : 1;
+  const outwardX = shell.side === "west" ? -1 : shell.side === "east" ? 1 : 0;
+  const outwardZ = shell.side === "south" ? -1 : shell.side === "north" ? 1 : 0;
+  const alongOffsetM = shell.profile === "terrace"
+    ? phase * (alongSizeM - crownAlongM) * 0.42
+    : shell.profile === "tower"
+      ? phase * (alongSizeM - crownAlongM) * 0.12
+      : 0;
+  const rearOffsetM = shell.profile === "rearStep"
+    ? (outwardSizeM - crownOutwardM) * 0.42
+    : 0;
+  const crownH = shell.h - lowerH;
+  const desiredCrownX = shell.x + shell.ox + (shell.alongAxis === "x" ? alongOffsetM : outwardX * rearOffsetM);
+  const desiredCrownZ = shell.z + shell.oz + (shell.alongAxis === "z" ? alongOffsetM : outwardZ * rearOffsetM);
+  const crownW = shell.alongAxis === "x" ? crownAlongM : crownOutwardM;
+  const crownD = shell.alongAxis === "x" ? crownOutwardM : crownAlongM;
+  const crownX = clamp(
+    desiredCrownX,
+    shell.x - (shell.w - crownW) * 0.5,
+    shell.x + (shell.w - crownW) * 0.5,
+  );
+  const crownZ = clamp(
+    desiredCrownZ,
+    shell.z - (shell.d - crownD) * 0.5,
+    shell.z + (shell.d - crownD) * 0.5,
+  );
+  return {
+    lowerH,
+    crown: {
+      x: crownX,
+      z: crownZ,
+      w: crownW,
+      d: crownD,
+      h: crownH,
+      baseY: lowerH,
+      topY: shell.h,
+    },
+  };
+}
+
+export function resolveBackgroundCourseFootprint(
+  shell: BackgroundShellPlacement,
+  overhangM: number,
+): { x: number; z: number; w: number; d: number } {
+  const startOverhangM = shell.clusterMemberIndex === 0 ? overhangM : 0;
+  const endOverhangM = shell.clusterMemberIndex === shell.clusterSize - 1 ? overhangM : 0;
+  if (shell.alongAxis === "x") {
+    return {
+      x: shell.x + (endOverhangM - startOverhangM) * 0.5,
+      z: shell.z,
+      w: shell.w + startOverhangM + endOverhangM,
+      d: shell.d + overhangM * 2,
+    };
+  }
+  return {
+    x: shell.x,
+    z: shell.z + (endOverhangM - startOverhangM) * 0.5,
+    w: shell.w + overhangM * 2,
+    d: shell.d + startOverhangM + endOverhangM,
+  };
 }
 
 function scaleCylinderUvs(geometry: CylinderGeometry, uScale: number, vScale: number): CylinderGeometry {
@@ -201,8 +381,9 @@ function createBackgroundMinarets(
     const instanceQa = [];
     for (let index = 0; index < landmarkPlacements.length; index += 1) {
       const shell = landmarkPlacements[index]!;
-      const roofTopY = shell.h + 0.32;
-      dummy.position.set(shell.x + shell.ox, roofTopY + part.offsetY, shell.z + shell.oz);
+      const { crown } = resolveBackgroundMassingPlan(shell);
+      const roofTopY = crown.topY + 0.16;
+      dummy.position.set(crown.x, roofTopY + part.offsetY, crown.z);
       dummy.rotation.set(0, 0, 0);
       dummy.scale.set(1, 1, 1);
       dummy.updateMatrix();
@@ -248,49 +429,39 @@ function createBackgroundShells(boundary: RuntimeRect): Group {
   const roofMesh = new InstancedMesh(new BoxGeometry(1, 1, 1), roofMaterial, placements.length);
   const tankPlacements = placements.filter((placement) => placement.waterTank);
   const tankMesh = new InstancedMesh(new CylinderGeometry(0.5, 0.5, 1, 12), utilityMaterial, tankPlacements.length);
-  const chimneyMesh = new InstancedMesh(new BoxGeometry(1, 1, 1), roofMaterial, placements.length);
   const dummy = new Object3D();
   for (let index = 0; index < placements.length; index += 1) {
     const shell = placements[index]!;
-    const lowerH = shell.h * 0.68;
+    const { lowerH, crown } = resolveBackgroundMassingPlan(shell);
     dummy.position.set(shell.x, lowerH * 0.5, shell.z);
     dummy.scale.set(shell.w, lowerH, shell.d);
     dummy.rotation.set(0, 0, 0);
     dummy.updateMatrix();
     baseMesh.setMatrixAt(index, dummy.matrix);
 
-    const upperH = shell.h - lowerH;
-    dummy.position.set(shell.x + shell.ox, lowerH + upperH * 0.5, shell.z + shell.oz);
-    dummy.scale.set(shell.w * 0.72, upperH, shell.d * 0.68);
+    dummy.position.set(crown.x, crown.baseY + crown.h * 0.5, crown.z);
+    dummy.scale.set(crown.w, crown.h, crown.d);
     dummy.updateMatrix();
     upperMesh.setMatrixAt(index, dummy.matrix);
 
-    dummy.position.set(shell.x + shell.ox, shell.h + 0.16, shell.z + shell.oz);
-    dummy.scale.set(shell.w * 0.76, 0.32, shell.d * 0.72);
+    dummy.position.set(crown.x, crown.topY + 0.16, crown.z);
+    dummy.scale.set(crown.w + 0.16, 0.32, crown.d + 0.16);
     dummy.updateMatrix();
     roofMesh.setMatrixAt(index, dummy.matrix);
 
-    const chimneyH = 0.75 + (index % 3) * 0.22;
-    dummy.position.set(
-      shell.x + shell.ox + shell.w * (index % 2 === 0 ? -0.18 : 0.2),
-      shell.h + chimneyH * 0.5,
-      shell.z + shell.oz + shell.d * (index % 3 === 0 ? 0.15 : -0.12),
-    );
-    dummy.scale.set(0.42, chimneyH, 0.42);
-    dummy.updateMatrix();
-    chimneyMesh.setMatrixAt(index, dummy.matrix);
   }
 
   for (let index = 0; index < tankPlacements.length; index += 1) {
     const shell = tankPlacements[index]!;
-    dummy.position.set(shell.x + shell.ox - shell.w * 0.12, shell.h + 0.62, shell.z + shell.oz);
+    const { crown } = resolveBackgroundMassingPlan(shell);
+    dummy.position.set(crown.x - crown.w * 0.12, crown.topY + 0.78, crown.z);
     dummy.scale.set(1.1, 1.24, 1.1);
     dummy.updateMatrix();
     tankMesh.setMatrixAt(index, dummy.matrix);
   }
 
-  const shellMeshes = [baseMesh, upperMesh, roofMesh, tankMesh, chimneyMesh];
-  const shellKinds = ["base", "setback", "parapet", "water_tank", "chimney"];
+  const shellMeshes = [baseMesh, upperMesh, roofMesh, tankMesh];
+  const shellKinds = ["base", "setback", "parapet", "water_tank"];
   for (let index = 0; index < shellMeshes.length; index += 1) {
     const mesh = shellMeshes[index]!;
     mesh.instanceMatrix.needsUpdate = true;
@@ -430,10 +601,11 @@ function createPbrBackgroundShells(
 
   for (let index = 0; index < placements.length; index += 1) {
     const shell = placements[index]!;
-    const lowerH = shell.h * 0.68;
-    const upperH = shell.h - lowerH;
-    const lowerMaterialId = lowerPalette[index % lowerPalette.length]!;
-    const upperMaterialId = upperPalette[index % upperPalette.length]!;
+    const { lowerH, crown } = resolveBackgroundMassingPlan(shell);
+    const sidePaletteOffset = shell.side === "north" ? 1 : shell.side === "west" ? 2 : shell.side === "east" ? 3 : 0;
+    const clusterPaletteIndex = shell.ring * 5 + shell.clusterIndex + sidePaletteOffset;
+    const lowerMaterialId = lowerPalette[clusterPaletteIndex % lowerPalette.length]!;
+    const upperMaterialId = upperPalette[clusterPaletteIndex % upperPalette.length]!;
     addBox(index, "base", lowerMaterialId, { x: shell.w, y: lowerH, z: shell.d }, {
       x: shell.x,
       y: lowerH * 0.5,
@@ -443,65 +615,80 @@ function createPbrBackgroundShells(
     // floating plane at long axial cameras (green at Rug Gate, gray/brown at
     // North Court). A full-footprint masonry transition course turns that raw
     // face into a supported story ledge with a readable fascia.
+    const setbackCourse = resolveBackgroundCourseFootprint(shell, 0.07);
     addBox(index, "setback-course", "ph_sandstone_blocks_06", {
-      x: shell.w + 0.14,
+      x: setbackCourse.w,
       y: 0.3,
-      z: shell.d + 0.14,
+      z: setbackCourse.d,
     }, {
-      x: shell.x,
+      x: setbackCourse.x,
       y: lowerH - 0.03,
-      z: shell.z,
+      z: setbackCourse.z,
     });
+    const baseCourse = resolveBackgroundCourseFootprint(shell, 0.06);
     addBox(index, "base-course", "ph_sandstone_blocks_06", {
-      x: shell.w + 0.12,
+      x: baseCourse.w,
       y: 0.42,
-      z: shell.d + 0.12,
+      z: baseCourse.d,
     }, {
-      x: shell.x,
+      x: baseCourse.x,
       y: 0.21,
-      z: shell.z,
+      z: baseCourse.z,
     });
-    for (const side of [-1, 1] as const) {
+    const terminalSides: Array<-1 | 1> = shell.clusterSize === 1
+      ? [-1, 1]
+      : [
+        ...(shell.clusterMemberIndex === 0 ? [-1 as const] : []),
+        ...(shell.clusterMemberIndex === shell.clusterSize - 1 ? [1 as const] : []),
+      ];
+    for (const side of terminalSides) {
+      const alongX = shell.alongAxis === "x";
       addBox(index, `base-terminal-quoin-${side}`, "ph_sandstone_blocks_06", {
-        x: 0.3,
+        x: alongX ? 0.3 : shell.w + 0.12,
         y: lowerH,
-        z: shell.d + 0.12,
+        z: alongX ? shell.d + 0.12 : 0.3,
       }, {
-        x: shell.x + side * (shell.w * 0.5 - 0.15),
+        x: alongX ? shell.x + side * (shell.w * 0.5 - 0.15) : shell.x,
         y: lowerH * 0.5,
-        z: shell.z,
+        z: alongX ? shell.z : shell.z + side * (shell.d * 0.5 - 0.15),
       });
     }
     addBox(index, "setback", upperMaterialId, {
-      x: shell.w * 0.72,
-      y: upperH,
-      z: shell.d * 0.68,
+      x: crown.w,
+      y: crown.h,
+      z: crown.d,
     }, {
-      x: shell.x + shell.ox,
-      y: lowerH + upperH * 0.5,
-      z: shell.z + shell.oz,
+      x: crown.x,
+      y: crown.baseY + crown.h * 0.5,
+      z: crown.z,
     });
-    for (const side of [-1, 1] as const) {
+    for (const side of terminalSides) {
+      const alongX = shell.alongAxis === "x";
       addBox(index, `setback-terminal-quoin-${side}`, "ph_sandstone_blocks_06", {
-        x: 0.24,
-        y: upperH,
-        z: shell.d * 0.68 + 0.1,
+        x: alongX ? 0.24 : crown.w + 0.1,
+        y: crown.h,
+        z: alongX ? crown.d + 0.1 : 0.24,
       }, {
-        x: shell.x + shell.ox + side * (shell.w * 0.36 - 0.12),
-        y: lowerH + upperH * 0.5,
-        z: shell.z + shell.oz,
+        x: alongX ? crown.x + side * (crown.w * 0.5 - 0.12) : crown.x,
+        y: crown.baseY + crown.h * 0.5,
+        z: alongX ? crown.z : crown.z + side * (crown.d * 0.5 - 0.12),
       });
     }
-    const roofWidthM = shell.w * 0.76;
-    const roofDepthM = shell.d * 0.72;
-    const roofCenterX = shell.x + shell.ox;
-    const roofCenterZ = shell.z + shell.oz;
-    const roofMaterialId = roofPalette[index % roofPalette.length]!;
+    const roofWidthM = crown.w + 0.16;
+    const roofDepthM = crown.d + 0.16;
+    const roofCenterX = crown.x;
+    const roofCenterZ = crown.z;
+    const roofMaterialId = roofPalette[clusterPaletteIndex % roofPalette.length]!;
     const roofDeckHeightM = 0.16;
     const parapetThicknessM = 0.2;
-    const parapetHeightM = 0.42 + (index % 3) * 0.06;
+    const parapetHeightM = {
+      party: 0.34,
+      terrace: 0.46,
+      rearStep: 0.39,
+      tower: 0.54,
+    }[shell.profile] + (shell.clusterIndex % 2) * 0.04;
     const copingHeightM = 0.12;
-    const roofDeckTopY = shell.h + roofDeckHeightM;
+    const roofDeckTopY = crown.topY + roofDeckHeightM;
     const parapetCenterY = roofDeckTopY + parapetHeightM * 0.5;
     const copingCenterY = roofDeckTopY + parapetHeightM + copingHeightM * 0.5;
     addBox(index, "roof-deck", roofMaterialId, {
@@ -510,7 +697,7 @@ function createPbrBackgroundShells(
       z: roofDepthM,
     }, {
       x: roofCenterX,
-      y: shell.h + roofDeckHeightM * 0.5,
+      y: crown.topY + roofDeckHeightM * 0.5,
       z: roofCenterZ,
     });
     for (const side of [-1, 1] as const) {
@@ -549,45 +736,6 @@ function createPbrBackgroundShells(
         x: roofCenterX + side * (roofWidthM * 0.5 - parapetThicknessM * 0.5),
         y: copingCenterY,
         z: roofCenterZ,
-      });
-    }
-
-    const chimneyH = 0.75 + (index % 3) * 0.22;
-    addBox(index, "chimney", "ph_sandstone_blocks_06", { x: 0.42, y: chimneyH, z: 0.42 }, {
-      x: shell.x + shell.ox + shell.w * (index % 2 === 0 ? -0.18 : 0.2),
-      y: shell.h + chimneyH * 0.5,
-      z: shell.z + shell.oz + shell.d * (index % 3 === 0 ? 0.15 : -0.12),
-    });
-
-    // Roof services. Every shell in the belt carried a coping, a chimney and
-    // nothing else, so from the establishing camera the whole old-city edge read
-    // as a field of empty capped boxes. A stood water tank, a vent hood, a hatch
-    // kerb and - on every third roof - a small shade frame give the belt the
-    // lived-on texture the reference shows. The set is indexed off the shell
-    // ordinal, so it stays deterministic and every member sits inside its own
-    // parapet.
-    // Roof services. Every shell in the belt carried a coping, a chimney and
-    // nothing else, so from the establishing camera the whole old-city edge read
-    // as a field of empty capped boxes. A stood water tank and a vent hood on
-    // every third roof give the belt lived-on texture without pushing the belt's
-    // merged geometry past the budget where the runtime's first frame stalls -
-    // a full set on every shell measurably did, and failed the closeup capture.
-    if (index % 3 === 0) {
-      const serviceInsetX = Math.max(0.55, roofWidthM * 0.5 - parapetThicknessM - 0.6);
-      const serviceInsetZ = Math.max(0.55, roofDepthM * 0.5 - parapetThicknessM - 0.6);
-      const tankSizeM = 0.72 + (index % 4) * 0.07;
-      const tankSide = index % 2 === 0 ? 1 : -1;
-      const tankX = roofCenterX + tankSide * serviceInsetX * (0.42 + (index % 3) * 0.08);
-      const tankZ = roofCenterZ - tankSide * serviceInsetZ * (0.34 + (index % 5) * 0.06);
-      addBox(index, "roof-tank", "ph_whitewashed_brick_cool", {
-        x: tankSizeM,
-        y: tankSizeM * 0.86,
-        z: tankSizeM,
-      }, { x: tankX, y: roofDeckTopY + tankSizeM * 0.43, z: tankZ });
-      addBox(index, "roof-vent", "ph_aged_plaster_ochre", { x: 0.44, y: 0.3, z: 0.44 }, {
-        x: roofCenterX - tankSide * serviceInsetX * (0.4 + (index % 4) * 0.07),
-        y: roofDeckTopY + 0.15,
-        z: roofCenterZ + tankSide * serviceInsetZ * (0.38 + (index % 3) * 0.07),
       });
     }
 
@@ -631,7 +779,8 @@ function createPbrBackgroundShells(
   );
   const tankDummy = new Object3D();
   tank.userData.visualQaInstances = tankPlacements.map((shell, index) => {
-    tankDummy.position.set(shell.x + shell.ox - shell.w * 0.12, shell.h + 0.62, shell.z + shell.oz);
+    const { crown } = resolveBackgroundMassingPlan(shell);
+    tankDummy.position.set(crown.x - crown.w * 0.12, crown.topY + 0.78, crown.z);
     tankDummy.rotation.set(0, 0, 0);
     tankDummy.scale.set(1, 1, 1);
     tankDummy.updateMatrix();
