@@ -45,6 +45,7 @@ All cards are render-only system work. `docs/map-design/specs/map_spec.json` rem
 ## C2 — Canopy span load path and finished-edge topology
 
 - [ ] Complete
+- Status: Stalled 2026-08-08 after two consecutive cause-distinct non-improvements; both attempts were fully restored.
 - Visual boundary: Every overhead cloth span and the structural system that visibly carries it: reinforced hems and edge battens, span-end attachment stations, rings, cords, tension members, local load deformation, and deterministic cloth-family assignment.
 - Protected gameplay boundary: Preserve every authored span footprint, endpoint, clear height, doorway/opening buffer, route and sightline. Added work is non-colliding, seated on the existing span or wall support, and must remain outside standing/crouched swept movement volumes.
 - Primary fixed camera: `SHOT_15_CLOSEUP_CANOPY_ATTACHMENT`
@@ -56,10 +57,10 @@ All cards are render-only system work. `docs/map-design/specs/map_spec.json` rem
 
 ### Evidence and outcome
 
-- Fresh before:
-- Attempt 1 after / blind result:
-- Attempt 2 after / blind result:
-- Final status / commit:
+- Fresh before: `artifacts/playwright/map-shots/continuation-C2-before/` — all four exact authored cameras passed with no capture findings from the accepted C1 checkpoint.
+- Attempt 1 after / blind result: `continuation-C2-a1-integrated-load-path/`. This integrated rolled long-edge hems, bound end sleeves, shared three-station point-load deformation and wall ties, removed the separately floated wall-end strips, and assigned one deterministic madder bolt. In the anonymous Cedar/Linen comparison, a fresh blind critic preferred the unchanged Linen set overall: moderate–strong in `SHOT_15`, strong in `SHOT_11` and `AUDIT_23`, and at most a weak Linen preference in `SHOT_04`. The accepted pale end rails and ochre woven bolt read better than the new raw-looking edge and flat red sheet, while the new cordage still failed to connect visibly to an identifiable anchor. The entire attempt was restored.
+- Attempt 2 after / blind result: `continuation-C2-a2-direct-ring-tension/`. Runtime inspection verified that the retained L-shaped ropes ended at each fixture's instance origin even though its visible torus is offset `0.455 m` along the arm and `0.07 m` upward. This cause-distinct pass derived a pucker and three attachment stations from the sheet, computed the rendered cloth and torus endpoints, and used exact quaternion-oriented members between them while preserving the accepted cloth palette. The focused regression proved all 36 members terminated at their paired torus centers and the obsolete edge-rope draw was absent. Nevertheless, in the anonymous Alder/Bronze comparison a second fresh blind critic preferred the unchanged Bronze set in every camera (moderate in `SHOT_15`, slight–moderate in `SHOT_11`, strong in `SHOT_04`, slight in `AUDIT_23`): the new members remained too short or low-contrast to read as continuous load paths, and the long front lip still appeared soft or partly raw. This attempt was also fully restored.
+- Final status / commit: Stalled. `pnpm typecheck` passes after restoration, and no C2 source, test, palette, geometry, or draw-path change remains. The supporting set already retains two preferred woven families, including its restrained ochre/rust bolt, but the primary camera still does not prove a continuous finished edge → tension member → wall support path or an unmistakable point load. The two-rejection threshold forbids further grinding in this wave; the checkpoint is the commit containing this record.
 
 ## C3 — Structural old-city perimeter massing
 
