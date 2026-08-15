@@ -121,11 +121,14 @@ export class Ak47Weapon {
     if (this.reloading) {
       this.reloadTimerS += Math.max(0, input.deltaSeconds) * this.reloadSpeedMultiplier;
 
-      // Reload cancel: if trigger is pulled mid-reload and mag has bullets, interrupt
+      // Reload cancel: if trigger is pulled mid-reload and mag has bullets, interrupt.
+      // Must go through fireAndAccount — returning the raw fire result here used
+      // to skip the magazine deduction entirely, so every cancelled reload
+      // granted a free, fully damaging round that the HUD never counted.
       if (input.fireHeld && !this.wasFireHeld && this.mag > 0) {
         this.cancelReload(true);
         this.wasFireHeld = input.fireHeld;
-        return this.forwardToFireController(input, input.fireHeld, this.mag, onShot);
+        return this.fireAndAccount(input, onShot);
       }
 
       if (this.reloadTimerS >= RELOAD_TIME_S) {
@@ -156,6 +159,21 @@ export class Ak47Weapon {
       return this.updateWithoutFiring(input);
     }
 
+    const fireResult = this.fireAndAccount(input, onShot);
+
+    this.wasFireHeld = input.fireHeld;
+    return fireResult;
+  }
+
+  /**
+   * The single exit for any path that can actually discharge rounds. Every
+   * bullet handed to `onShot` is deducted from the magazine here, so no caller
+   * can fire without paying ammo for it.
+   */
+  private fireAndAccount(
+    input: Ak47FireUpdateInput,
+    onShot?: (shot: Ak47ShotEvent) => void,
+  ): Ak47FireUpdateResult {
     const fireResult = this.forwardToFireController(input, input.fireHeld, this.mag, onShot);
 
     if (fireResult.shotsFired > 0 && !this.unlimitedAmmo) {
@@ -165,7 +183,6 @@ export class Ak47Weapon {
       }
     }
 
-    this.wasFireHeld = input.fireHeld;
     return fireResult;
   }
 

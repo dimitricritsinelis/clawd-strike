@@ -14,7 +14,7 @@ import {
 import { Game } from "./game/Game";
 import { resolveEnemyHitDamage } from "./combat/enemyHitZone";
 import { PerfHud } from "./debug/PerfHud";
-import { setEnemyVisualModelStreamingEnabled } from "./enemies/EnemyVisual";
+import { preloadEnemyVisualAssets, setEnemyVisualModelStreamingEnabled } from "./enemies/EnemyVisual";
 import { ENEMIES_PER_WAVE } from "./enemies/EnemyManager";
 import { PointerLockController } from "./input/PointerLock";
 import { loadMap, RuntimeMapLoadError } from "./map/loadMap";
@@ -22,6 +22,11 @@ import { designToWorldVec3 } from "./map/coordinateTransforms";
 import { resolveShot } from "./map/shots";
 import type { RuntimeAnchor, RuntimeBlockoutSpec, RuntimeMapAssets } from "./map/types";
 import { Renderer } from "./render/Renderer";
+import {
+  collectSceneTextures,
+  uploadTexturesInBatches,
+  waitForPendingAssetLoads,
+} from "./render/sceneReadiness";
 import { FloorMaterialLibrary } from "./render/materials/FloorMaterialLibrary";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { PropModelLibrary } from "./render/models/PropModelLibrary";
@@ -70,7 +75,7 @@ import { BuffHud } from "./ui/BuffHud";
 import { BuffTextHud } from "./ui/BuffTextHud";
 import { BuffVignette } from "./ui/BuffVignette";
 import type { RuntimeWarmupAssets } from "./warmup";
-import { isLocalhostHostname } from "../shared/hostEnvironment";
+import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
 import {
   getSharedChampionSnapshot,
   loadSharedChampion,
@@ -111,8 +116,34 @@ const SCORE_STORAGE_PREFIX = "clawd-strike:score-best";
 const SCORE_RULESET_KEY = SHARED_CHAMPION_SCORE_RULESET;
 const AGENT_VISIBLE_RENDER_INTERVAL_MS = 1000 / 30;
 const AGENT_BACKGROUND_STEP_INTERVAL_MS = 500;
+/** Frames that may throw back-to-back before the loop stops trying. */
+const MAX_CONSECUTIVE_FRAME_ERRORS = 10;
 const TEXTURE_STABLE_WINDOW_MS = 500;
 const SCENE_COMPILE_TIMEOUT_MS = 2_500;
+// Human-play boot gate budgets. Every stage is individually bounded so a bad
+// network or driver can delay the reveal by at most the sum of these caps.
+const MAP_ASSET_SETTLE_TIMEOUT_MS = 10_000;
+const MAP_SCENE_COMPILE_TIMEOUT_MS = 10_000;
+const ENEMY_TEMPLATE_BOOT_TIMEOUT_MS = 10_000;
+
+/**
+ * Software rasterizers (headless SwiftShader, llvmpipe, Windows Basic Render)
+ * have monopolized the main thread on whole-scene compiles/renders before.
+ * The human boot gate skips them and keeps the historical fast-reveal boot.
+ */
+function isLikelySoftwareGl(renderer: Renderer): boolean {
+  const gl = renderer.getWebGLRenderer()?.getContext();
+  if (!gl) return true;
+  try {
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    const name = info
+      ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL))
+      : String(gl.getParameter(gl.RENDERER));
+    return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+  } catch {
+    return false;
+  }
+}
 const PUBLIC_AGENT_FEEDBACK_MAX_EVENTS = 24;
 const OVERVIEW_MIN_VISIBLE_SPAN_M = 6;
 
@@ -572,6 +603,7 @@ export type RuntimeTextState = {
   gameplay: {
     active: boolean;
     alive: boolean;
+    health: number;
     pointerLocked: boolean;
     focused: boolean;
     visibility: "visible" | "hidden";
@@ -1726,9 +1758,28 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     playerName,
   };
   const isLocalHostRuntime = isLocalhostHostname(window.location.hostname);
-  const isLocalHumanRuntime = isLocalHostRuntime && runtimeParams.controlMode === "human";
-  const effectiveUnlimitedHealth =
-    isLocalHostRuntime && (isLocalHumanRuntime || runtimeParams.unlimitedHealth);
+
+  /**
+   * Manual-playtest assists: unlimited health and a boosted run speed, for a
+   * person poking at a local build by hand.
+   *
+   * These are OPT-IN (`?god=1`) and never apply otherwise. They used to switch
+   * themselves on for any localhost human run, which meant anything driving the
+   * game — an agent, an LLM, a Playwright spec, or a person who just forgot —
+   * was silently invincible and 50% faster than production. Every judgement
+   * made in that state about difficulty, damage, hit registration or movement
+   * feel was measuring a build no player will ever run.
+   *
+   * Also hard-off under automation, so a spec cannot re-enable them by passing
+   * the flag, and hard-off anywhere but localhost.
+   */
+  const isAutomatedRuntime = navigator.webdriver === true;
+  const manualPlaytestAssistsEnabled =
+    isLocalHostRuntime
+    && !isAutomatedRuntime
+    && runtimeParams.controlMode === "human"
+    && runtimeParams.unlimitedHealthExplicit === true;
+  const effectiveUnlimitedHealth = manualPlaytestAssistsEnabled;
   const warmupAssets = options.warmup ?? null;
   const warmupTimedOut = warmupAssets?.timedOut === true;
   const performanceSafeFallback = warmupTimedOut;
@@ -1854,6 +1905,21 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   let qaStateSerializationInProgress = false;
   let shadowWarmupFrames = 0;
   const weaponAudio = new WeaponAudio();
+  // Keep tooling silent. A person watching an LLM or a spec drive the game
+  // should not get gunfire and ambience out of their speakers, and agent mode
+  // is by definition nobody sitting at the keyboard. Real players match none of
+  // these conditions, so production audio is unaffected. ?audio=1 forces sound
+  // back on for an agent run, ?audio=0 forces it off anywhere.
+  const audioForced = new URLSearchParams(window.location.search).get("audio");
+  const audioSuppressedByDefault =
+    isAutomatedClient() || runtimeParams.controlMode === "agent";
+  const audioMuted = audioForced === "1"
+    ? false
+    : audioForced === "0" || audioSuppressedByDefault;
+  weaponAudio.setMuted(audioMuted);
+  if (audioMuted) {
+    console.info("[runtime:audio] muted (automated or agent-driven session)");
+  }
   weaponAudio.prewarmCombatFeedback();
   const viewModelEnabled = runtimeParams.vm && !performanceSafeFallback && !deterministicQa;
   let viewModel: ViewModelInstance | null = warmupAssets?.viewModel ?? null;
@@ -1867,6 +1933,39 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
     warningOverlay.style.display = "block";
   };
+
+  // Without WebGL the canvas simply never draws. The HUD is DOM, so it still
+  // appears over a black void and the player is left with a game that looks
+  // broken and says nothing. Tell them what happened instead.
+  //
+  // Only a human actually trying to play needs this. Headless QA and agent runs
+  // routinely have no GPU and assert on a clean console, and their harnesses
+  // read runtime state rather than pixels, so warning there is pure noise.
+  const webglFailureIsUserFacing =
+    runtimeParams.controlMode === "human"
+    && !deterministicQa
+    && navigator.webdriver !== true;
+  if (!renderer.hasWebGL && webglFailureIsUserFacing) {
+    appendWarning(
+      "This browser or device could not start WebGL, so the game cannot render.\n"
+      + "Try enabling hardware acceleration, updating your graphics driver, or using a different browser.",
+    );
+    console.error("[runtime:boot] WebGL unavailable — rendering is disabled");
+  }
+
+  renderer.setContextLossHandlers({
+    onLost: () => {
+      if (webglFailureIsUserFacing) {
+        appendWarning("Lost the graphics context. Attempting to restore…");
+      }
+    },
+    onRestored: () => {
+      if (webglFailureIsUserFacing) {
+        warningOverlay.textContent = "";
+        warningOverlay.style.display = "none";
+      }
+    },
+  });
 
   if (performanceSafeFallback) {
     appendWarning("Runtime warmup timed out. Using performance-safe fallback before spawn.");
@@ -2184,15 +2283,15 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       waveStats.shotsFired++;
       runStats.shotsFired++;
 
-      // Enemy hit detection: re-raycast against enemy AABBs to see if the bullet hit one
-      if (shot.hit && shot.hitPoint) {
+      // Enemy hit detection: re-raycast against enemy AABBs to see if the bullet
+      // hit one. This must reuse the bullet's own ray (spread and bloom applied)
+      // and must run even when the bullet struck no world geometry — a shot into
+      // open sky still passes through anything standing in its path.
+      {
         const camPos = game.camera.position;
-        const camFwd = camFwdScratch;
-        game.camera.getWorldDirection(camFwd);
-        const hp = shot.hitPoint;
-        const hitPoint = hitPointScratch.set(hp.x, hp.y, hp.z);
-        const worldHitDist = camPos.distanceTo(hitPoint);
-        const enemyHit = game.checkEnemyRaycastHit(camPos, camFwd, worldHitDist + 0.1);
+        const shotDir = camFwdScratch.set(shot.direction.x, shot.direction.y, shot.direction.z);
+        const worldHitDist = shot.travelDistance;
+        const enemyHit = game.checkEnemyRaycastHit(camPos, shotDir, worldHitDist + 0.1);
         if (enemyHit.hit && enemyHit.distance <= worldHitDist + 0.05) {
           const { damage, isHeadshot } = resolveEnemyHitDamage(enemyHit.hitY, enemyHit.feetY);
           waveStats.shotsHit++;
@@ -2206,15 +2305,15 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
             damage,
             isHeadshot,
           });
-        } else if (shot.hitNormal) {
+        } else if (shot.hit && shot.hitPoint && shot.hitNormal) {
           // Bullet hit world surface (wall/floor/prop), not an enemy — spawn decal
-          bulletHoles?.spawn(shot.hitPoint!, shot.hitNormal);
+          bulletHoles?.spawn(shot.hitPoint, shot.hitNormal);
         }
 
         // Check if bullet hit a buff orb (pick up by shooting)
         const orbHit = buffManager.checkRaycastHit(
           camPos.x, camPos.y, camPos.z,
-          camFwd.x, camFwd.y, camFwd.z,
+          shotDir.x, shotDir.y, shotDir.z,
           worldHitDist + 0.5,
         );
         if (orbHit.hit) {
@@ -2222,7 +2321,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         }
       }
     },
-    ...(isLocalHumanRuntime ? { playerRunSpeedMps: 9 } : {}),
+    // Only a hand-driven local playtest gets the boosted traversal speed;
+    // everything else runs at the production RUN_SPEED_MPS so movement, enemy
+    // lead and time-to-cover all behave the way a real player experiences them.
+    ...(manualPlaytestAssistsEnabled ? { playerRunSpeedMps: 9 } : {}),
     unlimitedHealth: effectiveUnlimitedHealth,
     ...(runtimeParams.debug ? { onTogglePerfHud: () => perfHud.toggle() } : {}),
   });
@@ -2370,9 +2472,14 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     waveStats.shotsHit = 0;
     waveStats.headshots = 0;
 
-    // Buff system: check Rallying Cry, clear orbs
+    // Buff system: check Rallying Cry, clear orbs.
+    // Game's new-wave wrapper resets health, overshield and the weapon before
+    // this runs, which silently cancels every buff-owned modifier. Clear the
+    // buff state to match, or the HUD keeps counting down buffs whose effects
+    // were already wiped (a Bloodlust that no longer fires faster, an Iron
+    // Skin whose shield is gone).
     buffManager.onNewWave();
-    buffManager.clearOrbs();
+    clearAllBuffRuntimeState();
     if (buffManager.checkRallyingCry()) {
       // Previous wave was 10/10 headshots — defer activation so player
       // sees the round-end screen disappear before buffs kick in
@@ -2393,6 +2500,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       lastKillFeedbackMs = 0;
       game.restartRun();
       clearAllBuffRuntimeState();
+      // Per-wave headshot progress is run-scoped: without this a 10/10 wave in
+      // the previous run grants a free Rallying Cry on the next run's wave 2.
+      buffManager.resetWaveProgress();
       roundEndScreen.hide();
       roundEndShowing = false;
       pendingRallyingCry = false;
@@ -2441,9 +2551,54 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     });
   };
 
+  // The human boot gate below serves real players in real browsers. It must
+  // never run for deterministic QA (own readiness tracker), automation
+  // (Playwright specs and smokes boot autostart=human without qa=1 and their
+  // wall-clock budgets assume the historical fast boot), authored-shot runs
+  // (review cameras, including tens-of-seconds overview frames), or software
+  // rasterizers, where whole-scene compiles and renders have monopolized the
+  // main thread in the past.
+  // ?bootGate=1 opts automation back in. Without it this gate — the one every
+  // real player goes through — is unreachable from any test by construction,
+  // so nothing would catch it hanging or regressing. It only ever makes boot do
+  // more work behind the loading overlay, so it is safe to expose.
+  const forceHumanBootGate =
+    new URLSearchParams(window.location.search).get("bootGate") === "1";
+  const humanBootGateEligible =
+    mapAssets !== null
+    && !deterministicQa
+    && runtimeParams.controlMode === "human"
+    && runtimeParams.shot === null
+    && (navigator.webdriver !== true || forceHumanBootGate)
+    && (!isLikelySoftwareGl(renderer) || forceHumanBootGate);
+
+  if (
+    humanBootGateEligible
+    && !performanceSafeFallback
+    && !(warmupAssets?.enemyVisualsReady ?? false)
+  ) {
+    // Warmup did not finish the enemy model template (it may have failed
+    // outright rather than timed out). Enemies spawn during the map build
+    // below, so settle the shared template first — bodies must never morph
+    // from capsules to the model mid-combat. Bounded like every boot stage.
+    const templateReady = await Promise.race<boolean>([
+      preloadEnemyVisualAssets().then(() => true, () => false),
+      new Promise<boolean>((resolve) => {
+        window.setTimeout(() => resolve(false), ENEMY_TEMPLATE_BOOT_TIMEOUT_MS);
+      }),
+    ]);
+    // The earlier streaming decision at boot saw enemyVisualsReady=false and
+    // disabled model streaming; a successful settle here supersedes it —
+    // without this, the retry would resolve a template no enemy ever uses.
+    setEnemyVisualModelStreamingEnabled(templateReady);
+    if (!templateReady && !warmupAssets) {
+      // warmupAssets != null already produced the fallback-mesh warning.
+      appendWarning("Enemy model unavailable. Using fallback enemy meshes.");
+    }
+  }
+
   if (mapAssets) {
-    game.setBlockoutSpec(mapAssets.blockout);
-    game.setAnchorsSpec(mapAssets.anchors);
+    game.setMapSpecs(mapAssets.blockout, mapAssets.anchors);
     shadowWarmupFrames = 0;
   }
   let restoreOverviewRenderLod = (): void => {};
@@ -2529,11 +2684,70 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         `Shader precompile failed. Continuing without compile warmup.\n${error instanceof Error ? error.message : String(error)}`,
       );
     }
+  } else if (mapAssets && humanBootGateEligible) {
+    // Live human play in a real browser on hardware GL: pay the whole
+    // first-frame cost here, behind the loading overlay, so the reveal frame
+    // renders at full speed with no shader-compile freeze and no texture
+    // pop-in. QA, automation, shot runs, and software rasterizers are excluded
+    // by humanBootGateEligible and keep the historical fast boot below.
+    try {
+      console.info("[runtime:boot] human map readiness gate started");
+      // 1. Let stragglers started through the default loading manager settle
+      //    (prop/door GLB textures load fire-and-forget during the map build).
+      const assetSettle = await waitForPendingAssetLoads(MAP_ASSET_SETTLE_TIMEOUT_MS);
+      // 2. Compile every shader variant the scene needs.
+      let compileTimeoutId = 0;
+      const compileResult = await Promise.race<"compiled" | "timed-out">([
+        renderer.compileSceneAsync(
+          game.scene,
+          game.camera,
+          viewModel?.viewModelScene ?? null,
+          viewModel?.viewModelCamera ?? null,
+          viewModelVisible,
+        ).then(() => "compiled" as const),
+        new Promise<"timed-out">((resolve) => {
+          compileTimeoutId = window.setTimeout(() => resolve("timed-out"), MAP_SCENE_COMPILE_TIMEOUT_MS);
+        }),
+      ]);
+      window.clearTimeout(compileTimeoutId);
+      bootTelemetry.precompiled = compileResult === "compiled";
+      bootTelemetry.precompileTimedOut = compileResult === "timed-out";
+      // 3. Upload every referenced texture to the GPU in overlay-friendly
+      //    batches instead of letting the first visible frames pay for it.
+      const webglRenderer = renderer.getWebGLRenderer();
+      let uploadedTextures = 0;
+      if (webglRenderer) {
+        const sceneTextures = collectSceneTextures(game.scene);
+        const viewModelTextures = viewModel?.viewModelScene
+          ? collectSceneTextures(viewModel.viewModelScene)
+          : [];
+        uploadedTextures = await uploadTexturesInBatches(webglRenderer, [
+          ...sceneTextures,
+          ...viewModelTextures,
+        ]);
+      }
+      // 4. One hidden render primes the remaining lazy paths (static shadow
+      //    map, sky, sprites) so the reveal frame has nothing left to build.
+      renderer.renderWithViewModel(
+        game.scene,
+        game.camera,
+        viewModel?.viewModelScene ?? null,
+        viewModel?.viewModelCamera ?? null,
+        viewModelVisible,
+      );
+      bootTelemetry.hiddenWarmupRenderDone = true;
+      console.info(
+        `[runtime:boot] human map readiness gate done (assets=${assetSettle}, compile=${compileResult}, texturesUploaded=${uploadedTextures})`,
+      );
+    } catch (error) {
+      appendWarning(
+        `Map readiness gate failed. Revealing anyway.\n${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
   } else if (mapAssets) {
-    // The staged frame has already visited the authored map materials. Three's
-    // compileAsync can monopolize the GPU/main thread after resolving on large
-    // scenes, which defeats a Promise timeout and previously kept the loading
-    // overlay up indefinitely. Do not add a second whole-scene compile pass.
+    // Deterministic QA and agent runs keep the historical behavior: their
+    // readiness tracking and boot budgets live in the QA harness, and three's
+    // compileAsync has monopolized software GPUs here in the past.
     console.info("[runtime:boot] scene precompile skipped for staged map scene");
   }
 
@@ -2717,8 +2931,16 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           pointerLockBannerGraceMs = POINTER_LOCK_BANNER_GRACE_MS;
           weaponAudio.ensureResumedFromGesture();
           weaponAudio.startAmbient(); // begin wind loop once audio is unlocked
+          // The lock is back: the player is playing again.
+          pauseMenu.hide();
         } else {
           pointerLockBannerGraceMs = 0;
+          // Losing the lock (Escape, alt-tab, OS focus steal) means the player
+          // can no longer aim. Raise the pause menu so the simulation halts
+          // instead of leaving them to be shot while they cannot fight back.
+          if (runtimeActive && !game.getIsDead() && !inputFrozen && !respawnInProgress) {
+            pauseMenu.show();
+          }
         }
       },
       onMouseDelta: (deltaX, deltaY) => {
@@ -2794,7 +3016,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     topMeshes: [],
   };
   const camFwdScratch = new Vector3();
-  const hitPointScratch = new Vector3();
   const scoreStorageKey = makeScoreStorageKey(runtimeParams.mapId);
   let bestScore = readBestScore(scoreStorageKey);
   scoreHud.setBestScore(bestScore);
@@ -3080,6 +3301,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       gameplay: {
         active: runtimeActive && mapLoaded,
         alive,
+        health: Math.max(0, Math.round(game.getPlayerHealth())),
         pointerLocked,
         focused: document.hasFocus(),
         visibility,
@@ -3276,8 +3498,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     const renderFrame = options.renderFrame ?? true;
     applyQueuedAgentActions();
 
+    // An overlay owning the screen suspends the simulation and hands touch
+    // input back to that overlay's own buttons.
+    const simulationSuspended = Boolean(
+      pauseMenu.isVisible()
+      || howToPlayOverlay.isVisible()
+      || controlsOverlay.isVisible()
+      || mobileOrientationGuard?.isBlocking(),
+    );
+
     // Feed mobile touch input before game update
     if (touchInput) {
+      touchInput.setCaptureEnabled(!simulationSuspended && !game.getIsDead());
       game.feedMobileInput({
         moveX: touchInput.moveX,
         moveZ: touchInput.moveZ,
@@ -3295,17 +3527,22 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       mobileTouchHud?.updateCrouchVisual(touchInput.crouchHeld);
 
       // Hide touch controls during death/pause
-      const touchVisible = !game.getIsDead() && !pauseMenu.isVisible();
+      const touchVisible = !game.getIsDead() && !simulationSuspended;
       mobileTouchHud?.setVisible(touchVisible);
     }
 
     // Freeze game input when pause menu, overlays, or orientation guard are open (death-freeze is managed inside Game.ts)
-    if (pauseMenu.isVisible() || howToPlayOverlay.isVisible() || controlsOverlay.isVisible() || mobileOrientationGuard?.isBlocking()) {
+    if (simulationSuspended) {
       game.setFreezeInput(true);
     } else if (!game.getIsDead() && !inputFrozen) {
       game.setFreezeInput(false);
     }
-    game.update(dt);
+    // Freezing input alone only stops the *player* acting. Enemies, weapon
+    // timers and buff durations run off the simulation clock, so a paused game
+    // has to advance that clock by zero or the player is shot dead while the
+    // pause menu is up. UI/overlay animation keeps the real dt below.
+    const simDt = simulationSuspended ? 0 : dt;
+    game.update(simDt);
     drainCombatFeedback();
 
     const aliveNow = !game.getIsDead();
@@ -3430,7 +3667,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
     // ── Deferred Rallying Cry activation ──────────────────────────────────────
     if (pendingRallyingCry && !roundEndShowing) {
-      rallyingCryDelayS -= dt;
+      rallyingCryDelayS -= simDt;
       if (rallyingCryDelayS <= 0) {
         pendingRallyingCry = false;
         buffManager.activateRallyingCry();
@@ -3438,7 +3675,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
 
     // ── Buff system per-frame update ──────────────────────────────────────────
-    buffManager.update(dt, game.getPlayerPosition(), game.camera);
+    // simDt: buff durations are gameplay state and must not burn down while paused.
+    buffManager.update(simDt, game.getPlayerPosition(), game.camera);
     const activeBuffs = buffManager.getActiveBuffs();
     const rcActive = buffManager.isRallyingCryActive();
     buffHud.update({ buffs: activeBuffs, rallyingCryActive: rcActive }, dt);
@@ -3451,8 +3689,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     howToPlayOverlay.update(dt);
     controlsOverlay.update(dt);
 
-    // ── Timer: pause while dead or round-end showing ─────────────────────────
-    if (game.getIsDead() || roundEndShowing) {
+    // ── Timer: pause while dead, round-end showing, or the game is paused ────
+    if (game.getIsDead() || roundEndShowing || simulationSuspended) {
       timerHud.pause();
     } else {
       timerHud.start();
@@ -3566,6 +3804,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   };
 
   let lastAgentRenderTime = 0;
+  let consecutiveFrameErrors = 0;
   let hiddenAgentTimerId: number | null = null;
   const isAgentHiddenLowPowerMode = (): boolean =>
     runtimeParams.controlMode === "agent" && document.visibilityState === "hidden";
@@ -3610,11 +3849,37 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     const shouldRender = runtimeParams.controlMode !== "agent"
       || lastAgentRenderTime === 0
       || time - lastAgentRenderTime >= AGENT_VISIBLE_RENDER_INTERVAL_MS;
-    step(deltaMs, { renderFrame: shouldRender });
-    if (shouldRender) {
-      lastAgentRenderTime = time;
+    // The frame is re-armed in `finally`. Re-arming only after step() returned
+    // meant a single uncaught exception anywhere in the simulation permanently
+    // killed the loop: the game froze mid-run with no message and no recovery.
+    // A repeatedly-throwing frame is surfaced and then given up on rather than
+    // spinning silently forever.
+    try {
+      step(deltaMs, { renderFrame: shouldRender });
+      if (shouldRender) {
+        lastAgentRenderTime = time;
+      }
+      consecutiveFrameErrors = 0;
+    } catch (error) {
+      consecutiveFrameErrors += 1;
+      console.error(`[runtime:loop] frame failed (${consecutiveFrameErrors})`, error);
+      if (consecutiveFrameErrors === 1) {
+        appendWarning(
+          `The game hit an unexpected error and may behave oddly. Reload if it does not recover.\n${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+      if (consecutiveFrameErrors >= MAX_CONSECUTIVE_FRAME_ERRORS) {
+        appendWarning("Stopping the game loop after repeated errors. Please reload the page.");
+        console.error("[runtime:loop] giving up after repeated frame failures");
+        return;
+      }
+    } finally {
+      if (!disposed && consecutiveFrameErrors < MAX_CONSECUTIVE_FRAME_ERRORS) {
+        rafId = window.requestAnimationFrame(animate);
+      }
     }
-    rafId = window.requestAnimationFrame(animate);
   };
 
   // Escape key toggles pause menu (when pointer lock is NOT held by the browser)
@@ -3634,18 +3899,23 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       controlsOverlay.onClose?.();
       return;
     }
-    // If we're already showing pause, hide it and try to re-lock.
+    // Resuming: hide and request the lock back, then stop. This used to fall
+    // through into a 50ms timer that re-showed the menu whenever the lock had
+    // not been granted yet — and Chrome rate-limits re-locking after an Esc
+    // exit, so the menu reliably sprang straight back open and the game could
+    // not be resumed with Escape at all. Menu state now follows the real
+    // pointerlockchange event (see onLockChange) instead of a fixed poll.
     if (pauseMenu.isVisible()) {
       pauseMenu.hide();
       pauseMenu.onResume?.();
+      return;
     }
-    // If pointer is not locked (Esc just released it), show pause
-    // We check via a short delay since pointerlockchange fires after keydown
-    setTimeout(() => {
-      if (!pointerLock?.isLocked() && !game.getIsDead() && !inputFrozen) {
-        pauseMenu.show();
-      }
-    }, 50);
+    // Not paused. Escape from a locked session makes the browser exit pointer
+    // lock, and onLockChange raises the menu. If the lock is already gone,
+    // there is no event coming — raise it here.
+    if (!pointerLock?.isLocked()) {
+      pauseMenu.show();
+    }
   };
 
   const attachRuntimeBindings = (): void => {

@@ -205,6 +205,34 @@ const SHAKE_DAMAGE_BASE = 0.045;
 const SHAKE_STIFFNESS = 180;
 /** Spring damping for shake recovery. */
 const SHAKE_DAMPING = 18;
+/**
+ * Largest integration step the shake spring may take. Explicit (semi-implicit)
+ * Euler on this spring stays stable only while dt is comfortably under
+ * 2/SHAKE_DAMPING (0.111 s) — the step matrix crosses |eigenvalue| = 1 at
+ * dt ≈ 0.078 s. 1/120 s leaves a wide margin at any frame rate.
+ */
+const SHAKE_MAX_STEP_S = 1 / 120;
+
+export type ShakeSpringState = {
+  offset: number;
+  velocity: number;
+};
+
+/**
+ * Advances one axis of the camera-shake spring, sub-stepped so the explicit
+ * integrator never runs outside its stable region regardless of frame time.
+ * Exported for the stability regression test.
+ */
+export function integrateShakeSpring(state: ShakeSpringState, deltaSeconds: number): void {
+  let remaining = Math.max(0, deltaSeconds);
+  while (remaining > 0) {
+    const step = Math.min(SHAKE_MAX_STEP_S, remaining);
+    remaining -= step;
+    const accel = -state.offset * SHAKE_STIFFNESS - state.velocity * SHAKE_DAMPING;
+    state.velocity += accel * step;
+    state.offset += state.velocity * step;
+  }
+}
 
 export type CameraPose = {
   pos: {
@@ -402,6 +430,9 @@ export class Game {
   // Camera shake: spring state for X and Y offset
   private shakeX = 0;
   private shakeXVel = 0;
+  /** Reused scratch so the per-frame spring integration allocates nothing. */
+  private readonly shakeSpringX: ShakeSpringState = { offset: 0, velocity: 0 };
+  private readonly shakeSpringY: ShakeSpringState = { offset: 0, velocity: 0 };
   private shakeY = 0;
   private smoothedEyeHeight = PLAYER_EYE_HEIGHT_M;
   private shakeYVel = 0;
@@ -618,6 +649,19 @@ export class Game {
     this.rebuildWorld();
   }
 
+  /**
+   * Assigns both map specs with a single world rebuild. The split setters each
+   * trigger a full rebuild, which doubles boot-time map construction when both
+   * specs arrive together.
+   */
+  setMapSpecs(blockout: RuntimeBlockoutSpec, anchors: RuntimeAnchorsSpec): void {
+    this.blockoutSpec = blockout;
+    this.applyMapLightingBounds(blockout);
+    this.anchorsSpec = anchors;
+    this.anchorsDebug?.setAnchors(anchors);
+    this.rebuildWorld();
+  }
+
   getColliderCount(): number {
     return this.runtimeColliders.length;
   }
@@ -740,12 +784,22 @@ export class Game {
       }
 
       // ── Shake spring update ───────────────────────────────────────────────
-      const shakeAccelX = -this.shakeX * SHAKE_STIFFNESS - this.shakeXVel * SHAKE_DAMPING;
-      const shakeAccelY = -this.shakeY * SHAKE_STIFFNESS - this.shakeYVel * SHAKE_DAMPING;
-      this.shakeXVel += shakeAccelX * deltaSeconds;
-      this.shakeYVel += shakeAccelY * deltaSeconds;
-      this.shakeX += this.shakeXVel * deltaSeconds;
-      this.shakeY += this.shakeYVel * deltaSeconds;
+      // Explicit integration of this spring is only stable while
+      // dt < ~2/SHAKE_DAMPING. At the loop's 100 ms dt clamp the step matrix has
+      // an eigenvalue of -2, so every frame doubles the shake and the camera
+      // diverges out of the world (and eventually to NaN) on any device that
+      // drops below ~12 fps. Sub-stepping keeps each integration step inside the
+      // stable region no matter how long the frame was.
+      this.shakeSpringX.offset = this.shakeX;
+      this.shakeSpringX.velocity = this.shakeXVel;
+      this.shakeSpringY.offset = this.shakeY;
+      this.shakeSpringY.velocity = this.shakeYVel;
+      integrateShakeSpring(this.shakeSpringX, deltaSeconds);
+      integrateShakeSpring(this.shakeSpringY, deltaSeconds);
+      this.shakeX = this.shakeSpringX.offset;
+      this.shakeXVel = this.shakeSpringX.velocity;
+      this.shakeY = this.shakeSpringY.offset;
+      this.shakeYVel = this.shakeSpringY.velocity;
 
       // Authored review shots own the camera for the entire frame. Player camera
       // shake continues to settle in the background but must not move the shot.

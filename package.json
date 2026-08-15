@@ -33,7 +33,7 @@
     "test:qa-tooling": "pnpm --filter @clawd-strike/client test:qa-tooling",
     "test:map-runtime": "pnpm --filter @clawd-strike/client test:map-runtime",
     "typecheck": "pnpm --filter @clawd-strike/client exec tsc -p ../../tsconfig.json --noEmit && pnpm --filter @clawd-strike/client typecheck",
-    "test:server": "tsx --test ./server/highScoreStoreImpl.test.ts",
+    "test:server": "tsx --test ./server/highScoreStoreImpl.test.ts ./server/highScoreHardening.test.ts",
     "smoke:game": "pnpm --filter @clawd-strike/client smoke:game",
     "bot:smoke": "pnpm --filter @clawd-strike/client bot:smoke",
     "bot:smoke:owned": "pnpm --filter @clawd-strike/client bot:smoke:owned",

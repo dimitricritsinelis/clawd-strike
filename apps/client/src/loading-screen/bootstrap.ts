@@ -12,7 +12,7 @@ import {
   PUBLIC_AGENT_API_VERSION,
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
-import { isLocalhostHostname } from "../shared/hostEnvironment";
+import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
 
 export type BootstrapLoadingScreenOptions = {
   handoff?: LoadingScreenHandoff;
@@ -109,7 +109,17 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   window.addEventListener("pagehide", teardown);
   window.addEventListener("beforeunload", teardown);
 
-  loadingAmbient.setMuted(false);
+  // Start muted for tooling-driven sessions (WebDriver, the Claude browser) and
+  // for agent runs, so an LLM playtest never plays menu music at whoever is
+  // watching. ?audio=1 forces it on, ?audio=0 forces it off. Real players match
+  // none of these, so production behaviour is unchanged.
+  const audioForced = new URLSearchParams(window.location.search).get("audio");
+  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
+    .test(window.location.search);
+  const ambientMuted = audioForced === "1"
+    ? false
+    : audioForced === "0" || isAutomatedClient() || runtimeUrlIsAgent;
+  loadingAmbient.setMuted(ambientMuted);
   ui.setMuteState(loadingAmbient.isMuted());
   ui.setSharedChampion(sharedChampionSnapshot);
   ui.show();

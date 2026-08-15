@@ -21,6 +21,10 @@ const ENEMY_PEEK_SPEED_MPS = 2.0;
 const ENEMY_DAMAGE_PER_HIT = 25;
 const ENEMY_MAX_HEALTH = 100;
 const ENEMY_STUCK_THRESHOLD_S = 0.45;
+/** How long a stuck bot steers sideways to slide off whatever blocked it. */
+const STUCK_ESCAPE_DURATION_S = 0.6;
+const STUCK_ESCAPE_FORWARD_BLEND = 0.35;
+const STUCK_ESCAPE_SIDE_BLEND = 0.9;
 const ENEMY_MIN_MOVED_M = 0.05;
 const ENEMY_PEEK_CHANGE_S_MIN = 1.2;
 const ENEMY_PEEK_CHANGE_S_MAX = 1.8;
@@ -196,6 +200,13 @@ export type EnemyTarget = {
   team: EnemyTeam;
   position: { x: number; y: number; z: number };
   health: number;
+  /**
+   * Height above the target's feet that shooters aim at. This must track the
+   * target's CURRENT stance: aiming at a fixed 1.5 m sent every shot straight
+   * over a crouching player, whose collision box only reaches 1.4 m, making
+   * crouch a total immunity to enemy fire at close range.
+   */
+  aimHeightM: number;
 };
 
 export type EnemyAabb = {
@@ -331,6 +342,8 @@ export class EnemyController {
 
   private desiredVX = 0;
   private desiredVZ = 0;
+  private stuckEscapeTimerS = 0;
+  private stuckEscapeDir = 1;
   private stuckTimer = 0;
   private peekDir = 1;
   private peekTimerS = 0;
@@ -415,6 +428,8 @@ export class EnemyController {
     this.desiredVX = 0;
     this.desiredVZ = 0;
     this.stuckTimer = 0;
+    this.stuckEscapeTimerS = 0;
+    this.stuckEscapeDir = 1;
     this.peekDir = 1;
     this.peekTimerS = 0;
     this.sweepDir = 1;
@@ -495,8 +510,8 @@ export class EnemyController {
     }
 
     const tierProfile = directive.tierProfile;
-    const visibleTarget = this.findVisibleTarget(targets, tierProfile, worldColliders, enemyAabbs);
-    this.directSight = visibleTarget !== null || directive.hasDirectSight;
+    const visibleTarget = directive.hasDirectSight ? this.findDirectSightTarget(targets) : null;
+    this.directSight = visibleTarget !== null;
     if (visibleTarget) {
       const dx = visibleTarget.position.x - this.position.x;
       const dz = visibleTarget.position.z - this.position.z;
@@ -549,6 +564,18 @@ export class EnemyController {
     const preZ = this.position.z;
     let vx = this.desiredVX;
     let vz = this.desiredVZ;
+
+    // Stuck escape: flipping peek direction only helps a bot that is peeking.
+    // A bot travelling into a prop or a wall corner keeps pushing straight at
+    // it forever, and because the wave only ends when every bot dies, one
+    // wedged bot can stall the whole run. Steering perpendicular to the blocked
+    // heading lets it slide along the obstacle and re-path.
+    if (this.stuckEscapeTimerS > 0) {
+      const escapeX = -vz * this.stuckEscapeDir;
+      const escapeZ = vx * this.stuckEscapeDir;
+      vx = vx * STUCK_ESCAPE_FORWARD_BLEND + escapeX * STUCK_ESCAPE_SIDE_BLEND;
+      vz = vz * STUCK_ESCAPE_FORWARD_BLEND + escapeZ * STUCK_ESCAPE_SIDE_BLEND;
+    }
 
     for (let i = 0; i < stepCount; i += 1) {
       this.velocityY -= GRAVITY_MPS2 * stepDt;
@@ -631,10 +658,15 @@ export class EnemyController {
       if (this.stuckTimer >= ENEMY_STUCK_THRESHOLD_S) {
         this.stuckTimer = 0;
         this.peekDir *= -1;
+        // Alternate the slide direction so a bot wedged in a corner tries both
+        // ways out instead of grinding against the same face.
+        this.stuckEscapeDir *= -1;
+        this.stuckEscapeTimerS = STUCK_ESCAPE_DURATION_S;
       }
     } else {
       this.stuckTimer = 0;
     }
+    this.stuckEscapeTimerS = Math.max(0, this.stuckEscapeTimerS - clampedDt);
 
     if (visibleTarget) {
       this.reactionTimerS = Math.max(0, this.reactionTimerS - clampedDt);
@@ -981,12 +1013,13 @@ export class EnemyController {
     }
   }
 
-  private findVisibleTarget(
-    targets: readonly EnemyTarget[],
-    tierProfile: EnemyTierProfile,
-    world: WorldColliders,
-    enemyAabbs: readonly EnemyAabb[],
-  ): EnemyTarget | null {
+  /**
+   * The manager already raycasts the enemy->player line of sight when it
+   * computes directive.hasDirectSight each frame, so the controller only
+   * resolves which hostile target that sight refers to instead of re-casting
+   * the same ray.
+   */
+  private findDirectSightTarget(targets: readonly EnemyTarget[]): EnemyTarget | null {
     let nearestDist = Number.POSITIVE_INFINITY;
     let nearestTarget: EnemyTarget | null = null;
 
@@ -998,9 +1031,6 @@ export class EnemyController {
       const dx = target.position.x - this.position.x;
       const dz = target.position.z - this.position.z;
       const dist = Math.hypot(dx, dz);
-      if (dist > tierProfile.visionRangeM) continue;
-      if (!this.hasLineOfSight(target.position, world, enemyAabbs)) continue;
-
       if (dist < nearestDist) {
         nearestDist = dist;
         nearestTarget = target;
@@ -1075,7 +1105,10 @@ export class EnemyController {
     const eyeZ = this.position.z;
 
     const targetEyeX = target.position.x;
-    const targetEyeY = target.position.y + ENEMY_EYE_HEIGHT_M;
+    // Aim at the target's own current aim height, not a fixed enemy eye height.
+    // Clamped a little below the top of the target so a stance change mid-flight
+    // still lands inside the collision box rather than skimming over it.
+    const targetEyeY = target.position.y + Math.min(target.aimHeightM, ENEMY_EYE_HEIGHT_M);
     const targetEyeZ = target.position.z;
 
     const dx = targetEyeX - eyeX;

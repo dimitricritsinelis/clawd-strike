@@ -270,8 +270,18 @@ export function parseSharedChampionPostResponse(value: unknown): SharedChampionP
   };
 }
 
-function normalizeHeadshotsPerWave(value: unknown): number[] {
+/**
+ * Absolute ceiling on per-wave entries. This sits far above any run the score
+ * cap can accept — over-cap-but-plausible runs must still reach the semantic
+ * validator so they are rejected as `kills-exceed-cap` rather than as a
+ * malformed body. It exists only to stop a client posting a multi-megabyte
+ * array that would be stored verbatim as JSONB.
+ */
+export const MAX_HEADSHOTS_PER_WAVE_ENTRIES = 20_000;
+
+function normalizeHeadshotsPerWave(value: unknown): number[] | null {
   if (!Array.isArray(value)) return [];
+  if (value.length > MAX_HEADSHOTS_PER_WAVE_ENTRIES) return null;
   const result: number[] = [];
   for (const item of value) {
     result.push(normalizeRunCount(item));
@@ -289,11 +299,14 @@ export function normalizeSharedChampionRunSummary(value: unknown): SharedChampio
   }
   const deathCause = rawDeathCause as SharedChampionRunDeathCause | undefined;
 
+  const headshotsPerWave = normalizeHeadshotsPerWave(record.headshotsPerWave);
+  if (headshotsPerWave === null) return null;
+
   return {
     survivalTimeS: normalizeRunSeconds(record.survivalTimeS),
     kills: normalizeRunCount(record.kills),
     headshots: normalizeRunCount(record.headshots),
-    headshotsPerWave: normalizeHeadshotsPerWave(record.headshotsPerWave),
+    headshotsPerWave,
     shotsFired: normalizeRunCount(record.shotsFired),
     shotsHit: normalizeRunCount(record.shotsHit),
     accuracy: normalizeAccuracyPercent(record.accuracy),

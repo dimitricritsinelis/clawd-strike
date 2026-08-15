@@ -16,13 +16,19 @@ import {
   Vector3,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { SimplifyModifier } from "three/addons/modifiers/SimplifyModifier.js";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { disposeObjectRoot } from "../utils/disposeObjectRoot";
 
 const MODEL_URL = "/assets/models/characters/enemy_raider/model.glb";
 const MODEL_TARGET_HEIGHT_M = 1.8;
-const MODEL_VISUAL_LOD_KEEP_RATIO = 0.06;
+// Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
+// this leaves the whole wave near half the map's remaining tri headroom.
+//
+// This is deliberately pinned just above the shipping asset's measured count
+// (24,986 tris) so a heavier re-export actually trips it. The previous 30,000
+// sat above the asset itself, which meant the guardrail could never fire and
+// silently protected nothing.
+const MODEL_MAX_TRIS_WARN = 25_000;
 const MODEL_FACING_FIXUP_YAW_RAD = Math.PI * 0.5;
 const MODEL_BARREL_AXIS_LOCAL = new Vector3(1, 0, 0);
 const MUZZLE_FORWARD_OFFSET_M = 0.03;
@@ -118,30 +124,23 @@ function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyMode
         );
       muzzleLocal.addScaledVector(MODEL_BARREL_AXIS_LOCAL, MUZZLE_FORWARD_OFFSET_M);
 
-      // Map-review cameras can see all ten enemies at once. The source GLB is
-      // a single 25k-triangle scan-like mesh, far denser than its combat-scale
-      // silhouette requires. Simplify the shared template once, after muzzle
-      // extraction, so every skeleton clone reuses the same UV-preserving LOD.
-      const modifier = new SimplifyModifier();
+      // The asset ships pre-optimized (LOD + texture sizing happen offline in
+      // art-source tooling); runtime decimation is forbidden here — three's
+      // SimplifyModifier tears UV seams open and shreds the silhouette.
+      let templateTris = 0;
       gltf.scene.traverse((child) => {
         const mesh = child as Mesh;
         if (!mesh.isMesh) return;
+        const index = mesh.geometry.getIndex();
         const position = mesh.geometry.getAttribute("position");
-        if (!position || position.count < 1_000) return;
-        const removeCount = Math.max(
-          0,
-          Math.floor(position.count * (1 - MODEL_VISUAL_LOD_KEEP_RATIO)),
-        );
-        if (removeCount < 8) return;
-        const sourceGeometry = mesh.geometry;
-        const simplified = modifier.modify(sourceGeometry, removeCount);
-        simplified.computeBoundingBox();
-        simplified.computeBoundingSphere();
-        simplified.userData.sourceGeometryUuid = sourceGeometry.uuid;
-        simplified.userData.lodKeepRatio = MODEL_VISUAL_LOD_KEEP_RATIO;
-        mesh.geometry = simplified;
-        sourceGeometry.dispose();
+        templateTris += Math.floor((index ? index.count : position?.count ?? 0) / 3);
       });
+      if (templateTris > MODEL_MAX_TRIS_WARN) {
+        console.warn(
+          `[enemy-visual] enemy model is ${templateTris} tris (budget guardrail ${MODEL_MAX_TRIS_WARN}); ` +
+          "re-export a lighter LOD offline (see art-source/characters/enemy_raider)",
+        );
+      }
 
       return {
         template: gltf.scene,
@@ -424,6 +423,13 @@ export class EnemyVisual {
 
   dispose(scene: Scene): void {
     scene.remove(this.root);
+    if (this.modelRoot) {
+      // The cloned model shares geometry/materials/textures with the module
+      // template cache; disposing them here would force three to re-upload
+      // everything on the next spawn. Detach before the recursive dispose.
+      this.root.remove(this.modelRoot);
+      this.modelRoot = null;
+    }
     disposeObjectRoot(this.root);
     this.nameTexture.dispose();
     this.nameMaterial.dispose();

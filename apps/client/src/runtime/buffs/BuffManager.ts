@@ -135,6 +135,21 @@ export class BuffManager {
   }
 
   /**
+   * Drops all per-wave headshot progress, including the pending Rallying Cry
+   * flag. Call when a run ends and a fresh one begins — otherwise a wave's
+   * headshot tally carries into the next run and awards a Rallying Cry that
+   * was never earned there.
+   *
+   * Deliberately NOT part of clearAllBuffs(): the wave-boundary path clears
+   * buffs and then reads previousWaveWasPerfectHeadshots to grant the reward.
+   */
+  resetWaveProgress(): void {
+    this.waveKills = 0;
+    this.waveHeadshots = 0;
+    this.previousWaveWasPerfectHeadshots = false;
+  }
+
+  /**
    * Per-frame update. Ticks orbs, checks pickup, ticks buff timers.
    */
   update(
@@ -370,9 +385,14 @@ export class BuffManager {
     const def = BUFF_DEFINITIONS[type];
     const existing = this.activeBuffs.get(type);
     if (existing) {
-      // Refresh timer
+      // Refresh timer, then re-apply the effect. Refreshing the clock alone is
+      // wrong for any buff whose effect can be consumed: an Iron Skin shield
+      // that has already been shot off is never restored, so the player pays
+      // for a pickup that visibly does nothing. Every activation handler is an
+      // idempotent setter, so re-invoking it is safe for the other buffs too.
       existing.remainingS = def.durationS;
       existing.durationS = def.durationS;
+      this.onBuffActivated?.(type);
       return "refreshed";
     }
     this.activeBuffs.set(type, {

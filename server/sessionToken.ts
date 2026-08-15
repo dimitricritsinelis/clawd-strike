@@ -14,9 +14,12 @@
  * - Not one-time-use: would require a DB table. The existing rate limiter
  *   (1 submission per 30s per IP) prevents rapid reuse of the same token.
  *
- * Security: SESSION_SECRET env var is required in production. In dev (when
- * the env var is absent), a hardcoded fallback is used. Never ship the
- * fallback to production.
+ * Security: SESSION_SECRET env var is REQUIRED in production and the module
+ * throws without it. In dev (when the env var is absent and the process is not
+ * running in a production/Vercel environment) a hardcoded fallback is used.
+ * The fallback is committed to this repository, so any deployment that signed
+ * tokens with it would let anyone forge a session token and submit arbitrary
+ * scores — that is why the production path fails closed instead of warning.
  *
  * See docs/security.md for the full security architecture.
  */
@@ -27,16 +30,21 @@ const SESSION_TOKEN_EXPIRY_MS = 30 * 60 * 1000; // 30 minutes
 
 const DEV_FALLBACK_SECRET = "clawd-strike-dev-session-secret-do-not-use-in-production";
 
+function isProductionEnvironment(): boolean {
+  return process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL);
+}
+
 function getSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (secret && secret.trim().length >= 32) {
     return secret.trim();
   }
-  // In production, warn loudly if the secret is missing or too short.
-  if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    console.warn(
-      "[session-token] WARNING: SESSION_SECRET is missing or too short. "
-      + "Using dev fallback. Set a 32+ character SESSION_SECRET env var in Vercel.",
+  // Fail closed. Falling back to the committed constant in production would
+  // publish the signing key, letting anyone mint valid session tokens.
+  if (isProductionEnvironment()) {
+    throw new Error(
+      "[session-token] SESSION_SECRET is missing or shorter than 32 characters. "
+      + "Set a 32+ character SESSION_SECRET environment variable before deploying.",
     );
   }
   return DEV_FALLBACK_SECRET;

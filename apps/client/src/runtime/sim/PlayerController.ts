@@ -27,9 +27,24 @@ const COYOTE_TIME_S = 0.1;
 const JUMP_BUFFER_S = 0.1;
 
 const PLAYER_HALF_WIDTH_M = PLAYER_WIDTH_M * 0.5;
-const MAX_FRAME_DT_S = 1 / 20;
+/**
+ * Must match the runtime loop's own per-frame clamp (100 ms in bootstrap's
+ * step()). When this was tighter than the loop clamp, every frame between 10 and
+ * 20 fps advanced the player by at most 50 ms while enemies, buff durations,
+ * wave timers and weapon cadence consumed the full frame — the player was
+ * silently time-dilated to half speed exactly when the game was already
+ * struggling. Movement is sub-stepped below, so a longer clamp costs accuracy
+ * nothing; it only stops the player's clock drifting from the world's.
+ */
+const MAX_FRAME_DT_S = 0.1;
 const MAX_SUBSTEP_DT_S = 1 / 120;
 const BOUNDS_EPSILON_M = 0.001;
+/**
+ * Below this Y the player is considered to have fallen out of the world. The
+ * bazaar's lowest authored ground sits far above it, so only a genuine fall
+ * through the floor reaches this.
+ */
+const OUT_OF_WORLD_Y_M = -25;
 export const MAX_AUTO_STEP_M = 0.35;
 export const GROUND_SNAP_DOWN_M = 0.45;
 const SURFACE_GROUND_EPSILON_M = 0.002;
@@ -52,6 +67,11 @@ export class PlayerController {
   private velocityX = 0;
   private velocityY = 0;
   private velocityZ = 0;
+  /** Last position the player was known to be standing safely on. */
+  private lastGroundedX = 0;
+  private lastGroundedY = 0;
+  private lastGroundedZ = 0;
+  private outOfWorldRecoveries = 0;
   private grounded = true;
   private horizontalSpeedMps = 0;
   private currentHeight = PLAYER_HEIGHT_M;
@@ -101,6 +121,9 @@ export class PlayerController {
     this.motionResult.hitY = false;
     this.motionResult.hitZ = false;
     this.motionResult.grounded = true;
+    this.lastGroundedX = this.position.x;
+    this.lastGroundedY = this.position.y;
+    this.lastGroundedZ = this.position.z;
     this.clampToPlayableBounds();
   }
 
@@ -315,6 +338,45 @@ export class PlayerController {
     if (this.position.x > maxX) this.position.x = maxX;
     if (this.position.z < minZ) this.position.z = minZ;
     if (this.position.z > maxZ) this.position.z = maxZ;
+
+    this.recoverIfOutOfWorld();
+  }
+
+  /**
+   * Last-resort floor. Bounds clamping only constrains X/Z — nothing stops a
+   * fall, so any spot the map leaves without a traversal surface or floor
+   * collider drops the player forever with no way back and no death, which
+   * soft-locks the whole run. A NaN position would be equally unrecoverable.
+   * Returning to the last known-good standing position keeps a map gap or a
+   * numerical glitch to a blink instead of a lost session.
+   */
+  private recoverIfOutOfWorld(): void {
+    const { x, y, z } = this.position;
+    const finite = Number.isFinite(x) && Number.isFinite(y) && Number.isFinite(z);
+
+    if (finite && y > OUT_OF_WORLD_Y_M) {
+      if (this.grounded) {
+        this.lastGroundedX = x;
+        this.lastGroundedY = y;
+        this.lastGroundedZ = z;
+      }
+      return;
+    }
+
+    this.position.x = this.lastGroundedX;
+    this.position.y = this.lastGroundedY;
+    this.position.z = this.lastGroundedZ;
+    this.velocityY = 0;
+    this.velocityX = 0;
+    this.velocityZ = 0;
+    this.grounded = true;
+    this.coyoteTimerS = 0;
+    this.outOfWorldRecoveries += 1;
+  }
+
+  /** Number of times the player has been rescued from below the world. */
+  getOutOfWorldRecoveryCount(): number {
+    return this.outOfWorldRecoveries;
   }
 
   private canOccupyHeight(heightM: number, world: WorldColliders): boolean {

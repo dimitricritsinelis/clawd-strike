@@ -243,6 +243,34 @@ function tryCreateWebGLContext(canvas: HTMLCanvasElement): WebGLContextLike | nu
 export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly hasWebGL: boolean;
+  private contextLost = false;
+  private onContextLostCallback: (() => void) | null = null;
+  private onContextRestoredCallback: (() => void) | null = null;
+
+  private readonly onContextLost = (event: Event): void => {
+    // Without preventDefault the browser will not attempt a restore at all.
+    event.preventDefault();
+    this.contextLost = true;
+    console.warn("[renderer] WebGL context lost");
+    this.onContextLostCallback?.();
+  };
+
+  private readonly onContextRestored = (): void => {
+    this.contextLost = false;
+    console.info("[renderer] WebGL context restored");
+    this.onContextRestoredCallback?.();
+  };
+
+  /** True while the GPU context is gone and draw calls would be discarded. */
+  isContextLost(): boolean {
+    return this.contextLost;
+  }
+
+  setContextLossHandlers(handlers: { onLost?: () => void; onRestored?: () => void }): void {
+    this.onContextLostCallback = handlers.onLost ?? null;
+    this.onContextRestoredCallback = handlers.onRestored ?? null;
+  }
+
   private readonly renderer: WebGLRenderer | null;
   private composer: EffectComposer | null = null;
   private worldPass: RenderPass | null = null;
@@ -285,6 +313,13 @@ export class Renderer {
 
     this.mountEl.append(this.canvas);
 
+    // A lost context leaves the canvas frozen while the simulation keeps
+    // running invisibly — the player sees a still image and keeps taking
+    // damage. Preventing the default lets the browser restore the context, and
+    // the flag lets the loop skip drawing into a dead context meanwhile.
+    this.canvas.addEventListener("webglcontextlost", this.onContextLost);
+    this.canvas.addEventListener("webglcontextrestored", this.onContextRestored);
+
     if (this.renderer) {
       this.renderer.outputColorSpace = SRGBColorSpace;
       this.renderer.toneMapping = ACESFilmicToneMapping;
@@ -310,6 +345,10 @@ export class Renderer {
       this.renderer.shadowMap.type = PCFSoftShadowMap;
       this.renderer.shadowMap.autoUpdate = false;
       this.renderer.shadowMap.needsUpdate = true;
+      // Safety net: if any transmissive material ever ships again, the hidden
+      // opaque-scene pre-pass it forces renders at 1/16th the pixels instead of
+      // full resolution. Gameplay materials should still keep transmission at 0.
+      this.renderer.transmissionResolutionScale = 0.25;
       this.renderer.info.autoReset = false;
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.maxPixelRatio ?? MAX_PIXEL_RATIO));
       this.renderer.setClearColor(
@@ -530,6 +569,10 @@ export class Renderer {
   }
 
   dispose(): void {
+    this.canvas.removeEventListener("webglcontextlost", this.onContextLost);
+    this.canvas.removeEventListener("webglcontextrestored", this.onContextRestored);
+    this.onContextLostCallback = null;
+    this.onContextRestoredCallback = null;
     this.environmentTarget?.dispose();
     this.environmentTarget = null;
     this.renderer?.dispose();

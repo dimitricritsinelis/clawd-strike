@@ -5,7 +5,13 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const clientRoot = path.resolve(scriptDir, "..");
-const runtimeRoot = path.join(clientRoot, "src/runtime");
+// src/shared holds cross-surface helpers (host/client detection) used by both
+// the runtime and the loading screen; its tests must run too or they silently
+// never execute.
+const testRoots = [
+  path.join(clientRoot, "src/runtime"),
+  path.join(clientRoot, "src/shared"),
+];
 
 async function collectTests(directory) {
   const entries = await readdir(directory, { withFileTypes: true });
@@ -17,7 +23,9 @@ async function collectTests(directory) {
   return nested.flat();
 }
 
-const testFiles = (await collectTests(runtimeRoot))
+const collected = await Promise.all(testRoots.map((root) => collectTests(root)));
+const testFiles = collected
+  .flat()
   .map((filePath) => path.relative(clientRoot, filePath))
   .sort();
 

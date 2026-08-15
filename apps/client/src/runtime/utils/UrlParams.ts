@@ -44,6 +44,13 @@ export type RuntimeUrlParams = {
   propVisuals: RuntimePropVisualMode;
   propChaos: RuntimePropChaosOptions;
   unlimitedHealth: boolean;
+  /**
+   * Whether the god-mode flag was named in the URL at all, and what it said.
+   * null when absent. Localhost human runs force unlimited health on as a dev
+   * convenience; without this an explicit ?god=0 could not turn it back off,
+   * which made it impossible to playtest enemy damage locally.
+   */
+  unlimitedHealthExplicit: boolean | null;
   ao: boolean;
   post: boolean;
 };
@@ -217,7 +224,17 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     density: parseUnitFloat(rawPropDensity),
   };
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
-  const ao = parseBooleanFlagWithDefault(rawAo, true);
+  const unlimitedHealthExplicit = rawUnlimitedHealth === null ? null : unlimitedHealth;
+  // GTAO re-renders the whole scene for its normal/depth buffer plus two heavy
+  // full-screen passes — far too expensive as a default for live gameplay.
+  // Authored-shot runs (review/capture cameras) keep it on by default so the
+  // tuned quality-bar look is unchanged; gameplay opts in via ?ao=1.
+  //
+  // Note this deliberately splits gameplay from authored shots: any performance
+  // measurement taken through a shot run is measuring GTAO-on and therefore is
+  // NOT representative of what players get. Performance gates that need to
+  // reflect live play must pass ?ao=0 explicitly.
+  const ao = parseBooleanFlagWithDefault(rawAo, shot !== null);
   const post = parseBooleanFlagWithDefault(rawPost, true);
 
   return {
@@ -245,6 +262,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     propVisuals,
     propChaos,
     unlimitedHealth,
+    unlimitedHealthExplicit,
     ao,
     post,
   };

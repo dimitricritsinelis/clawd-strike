@@ -49,8 +49,32 @@ export class TouchInputManager {
 
   private readonly el: HTMLElement;
 
+  // While an overlay owns the screen (pause menu, How to Play, Controls, death
+  // screen, orientation guard) every touch must reach that overlay's own
+  // buttons. Gameplay claims a touch anywhere on screen and preventDefault()s
+  // it, which suppresses the synthetic click — so gameplay capture is gated off
+  // entirely rather than being trusted to miss the overlay.
+  private captureEnabled = true;
+
   constructor(el: HTMLElement) {
     this.el = el;
+  }
+
+  /**
+   * Enables or disables gameplay touch capture. Disabling releases any
+   * in-flight gesture so a joystick held when an overlay opens cannot latch the
+   * player into running forever once it closes.
+   */
+  setCaptureEnabled(enabled: boolean): void {
+    if (this.captureEnabled === enabled) return;
+    this.captureEnabled = enabled;
+    if (!enabled) {
+      this.resetState();
+    }
+  }
+
+  isCaptureEnabled(): boolean {
+    return this.captureEnabled;
   }
 
   /** Register a button element so touches on it are assigned the correct role. */
@@ -106,6 +130,7 @@ export class TouchInputManager {
     // Only preventDefault when we claim a touch — unrecognised touches must
     // propagate so overlay UI (pause menu, death screen, etc.) still receives
     // synthetic click events from the browser.
+    if (!this.captureEnabled) return;
     let claimed = false;
 
     for (let i = 0; i < e.changedTouches.length; i++) {

@@ -172,7 +172,7 @@ async function readLoadingScreenRevealState(page: Page) {
 test("exposes the public agent contract before runtime boot", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
 
-  await page.goto(`${testInfo.project.use.baseURL as string}/`, {
+  await page.goto(new URL("/", testInfo.project.use.baseURL as string).toString(), {
     waitUntil: "domcontentloaded",
   });
 
@@ -211,7 +211,7 @@ test("reveals the loading-screen overlay only after the first-paint art is fully
   });
   await clearBrowserCache(page);
 
-  await page.goto(`${baseUrl}/`, {
+  await page.goto(new URL("/", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
 
@@ -276,7 +276,7 @@ test("keeps name-entry hidden until the nameplate art is ready for both human an
     const baselineRequestCount = delayedNameplateRequestCount;
 
     await clearBrowserCache(page);
-    await page.goto(`${baseUrl}/`, {
+    await page.goto(new URL("/", baseUrl).toString(), {
       waitUntil: "domcontentloaded",
     });
     await page.waitForSelector("#start[data-assets-ready=\"true\"]");
@@ -322,7 +322,7 @@ test("suppresses native loading-screen selection while preserving name-entry flo
   const recorder = attachConsoleRecorder(page);
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.goto(`${baseUrl}/`, {
+  await page.goto(new URL("/", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
   await page.waitForSelector("#start[data-assets-ready=\"true\"]");
@@ -390,7 +390,7 @@ test("requires a valid agent name before start and marks invalid input in red", 
   const recorder = attachConsoleRecorder(page);
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.goto(`${baseUrl}/`, {
+  await page.goto(new URL("/", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
   await page.waitForSelector("#start[data-assets-ready=\"true\"]");
@@ -440,7 +440,7 @@ test("requires a valid human name before start", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.goto(`${baseUrl}/`, {
+  await page.goto(new URL("/", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
   await page.waitForSelector("#start[data-assets-ready=\"true\"]");
@@ -480,7 +480,7 @@ test("blocks invalid autostart names and returns to focused name entry", async (
   const recorder = attachConsoleRecorder(page);
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.goto(`${baseUrl}/?autostart=agent`, {
+  await page.goto(new URL("/?autostart=agent", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
 
@@ -491,7 +491,7 @@ test("blocks invalid autostart names and returns to focused name entry", async (
   expect(await readPlaceholderColor(missingNameInput)).toBe("rgba(47, 26, 11, 0.8)");
   await expectLoadingScreenMode(page);
 
-  await page.goto(`${baseUrl}/?autostart=agent&name=Bad%3CName`, {
+  await page.goto(new URL("/?autostart=agent&name=Bad%3CName", baseUrl).toString(), {
     waitUntil: "domcontentloaded",
   });
 
@@ -621,7 +621,7 @@ test("supports the documented no-context death and retry loop", async ({ page },
   const recorder = attachConsoleRecorder(page);
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.goto(`${baseUrl}/skills.md`, { waitUntil: "domcontentloaded" });
+  await page.goto(new URL("/skills.md", baseUrl).toString(), { waitUntil: "domcontentloaded" });
   const skillsText = (await page.textContent("body")) ?? "";
   for (const requiredSnippet of [
     "[data-testid=\"agent-mode\"]",
