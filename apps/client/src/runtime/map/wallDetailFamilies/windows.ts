@@ -516,11 +516,6 @@ export function createStainedGlassMaterial(variant: "bright" | "dim" | "hero"): 
     `${STAINED_GLASS_TEXTURE_BASE_URL}/Glass_Stained_Panel_001_roughness.png`,
     NoColorSpace,
   );
-  const transmissionSource = loadTemplateTexture(
-    `${STAINED_GLASS_TEXTURE_BASE_URL}/Glass_Stained_Panel_001_transmissive.png`,
-    NoColorSpace,
-  );
-
   const isHero = variant === "hero";
   const isBright = variant === "bright" || isHero;
 
@@ -541,9 +536,9 @@ export function createStainedGlassMaterial(variant: "bright" | "dim" | "hero"): 
     emissive: 0x000000,
     emissiveMap: null,
     emissiveIntensity: 0,
-    transmission: isHero ? 0.18 : (isBright ? 0.12 : 0.06),
-    transmissionMap: transmissionSource,
-    thickness: isHero ? 0.065 : (isBright ? 0.05 : 0.035),
+    // Transmission removed: the transparent+alphaMap+opacity stack below
+    // already carries the translucent read, and any transmission > 0 forces a
+    // full extra opaque-scene render per frame.
     ior: 1.46,
     clearcoat: isHero ? 0.52 : 0.36,
     clearcoatRoughness: isHero ? 0.28 : 0.36,

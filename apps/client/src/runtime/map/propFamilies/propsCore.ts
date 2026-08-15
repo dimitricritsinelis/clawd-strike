@@ -6,6 +6,7 @@ import {
   RGBAFormat,
   RepeatWrapping,
   SRGBColorSpace,
+  type Texture,
   TextureLoader,
 } from "three";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
@@ -249,18 +250,32 @@ export function createSolidTexture(color: readonly [number, number, number, numb
   return texture;
 }
 
+// Many prop batches tile the same image with different repeat vectors. Cache
+// the first Texture per (role, url) and hand out clones: clones share the
+// underlying image Source, so each file is fetched, decoded, and uploaded to
+// the GPU once instead of once per batch, while repeat stays per-batch.
+const tiledTextureCache = new Map<string, Texture>();
+
 export function loadTiledTexture(
   url: string,
   repeat: readonly [number, number],
   role: "color" | "normal" | "arm" = "color",
 ) {
-  const texture = typeof document === "undefined"
-    ? role === "normal"
-      ? createSolidTexture([128, 128, 255, 255])
-      : role === "arm"
-        ? createSolidTexture([255, 242, 0, 255])
-        : createStripedTexture([0xc8b892, 0xdfd2b8])
-    : new TextureLoader().load(url);
+  const cacheKey = `${role}:${url}`;
+  const cached = tiledTextureCache.get(cacheKey);
+  let texture: Texture;
+  if (cached) {
+    texture = cached.clone();
+  } else {
+    texture = typeof document === "undefined"
+      ? role === "normal"
+        ? createSolidTexture([128, 128, 255, 255])
+        : role === "arm"
+          ? createSolidTexture([255, 242, 0, 255])
+          : createStripedTexture([0xc8b892, 0xdfd2b8])
+      : new TextureLoader().load(url);
+    tiledTextureCache.set(cacheKey, texture);
+  }
   texture.wrapS = RepeatWrapping;
   texture.wrapT = RepeatWrapping;
   texture.repeat.set(repeat[0], repeat[1]);

@@ -216,11 +216,15 @@ test("merchant storefronts override legacy flat timber/metal templates with vari
     instance.trimMaterialId?.startsWith("ph_")
     || instance.detailMaterialId?.startsWith("ph_")
   )), "merchant construction lost its manifest-backed PBR joinery");
+  // The struts and their fixings are deliberately timber, not iron: on the
+  // metal role they reflected the sky as pale galvanised pipe. They must carry
+  // the manifest-backed merchant timber id, bypassing the profile's (possibly
+  // legacy) timber slot entirely.
   assert.ok(
     result.instances
       .filter((instance) => instance.moduleId === "awning_support_pole")
-      .every((instance) => instance.detailMaterialId === "ph_stone_trim_white"),
-    "awning hardware bypassed the manifest-backed iron role",
+      .every((instance) => instance.detailMaterialId === "ph_worn_planks"),
+    "awning hardware bypassed the manifest-backed merchant timber role",
   );
 
   const shopTints = new Set(
@@ -1012,8 +1016,8 @@ test("authored merchant recess depth drives collision-backed shell clearance and
   assert.ok(result.instances.some((instance) => instance.semanticClass === "merchant_interior_hanging_goods"));
   assert.ok(
     result.instances.filter((instance) => instance.semanticClass === "canopy_support")
-      .every((instance) => instance.detailMaterialId === "ph_stone_trim_white"),
-    "canopy supports must use the manifest-backed merchant hardware material",
+      .every((instance) => instance.detailMaterialId === "ph_worn_planks"),
+    "canopy supports must use the manifest-backed merchant timber material",
   );
   assert.ok(
     result.instances.filter((instance) => instance.semanticClass === "merchant_interior_stock")

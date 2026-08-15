@@ -1015,16 +1015,15 @@ export function createWallDetailMaterialBank(
   stripedClothMap.wrapS = RepeatWrapping;
   stripedClothMap.wrapT = RepeatWrapping;
   stripedClothMap.repeat.set(2, 1);
+  // No transmission on cloth: any transmissive material forces three to
+  // re-render the entire opaque scene into a separate target every frame,
+  // and the sun-through-cloth read at 0.08-0.1 transmission is too subtle
+  // to justify that.
   const awningCloth = new MeshPhysicalMaterial({
     color: 0xffffff,
     map: stripedClothMap,
     roughness: 0.94,
     metalness: 0,
-    transmission: highVis ? 0.1 : 0.08,
-    thickness: 0.035,
-    ior: 1.35,
-    attenuationColor: 0xd8c8af,
-    attenuationDistance: 0.55,
     envMapIntensity: 0.72,
     side: DoubleSide,
   });

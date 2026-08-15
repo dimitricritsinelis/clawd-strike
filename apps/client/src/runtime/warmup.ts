@@ -11,7 +11,11 @@ const WALL_MANIFEST_URL =
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
 const PBR_FLOORS_ENABLED = true;
 const PBR_WALLS_ENABLED = true;
-const RUNTIME_WARMUP_TIMEOUT_MS = 8_000;
+// Upper bound before boot proceeds with the performance-safe fallback
+// (blockout surfaces, capsule enemies). Local/dev loads finish in well under
+// 2s; this cap only matters on genuinely slow networks, so it is generous —
+// hitting it silently costs the player every PBR surface.
+const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
 
 export type RuntimeWarmupAssets = {
   floorMaterials: FloorMaterialLibrary | null;

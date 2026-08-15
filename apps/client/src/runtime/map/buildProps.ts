@@ -4061,11 +4061,8 @@ function buildCompiledDressing(
           roughnessMap: armMap,
           roughness: batch.roughness,
           metalness: 0,
-          transmission: 0.08,
-          thickness: 0.035,
-          ior: 1.35,
-          attenuationColor: 0xd8c8af,
-          attenuationDistance: 0.55,
+          // No transmission on canopies — it forces a full extra opaque-scene
+          // render per frame (see kitMaterials awningCloth).
           envMapIntensity: 0.72,
           vertexColors: batch.vertexColors,
         })

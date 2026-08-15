@@ -173,7 +173,6 @@ export const QA_STAINED_GLASS_DIRECT_TEXTURE_URLS = [
   "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_normal.png",
   "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_opacity.png",
   "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_roughness.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_transmissive.png",
 ] as const;
 
 function sortedUnique(values: Iterable<string>): string[] {

@@ -428,8 +428,11 @@ test("Dyers wet-workstations are grounded seeded PBR prefabs without gameplay co
   const drain = mesh(root, "v3-dyers-workstation-drainage-tools");
   const wetApron = mesh(root, "v3-dyers-workstation-wet-contact-apron");
 
+  // Four authored instances: the canonical Dogleg workstation, its North Court
+  // propagation, and the two Dyers Alley process vats upgraded to full
+  // wet-workstations when the polish queue advanced through the alley edge.
   for (const target of [stone, indigoShell, madderShell, timber, textiles, indigo, madder, drain, wetApron]) {
-    assert.equal(target.count, 2, `${target.name} did not propagate from the canonical Dogleg instance to North Court`);
+    assert.equal(target.count, 4, `${target.name} did not propagate across the four authored workstation anchors`);
   }
   for (const target of [stone, indigoShell, madderShell, timber, drain, wetApron]) {
     const material = target.material as MeshStandardMaterial;
@@ -444,10 +447,13 @@ test("Dyers wet-workstations are grounded seeded PBR prefabs without gameplay co
     textiles.getColorAt(index, color);
     return color.getHexString();
   }));
-  assert.equal(textileColors.size, 2, "the propagated workstation still clones the canonical textile signature");
+  // The five seeded tint variants deterministically collide on one pair of the
+  // four placement ids, so three distinct textile signatures is the authored
+  // outcome; fewer means propagated instances are cloning the canonical tint.
+  assert.equal(textileColors.size, 3, "the propagated workstations no longer carry seeded per-instance textile signatures");
 
   const placements = result.renderedPlacements.filter((placement) => placement.moduleId === "bazaar_dyers_workstation");
-  assert.equal(placements.length, 2);
+  assert.equal(placements.length, 4);
   assert.ok(placements.every((placement) => placement.groundingGapM === 0));
   assert.ok(placements.every((placement) => placement.materialMode === "pbr"));
   assert.ok(result.colliders.every((collider) => !collider.id.includes("WORKSTATION")), "render-only workstation added gameplay collision");
@@ -976,7 +982,10 @@ test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spou
   });
   const waterMaterial = water.material;
   assert.ok(waterMaterial instanceof MeshPhysicalMaterial);
-  assert.ok(waterMaterial.transmission >= 0.15 && waterMaterial.opacity <= 0.65, "fountain water is no longer shallow and restrained");
+  // Transmission must stay at 0: any transmission > 0 forces three to
+  // re-render the entire opaque scene per frame (see FOUNTAIN_WATER_MATERIAL_INPUTS).
+  // The alpha blend alone carries the shallow translucent read.
+  assert.ok(waterMaterial.transmission === 0 && waterMaterial.opacity <= 0.65, "fountain water must stay alpha-blended with zero transmission");
   assert.ok(waterMaterial.normalMap instanceof DataTexture, "fountain water lost its procedural ripple normal");
   // Guards that the water keeps a specular surface response, without pinning it
   // to near-mirror. At clearcoat 1 / specularIntensity 1 the pool returned one
@@ -1057,9 +1066,11 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   assert.ok(qaInstances.every((instance) => instance?.shadowMode === "cast_only"));
 
   // The span's longitudinal cordage is sampled into the cloth module so it can
-  // follow the catenary; this batch now carries only the four wall corner ties
-  // per span that a straight instanced rope can still describe honestly.
-  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, 16, "corner ties are not batched with the canopy edge ropes");
+  // follow the catenary; this batch carries the straight ties a rigid instanced
+  // rope can still describe honestly: four wall corner ties per span, plus the
+  // three intermediate lashings per wall edge added so the attachment closeup
+  // shows cordage mid-span. Six authored spans x (4 + 2 x 3) = 60.
+  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, 60, "corner ties and lashings are not batched with the canopy edge ropes");
   const cloth = mesh(root, "v3-canopy-cloth");
   const positions = cloth.geometry.getAttribute("position");
   const minYNear = (z: number): number => {
@@ -1093,9 +1104,9 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const hangRopes = mesh(root, "v3-canopy-hang-ropes");
   assert.ok(hangRopes.count >= 24 && hangRopes.count % 2 === 0, "canopy and laundry supports lost their paired vertical load paths");
   const trestles = mesh(root, "v3-canopy-wall-trestles");
-  assert.equal(trestles.count, 8, "each full-street cloth span needs one trestle on both served walls");
+  assert.equal(trestles.count, 12, "each of the six cloth spans needs one trestle on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.equal(root.children.length, 62, "served-souk canopy families drifted from their deterministic batch budget");
+  assert.equal(root.children.length, 68, "served-souk canopy families drifted from their deterministic batch budget");
 });
 
 test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
