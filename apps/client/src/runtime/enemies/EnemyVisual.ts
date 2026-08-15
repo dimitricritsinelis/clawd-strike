@@ -24,11 +24,12 @@ const MODEL_TARGET_HEIGHT_M = 1.8;
 // Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
 // this leaves the whole wave near half the map's remaining tri headroom.
 //
-// This is deliberately pinned just above the shipping asset's measured count
-// (24,986 tris) so a heavier re-export actually trips it. The previous 30,000
-// sat above the asset itself, which meant the guardrail could never fire and
-// silently protected nothing.
-const MODEL_MAX_TRIS_WARN = 25_000;
+// Pinned just above the shipping asset's measured count (7,492 tris) so a
+// heavier re-export actually trips it. Keep this in step with the asset: a
+// threshold at or above whatever ships can never fire and protects nothing,
+// which is exactly how the earlier 30,000 sat uselessly above a 24,986-tri
+// model for an entire release cycle.
+const MODEL_MAX_TRIS_WARN = 8_000;
 const MODEL_FACING_FIXUP_YAW_RAD = Math.PI * 0.5;
 const MODEL_BARREL_AXIS_LOCAL = new Vector3(1, 0, 0);
 const MUZZLE_FORWARD_OFFSET_M = 0.03;
