@@ -155,6 +155,20 @@ export function raycastFirstHit(
   let nearestNormalZ = 0;
   let found = false;
 
+  if (world.hasTraversalSurfaces) {
+    const surfaceHit = world.traversalSurfaces.raycast(origin, dir, maxDist);
+    if (surfaceHit) {
+      nearestDistance = surfaceHit.distance;
+      nearestNormalX = surfaceHit.normal.x;
+      nearestNormalY = surfaceHit.normal.y;
+      nearestNormalZ = surfaceHit.normal.z;
+      outHit.point.set(surfaceHit.point.x, surfaceHit.point.y, surfaceHit.point.z);
+      outHit.colliderId = surfaceHit.surfaceId;
+      outHit.colliderKind = "traversal_surface";
+      found = true;
+    }
+  }
+
   for (const collider of candidates) {
     const hitDistance = rayVsAabb(collider, origin, dir, maxDist, outHit.normal);
     if (!Number.isFinite(hitDistance)) continue;
@@ -168,8 +182,14 @@ export function raycastFirstHit(
     found = true;
   }
 
-  if (!found || !nearestCollider) {
+  if (!found) {
     return false;
+  }
+
+  if (!nearestCollider) {
+    outHit.distance = nearestDistance;
+    outHit.normal.set(nearestNormalX, nearestNormalY, nearestNormalZ);
+    return true;
   }
 
   outHit.distance = nearestDistance;

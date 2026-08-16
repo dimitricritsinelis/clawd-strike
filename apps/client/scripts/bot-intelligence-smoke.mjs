@@ -1,10 +1,11 @@
 import path from "node:path";
-import { copyFile, writeFile } from "node:fs/promises";
+import { copyFile, readFile, writeFile } from "node:fs/promises";
 import {
   advanceRuntime,
   attachConsoleRecorder,
   buildRuntimeUrl,
   captureRuntimeSnapshot,
+  DEFAULT_RUNTIME_READY_TIMEOUT_MS,
   ensureDir,
   gotoAgentRuntime,
   launchBrowser,
@@ -20,13 +21,17 @@ import {
 const BASE_URL = parseBaseUrl(process.env.BASE_URL ?? "http://127.0.0.1:5174");
 const MAP_ID = (process.env.MAP_ID ?? "bazaar-map").trim() || "bazaar-map";
 const HEADLESS = parseBooleanEnv(process.env.HEADLESS, true);
-const MAP_MID_Z = 41;
+const MAP_MID_Z = 46;
 const EXPECTED_BOT_COUNT = 10;
 const BOT_OVERLAP_DISTANCE_M = 0.59;
-const HIDDEN_PLAYER_POSE = { x: 4.8, y: 0.0001, z: 64, yawDeg: 180 };
+const ELEVATED_Y_MIN_M = 1;
+const HIDDEN_PLAYER_ZONE_ID = "SERVICE_NORTH";
+const TERRACE_ZONE_ID = "TEA_TERRACE";
+const HIDDEN_PLAYER_POSE = { x: 6.5, y: 0.0001, z: 65, yawDeg: 180 };
+const TERRACE_PLAYER_POSE = { x: 15, y: 1.4001, z: 61, yawDeg: 180 };
 const HIDDEN_PLAYER_ROUTE = {
-  id: "hide-sh-w",
-  label: "Hide in west hall",
+  id: "hide-service-west",
+  label: "Move toward west service lane",
   spawn: "A",
   expectedMinDistanceM: 18,
   maxStationaryTicks: 12,
@@ -145,11 +150,8 @@ function collectSpawnValidationIssues(state, { checkLiveElevation = true } = {})
     if ((spawnValidation.blockingColliderIds ?? []).length > 0) {
       issues.push(`${enemy.id}:blocked-by-${spawnValidation.blockingColliderIds.join("+")}`);
     }
-    if (spawnValidation.elevated) {
-      issues.push(`${enemy.id}:spawn-elevated`);
-    }
-    if (checkLiveElevation && Math.abs(enemy.position?.y ?? 0) > 0.05) {
-      issues.push(`${enemy.id}:live-y=${(enemy.position?.y ?? 0).toFixed(3)}`);
+    if (checkLiveElevation && (enemy.position?.y ?? 0) < -0.05) {
+      issues.push(`${enemy.id}:below-surface-y=${(enemy.position?.y ?? 0).toFixed(3)}`);
     }
   }
   return issues;
@@ -161,8 +163,8 @@ function spawnValidationDetail(state) {
 }
 
 function laneFromX(x) {
-  if (x <= 14.5) return "west";
-  if (x >= 35.5) return "east";
+  if (x < 20) return "west";
+  if (x >= 41) return "east";
   return "main";
 }
 
@@ -176,6 +178,17 @@ function laneCounts(state) {
     main: countBotsInLane(state, "main"),
     east: countBotsInLane(state, "east"),
   };
+}
+
+function spawnLaneCounts(state, zoneLanes) {
+  const counts = { west: 0, main: 0, east: 0 };
+  for (const enemy of state?.bots?.enemies ?? []) {
+    const zoneId = enemy.spawnValidation?.actualZoneId ?? enemy.spawnValidation?.expectedZoneId ?? null;
+    const lane = zoneId ? zoneLanes?.[zoneId] : null;
+    if (lane === "west" || lane === "main" || lane === "east") counts[lane] += 1;
+    else counts[laneFromX(enemy.position.x)] += 1;
+  }
+  return counts;
 }
 
 function findOverlappingBotPairs(state, minimumDistanceM = BOT_OVERLAP_DISTANCE_M) {
@@ -220,19 +233,70 @@ function countNoSightOverwatch(state) {
   return (state?.bots?.enemies ?? []).filter((enemy) => enemy.state === "OVERWATCH" && enemy.directSight !== true).length;
 }
 
-function hasLongSightlineOverwatch(state) {
+function hasCombatEngagement(state) {
   const player = state?.player?.pos;
   if (!player) return false;
   return (state?.bots?.enemies ?? []).some((enemy) => {
     const dx = enemy.position.x - player.x;
     const dz = enemy.position.z - player.z;
     const distance = Math.hypot(dx, dz);
-    return distance > 40 && enemy.directSight === true && (
+    return distance >= 4 && enemy.directSight === true && (
       enemy.state === "OVERWATCH"
       || enemy.reactionRemainingS > 0
       || enemy.burstShotsRemaining > 0
     );
   });
+}
+
+function countElevatedEnemies(state) {
+  return (state?.bots?.enemies ?? []).filter((enemy) => (enemy.position?.y ?? 0) >= ELEVATED_Y_MIN_M).length;
+}
+
+function hasElevatedCombat(state) {
+  return (state?.bots?.enemies ?? []).some((enemy) =>
+    (enemy.position?.y ?? 0) >= ELEVATED_Y_MIN_M
+    && enemy.directSight === true
+    && (enemy.state === "OVERWATCH" || enemy.state === "PRESSURE" || enemy.burstShotsRemaining > 0));
+}
+
+function findPersistentlyStuckEnemies(states, minimumWindowS = 25) {
+  if (states.length < 2) return [];
+  const first = buildEnemyMap(states[0]);
+  const last = buildEnemyMap(states.at(-1));
+  const elapsedS = (states.at(-1)?.bots?.waveElapsedS ?? 0) - (states[0]?.bots?.waveElapsedS ?? 0);
+  if (elapsedS < minimumWindowS) return [];
+  const movingStates = new Set(["ROTATE", "INVESTIGATE", "PRESSURE", "FALLBACK"]);
+  const stuck = [];
+  for (const [id, start] of first) {
+    const end = last.get(id);
+    if (!end || !movingStates.has(end.state) || !end.assignedNodeId) continue;
+    const distance = Math.hypot(end.position.x - start.position.x, end.position.z - start.position.z);
+    if (distance < 0.35 && end.targetNodeChangeCount === start.targetNodeChangeCount) stuck.push(id);
+  }
+  return stuck;
+}
+
+async function readAuthoredSpawnAcceptance() {
+  const mapPath = path.resolve(process.cwd(), "public/maps", MAP_ID, "map_spec.json");
+  const map = JSON.parse(await readFile(mapPath, "utf8"));
+  const surfaces = new Map((map.traversalSurfaces ?? []).map((surface) => [surface.id, surface]));
+  const enemySpawns = (map.authoredSpawns ?? []).filter((spawn) => spawn.kind === "enemy");
+  const invalid = enemySpawns.filter((spawn) => {
+    const surface = surfaces.get(spawn.surfaceId);
+    return !surface || surface.zoneId !== spawn.zoneId;
+  });
+  const elevated = enemySpawns.filter((spawn) => {
+    const surface = surfaces.get(spawn.surfaceId);
+    return surface?.elevationM >= ELEVATED_Y_MIN_M || surface?.startElevationM >= ELEVATED_Y_MIN_M;
+  });
+  return {
+    formatVersion: map.formatVersion ?? null,
+    enemySpawnCount: enemySpawns.length,
+    invalidIds: invalid.map((spawn) => spawn.id),
+    elevatedIds: elevated.map((spawn) => spawn.id),
+    terraceIds: enemySpawns.filter((spawn) => spawn.zoneId === TERRACE_ZONE_ID).map((spawn) => spawn.id),
+    zoneLanes: Object.fromEntries((map.zones ?? []).map((zone) => [zone.id, zone.macroLane])),
+  };
 }
 
 function renderReview(summary) {
@@ -257,6 +321,12 @@ function renderReview(summary) {
     lines.push(`  - state: ${checkpoint.statePath}`);
     lines.push(`  - consoleErrors: ${checkpoint.console.errorCount}`);
   }
+
+  lines.push("", "## Bazaar v3 Authored Spawns");
+  lines.push(`- format: ${summary.authoredSpawns?.formatVersion ?? "n/a"}`);
+  lines.push(`- enemy spawns: ${summary.authoredSpawns?.enemySpawnCount ?? 0}`);
+  lines.push(`- elevated: ${(summary.authoredSpawns?.elevatedIds ?? []).join(", ") || "none"}`);
+  lines.push(`- Tea Terrace: ${(summary.authoredSpawns?.terraceIds ?? []).join(", ") || "none"}`);
 
   if (summary.longSightline) {
     lines.push("", "## Long Sightline");
@@ -288,6 +358,18 @@ function renderReview(summary) {
     for (const checkpoint of summary.hiddenSearch.checkpoints ?? []) {
       lines.push(
         `- ${checkpoint.id}: wave=${checkpoint.snapshot.waveNumber} elapsed=${checkpoint.snapshot.waveElapsedS?.toFixed?.(2) ?? "n/a"} alive=${checkpoint.state?.gameplay?.alive !== false} avgDist=${averageDistanceToPlayer(checkpoint.state).toFixed(2)}`,
+      );
+      lines.push(`  - image: ${checkpoint.imagePath}`);
+      lines.push(`  - state: ${checkpoint.statePath}`);
+      lines.push(`  - consoleErrors: ${checkpoint.console.errorCount}`);
+    }
+  }
+
+  if (summary.terraceCombat) {
+    lines.push("", "## Tea Terrace Combat");
+    for (const checkpoint of summary.terraceCombat.checkpoints ?? []) {
+      lines.push(
+        `- ${checkpoint.id}: elevatedBots=${countElevatedEnemies(checkpoint.state)} elevatedCombat=${hasElevatedCombat(checkpoint.state)}`,
       );
       lines.push(`  - image: ${checkpoint.imagePath}`);
       lines.push(`  - state: ${checkpoint.statePath}`);
@@ -349,7 +431,7 @@ async function waitForRuntimeState(page) {
     } catch {
       return false;
     }
-  }, { timeout: 20_000 });
+  }, undefined, { timeout: DEFAULT_RUNTIME_READY_TIMEOUT_MS });
 }
 
 async function captureCheckpoint(page, outputDir, consoleRecorder, id) {
@@ -455,12 +537,16 @@ const summary = {
   outputDir,
   startedAt: new Date().toISOString(),
   checkpoints: [],
+  authoredSpawns: await readAuthoredSpawnAcceptance(),
   longSightline: null,
   zeroContact: {
     checkpoints: [],
   },
   hiddenSearch: {
     route: null,
+    checkpoints: [],
+  },
+  terraceCombat: {
     checkpoints: [],
   },
   respawnScenario: {
@@ -538,7 +624,7 @@ try {
       if (zeroContactDeathAtS === null && (currentState?.gameplay?.alive === false || currentState?.gameOver?.visible === true)) {
         zeroContactDeathAtS = currentState?.bots?.waveElapsedS ?? null;
       }
-      if (zeroContactDeathAtS === null && currentState?.gameplay?.alive !== false && currentState?.player?.zoneId !== "SH_W") {
+      if (zeroContactDeathAtS === null && currentState?.gameplay?.alive !== false && currentState?.player?.zoneId !== HIDDEN_PLAYER_ZONE_ID) {
         await enforceHiddenPlayerPose(page, { suppressIntelMs: 10_000 });
       }
     });
@@ -575,7 +661,7 @@ try {
       if (hiddenDeathAtS === null && (currentState?.gameplay?.alive === false || currentState?.gameOver?.visible === true)) {
         hiddenDeathAtS = currentState?.bots?.waveElapsedS ?? null;
       }
-      if (hiddenDeathAtS === null && currentState?.gameplay?.alive !== false && currentState?.player?.zoneId !== "SH_W") {
+      if (hiddenDeathAtS === null && currentState?.gameplay?.alive !== false && currentState?.player?.zoneId !== HIDDEN_PLAYER_ZONE_ID) {
         await enforceHiddenPlayerPose(page);
       }
     });
@@ -586,6 +672,25 @@ try {
     summary.hiddenSearch.checkpoints.push(checkpoint);
   }
   summary.hiddenSearch.deathAtS = hiddenDeathAtS;
+
+  consoleRecorder.clear();
+  await gotoAgentRuntime(page, {
+    baseUrl: BASE_URL,
+    mapId: MAP_ID,
+    agentName: "TerraceCombat",
+    spawn: "A",
+    extraSearchParams: {
+      unlimitedHealth: 1,
+      debug: 1,
+    },
+  });
+  await page.evaluate((pose) => window.__debug_set_player_pose?.(pose), TERRACE_PLAYER_POSE);
+  const terraceOutputDir = path.join(outputDir, "terrace-combat");
+  summary.terraceCombat.checkpoints.push(await captureCheckpoint(page, terraceOutputDir, consoleRecorder, "terrace-t0"));
+  await advanceRuntime(page, 15_000);
+  summary.terraceCombat.checkpoints.push(await captureCheckpoint(page, terraceOutputDir, consoleRecorder, "terrace-t15"));
+  await advanceRuntime(page, 15_000);
+  summary.terraceCombat.checkpoints.push(await captureCheckpoint(page, terraceOutputDir, consoleRecorder, "terrace-t30"));
 
   consoleRecorder.clear();
   await gotoAgentRuntime(page, {
@@ -647,12 +752,28 @@ try {
     fail("Missing one or more checkpoint states");
   }
   const initialTelemetry = t0.bots.lastSpawn ?? null;
-  const initialLaneCounts = laneCounts(t0);
+  const initialLaneCounts = spawnLaneCounts(t0, summary.authoredSpawns.zoneLanes);
   const settledAtT30 = countSettledEnemies(t30);
   const stableAimAtT30 = countStableAimEnemies(t30);
   const respawnMinDistance = minimumDistanceToPlayer(respawnState);
+  const activeStates = [t0, t15, t30, t60];
+  const persistentStuckIds = findPersistentlyStuckEnemies([t15, t30, t60]);
+  const terraceStates = summary.terraceCombat.checkpoints.map((checkpoint) => checkpoint.state);
 
   const assertions = [
+    {
+      label: "v3 declares exactly ten valid authored enemy spawns",
+      passed:
+        summary.authoredSpawns.formatVersion === "3.0"
+        && summary.authoredSpawns.enemySpawnCount === EXPECTED_BOT_COUNT
+        && summary.authoredSpawns.invalidIds.length === 0,
+      detail: `format=${summary.authoredSpawns.formatVersion} count=${summary.authoredSpawns.enemySpawnCount} invalid=${summary.authoredSpawns.invalidIds.join("/") || "none"}`,
+    },
+    {
+      label: "v3 authors an elevated Tea Terrace enemy spawn",
+      passed: summary.authoredSpawns.elevatedIds.length >= 1 && summary.authoredSpawns.terraceIds.length >= 1,
+      detail: `elevated=${summary.authoredSpawns.elevatedIds.join("/") || "none"} terrace=${summary.authoredSpawns.terraceIds.join("/") || "none"}`,
+    },
     {
       label: "starts on wave 1 tier 1",
       passed: t0.bots.waveNumber === 1 && t0.bots.tier === 1,
@@ -757,16 +878,32 @@ try {
       detail: `avgDist=${averageDistanceToPlayer(t15).toFixed(2)}->${averageDistanceToPlayer(t60).toFixed(2)}`,
     },
     {
-      label: "long sightline produces overwatch or firing logic",
-      passed: summary.longSightline !== null && hasLongSightlineOverwatch(summary.longSightline.state),
-      detail: `longLos=${summary.longSightline !== null ? hasLongSightlineOverwatch(summary.longSightline.state) : false}`,
+      label: "spawn opening remains screened from immediate long-range engagement",
+      passed: summary.longSightline !== null && !hasCombatEngagement(summary.longSightline.state),
+      detail: `engaged=${summary.longSightline !== null ? hasCombatEngagement(summary.longSightline.state) : false}`,
     },
     {
-      label: "flankers stay gated before T3",
+      label: "bots actively use the elevated traversal surface",
+      passed: [...activeStates, ...terraceStates].some((state) => countElevatedEnemies(state) >= 1),
+      detail: `elevatedCounts=${[...activeStates, ...terraceStates].map(countElevatedEnemies).join("/")}`,
+    },
+    {
+      label: "terrace scenario supports elevated firefights",
+      passed: terraceStates.some(hasElevatedCombat),
+      detail: `elevatedCombat=${terraceStates.map(hasElevatedCombat).join("/")}`,
+    },
+    {
+      label: "active directives do not remain persistently stuck",
+      passed: persistentStuckIds.length === 0,
+      detail: `stuck=${persistentStuckIds.join("/") || "none"}`,
+    },
+    {
+      label: "flankers stay gated at T1 and use a bounded T2 budget",
       passed:
         (t0.bots.roleCounts?.flanker ?? 0) === 0
         && (t15.bots.roleCounts?.flanker ?? 0) === 0
-        && (t30.bots.roleCounts?.flanker ?? 0) === 0,
+        && (t30.bots.roleCounts?.flanker ?? 0) > 0
+        && (t30.bots.roleCounts?.flanker ?? 0) <= 2,
       detail: `flankers=${[t0.bots.roleCounts?.flanker ?? 0, t15.bots.roleCounts?.flanker ?? 0, t30.bots.roleCounts?.flanker ?? 0].join("/")}`,
     },
     {
@@ -777,7 +914,7 @@ try {
     {
       label: "zero-contact camper starts hidden and silent",
       passed:
-        zeroContactPostTeleport.player?.zoneId === "SH_W"
+        zeroContactPostTeleport.player?.zoneId === HIDDEN_PLAYER_ZONE_ID
         && (zeroContactPostTeleport.bots?.lastSeenPlayer ?? null) === null
         && (zeroContactPostTeleport.bots?.lastHeardPlayer ?? null) === null,
       detail: `zone=${zeroContactPostTeleport.player?.zoneId ?? "n/a"} seen=${zeroContactPostTeleport.bots?.lastSeenPlayer ? "yes" : "no"} heard=${zeroContactPostTeleport.bots?.lastHeardPlayer ? "yes" : "no"}`,
@@ -799,21 +936,20 @@ try {
       detail: `phase=${zeroContactT30.bots?.searchPhase ?? "n/a"} tasks=${zeroContactT30.bots?.squadTasks?.length ?? 0}`,
     },
     {
-      label: "zero-contact hunt kills or hard-pins by 90s",
+      label: "zero-contact hunt converges across the expanded map by 90s",
       passed:
         (summary.zeroContact.deathAtS !== null && summary.zeroContact.deathAtS <= 90)
         || (
-          averageDistanceToPlayer(zeroContactT90) <= 21
-          && countBotsInLane(zeroContactT90, "west") + countBotsInLane(zeroContactT90, "main") >= 8
+          averageDistanceToPlayer(zeroContactT90) <= 30
+          && countBotsInLane(zeroContactT90, "west") + countBotsInLane(zeroContactT90, "main") >= 6
         ),
       detail: `deathAt=${summary.zeroContact.deathAtS ?? "n/a"} avgDist90=${averageDistanceToPlayer(zeroContactT90).toFixed(2)} westMain90=${countBotsInLane(zeroContactT90, "west") + countBotsInLane(zeroContactT90, "main")}`,
     },
     {
-      label: "hidden route reaches the west hall",
+      label: "hidden route reaches the west service lane",
       passed:
         summary.hiddenSearch.route !== null
-        && summary.hiddenSearch.route.zonesVisited.includes("SH_W")
-        && hiddenPostRoute.player?.zoneId === "SH_W",
+        && hiddenPostRoute.player?.zoneId === HIDDEN_PLAYER_ZONE_ID,
       detail: `zones=${summary.hiddenSearch.route?.zonesVisited?.join("/") ?? "n/a"} finalZone=${hiddenPostRoute.player?.zoneId ?? "n/a"}`,
     },
     {
@@ -821,7 +957,7 @@ try {
       passed:
         (summary.hiddenSearch.deathAtS !== null && summary.hiddenSearch.deathAtS <= 30)
         || (
-          hiddenT30.player?.zoneId === "SH_W"
+          hiddenT30.player?.zoneId === HIDDEN_PLAYER_ZONE_ID
           && countBotsInLane(hiddenT30, "west") >= 3
           && averageDistanceToPlayer(hiddenT30) <= averageDistanceToPlayer(hiddenPostRoute) - 4
         ),
@@ -832,7 +968,7 @@ try {
       passed:
         (summary.hiddenSearch.deathAtS !== null && summary.hiddenSearch.deathAtS <= 60)
         || (
-          hiddenT60.player?.zoneId === "SH_W"
+          hiddenT60.player?.zoneId === HIDDEN_PLAYER_ZONE_ID
           && countBotsInLane(hiddenT60, "west") >= 8
           && averageDistanceToPlayer(hiddenT60) <= 21
         ),
@@ -843,7 +979,7 @@ try {
       passed:
         (summary.hiddenSearch.deathAtS !== null && summary.hiddenSearch.deathAtS <= 90)
         || (
-          hiddenT90.player?.zoneId === "SH_W"
+          hiddenT90.player?.zoneId === HIDDEN_PLAYER_ZONE_ID
           && countBotsInLane(hiddenT90, "west") + countBotsInLane(hiddenT90, "main") >= 8
           && averageDistanceToPlayer(hiddenT90) <= 20
         ),
@@ -905,6 +1041,7 @@ try {
         && (summary.longSightline?.console.errorCount ?? 0) === 0
         && summary.zeroContact.checkpoints.every((checkpoint) => checkpoint.console.errorCount === 0)
         && summary.hiddenSearch.checkpoints.every((checkpoint) => checkpoint.console.errorCount === 0)
+        && summary.terraceCombat.checkpoints.every((checkpoint) => checkpoint.console.errorCount === 0)
         && (summary.respawnScenario.checkpoint?.console.errorCount ?? 0) === 0,
       detail: `errors=${summary.checkpoints.map((checkpoint) => checkpoint.console.errorCount).join("/")}/${summary.longSightline?.console.errorCount ?? 0}/${summary.zeroContact.checkpoints.map((checkpoint) => checkpoint.console.errorCount).join("/")}/${summary.hiddenSearch.checkpoints.map((checkpoint) => checkpoint.console.errorCount).join("/")}/${summary.respawnScenario.checkpoint?.console.errorCount ?? 0}`,
     },

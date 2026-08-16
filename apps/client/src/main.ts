@@ -130,16 +130,14 @@ async function revealRuntime(handle: RuntimeHandle): Promise<void> {
   runtimeRoot.style.transition = `opacity ${REVEAL_DURATION_MS}ms ease`;
   overlay.style.transition = `opacity ${REVEAL_DURATION_MS}ms ease`;
 
-  await new Promise<void>((resolve) => {
-    window.requestAnimationFrame(() => {
-      runtimeRoot.style.opacity = "1";
-      overlay.style.opacity = "0";
-      resolve();
-    });
-  });
+  runtimeRoot.style.opacity = "1";
+  overlay.style.opacity = "0";
+  // Mark the runtime active before waiting on paint/transition callbacks. GPU
+  // uploads can delay both callbacks on heavy scenes, but readiness and agent
+  // control must remain bounded and observable.
+  handle.activate();
   await waitForRevealTransition(overlay);
 
-  handle.activate();
   overlay.style.display = "none";
   overlay.setAttribute("aria-hidden", "true");
   overlay.style.opacity = "";
@@ -179,6 +177,7 @@ async function transitionToGame(selection?: RuntimeLaunchSelection): Promise<voi
           warmup: assets,
         };
     runtimeHandle = await bootstrapRuntime(runtimeOptions);
+    console.info("[runtime:boot] bootstrap resolved; beginning reveal");
     await revealRuntime(runtimeHandle);
   })().catch((error: unknown) => {
     if (launchState !== "active") {

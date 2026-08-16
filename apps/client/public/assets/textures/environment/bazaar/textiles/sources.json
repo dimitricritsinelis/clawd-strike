@@ -1,0 +1,24 @@
+{
+  "assets": [
+    {
+      "id": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "notes": "Project-owned canopy stripe, plain shade cloth, two woven shade-cloth bolts and Levantine rug albedo textures authored for Clawd Strike.",
+      "md5": {
+        "project_original/canopy_stripe_albedo_v1.jpg": "b99e482c87fc3f34269c0c6ba124c9f1",
+        "project_original/levantine_rug_albedo_v1.jpg": "748db3341007442fdf290851da01f8e7",
+        "project_original/shade_cloth_albedo_v1.jpg": "df9447fda8505e0d2ca8786bc4529ab8",
+        "project_original/shade_cloth_woven_v2.jpg": "d3074a462f40f921137dc07f70a6b728",
+        "project_original/shade_cloth_woven_v3.jpg": "7496cbf6e151fe1ac1451184996933ae"
+      },
+      "files": [
+        "project_original/canopy_stripe_albedo_v1.jpg",
+        "project_original/levantine_rug_albedo_v1.jpg",
+        "project_original/shade_cloth_albedo_v1.jpg",
+        "project_original/shade_cloth_woven_v2.jpg",
+        "project_original/shade_cloth_woven_v3.jpg"
+      ]
+    }
+  ]
+}

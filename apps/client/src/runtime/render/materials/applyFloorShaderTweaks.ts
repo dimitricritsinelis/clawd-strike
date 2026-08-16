@@ -110,7 +110,9 @@ float floorMacroNoise(vec2 worldXZ) {
 uniform float uFloorAlbedoBoost;
 uniform float uFloorAlbedoGamma;
 uniform float uFloorDustStrength;
-const vec3 uFloorDustColor = vec3(1.0, 0.96, 0.88);${macroHeader}`,
+// A muted warm mineral dust, expressed in linear space. It compresses the
+// photographed paving's darkest mortar without bleaching the stones to white.
+const vec3 uFloorDustColor = vec3(0.60, 0.56, 0.50);${macroHeader}`,
       );
     }
 

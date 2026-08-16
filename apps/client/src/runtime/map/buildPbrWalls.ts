@@ -3,7 +3,7 @@ import type { WallMaterialLibrary, WallTextureQuality } from "../render/material
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type { BoundarySegment } from "./buildBlockout";
-import type { RuntimeBlockoutZone } from "./types";
+import type { RuntimeBlockoutZone, RuntimeFacadeProfile, RuntimeFrontage } from "./types";
 import {
   resolveFacadeFaceForSegment,
   resolveFacadeStyleForSegment,
@@ -29,15 +29,52 @@ type MaterialBatch = {
 };
 
 type BuildPbrWallsOptions = {
+  formatVersion?: string;
   segments: readonly BoundarySegment[];
+  /** Untouched collision-wall authority used for stable assignment context. */
+  sourceSegments?: readonly BoundarySegment[];
+  /** Parent index in sourceSegments for each render-only segment. */
+  segmentSourceIndices?: readonly number[];
   zones: readonly RuntimeBlockoutZone[];
+  frontages?: readonly RuntimeFrontage[];
+  facadeProfiles?: readonly RuntimeFacadeProfile[];
   seed: number;
   quality: WallTextureQuality;
   manifest: WallMaterialLibrary;
   wallHeightM: number;
   floorTopY: number;
   segmentHeights?: readonly number[];
+  segmentBaseYs?: readonly number[];
 };
+
+function validateSegmentParentContract(options: BuildPbrWallsOptions): void {
+  const hasSourceSegments = typeof options.sourceSegments !== "undefined";
+  const hasSourceIndices = typeof options.segmentSourceIndices !== "undefined";
+  if (hasSourceSegments !== hasSourceIndices) {
+    throw new Error("[pbr walls] sourceSegments and segmentSourceIndices must be provided together");
+  }
+  if (!options.segmentSourceIndices || !options.sourceSegments) return;
+  if (options.segmentSourceIndices.length !== options.segments.length) {
+    throw new Error("[pbr walls] segmentSourceIndices must align with render segments");
+  }
+  for (let index = 0; index < options.segmentSourceIndices.length; index += 1) {
+    const sourceIndex = options.segmentSourceIndices[index]!;
+    if (!Number.isInteger(sourceIndex) || sourceIndex < 0 || sourceIndex >= options.sourceSegments.length) {
+      throw new Error(`[pbr walls] render segment ${index} has invalid source index ${sourceIndex}`);
+    }
+  }
+}
+
+function resolveSegmentParent(
+  options: BuildPbrWallsOptions,
+  segmentIndex: number,
+): { sourceIndex: number; segment: BoundarySegment } {
+  const sourceIndex = options.segmentSourceIndices?.[segmentIndex] ?? segmentIndex;
+  return {
+    sourceIndex,
+    segment: options.sourceSegments?.[sourceIndex] ?? options.segments[segmentIndex]!,
+  };
+}
 
 function getBatch(map: Map<string, MaterialBatch>, materialId: string): MaterialBatch {
   const existing = map.get(materialId);
@@ -192,6 +229,32 @@ function resolveZoneMaterialId(zone: RuntimeBlockoutZone | null): string {
   return style.materials.wall;
 }
 
+function resolveSegmentFrontage(
+  zone: RuntimeBlockoutZone | null,
+  face: FacadeFace,
+  frame: SegmentFrame,
+  frontages: readonly RuntimeFrontage[],
+): RuntimeFrontage | null {
+  if (!zone) return null;
+  const spanM = face === "west" || face === "east" ? zone.rect.h : zone.rect.w;
+  if (spanM <= 0) return null;
+  const coordinateM = face === "west" || face === "east"
+    ? frame.centerZ - zone.rect.y
+    : frame.centerX - zone.rect.x;
+  const along = coordinateM / spanM;
+  return frontages
+    .filter((frontage) => (
+      frontage.zoneId === zone.id
+      && frontage.face === face
+      && along >= (frontage.start ?? 0) - 1e-6
+      && along <= (frontage.end ?? 1) + 1e-6
+    ))
+    .sort((left, right) => (
+      ((left.end ?? 1) - (left.start ?? 0)) - ((right.end ?? 1) - (right.start ?? 0))
+      || left.id.localeCompare(right.id)
+    ))[0] ?? null;
+}
+
 function resolveManifestMaterialId(
   materialIds: readonly string[],
   availableMaterialIds: ReadonlySet<string>,
@@ -226,6 +289,7 @@ function finalizeGeometry(batch: MaterialBatch): BufferGeometry {
 export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
   const root = new Group();
   root.name = "map-pbr-walls";
+  validateSegmentParentContract(options);
 
   const materialIds = options.manifest.getMaterialIds();
   if (materialIds.length === 0) {
@@ -233,7 +297,9 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
   }
 
   const batches = new Map<string, MaterialBatch>();
+  const isV3 = /^3(?:\.|$)/.test(options.formatVersion ?? "");
   const availableMaterialIds = new Set(materialIds);
+  const facadeProfileById = new Map((options.facadeProfiles ?? []).map((profile) => [profile.id, profile]));
   const segmentMetaByIndex = new Map<number, {
     zone: RuntimeBlockoutZone | null;
     facadeFace: FacadeFace;
@@ -242,8 +308,8 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
   const segmentGroupsByFace = new Map<string, Array<{ index: number; start: number }>>();
 
   for (let index = 0; index < options.segments.length; index += 1) {
-    const segment = options.segments[index]!;
-    const frame = toSegmentFrame(segment);
+    const parent = resolveSegmentParent(options, index);
+    const frame = toSegmentFrame(parent.segment);
     const zone = resolveSegmentZone(frame, options.zones);
     const facadeFace = resolveFacadeFaceForSegment(zone, frame);
     segmentMetaByIndex.set(index, {
@@ -254,7 +320,7 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
     if (!zone) continue;
     const key = `${zone.id}:${facadeFace}`;
     const entries = segmentGroupsByFace.get(key) ?? [];
-    entries.push({ index, start: segment.start });
+    entries.push({ index, start: parent.segment.start });
     segmentGroupsByFace.set(key, entries);
   }
 
@@ -270,17 +336,29 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
 
   for (let index = 0; index < options.segments.length; index += 1) {
     const segment = options.segments[index]!;
-    const frame = toSegmentFrame(segment);
+    const parent = resolveSegmentParent(options, index);
+    const frame = toSegmentFrame(isV3 ? segment : parent.segment);
     const meta = segmentMetaByIndex.get(index);
-    const zone = meta?.zone ?? resolveSegmentZone(frame, options.zones);
+    const zone = isV3
+      ? resolveSegmentZone(frame, options.zones)
+      : meta?.zone ?? resolveSegmentZone(frame, options.zones);
+    const facadeFace = resolveFacadeFaceForSegment(zone, frame);
+    const frontage = isV3
+      ? resolveSegmentFrontage(zone, facadeFace, frame, options.frontages ?? [])
+      : null;
+    const authoredProfile = facadeProfileById.get(
+      frontage?.facadeProfileId ?? zone?.facadeProfileId ?? "",
+    );
     const zoneMaterialId = zone
       ? (
-          resolveWallPlaneOverride(
-            zone,
-            meta?.facadeFace ?? resolveFacadeFaceForSegment(zone, frame),
-            meta?.segmentOrdinal ?? null,
-          )?.materials.wall
-          ?? resolveFacadeStyleForSegment(zone, frame).materials.wall
+          (!isV3
+            ? resolveWallPlaneOverride(
+                zone,
+                meta?.facadeFace ?? resolveFacadeFaceForSegment(zone, frame),
+                meta?.segmentOrdinal ?? null,
+              )?.materials.wall
+            : null)
+          ?? resolveFacadeStyleForSegment(zone, frame, authoredProfile).materials.wall
         )
       : resolveZoneMaterialId(zone);
     const materialId = resolveManifestMaterialId(
@@ -288,7 +366,7 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
       availableMaterialIds,
       zoneMaterialId,
     );
-    const uvSeed = deriveSubSeed(options.seed, `wall-uv:${index}:${materialId}`);
+    const uvSeed = deriveSubSeed(options.seed, `wall-uv:${parent.sourceIndex}:${materialId}`);
     const uvRng = new DeterministicRng(uvSeed);
     const tileSizeM = options.manifest.getTileSizeM(materialId);
     const batch = getBatch(batches, materialId);
@@ -296,7 +374,7 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
     appendSegmentFace(
       batch,
       segment,
-      options.floorTopY,
+      options.segmentBaseYs?.[index] ?? options.floorTopY,
       segHeight,
       tileSizeM,
       uvRng.int(0, 4),
@@ -335,7 +413,15 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
     const mesh = new Mesh(geometry, material);
     mesh.name = `wall-${materialId}`;
     mesh.castShadow = true;
-    mesh.receiveShadow = false;
+    mesh.receiveShadow = true;
+    mesh.userData.visualQa = {
+      moduleId: "boundary_wall",
+      semanticClass: "structural_wall",
+      representation: "module",
+      materialMode: "pbr",
+      materialId,
+      shadowMode: "cast",
+    };
     root.add(mesh);
   }
 

@@ -1,13 +1,15 @@
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import test from "node:test";
+import { buildProps } from "./buildProps";
 import { buildWallDetailPlacements } from "./wallDetailPlacer";
-import { parseBlockoutSpec } from "./types";
+import { parseAnchorsSpec, parseBlockoutSpec, type RuntimeBlockoutZone, type RuntimeRect } from "./types";
 import {
   resolveFacadeFaceForSegment,
   resolveFacadeStyleForSegment,
   resolveWallPlaneOverride,
+  type FacadeFace,
+  type FacadeSegmentFrame,
 } from "./wallMaterialAssignment";
 
 const WALKABLE_ZONE_TYPES = new Set([
@@ -18,17 +20,7 @@ const WALKABLE_ZONE_TYPES = new Set([
   "connector",
 ]);
 
-const DETAIL_ZONE_TYPES = new Set([
-  "main_lane_segment",
-  "side_hall",
-  "spawn_plaza",
-  "connector",
-  "cut",
-]);
-
-const B_SPAWN_DETAIL_HASH = "3baec89fcc135efb0169bb191a879c7e980274c2101c7f83e95445ac03d982b2";
-const B_SPAWN_DOOR_HASH = "5dc2d5e9ecec25678725733de6ed565395617cb7e4c94d3e8dccc607f8931912";
-const B_SPAWN_WALL_HASH = "21412ff62e9a7e419fe4caeeab1ae1aa7b85caa9898facf3207bcd8d3de60662";
+const DETAIL_ZONE_TYPES = new Set(WALKABLE_ZONE_TYPES);
 
 type Segment = {
   orientation: "vertical" | "horizontal";
@@ -38,34 +30,84 @@ type Segment = {
   outward: -1 | 1;
 };
 
-type SegmentFrame = {
+type SegmentFrame = FacadeSegmentFrame & {
   lengthM: number;
-  centerX: number;
-  centerZ: number;
   tangentX: number;
   tangentZ: number;
-  inwardX: number;
-  inwardZ: number;
 };
 
 type SegmentMeta = {
-  index: number;
   segment: Segment;
   frame: SegmentFrame;
-  zone: {
-    id: string;
-    type: string;
-    rect: { x: number; y: number; w: number; h: number };
-  } | null;
-  face: "north" | "south" | "east" | "west";
+  zone: RuntimeBlockoutZone | null;
+  face: FacadeFace;
   ordinal: number | null;
 };
 
 type AuditContext = {
-  spec: ReturnType<typeof parseBlockoutSpec>;
   metas: SegmentMeta[];
   placements: ReturnType<typeof buildWallDetailPlacements>;
 };
+
+function zone(id: string, type: string): RuntimeBlockoutZone {
+  return {
+    id,
+    type,
+    rect: { x: 10, y: 10, w: 12, h: 16 },
+    label: id,
+    notes: "semantic facade test fixture",
+  };
+}
+
+function frameForFace(target: RuntimeBlockoutZone, face: FacadeFace): FacadeSegmentFrame {
+  const centerX = target.rect.x + target.rect.w * 0.5;
+  const centerZ = target.rect.y + target.rect.h * 0.5;
+  switch (face) {
+    case "west":
+      return { centerX: target.rect.x, centerZ, inwardX: 1, inwardZ: 0 };
+    case "east":
+      return { centerX: target.rect.x + target.rect.w, centerZ, inwardX: -1, inwardZ: 0 };
+    case "south":
+      return { centerX, centerZ: target.rect.y, inwardX: 0, inwardZ: 1 };
+    case "north":
+      return { centerX, centerZ: target.rect.y + target.rect.h, inwardX: 0, inwardZ: -1 };
+  }
+}
+
+function segmentForFace(target: RuntimeBlockoutZone, face: FacadeFace): Segment {
+  switch (face) {
+    case "west":
+      return { orientation: "vertical", coord: target.rect.x, start: target.rect.y, end: target.rect.y + target.rect.h, outward: -1 };
+    case "east":
+      return { orientation: "vertical", coord: target.rect.x + target.rect.w, start: target.rect.y, end: target.rect.y + target.rect.h, outward: 1 };
+    case "south":
+      return { orientation: "horizontal", coord: target.rect.y, start: target.rect.x, end: target.rect.x + target.rect.w, outward: -1 };
+    case "north":
+      return { orientation: "horizontal", coord: target.rect.y + target.rect.h, start: target.rect.x, end: target.rect.x + target.rect.w, outward: 1 };
+  }
+}
+
+function buildFixturePlacements(target: RuntimeBlockoutZone, face: FacadeFace) {
+  return buildWallDetailPlacements({
+    segments: [segmentForFace(target, face)],
+    zones: [target],
+    anchors: null,
+    facadeOverrides: [],
+    moduleRegistry: { windowModules: [], doorModules: [], heroBayModules: [] },
+    compositionLayoutOverrides: [],
+    doorLayoutOverrides: [],
+    windowLayoutOverrides: [],
+    balconyLayoutOverrides: [],
+    seed: 7,
+    wallHeightM: 7,
+    wallThicknessM: 0.35,
+    enabled: true,
+    profile: "pbr",
+    detailSeed: null,
+    density: 0.72,
+    maxProtrusionM: 0.3,
+  });
+}
 
 function rectContainsPoint(rect: { x: number; y: number; w: number; h: number }, x: number, y: number): boolean {
   return x >= rect.x && x <= rect.x + rect.w && y >= rect.y && y <= rect.y + rect.h;
@@ -96,7 +138,7 @@ function buildInsideGrid(
 ): boolean[][] {
   const rows = ys.length - 1;
   const cols = xs.length - 1;
-  const inside: boolean[][] = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
+  const inside = Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
   for (let yIndex = 0; yIndex < rows; yIndex += 1) {
     for (let xIndex = 0; xIndex < cols; xIndex += 1) {
       const centerX = (xs[xIndex]! + xs[xIndex + 1]!) * 0.5;
@@ -111,18 +153,17 @@ function extractBoundarySegments(inside: boolean[][], xs: number[], ys: number[]
   const rows = inside.length;
   const cols = inside[0]?.length ?? 0;
   const segments: Segment[] = [];
-  const isInside = (xIndex: number, yIndex: number): boolean => {
-    if (xIndex < 0 || yIndex < 0 || xIndex >= cols || yIndex >= rows) {
-      return false;
-    }
-    return inside[yIndex]?.[xIndex] ?? false;
-  };
+  const isInside = (xIndex: number, yIndex: number): boolean => (
+    xIndex >= 0
+    && yIndex >= 0
+    && xIndex < cols
+    && yIndex < rows
+    && (inside[yIndex]?.[xIndex] ?? false)
+  );
 
   for (let yIndex = 0; yIndex < rows; yIndex += 1) {
     for (let xIndex = 0; xIndex < cols; xIndex += 1) {
-      if (!inside[yIndex]?.[xIndex]) {
-        continue;
-      }
+      if (!inside[yIndex]?.[xIndex]) continue;
       const x0 = xs[xIndex]!;
       const x1 = xs[xIndex + 1]!;
       const y0 = ys[yIndex]!;
@@ -141,39 +182,30 @@ function extractBoundarySegments(inside: boolean[][], xs: number[], ys: number[]
       }
     }
   }
-
   return segments;
 }
 
 function mergeBoundarySegments(segments: Segment[]): Segment[] {
-  const EPS = 1e-6;
-  const sorted = [...segments].sort((left, right) => {
-    if (left.orientation !== right.orientation) {
-      return left.orientation.localeCompare(right.orientation);
-    }
-    if (left.coord !== right.coord) {
-      return left.coord - right.coord;
-    }
-    if (left.outward !== right.outward) {
-      return left.outward - right.outward;
-    }
-    return left.start - right.start;
-  });
-
+  const sorted = [...segments].sort((left, right) => (
+    left.orientation.localeCompare(right.orientation)
+    || left.coord - right.coord
+    || left.outward - right.outward
+    || left.start - right.start
+  ));
   const merged: Segment[] = [];
   for (const segment of sorted) {
     const previous = merged[merged.length - 1];
     if (
       previous
       && previous.orientation === segment.orientation
-      && Math.abs(previous.coord - segment.coord) < EPS
+      && Math.abs(previous.coord - segment.coord) < 1e-6
       && previous.outward === segment.outward
-      && Math.abs(previous.end - segment.start) < EPS
+      && Math.abs(previous.end - segment.start) < 1e-6
     ) {
       previous.end = segment.end;
-      continue;
+    } else {
+      merged.push({ ...segment });
     }
-    merged.push({ ...segment });
   }
   return merged;
 }
@@ -190,7 +222,6 @@ function toSegmentFrame(segment: Segment): SegmentFrame {
       inwardZ: 0,
     };
   }
-
   return {
     lengthM: segment.end - segment.start,
     centerX: (segment.start + segment.end) * 0.5,
@@ -202,37 +233,13 @@ function toSegmentFrame(segment: Segment): SegmentFrame {
   };
 }
 
-function pointInRect2D(
-  zone: { rect: { x: number; y: number; w: number; h: number } },
-  x: number,
-  z: number,
-): boolean {
-  const rect = zone.rect;
-  return x >= rect.x && x <= rect.x + rect.w && z >= rect.y && z <= rect.y + rect.h;
-}
-
-function resolveSegmentZone(
-  frame: SegmentFrame,
-  zones: Array<{ id: string; type: string; rect: { x: number; y: number; w: number; h: number } }>,
-) {
+function resolveSegmentZone(frame: SegmentFrame, zones: RuntimeBlockoutZone[]): RuntimeBlockoutZone | null {
   const probeX = frame.centerX + frame.inwardX * 0.1;
   const probeZ = frame.centerZ + frame.inwardZ * 0.1;
-  let winner: typeof zones[number] | null = null;
-  let winnerArea = Number.POSITIVE_INFINITY;
-  for (const zone of zones) {
-    if (!DETAIL_ZONE_TYPES.has(zone.type)) {
-      continue;
-    }
-    if (!pointInRect2D(zone, probeX, probeZ)) {
-      continue;
-    }
-    const area = zone.rect.w * zone.rect.h;
-    if (area < winnerArea) {
-      winnerArea = area;
-      winner = zone;
-    }
-  }
-  return winner;
+  return zones
+    .filter((candidate) => DETAIL_ZONE_TYPES.has(candidate.type))
+    .filter((candidate) => rectContainsPoint(candidate.rect, probeX, probeZ))
+    .sort((left, right) => left.rect.w * left.rect.h - right.rect.w * right.rect.h)[0] ?? null;
 }
 
 function project(frame: SegmentFrame, position: { x: number; y: number; z: number }) {
@@ -241,37 +248,33 @@ function project(frame: SegmentFrame, position: { x: number; y: number; z: numbe
   return {
     alongS: dx * frame.tangentX + dz * frame.tangentZ,
     inwardN: dx * frame.inwardX + dz * frame.inwardZ,
-    y: position.y,
   };
 }
 
 async function buildAuditContext(): Promise<AuditContext> {
-  const raw = JSON.parse(await readFile("public/maps/bazaar-map/map_spec.json", "utf8"));
-  const spec = parseBlockoutSpec(raw, "public/maps/bazaar-map/map_spec.json");
+  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
+  const raw = JSON.parse(await readFile(specUrl, "utf8"));
+  const spec = parseBlockoutSpec(raw, specUrl.pathname);
   const walkableRects = spec.zones
-    .filter((zone) => WALKABLE_ZONE_TYPES.has(zone.type))
-    .map((zone) => zone.rect);
+    .filter((candidate) => WALKABLE_ZONE_TYPES.has(candidate.type))
+    .map((candidate) => candidate.rect);
   const { xs, ys } = collectAxisCoordinates(walkableRects, spec.playable_boundary);
   const segments = mergeBoundarySegments(extractBoundarySegments(buildInsideGrid(walkableRects, xs, ys), xs, ys));
-  const metas: SegmentMeta[] = segments.map((segment, index) => {
+  const metas: SegmentMeta[] = segments.map((segment) => {
     const frame = toSegmentFrame(segment);
-    const zone = resolveSegmentZone(frame, spec.zones);
-    const face = resolveFacadeFaceForSegment(zone, frame);
+    const resolvedZone = resolveSegmentZone(frame, spec.zones);
     return {
-      index,
       segment,
       frame,
-      zone,
-      face,
+      zone: resolvedZone,
+      face: resolveFacadeFaceForSegment(resolvedZone, frame),
       ordinal: null,
     };
   });
 
   const groups = new Map<string, SegmentMeta[]>();
   for (const meta of metas) {
-    if (!meta.zone) {
-      continue;
-    }
+    if (!meta.zone) continue;
     const key = `${meta.zone.id}:${meta.face}`;
     const list = groups.get(key) ?? [];
     list.push(meta);
@@ -284,462 +287,291 @@ async function buildAuditContext(): Promise<AuditContext> {
     });
   }
 
-  const placements = buildWallDetailPlacements({
-    segments,
-    zones: spec.zones,
-    anchors: null,
-    facadeOverrides: spec.wall_details.facadeOverrides,
-    moduleRegistry: spec.wall_details.moduleRegistry,
-    compositionLayoutOverrides: spec.wall_details.compositionLayoutOverrides,
-    doorLayoutOverrides: spec.wall_details.doorLayoutOverrides,
-    windowLayoutOverrides: spec.wall_details.windowLayoutOverrides,
-    balconyLayoutOverrides: spec.wall_details.balconyLayoutOverrides,
-    seed: 1,
-    wallHeightM: spec.defaults.wall_height,
-    wallThicknessM: spec.defaults.wall_thickness,
-    enabled: spec.wall_details.enabled,
-    profile: "pbr",
-    detailSeed: null,
-    density: spec.wall_details.density,
-    maxProtrusionM: spec.wall_details.maxProtrusion,
-  });
-
-  return { spec, metas, placements };
-}
-
-function findBestSegmentMeta(
-  metas: SegmentMeta[],
-  position: { x: number; y: number; z: number },
-  maxNormalDistance = 2.5,
-): { meta: SegmentMeta; local: ReturnType<typeof project> } | null {
-  const matches = metas
-    .map((meta) => ({
-      meta,
-      local: project(meta.frame, position),
-    }))
-    .filter(({ meta, local }) => (
-      Math.abs(local.alongS) <= meta.frame.lengthM * 0.5 + 0.3
-      && Math.abs(local.inwardN) <= maxNormalDistance
-    ))
-    .sort((left, right) => (
-      Math.abs(left.local.inwardN) - Math.abs(right.local.inwardN)
-      || Math.abs(left.local.alongS) - Math.abs(right.local.alongS)
-    ));
-
-  return matches[0] ?? null;
-}
-
-function isBalconyLikeMesh(meshId: string): boolean {
-  return meshId.startsWith("balcony_")
-    || meshId === "spawn_hero_corbel"
-    || meshId === "spawn_hero_pediment";
-}
-
-function windowFrameLike(meshId: string): boolean {
-  return meshId === "spawn_window_pointed_arch_frame"
-    || meshId === "spawn_hero_window_pointed_arch_frame"
-    || meshId === "window_pointed_arch_frame"
-    || meshId === "hero_window_pointed_arch_frame";
-}
-
-function isSpawnBReferenceMeta(meta: SegmentMeta): boolean {
-  return meta.zone?.id === "SPAWN_B_GATE_PLAZA"
-    && (
-      (meta.face === "north" && meta.ordinal === 1)
-      || (meta.face === "west" && meta.ordinal === 2)
-      || (meta.face === "east" && meta.ordinal === 2)
-    );
-}
-
-function digestBSpawn(context: AuditContext): { detailHash: string; doorHash: string; wallHash: string } {
-  const bMetas = context.metas.filter((meta) => isSpawnBReferenceMeta(meta));
-  const detailRecords = context.placements.instances
-    .map((instance) => {
-      const hit = findBestSegmentMeta(bMetas, instance.position);
-      if (!hit) {
-        return null;
-      }
-      return {
-        face: hit.meta.face,
-        ordinal: hit.meta.ordinal,
-        meshId: instance.meshId,
-        x: +hit.local.alongS.toFixed(3),
-        y: +instance.position.y.toFixed(3),
-        n: +hit.local.inwardN.toFixed(3),
-        sx: +instance.scale.x.toFixed(3),
-        sy: +instance.scale.y.toFixed(3),
-        sz: +instance.scale.z.toFixed(3),
-        wall: instance.wallMaterialId,
-        trim: instance.trimMaterialId,
-        detail: instance.detailMaterialId ?? null,
-      };
-    })
-    .filter((record): record is NonNullable<typeof record> => record != null)
-    .sort((left, right) => (
-      left.face.localeCompare(right.face)
-      || left.ordinal! - right.ordinal!
-      || left.meshId.localeCompare(right.meshId)
-      || left.x - right.x
-      || left.y - right.y
-      || left.n - right.n
-    ));
-
-  const doorRecords = context.placements.doorModelPlacements
-    .map((placement) => {
-      const hit = findBestSegmentMeta(bMetas, placement.wallSurfacePos, 0.25);
-      if (!hit) {
-        return null;
-      }
-      return {
-        face: hit.meta.face,
-        ordinal: hit.meta.ordinal,
-        x: +hit.local.alongS.toFixed(3),
-        y: +placement.wallSurfacePos.y.toFixed(3),
-        doorW: +placement.doorW.toFixed(3),
-        doorH: +placement.doorH.toFixed(3),
-        surroundDepthM: +(placement.surroundDepthM ?? 0).toFixed(3),
-        coverWidthM: +(placement.coverWidthM ?? 0).toFixed(3),
-        coverHeightM: +(placement.coverHeightM ?? 0).toFixed(3),
-        trimThicknessM: +(placement.trimThicknessM ?? 0).toFixed(3),
-        trim: placement.trimMaterialId,
-      };
-    })
-    .filter((record): record is NonNullable<typeof record> => record != null)
-    .sort((left, right) => left.face.localeCompare(right.face) || left.ordinal! - right.ordinal! || left.x - right.x);
-
-  const wallRecords = bMetas
-    .map((meta) => ({
-      face: meta.face,
-      ordinal: meta.ordinal,
-      material: resolveFacadeStyleForSegment(meta.zone, meta.frame).materials.wall,
-    }))
-    .sort((left, right) => left.face.localeCompare(right.face) || left.ordinal! - right.ordinal!);
-
   return {
-    detailHash: createHash("sha256").update(JSON.stringify(detailRecords)).digest("hex"),
-    doorHash: createHash("sha256").update(JSON.stringify(doorRecords)).digest("hex"),
-    wallHash: createHash("sha256").update(JSON.stringify(wallRecords)).digest("hex"),
+    metas,
+    placements: buildWallDetailPlacements({
+      segments,
+      zones: spec.zones,
+      anchors: null,
+      facadeOverrides: spec.wall_details.facadeOverrides,
+      moduleRegistry: spec.wall_details.moduleRegistry,
+      compositionLayoutOverrides: spec.wall_details.compositionLayoutOverrides,
+      doorLayoutOverrides: spec.wall_details.doorLayoutOverrides,
+      windowLayoutOverrides: spec.wall_details.windowLayoutOverrides,
+      balconyLayoutOverrides: spec.wall_details.balconyLayoutOverrides,
+      seed: 1,
+      wallHeightM: spec.defaults.wall_height,
+      wallThicknessM: spec.defaults.wall_thickness,
+      enabled: spec.wall_details.enabled,
+      profile: "pbr",
+      detailSeed: null,
+      density: spec.wall_details.density,
+      maxProtrusionM: spec.wall_details.maxProtrusion,
+    }),
   };
 }
 
-function assertMirrored(values: number[], tolerance: number, label: string): void {
-  const sorted = [...values].sort((left, right) => left - right);
-  for (let index = 0; index < sorted.length; index += 1) {
-    const mirrored = sorted[sorted.length - 1 - index]!;
-    assert.ok(
-      Math.abs(sorted[index]! + mirrored) <= tolerance,
-      `${label} lost symmetry: ${sorted.join(", ")}`,
-    );
-  }
-}
-
-function collectInstancesBySegment(
-  context: AuditContext,
-): Map<string, Array<{ meshId: string; alongS: number; y: number; start: number; end: number }>> {
-  const instancesBySegment = new Map<string, Array<{ meshId: string; alongS: number; y: number; start: number; end: number }>>();
-  for (const instance of context.placements.instances) {
-    const hit = findBestSegmentMeta(context.metas, instance.position);
-    if (!hit) {
-      continue;
-    }
-    const key = `${hit.meta.zone?.id ?? "none"}:${hit.meta.face}#${hit.meta.ordinal ?? 0}`;
-    const list = instancesBySegment.get(key) ?? [];
-    list.push({
-      meshId: instance.meshId,
-      alongS: hit.local.alongS,
-      y: instance.position.y,
-      start: hit.local.alongS - instance.scale.z * 0.5,
-      end: hit.local.alongS + instance.scale.z * 0.5,
-    });
-    instancesBySegment.set(key, list);
-  }
-  return instancesBySegment;
-}
-
-function collectDoorCentersBySegment(context: AuditContext): Map<string, number[]> {
-  const doorCentersBySegment = new Map<string, number[]>();
-  for (const placement of context.placements.doorModelPlacements) {
-    const hit = findBestSegmentMeta(context.metas, placement.wallSurfacePos, 0.25);
-    if (!hit) {
-      continue;
-    }
-    const key = `${hit.meta.zone?.id ?? "none"}:${hit.meta.face}#${hit.meta.ordinal ?? 0}`;
-    const list = doorCentersBySegment.get(key) ?? [];
-    list.push(hit.local.alongS);
-    doorCentersBySegment.set(key, list);
-  }
-  return doorCentersBySegment;
-}
-
-test("preserves the Spawn B reference digest", async () => {
-  const context = await buildAuditContext();
-  const digest = digestBSpawn(context);
-  assert.equal(digest.detailHash, B_SPAWN_DETAIL_HASH);
-  assert.equal(digest.doorHash, B_SPAWN_DOOR_HASH);
-  assert.equal(digest.wallHash, B_SPAWN_WALL_HASH);
-});
-
-test("uses canonical openings, removes generic balconies, and clears hallway openings", async () => {
-  const context = await buildAuditContext();
-  const doorModule = context.spec.wall_details.moduleRegistry.doorModules.find((module) => module.id === "spawn_standard_door");
-  assert.ok(doorModule, "spawn standard door module missing");
-
-  const instancesBySegment = collectInstancesBySegment(context);
-  const doorCentersBySegment = collectDoorCentersBySegment(context);
-
-  for (const placement of context.placements.doorModelPlacements) {
-    const hit = findBestSegmentMeta(context.metas, placement.wallSurfacePos, 0.25);
-    if (!hit) {
-      continue;
-    }
-    const key = `${hit.meta.zone?.id ?? "none"}:${hit.meta.face}#${hit.meta.ordinal ?? 0}`;
-    if (hit.meta.zone?.id !== "SPAWN_B_GATE_PLAZA") {
-      assert.ok(Math.abs(placement.doorW - doorModule!.doorWidthM) <= 1e-6, `${key} drifted off canonical door width`);
-      assert.ok(Math.abs(placement.doorH - doorModule!.doorHeightM) <= 1e-6, `${key} drifted off canonical door height`);
-      assert.ok(Math.abs((placement.coverWidthM ?? 0) - doorModule!.coverWidthM) <= 1e-6, `${key} drifted off canonical cover width`);
-      assert.ok(Math.abs((placement.coverHeightM ?? 0) - doorModule!.coverHeightM) <= 1e-6, `${key} drifted off canonical cover height`);
-      assert.ok(Math.abs((placement.surroundDepthM ?? 0) - doorModule!.surroundDepthM) <= 1e-6, `${key} drifted off canonical surround depth`);
-    }
-  }
-
-  for (const [key, entries] of instancesBySegment) {
-    const zoneId = key.split(":")[0]!;
-
-    if (zoneId === "SH_W" || zoneId === "SH_E") {
-      assert.ok(
-        entries.every(({ meshId }) => !meshId.includes("window") && !meshId.includes("door")),
-        `${key} still contains hallway openings`,
-      );
-      assert.equal(doorCentersBySegment.get(key)?.length ?? 0, 0, `${key} still has hallway door placements`);
-    }
-
-    if (zoneId !== "SPAWN_B_GATE_PLAZA") {
-      assert.ok(
-        entries.every(({ meshId }) => meshId !== "window_pointed_arch_frame" && meshId !== "hero_window_pointed_arch_frame"),
-        `${key} still uses non-canonical window geometry`,
-      );
-    }
-
-    const balconyMeshes = entries.filter(({ meshId }) => isBalconyLikeMesh(meshId));
-    if (balconyMeshes.length > 0) {
-      assert.ok(
-        key === "SPAWN_B_GATE_PLAZA:north#1" || key === "SPAWN_A_COURTYARD:south#1",
-        `${key} still carries a non-approved balcony/portico mesh`,
-      );
-    }
-
-    const windowCenters = entries
-      .filter(({ meshId }) => windowFrameLike(meshId))
-      .map(({ alongS }) => alongS);
-    const doorCenters = doorCentersBySegment.get(key) ?? [];
-    if (windowCenters.length > 0 || doorCenters.length > 0) {
-      assertMirrored([...windowCenters, ...doorCenters], 0.02, key);
-    }
-
-    const rows = new Map<string, Array<{ start: number; end: number; meshId: string }>>();
-    for (const entry of entries.filter(({ meshId }) => windowFrameLike(meshId))) {
-      const rowKey = entry.y.toFixed(3);
-      const list = rows.get(rowKey) ?? [];
-      list.push({ start: entry.start, end: entry.end, meshId: entry.meshId });
-      rows.set(rowKey, list);
-    }
-    for (const center of doorCenters) {
-      const rowKey = (doorModule!.doorHeightM * 0.5).toFixed(3);
-      const list = rows.get(rowKey) ?? [];
-      list.push({
-        start: center - doorModule!.coverWidthM * 0.5,
-        end: center + doorModule!.coverWidthM * 0.5,
-        meshId: "door",
-      });
-      rows.set(rowKey, list);
-    }
-    for (const [rowKey, rowEntries] of rows) {
-      const sorted = [...rowEntries].sort((left, right) => left.start - right.start);
-      for (let index = 1; index < sorted.length; index += 1) {
-        assert.ok(
-          sorted[index]!.start >= sorted[index - 1]!.end - 0.01,
-          `${key} row ${rowKey} has overlapping openings`,
-        );
-      }
-    }
-  }
-});
-
-test("adds a third standardized window row on main hallway facades only", async () => {
-  const context = await buildAuditContext();
-  const instancesBySegment = collectInstancesBySegment(context);
-  const expectedTopRowCounts = new Map<string, { topRow: number; total: number }>([
-    ["BZ_M1:east#1", { topRow: 3, total: 8 }],
-    ["BZ_M1:west#1", { topRow: 3, total: 8 }],
-    ["BZ_M1:east#2", { topRow: 1, total: 3 }],
-    ["BZ_M1:west#2", { topRow: 1, total: 3 }],
-    ["BZ_M2_JOG:east#1", { topRow: 7, total: 17 }],
-    ["BZ_M2_JOG:west#1", { topRow: 7, total: 20 }],
-    ["BZ_M3:east#1", { topRow: 1, total: 3 }],
-    ["BZ_M3:west#1", { topRow: 1, total: 3 }],
-    ["BZ_M3:east#2", { topRow: 3, total: 8 }],
-    ["BZ_M3:west#2", { topRow: 3, total: 8 }],
-  ]);
-
-  for (const [key, expected] of expectedTopRowCounts) {
-    const frameEntries = (instancesBySegment.get(key) ?? []).filter(
-      ({ meshId }) => meshId === "spawn_window_pointed_arch_frame",
-    );
-    assert.equal(frameEntries.length, expected.total, `${key} total standardized window count drifted`);
-
-    const rowCounts = new Map<string, number>();
-    for (const entry of frameEntries) {
-      const rowKey = entry.y.toFixed(3);
-      rowCounts.set(rowKey, (rowCounts.get(rowKey) ?? 0) + 1);
-    }
-
-    const rows = [...rowCounts.entries()].sort((left, right) => Number(left[0]) - Number(right[0]));
-    assert.equal(rows.length, 3, `${key} should have exactly three standardized window rows`);
-    assert.equal(rows[2]?.[1], expected.topRow, `${key} top row count drifted`);
-    assert.equal(rows[1]?.[1], expected.topRow, `${key} third story should mirror the second-story solve`);
-  }
-
-  const unchangedSegments = [
-    "SPAWN_A_COURTYARD:east#1",
-    "SPAWN_A_COURTYARD:west#1",
-    "CONN_NE:north#1",
-    "CONN_NW:north#1",
-  ];
-  for (const key of unchangedSegments) {
-    const frameEntries = (instancesBySegment.get(key) ?? []).filter(
-      ({ meshId }) => meshId === "spawn_window_pointed_arch_frame",
-    );
-    const rowCount = new Set(frameEntries.map((entry) => entry.y.toFixed(3))).size;
-    assert.ok(rowCount <= 2, `${key} unexpectedly gained a third standardized window row`);
-  }
-});
-
-function resolveSegmentMetaByKey(context: AuditContext, key: string): SegmentMeta {
-  const [zoneId, faceOrdinal] = key.split(":");
-  const [face, ordinalRaw] = faceOrdinal!.split("#");
-  const meta = context.metas.find((candidate) => (
-    candidate.zone?.id === zoneId
-    && candidate.face === face
-    && candidate.ordinal === Number(ordinalRaw)
-  ));
-  assert.ok(meta, `missing segment meta for ${key}`);
-  return meta!;
-}
-
-function collectSegmentWindowFrames(
-  context: AuditContext,
-  key: string,
-  maxNormalDistance = 0.5,
-): Array<{ alongS: number; y: number }> {
-  const meta = resolveSegmentMetaByKey(context, key);
-  return context.placements.instances
-    .map((instance) => ({
-      instance,
-      local: project(meta.frame, instance.position),
-    }))
-    .filter(({ instance, local }) => (
-      instance.meshId === "spawn_window_pointed_arch_frame"
-      && Math.abs(local.alongS) <= meta.frame.lengthM * 0.5 + 0.3
+function findSegmentMeta(
+  metas: SegmentMeta[],
+  position: { x: number; y: number; z: number },
+  maxNormalDistance = 0.55,
+): SegmentMeta | null {
+  return metas
+    .map((meta) => ({ meta, local: project(meta.frame, position) }))
+    .filter(({ meta, local }) => (
+      Math.abs(local.alongS) <= meta.frame.lengthM * 0.5 + 0.25
       && Math.abs(local.inwardN) <= maxNormalDistance
     ))
-    .map(({ instance, local }) => ({
-      alongS: local.alongS,
-      y: instance.position.y,
-    }))
-    .sort((left, right) => left.y - right.y || left.alongS - right.alongS);
+    .sort((left, right) => Math.abs(left.local.inwardN) - Math.abs(right.local.inwardN))[0]?.meta ?? null;
 }
 
-test("standardizes the four spawn-facing main-building end walls with two canonical windows per row", async () => {
+function isOpeningMesh(meshId: string): boolean {
+  return meshId.includes("window") || meshId.includes("door");
+}
+
+function colliderOverlapsRect(
+  collider: { min: { x: number; z: number }; max: { x: number; z: number } },
+  rect: RuntimeRect,
+): boolean {
+  return !(
+    collider.max.x <= rect.x
+    || collider.min.x >= rect.x + rect.w
+    || collider.max.z <= rect.y
+    || collider.min.z >= rect.y + rect.h
+  );
+}
+
+test("keeps legacy v2 materials isolated while v3 uses the authored facade-family palette", () => {
+  const m1 = zone("BZ_M1", "main_lane_segment");
+  const m2 = zone("BZ_M2_JOG", "main_lane_segment");
+  const m3 = zone("BZ_M3", "main_lane_segment");
+  const styles = [
+    resolveFacadeStyleForSegment(m1, frameForFace(m1, "west")),
+    resolveFacadeStyleForSegment(m1, frameForFace(m1, "east")),
+    resolveFacadeStyleForSegment(m2, frameForFace(m2, "west")),
+    resolveFacadeStyleForSegment(m2, frameForFace(m2, "east")),
+    resolveFacadeStyleForSegment(m3, frameForFace(m3, "west")),
+    resolveFacadeStyleForSegment(m3, frameForFace(m3, "east")),
+  ];
+
+  assert.deepEqual(new Set(styles.map((style) => style.family)), new Set(["merchant", "residential", "service"]));
+  assert.ok(new Set(styles.map((style) => style.materials.wall)).size >= 4, "main-lane wall palette collapsed");
+  assert.ok(styles.every((style) => style.materials.wall !== "ph_brick_4_desert"));
+  assert.equal(styles.filter((style) => style.trimTier === "hero").length, 1, "hero treatment should stay exceptional");
+
+  const connector = zone("CONN_TEST", "connector");
+  const cut = zone("CUT_TEST", "cut");
+  assert.equal(resolveFacadeStyleForSegment(connector, frameForFace(connector, "north")).materials.wall, "ph_whitewashed_brick_cool");
+  assert.equal(resolveFacadeStyleForSegment(cut, frameForFace(cut, "north")).materials.wall, "ph_beige_wall_002");
+
+  const spawnA = zone("SPAWN_A_COURTYARD", "spawn_plaza");
+  const spawnB = zone("SPAWN_B_GATE_PLAZA", "spawn_plaza");
+  assert.notEqual(resolveFacadeStyleForSegment(spawnA, frameForFace(spawnA, "north")).materials.wall, "ph_brick_4_desert");
+  assert.equal(resolveFacadeStyleForSegment(spawnB, frameForFace(spawnB, "north")).materials.wall, "ph_brick_4_desert");
+  assert.notEqual(resolveFacadeStyleForSegment(spawnB, frameForFace(spawnB, "south")).materials.wall, "ph_brick_4_desert");
+  assert.equal(resolveWallPlaneOverride(spawnB, "north", 1)?.kind, "spawn_b_reference_shell");
+
+  const profiledFixtures = [
+    { profile: "active_merchant", family: "merchant" },
+    { profile: "quiet_residential", family: "residential" },
+    { profile: "covered_arcade", family: "merchant" },
+    { profile: "service_storage", family: "service" },
+    { profile: "hero_courtyard", family: "merchant" },
+  ] as const;
+  const v3WallMaterials = new Set<string>();
+  for (const fixture of profiledFixtures) {
+    const profiledZone = {
+      ...zone(`V3_${fixture.profile.toUpperCase()}`, "main_lane_segment"),
+      facadeProfileId: fixture.profile,
+    };
+    const style = resolveFacadeStyleForSegment(profiledZone, frameForFace(profiledZone, "west"));
+    v3WallMaterials.add(style.materials.wall);
+    assert.equal(style.family, fixture.family, `${fixture.profile} ignored its semantic family`);
+    assert.match(style.materials.wall, /^ph_/, `${fixture.profile} left the manifest-backed PBR material family`);
+  }
+  assert.ok(v3WallMaterials.size >= 4, "v3 facade families collapsed back to one wall material");
+  assert.ok(
+    [...v3WallMaterials].every((id) => id !== "ph_brick_4_desert"),
+    "the legacy red-brick fallback leaked into a v3 facade profile",
+  );
+});
+
+test("v3 spawn courtyards keep the exterior perimeter sealed while dressing inward faces", () => {
+  const spawn = {
+    ...zone("BZ_SPAWN_A", "spawn_plaza"),
+    facadeProfileId: "hero_courtyard",
+  };
+  const exterior = buildFixturePlacements(spawn, "south");
+  const inward = buildFixturePlacements(spawn, "north");
+
+  assert.ok(exterior.instances.every((instance) => !isOpeningMesh(instance.meshId)), "Spawn A exterior gained fake openings");
+  assert.equal(exterior.doorModelPlacements.length, 0, "Spawn A exterior gained a door");
+  assert.ok(inward.instances.some((instance) => isOpeningMesh(instance.meshId)), "Spawn A inward courtyard lost its lived-in facade");
+});
+
+test("v3 facade profiles resolve stable low, mid, and tall mass classes", () => {
+  const resolveHeight = (id: string, facadeProfileId: string): number => {
+    const target = {
+      ...zone(id, "main_lane_segment"),
+      facadeProfileId,
+    };
+    return buildFixturePlacements(target, "west").segmentHeights[0]!;
+  };
+
+  assert.equal(resolveHeight("BZ_W_SERVICE_SOUTH", "service_storage"), 4.5);
+  assert.equal(resolveHeight("BZ_E_NORTH_COURT", "quiet_residential"), 7);
+  assert.equal(resolveHeight("BZ_E_COVERED_SOUK", "covered_arcade"), 7);
+  assert.equal(resolveHeight("BZ_FOUNTAIN_COURT", "hero_courtyard"), 9.5);
+
+  const merchantHeight = resolveHeight("BZ_SPICE_STREET", "active_merchant");
+  assert.ok(merchantHeight === 7 || merchantHeight === 9.5);
+  assert.equal(resolveHeight("BZ_SPICE_STREET", "active_merchant"), merchantHeight, "merchant massing is nondeterministic");
+});
+
+test("main-lane details use semantic windows and preserve material variety", async () => {
   const context = await buildAuditContext();
-  const doorCentersBySegment = collectDoorCentersBySegment(context);
-  const expectedRowYs = ["1.686", "4.486", "7.486"];
-  const targetSegments = [
-    "SPAWN_A_COURTYARD:north#1",
-    "SPAWN_A_COURTYARD:north#2",
-    "SPAWN_B_GATE_PLAZA:south#1",
-    "SPAWN_B_GATE_PLAZA:south#2",
-  ];
+  const mainDetails = context.placements.instances.filter((instance) => (
+    findSegmentMeta(context.metas, instance.position)?.zone?.type === "main_lane_segment"
+  ));
+  const mainOpenings = mainDetails.filter((instance) => isOpeningMesh(instance.meshId));
 
-  for (const key of targetSegments) {
-    const frameEntries = collectSegmentWindowFrames(context, key);
-    assert.equal(frameEntries.length, 6, `${key} should have exactly two end-wall windows per row`);
-    assert.equal(doorCentersBySegment.get(key)?.length ?? 0, 0, `${key} should not receive doors`);
+  assert.ok(mainOpenings.length > 0, "main lane lost its inhabited facade openings");
+  assert.ok(
+    mainOpenings.some((instance) => instance.meshId === "window_glass"),
+    "main lane did not use the semantic recessed-window facade kit",
+  );
+  assert.ok(
+    mainOpenings.some((instance) => instance.meshId === "window_shutter"),
+    "main lane lost its shuttered merchant treatment",
+  );
+  assert.ok(
+    mainOpenings.every((instance) => instance.meshId !== "spawn_window_pointed_arch_frame"),
+    "main lane fell back to the Spawn B standardized window module",
+  );
 
-    const rows = [...new Set(frameEntries.map((entry) => entry.y.toFixed(3)))].sort();
-    assert.deepEqual(rows, expectedRowYs, `${key} row heights drifted`);
+  const materialIds = new Set(
+    mainDetails.map((instance) => instance.wallMaterialId).filter((materialId): materialId is string => materialId != null),
+  );
+  assert.ok(materialIds.size >= 2, "main-lane wall material families collapsed into one surface");
+  assert.ok([...materialIds].every((materialId) => materialId.startsWith("ph_")));
+  assert.ok(!materialIds.has("ph_brick_4_desert"), "canonical red brick leaked back into the main lane");
+});
 
-    for (const rowKey of rows) {
-      const rowEntries = frameEntries
-        .filter((entry) => entry.y.toFixed(3) === rowKey)
-        .map((entry) => entry.alongS)
-        .sort((left, right) => left - right);
-      assert.equal(rowEntries.length, 2, `${key} row ${rowKey} should have exactly two windows`);
-      assertMirrored(rowEntries, 0.02, `${key} row ${rowKey}`);
-    }
+test("sealed connectors, cuts, side halls, and service faces do not advertise fake openings", async () => {
+  const context = await buildAuditContext();
+  const serviceMetas = context.metas.filter((meta) => (
+    meta.zone?.type === "connector"
+    || meta.zone?.type === "cut"
+    || meta.zone?.type === "side_hall"
+    || (meta.zone?.id === "BZ_M2_JOG" && meta.face === "west")
+  ));
+  assert.ok(serviceMetas.length > 0, "service facade fixtures are missing");
+
+  for (const instance of context.placements.instances) {
+    if (!isOpeningMesh(instance.meshId)) continue;
+    const meta = findSegmentMeta(serviceMetas, instance.position, 0.35);
+    assert.equal(meta, null, `${meta?.zone?.id ?? "service face"} contains a fake ${instance.meshId} opening`);
   }
-
-  const oldWrongSegments = [
-    "BZ_M1:north#1",
-    "BZ_M2_JOG:north#1",
-    "BZ_M2_JOG:south#1",
-    "BZ_M3:south#1",
-  ];
-  for (const key of oldWrongSegments) {
-    const frameEntries = collectSegmentWindowFrames(context, key);
-    assert.ok(frameEntries.length <= 3, `${key} should no longer use the dedicated end-wall treatment`);
-  }
-
-  const connectorSegments = [
-    "CONN_SW:north#1",
-    "CONN_SE:north#1",
-    "CONN_NW:north#1",
-    "CONN_NE:north#1",
-  ];
-  for (const key of connectorSegments) {
-    const frameEntries = collectSegmentWindowFrames(context, key);
-    assert.equal(frameEntries.length, 0, `${key} should remain unchanged`);
+  for (const placement of context.placements.doorModelPlacements) {
+    const meta = findSegmentMeta(serviceMetas, placement.wallSurfacePos, 0.2);
+    assert.equal(meta, null, `${meta?.zone?.id ?? "service face"} contains a fake interactive-looking door`);
   }
 });
 
-test("adds one narrow centered window per row on the four connector-adjacent corner walls", async () => {
+test("stained glass remains a rare spawn-landmark accent", async () => {
   const context = await buildAuditContext();
-  const doorCentersBySegment = collectDoorCentersBySegment(context);
-  const cornerSegments = [
-    "SPAWN_A_COURTYARD:west#2",
-    "SPAWN_A_COURTYARD:east#2",
-    "SPAWN_B_GATE_PLAZA:west#1",
-    "SPAWN_B_GATE_PLAZA:east#1",
-  ];
-  const expectedRowYs = ["1.686", "4.486", "7.486"];
+  const glass = context.placements.instances.filter((instance) => instance.meshId.includes("glass"));
+  const stained = glass.filter((instance) => instance.detailMaterialId?.startsWith("tm_stained_glass"));
+  const ordinary = glass.filter((instance) => !instance.detailMaterialId?.startsWith("tm_stained_glass"));
 
-  for (const key of cornerSegments) {
-    const frameEntries = collectSegmentWindowFrames(context, key, 0.3);
-    assert.equal(frameEntries.length, 3, `${key} should have exactly one corner window per row`);
-    assert.equal(doorCentersBySegment.get(key)?.length ?? 0, 0, `${key} should not receive doors`);
+  assert.ok(stained.length > 0, "landmark stained glass is missing");
+  assert.ok(ordinary.length > 0, "all glazing became landmark stained glass");
+  assert.ok(stained.length < glass.length, "stained glass is no longer an accent");
 
-    const rows = [...new Set(frameEntries.map((entry) => entry.y.toFixed(3)))].sort();
-    assert.deepEqual(rows, expectedRowYs, `${key} row heights drifted`);
+  for (const instance of stained) {
+    const meta = findSegmentMeta(context.metas, instance.position);
+    assert.equal(meta?.zone?.type, "spawn_plaza", `stained glass leaked into ${meta?.zone?.id ?? "an unknown facade"}`);
+  }
+});
 
-    for (const entry of frameEntries) {
-      assert.ok(Math.abs(entry.alongS) <= 0.02, `${key} corner window drifted off centerline`);
+test("procedural bazaar props remain deterministic, culled, and clear-zone safe without model assets", async () => {
+  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
+  const raw = JSON.parse(await readFile(specUrl, "utf8"));
+  const blockout = parseBlockoutSpec(raw, specUrl.pathname);
+  const anchors = parseAnchorsSpec(raw, specUrl.pathname);
+  const options = {
+    mapId: blockout.mapId,
+    blockout,
+    anchors,
+    seedOverride: 73,
+    propChaos: { profile: "high" as const, jitter: 0.7, cluster: 0.85, density: 1 },
+    propVisuals: "blockout" as const,
+    propModels: null,
+    highVis: false,
+  };
+  const first = buildProps(options);
+  const second = buildProps(options);
+
+  assert.deepEqual(first.stats, second.stats);
+  assert.deepEqual(first.colliders, second.colliders);
+  assert.ok(first.stats.collidersPlaced > 0, "procedural dressing produced no gameplay cover");
+
+  const clearRects = blockout.zones
+    .filter((candidate) => candidate.type === "clear_travel_zone")
+    .map((candidate) => candidate.rect);
+  for (const candidate of blockout.zones) {
+    if (typeof candidate.clearWidthM !== "number") continue;
+    if (candidate.type === "connector" || candidate.type === "cut") {
+      clearRects.push(candidate.rect);
+      continue;
     }
+    const width = Math.min(candidate.rect.w, candidate.clearWidthM);
+    clearRects.push({
+      x: candidate.rect.x + (candidate.rect.w - width) * 0.5,
+      y: candidate.rect.y,
+      w: width,
+      h: candidate.rect.h,
+    });
+  }
+  for (const collider of first.colliders) {
+    assert.ok(
+      clearRects.every((rect) => !colliderOverlapsRect(collider, rect)),
+      `${collider.id} intrudes into an authored clear-travel zone`,
+    );
+  }
+  const terraceCover = first.colliders.find((collider) => collider.id.startsWith("COVER_TEA_01"));
+  assert.ok(terraceCover, "tea terrace gameplay cover is missing");
+  assert.ok(terraceCover.min.y >= 1.39, "tea terrace cover sank below its authored 1.4m surface");
 
-    const meta = resolveSegmentMetaByKey(context, key);
-    const override = resolveWallPlaneOverride(meta.zone, meta.face, meta.ordinal);
-    assert.ok(override, `${key} should resolve a shared wall-plane override`);
-    assert.equal(override?.materials.wall, "ph_brick_4_desert", `${key} wall material override drifted`);
-    assert.equal(override?.materials.trimHeavy, "ph_stone_trim_white", `${key} heavy trim override drifted`);
-    assert.equal(override?.materials.trimLight, "ph_band_plastered", `${key} light trim override drifted`);
+  const blockoutGroup = first.root.getObjectByName("map-props-blockout");
+  assert.ok(blockoutGroup, "procedural prop group is missing");
+  const batchNames = new Set(blockoutGroup!.children.map((child) => child.name));
+  assert.ok(batchNames.has("prop-shopfront"), "market stalls are missing");
+  assert.ok(batchNames.has("prop-canopy") || batchNames.has("prop-canopy-teal"), "cloth canopies are missing");
+  assert.equal(
+    batchNames.has("prop-threshold-rug"),
+    false,
+    "the removed unsupported route textile returned to the fallback prop layer",
+  );
+  assert.ok(batchNames.has("prop-landmark-cart"), "Caravan Court cart landmark is missing");
+  assert.ok(
+    [...batchNames].some((name) => name.startsWith("prop-stall-filler-")),
+    "crate, sack, and pottery filler clusters are missing",
+  );
+
+  for (const child of blockoutGroup!.children) {
+    const batch = child as typeof child & {
+      frustumCulled?: boolean;
+      boundingSphere?: unknown;
+      computeBoundingSphere?: () => void;
+    };
+    if (!batch.computeBoundingSphere) continue;
+    assert.equal(batch.frustumCulled, true, `${child.name} disabled frustum culling`);
+    assert.ok(batch.boundingSphere, `${child.name} lacks a computed instanced bound`);
   }
 
-  const connectorSegments = [
-    "CONN_SW:north#1",
-    "CONN_SE:north#1",
-    "CONN_NW:north#1",
-    "CONN_NE:north#1",
-  ];
-  for (const key of connectorSegments) {
-    const frameEntries = collectSegmentWindowFrames(context, key, 0.3);
-    assert.equal(frameEntries.length, 0, `${key} should remain unchanged`);
-  }
+  const shopfront = blockoutGroup!.getObjectByName("prop-shopfront") as typeof blockoutGroup & {
+    geometry?: { attributes?: { position?: { count: number } } };
+  };
+  assert.ok((shopfront.geometry?.attributes?.position?.count ?? 0) > 24, "shopfront fallback regressed to a plain cube");
 });

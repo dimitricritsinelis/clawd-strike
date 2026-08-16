@@ -376,10 +376,10 @@ test("validate rejects budget failures for cards, rollup, notes, file size, non-
     ...base,
     cards: base.cards.map((card, index) => (index === 0 ? {
       ...card,
-      goal: "x".repeat(8100),
+      goal: "x".repeat(16100),
     } : card)),
   });
-  assert.throws(() => validateShortTermMemoryDocument(fileTooLarge), /8000 bytes/);
+  assert.throws(() => validateShortTermMemoryDocument(fileTooLarge), /16000 bytes/);
 
   const lineOverflow = withExtraCards(base, 4);
   lineOverflow.sharedEphemera = ["one", "two", "three"];

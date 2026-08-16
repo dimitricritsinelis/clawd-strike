@@ -3,6 +3,7 @@ import { preloadEnemyVisualAssets } from "./enemies/EnemyVisual";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { Ak47ViewModel } from "./weapons/Ak47ViewModel";
+import { resolveQaAssetProfile } from "./qa/assetReadiness";
 
 const FLOOR_MANIFEST_URL =
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/materials.json";
@@ -10,7 +11,11 @@ const WALL_MANIFEST_URL =
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
 const PBR_FLOORS_ENABLED = true;
 const PBR_WALLS_ENABLED = true;
-const RUNTIME_WARMUP_TIMEOUT_MS = 8_000;
+// Upper bound before boot proceeds with the performance-safe fallback
+// (blockout surfaces, capsule enemies). Local/dev loads finish in well under
+// 2s; this cap only matters on genuinely slow networks, so it is generous —
+// hitting it silently costs the player every PBR surface.
+const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
 
 export type RuntimeWarmupAssets = {
   floorMaterials: FloorMaterialLibrary | null;
@@ -32,6 +37,12 @@ function createEmptyWarmupAssets(timedOut: boolean): RuntimeWarmupAssets {
 
 async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   const parsed = parseRuntimeUrlParams(search);
+  // Map-review runs build a dependency plan only after the compiled map is
+  // available. Starting broad gameplay warmup here would defeat that plan and
+  // reintroduce enemy/viewmodel failure modes into deterministic captures.
+  if (resolveQaAssetProfile(search) !== null) {
+    return createEmptyWarmupAssets(false);
+  }
   let floorMaterials: FloorMaterialLibrary | null = null;
   let wallMaterials: WallMaterialLibrary | null = null;
   let viewModel: Ak47ViewModel | null = null;

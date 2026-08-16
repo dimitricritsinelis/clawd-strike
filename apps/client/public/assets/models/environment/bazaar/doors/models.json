@@ -3,12 +3,49 @@
     {
       "id": "ph_large_castle_door",
       "url": "large_castle_door/large_castle_door_2k.gltf",
-      "scale": 1.0
+      "scale": 1.0,
+      "source": "https://polyhaven.com/a/large_castle_door",
+      "license": "CC0-1.0",
+      "md5": {
+        "large_castle_door/large_castle_door_2k.gltf": "301320484d7cceb4176297d3f510e929",
+        "large_castle_door/large_castle_door.bin": "ed0cee2626677b1a520de7bd868d09cc",
+        "large_castle_door/textures/large_castle_door_arm_2k.jpg": "5b31d5e2057371f82158bd56dbe19588",
+        "large_castle_door/textures/large_castle_door_diff_2k.jpg": "030d6cb9b510fc5686a67c670650f06c",
+        "large_castle_door/textures/large_castle_door_nor_gl_2k.jpg": "915c45399d96e5c8617eb78685fb02a1"
+      },
+      "variants": {
+        "1k": {
+          "url": "large_castle_door/large_castle_door_1k.gltf",
+          "generator": "sharp@0.34.5 resize=1024x1024 kernel=lanczos3 jpeg-quality=90 chroma-subsampling=4:4:4 progressive=false mozjpeg=false",
+          "derivedFrom": {
+            "large_castle_door/large_castle_door_1k.gltf": "large_castle_door/large_castle_door_2k.gltf",
+            "large_castle_door/textures/large_castle_door_arm_1k.jpg": "large_castle_door/textures/large_castle_door_arm_2k.jpg",
+            "large_castle_door/textures/large_castle_door_diff_1k.jpg": "large_castle_door/textures/large_castle_door_diff_2k.jpg",
+            "large_castle_door/textures/large_castle_door_nor_gl_1k.jpg": "large_castle_door/textures/large_castle_door_nor_gl_2k.jpg"
+          },
+          "md5": {
+            "large_castle_door/large_castle_door_1k.gltf": "40c7debfb0e9f51826b294d642bc0bfe",
+            "large_castle_door/textures/large_castle_door_arm_1k.jpg": "ead9249b9dcd14a4b67e937cf4f3553e",
+            "large_castle_door/textures/large_castle_door_diff_1k.jpg": "a331e07baf6deda4e93c80985711cf9b",
+            "large_castle_door/textures/large_castle_door_nor_gl_1k.jpg": "c9b8831b3ce151d8ffd11d40756f51de"
+          }
+        }
+      }
     },
     {
       "id": "ph_rollershutter_window_02",
       "url": "rollershutter_window_02/rollershutter_window_02_2k.gltf",
-      "scale": 1.0
+      "scale": 1.0,
+      "source": "https://polyhaven.com/a/rollershutter_window_02",
+      "license": "CC0-1.0",
+      "md5": {
+        "rollershutter_window_02/rollershutter_window_02_2k.gltf": "8f4cc736e1362276df3ce8b019545793",
+        "rollershutter_window_02/rollershutter_window_02.bin": "344eb7276920e1fafb9a91c32bc376fe",
+        "rollershutter_window_02/textures/rollershutter_window_02_arm_2k.jpg": "ed319eb3855b7785dbb68b1d88e75669",
+        "rollershutter_window_02/textures/rollershutter_window_02_diff_2k.jpg": "e7a3b8647902a8b89e6f3cfb6d68b63a",
+        "rollershutter_window_02/textures/rollershutter_window_02_graffiti_diff_2k.jpg": "c2809434ff7869167a1d5fb8a414c05d",
+        "rollershutter_window_02/textures/rollershutter_window_02_nor_gl_2k.jpg": "a052d82c9dd695e777d996bfaf8811da"
+      }
     }
   ]
 }

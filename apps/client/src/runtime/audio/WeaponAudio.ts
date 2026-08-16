@@ -81,6 +81,13 @@ const ENEMY_AK47_DRIVE_CURVE = createDriveCurve(512, AK47_AUDIO_TUNING.enemy.tra
 const KILL_DING_DRIVE_CURVE = createDriveCurve(512, 1.05);
 
 export class WeaponAudio {
+  /**
+   * When true the audio graph is never built, so nothing plays and no
+   * AudioContext is created at all. Used to keep automated and agent-driven
+   * playtests silent — a person watching an LLM drive the game should not have
+   * gunfire and ambience coming out of their speakers.
+   */
+  private muted = false;
   private audioContext: AudioContext | null = null;
   private masterGain: GainNode | null = null;
   private compressor: DynamicsCompressorNode | null = null;
@@ -735,7 +742,22 @@ export class WeaponAudio {
     }
   }
 
+  /**
+   * Silences all output. Muting tears down any existing graph so an already
+   * running ambient loop stops rather than lingering.
+   */
+  setMuted(muted: boolean): void {
+    if (this.muted === muted) return;
+    this.muted = muted;
+    if (muted) this.dispose();
+  }
+
+  isMuted(): boolean {
+    return this.muted;
+  }
+
   private ensureAudioGraph(): AudioContext | null {
+    if (this.muted) return null;
     if (this.audioContext && this.masterGain && this.compressor) {
       return this.audioContext;
     }

@@ -1,7 +1,12 @@
 import { Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AK47_AUDIO_TUNING, type WeaponAudio } from "../audio/WeaponAudio";
-import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec, RuntimeBlockoutZone } from "../map/types";
+import type {
+  RuntimeAnchorsSpec,
+  RuntimeAuthoredSpawn,
+  RuntimeBlockoutSpec,
+  RuntimeBlockoutZone,
+} from "../map/types";
 import { PLAYER_EYE_HEIGHT_M, PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/PlayerController";
 import { intersectsAabb, setAabbFromFootPosition, type MutableAabb } from "../sim/collision/Aabb";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
@@ -19,6 +24,7 @@ import {
   type EnemyDebugSnapshot,
   type EnemyDirective,
   type EnemyId,
+  type EnemyPerceptionEvent,
   type EnemyRole,
   type EnemyState,
   type EnemyTarget,
@@ -75,6 +81,15 @@ const SPAWN_ELEVATION_EPSILON_M = 0.05;
 /** Hunt pressure: forces increasingly aggressive behavior over time to prevent stalling. */
 const HUNT_ACTIVATION_S = 10;
 const HUNT_FULL_S = 30;
+
+/**
+ * Full directive planning (node scoring, pathfinding, search-belief updates) is
+ * far more expensive than steering/aim/fire, so each enemy re-plans on a
+ * staggered ~6.7Hz cadence instead of every frame. New direct sight or taking
+ * damage forces an immediate re-plan; between plans the cached directive only
+ * has its per-frame sight flag and age refreshed.
+ */
+const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
 
 const STATE_COMMIT_S: Record<EnemyState, number> = {
   HOLD: 1.0,
@@ -192,6 +207,7 @@ type SpawnRequest = {
 
 type SpawnPlacement = {
   spawnX: number;
+  spawnY: number;
   spawnZ: number;
   nodeId: string | null;
   zoneId: string | null;
@@ -209,6 +225,7 @@ type FinalizedSpawnPlacement = SpawnPlacement & {
 
 type SpawnValidation = {
   valid: boolean;
+  spawnY: number;
   withinPlayableBounds: boolean;
   insideExpectedZone: boolean;
   actualZoneId: string | null;
@@ -218,6 +235,7 @@ type SpawnValidation = {
 
 type SpawnResolution = {
   spawnX: number;
+  spawnY: number;
   spawnZ: number;
   zoneId: string | null;
   searchDistanceM: number;
@@ -310,7 +328,7 @@ export type EnemySpawnTelemetry = {
 };
 
 export type EnemyHitResult =
-  | { hit: true; enemyId: string; distance: number; hitX: number; hitY: number; hitZ: number }
+  | { hit: true; enemyId: string; distance: number; hitX: number; hitY: number; hitZ: number; feetY: number }
   | { hit: false };
 
 export type EnemyManagerDebugSnapshot = {
@@ -397,6 +415,18 @@ export class EnemyManager {
   private readonly sharedLoader: GLTFLoader;
   private controllers: EnemyController[] = [];
   private visuals: EnemyVisual[] = [];
+  private nameplatesVisible = true;
+  private visualsVisible = true;
+
+  setNameplatesVisible(visible: boolean): void {
+    this.nameplatesVisible = visible;
+    for (const visual of this.visuals) visual.setNameVisible(visible);
+  }
+
+  setVisualsVisible(visible: boolean): void {
+    this.visualsVisible = visible;
+    for (const visual of this.visuals) visual.setRenderVisible(visible);
+  }
   private weaponAudio: WeaponAudio | null = null;
   private onEnemyKilled: ((name: string, isHeadshot: boolean, deathPos: { x: number; y: number; z: number }, enemyIndex: number) => void) | null = null;
 
@@ -407,6 +437,7 @@ export class EnemyManager {
   private worldCollidersRef: WorldColliders | null = null;
   private onNewWave: ((wave: number) => void) | null = null;
   private tacticalGraph: TacticalGraph | null = null;
+  private authoredEnemySpawns: RuntimeAuthoredSpawn[] = [];
   private tacticalMapId = "bazaar-map";
   private lastSpawnTelemetry: EnemySpawnTelemetry | null = null;
   private searchPhase: SearchPhase = "caution";
@@ -451,12 +482,17 @@ export class EnemyManager {
 
   private readonly lastDirectiveByEnemyId = new Map<string, EnemyDirective>();
   private readonly directiveMemoryByEnemyId = new Map<string, DirectiveMemory>();
+  private readonly nextPlanAtSByEnemyId = new Map<string, number>();
+  private readonly healthAtLastPlanByEnemyId = new Map<string, number>();
   private readonly localKnowledgeByEnemyId = new Map<string, BlackboardContact>();
   private readonly sharedKnowledgeByEnemyId = new Map<string, BlackboardContact>();
   private readonly pendingSharedReports: SharedContactReport[] = [];
   private readonly zoneSearchStateByZoneId = new Map<string, ZoneSearchState>();
   private readonly squadTaskByEnemyId = new Map<string, SquadTask>();
   private readonly respawnLosScratch = createLineOfSightScratch();
+  private readonly tacticalPathCache = new Map<string, readonly string[]>();
+  private readonly zoneDistanceCache = new Map<string, Map<string, number>>();
+  private framePressureProfile: PressureProfile | null = null;
 
   constructor(scene: Scene) {
     this.scene = scene;
@@ -466,6 +502,7 @@ export class EnemyManager {
       team: "enemy",
       position: { x: 0, y: 0, z: 0 },
       health: 0,
+      aimHeightM: ENEMY_EYE_HEIGHT_M,
     }));
     this.targetPool[0]!.id = "player";
     this.targetPool[0]!.team = "player";
@@ -480,6 +517,17 @@ export class EnemyManager {
     if (!audio) return;
     const distNorm = Math.min(1, distanceToPlayer / 20);
     audio.playEnemyFootstep(distNorm);
+  };
+
+  private readonly handlePerception = (event: EnemyPerceptionEvent): void => {
+    if (this.isPlayerIntelSuppressed()) return;
+    if (event.kind !== "seen-player") return;
+    const pressureProfile = this.framePressureProfile;
+    if (!pressureProfile) return;
+    const contact = this.createContactEstimate(event.position, "visual", 1.2, 1.0, event.enemyId, true, false);
+    this.blackboard.lastSeenPlayer = contact;
+    this.storeKnowledge(this.localKnowledgeByEnemyId, event.enemyId, contact);
+    this.queueSharedContactReports(event.enemyId, contact, pressureProfile);
   };
 
   setAudio(audio: WeaponAudio): void {
@@ -497,6 +545,11 @@ export class EnemyManager {
   setTacticalContext(blockout: RuntimeBlockoutSpec, anchors: RuntimeAnchorsSpec | null): void {
     this.tacticalMapId = blockout.mapId;
     this.tacticalGraph = buildTacticalGraph(blockout, anchors);
+    this.tacticalPathCache.clear();
+    this.zoneDistanceCache.clear();
+    this.authoredEnemySpawns = (blockout.authoredSpawns ?? [])
+      .filter((spawn) => spawn.kind === "enemy")
+      .slice(0, ENEMIES_PER_WAVE);
     this.initializeSearchState();
   }
 
@@ -580,6 +633,8 @@ export class EnemyManager {
     this.blackboard.currentTier = 0;
     this.lastDirectiveByEnemyId.clear();
     this.directiveMemoryByEnemyId.clear();
+    this.nextPlanAtSByEnemyId.clear();
+    this.healthAtLastPlanByEnemyId.clear();
     this.localKnowledgeByEnemyId.clear();
     this.sharedKnowledgeByEnemyId.clear();
     this.pendingSharedReports.length = 0;
@@ -620,8 +675,17 @@ export class EnemyManager {
         const placement = finalizedSpawnBatch.placements[i]!;
         const id: EnemyId = `enemy_${config.name.toLowerCase()}`;
         const seed = deriveSubSeed(waveSeed, id);
-        const controller = new EnemyController(id, config.name, placement.spawnX, placement.spawnZ, seed);
+        const controller = new EnemyController(
+          id,
+          config.name,
+          placement.spawnX,
+          placement.spawnZ,
+          seed,
+          placement.spawnY,
+        );
         const visual = new EnemyVisual(config.name, this.scene, this.sharedLoader);
+        visual.setNameVisible(this.nameplatesVisible);
+        visual.setRenderVisible(this.visualsVisible);
         this.controllers.push(controller);
         this.visuals.push(visual);
         this.spawnDebugByEnemyId.set(id, placement.spawnDebug);
@@ -632,7 +696,7 @@ export class EnemyManager {
         const controller = this.controllers[i]!;
         const visual = this.visuals[i]!;
         const seed = deriveSubSeed(waveSeed, controller.id);
-        controller.reset(placement.spawnX, placement.spawnZ, seed);
+        controller.reset(placement.spawnX, placement.spawnZ, seed, placement.spawnY);
         visual.reset();
         this.spawnDebugByEnemyId.set(controller.id, placement.spawnDebug);
       }
@@ -687,28 +751,41 @@ export class EnemyManager {
     playerPos: { x: number; y: number; z: number } | null,
   ): { placements: SpawnPlacement[]; telemetry: EnemySpawnTelemetry } {
     const placements: SpawnPlacement[] = [];
+    const authoredSpawns = this.authoredEnemySpawns.length === ENEMIES_PER_WAVE
+      ? this.authoredEnemySpawns
+      : null;
 
-    for (const config of ENEMY_SPAWN_CONFIG) {
+    for (let index = 0; index < ENEMIES_PER_WAVE; index += 1) {
+      const config = ENEMY_SPAWN_CONFIG[index]!;
+      const authored = authoredSpawns?.[index] ?? null;
+      const baseX = authored?.x ?? config.x;
+      const baseZ = authored?.y ?? config.z;
       const resolution = this.resolveSafeSpawnPoint(
-        config.x,
-        config.z,
+        baseX,
+        baseZ,
         FIXED_SPAWN_JITTER_M,
         worldColliders,
         {
+          expectedZoneId: authored?.zoneId ?? null,
           requireWalkableZone: true,
           occupiedPlacements: placements,
         },
       );
-      const spawnX = resolution?.spawnX ?? config.x;
-      const spawnZ = resolution?.spawnZ ?? config.z;
+      const spawnX = resolution?.spawnX ?? baseX;
+      const spawnY = resolution?.spawnY
+        ?? worldColliders.traversalSurfaces.sample(baseX, baseZ)?.elevationM
+        ?? 0;
+      const spawnZ = resolution?.spawnZ ?? baseZ;
       const zoneId = resolution?.zoneId ?? this.findWalkableZoneIdForPoint(spawnX, spawnZ);
       const distanceToPlayerM = playerPos ? distanceM(spawnX, spawnZ, playerPos.x, playerPos.z) : null;
+      const zone = zoneId ? this.tacticalGraph?.zoneById.get(zoneId) ?? null : null;
       placements.push({
         spawnX,
+        spawnY,
         spawnZ,
         nodeId: null,
         zoneId,
-        lane: zoneId ? laneFromPosition(spawnX) : null,
+        lane: zone?.macroLane ?? (zoneId ? laneFromPosition(spawnX) : null),
         nodeType: "authored" as const,
         distanceToPlayerM,
         visibleToPlayer: false,
@@ -799,7 +876,7 @@ export class EnemyManager {
     }
 
     for (const phase of this.buildAdaptiveRespawnPhases()) {
-      const playerZone = findZoneForPoint(this.tacticalGraph, playerPos.x, playerPos.z);
+      const playerZone = findZoneForPoint(this.tacticalGraph, playerPos.x, playerPos.z, playerPos.y);
       const adjacentZones = new Set<string>(playerZone ? this.tacticalGraph?.zoneAdjacency.get(playerZone.id) ?? [] : []);
       const placements = this.pickAdaptiveRespawnSet(candidates, phase, playerZone?.id ?? null, adjacentZones, waveSeed);
       if (!placements) continue;
@@ -851,7 +928,7 @@ export class EnemyManager {
         if (!resolution) {
           return null;
         }
-        const { spawnX, spawnZ } = resolution;
+        const { spawnX, spawnY, spawnZ } = resolution;
         return {
           node,
           nodeId: node.id,
@@ -859,12 +936,13 @@ export class EnemyManager {
           lane: node.lane,
           nodeType: node.nodeType,
           spawnX,
+          spawnY,
           spawnZ,
           distanceToPlayerM: distanceM(spawnX, spawnZ, playerPos.x, playerPos.z),
           visibleToPlayer: hasLineOfSight(
             playerPos,
             this.currentPlayerEyeHeightM,
-            { x: spawnX, y: 0, z: spawnZ },
+            { x: spawnX, y: spawnY, z: spawnZ },
             ENEMY_EYE_HEIGHT_M,
             worldColliders,
             NO_RESPAWN_BLOCKERS,
@@ -1247,7 +1325,7 @@ export class EnemyManager {
     playerPos: { x: number; y: number; z: number },
     playerSpawnId: RuntimeSpawnId | undefined,
   ): string | null {
-    const pointZoneId = findZoneForPoint(this.tacticalGraph, playerPos.x, playerPos.z)?.id ?? null;
+    const pointZoneId = findZoneForPoint(this.tacticalGraph, playerPos.x, playerPos.z, playerPos.y)?.id ?? null;
     if (pointZoneId) {
       return pointZoneId;
     }
@@ -1263,8 +1341,8 @@ export class EnemyManager {
     return null;
   }
 
-  private findWalkableZoneForPoint(x: number, z: number): RuntimeBlockoutZone | null {
-    const zone = findZoneForPoint(this.tacticalGraph, x, z);
+  private findWalkableZoneForPoint(x: number, z: number, y?: number): RuntimeBlockoutZone | null {
+    const zone = findZoneForPoint(this.tacticalGraph, x, z, y);
     if (!zone || !WALKABLE_ZONE_TYPES.has(zone.type)) {
       return null;
     }
@@ -1304,6 +1382,7 @@ export class EnemyManager {
     worldColliders: WorldColliders,
     expectedZoneId: string | null,
   ): SpawnValidation {
+    const spawnY = worldColliders.traversalSurfaces.sample(baseX, baseZ)?.elevationM ?? 0;
     const playableBounds = worldColliders.playableBounds;
     const withinPlayableBounds = (
       baseX >= playableBounds.minX + SPAWN_BOUNDS_MARGIN_M
@@ -1312,13 +1391,13 @@ export class EnemyManager {
       && baseZ <= playableBounds.maxZ - SPAWN_BOUNDS_MARGIN_M
     );
 
-    const actualZone = this.findWalkableZoneForPoint(baseX, baseZ);
+    const actualZone = this.findWalkableZoneForPoint(baseX, baseZ, spawnY);
     const expectedZone = expectedZoneId
       ? this.tacticalGraph?.zoneById.get(expectedZoneId) ?? null
       : actualZone;
     const insideExpectedZone = expectedZone ? this.isInsideSpawnFootprint(expectedZone, baseX, baseZ) : false;
 
-    setAabbFromFootPosition(this.spawnValidationAabb, baseX, 0, baseZ, ENEMY_HALF_WIDTH_M, ENEMY_HEIGHT_M);
+    setAabbFromFootPosition(this.spawnValidationAabb, baseX, spawnY, baseZ, ENEMY_HALF_WIDTH_M, ENEMY_HEIGHT_M);
     worldColliders.queryCandidates(this.spawnValidationAabb, this.spawnCollisionScratch);
     const blockingColliderIds: string[] = [];
     for (const collider of this.spawnCollisionScratch) {
@@ -1329,6 +1408,7 @@ export class EnemyManager {
 
     return {
       valid: withinPlayableBounds && insideExpectedZone && blockingColliderIds.length === 0,
+      spawnY,
       withinPlayableBounds,
       insideExpectedZone,
       actualZoneId: actualZone?.id ?? null,
@@ -1376,6 +1456,7 @@ export class EnemyManager {
 
         const resolution: SpawnResolution = {
           spawnX,
+          spawnY: validation.spawnY,
           spawnZ,
           zoneId: validation.actualZoneId,
           searchDistanceM: Math.hypot(offset.x, offset.z),
@@ -1408,7 +1489,7 @@ export class EnemyManager {
       insideExpectedZone: validation.insideExpectedZone,
       blockingColliderIds: [...validation.blockingColliderIds],
       elevated: Math.abs(spawnY) > SPAWN_ELEVATION_EPSILON_M,
-      valid: validation.valid && Math.abs(spawnY) <= SPAWN_ELEVATION_EPSILON_M,
+      valid: validation.valid,
       correctionKind,
       fallbackNodeId,
     };
@@ -1437,6 +1518,7 @@ export class EnemyManager {
 
     return {
       spawnX: resolution.spawnX,
+      spawnY: resolution.spawnY,
       spawnZ: resolution.spawnZ,
       nodeId: node.id,
       zoneId: node.zoneId,
@@ -1447,7 +1529,7 @@ export class EnemyManager {
         ? hasLineOfSight(
             playerPos,
             this.currentPlayerEyeHeightM,
-            { x: resolution.spawnX, y: 0, z: resolution.spawnZ },
+            { x: resolution.spawnX, y: resolution.spawnY, z: resolution.spawnZ },
             ENEMY_EYE_HEIGHT_M,
             worldColliders,
             NO_RESPAWN_BLOCKERS,
@@ -1547,8 +1629,28 @@ export class EnemyManager {
           nextUsedNodeIds,
           placements,
         );
+        // Spawn resolution runs inside the frame loop. Throwing here used to
+        // take the whole run down over a placement nobody would have noticed;
+        // a slightly imperfect spawn is strictly better than a dead game.
         if (!fallback) {
-          throw new Error(`[enemy-spawn] unable to resolve safe placement for index ${index}`);
+          console.warn(
+            `[enemy-spawn] no safe placement for index ${index}; using the authored placement as-is`,
+          );
+          if (resolvedPlacement.nodeId) {
+            usedNodeIds.add(resolvedPlacement.nodeId);
+          }
+          placements.push({
+            ...resolvedPlacement,
+            spawnDebug: this.createSpawnDebugSnapshot(
+              resolvedPlacement.spawnX,
+              resolvedPlacement.spawnY,
+              resolvedPlacement.spawnZ,
+              validation,
+              correctionKind,
+              fallbackNodeId,
+            ),
+          });
+          continue;
         }
         resolvedPlacement = fallback.placement;
         correctionKind = fallback.correctionKind;
@@ -1565,7 +1667,9 @@ export class EnemyManager {
           placements,
         );
         if (!validation.valid || overlapsExistingPlacement) {
-          throw new Error(`[enemy-spawn] fallback placement remained invalid for index ${index}`);
+          console.warn(
+            `[enemy-spawn] fallback placement still invalid for index ${index}; spawning there anyway`,
+          );
         }
         correctedPlacements += 1;
       }
@@ -1578,7 +1682,7 @@ export class EnemyManager {
         ...resolvedPlacement,
         spawnDebug: this.createSpawnDebugSnapshot(
           resolvedPlacement.spawnX,
-          0,
+          resolvedPlacement.spawnY,
           resolvedPlacement.spawnZ,
           validation,
           correctionKind,
@@ -1662,6 +1766,9 @@ export class EnemyManager {
     playerTarget.team = "player";
     playerTarget.position = playerPos;
     playerTarget.health = playerHealth;
+    // Follows the player's live stance, so crouching lowers where enemies aim
+    // instead of making them shoot over the player's head entirely.
+    playerTarget.aimHeightM = this.currentPlayerEyeHeightM;
     this.targetsScratch[0] = playerTarget;
 
     for (const controller of this.controllers) {
@@ -1671,6 +1778,7 @@ export class EnemyManager {
         target.team = controller.getTeam();
         target.position = controller.getPosition();
         target.health = controller.getHealth();
+        target.aimHeightM = ENEMY_EYE_HEIGHT_M;
         this.targetsScratch[targetCount] = target;
         targetCount += 1;
       }
@@ -1687,33 +1795,73 @@ export class EnemyManager {
     this.searchPhase = this.resolveSearchPhase();
     this.flushSharedReports();
     this.refreshSearchBeliefs();
-    this.squadTaskByEnemyId.clear();
-    const laneAssignments = new Map<TacticalLane, number>([
-      ["west", 0],
-      ["main", 0],
-      ["east", 0],
-    ]);
+    this.framePressureProfile = pressureProfile;
+
     this.blackboard.occupiedNodeIds.clear();
-    this.lastDirectiveByEnemyId.clear();
+    for (const controller of this.controllers) {
+      if (controller.isDead()) {
+        this.lastDirectiveByEnemyId.delete(controller.id);
+        this.squadTaskByEnemyId.delete(controller.id);
+        this.nextPlanAtSByEnemyId.delete(controller.id);
+        this.healthAtLastPlanByEnemyId.delete(controller.id);
+        continue;
+      }
+      const heldDirective = this.lastDirectiveByEnemyId.get(controller.id);
+      if (heldDirective?.targetNodeId) {
+        this.blackboard.occupiedNodeIds.set(heldDirective.targetNodeId, controller.id);
+      }
+    }
 
     const onFootstep = this.weaponAudio ? this.handleFootstep : undefined;
-    for (const controller of this.controllers) {
+    for (let index = 0; index < this.controllers.length; index += 1) {
+      const controller = this.controllers[index]!;
       if (controller.isDead()) continue;
-      const directive = this.buildDirective(
-        controller,
-        playerTarget,
-        worldColliders,
-        tierProfile,
-        laneAssignments,
-        pressureProfile,
-      );
-      this.lastDirectiveByEnemyId.set(controller.id, directive);
-      if (directive.targetNodeId) {
-        this.blackboard.occupiedNodeIds.set(directive.targetNodeId, controller.id);
-      }
-      if (directive.holdPoint) {
-        const holdLane = laneFromPosition(directive.holdPoint.x);
-        laneAssignments.set(holdLane, (laneAssignments.get(holdLane) ?? 0) + 1);
+
+      const controllerPos = controller.getPosition();
+      const playerDistance = distanceM(controllerPos.x, controllerPos.z, playerTarget.position.x, playerTarget.position.z);
+      const hasDirectSight =
+        !this.isPlayerIntelSuppressed()
+        && playerTarget.health > 0
+        && playerDistance <= tierProfile.visionRangeM
+        && controller.canSeeTarget(playerTarget, worldColliders, this.aabbScratch);
+
+      let directive = this.lastDirectiveByEnemyId.get(controller.id) ?? null;
+      const memory = this.directiveMemoryByEnemyId.get(controller.id) ?? null;
+      const gainedSight = hasDirectSight && !(memory?.hadDirectSight ?? false);
+      const healthAtLastPlan = this.healthAtLastPlanByEnemyId.get(controller.id);
+      const tookDamage = healthAtLastPlan !== undefined && controller.getHealth() < healthAtLastPlan;
+      const previousPlanAtS = this.nextPlanAtSByEnemyId.get(controller.id);
+      const planDue = this.waveElapsedS >= (previousPlanAtS ?? 0);
+
+      if (!directive || planDue || gainedSight || tookDamage) {
+        if (directive?.targetNodeId && this.blackboard.occupiedNodeIds.get(directive.targetNodeId) === controller.id) {
+          this.blackboard.occupiedNodeIds.delete(directive.targetNodeId);
+        }
+        directive = this.buildDirective(
+          controller,
+          playerTarget,
+          tierProfile,
+          pressureProfile,
+          hasDirectSight,
+          playerDistance,
+        );
+        this.lastDirectiveByEnemyId.set(controller.id, directive);
+        if (directive.targetNodeId) {
+          this.blackboard.occupiedNodeIds.set(directive.targetNodeId, controller.id);
+        }
+        // First plan after a wave spawn lands on the same frame for everyone,
+        // so phase the first re-plan by index; afterwards a flat interval
+        // preserves that stagger.
+        this.nextPlanAtSByEnemyId.set(
+          controller.id,
+          previousPlanAtS === undefined
+            ? this.waveElapsedS + (DIRECTIVE_PLAN_INTERVAL_S * (index + 1)) / Math.max(1, this.controllers.length)
+            : this.waveElapsedS + DIRECTIVE_PLAN_INTERVAL_S,
+        );
+        this.healthAtLastPlanByEnemyId.set(controller.id, controller.getHealth());
+      } else {
+        directive.hasDirectSight = hasDirectSight;
+        directive.directiveAgeS = this.waveElapsedS - (memory?.startedAtS ?? this.waveElapsedS);
       }
 
       controller.step(
@@ -1724,15 +1872,7 @@ export class EnemyManager {
         this.aabbScratch,
         this.handleEnemyShot,
         onFootstep,
-        (event) => {
-          if (this.isPlayerIntelSuppressed()) return;
-          if (event.kind === "seen-player") {
-            const contact = this.createContactEstimate(event.position, "visual", 1.2, 1.0, event.enemyId, true, false);
-            this.blackboard.lastSeenPlayer = contact;
-            this.storeKnowledge(this.localKnowledgeByEnemyId, event.enemyId, contact);
-            this.queueSharedContactReports(event.enemyId, contact, pressureProfile);
-          }
-        },
+        this.handlePerception,
       );
     }
 
@@ -1827,10 +1967,10 @@ export class EnemyManager {
   private buildDirective(
     controller: EnemyController,
     playerTarget: EnemyTarget,
-    worldColliders: WorldColliders,
     tierProfile: ReturnType<typeof resolveEnemyTierProfile>,
-    laneAssignments: Map<TacticalLane, number>,
     pressureProfile: PressureProfile,
+    hasDirectSight: boolean,
+    playerDistance: number,
   ): EnemyDirective {
     const role = this.blackboard.assignedRoleByEnemyId.get(controller.id) ?? "rifler";
     const roleRank = this.blackboard.roleRankByEnemyId.get(controller.id) ?? 0;
@@ -1845,12 +1985,8 @@ export class EnemyManager {
     const controllerPos = controller.getPosition();
     const currentNode = findNearestTacticalNode(this.tacticalGraph, controllerPos.x, controllerPos.z);
     const currentLane = currentNode?.lane ?? laneFromPosition(controllerPos.x);
-    const playerDistance = distanceM(controllerPos.x, controllerPos.z, playerTarget.position.x, playerTarget.position.z);
-    const hasDirectSight =
-      !this.isPlayerIntelSuppressed()
-      &&
-      playerDistance <= tierProfile.visionRangeM
-      && controller.canSeeTarget(playerTarget, worldColliders, this.aabbScratch);
+    const laneAssignments = this.buildLaneAssignments(controller.id);
+    this.squadTaskByEnemyId.delete(controller.id);
 
     const knowledge = hasDirectSight
       ? this.createContactEstimate(playerTarget.position, "visual", 1.2, 1.0, controller.id, true, false)
@@ -2061,7 +2197,7 @@ export class EnemyManager {
       debugReason = "full hunt mode";
     }
 
-    const path = findTacticalPath(this.tacticalGraph, currentNode?.id ?? null, targetNode?.id ?? null);
+    const path = this.findTacticalPathCached(currentNode?.id ?? null, targetNode?.id ?? null);
     const moveNodeId = path.length > 1 ? path[1]! : targetNode?.id ?? null;
     const moveNode = moveNodeId ? this.tacticalGraph?.nodeById.get(moveNodeId) ?? null : targetNode;
     const holdPoint = targetNode ? { x: targetNode.x, z: targetNode.z } : null;
@@ -2601,7 +2737,15 @@ export class EnemyManager {
     return "search";
   }
 
+  /**
+   * Zone adjacency is static per tactical graph, so BFS results are memoized
+   * until setTacticalContext rebuilds the graph. Callers must treat the
+   * returned map as read-only.
+   */
   private buildZoneDistanceMap(contactZoneId: string): Map<string, number> {
+    const cached = this.zoneDistanceCache.get(contactZoneId);
+    if (cached) return cached;
+
     const distances = new Map<string, number>([[contactZoneId, 0]]);
     const queue = [contactZoneId];
 
@@ -2616,7 +2760,35 @@ export class EnemyManager {
       }
     }
 
+    this.zoneDistanceCache.set(contactZoneId, distances);
     return distances;
+  }
+
+  /**
+   * Node-to-node paths are static per tactical graph, so Dijkstra results are
+   * memoized until setTacticalContext rebuilds the graph. Callers must treat
+   * the returned path as read-only.
+   */
+  private findTacticalPathCached(startNodeId: string | null, goalNodeId: string | null): readonly string[] {
+    if (!this.tacticalGraph || !startNodeId || !goalNodeId) return [];
+    const key = `${startNodeId}\u0000${goalNodeId}`;
+    const cached = this.tacticalPathCache.get(key);
+    if (cached) return cached;
+    const path = findTacticalPath(this.tacticalGraph, startNodeId, goalNodeId);
+    this.tacticalPathCache.set(key, path);
+    return path;
+  }
+
+  private buildLaneAssignments(planningEnemyId: string): Map<TacticalLane, number> {
+    const laneAssignments = createLaneUsageMap();
+    for (const controller of this.controllers) {
+      if (controller.isDead() || controller.id === planningEnemyId) continue;
+      const directive = this.lastDirectiveByEnemyId.get(controller.id);
+      if (!directive?.holdPoint) continue;
+      const holdLane = laneFromPosition(directive.holdPoint.x);
+      laneAssignments.set(holdLane, (laneAssignments.get(holdLane) ?? 0) + 1);
+    }
+    return laneAssignments;
   }
 
   private pickFallbackNode(
@@ -2832,6 +3004,7 @@ export class EnemyManager {
   checkRaycastHit(origin: Vector3, dir: Vector3, maxDist: number): EnemyHitResult {
     let bestDist = maxDist;
     let bestId: string | null = null;
+    let bestFeetY = 0;
 
     const ox = origin.x;
     const oy = origin.y;
@@ -2846,6 +3019,7 @@ export class EnemyManager {
       if (t < bestDist) {
         bestDist = t;
         bestId = aabb.id;
+        bestFeetY = aabb.minY;
       }
     }
 
@@ -2858,6 +3032,7 @@ export class EnemyManager {
       hitX: ox + dx * bestDist,
       hitY: oy + dy * bestDist,
       hitZ: oz + dz * bestDist,
+      feetY: bestFeetY,
     };
   }
 
@@ -2874,6 +3049,8 @@ export class EnemyManager {
     this.waveElapsedS = 0;
     this.lastDirectiveByEnemyId.clear();
     this.directiveMemoryByEnemyId.clear();
+    this.nextPlanAtSByEnemyId.clear();
+    this.healthAtLastPlanByEnemyId.clear();
     this.blackboard.lastSeenPlayer = null;
     this.blackboard.lastHeardPlayer = null;
     this.blackboard.occupiedNodeIds.clear();
@@ -2890,6 +3067,8 @@ export class EnemyManager {
     this.waveNumber = 0;
     this.worldCollidersRef = null;
     this.tacticalGraph = null;
+    this.tacticalPathCache.clear();
+    this.zoneDistanceCache.clear();
   }
 
   private resolveEnemyShot(targetId: string, damage: number): void {

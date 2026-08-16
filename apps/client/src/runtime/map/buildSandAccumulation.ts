@@ -4,16 +4,18 @@ import { applyFloorShaderTweaks } from "../render/materials/applyFloorShaderTwea
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import type { BoundarySegment } from "./buildBlockout";
 
-const MIN_PIECE_LENGTH_M = 2.0;
-const MAX_PIECE_LENGTH_M = 6.0;
-const MIN_GAP_M = 0.5;
-const MAX_GAP_M = 2.0;
+const MIN_PIECE_LENGTH_M = 2.4;
+const MAX_PIECE_LENGTH_M = 7.0;
+// Wind-blown grit banks almost continuously along a wall base. Long clean gaps
+// read as a swept floor, which is the opposite of a working market street.
+const MIN_GAP_M = 0.35;
+const MAX_GAP_M = 1.3;
 
-const BASE_WIDTH_M = 0.58;
-const WIDTH_VARIATION_M = 0.18;
-const OUTER_EDGE_JITTER_M = 0.22;
-const MIN_WIDTH_M = 0.28;
-const MAX_WIDTH_M = 0.95;
+const BASE_WIDTH_M = 0.84;
+const WIDTH_VARIATION_M = 0.3;
+const OUTER_EDGE_JITTER_M = 0.34;
+const MIN_WIDTH_M = 0.34;
+const MAX_WIDTH_M = 1.4;
 const WALL_INSET_M = 0.03;
 
 const WALL_EDGE_Y_M = 0.02;
@@ -37,6 +39,7 @@ type GeometryBatch = {
   positions: number[];
   normals: number[];
   uvs: number[];
+  colors: number[];
   indices: number[];
   vertexCount: number;
 };
@@ -52,10 +55,22 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-function pushVertex(batch: GeometryBatch, x: number, y: number, z: number, u: number, v: number): number {
+function pushVertex(
+  batch: GeometryBatch,
+  x: number,
+  y: number,
+  z: number,
+  u: number,
+  v: number,
+  coverage = 1,
+): number {
   batch.positions.push(x, y, z);
   batch.normals.push(0, 1, 0);
   batch.uvs.push(u, v);
+  // Drift has no edge in the real world: it thins until the paving shows
+  // through. Carrying that as vertex alpha lets the sheet dissolve instead of
+  // stopping along a cut line, which is what made it read as a decal.
+  batch.colors.push(1, 1, 1, clamp(coverage, 0, 1));
   const index = batch.vertexCount;
   batch.vertexCount += 1;
   return index;
@@ -72,9 +87,13 @@ function pushTriangleFacingUp(batch: GeometryBatch, indexA: number, indexB: numb
   const bz = pos[b3 + 2]!;
   const cx = pos[c3]!;
   const cz = pos[c3 + 2]!;
-  const crossY = (bx - ax) * (cz - az) - (bz - az) * (cx - ax);
+  // Upward normal for AB x AC is n.y = u.z * v.x - u.x * v.z. Keep the given
+  // order only when that is already positive, otherwise swap the last two so
+  // the triangle winds counter-clockwise seen from above and survives
+  // front-face culling.
+  const normalY = (bz - az) * (cx - ax) - (bx - ax) * (cz - az);
 
-  if (crossY >= 0) {
+  if (normalY >= 0) {
     batch.indices.push(indexA, indexB, indexC);
   } else {
     batch.indices.push(indexA, indexC, indexB);
@@ -107,6 +126,13 @@ function appendSegmentedStripPiece(
       MAX_WIDTH_M,
     );
 
+    // The banked edge against the wall is solid; the feather-out varies along
+    // the run so the sheet does not thin by the same amount everywhere.
+    const outerCoverage = clamp(rng.range(-0.04, 0.1), 0, 1);
+    // Each piece also fades in and out along its length, so a run of drift ends
+    // by running out rather than by being cut square.
+    const nearCoverage = clamp(centerWeight * 2.1, 0, 1);
+
     if (segment.orientation === "vertical") {
       const nearX = segment.coord - segment.outward * WALL_INSET_M;
       const nearZ = along;
@@ -115,8 +141,10 @@ function appendSegmentedStripPiece(
       const nearY = floorTopY + WALL_EDGE_Y_M;
       const farY = floorTopY + OUTER_EDGE_Y_M + rng.range(-OUTER_EDGE_Y_JITTER_M, OUTER_EDGE_Y_JITTER_M);
 
-      nearIndices.push(pushVertex(batch, nearX, nearY, nearZ, nearX * invTileSize, nearZ * invTileSize));
-      farIndices.push(pushVertex(batch, farX, farY, farZ, farX * invTileSize, farZ * invTileSize));
+      nearIndices.push(pushVertex(batch, nearX, nearY, nearZ, nearX * invTileSize, nearZ * invTileSize, nearCoverage));
+      farIndices.push(
+        pushVertex(batch, farX, farY, farZ, farX * invTileSize, farZ * invTileSize, outerCoverage),
+      );
     } else {
       const nearZ = segment.coord - segment.outward * WALL_INSET_M;
       const nearX = along;
@@ -125,8 +153,10 @@ function appendSegmentedStripPiece(
       const nearY = floorTopY + WALL_EDGE_Y_M;
       const farY = floorTopY + OUTER_EDGE_Y_M + rng.range(-OUTER_EDGE_Y_JITTER_M, OUTER_EDGE_Y_JITTER_M);
 
-      nearIndices.push(pushVertex(batch, nearX, nearY, nearZ, nearX * invTileSize, nearZ * invTileSize));
-      farIndices.push(pushVertex(batch, farX, farY, farZ, farX * invTileSize, farZ * invTileSize));
+      nearIndices.push(pushVertex(batch, nearX, nearY, nearZ, nearX * invTileSize, nearZ * invTileSize, nearCoverage));
+      farIndices.push(
+        pushVertex(batch, farX, farY, farZ, farX * invTileSize, farZ * invTileSize, outerCoverage),
+      );
     }
   }
 
@@ -228,7 +258,9 @@ function appendCornerPile(
     const x = corner.x + corner.inwardX * Math.cos(angle) * radial;
     const z = corner.z + corner.inwardZ * Math.sin(angle) * radial;
     const y = floorTopY + OUTER_EDGE_Y_M + rng.range(-OUTER_EDGE_Y_JITTER_M, OUTER_EDGE_Y_JITTER_M);
-    ringIndices.push(pushVertex(batch, x, y, z, x * invTileSize, z * invTileSize));
+    ringIndices.push(
+      pushVertex(batch, x, y, z, x * invTileSize, z * invTileSize, clamp(rng.range(-0.05, 0.12), 0, 1)),
+    );
   }
 
   for (let i = 0; i < fanSubdivisions; i += 1) {
@@ -243,6 +275,7 @@ export function buildSandAccumulation(options: BuildSandAccumulationOptions): Me
     positions: [],
     normals: [],
     uvs: [],
+    colors: [],
     indices: [],
     vertexCount: 0,
   };
@@ -304,6 +337,7 @@ export function buildSandAccumulation(options: BuildSandAccumulationOptions): Me
   geometry.setAttribute("normal", new Float32BufferAttribute(batch.normals, 3));
   geometry.setAttribute("uv", new Float32BufferAttribute(batch.uvs, 2));
   geometry.setAttribute("uv2", new Float32BufferAttribute([...batch.uvs], 2));
+  geometry.setAttribute("color", new Float32BufferAttribute(batch.colors, 4));
   geometry.setIndex(batch.indices);
   if (batch.vertexCount > 0) {
     geometry.computeBoundingBox();
@@ -324,10 +358,24 @@ export function buildSandAccumulation(options: BuildSandAccumulationOptions): Me
     typeof material.userData.floorDustStrength === "number" && Number.isFinite(material.userData.floorDustStrength)
       ? material.userData.floorDustStrength
       : 0;
-  applyFloorShaderTweaks(material, { albedoBoost, albedoGamma, dustStrength });
+  applyFloorShaderTweaks(material, {
+    albedoBoost,
+    albedoGamma,
+    dustStrength,
+    // Drift runs the length of a wall, so it needs variation coarser than its
+    // own tile or a long bank reads as one extruded ribbon.
+    macroColorAmplitude: 0.1,
+    macroRoughnessAmplitude: 0.06,
+    macroFrequency: 0.06,
+    macroSeed: deriveSubSeed(options.seed, "sand-accumulation-macro"),
+  });
   material.roughness = Math.max(material.roughness, 0.98);
-  material.normalScale.set(0.22, 0.22);
-  material.aoMapIntensity = Math.min(material.aoMapIntensity, 0.32);
+  // The per-vertex alpha authored above only reaches the frame through a
+  // blended material. Depth writes stay off so the paving underneath keeps
+  // resolving through the thinning edge instead of being punched out by it.
+  material.vertexColors = true;
+  material.transparent = true;
+  material.depthWrite = false;
   material.polygonOffset = true;
   material.polygonOffsetFactor = -1;
   material.polygonOffsetUnits = -1;
@@ -335,7 +383,9 @@ export function buildSandAccumulation(options: BuildSandAccumulationOptions): Me
 
   const mesh = new Mesh(geometry, material);
   mesh.name = "map-sand-accumulation";
-  mesh.receiveShadow = false;
+  // Drift that ignores the shade it sits in glows against the wall it banks
+  // against, which is the one place this layer is always seen.
+  mesh.receiveShadow = true;
   mesh.castShadow = false;
   return mesh;
 }

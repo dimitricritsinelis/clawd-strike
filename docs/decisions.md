@@ -3,13 +3,13 @@ Authority: normative
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: durable internal decisions that future tasks should not rediscover
 Do not use for: current task status, temporary bug lists, per-task notes, public browser-agent behavior details
-Last updated: 2026-03-10
+Last updated: 2026-07-26
 
 # Durable Decisions
 
 ## DEC-001: Authority surfaces are role-based
-- `AGENTS.md` is the only normative internal implementation doc.
-- One current short-term memory surface owns active coordination state, and `docs/decisions.md` owns durable internal decisions.
+- `AGENTS.md` owns the durable repository-wide implementation safeguards.
+- `docs/decisions.md` owns durable internal decisions, while the current user prompt owns the bounded task.
 - `README.md` is quick start only, `docs/map-design/layout-reference.md` is generated reference evidence, and `apps/client/public/skills.md` is the public browser-only contract.
 - Tool shims such as `CLAUDE.md` may point to authority surfaces, but they may not restate or redefine policy.
 
@@ -19,7 +19,7 @@ Last updated: 2026-03-10
 - Prefer code, scripts, specs, and runtime contracts over new prose when they can answer the question.
 
 ## DEC-003: Map authority and runtime generation
-- Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_slice_v2_2_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
+- Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_v3_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
 - `docs/map-design/shots.json` owns the runtime review shot contract.
 - Map-design authority lives in structured files and approved refs, not prose packet docs.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
@@ -29,19 +29,15 @@ Last updated: 2026-03-10
 - `apps/client/public/skills.md` is a browser-only public contract and must remain separate from internal process docs.
 - The public contract must not expose coordinates, hidden enemy state, routes, seeds, landmark IDs, or other repo-only tactical truth.
 
-## DEC-005: Validation boundary
-- Default fast local validation is `pnpm typecheck && pnpm test:server && pnpm smoke:game`.
-- `pnpm qa:completion` is required for player-visible map or visual changes and now covers traversal plus deterministic shot review only.
-- `pnpm --filter @clawd-strike/client bot:smoke` is required for enemy tuning and remains part of `pnpm qa:release` alongside `pnpm qa:completion` and `pnpm build`.
-- If a task changes `/skills.md`, stable public selectors, agent-visible browser payload/state, or the documented no-context retry flow, also run `pnpm verify:skills-contract` and `pnpm smoke:no-context` regardless of the primary change tag.
-- `pnpm test:playwright` remains the full browser regression suite for loading-screen, public-selector, public-payload, and shared-champion work rather than the default inner-loop gate.
-- Screenshot and reference inspection are reserved for visual-signoff surfaces rather than logic-only gameplay, bot, perf, tooling, or contract work unless appearance intentionally changed.
-- Current CI is narrower than local completion policy and does not replace these local gates.
+## DEC-005: Visual cadence and repository validation have separate owners
+- Package scripts and CI own the executable validation surface.
+- The map-polish skill owns section-iteration and final-check cadence. The map quality bar owns the visual target and screenshot acceptance, while `AGENTS.md` contains only durable repository safeguards.
+- Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
-## DEC-006: Play-facing quality bar
-- Use Dust II-level production polish as the benchmark for play-facing work, without copying its layout.
-- Favor readability over clutter, honest critique over comfort, and practical high-impact changes over vague ambition.
-- Separate quick wins from larger rework when that distinction helps prioritization.
+## DEC-006: The Bazaar target is a finished Middle Eastern market
+- Play-facing map work should read as a high-quality shipped Middle Eastern bazaar, with complete architecture, stalls, openings, overhead cloth, attachments, props, and material finish.
+- Preserve overall map identity and general layout by default, but allow local rebuilding and changes to directly coupled visual systems when they materially improve the bounded section. This does not imply a map-wide overhaul.
+- Rendered comparisons from the same fixed cameras are the primary evidence of improvement.
 
 ## DEC-007: Agent tooling stays out of the repo root surface
 - Repo-local agent tooling is not game runtime code and is not part of the public `apps/client/public/skills.md` contract.
@@ -101,3 +97,18 @@ Last updated: 2026-03-10
 - Runtime buff orbs should preserve their glowing pickup readability, but they must render through pooled shared resources rather than per-orb scene graphs with dynamic lights and per-instance material allocation.
 - Idle runtime performance and orb-scaling performance are both first-class perf surfaces; orb perf validation must include zero-orb baseline plus multi-count orb scenarios rather than a single fixed orb count.
 - Future orb-look changes should preserve that scalability boundary unless a new owning perf decision explicitly replaces it.
+
+## DEC-018: Bazaar v3 uses authored surfaces and explicit connectivity
+- `bazaar-map` format v3 is a 56×92 m three-macro-lane layout whose zones, traversal surfaces, transitions, spawns, frontages, districts, dressing clusters, and asset metadata are authored in `docs/map-design/specs/map_spec.json` and compiled without silent clamps.
+- Player grounding, bot grounding/navigation, floor collision, LOS, bullets, hit-zone classification, prop placement, and wall/cage heights must share the authored elevation contract. The Tea Terrace loop is a player-and-bot route at 1.4 m, not a visual-only platform.
+- Exterior perimeter façades remain sealed. Inward openings are noninteractive dressing unless the spec identifies a connector footprint as a real passage.
+- Runtime maps, layout references, topdown SVG, and review shots are generated evidence. The public map ID, ten-enemy wave/scoring contract, controls, and `/skills.md` payload remain unchanged.
+
+## DEC-019: Daylight and Bazaar references have distinct roles
+- The five CS2 screenshots `docs/map-design/refs/cs2_daylight_ref_1..5.png` are references for bright daylight, value discipline, clarity, material response, and shipped-game finish.
+- `bazaar_main_hall_reference.png` is the identity and content reference for layered architecture, market density, stalls, facade vocabulary, and hanging cloth. Its dusk mood, darkness, and saturation are not targets.
+- Evaluate rendered screenshots holistically rather than steering the map toward a metered color target.
+
+## DEC-020: Historical map-process artifacts are not live instructions
+- Historical map planning and process documents are evidence only. They do not define the current task or hold active workflow state.
+- Current map work runs directly from the user prompt and the live authority surfaces identified in DEC-005, without a persistent task-state layer.

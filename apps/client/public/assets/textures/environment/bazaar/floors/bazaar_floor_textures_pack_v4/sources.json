@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "sourceFamilies": {
+    "cobblestone_floor_04": {
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": {
+          "albedo": "a1b3340f0bd79af01072f6ace0ac686b",
+          "normal": "2112456c57bf1a1d6fbd93692b8d2080",
+          "arm": "6a0ad4ed79907f7fa5c2e6def4eb93b5"
+        },
+        "2k": {
+          "albedo": "6fd3d5dbaca10c763d813f1b9d532f1b",
+          "normal": "051fb80cac9f261e1d21f10b2a664245",
+          "arm": "d14169c7746411fe3216071da9b23f96"
+        }
+      }
+    },
+    "medieval_blocks_05": {
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "originalResolution": "4k",
+      "md5": {
+        "1k": {
+          "albedo": "dae4c2458b3a3efbeda141a98a8d66dd",
+          "normal": "ebd5906c90bedce52817eb715e4424e9",
+          "arm": "9b3f9ed1406ee6e091f15cf99a02b43c"
+        },
+        "2k": {
+          "albedo": "c88eb55a33d817fc4913aade5e6e621e",
+          "normal": "531215a47f1f242480e7c232b6ac8893",
+          "arm": "ce6be9c158f821923c9e3e3ed17fb349"
+        },
+        "4k": {
+          "albedo": "094d50f76d8b7d83babff8ae422e373f",
+          "normal": "fa39a20eeac5cb56898836801e2383a1",
+          "arm": "9a2ea46368f1c335a5974fb93a279e23"
+        }
+      }
+    },
+    "red_sandstone_pavement": {
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": {
+          "albedo": "d7048c04e343b024b310277c5d7004ba",
+          "normal": "fd71afae36c61a0705b8e07f4ad42b9d",
+          "arm": "5f78dc55ef9bcb3adf3931a468500e20"
+        },
+        "2k": {
+          "albedo": "a1259b901bce5c5b428ca1fdbb5c8ac7",
+          "normal": "331f734509e5354c74012364d1c19faa",
+          "arm": "39b7314228c5066f0b9342502d69b769"
+        }
+      }
+    },
+    "sand_drift_01": {
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "originalResolution": "2k",
+      "notes": "Project-authored tileable wind-rippled desert sand (albedo/nor_gl/arm) for the wall-base and corner accumulation layer.",
+      "md5": {
+        "1k": {
+          "albedo": "2ceaba9013e8763e7ee91a54a53335ea",
+          "normal": "fb698ea01374ae4834586d3383945a94",
+          "arm": "e8aedf461bc99d22eb99fe7cfa739589"
+        },
+        "2k": {
+          "albedo": "ca9ce8ad297daa22e94593029853f4b3",
+          "normal": "d03575bb38e4a5dadddd253b7127fa6b",
+          "arm": "6c56355702f221e9014ee6bbd7e30eb5"
+        }
+      }
+    },
+    "court_flagstone_01": {
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "originalResolution": "2k",
+      "notes": "Project-authored tileable dressed-limestone flagstone (albedo/nor_gl/arm) laid in courses, for court paving. Serves the patterned_cobblestone material id.",
+      "md5": {
+        "1k": {
+          "albedo": "53eb0148a7c9f715c1a0b224437cdd20",
+          "normal": "365ee0ec717ada90854c8c8ff3fe2f55",
+          "arm": "8205d0f68013e381ec941bb21561a9cf"
+        },
+        "2k": {
+          "albedo": "acad27c55f433ffe59a5d6515b375c91",
+          "normal": "feb25573bca463167db440520f80e556",
+          "arm": "ddbe3396f9ad989796ff4ed2c3903ee9"
+        }
+      }
+    }
+  }
+}

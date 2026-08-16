@@ -8,7 +8,12 @@ dist/
 **/.cache/
 .DS_Store
 .clawdstrike-dev.log
-.claude/
+/.claude/*
+!/.claude/skills/
+!/.claude/skills/**
+/.codex/
+/tmp/
+/review_artifacts/
 output/
 coverage/
 *.tsbuildinfo
@@ -29,3 +34,4 @@ artifacts/tmp/**
 .env*.local
 short_term_memory.md.lock
 short_term_memory.md.tmp-*
+.vercel

@@ -1,0 +1,10 @@
+# Historical process records are available by explicit path, but should not
+# contaminate normal repository searches.
+docs/map-design/archive/
+
+# Generated map/runtime and design-reference outputs are evidence, not source.
+apps/client/public/maps/
+docs/map-design/layout-reference.md
+docs/map-design/layout-reference.svg
+docs/map-design/blockout/topdown_layout.svg
+docs/map-design/refs/bazaar_v3_detailed_birdseye.png

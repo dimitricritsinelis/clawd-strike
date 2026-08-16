@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "sourceFamilies": {
+    "beige_wall_001": {
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "a99610d7d72ec6fb20ae991ad69b3eb7", "normal": "2f5fc5b63c425b359089468f4d719ef5", "arm": "665a2f0a2669e423ecdab3719a396739" },
+        "2k": { "albedo": "c927ac1136767f1df758ae064f50a2d1", "normal": "127b2f5f2f8c2e57b1f08b263c0690bd", "arm": "4b2733ac3dba7944316915e180a70a24" }
+      }
+    },
+    "beige_wall_002": {
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "67237dad18f795a43fb8a82d1b3aa227", "normal": "9bc4777b2f38e2ef06e394f1fca2f749", "arm": "bd2f6015b85864d8f6359ec6d26cbec5" },
+        "2k": { "albedo": "2a28be17ac77d1d0edc0d6f59d0c2b6a", "normal": "4b57a70dda94f3ab1ecf6c506ebc1190", "arm": "e2c9a4a72772565ef8e29303722be76a" }
+      }
+    },
+    "brick_4_desert": {
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "d796ac77f351cd9de096c64370700c1b", "normal": "db5c953bc1ca96ea6861a0a354624a85", "arm": "350348a669fdceae40bf35cf704364f2" },
+        "2k": { "albedo": "6ae9df82d012c9ea49ac05d454358e37", "normal": "63ddf407d2a3c41a51b56f70cf45431d", "arm": "861868c9ab8bd3481100fbb82b086afc" }
+      }
+    },
+    "painted_plaster_wall": {
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "d273ddf6a8d75c7f0e7e09cbe3de8d79", "normal": "113ddb47b677fc92710dda3b5d0f2bf9", "arm": "3cd079adad9d00dade84be1d700608c7" },
+        "2k": { "albedo": "32f4f4e5ded7d20e55e337004d0d9691", "normal": "18faf9f7949aefdb3ae7cef7195cba04", "arm": "b66f912016257faa7e71a1530e387545" }
+      }
+    },
+    "plastered_wall": {
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "9f64cd14ded4938e64ab6c6bb3de3c19", "normal": "e3e00c5d9a589621bf3cc541d9fb7d81", "arm": "8f2c972159e4d346f37224b6886709d4" },
+        "2k": { "albedo": "1cacf2ddbccc137473e717f23db200a9", "normal": "ccfd96ad464ed339f2df9d5d1bca878b", "arm": "9c3bc94f7d0131e8290f5668ebbfbe19" }
+      }
+    },
+    "rough_pine_door": {
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "originalResolution": "1k",
+      "md5": {
+        "1k": { "albedo": "8c1036e566fe8e925e98123458aae385", "normal": "4ea81cbe11f012f8dd9490de124ed1fd", "arm": "f542d70fa482014e9533a896e917c161" }
+      }
+    },
+    "rustic_stone_wall_02": {
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "9ca81a5ea589ea55a547bccc43c9df85", "normal": "9612e01f923facfdd420fd7b811269b0", "arm": "1c23adca55ff4f342ae63c3c3af8605a" },
+        "2k": { "albedo": "b2459f26bf75da47d7b828044049d3cd", "normal": "96aa0239100b00082b64f952d53819dd", "arm": "31c0d4f6bf090448b92c793eff26e9af" }
+      }
+    },
+    "rusty_metal_02": {
+      "source": "https://polyhaven.com/a/rusty_metal_02",
+      "license": "CC0-1.0",
+      "originalResolution": "1k",
+      "md5": {
+        "1k": { "albedo": "476bff9959bc727bd4b83c0a9ac4aeaa", "normal": "8d6dc7e26f2708ec59e2a739711c612b", "arm": "888da78afd9bfc9fd3dafbbf2a5b8134" }
+      }
+    },
+    "sandstone_blocks_05": {
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "2c3651fdf1071d7b60d82f0e86953968", "normal": "cb9d5f4e66155a34236d6e2420ce276b", "arm": "d6eff1ed1206fac358da4a4d2a5e407d" },
+        "2k": { "albedo": "486e2b51beffc6c050d1e2b25fa47cbd", "normal": "d4d54c89dce5e682e12e38f71db3820d", "arm": "887ad0057682f01bf2705d4d1134c866" }
+      }
+    },
+    "white_plaster_02": {
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "7b10c2686bcfd76d1f309a20fd06b57e", "normal": "55fc03203ebf1dc703a380fde93ff502", "arm": "4a5a080e2421fac4fa602680bef4c8b1" },
+        "2k": { "albedo": "35f9c96c16aa0d934da7884b232f6d07", "normal": "a9fa643c4a200686ad89598b545b2adc", "arm": "8037fca09e797a6664834a00adbe05aa" }
+      }
+    },
+    "white_sandstone_blocks_02": {
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "5a31e6268c764ffccc358420e3aa3fb5", "normal": "0de5ad6426e1415bc36d5d31c3a0f179", "arm": "16deb112a37a5e9e966609d23f86ef0e" },
+        "2k": { "albedo": "141a8964984195586d2d6fac4ee34fef", "normal": "aa73e395015c04dfe452405b8be5d337", "arm": "62719faf93f71a6daa3659bdc5dff0bd" }
+      }
+    },
+    "worn_planks": {
+      "source": "https://polyhaven.com/a/worn_planks",
+      "license": "CC0-1.0",
+      "originalResolution": "1k",
+      "md5": {
+        "1k": { "albedo": "c5f7b2343880a705e9acb471938e07da", "normal": "9a31cafe552f7e15228a513cfd25c574", "arm": "1d4acce324ac8377e0eeace283da3cc3" }
+      }
+    },
+    "worn_plaster_wall": {
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "originalResolution": "2k",
+      "md5": {
+        "1k": { "albedo": "e571a608f92ac2209389a35f2a378150", "normal": "0e41998ee988c493ade5c774a5c29057", "arm": "15c83496e11bf088f375b21a313836c6" },
+        "2k": { "albedo": "113c336124507f4b3fc7d440f6fd8346", "normal": "737e4eb8ec9af427c8aafe46675409d9", "arm": "4131b686f55a1e47777f58931d423b66" }
+      }
+    }
+  }
+}

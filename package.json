@@ -29,16 +29,21 @@
     "test:agent-export": "tsx --test scripts/export-agent-starter.test.ts",
     "test:stm": "tsx --test scripts/short-term-memory.test.ts",
     "test:postgres-audit": "tsx --test scripts/export-postgres-audit.test.ts",
+    "test:map-tooling": "pnpm --filter @clawd-strike/client test:map-tooling",
+    "test:qa-tooling": "pnpm --filter @clawd-strike/client test:qa-tooling",
+    "test:map-runtime": "pnpm --filter @clawd-strike/client test:map-runtime",
     "typecheck": "pnpm --filter @clawd-strike/client exec tsc -p ../../tsconfig.json --noEmit && pnpm --filter @clawd-strike/client typecheck",
-    "test:server": "tsx --test ./server/highScoreStoreImpl.test.ts",
+    "test:server": "tsx --test ./server/highScoreStoreImpl.test.ts ./server/highScoreHardening.test.ts",
     "smoke:game": "pnpm --filter @clawd-strike/client smoke:game",
     "bot:smoke": "pnpm --filter @clawd-strike/client bot:smoke",
+    "bot:smoke:owned": "pnpm --filter @clawd-strike/client bot:smoke:owned",
     "test:playwright": "pnpm --filter @clawd-strike/client test:playwright",
     "test:playwright:full": "pnpm --filter @clawd-strike/client test:playwright:full",
     "smoke:no-context": "pnpm --filter @clawd-strike/client smoke:no-context",
     "verify:skills-contract": "pnpm --filter @clawd-strike/client verify:skills-contract",
+    "capture:shots": "pnpm --filter @clawd-strike/client capture:shots",
+    "capture:spice": "pnpm --filter @clawd-strike/client capture:spice",
     "qa:completion": "pnpm --filter @clawd-strike/client qa:completion",
-    "qa:release": "pnpm qa:completion && pnpm bot:smoke && pnpm build",
-    "qa:autonomous": "pnpm --filter @clawd-strike/client qa:autonomous"
+    "qa:release": "pnpm --filter @clawd-strike/client test:map-traversal:blockout && pnpm qa:completion && pnpm bot:smoke:owned && pnpm build"
   }
 }

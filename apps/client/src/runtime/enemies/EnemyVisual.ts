@@ -21,6 +21,15 @@ import { disposeObjectRoot } from "../utils/disposeObjectRoot";
 
 const MODEL_URL = "/assets/models/characters/enemy_raider/model.glb";
 const MODEL_TARGET_HEIGHT_M = 1.8;
+// Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
+// this leaves the whole wave near half the map's remaining tri headroom.
+//
+// Pinned just above the shipping asset's measured count (7,492 tris) so a
+// heavier re-export actually trips it. Keep this in step with the asset: a
+// threshold at or above whatever ships can never fire and protects nothing,
+// which is exactly how the earlier 30,000 sat uselessly above a 24,986-tri
+// model for an entire release cycle.
+const MODEL_MAX_TRIS_WARN = 8_000;
 const MODEL_FACING_FIXUP_YAW_RAD = Math.PI * 0.5;
 const MODEL_BARREL_AXIS_LOCAL = new Vector3(1, 0, 0);
 const MUZZLE_FORWARD_OFFSET_M = 0.03;
@@ -116,6 +125,24 @@ function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyMode
         );
       muzzleLocal.addScaledVector(MODEL_BARREL_AXIS_LOCAL, MUZZLE_FORWARD_OFFSET_M);
 
+      // The asset ships pre-optimized (LOD + texture sizing happen offline in
+      // art-source tooling); runtime decimation is forbidden here — three's
+      // SimplifyModifier tears UV seams open and shreds the silhouette.
+      let templateTris = 0;
+      gltf.scene.traverse((child) => {
+        const mesh = child as Mesh;
+        if (!mesh.isMesh) return;
+        const index = mesh.geometry.getIndex();
+        const position = mesh.geometry.getAttribute("position");
+        templateTris += Math.floor((index ? index.count : position?.count ?? 0) / 3);
+      });
+      if (templateTris > MODEL_MAX_TRIS_WARN) {
+        console.warn(
+          `[enemy-visual] enemy model is ${templateTris} tris (budget guardrail ${MODEL_MAX_TRIS_WARN}); ` +
+          "re-export a lighter LOD offline (see art-source/characters/enemy_raider)",
+        );
+      }
+
       return {
         template: gltf.scene,
         center,
@@ -191,6 +218,8 @@ export class EnemyVisual {
   private readonly headMat: MeshStandardMaterial;
   private modelRoot: Group | null = null;
   private readonly nameSprite: Sprite;
+  private namesVisible = true;
+  private renderVisible = true;
   private readonly nameTexture: CanvasTexture;
   private readonly nameMaterial: SpriteMaterial;
   private readonly muzzleAnchor: Group;
@@ -306,7 +335,7 @@ export class EnemyVisual {
       this.root.position.set(x, y, z);
       return;
     }
-    this.root.visible = isAlive;
+    this.root.visible = isAlive && this.renderVisible;
     if (!isAlive) return;
 
     this.root.position.set(x, y, z);
@@ -316,8 +345,8 @@ export class EnemyVisual {
   reset(): void {
     this.fadingOut = false;
     this.fadeTimerS = 0;
-    this.root.visible = true;
-    this.nameSprite.visible = true;
+    this.root.visible = this.renderVisible;
+    this.nameSprite.visible = this.namesVisible;
 
     this.bodyMat.opacity = 1;
     this.headMat.opacity = 1;
@@ -327,6 +356,16 @@ export class EnemyVisual {
     this.muzzleBaseScale = 1;
     if (this.muzzleFlash) this.muzzleFlash.visible = false;
     if (this.muzzleFlashMat) this.muzzleFlashMat.opacity = 0;
+  }
+
+  setNameVisible(visible: boolean): void {
+    this.namesVisible = visible;
+    if (!this.fadingOut) this.nameSprite.visible = visible;
+  }
+
+  setRenderVisible(visible: boolean): void {
+    this.renderVisible = visible;
+    this.root.visible = visible && !this.fadingOut;
   }
 
   startDeathFade(): void {
@@ -385,6 +424,13 @@ export class EnemyVisual {
 
   dispose(scene: Scene): void {
     scene.remove(this.root);
+    if (this.modelRoot) {
+      // The cloned model shares geometry/materials/textures with the module
+      // template cache; disposing them here would force three to re-upload
+      // everything on the next spawn. Detach before the recursive dispose.
+      this.root.remove(this.modelRoot);
+      this.modelRoot = null;
+    }
     disposeObjectRoot(this.root);
     this.nameTexture.dispose();
     this.nameMaterial.dispose();

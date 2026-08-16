@@ -2,6 +2,10 @@ import type { WallShaderTweakOptions } from "../render/materials/applyWallShader
 
 export type WallShaderSurfaceKind = "wall" | "detail" | "balcony";
 
+const TIMBER_IDS = new Set([
+  "ph_rough_pine_door",
+]);
+
 const BRICK_MASONRY_IDS = new Set([
   "ph_brick_4_desert",
 ]);
@@ -18,10 +22,16 @@ const AGED_PLASTER_IDS = new Set([
   "ph_aged_plaster_ochre",
   "ph_plastered_wall",
   "ph_beige_wall_002",
+  // The merchant frontages are surfaced in this plaster, and without a profile
+  // it fell through to the generic defaults: no streaks, chips, repair patches
+  // or dust, so the largest surface on the street carried only a broad blotch
+  // pattern and read unfinished at two metres.
+  "ph_painted_plaster_warm",
 ]);
 
 const SOFT_TRIM_IDS = new Set([
   "ph_trim_sanded_01",
+  "ph_stone_trim_sandstone",
   "ph_band_lime_soft",
   "ph_band_beige_001",
   "ph_band_beige_002",
@@ -33,10 +43,31 @@ export function resolveWallShaderProfile(
   materialId: string,
   surfaceKind: WallShaderSurfaceKind,
 ): Partial<WallShaderTweakOptions> {
+  if (TIMBER_IDS.has(materialId)) {
+    return {
+      macroColorAmplitude: surfaceKind === "wall" ? 0.025 : 0.018,
+      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.035 : 0.025,
+      macroFrequency: 0.2,
+      dustColor: "#805b39",
+      dustColorAmount: surfaceKind === "wall" ? 0.025 : 0.015,
+      dirtEnabled: true,
+      dirtHeightM: surfaceKind === "wall" ? 0.55 : 0.38,
+      dirtDarken: surfaceKind === "wall" ? 0.06 : 0.045,
+      dirtRoughnessBoost: 0.05,
+      ...(surfaceKind !== "wall"
+        ? {
+            contactDarkenAmount: surfaceKind === "balcony" ? 0.08 : 0.06,
+            contactDarkenDepth: surfaceKind === "balcony" ? 0.14 : 0.1,
+            useLocalCoords: true,
+          }
+        : {}),
+    };
+  }
+
   if (BRICK_MASONRY_IDS.has(materialId)) {
     return {
-      macroColorAmplitude: surfaceKind === "wall" ? 0.05 : 0.035,
-      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.06 : 0.04,
+      macroColorAmplitude: surfaceKind === "wall" ? 0.03 : 0.025,
+      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.04 : 0.03,
       macroFrequency: surfaceKind === "wall" ? 0.09 : 0.11,
       topBleachAmount: surfaceKind === "balcony" ? 0.015 : 0.025,
       topBleachStartY: surfaceKind === "wall" ? 2.6 : 0.45,
@@ -60,8 +91,8 @@ export function resolveWallShaderProfile(
 
   if (SUN_WASHED_PLASTER_IDS.has(materialId)) {
     return {
-      macroColorAmplitude: surfaceKind === "wall" ? 0.07 : 0.05,
-      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.08 : 0.05,
+      macroColorAmplitude: surfaceKind === "wall" ? 0.025 : 0.02,
+      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.04 : 0.03,
       macroFrequency: surfaceKind === "wall" ? 0.1 : 0.12,
       topBleachAmount: surfaceKind === "balcony" ? 0.03 : 0.06,
       topBleachStartY: surfaceKind === "wall" ? 2.2 : 0.35,
@@ -73,6 +104,13 @@ export function resolveWallShaderProfile(
       dirtHeightM: surfaceKind === "balcony" ? 0.55 : 1.45,
       dirtDarken: surfaceKind === "balcony" ? 0.08 : 0.12,
       dirtRoughnessBoost: surfaceKind === "balcony" ? 0.1 : 0.16,
+      localizedWearEnabled: surfaceKind === "wall",
+      wearStreakStrength: surfaceKind === "wall" ? 0.1 : 0,
+      wearChipStrength: surfaceKind === "wall" ? 0.1 : 0,
+      wearRepairStrength: surfaceKind === "wall" ? 0.13 : 0,
+      wearRoughnessBoost: surfaceKind === "wall" ? 0.12 : 0,
+      wearSubstrateColor: "#9a6843",
+      wearRepairColor: "#c7ad86",
       ...(surfaceKind !== "wall"
         ? {
             contactDarkenAmount: surfaceKind === "balcony" ? 0.14 : 0.1,
@@ -85,8 +123,8 @@ export function resolveWallShaderProfile(
 
   if (AGED_PLASTER_IDS.has(materialId)) {
     return {
-      macroColorAmplitude: surfaceKind === "wall" ? 0.06 : 0.04,
-      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.06 : 0.04,
+      macroColorAmplitude: surfaceKind === "wall" ? 0.025 : 0.02,
+      macroRoughnessAmplitude: surfaceKind === "wall" ? 0.04 : 0.03,
       macroFrequency: surfaceKind === "wall" ? 0.12 : 0.14,
       topBleachAmount: 0.03,
       topBleachStartY: surfaceKind === "wall" ? 2.5 : 0.4,
@@ -98,6 +136,13 @@ export function resolveWallShaderProfile(
       dirtHeightM: surfaceKind === "balcony" ? 0.5 : 1.25,
       dirtDarken: surfaceKind === "balcony" ? 0.06 : 0.1,
       dirtRoughnessBoost: surfaceKind === "balcony" ? 0.08 : 0.13,
+      localizedWearEnabled: surfaceKind === "wall",
+      wearStreakStrength: surfaceKind === "wall" ? 0.13 : 0,
+      wearChipStrength: surfaceKind === "wall" ? 0.14 : 0,
+      wearRepairStrength: surfaceKind === "wall" ? 0.16 : 0,
+      wearRoughnessBoost: surfaceKind === "wall" ? 0.15 : 0,
+      wearSubstrateColor: "#8d5c3b",
+      wearRepairColor: "#b99b72",
       ...(surfaceKind !== "wall"
         ? {
             contactDarkenAmount: surfaceKind === "balcony" ? 0.12 : 0.08,

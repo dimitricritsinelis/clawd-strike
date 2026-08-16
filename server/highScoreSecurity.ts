@@ -75,10 +75,13 @@ function getPrivacyHashSecret(): string {
   if (value.length >= 32) {
     return value;
   }
+  // Fail closed. The fallback is committed to this repository, so using it in
+  // production would make every stored IP fingerprint trivially reversible by
+  // anyone who can read the repo — the hash would protect nothing.
   if (process.env.NODE_ENV === "production" || process.env.VERCEL) {
-    console.warn(
-      "[privacy-hash] WARNING: PRIVACY_HASH_SECRET is missing or too short. "
-      + "Using dev fallback. Set a 32+ character PRIVACY_HASH_SECRET env var in Vercel.",
+    throw new Error(
+      "[privacy-hash] PRIVACY_HASH_SECRET is missing or shorter than 32 characters. "
+      + "Set a 32+ character PRIVACY_HASH_SECRET environment variable before deploying.",
     );
   }
   return DEV_FALLBACK_PRIVACY_HASH_SECRET;
@@ -103,11 +106,37 @@ export function extractClientIp(request: Request): string {
   return "unknown";
 }
 
+/**
+ * Hard ceiling on tracked buckets. This limiter is per-instance in-memory, so
+ * a flood from many distinct addresses would otherwise grow the map without
+ * bound until the 10-minute expiry caught up. Roughly 10k entries is a few MB
+ * and far more than a single lambda instance legitimately sees in a window.
+ */
+const MAX_RATE_LIMIT_BUCKETS = 10_000;
+const RATE_LIMIT_SWEEP_INTERVAL_MS = 60_000;
+let lastRateLimitSweepAtMs = 0;
+
 function cleanupExpiredRateLimitBuckets(nowMs: number): void {
+  // Sweeping on every request is O(n) per request, which is exactly the wrong
+  // shape under the flood this is meant to survive. Sweep on an interval.
+  if (nowMs - lastRateLimitSweepAtMs < RATE_LIMIT_SWEEP_INTERVAL_MS) return;
+  lastRateLimitSweepAtMs = nowMs;
   for (const [key, bucket] of rateLimitBuckets) {
     if (nowMs - bucket.windowStartedAtMs > 10 * 60_000) {
       rateLimitBuckets.delete(key);
     }
+  }
+}
+
+/** Evicts oldest-inserted entries until the map is back under its ceiling. */
+function evictRateLimitBucketsToCapacity(): void {
+  if (rateLimitBuckets.size < MAX_RATE_LIMIT_BUCKETS) return;
+  const overflow = rateLimitBuckets.size - MAX_RATE_LIMIT_BUCKETS + 1;
+  let removed = 0;
+  for (const key of rateLimitBuckets.keys()) {
+    rateLimitBuckets.delete(key);
+    removed += 1;
+    if (removed >= overflow) break;
   }
 }
 
@@ -121,6 +150,7 @@ function consumeRateLimitBucket(
 
   const bucket = rateLimitBuckets.get(key);
   if (!bucket || nowMs - bucket.windowStartedAtMs >= windowMs) {
+    if (!bucket) evictRateLimitBucketsToCapacity();
     rateLimitBuckets.set(key, {
       count: 1,
       windowStartedAtMs: nowMs,

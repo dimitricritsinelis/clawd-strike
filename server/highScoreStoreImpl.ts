@@ -147,10 +147,30 @@ const DROP_LEGACY_AUDIT_COLUMNS_SQL = `
   ALTER TABLE shared_champion_run_audit DROP COLUMN IF EXISTS user_agent;
 `;
 
+const CREATE_AUDIT_INDEX_SQL = `
+  CREATE INDEX IF NOT EXISTS idx_shared_champion_run_audit_created_at
+    ON shared_champion_run_audit (created_at);
+`;
+
 const AUDIT_CLEANUP_SQL = `
   DELETE FROM shared_champion_run_audit
   WHERE created_at < NOW() - INTERVAL '30 days';
 `;
+
+/**
+ * Retention DELETEs used to run inline on every single write, so each request
+ * paid for a scan of the whole retention window. They only need to keep up with
+ * the insert rate, not run per-insert — sampling keeps the amortised cost
+ * negligible while still bounding table growth.
+ */
+const RETENTION_SWEEP_PROBABILITY = 1 / 500;
+
+/** Arbitrary fixed key identifying the shared-champion schema maintenance lock. */
+const SCHEMA_MAINTENANCE_LOCK_KEY = 8_140_512_003;
+
+function shouldRunRetentionSweep(): boolean {
+  return Math.random() < RETENTION_SWEEP_PROBABILITY;
+}
 
 const CREATE_RUNS_TABLE_SQL = `
   CREATE TABLE IF NOT EXISTS shared_champion_runs (
@@ -754,15 +774,25 @@ async function ensureTableConstraint(
     return;
   }
 
-  await client.query(
-    `
-      ALTER TABLE ${tableName}
-      ADD CONSTRAINT ${constraintName}
-      CHECK (
-        ${checkExpression}
-      ) NOT VALID;
-    `,
-  );
+  try {
+    await client.query(
+      `
+        ALTER TABLE ${tableName}
+        ADD CONSTRAINT ${constraintName}
+        CHECK (
+          ${checkExpression}
+        ) NOT VALID;
+      `,
+    );
+  } catch (error) {
+    // 42710 duplicate_object: another instance added the same constraint between
+    // our existence check and this ALTER. The desired end state is already true,
+    // so treat it as success instead of failing the request that triggered the
+    // cold-start schema check.
+    if ((error as { code?: string })?.code !== "42710") {
+      throw error;
+    }
+  }
 }
 
 async function hasTableConstraint(
@@ -1700,6 +1730,7 @@ export async function runSharedChampionSchemaMaintenance(client: QueryableClient
 
   await client.query(CREATE_AUDIT_TABLE_SQL);
   await client.query(ALTER_AUDIT_TABLE_SQL);
+  await client.query(CREATE_AUDIT_INDEX_SQL);
   await client.query(DROP_LEGACY_AUDIT_COLUMNS_SQL);
 
   await client.query(CREATE_RUNS_TABLE_SQL);
@@ -1988,7 +2019,16 @@ async function ensureSchemaReady(): Promise<void> {
   schemaReadyPromise = (async () => {
     const client = await getPool("write").connect();
     try {
-      await runSharedChampionSchemaMaintenance(client);
+      // Serialize schema maintenance across instances. Without this, two cold
+      // starts race the same CREATE/ALTER statements and one of them surfaces a
+      // duplicate-object error as a 500 to whichever player triggered it.
+      await client.query("SELECT pg_advisory_lock($1);", [SCHEMA_MAINTENANCE_LOCK_KEY]);
+      try {
+        await runSharedChampionSchemaMaintenance(client);
+      } finally {
+        await client.query("SELECT pg_advisory_unlock($1);", [SCHEMA_MAINTENANCE_LOCK_KEY])
+          .catch(() => {});
+      }
     } finally {
       client.release();
     }
@@ -2128,7 +2168,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
     async logSubmission(clientIpFingerprint) {
       await ensureSchemaReady();
       await getPool("write").query(RATE_LIMIT_INSERT_SQL, [clientIpFingerprint]);
-      getPool("write").query(RATE_LIMIT_CLEANUP_SQL).catch(() => {});
+      if (shouldRunRetentionSweep()) getPool("write").query(RATE_LIMIT_CLEANUP_SQL).catch(() => {});
     },
     async issueRunToken(input) {
       await ensureSchemaReady();
@@ -2143,7 +2183,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
         normalized.clientIpFingerprint,
         normalized.userAgentFingerprint,
       ]);
-      getPool("write").query(RUN_TOKEN_CLEANUP_SQL).catch(() => {});
+      if (shouldRunRetentionSweep()) getPool("write").query(RUN_TOKEN_CLEANUP_SQL).catch(() => {});
       const row = result.rows[0];
       if (!row) {
         throw new Error("Failed to issue shared champion run token.");
@@ -2233,7 +2273,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
         event.reason ?? null,
         JSON.stringify(event.payload ?? null),
       ]);
-      getPool("write").query(AUDIT_CLEANUP_SQL).catch(() => {});
+      if (shouldRunRetentionSweep()) getPool("write").query(AUDIT_CLEANUP_SQL).catch(() => {});
     },
     async getStatsOverview(filters) {
       await ensureSchemaReady();

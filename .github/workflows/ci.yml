@@ -38,6 +38,15 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Map Tooling Tests
+        run: pnpm test:map-tooling
+
+      - name: QA Tooling Tests
+        run: pnpm test:qa-tooling
+
+      - name: Map Runtime Tests
+        run: pnpm test:map-runtime
+
       - name: Validate STM
         run: pnpm stm -- validate
 

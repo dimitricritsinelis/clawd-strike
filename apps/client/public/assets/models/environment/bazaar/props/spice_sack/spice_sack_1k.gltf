@@ -1,0 +1,216 @@
+{
+    "asset": {
+        "generator": "FBX2glTF v0.9.7",
+        "version": "2.0"
+    },
+    "scene": 0,
+    "buffers": [
+        {
+            "byteLength": 15872,
+            "uri": "spice_sack.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteLength": 3456,
+            "byteOffset": 0,
+            "target": 34963
+        },
+        {
+            "buffer": 0,
+            "byteLength": 4656,
+            "byteOffset": 3456,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 4656,
+            "byteOffset": 8112,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteLength": 3104,
+            "byteOffset": 12768,
+            "target": 34962
+        }
+    ],
+    "scenes": [
+        {
+            "name": "Root Scene",
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "accessors": [
+        {
+            "componentType": 5123,
+            "type": "SCALAR",
+            "count": 1728,
+            "bufferView": 0,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 388,
+            "bufferView": 1,
+            "byteOffset": 0,
+            "min": [
+                -0.265829622745514,
+                -0.16913665831089,
+                -0.265829622745514
+            ],
+            "max": [
+                0.265829622745514,
+                0.332243651151657,
+                0.265829622745514
+            ]
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC3",
+            "count": 388,
+            "bufferView": 2,
+            "byteOffset": 0
+        },
+        {
+            "componentType": 5126,
+            "type": "VEC2",
+            "count": 388,
+            "bufferView": 3,
+            "byteOffset": 0
+        }
+    ],
+    "images": [
+        {
+            "name": "spice_sack_nor_gl_1k",
+            "uri": "textures/spice_sack_nor_gl_1k.jpg"
+        },
+        {
+            "name": "spice_sack_diff_1k",
+            "uri": "textures/spice_sack_diff_1k.jpg"
+        },
+        {
+            "name": "spice_sack_rough_1k",
+            "uri": "textures/spice_sack_rough_1k.jpg"
+        }
+    ],
+    "samplers": [
+        {}
+    ],
+    "textures": [
+        {
+            "name": "Sack_Normal",
+            "sampler": 0,
+            "source": 0
+        },
+        {
+            "name": "Sack_Base_Color",
+            "sampler": 0,
+            "source": 1
+        },
+        {
+            "name": "Sack_Roughness",
+            "sampler": 0,
+            "source": 2
+        }
+    ],
+    "materials": [
+        {
+            "name": "Sack",
+            "alphaMode": "OPAQUE",
+            "extras": {
+                "fromFBX": {
+                    "shadingModel": "Phong",
+                    "isTruePBR": false
+                }
+            },
+            "normalTexture": {
+                "index": 0,
+                "texCoord": 0
+            },
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 1,
+                    "texCoord": 0
+                },
+                "metallicRoughnessTexture": {
+                    "index": 2,
+                    "texCoord": 0
+                },
+                "baseColorFactor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "metallicFactor": 0.0,
+                "roughnessFactor": 1.0
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "SackOfGrain",
+            "primitives": [
+                {
+                    "material": 0,
+                    "mode": 4,
+                    "attributes": {
+                        "NORMAL": 2,
+                        "POSITION": 1,
+                        "TEXCOORD_0": 3
+                    },
+                    "indices": 0
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "RootNode",
+            "translation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "children": [
+                1
+            ]
+        },
+        {
+            "name": "SackOfGrain",
+            "translation": [
+                0.0,
+                0.16913665831089,
+                0.0
+            ],
+            "rotation": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "mesh": 0
+        }
+    ]
+}

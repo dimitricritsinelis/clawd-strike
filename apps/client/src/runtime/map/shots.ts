@@ -3,13 +3,6 @@ import { designToWorldVec3 } from "./coordinateTransforms";
 import type { RuntimeShotsSpec } from "./types";
 
 const COMPARE_ALIAS = "compare";
-const COMPARE_SHOT_ID = "SHOT_BLOCKOUT_COMPARE";
-
-const HARDCODED_COMPARE_CAMERA: CameraPose = {
-  pos: { x: 25, y: 1.7, z: 7 },
-  lookAt: { x: 25, y: 1.7, z: 20 },
-  fovDeg: 75,
-};
 
 export type ResolvedShot = {
   active: boolean;
@@ -38,18 +31,18 @@ export function resolveShot(shotsSpec: RuntimeShotsSpec, requestedShot: string |
     };
   }
 
-  const targetShotId =
-    requestedShot === COMPARE_ALIAS ? (shotsSpec.aliases?.compare ?? COMPARE_SHOT_ID) : requestedShot;
+  const targetShotId = requestedShot === COMPARE_ALIAS
+    ? shotsSpec.aliases?.compare
+    : requestedShot;
+  if (!targetShotId) {
+    throw new Error(`[shot-inventory] authored alias '${requestedShot}' is not configured`);
+  }
 
   const shot = shotsSpec.shots.find((candidate) => candidate.id === targetShotId);
   if (!shot) {
-    return {
-      active: true,
-      id: targetShotId,
-      cameraPose: HARDCODED_COMPARE_CAMERA,
-      freezeInput: true,
-      warning: `Shot '${requestedShot}' not found. Falling back to hardcoded compare camera.`,
-    };
+    throw new Error(
+      `[shot-inventory] unknown authored shot id '${targetShotId}' requested as '${requestedShot}'`,
+    );
   }
 
   return {

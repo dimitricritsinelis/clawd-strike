@@ -6,16 +6,13 @@ Do not use for: workflow policy, durable rationale, archive history, product tru
 Schema version: stm-v2
 Canonical playtest URL: http://127.0.0.1:4174/?map=bazaar-map
 Map approval status: NOT APPROVED
-Last compacted: 2026-03-21T14:21:31Z
+Last compacted: 2026-07-25T15:52:29Z
 
 # short_term_memory.md - Clawd Strike Status
 
 ## Active Snapshot
 <!-- GENERATED START: active-snapshot -->
-- STM-20260309-154233-codex | active | codex | ui-flow | Loading-screen champion b... | next: Wait for review or make a...
-- STM-20260309-223704-codex | blocked | codex | docs | Lean AGENTS and mirror docs | next: Resolve the blocked build...
-- STM-20260312-020306-codex | handoff | codex | perf | Scalable runtime perf pass | next: Claim the card and implem...
-- STM-20260312-151925-codex | active | codex | ui-flow | Buff vignette redesign | next: Await review or alpha/fal...
+- none
 <!-- GENERATED END: active-snapshot -->
 
 ## Shared Ephemera
@@ -23,92 +20,11 @@ Last compacted: 2026-03-21T14:21:31Z
 
 ## Task Cards
 
-### STM-20260309-154233-codex | active | ui-flow | Loading-screen champion badge typography
-Owner: codex
-Branch: codex/champion-badge-font
-Goal: Keep the loading-screen shared-champion badge typography update ready for review or typography-only follow-up.
-Done when: Review lands or any requested typography-only adjustment is applied without moving badge placement or alignment.
-Authority:
-- apps/client/src/styles.css
-Files:
-- apps/client/src/styles.css
-Context:
-- Only loading-screen shared-champion badge typography changed.
-- Placement and alignment stayed unchanged.
-- Longer names ellipsize sooner because badge width stayed fixed.
-Next:
-- Wait for review or make a typography-only adjustment if requested.
-Blockers:
-- none
-Recent Notes:
-- 2026-03-09T15:42:33Z | claim | Claimed task.
-
-### STM-20260309-223704-codex | blocked | docs | Lean AGENTS and mirror docs
-Owner: codex
-Branch: map-dev
-Goal: Keep the STM-based policy surfaces lean by trimming AGENTS.md and removing duplicate authority prose from the mirror docs.
-Done when: AGENTS.md stays under 6 KB, mirror docs stay lean, DEC-001 and DEC-002 stay durable, and the required validation gates pass.
-Authority:
-- AGENTS.md
-- docs/decisions.md
-Files:
-- AGENTS.md
-- README.md
-- docs/decisions.md
-Next:
-- Resolve the blocked build gate or confirm it is unrelated to the docs rewrite.
-Blockers:
-- none
-Recent Notes:
-- 2026-03-09T22:37:09Z | blocker | Blocked on pnpm build hanging after Vite reports 96 modules transformed.
-- 2026-03-09T22:37:09Z | progress | Trimmed AGENTS to 79 lines and 6141 bytes; cleaned README and CLAUDE; rewrote DEC-001 and DEC-002.
-- 2026-03-09T22:37:04Z | claim | Claimed task.
-
-### STM-20260312-020306-codex | handoff | perf | Scalable runtime perf pass
-Owner: codex
-Branch: main
-Goal: Replace per-orb scene graphs with scalable pooled orb rendering and cut baseline render cost.
-Done when: Orb perf scales with count, runtime exposes orb perf counters, and perf smoke covers 0/1/5/10/20 orb cases.
-Authority:
-- AGENTS.md
-- apps/client/src/runtime/buffs/BuffManager.ts
-- apps/client/src/runtime/game/Game.ts
-Files:
-- AGENTS.md
-Next:
-- Claim the card and implement the orb renderer plus perf smoke.
-Blockers:
-- none
-Recent Notes:
-- 2026-03-12T02:55:59Z | progress | Recovered orb color and motion using per-buff pooled layers with bob, breathe, and pulse animation while keeping orb-side perf budgets wi...
-- 2026-03-12T02:20:52Z | handoff | Orb scaling now stays within budget locally, but the zero-orb baseline remains above target and needs a follow-up non-orb perf pass.
-- 2026-03-12T02:20:52Z | progress | Implemented the pooled orb renderer, added orb perf telemetry/debug hooks, and added an orb-scaling perf smoke with paired controls.
-
-### STM-20260312-151925-codex | active | ui-flow | Buff vignette redesign
-Owner: codex
-Branch: main
-Goal: Rebuild the buff overlay around the hit-vignette silhouette with buff-color tint, clean-center edge weighting, and simple pulse/flash timing.
-Done when: Buff vignettes reuse the shared edge-vignette shape, latest active buff owns the color, red hit feedback stays on top, and typecheck/server/smoke validation pass.
-Authority:
-- apps/client/src/runtime/ui/BuffVignette.ts
-- apps/client/src/runtime/buffs/BuffTypes.ts
-- apps/client/src/runtime/bootstrap.ts
-Files:
-- apps/client/src/runtime/ui/BuffVignette.ts
-Next:
-- Await review or alpha/falloff-only tuning in a real headed Chrome pass.
-Blockers:
-- none
-Recent Notes:
-- 2026-03-12T17:11:00Z | progress | Raised sustained buff floor/pulse highs, revalidated typecheck plus smoke, verified 5s and 9.2s runtime samples.
-- 2026-03-12T16:56:01Z | progress | Tuned buff vignette inward reach with stronger base/pulse/flash, revalidated typecheck plus smoke gates.
-- 2026-03-12T16:25:24Z | progress | Replaced decorative buff wash with shared edge-vignette layers, passed typecheck plus smoke gates.
-
 ## Recent Completed Rollup
 <!-- TOOL-MANAGED START: completed-rollup -->
-- STM-20260321-141728-codex | ui-flow | Responsive loading-screen desktop layout | 2026-03-21 | Made desktop loading-screen layout viewport-aware; smoke:game and targeted loading-screen Playwright checks pass. Full Playwright still has an unrelated shared-champion expectation mismatch (403 expected, 400 received).
-- STM-20260316-002631-codex | map-visual | Additional palm anchor placement | 2026-03-16 | Added the 4 spawn-ring decorative palms plus the west-jog pocket palm to the bazaar map authority, regenerated the runtime/layout artifacts, and validated with typecheck, smoke:game, and qa:completion against a local server at 127.0.0.1:4174.
-- STM-20260314-200934-codex | map-visual | Palm crown refinement | 2026-03-14 | Rebuilt the decorative palm crown into three deterministic frond layers with juvenile/torn/partial variants, enabled frond receive-shadowing, retuned alpha edges, and swapped the planter shell from a flat fill to the spawn trim texture family. Validation passed with typecheck, smoke:game, and qa:completion.
-- STM-20260314-172757-codex | map-visual | Bazaar palm texture integration | 2026-03-14 | Integrated sourced palm bark and generated frond textures into a visual-only courtyard palm system, added decorative palm anchors to the bazaar authority, regenerated derived map outputs, and passed typecheck/test:server/smoke:game/qa:completion.
-- STM-20260313-185148-codex | map-visual | Spawn B center hero bay final polish | 2026-03-13 | Final Spawn B hero-bay pass rebuilt the center opening, pediment, entablature, and corbels into one integrated module; updated the owning map spec/hero shot criteria, regenerated derived map outputs, and passed typecheck/test:server/smoke:game/qa:completion with refreshed captures.
+- STM-20260725-140809-codex | tooling | Reliable unattended QA harness | 2026-07-25 | QA harness now owns dynamic frozen Vite servers, bounds runtime reads with heartbeat diagnostics, isolates shot/route contexts, persists completion evidence incrementally, and cleans up reliably. Focused tests, typecheck, 2-shot capture, selected route, 12-route suite, smoke:game, qa:completion, and diff check passed.
+- STM-20260710-033932-codex | map-visual | Bazaar Map v3 production polish | 2026-07-25 | L3.7 FINAL GATE owner package ready. Sole hard evidence: artifacts/playwright/completion-gate/2026-07-24T23-39-04-861Z (failed=false, 3/3 routes, 16/16 shots, desktop 828 draws/1,547,741 tris/8.40ms/706.3ms boot, mobile 355/979,724/6.05ms/631.2ms). Fresh binding critic recorded 0/16 full visual targets with every residual and final regression disclosed in the roadmap ledger; visual misses package per owner rule. L3.7 and L3.7-B1 checked; build and preview verified at http://127.0.0.1:4174/?map=bazaar-map; approval remains NOT_APPROVED/human-only; no commit.
+- STM-20260312-151925-codex | ui-flow | Buff vignette redesign | 2026-07-25 | Closed as stale during the 2026-07-25 map-development context cleanup; no active work remains.
+- STM-20260312-020306-codex | perf | Scalable runtime perf pass | 2026-07-25 | Closed as stale during the 2026-07-25 map-development context cleanup; no active work remains.
+- STM-20260309-223704-codex | docs | Lean AGENTS and mirror docs | 2026-07-25 | Closed as stale during the 2026-07-25 map-development context cleanup; no active work remains.
 <!-- TOOL-MANAGED END: completed-rollup -->

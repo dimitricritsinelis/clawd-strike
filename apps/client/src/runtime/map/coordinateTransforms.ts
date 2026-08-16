@@ -21,5 +21,8 @@ export function designToWorldVec3(vec: DesignVec3): WorldVec3 {
 }
 
 export function designYawDegToWorldYawRad(yawDeg: number | undefined): number {
-  return (yawDeg ?? 0) * DEG_TO_RAD;
+  // Design yaw uses 0° = +north (+Z in world space), while Three.js camera
+  // and gameplay forward use yaw 0 = -Z. Rotate the authored convention by
+  // 180° so 90° remains east and 270° remains west.
+  return ((yawDeg ?? 0) + 180) * DEG_TO_RAD;
 }

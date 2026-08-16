@@ -2,11 +2,60 @@
 
 import type { AgentAction } from "./runtime/input/AgentAction";
 import type { BuffType } from "./runtime/buffs/BuffTypes";
+import type { QaCaptureState } from "./runtime/qa/assetReadiness";
 
 declare global {
   interface Window {
     agent_observe?: () => string;
     render_game_to_text?: () => string;
+    __runtime_ready_state?: () => {
+      mapLoaded: boolean;
+      revealPhase: string;
+      shotActive: boolean;
+      shotId: string | null;
+      qaCaptureReady: boolean;
+      qaAssetPlanHash: string | null;
+    };
+    __debug_scene_perf?: () => unknown;
+    __debug_render_perf?: () => unknown;
+    __qa_performance_state?: () => unknown;
+    __qa_capture_state?: () => QaCaptureState;
+    __qa_render_frame?: () => void;
+    __qa_route_state?: () => {
+      gameplay: { alive: boolean };
+      player: {
+        pos: { x: number; y: number; z: number };
+        withinPlayableBounds: boolean;
+        zoneId: string | null;
+        collision: { hitX: boolean; hitY: boolean; hitZ: boolean; grounded: boolean };
+      };
+    };
+    __qa_heartbeat?: () => {
+      timestamp: number;
+      frameCounter: number;
+      runtimePhase: string;
+      mainLoopAdvancing: boolean;
+      lastFrameAt: number | null;
+      lastStateSerializationAt: number | null;
+      stateSerializationInProgress: boolean;
+      disposed: boolean;
+      frozen: boolean;
+    };
+    __qa_framing_state?: () => {
+      revealPhase: string;
+      camera: {
+        fovDeg: number;
+        aspect: number;
+      };
+      landmarks: unknown;
+      revealing: {
+        camera: {
+          fovDeg: number;
+          aspect: number;
+        };
+        landmarks: unknown;
+      } | null;
+    };
     advanceTime?: (ms: number) => Promise<void>;
     agent_apply_action?: (action: AgentAction) => void;
     __debug_emit_combat_feedback?: (payload: {
@@ -43,6 +92,10 @@ declare global {
       z: number;
       yawDeg?: number;
     }) => void;
+    __debug_pick_scene?: (payload: {
+      xPx: number;
+      yPx: number;
+    }) => unknown[];
     __debug_reset_bot_knowledge?: () => void;
     __debug_suppress_bot_intel_ms?: (durationMs: number) => void;
     __vt_pending?: unknown;

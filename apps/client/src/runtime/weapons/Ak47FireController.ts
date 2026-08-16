@@ -70,6 +70,22 @@ const WORLD_RIGHT = new Vector3(1, 0, 0);
 
 export type Ak47ShotEvent = {
   hit: boolean;
+  /**
+   * The direction the bullet actually travelled, including spread and bloom.
+   * Consumers that re-raycast the shot (enemy hit registration, buff orbs)
+   * must use this instead of raw camera forward, or spread stops applying to
+   * anything but wall decals.
+   */
+  direction: {
+    x: number;
+    y: number;
+    z: number;
+  };
+  /**
+   * How far the bullet may travel before it is spent: the world hit distance
+   * when it struck geometry, otherwise the weapon's max range.
+   */
+  travelDistance: number;
   hitPoint?: {
     x: number;
     y: number;
@@ -250,9 +266,16 @@ export class Ak47FireController {
 
     const hit = raycastFirstHit(input.world, input.origin, this.shotDirection, this.maxRangeM, this.raycastHit);
     if (onShot) {
+      const direction = {
+        x: this.shotDirection.x,
+        y: this.shotDirection.y,
+        z: this.shotDirection.z,
+      };
       if (hit) {
         onShot({
           hit: true,
+          direction,
+          travelDistance: this.raycastHit.distance,
           hitPoint: {
             x: this.raycastHit.point.x,
             y: this.raycastHit.point.y,
@@ -266,7 +289,9 @@ export class Ak47FireController {
           colliderId: this.raycastHit.colliderId,
         });
       } else {
-        onShot({ hit: false });
+        // A bullet that reaches open sky still travels through the world and
+        // must remain able to hit an enemy along the way.
+        onShot({ hit: false, direction, travelDistance: this.maxRangeM });
       }
     }
 

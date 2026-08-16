@@ -24,6 +24,40 @@ const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
 } as const;
 
+/**
+ * Ceiling on a run request body. Sized so that an implausible-but-parseable
+ * submission still reaches the anti-cheat validator and earns its semantic
+ * rejection, while a multi-megabyte body is refused before it is ever buffered.
+ */
+const MAX_RUN_BODY_BYTES = 256 * 1024;
+
+/**
+ * Rejections raised before the request cleared the transport gate (wrong
+ * content type, cross-origin, rate limited) are unauthenticated and fully
+ * attacker-controlled. Writing an audit row for each one turns a request flood
+ * into an unbounded write flood against Postgres, so these are logged only.
+ */
+function logPreAuthRejection(
+  eventType: SharedChampionAuditEvent["eventType"],
+  status: number,
+  reason: string,
+  ipFingerprint: string | null,
+): void {
+  console.warn(
+    `[shared-champion] ${eventType} pre-auth rejection status=${status} reason=${reason} `
+    + `ip=${(ipFingerprint ?? "unknown").slice(0, 12)}`,
+  );
+}
+
+/**
+ * Rejects an oversized body using the Content-Length header, before request
+ * .json() buffers it into memory.
+ */
+function exceedsRunBodyLimit(request: Request): boolean {
+  const declared = Number.parseInt(request.headers.get("content-length") ?? "0", 10);
+  return Number.isFinite(declared) && declared > MAX_RUN_BODY_BYTES;
+}
+
 function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
   return Response.json(body, {
     ...init,
@@ -103,6 +137,11 @@ export async function handleSharedChampionRunStartRequest(
     );
   }
 
+  if (exceedsRunBodyLimit(request)) {
+    logPreAuthRejection("run-start", 413, "payload-too-large", null);
+    return errorResponse(413, "Payload too large.");
+  }
+
   const writeCheck = protectJsonWriteRequest(request, {
     rateLimitNamespace: "shared-champion-run-start",
     maxRequests: 120,
@@ -110,13 +149,7 @@ export async function handleSharedChampionRunStartRequest(
     requireSameOrigin: true,
   });
   if (writeCheck.ok === false) {
-    await recordAuditEvent(store, {
-      eventType: "run-start",
-      outcome: "rejected",
-      ipFingerprint: writeCheck.clientIpFingerprint,
-      userAgentFingerprint: writeCheck.userAgentFingerprint,
-      reason: writeCheck.error,
-    });
+    logPreAuthRejection("run-start", writeCheck.status, writeCheck.error, writeCheck.clientIpFingerprint);
     return errorResponse(writeCheck.status, writeCheck.error);
   }
 
@@ -228,6 +261,11 @@ export async function handleSharedChampionRunFinishRequest(
     );
   }
 
+  if (exceedsRunBodyLimit(request)) {
+    logPreAuthRejection("run-finish", 413, "payload-too-large", null);
+    return errorResponse(413, "Payload too large.");
+  }
+
   const writeCheck = protectJsonWriteRequest(request, {
     rateLimitNamespace: "shared-champion-run-finish",
     maxRequests: 120,
@@ -235,13 +273,7 @@ export async function handleSharedChampionRunFinishRequest(
     requireSameOrigin: true,
   });
   if (writeCheck.ok === false) {
-    await recordAuditEvent(store, {
-      eventType: "run-finish",
-      outcome: "rejected",
-      ipFingerprint: writeCheck.clientIpFingerprint,
-      userAgentFingerprint: writeCheck.userAgentFingerprint,
-      reason: writeCheck.error,
-    });
+    logPreAuthRejection("run-finish", writeCheck.status, writeCheck.error, writeCheck.clientIpFingerprint);
     return buildRejectedFinishResponse(store, writeCheck.status, writeCheck.error);
   }
 

@@ -1,0 +1,179 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://clawdstrike.local/schemas/composition-waivers-v1.json",
+  "title": "Clawd Strike composition waiver registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "legacyMigration", "waivers"],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "legacyMigration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "closed", "recordCount", "recordsSha256"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "closed": {
+          "const": true
+        },
+        "recordCount": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "recordsSha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "waivers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/waiver"
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": {
+      "type": "string",
+      "minLength": 1
+    },
+    "stringList": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/nonEmptyString"
+      }
+    },
+    "match": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "anchorId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "openingIds": {
+          "$ref": "#/$defs/stringList"
+        },
+        "placementIds": {
+          "$ref": "#/$defs/stringList"
+        },
+        "placementId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "openingId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "frontageId": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "violationIds": {
+          "$ref": "#/$defs/stringList"
+        }
+      },
+      "oneOf": [
+        {
+          "required": ["anchorId", "openingIds"]
+        },
+        {
+          "required": ["placementIds"]
+        },
+        {
+          "required": ["placementId", "openingId"]
+        },
+        {
+          "required": ["frontageId", "violationIds"]
+        }
+      ]
+    },
+    "approval": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "legacyRef"],
+          "properties": {
+            "status": {
+              "const": "legacy-migrated"
+            },
+            "legacyRef": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "approver", "ticket"],
+          "properties": {
+            "status": {
+              "const": "approved"
+            },
+            "approver": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "ticket": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
+        }
+      ]
+    },
+    "waiver": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "signature",
+        "match",
+        "reasonCode",
+        "rationale",
+        "approval"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^CW-[A-F0-9]{12}$"
+        },
+        "kind": {
+          "enum": [
+            "canopy-opening",
+            "decoration-opening",
+            "fenestration",
+            "fixture-axis",
+            "fixture-buffer",
+            "hard-overlap",
+            "opening-service",
+            "wall-budget"
+          ]
+        },
+        "signature": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "match": {
+          "$ref": "#/$defs/match"
+        },
+        "reasonCode": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "rationale": {
+          "$ref": "#/$defs/nonEmptyString"
+        },
+        "approval": {
+          "$ref": "#/$defs/approval"
+        },
+        "expiresOn": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    }
+  }
+}

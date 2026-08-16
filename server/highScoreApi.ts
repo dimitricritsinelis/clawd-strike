@@ -1,17 +1,8 @@
 import {
-  isSharedChampionControlMode,
-  normalizeScore,
-  parseTelemetry,
-  sanitizeSharedChampionName,
-  validateTelemetry,
-  type SharedChampionPostRequest,
-} from "../apps/shared/highScore.js";
-import {
-  getSharedChampionAdminToken,
+  fingerprintClientIp,
   protectJsonWriteRequest,
 } from "./highScoreSecurity.js";
 import type { SharedChampionAuditEvent, SharedChampionStore } from "./highScoreStore.js";
-import { verifySessionToken } from "./sessionToken.js";
 
 const MAX_POST_BODY_BYTES = 1024;
 
@@ -32,36 +23,6 @@ function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
 
 function errorResponse(status: number, error: string): Response {
   return jsonResponse({ error }, { status });
-}
-
-function parseSubmissionBody(value: unknown): SharedChampionPostRequest | null {
-  if (!value || typeof value !== "object") return null;
-  const record = value as Record<string, unknown>;
-  if (!isSharedChampionControlMode(record.controlMode)) return null;
-
-  const parsedScore = Number(record.score ?? record.scoreHalfPoints);
-  if (!Number.isFinite(parsedScore) || parsedScore < 0) return null;
-
-  const telemetry = parseTelemetry(record.telemetry);
-  if (!telemetry) return null;
-  const playerName = sanitizeSharedChampionName(record.playerName, record.controlMode);
-  if (playerName === null) return null;
-
-  return {
-    playerName,
-    score: normalizeScore(parsedScore),
-    controlMode: record.controlMode,
-    telemetry,
-  };
-}
-
-function extractClientIp(request: Request): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) {
-    const first = forwarded.split(",")[0]?.trim();
-    if (first) return first;
-  }
-  return "unknown";
 }
 
 async function recordAuditEvent(
@@ -103,19 +64,24 @@ export async function handleSharedChampionRequest(
     }
 
     if (request.method === "POST") {
-      const clientIp = extractClientIp(request);
+      // Never hold the raw address: this value is the rate-limit key, is
+      // persisted by logSubmission into the column named client_ip_fingerprint,
+      // and is echoed into request logs. fingerprintClientIp is a keyed HMAC, so
+      // it is stable per client without being reversible.
+      const clientIpFingerprint = fingerprintClientIp(request);
+      const clientIpLogTag = clientIpFingerprint.slice(0, 12);
 
       // ── Request size limit ──────────────────────────────────────────────
       const contentLength = parseInt(request.headers.get("content-length") ?? "0", 10);
       if (contentLength > MAX_POST_BODY_BYTES) {
-        console.log(`[champion-submit] ip=${clientIp} result=rejected reason=payload-too-large size=${contentLength}`);
+        console.log(`[champion-submit] ip=${clientIpLogTag} result=rejected reason=payload-too-large size=${contentLength}`);
         return errorResponse(413, "Payload too large.");
       }
 
       // ── Rate limiting ───────────────────────────────────────────────────
-      const rateLimited = await store.isRateLimited(clientIp);
+      const rateLimited = await store.isRateLimited(clientIpFingerprint);
       if (rateLimited) {
-        console.log(`[champion-submit] ip=${clientIp} result=rate-limited`);
+        console.log(`[champion-submit] ip=${clientIpLogTag} result=rate-limited`);
         return errorResponse(429, "Too many submissions. Try again later.");
       }
 
@@ -136,94 +102,24 @@ export async function handleSharedChampionRequest(
         return errorResponse(writeCheck.status, writeCheck.error);
       }
 
-      const configuredAdminToken = getSharedChampionAdminToken();
-      const providedAdminToken = request.headers.get("x-shared-champion-admin-token")?.trim() ?? "";
-      if (!configuredAdminToken || providedAdminToken !== configuredAdminToken) {
-        await recordAuditEvent(store, {
-          eventType: "champion-direct-write",
-          outcome: "rejected",
-          ipFingerprint: writeCheck.clientIpFingerprint,
-          userAgentFingerprint: writeCheck.userAgentFingerprint,
-          reason: "Direct shared champion writes are internal-only.",
-        });
-        return errorResponse(403, "Direct shared champion writes are internal-only.");
-      }
-
-
-      let body: unknown;
-      try {
-        body = await request.json();
-      } catch {
-        console.log(`[champion-submit] ip=${clientIp} result=rejected reason=invalid-json`);
-        await recordAuditEvent(store, {
-          eventType: "champion-direct-write",
-          outcome: "rejected",
-          ipFingerprint: writeCheck.clientIpFingerprint,
-          userAgentFingerprint: writeCheck.userAgentFingerprint,
-          reason: "Invalid JSON body.",
-        });
-        return errorResponse(400, "Invalid JSON body.");
-      }
-
-      // ── Session token verification ──────────────────────────────────────
-      // Proves the submission came from an actual game page load, not a
-      // direct API call. See docs/security.md for design rationale.
-      const rawToken = (body as Record<string, unknown>)?.sessionToken;
-      const tokenResult = verifySessionToken(rawToken);
-      if (tokenResult.valid === false) {
-        console.log(`[champion-submit] ip=${clientIp} result=rejected reason=session-${tokenResult.reason}`);
-        return errorResponse(403, "Invalid or expired session token.");
-      }
-
-      const parsedBody = parseSubmissionBody(body);
-      if (!parsedBody) {
-        console.log(`[champion-submit] ip=${clientIp} result=rejected reason=invalid-payload`);
-        await recordAuditEvent(store, {
-          eventType: "champion-direct-write",
-          outcome: "rejected",
-          ipFingerprint: writeCheck.clientIpFingerprint,
-          userAgentFingerprint: writeCheck.userAgentFingerprint,
-          reason: "Expected { playerName, score, controlMode, telemetry, sessionToken }.",
-        });
-        return errorResponse(400, "Expected { playerName, score, controlMode, telemetry, sessionToken }.");
-      }
-
-      // ── Telemetry validation ────────────────────────────────────────────
-      if (!parsedBody.telemetry) {
-        console.log(`[champion-submit] ip=${clientIp} result=rejected reason=missing-telemetry`);
-        return errorResponse(400, "Missing telemetry.");
-      }
-      const telemetryResult = validateTelemetry(parsedBody.score, parsedBody.telemetry);
-      if (telemetryResult.valid === false) {
-        console.log(
-          `[champion-submit] ip=${clientIp} name=${parsedBody.playerName} score=${parsedBody.score} mode=${parsedBody.controlMode} result=rejected reason=telemetry-${telemetryResult.reason}`,
-        );
-        return errorResponse(400, "Score telemetry validation failed.");
-      }
-
-      // ── Submit ──────────────────────────────────────────────────────────
-      const result = await store.submitCandidate(parsedBody);
-
-      // ── Log submission + record for rate limiting ───────────────────────
-      await store.logSubmission(clientIp);
-
-      console.log(
-        `[champion-submit] ip=${clientIp} name=${parsedBody.playerName} score=${parsedBody.score} mode=${parsedBody.controlMode} result=${result.updated ? "accepted" : "not-higher"}`,
-      );
-
+      // Direct champion writes are retired. Every score must come through the
+      // validated run flow (/api/run/start -> /api/run/finish), which binds the
+      // score to a server-issued run token and runs anti-cheat validation.
+      //
+      // This path used to accept a shared admin token as a bypass, so anyone
+      // holding that env value could set an arbitrary champion score in one
+      // request. Nothing uses the bypass — the game client only GETs this
+      // endpoint, and no script or admin tool sends the header — so it is
+      // closed outright rather than left as a standing skeleton key.
       await recordAuditEvent(store, {
         eventType: "champion-direct-write",
-        outcome: "accepted",
+        outcome: "rejected",
         ipFingerprint: writeCheck.clientIpFingerprint,
         userAgentFingerprint: writeCheck.userAgentFingerprint,
-        payload: {
-          playerName: parsedBody.playerName,
-          score: parsedBody.score,
-          controlMode: parsedBody.controlMode,
-          updated: result.updated,
-        },
+        reason: "Direct shared champion writes are internal-only.",
       });
-      return jsonResponse(result);
+      console.log(`[champion-submit] ip=${clientIpLogTag} result=rejected reason=direct-write-retired`);
+      return errorResponse(403, "Direct shared champion writes are internal-only.");
     }
 
     return errorResponse(405, "Method not allowed.");
