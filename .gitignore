@@ -34,3 +34,4 @@ artifacts/tmp/**
 .env*.local
 short_term_memory.md.lock
 short_term_memory.md.tmp-*
+.vercel
