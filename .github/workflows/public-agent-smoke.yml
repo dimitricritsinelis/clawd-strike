@@ -22,7 +22,11 @@ jobs:
           node-version: 20
           cache: pnpm
       - run: pnpm install --no-frozen-lockfile
-      - run: pnpm exec playwright install --with-deps chromium
+        # playwright is a devDependency of @clawd-strike/client, not of the
+        # workspace root, so `pnpm exec` here resolves nothing and the job dies
+        # with `Command "playwright" not found`. ci.yml already scopes this
+        # correctly with --filter.
+      - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
       - run: pnpm smoke:no-context
         env:
           BASE_URL: https://clawd-strike.vercel.app/
