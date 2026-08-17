@@ -8,26 +8,18 @@
  */
 
 import {
-  type BuffType,
   BUFF_DEFINITIONS,
   BUFF_TYPES,
   RALLYING_CRY_NAME,
   RALLYING_CRY_ICON_PATH,
 } from "../buffs/BuffTypes";
+import type { GameplayTuning } from "../tuning/gameplayTuning";
+import { createBuffDisplayCopy, type BuffDisplayCopy } from "./BuffDisplayCopy";
 
 /* ── Theme constants (mirrored from PauseMenu) ── */
 
 const SERIF_FONT = 'Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif';
 const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
-
-/* ── Buff effect descriptions (human-readable, colocated with UI) ── */
-
-const BUFF_EFFECTS: Record<BuffType, string> = {
-  speed_boost: "+35% movement speed",
-  rapid_fire: "1.5\u00D7 fire rate, 2\u00D7 reload speed",
-  unlimited_ammo: "Unlimited ammo, no reload needed",
-  health_boost: "+100 overshield (absorbs damage first)",
-};
 
 /* ── Helpers ── */
 
@@ -109,6 +101,7 @@ function createBodyText(text: string): HTMLDivElement {
 export class HowToPlayOverlay {
   readonly root: HTMLDivElement;
 
+  private readonly buffCopy: BuffDisplayCopy;
   private visible = false;
   private fadeTimerS = 0;
   private readonly FADE_IN_S = 0.2;
@@ -116,7 +109,8 @@ export class HowToPlayOverlay {
   /** Called when the overlay closes. */
   onClose: (() => void) | null = null;
 
-  constructor(mountEl: HTMLElement) {
+  constructor(mountEl: HTMLElement, tuning: GameplayTuning) {
+    this.buffCopy = createBuffDisplayCopy(tuning);
     /* ── Root overlay ── */
     this.root = document.createElement("div");
     Object.assign(this.root.style, {
@@ -370,7 +364,7 @@ export class HowToPlayOverlay {
         color: "#ffd78d",
         textAlign: "center",
       });
-      durationEl.textContent = `${def.durationS}s`;
+      durationEl.textContent = this.buffCopy.standardDurationLabel;
 
       // Effect
       const effectEl = document.createElement("div");
@@ -382,7 +376,7 @@ export class HowToPlayOverlay {
         color: "rgba(255, 241, 224, 0.72)",
         lineHeight: "1.4",
       });
-      effectEl.textContent = BUFF_EFFECTS[buffType];
+      effectEl.textContent = this.buffCopy.detailedEffects[buffType];
 
       row.append(iconWrap, nameEl, durationEl, effectEl);
       table.append(row);
@@ -464,8 +458,7 @@ export class HowToPlayOverlay {
       color: "rgba(255, 241, 224, 0.72)",
       lineHeight: "1.45",
     });
-    descEl.textContent =
-      "Score 10 headshot kills in a single wave to activate all four buffs simultaneously at the start of the next wave.";
+    descEl.textContent = this.buffCopy.perfectWaveDescription;
 
     textBlock.append(nameEl, descEl);
     box.append(iconEl, textBlock);

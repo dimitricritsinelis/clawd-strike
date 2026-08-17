@@ -1,9 +1,13 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import {
   SHARED_CHAMPION_RUN_TOKEN_TTL_MS,
-  SHARED_CHAMPION_SCORE_RULESET,
+  areGameplayProfileIdentitiesEqual,
+  createSharedChampionBoardIdentity,
   isSharedChampionControlMode,
+  isGameplayProfileCompatibleWithControlMode,
   normalizeSharedChampionRunSummary,
+  parseCurrentGameplayProfileIdentity,
+  parseStoredGameplayProfileIdentity,
   sanitizeSharedChampionMapId,
   sanitizeSharedChampionName,
   validateSharedChampionRunSummary,
@@ -12,12 +16,17 @@ import {
   type SharedChampionRunStartRequest,
   type SharedChampionRunStartResponse,
 } from "../apps/shared/highScore.js";
+import type { GameplayProfileIdentity } from "../apps/shared/gameplayProfile.js";
 import {
   isSharedChampionPublicRunSubmissionEnabled,
   protectJsonWriteRequest,
   sha256Hex,
 } from "./highScoreSecurity.js";
-import type { SharedChampionAuditEvent, SharedChampionStore } from "./highScoreStore.js";
+import {
+  getSharedChampionRunTokenProfileIdentity,
+  type SharedChampionAuditEvent,
+  type SharedChampionStore,
+} from "./highScoreStore.js";
 
 const JSON_HEADERS = {
   "cache-control": "no-store",
@@ -76,12 +85,16 @@ function parseRunStartBody(value: unknown): SharedChampionRunStartRequest | null
   if (!value || typeof value !== "object") return null;
   const record = value as Record<string, unknown>;
   if (!isSharedChampionControlMode(record.controlMode)) return null;
+  const profileIdentity = parseCurrentGameplayProfileIdentity(record);
+  if (!profileIdentity) return null;
+  if (!isGameplayProfileCompatibleWithControlMode(profileIdentity, record.controlMode)) return null;
   const playerName = sanitizeSharedChampionName(record.playerName, record.controlMode);
   if (playerName === null) return null;
   return {
     playerName,
     controlMode: record.controlMode,
     mapId: sanitizeSharedChampionMapId(record.mapId),
+    ...profileIdentity,
   };
 }
 
@@ -97,10 +110,13 @@ function parseRunFinishBody(value: unknown): SharedChampionRunFinishRequest | nu
   if (!summary) {
     return null;
   }
+  const profileIdentity = parseStoredGameplayProfileIdentity(record);
+  if (!profileIdentity) return null;
 
   return {
     runToken: record.runToken.trim(),
     summary,
+    ...profileIdentity,
   };
 }
 
@@ -187,7 +203,10 @@ export async function handleSharedChampionRunStartRequest(
       userAgentFingerprint: writeCheck.userAgentFingerprint,
       reason: "invalid-start-payload",
     });
-    return errorResponse(400, "Expected { playerName, controlMode, mapId }.");
+    return errorResponse(
+      400,
+      "Expected { playerName, controlMode, mapId, profileId, tuningRevision, balanceSeason }.",
+    );
   }
 
   try {
@@ -198,16 +217,25 @@ export async function handleSharedChampionRunStartRequest(
       playerName: parsedBody.playerName,
       controlMode: parsedBody.controlMode,
       mapId: parsedBody.mapId,
+      profileIdentity: {
+        profileId: parsedBody.profileId,
+        tuningRevision: parsedBody.tuningRevision,
+        balanceSeason: parsedBody.balanceSeason,
+      },
       expiresAt: new Date(Date.now() + SHARED_CHAMPION_RUN_TOKEN_TTL_MS),
       clientIpFingerprint: writeCheck.clientIpFingerprint,
       userAgentFingerprint: writeCheck.userAgentFingerprint,
     });
 
+    const issuedIdentity = getSharedChampionRunTokenProfileIdentity(issued);
+    if (!issuedIdentity || !areGameplayProfileIdentitiesEqual(issuedIdentity, parsedBody)) {
+      throw new Error("Issued run token did not preserve its gameplay profile identity.");
+    }
     const responseBody: SharedChampionRunStartResponse = {
       runToken,
       issuedAt: issued.issuedAt,
       expiresAt: issued.expiresAt,
-      ruleset: SHARED_CHAMPION_SCORE_RULESET,
+      ...createSharedChampionBoardIdentity(issuedIdentity),
     };
 
     await recordAuditEvent(store, {
@@ -220,6 +248,11 @@ export async function handleSharedChampionRunStartRequest(
         playerName: issued.playerName,
         controlMode: issued.controlMode,
         mapId: issued.mapId,
+        profileId: issuedIdentity.profileId,
+        tuningRevision: issuedIdentity.tuningRevision,
+        balanceSeason: issuedIdentity.balanceSeason,
+        boardKey: issued.boardKey,
+        ruleset: issued.ruleset,
         expiresAt: issued.expiresAt,
       },
     });
@@ -235,8 +268,9 @@ async function buildRejectedFinishResponse(
   store: SharedChampionStore,
   status: number,
   reason: string,
+  identity: GameplayProfileIdentity | null = null,
 ): Promise<Response> {
-  const champion = await store.getChampion();
+  const champion = await store.getChampion(identity);
   const body: SharedChampionRunFinishResponse = {
     accepted: false,
     updated: false,
@@ -335,7 +369,52 @@ export async function handleSharedChampionRunFinishRequest(
         userAgentFingerprint: writeCheck.userAgentFingerprint,
         reason: consumed.status,
       });
-      return buildRejectedFinishResponse(store, status, consumed.status);
+      return buildRejectedFinishResponse(store, status, consumed.status, parsedBody);
+    }
+
+    const tokenIdentity = getSharedChampionRunTokenProfileIdentity(consumed.record);
+    if (!tokenIdentity) {
+      await recordAuditEvent(store, {
+        eventType: "run-finish",
+        outcome: "rejected",
+        runId: consumed.record.runId,
+        ipFingerprint: writeCheck.clientIpFingerprint,
+        userAgentFingerprint: writeCheck.userAgentFingerprint,
+        reason: "run-token-profile-missing",
+      });
+      return buildRejectedFinishResponse(store, 409, "run-token-profile-missing", parsedBody);
+    }
+
+    if (!areGameplayProfileIdentitiesEqual(tokenIdentity, parsedBody)) {
+      await recordAuditEvent(store, {
+        eventType: "run-finish",
+        outcome: "rejected",
+        runId: consumed.record.runId,
+        ipFingerprint: writeCheck.clientIpFingerprint,
+        userAgentFingerprint: writeCheck.userAgentFingerprint,
+        reason: "profile-identity-mismatch",
+        payload: {
+          tokenIdentity,
+          requestedIdentity: {
+            profileId: parsedBody.profileId,
+            tuningRevision: parsedBody.tuningRevision,
+            balanceSeason: parsedBody.balanceSeason,
+          },
+        },
+      });
+      return buildRejectedFinishResponse(store, 409, "profile-identity-mismatch", tokenIdentity);
+    }
+
+    if (!isGameplayProfileCompatibleWithControlMode(tokenIdentity, consumed.record.controlMode)) {
+      await recordAuditEvent(store, {
+        eventType: "run-finish",
+        outcome: "rejected",
+        runId: consumed.record.runId,
+        ipFingerprint: writeCheck.clientIpFingerprint,
+        userAgentFingerprint: writeCheck.userAgentFingerprint,
+        reason: "profile-control-mode-mismatch",
+      });
+      return buildRejectedFinishResponse(store, 409, "profile-control-mode-mismatch", tokenIdentity);
     }
 
     const normalizedTokenPlayerName = sanitizeSharedChampionName(
@@ -354,9 +433,13 @@ export async function handleSharedChampionRunFinishRequest(
           mapId: consumed.record.mapId,
           playerName: consumed.record.playerName,
           controlMode: consumed.record.controlMode,
+          profileId: tokenIdentity.profileId,
+          tuningRevision: tokenIdentity.tuningRevision,
+          balanceSeason: tokenIdentity.balanceSeason,
+          boardKey: consumed.record.boardKey,
         },
       });
-      return buildRejectedFinishResponse(store, 422, "invalid-run-token-player-name");
+      return buildRejectedFinishResponse(store, 422, "invalid-run-token-player-name", tokenIdentity);
     }
 
     const tokenRecord = {
@@ -368,8 +451,8 @@ export async function handleSharedChampionRunFinishRequest(
       ? Date.parse(tokenRecord.claimedAt)
       : Date.now();
     const issuedAtMs = Date.parse(tokenRecord.issuedAt);
-    const elapsedMs = Math.max(0, claimedAtMs - issuedAtMs);
-    const validation = validateSharedChampionRunSummary(parsedBody.summary, elapsedMs);
+    const wallElapsedMs = Math.max(0, claimedAtMs - issuedAtMs);
+    const validation = validateSharedChampionRunSummary(parsedBody.summary, wallElapsedMs);
 
     if (validation.ok === false) {
       await recordAuditEvent(store, {
@@ -383,13 +466,18 @@ export async function handleSharedChampionRunFinishRequest(
           mapId: tokenRecord.mapId,
           playerName: tokenRecord.playerName,
           controlMode: tokenRecord.controlMode,
+          profileId: tokenIdentity.profileId,
+          tuningRevision: tokenIdentity.tuningRevision,
+          balanceSeason: tokenIdentity.balanceSeason,
+          boardKey: tokenRecord.boardKey,
           elapsedMs: validation.elapsedMs,
+          wallElapsedMs,
           maxKills: validation.maxKills,
           maxShotsFired: validation.maxShotsFired,
           summary: parsedBody.summary,
         },
       });
-      return buildRejectedFinishResponse(store, 422, validation.reason);
+      return buildRejectedFinishResponse(store, 422, validation.reason, tokenIdentity);
     }
 
     const result = await store.finalizeValidatedRun({
@@ -411,7 +499,12 @@ export async function handleSharedChampionRunFinishRequest(
         playerName: tokenRecord.playerName,
         controlMode: tokenRecord.controlMode,
         mapId: tokenRecord.mapId,
+        profileId: tokenIdentity.profileId,
+        tuningRevision: tokenIdentity.tuningRevision,
+        balanceSeason: tokenIdentity.balanceSeason,
+        boardKey: tokenRecord.boardKey,
         elapsedMs: validation.elapsedMs,
+        wallElapsedMs,
         score: validation.computedScore,
         updated: result.updated,
         runId: result.run.runId,

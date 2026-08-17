@@ -6,11 +6,25 @@ import { fileURLToPath } from "node:url";
 import { Pool, type PoolClient } from "pg";
 
 import { authorizeStatsAdminRequest } from "./highScoreSecurity.js";
-import { handleSharedChampionRunFinishRequest } from "./highScoreRunApi.js";
+import { handleSharedChampionRequest } from "./highScoreApi.js";
 import {
+  handleSharedChampionRunFinishRequest,
+  handleSharedChampionRunStartRequest,
+} from "./highScoreRunApi.js";
+import {
+  SHARED_CHAMPION_SCORE_RULESET,
+  calculateSharedChampionScore,
+  calculateSharedChampionMaxKills,
+  calculateSharedChampionMaxShotsFired,
   createSharedChampion,
+  deriveSharedChampionBoardKey,
   parseSharedChampion,
+  validateSharedChampionRunSummary,
 } from "../apps/shared/highScore.js";
+import {
+  GAMEPLAY_PROFILE_IDENTITIES,
+  type GameplayProfileIdentity,
+} from "../apps/shared/gameplayProfile.js";
 import {
   deriveRunFields,
   parseStatsFilters,
@@ -24,6 +38,7 @@ import {
   resolveSharedChampionReconcileConnectionString,
   runSharedChampionSchemaMaintenance,
   type SharedChampionAuditEvent,
+  type SharedChampionRunTokenRecord,
   type SharedChampionStore,
   validateSharedChampionConstraints,
 } from "./highScoreStoreImpl.js";
@@ -45,7 +60,9 @@ function createValidRunFinishSummary() {
 function createRunFinishRequest(input: {
   runToken?: string;
   summary?: unknown;
+  identity?: GameplayProfileIdentity;
 } = {}): Request {
+  const identity = input.identity ?? GAMEPLAY_PROFILE_IDENTITIES["desktop-human"];
   return new Request("https://example.test/api/run/finish", {
     method: "POST",
     headers: {
@@ -56,8 +73,34 @@ function createRunFinishRequest(input: {
     body: JSON.stringify({
       runToken: input.runToken ?? "test-run-token",
       summary: input.summary ?? createValidRunFinishSummary(),
+      ...identity,
     }),
   });
+}
+
+function createRunTokenRecord(input: {
+  runId: string;
+  playerName: string;
+  controlMode: "human" | "agent";
+  identity: GameplayProfileIdentity;
+  claimedAt?: string | null;
+}): SharedChampionRunTokenRecord {
+  return {
+    runId: input.runId,
+    playerName: input.playerName,
+    controlMode: input.controlMode,
+    mapId: "bazaar-map",
+    ruleset: SHARED_CHAMPION_SCORE_RULESET,
+    balanceSeason: input.identity.balanceSeason,
+    profileId: input.identity.profileId,
+    tuningRevision: input.identity.tuningRevision,
+    boardKey: deriveSharedChampionBoardKey(input.identity),
+    issuedAt: "2026-03-08T00:00:00.000Z",
+    expiresAt: "2026-03-08T00:30:00.000Z",
+    claimedAt: input.claimedAt === undefined
+      ? "2026-03-08T00:00:01.000Z"
+      : input.claimedAt,
+  };
 }
 
 function createSharedChampionStoreStub(
@@ -280,10 +323,16 @@ test("schema maintenance includes shared_champion_runs and rollup views", async 
   assert(statements.some((statement) => statement.includes("ALTER TABLE shared_champion_scores") && statement.includes("ADD COLUMN score INTEGER")));
   assert(statements.some((statement) => statement.includes("UPDATE shared_champion_scores") && statement.includes("score_half_points / 2.0")));
   assert(statements.some((statement) => statement.includes("DROP COLUMN IF EXISTS score_half_points")));
+  assert(statements.some((statement) => statement.includes("ALTER TABLE shared_champion_scores") && statement.includes("ADD COLUMN IF NOT EXISTS profile_id TEXT")));
+  assert(statements.some((statement) => statement.includes("idx_shared_champion_scores_profile_identity")));
+  assert(statements.some((statement) => statement.includes("ALTER TABLE shared_champion_run_tokens") && statement.includes("ADD COLUMN IF NOT EXISTS board_key TEXT")));
+  assert(statements.some((statement) => statement.includes("idx_shared_champion_run_tokens_profile_board")));
   assert(statements.some((statement) => statement.includes("DROP VIEW IF EXISTS shared_champion_daily_rollups_v1")));
   assert(statements.some((statement) => statement.includes("ALTER TABLE shared_champion_runs") && statement.includes("ADD COLUMN score INTEGER")));
   assert(statements.some((statement) => statement.includes("UPDATE shared_champion_runs") && statement.includes("score_half_points / 2.0")));
   assert(statements.some((statement) => statement.includes("CREATE TABLE IF NOT EXISTS shared_champion_runs")));
+  assert(statements.some((statement) => statement.includes("ALTER TABLE shared_champion_runs") && statement.includes("ADD COLUMN IF NOT EXISTS balance_season TEXT")));
+  assert(statements.some((statement) => statement.includes("idx_shared_champion_runs_profile_board")));
   assert(statements.some((statement) => statement.includes("CREATE OR REPLACE VIEW shared_champion_daily_rollups_v1")));
   assert(statements.some((statement) => statement.includes("CREATE OR REPLACE VIEW shared_champion_name_rollups_v1")));
   assert(statements.some((statement) => statement.includes("shared_champion_scores_holder_name_contract_v1")));
@@ -367,6 +416,22 @@ test("invalid admin stats playerName filters fail instead of mapping to Unknown"
   );
 });
 
+test("admin stats filters can isolate a profile, revision, and balance season", () => {
+  const identity = GAMEPLAY_PROFILE_IDENTITIES["desktop-human"];
+  const url = new URL("https://example.test/api/admin/stats/overview");
+  url.searchParams.set("profileId", identity.profileId);
+  url.searchParams.set("tuningRevision", identity.tuningRevision);
+  url.searchParams.set("balanceSeason", identity.balanceSeason);
+  const filters = parseStatsFilters(url);
+  assert.equal(filters.profileId, identity.profileId);
+  assert.equal(filters.tuningRevision, identity.tuningRevision);
+  assert.equal(filters.balanceSeason, identity.balanceSeason);
+  assert.throws(
+    () => parseStatsFilters(new URL("https://example.test/api/admin/stats/overview?profileId=mobile-agent")),
+    /profileId is invalid/,
+  );
+});
+
 test("shared champion parsing rejects malformed stored names instead of coercing to Unknown", () => {
   assert.throws(
     () => createSharedChampion({
@@ -413,12 +478,284 @@ test("deriveRunFields rejects malformed stored player names", () => {
   );
 });
 
-test("run finish rejects malformed legacy token names instead of returning 500", async () => {
+test("v4 score formula remains unchanged while board keys isolate every profile", () => {
+  assert.equal(calculateSharedChampionScore(11, [2, 1]), 74);
+  const boardKeys = Object.values(GAMEPLAY_PROFILE_IDENTITIES).map(deriveSharedChampionBoardKey);
+  assert.equal(new Set(boardKeys).size, boardKeys.length);
+  for (const boardKey of boardKeys) {
+    assert.match(boardKey, /wave-score-v4-k5-wi2-hs2x-b10/);
+    assert.notEqual(boardKey, "default");
+  }
+});
+
+test("active combat time permits pauses and excluded wave intermissions", () => {
+  const summary = {
+    survivalTimeS: 1,
+    kills: 11,
+    headshots: 0,
+    headshotsPerWave: [0, 0],
+    shotsFired: 11,
+    shotsHit: 11,
+    accuracy: 100,
+    finalScore: 57,
+    deathCause: "enemy-fire" as const,
+  };
+  const validation = validateSharedChampionRunSummary(summary, 60_000);
+  assert.equal(validation.ok, true);
+  assert.equal(validation.elapsedMs, 1_000, "persisted elapsed time is active combat time");
+  assert.equal(validation.maxKills, calculateSharedChampionMaxKills(1_000));
+  assert.equal(validation.maxShotsFired, calculateSharedChampionMaxShotsFired(1_000));
+});
+
+test("wall-clock pauses cannot inflate active-time kill or shot feasibility caps", () => {
+  const maxKills = calculateSharedChampionMaxKills(1_000);
+  const inflatedKills = maxKills + 1;
+  const inflatedKillWaves = Math.ceil(inflatedKills / 10);
+  const killInflation = validateSharedChampionRunSummary({
+    survivalTimeS: 1,
+    kills: inflatedKills,
+    headshots: 0,
+    headshotsPerWave: Array.from({ length: inflatedKillWaves }, () => 0),
+    shotsFired: inflatedKills,
+    shotsHit: inflatedKills,
+    accuracy: 100,
+    finalScore: calculateSharedChampionScore(
+      inflatedKills,
+      Array.from({ length: inflatedKillWaves }, () => 0),
+    ),
+    deathCause: "enemy-fire",
+  }, 60_000);
+  assert.equal(killInflation.ok, false);
+  assert.equal(killInflation.ok ? null : killInflation.reason, "kills-exceed-cap");
+  assert.equal(killInflation.maxKills, calculateSharedChampionMaxKills(1_000));
+
+  const maxShotsFired = calculateSharedChampionMaxShotsFired(1_000);
+  const shotInflation = validateSharedChampionRunSummary({
+    survivalTimeS: 1,
+    kills: 1,
+    headshots: 0,
+    headshotsPerWave: [0],
+    shotsFired: maxShotsFired + 1,
+    shotsHit: 1,
+    accuracy: Math.round((100 / (maxShotsFired + 1)) * 10) / 10,
+    finalScore: 5,
+    deathCause: "enemy-fire",
+  }, 60_000);
+  assert.equal(shotInflation.ok, false);
+  assert.equal(shotInflation.ok ? null : shotInflation.reason, "shots-fired-exceed-cap");
+  assert.equal(shotInflation.maxShotsFired, calculateSharedChampionMaxShotsFired(1_000));
+});
+
+test("active time must be positive and cannot exceed token wall time by more than five seconds", () => {
+  const baseSummary = createValidRunFinishSummary();
+  for (const survivalTimeS of [0, -1, Number.POSITIVE_INFINITY]) {
+    const invalid = validateSharedChampionRunSummary({ ...baseSummary, survivalTimeS }, 10_000);
+    assert.equal(invalid.ok, false);
+    assert.equal(invalid.ok ? null : invalid.reason, "survival-time-invalid");
+  }
+
+  const toleranceBoundary = validateSharedChampionRunSummary(
+    { ...baseSummary, survivalTimeS: 10 },
+    5_000,
+  );
+  assert.equal(toleranceBoundary.ok, true);
+  const overTolerance = validateSharedChampionRunSummary(
+    { ...baseSummary, survivalTimeS: 10.1 },
+    5_000,
+  );
+  assert.equal(overTolerance.ok, false);
+  assert.equal(overTolerance.ok ? null : overTolerance.reason, "survival-time-out-of-range");
+});
+
+test("champion reads select an explicit current profile board while legacy GET remains default", async () => {
+  const reads: Array<GameplayProfileIdentity | null | undefined> = [];
+  const store = createSharedChampionStoreStub({
+    async getChampion(identity) {
+      reads.push(identity);
+      return null;
+    },
+  });
+  const identity = GAMEPLAY_PROFILE_IDENTITIES["mobile-human"];
+  const explicitUrl = new URL("https://example.test/api/high-score");
+  explicitUrl.searchParams.set("profileId", identity.profileId);
+  explicitUrl.searchParams.set("tuningRevision", identity.tuningRevision);
+  explicitUrl.searchParams.set("balanceSeason", identity.balanceSeason);
+
+  const explicitResponse = await handleSharedChampionRequest(new Request(explicitUrl), store);
+  assert.equal(explicitResponse.status, 200);
+  assert.deepEqual(reads[0], identity);
+
+  const legacyResponse = await handleSharedChampionRequest(
+    new Request("https://example.test/api/high-score"),
+    store,
+  );
+  assert.equal(legacyResponse.status, 200);
+  assert.equal(reads[1], null);
+
+  const partialResponse = await handleSharedChampionRequest(
+    new Request("https://example.test/api/high-score?profileId=mobile-human"),
+    store,
+  );
+  assert.equal(partialResponse.status, 400);
+  assert.equal(reads.length, 2);
+});
+
+test("run start requires and persists the complete current profile identity", async () => {
+  const identity = GAMEPLAY_PROFILE_IDENTITIES["desktop-agent"];
+  const issueInputs: Array<Parameters<SharedChampionStore["issueRunToken"]>[0]> = [];
+  const store = createSharedChampionStoreStub({
+    async issueRunToken(input) {
+      issueInputs.push(input);
+      return createRunTokenRecord({
+        runId: input.runId,
+        playerName: input.playerName,
+        controlMode: input.controlMode,
+        identity: input.profileIdentity,
+        claimedAt: null,
+      });
+    },
+  });
+  const request = new Request("https://example.test/api/run/start", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      origin: "https://example.test",
+    },
+    body: JSON.stringify({
+      playerName: "Agent Ace",
+      controlMode: "agent",
+      mapId: "bazaar-map",
+      ...identity,
+    }),
+  });
+
+  const response = await handleSharedChampionRunStartRequest(request, store);
+  assert.equal(response.status, 200);
+  const body = await response.json() as Record<string, unknown>;
+  assert.equal(body.profileId, identity.profileId);
+  assert.equal(body.tuningRevision, identity.tuningRevision);
+  assert.equal(body.balanceSeason, identity.balanceSeason);
+  assert.equal(body.boardKey, deriveSharedChampionBoardKey(identity));
+  assert.equal(body.ruleset, SHARED_CHAMPION_SCORE_RULESET);
+  assert.deepEqual(issueInputs[0]?.profileIdentity, identity);
+
+  const staleResponse = await handleSharedChampionRunStartRequest(
+    new Request("https://example.test/api/run/start", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        origin: "https://example.test",
+      },
+      body: JSON.stringify({
+        playerName: "Agent Ace",
+        controlMode: "agent",
+        mapId: "bazaar-map",
+        ...identity,
+        tuningRevision: `${identity.tuningRevision}-stale`,
+      }),
+    }),
+    store,
+  );
+  assert.equal(staleResponse.status, 400);
+  assert.equal(issueInputs.length, 1);
+});
+
+test("in-memory competitive champions and losing run records stay isolated by profile", async () => {
+  const store = createInMemorySharedChampionStore();
+  const desktopIdentity = GAMEPLAY_PROFILE_IDENTITIES["desktop-human"];
+  const mobileIdentity = GAMEPLAY_PROFILE_IDENTITIES["mobile-human"];
+  const baseInput = {
+    summary: createValidRunFinishSummary(),
+    elapsedMs: 1000,
+    clientIpFingerprint: null,
+    userAgentFingerprint: null,
+  };
+
+  const desktopWinner = await store.finalizeValidatedRun({
+    ...baseInput,
+    tokenRecord: createRunTokenRecord({
+      runId: "desktop-winner",
+      playerName: "Desktop Ace",
+      controlMode: "human",
+      identity: desktopIdentity,
+    }),
+    score: 50,
+  });
+  const desktopLoser = await store.finalizeValidatedRun({
+    ...baseInput,
+    tokenRecord: createRunTokenRecord({
+      runId: "desktop-loser",
+      playerName: "Desktop Two",
+      controlMode: "human",
+      identity: desktopIdentity,
+    }),
+    score: 5,
+  });
+  const mobileWinner = await store.finalizeValidatedRun({
+    ...baseInput,
+    tokenRecord: createRunTokenRecord({
+      runId: "mobile-winner",
+      playerName: "Mobile Ace",
+      controlMode: "human",
+      identity: mobileIdentity,
+    }),
+    score: 10,
+  });
+
+  assert.equal(desktopWinner.updated, true);
+  assert.equal(desktopLoser.updated, false);
+  assert.equal(desktopLoser.champion?.holderName, "Desktop Ace");
+  assert.equal(desktopLoser.run.championUpdated, false);
+  assert.equal(mobileWinner.updated, true);
+  assert.equal((await store.getChampion(desktopIdentity))?.score, 50);
+  assert.equal((await store.getChampion(mobileIdentity))?.score, 10);
+  assert.equal(await store.getChampion(), null, "legacy combined board must remain read-only");
+});
+
+test("run finish consumes but cannot switch a token to another profile board", async () => {
+  const tokenIdentity = GAMEPLAY_PROFILE_IDENTITIES["desktop-human"];
+  const requestedIdentity = GAMEPLAY_PROFILE_IDENTITIES["mobile-human"];
+  const auditEvents: SharedChampionAuditEvent[] = [];
+  let finalizeCalls = 0;
+  const store = createSharedChampionStoreStub({
+    async consumeRunToken() {
+      return {
+        status: "consumed" as const,
+        record: createRunTokenRecord({
+          runId: "profile-tamper",
+          playerName: "Honest Name",
+          controlMode: "human",
+          identity: tokenIdentity,
+        }),
+      };
+    },
+    async finalizeValidatedRun() {
+      finalizeCalls += 1;
+      throw new Error("identity mismatch must not finalize");
+    },
+    async recordAuditEvent(event) {
+      auditEvents.push(event);
+    },
+  });
+
+  const response = await handleSharedChampionRunFinishRequest(
+    createRunFinishRequest({ identity: requestedIdentity }),
+    store,
+  );
+  assert.equal(response.status, 409);
+  assert.equal((await response.json() as { reason: string }).reason, "profile-identity-mismatch");
+  assert.equal(finalizeCalls, 0);
+  assert.equal(auditEvents[0]?.reason, "profile-identity-mismatch");
+});
+
+test("run finish rejects malformed token names instead of returning 500", async () => {
+  const identity = GAMEPLAY_PROFILE_IDENTITIES["desktop-human"];
   const champion = createSharedChampion({
     holderName: "Clean Champ",
     score: 77,
-    controlMode: "agent",
+    controlMode: "human",
     updatedAt: "2026-03-08T12:00:00.000Z",
+    identity,
   });
   const auditEvents: SharedChampionAuditEvent[] = [];
   let finalizeCalls = 0;
@@ -429,15 +766,12 @@ test("run finish rejects malformed legacy token names instead of returning 500",
     async consumeRunToken() {
       return {
         status: "consumed" as const,
-        record: {
+        record: createRunTokenRecord({
           runId: "legacy-run",
           playerName: "Bad<Name",
           controlMode: "human" as const,
-          mapId: "bazaar-map",
-          issuedAt: "2026-03-08T00:00:00.000Z",
-          expiresAt: "2026-03-08T00:30:00.000Z",
-          claimedAt: "2026-03-08T00:00:01.000Z",
-        },
+          identity,
+        }),
       };
     },
     async finalizeValidatedRun() {
@@ -467,12 +801,17 @@ test("run finish rejects malformed legacy token names instead of returning 500",
     mapId: "bazaar-map",
     playerName: "Bad<Name",
     controlMode: "human",
+    profileId: identity.profileId,
+    tuningRevision: identity.tuningRevision,
+    balanceSeason: identity.balanceSeason,
+    boardKey: deriveSharedChampionBoardKey(identity),
   });
   assert.match(auditEvents[0]?.ipFingerprint ?? "", /^[0-9a-f]{64}$/);
   assert.match(auditEvents[0]?.userAgentFingerprint ?? "", /^[0-9a-f]{64}$/);
 });
 
-test("run finish normalizes valid legacy token names before finalizing", async () => {
+test("run finish normalizes token names and persists active elapsed across pauses", async () => {
+  const identity = GAMEPLAY_PROFILE_IDENTITIES["desktop-agent"];
   const finalizeStore = createInMemorySharedChampionStore();
   const auditEvents: SharedChampionAuditEvent[] = [];
   const finalizeInputs: Array<Parameters<SharedChampionStore["finalizeValidatedRun"]>[0]> = [];
@@ -480,15 +819,13 @@ test("run finish normalizes valid legacy token names before finalizing", async (
     async consumeRunToken() {
       return {
         status: "consumed" as const,
-        record: {
+        record: createRunTokenRecord({
           runId: "normalized-run",
           playerName: "  Legacy   Name  ",
           controlMode: "agent" as const,
-          mapId: "bazaar-map",
-          issuedAt: "2026-03-08T00:00:00.000Z",
-          expiresAt: "2026-03-08T00:30:00.000Z",
-          claimedAt: "2026-03-08T00:00:01.000Z",
-        },
+          identity,
+          claimedAt: "2026-03-08T00:00:20.000Z",
+        }),
       };
     },
     async finalizeValidatedRun(input) {
@@ -500,7 +837,10 @@ test("run finish normalizes valid legacy token names before finalizing", async (
     },
   });
 
-  const response = await handleSharedChampionRunFinishRequest(createRunFinishRequest(), store);
+  const response = await handleSharedChampionRunFinishRequest(
+    createRunFinishRequest({ identity }),
+    store,
+  );
   assert.equal(response.status, 200);
   assert.deepEqual(await response.json(), {
     accepted: true,
@@ -509,19 +849,26 @@ test("run finish normalizes valid legacy token names before finalizing", async (
       holderName: "Legacy Name",
       score: 5,
       controlMode: "agent",
-      updatedAt: "2026-03-08T00:00:01.000Z",
+      updatedAt: "2026-03-08T00:00:20.000Z",
+      identity,
     }),
     reason: null,
   });
   assert.equal(finalizeInputs.length, 1);
   assert.equal(finalizeInputs[0]?.tokenRecord.playerName, "Legacy Name");
+  assert.equal(finalizeInputs[0]?.elapsedMs, 1000);
   assert.equal(auditEvents.length, 1);
   assert.equal(auditEvents[0]?.outcome, "accepted");
   assert.deepEqual(auditEvents[0]?.payload, {
     playerName: "Legacy Name",
     controlMode: "agent",
     mapId: "bazaar-map",
+    profileId: identity.profileId,
+    tuningRevision: identity.tuningRevision,
+    balanceSeason: identity.balanceSeason,
+    boardKey: deriveSharedChampionBoardKey(identity),
     elapsedMs: 1000,
+    wallElapsedMs: 20_000,
     score: 5,
     updated: true,
     runId: "normalized-run",
@@ -613,6 +960,11 @@ test("backfill planning is conservative and idempotent", () => {
         player_name: "Dimitri",
         control_mode: "human" as const,
         map_id: "bazaar-map",
+        ruleset: null,
+        balance_season: null,
+        profile_id: null,
+        tuning_revision: null,
+        board_key: null,
         issued_at: issuedAt,
         expires_at: new Date("2026-03-07T20:43:59.000Z"),
         claimed_at: claimedAt,
@@ -629,6 +981,11 @@ test("backfill planning is conservative and idempotent", () => {
         player_name: "Broken",
         control_mode: "human" as const,
         map_id: "bazaar-map",
+        ruleset: null,
+        balance_season: null,
+        profile_id: null,
+        tuning_revision: null,
+        board_key: null,
         issued_at: new Date("2026-03-08T02:07:50.000Z"),
         expires_at: new Date("2026-03-08T02:37:50.000Z"),
         claimed_at: new Date("2026-03-08T02:08:00.000Z"),
@@ -645,6 +1002,11 @@ test("backfill planning is conservative and idempotent", () => {
         player_name: "Bad<Name",
         control_mode: "human" as const,
         map_id: "bazaar-map",
+        ruleset: null,
+        balance_season: null,
+        profile_id: null,
+        tuning_revision: null,
+        board_key: null,
         issued_at: new Date("2026-03-08T02:08:10.000Z"),
         expires_at: new Date("2026-03-08T02:38:10.000Z"),
         claimed_at: new Date("2026-03-08T02:08:20.000Z"),
@@ -696,6 +1058,11 @@ test("backfill planning is conservative and idempotent", () => {
   assert.equal(report.inserts[0]?.createdAt, claimedAt.toISOString());
   assert.equal(report.inserts[0]?.playerName, "Dimitri");
   assert.equal(report.inserts[0]?.score, 50);
+  assert.equal(report.inserts[0]?.elapsedMs, 6000);
+  assert.equal(report.inserts[0]?.profileId, null);
+  assert.equal(report.inserts[0]?.tuningRevision, null);
+  assert.equal(report.inserts[0]?.balanceSeason, null);
+  assert.equal(report.inserts[0]?.boardKey, null);
   assert.equal(report.inserts[0]?.clientIpFingerprint, "claim-ip");
   assert.equal(report.inserts[0]?.userAgentFingerprint, "claim-ua");
 });

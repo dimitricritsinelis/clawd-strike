@@ -11,7 +11,7 @@ export class PointerLockController {
     if (this.isLocked()) return;
     this.softLocked = true;
     this.options.onLockChange(true);
-    this.requestPointerLock();
+    this.requestLock();
   };
 
   private readonly onPointerLockChange = (): void => {
@@ -61,17 +61,12 @@ export class PointerLockController {
     return document.pointerLockElement === this.options.lockEl || this.softLocked;
   }
 
-  dispose(): void {
-    this.options.lockEl.removeEventListener("pointerdown", this.onPointerDown);
-    document.removeEventListener("pointerlockchange", this.onPointerLockChange);
-    document.removeEventListener("pointerlockerror", this.onPointerLockError);
-    document.removeEventListener("mousemove", this.onMouseMove);
-    window.removeEventListener("keydown", this.onKeyDown);
-    window.removeEventListener("blur", this.onWindowBlur);
-    document.removeEventListener("visibilitychange", this.onVisibilityChange);
-  }
-
-  private requestPointerLock(): void {
+  /**
+   * Requests the browser lock while containing both synchronous throws and the
+   * Promise rejection returned by modern browsers. Runtime UI paths use this
+   * instead of calling HTMLElement.requestPointerLock() directly.
+   */
+  requestLock(): void {
     if (document.pointerLockElement === this.options.lockEl) return;
     try {
       const result = this.options.lockEl.requestPointerLock();
@@ -83,6 +78,16 @@ export class PointerLockController {
     } catch {
       this.onPointerLockError();
     }
+  }
+
+  dispose(): void {
+    this.options.lockEl.removeEventListener("pointerdown", this.onPointerDown);
+    document.removeEventListener("pointerlockchange", this.onPointerLockChange);
+    document.removeEventListener("pointerlockerror", this.onPointerLockError);
+    document.removeEventListener("mousemove", this.onMouseMove);
+    window.removeEventListener("keydown", this.onKeyDown);
+    window.removeEventListener("blur", this.onWindowBlur);
+    document.removeEventListener("visibilitychange", this.onVisibilityChange);
   }
 
   private releaseSoftLock(): void {

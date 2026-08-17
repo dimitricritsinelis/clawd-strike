@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  generateAuthoredFacadeLayout,
   generateFacadeLayout,
   validateFrontageCoverage,
   validateFixtureCenterlines,
@@ -125,6 +126,9 @@ const APPROVED_CC0_HOSTS = new Set([
 const MAX_AUTHORED_GRADE_DEG = 30;
 const RECT_EPSILON = 1e-6;
 const SCALE_EPSILON = 1e-9;
+const MAP_POLISH_PLAYER_EYE_HEIGHT_M = 1.7;
+const MAP_POLISH_CAMERA_POSITION_TOLERANCE_M = 0.02;
+const MAP_POLISH_CAMERA_YAW_TOLERANCE_DEG = 0.35;
 
 const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
@@ -440,6 +444,9 @@ function collectJsonSchemaErrors(value, schema, rootSchema, valuePath) {
 
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const properties = schema.properties && typeof schema.properties === "object" ? schema.properties : {};
+    if (typeof schema.minProperties === "number" && Object.keys(value).length < schema.minProperties) {
+      errors.push(`${valuePath}: expected at least ${schema.minProperties} properties`);
+    }
     if (Array.isArray(schema.required)) {
       for (const key of schema.required) {
         if (!Object.hasOwn(value, key)) {
@@ -452,11 +459,21 @@ function collectJsonSchemaErrors(value, schema, rootSchema, valuePath) {
         errors.push(...collectJsonSchemaErrors(value[key], childSchema, rootSchema, `${valuePath}.${key}`));
       }
     }
-    if (schema.additionalProperties === false) {
-      for (const key of Object.keys(value)) {
-        if (!Object.hasOwn(properties, key)) {
-          errors.push(`${valuePath}.${key}: additional property is not allowed`);
-        }
+    for (const key of Object.keys(value)) {
+      if (Object.hasOwn(properties, key)) continue;
+      if (schema.additionalProperties === false) {
+        errors.push(`${valuePath}.${key}: additional property is not allowed`);
+      } else if (
+        schema.additionalProperties
+        && typeof schema.additionalProperties === "object"
+        && !Array.isArray(schema.additionalProperties)
+      ) {
+        errors.push(...collectJsonSchemaErrors(
+          value[key],
+          schema.additionalProperties,
+          rootSchema,
+          `${valuePath}.${key}`,
+        ));
       }
     }
     if (schema.dependentRequired && typeof schema.dependentRequired === "object") {
@@ -546,6 +563,115 @@ function deriveZones(spec) {
     zoneIds: seenIds,
     zones: sortedById(derived),
   };
+}
+
+function validateExactObjectKeys(value, allowedKeys, label) {
+  for (const key of Object.keys(value)) {
+    if (!allowedKeys.has(key)) {
+      fail(`${label}.${key} is not an allowed property`);
+    }
+  }
+}
+
+function validateSurveyCameraPoint(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(`${label} must be an object`);
+  }
+  validateExactObjectKeys(value, new Set(["x", "y", "z"]), label);
+  asNumber(value.x, `${label}.x`);
+  asNumber(value.y, `${label}.y`);
+  asNumber(value.z, `${label}.z`);
+}
+
+function validateSurveyCamera(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(`${label} must be an object`);
+  }
+  validateExactObjectKeys(
+    value,
+    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "fovDeg"]),
+    label,
+  );
+  validateSurveyCameraPoint(value.designPosition, `${label}.designPosition`);
+  validateSurveyCameraPoint(value.designLookAt, `${label}.designLookAt`);
+  validateSurveyCameraPoint(value.playerPosition, `${label}.playerPosition`);
+  const yawDeg = asNumber(value.yawDeg, `${label}.yawDeg`);
+  const fovDeg = asNumber(value.fovDeg, `${label}.fovDeg`);
+  if (fovDeg <= 0 || fovDeg >= 180) {
+    fail(`${label}.fovDeg must be > 0 and < 180`);
+  }
+  const playerEyePosition = {
+    x: value.playerPosition.x,
+    y: value.playerPosition.z,
+    z: value.playerPosition.y + MAP_POLISH_PLAYER_EYE_HEIGHT_M,
+  };
+  if (Math.hypot(
+    playerEyePosition.x - value.designPosition.x,
+    playerEyePosition.y - value.designPosition.y,
+    playerEyePosition.z - value.designPosition.z,
+  ) > MAP_POLISH_CAMERA_POSITION_TOLERANCE_M) {
+    fail(`${label}.designPosition must be the 1.7m player-eye position for playerPosition`);
+  }
+  const lookDx = value.designLookAt.x - value.designPosition.x;
+  const lookDy = value.designLookAt.y - value.designPosition.y;
+  const horizontalLookDistance = Math.hypot(
+    lookDx,
+    lookDy,
+  );
+  if (horizontalLookDistance <= RECT_EPSILON) {
+    fail(`${label}.designLookAt must differ from designPosition in the horizontal plane`);
+  }
+  const expectedYawDeg = Math.atan2(-lookDx, -lookDy) * (180 / Math.PI);
+  let yawDeltaDeg = Math.abs(yawDeg - expectedYawDeg) % 360;
+  if (yawDeltaDeg > 180) yawDeltaDeg = 360 - yawDeltaDeg;
+  if (yawDeltaDeg > MAP_POLISH_CAMERA_YAW_TOLERANCE_DEG) {
+    fail(`${label}.yawDeg must align with designPosition and designLookAt`);
+  }
+}
+
+function validateMapPolishSurveyCameraOverrides(spec, zoneIds) {
+  const overrides = spec?.map_polish_survey_camera_overrides;
+  if (typeof overrides === "undefined") return;
+  if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
+    fail("map_polish_survey_camera_overrides must be an object when provided");
+  }
+  const entries = Object.entries(overrides);
+  if (entries.length === 0) {
+    fail("map_polish_survey_camera_overrides must contain at least one zone override");
+  }
+
+  const seenZoneIds = new Set();
+  for (const [rawZoneId, views] of entries) {
+    const zoneId = ensureString(rawZoneId, "map_polish_survey_camera_overrides zone id");
+    if (seenZoneIds.has(zoneId)) {
+      fail(`Duplicate map polish survey camera override for zone '${zoneId}'`);
+    }
+    seenZoneIds.add(zoneId);
+    if (rawZoneId !== zoneId) {
+      fail(`map_polish_survey_camera_overrides zone id '${rawZoneId}' must not contain surrounding whitespace`);
+    }
+    if (!zoneIds.has(zoneId)) {
+      fail(`Unknown map polish survey camera override zone '${zoneId}'`);
+    }
+    if (!views || typeof views !== "object" || Array.isArray(views)) {
+      fail(`map_polish_survey_camera_overrides.${zoneId} must be an object`);
+    }
+    validateExactObjectKeys(
+      views,
+      new Set(["primary", "context"]),
+      `map_polish_survey_camera_overrides.${zoneId}`,
+    );
+    const viewEntries = Object.entries(views);
+    if (viewEntries.length === 0) {
+      fail(`map_polish_survey_camera_overrides.${zoneId} must define primary or context`);
+    }
+    for (const [viewName, camera] of viewEntries) {
+      validateSurveyCamera(
+        camera,
+        `map_polish_survey_camera_overrides.${zoneId}.${viewName}`,
+      );
+    }
+  }
 }
 
 function sampleSurfaceElevation(surface, x, y) {
@@ -1246,35 +1372,53 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
         fail(`V3 frontage '${id}' requires layoutIntent`);
       }
       const mode = ensureString(layoutIntent.mode, `frontages[${index}].layoutIntent.mode`);
-      if (mode !== "generated") fail(`Frontage '${id}' layoutIntent.mode must be 'generated'`);
-      const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
-      if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
-      if (typeof entry.bays !== "undefined") {
-        fail(`Generated frontage '${id}' cannot retain hand-authored bays`);
+      if (mode !== "generated" && mode !== "authored") {
+        fail(`Frontage '${id}' layoutIntent.mode must be 'generated' or 'authored'`);
       }
-      const accentModuleId = optionalString(
-        layoutIntent.accentModuleId,
-        `frontages[${index}].layoutIntent.accentModuleId`,
-      );
-      if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
-        fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
+      if (typeof entry.bays !== "undefined") {
+        fail(`V3 frontage '${id}' cannot carry top-level bays; authored bays belong inside layoutIntent`);
       }
       const zone = zoneById.get(zoneId);
       const massing = massingById.get(massingProfileId);
       const frontageLengthM = (face === "west" || face === "east" ? zone.rect.h : zone.rect.w)
         * ((end ?? 1) - (start ?? 0));
-      const generated = generateFacadeLayout({
-        frontageId: id,
-        lengthM: frontageLengthM,
-        heightM: massing.heightM,
-        family: profile.family,
-        rhythm,
-        profileModuleIds: profile.moduleIds,
-        moduleById,
-        accentModuleId,
-      });
-      bays = generated.bays;
-      layout = generated.layout;
+      if (mode === "authored") {
+        // Composition is a design decision: named columns, declared mirrors and
+        // corner treatment, one ordering sentence. Same physical validator as generated.
+        const authored = generateAuthoredFacadeLayout({
+          frontageId: id,
+          lengthM: frontageLengthM,
+          heightM: massing.heightM,
+          family: profile.family,
+          profileModuleIds: profile.moduleIds,
+          moduleById,
+          intent: layoutIntent,
+        });
+        bays = authored.bays;
+        layout = authored.layout;
+      } else {
+        const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
+        if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
+        const accentModuleId = optionalString(
+          layoutIntent.accentModuleId,
+          `frontages[${index}].layoutIntent.accentModuleId`,
+        );
+        if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
+          fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
+        }
+        const generated = generateFacadeLayout({
+          frontageId: id,
+          lengthM: frontageLengthM,
+          heightM: massing.heightM,
+          family: profile.family,
+          rhythm,
+          profileModuleIds: profile.moduleIds,
+          moduleById,
+          accentModuleId,
+        });
+        bays = generated.bays;
+        layout = generated.layout;
+      }
     } else if (typeof entry.bays !== "undefined") {
       if (!Array.isArray(entry.bays) || entry.bays.length === 0) fail(`Frontage '${id}' bays must be a non-empty array`);
       const seenBayIds = new Set();
@@ -1296,7 +1440,9 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
         return { id: bayId, moduleId, along, baseElevationM };
       }).sort((a, b) => a.along - b.along || a.id.localeCompare(b.id));
     }
-    if (isV3FormatVersion(formatVersion) && (!bays || bays.length === 0)) fail(`V3 frontage '${id}' requires generated bays`);
+    if (isV3FormatVersion(formatVersion) && (!bays || bays.length === 0)) {
+      fail(`V3 frontage '${id}' requires generated or authored bays`);
+    }
     return {
       id,
       zoneId,
@@ -2884,6 +3030,7 @@ export function compileMapSpec(
       ? undefined
       : ensureString(mapSpec.metadata.version, "metadata.version");
   const { zoneIds, zones } = deriveZones(mapSpec);
+  validateMapPolishSurveyCameraOverrides(mapSpec, zoneIds);
   const zoneById = new Map(zones.map((zone) => [zone.id, zone]));
   const districts = deriveDistricts(mapSpec);
   const districtIds = new Set((districts ?? []).map((district) => district.id));
@@ -2957,7 +3104,6 @@ export function compileMapSpec(
   if (isV3FormatVersion(formatVersion)) {
     const compositionRules = normalizeCompositionRules(
       mapSpec.composition_rules,
-      zones,
       compositionWaivers,
     );
     validateCompositionRules({
@@ -2966,7 +3112,6 @@ export function compileMapSpec(
       anchors,
       architecturePlacements,
       dressingPlacements,
-      moduleById,
       rules: compositionRules,
     });
   }

@@ -172,7 +172,9 @@ These are public gameplay rules you may reason about:
 - headshot bonus equals the current kill value
 - each new wave restores full health to `100`
 - each new wave restores full ammo to `30/120`
-- enemy hunt pressure ramps after `10s` and reaches full pressure by `30s`
+- enemy hunt pressure uses wave bands: search/full pressure begins at `30/75s`
+  in waves 1–2, `25/60s` in waves 3–4, `20/50s` in waves 5–6, and `15/40s`
+  from wave 7 onward
 
 ## 1) Stable start flow
 
@@ -382,8 +384,8 @@ const dead = s.gameplay.alive === false || s.gameplay.gameOverVisible === true;
 ### Retry rule
 
 - when dead, record `s.score.lastRun` and `s.lastRunSummary`
-- if `[data-testid="play-again"]` is visible, click it
-- if it is not visible, keep waiting because the restart countdown may still be running
+- wait for `[data-testid="play-again"]`, then click it; the shared baseline does
+  not automatically restart a dead run
 - after restart, expect a fresh run from initial conditions:
   - spawn reset
   - wave 1

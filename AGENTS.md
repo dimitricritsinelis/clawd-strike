@@ -3,7 +3,7 @@ Authority: normative
 Read when: implementation work
 Owns: durable repository-wide safeguards
 Do not use for: task status, map-polish procedure, or historical rationale
-Last updated: 2026-07-27
+Last updated: 2026-08-16
 
 # AGENTS.md — Clawd Strike Operating Contract
 
@@ -16,7 +16,7 @@ Last updated: 2026-07-27
 
 ## Generated-file authority
 
-- `docs/map-design/specs/map_spec.json` is map authority. `docs/map-design/shots.json` owns review cameras and shot requirements.
+- `docs/map-design/specs/map_spec.json` is map authority. `docs/map-design/shots.json` owns authored fixed signoff cameras and their requirements; deterministic survey cameras are derived evidence and must not be added there merely for coverage.
 - Generated map files, layout references, top-down views, screenshots, and other artifacts are evidence, not authority.
 - Regenerate map outputs with `pnpm --filter @clawd-strike/client gen:layout-reference` and `pnpm --filter @clawd-strike/client gen:maps`. Never hand-edit generated map files.
 

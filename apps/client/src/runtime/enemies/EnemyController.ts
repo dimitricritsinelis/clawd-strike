@@ -3,6 +3,10 @@ import { AabbCollisionSolver, type MotionResult, type MutablePosition } from "..
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
 import { raycastFirstHit, type RaycastAabbHit } from "../sim/collision/raycastAabb";
 import type { WorldColliders } from "../sim/collision/WorldColliders";
+import {
+  DESKTOP_HUMAN_GAMEPLAY_TUNING,
+  type GameplayTuning,
+} from "../tuning/gameplayTuning";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import { createLineOfSightScratch, hasLineOfSight } from "./enemyLineOfSight";
 
@@ -18,14 +22,13 @@ const ENEMY_HOLD_SPEED_MPS = 1.1;
 const ENEMY_PRESSURE_SPEED_MPS = 3.75;
 const ENEMY_FALLBACK_SPEED_MPS = 3.2;
 const ENEMY_PEEK_SPEED_MPS = 2.0;
-const ENEMY_DAMAGE_PER_HIT = 25;
-const ENEMY_MAX_HEALTH = 100;
 const ENEMY_STUCK_THRESHOLD_S = 0.45;
 /** How long a stuck bot steers sideways to slide off whatever blocked it. */
 const STUCK_ESCAPE_DURATION_S = 0.6;
 const STUCK_ESCAPE_FORWARD_BLEND = 0.35;
 const STUCK_ESCAPE_SIDE_BLEND = 0.9;
-const ENEMY_MIN_MOVED_M = 0.05;
+const ENEMY_MIN_PROGRESS_M = 0.005;
+const ENEMY_EXPECTED_PROGRESS_RATIO = 0.2;
 const ENEMY_PEEK_CHANGE_S_MIN = 1.2;
 const ENEMY_PEEK_CHANGE_S_MAX = 1.8;
 const ENEMY_SWEEP_CHANGE_S_MIN = 0.9;
@@ -34,14 +37,14 @@ const ENEMY_MIN_NODE_RADIUS_M = 0.6;
 const ENEMY_RELOAD_DECISION_MAG = 6;
 const GRAVITY_MPS2 = 20.0;
 const MAX_SUBSTEP_DT_S = 1 / 120;
-const MAX_FRAME_DT_S = 1 / 20;
+// Matches the runtime/player clamp. Movement is already sub-stepped below, so
+// discarding everything above 50 ms only made AI clocks drift behind the wave
+// director and player on slow frames.
+const MAX_FRAME_DT_S = 0.1;
 const BOUNDS_EPS = 0.001;
 const ENEMY_MAX_STEP_M = 0.35;
 const ENEMY_GROUND_SNAP_DOWN_M = 0.45;
 const SURFACE_GROUND_EPSILON_M = 0.002;
-
-const ENEMY_MAG_CAPACITY = 30;
-const ENEMY_RESERVE_START = 90;
 
 type BurstRange = readonly [number, number];
 
@@ -191,8 +194,131 @@ export function clampEnemyTier(value: number): number {
   return Math.max(0, Math.min(ENEMY_TIER_PROFILES.length - 1, Math.trunc(value)));
 }
 
-export function resolveEnemyTierProfile(tier: number): EnemyTierProfile {
-  return ENEMY_TIER_PROFILES[clampEnemyTier(tier)]!;
+export function resolveEnemyTierProfile(tier: number, tuning?: GameplayTuning): EnemyTierProfile {
+  const clampedTier = clampEnemyTier(tier);
+  const baseProfile = ENEMY_TIER_PROFILES[clampedTier]!;
+  if (!tuning) return baseProfile;
+
+  const combat = tuning.enemy.combat;
+  const perception = tuning.enemy.perception;
+  const burst = combat.burstByTier[clampedTier]!;
+  return {
+    ...baseProfile,
+    reactionTimeS: combat.reactionTimeSByTier[clampedTier]!,
+    memoryS: perception.memorySByTier[clampedTier]!,
+    spreadDeg: combat.spreadDegByTier[clampedTier]!,
+    visionRangeM: perception.visionRangeMByTier[clampedTier]!,
+    sharedAlertRadiusM: perception.sharedAlertRadiusMByTier[clampedTier]!,
+    maxTurnDegPerS: combat.maxTurnDegPerSByTier[clampedTier]!,
+    shotIntervalS: combat.shotIntervalSByTier[clampedTier]!,
+    reloadTimeS: combat.reloadTimeSByTier[clampedTier]!,
+    longBurst: burst.longRange,
+    midBurst: burst.midRange,
+    closeBurst: burst.closeRange,
+  };
+}
+
+export function hasInsufficientEnemyMotion(
+  movedDistanceM: number,
+  desiredSpeedMps: number,
+  deltaSeconds: number,
+): boolean {
+  if (desiredSpeedMps <= 0 || deltaSeconds <= 0) return false;
+  const expectedDistanceM = desiredSpeedMps * deltaSeconds;
+  const requiredProgressM = Math.max(
+    ENEMY_MIN_PROGRESS_M,
+    expectedDistanceM * ENEMY_EXPECTED_PROGRESS_RATIO,
+  );
+  return movedDistanceM < requiredProgressM;
+}
+
+export function isTargetInsideEnemyVisionCone(
+  source: { x: number; z: number },
+  yawRad: number,
+  target: { x: number; z: number },
+  visionConeDeg: number,
+  proximityAwarenessM: number,
+): boolean {
+  const dx = target.x - source.x;
+  const dz = target.z - source.z;
+  const distanceM = Math.hypot(dx, dz);
+  if (distanceM <= Math.max(0, proximityAwarenessM)) return true;
+  if (distanceM <= 1e-6 || visionConeDeg >= 360) return true;
+
+  const inverseDistance = 1 / distanceM;
+  const targetDirX = dx * inverseDistance;
+  const targetDirZ = dz * inverseDistance;
+  const forwardX = -Math.sin(yawRad);
+  const forwardZ = -Math.cos(yawRad);
+  const minimumDot = Math.cos(Math.max(0, visionConeDeg) * 0.5 * DEG_TO_RAD);
+  return forwardX * targetDirX + forwardZ * targetDirZ >= minimumDot;
+}
+
+export function resolveEnemyShotSpreadDeg(
+  baseSpreadDeg: number,
+  movementPenaltyActive: boolean,
+  movingSpreadMultiplier: number,
+): number {
+  return baseSpreadDeg * (movementPenaltyActive ? Math.max(1, movingSpreadMultiplier) : 1);
+}
+
+/**
+ * Applies a deterministic, area-uniform sample inside a circular aim cone.
+ * The caller supplies both random samples so tests and seeded runtimes share
+ * the exact same geometry without introducing an unseeded randomness path.
+ */
+export function applyCircularConeSpread(
+  direction: { x: number; y: number; z: number },
+  spreadDeg: number,
+  radialSample: number,
+  angleSample: number,
+  out = new Vector3(),
+): Vector3 {
+  const length = Math.hypot(direction.x, direction.y, direction.z);
+  if (length <= 1e-8 || spreadDeg <= 0) {
+    return out.set(direction.x, direction.y, direction.z).normalize();
+  }
+
+  const fx = direction.x / length;
+  const fy = direction.y / length;
+  const fz = direction.z / length;
+
+  // forward x world-up gives a stable horizontal basis except when looking
+  // nearly vertical, where world-right avoids the degeneracy.
+  let rx: number;
+  let ry: number;
+  let rz: number;
+  if (Math.abs(fy) < 0.999) {
+    rx = -fz;
+    ry = 0;
+    rz = fx;
+  } else {
+    rx = 0;
+    ry = fz;
+    rz = -fy;
+  }
+  const rightLength = Math.hypot(rx, ry, rz);
+  rx /= rightLength;
+  ry /= rightLength;
+  rz /= rightLength;
+
+  const ux = ry * fz - rz * fy;
+  const uy = rz * fx - rx * fz;
+  const uz = rx * fy - ry * fx;
+  const radius = Math.tan(spreadDeg * DEG_TO_RAD) * Math.sqrt(clamp01(radialSample));
+  const angle = Math.PI * 2 * clamp01(angleSample);
+  const horizontalOffset = Math.cos(angle) * radius;
+  const verticalOffset = Math.sin(angle) * radius;
+
+  return out.set(
+    fx + rx * horizontalOffset + ux * verticalOffset,
+    fy + ry * horizontalOffset + uy * verticalOffset,
+    fz + rz * horizontalOffset + uz * verticalOffset,
+  ).normalize();
+}
+
+function clamp01(value: number): number {
+  return Math.max(0, Math.min(1, value));
 }
 
 export type EnemyTarget = {
@@ -230,6 +356,8 @@ export type EnemyDirective = {
   holdPoint: { x: number; z: number } | null;
   focusPoint: { x: number; y: number; z: number } | null;
   peekOffsetM: number;
+  /** Planner intent before the manager applies per-frame attacker tokens. */
+  tacticalAllowFire?: boolean;
   allowFire: boolean;
   aggressive: boolean;
   hasDirectSight: boolean;
@@ -260,6 +388,10 @@ export type EnemyDebugSnapshot = {
   targetNodeId: string | null;
   memoryRemainingS: number;
   reactionRemainingS: number;
+  reacquireRemainingS: number;
+  lineOfSightBreakS: number;
+  movementSpreadActive: boolean;
+  movementSpreadRemainingS: number;
   burstShotsRemaining: number;
   debugReason: string;
   position: { x: number; y: number; z: number };
@@ -293,10 +425,16 @@ function resolveBurstCount(rng: DeterministicRng, range: BurstRange): number {
   return rng.int(minValue, maxValue + 1);
 }
 
-function resolveBurstCooldownS(distanceM: number): number {
-  if (distanceM > 18) return 0.5;
-  if (distanceM > 8) return 0.34;
-  return 0.2;
+function resolveBurstCooldownS(
+  distanceM: number,
+  bands: GameplayTuning["enemy"]["combat"]["burstCooldownBands"],
+): number {
+  for (const band of bands) {
+    if (distanceM > band.minimumDistanceM || band.minimumDistanceM === 0) {
+      return band.cooldownS;
+    }
+  }
+  return bands[bands.length - 1]?.cooldownS ?? 0;
 }
 
 function normalizeAngleRad(angle: number): number {
@@ -310,10 +448,11 @@ export class EnemyController {
   readonly id: EnemyId;
   readonly name: string;
 
+  private readonly gameplayTuning: GameplayTuning;
   private readonly position: MutablePosition;
   private readonly aabb: EnemyAabb;
   private yaw = 0;
-  private health = ENEMY_MAX_HEALTH;
+  private health = 0;
   private state: EnemyState = "HOLD";
   private role: EnemyRole = "rifler";
   private readonly team: EnemyTeam = "enemy";
@@ -331,12 +470,15 @@ export class EnemyController {
   private velocityY = 0;
   private grounded = false;
   private reactionTimerS = 0;
+  private reacquireTimerS = 0;
+  private lineOfSightBreakTimerS = 0;
+  private hadDirectSightLastFrame = false;
   private memoryTimerS = 0;
   private lastKnownTargetPos: { x: number; y: number; z: number } | null = null;
   private lastVisibleTargetId: string | null = null;
 
-  private mag = ENEMY_MAG_CAPACITY;
-  private reserve = ENEMY_RESERVE_START;
+  private mag = 0;
+  private reserve = 0;
   private reloading = false;
   private reloadTimer = 0;
 
@@ -350,6 +492,9 @@ export class EnemyController {
   private sweepDir = 1;
   private sweepTimerS = 0;
   private footstepTimerS = 0;
+  private movingForSpread = false;
+  private movementSpreadTimerS = 0;
+  private burstCompletedSinceLastStep = false;
   private currentTier = 0;
 
   private currentMovePoint: { x: number; z: number } | null = null;
@@ -374,9 +519,18 @@ export class EnemyController {
     colliderKind: "wall",
   };
 
-  constructor(id: EnemyId, name: string, spawnX: number, spawnZ: number, seed: number, spawnY = 0) {
+  constructor(
+    id: EnemyId,
+    name: string,
+    spawnX: number,
+    spawnZ: number,
+    seed: number,
+    spawnY = 0,
+    gameplayTuning: GameplayTuning = DESKTOP_HUMAN_GAMEPLAY_TUNING,
+  ) {
     this.id = id;
     this.name = name;
+    this.gameplayTuning = gameplayTuning;
     this.aabb = {
       id,
       minX: 0,
@@ -387,6 +541,9 @@ export class EnemyController {
       maxZ: 0,
     };
     this.position = { x: spawnX, y: spawnY, z: spawnZ };
+    this.health = gameplayTuning.enemy.combat.maxHealth;
+    this.mag = gameplayTuning.enemy.combat.magazineCapacity;
+    this.reserve = gameplayTuning.enemy.combat.reserveStart;
     this.solver = new AabbCollisionSolver(ENEMY_HALF_WIDTH_M, ENEMY_HEIGHT_M);
     this.rng = new DeterministicRng(deriveSubSeed(seed, id));
     this.shootTimer = this.rng.range(0.08, 0.22);
@@ -400,7 +557,7 @@ export class EnemyController {
     this.position.z = spawnZ;
 
     this.yaw = 0;
-    this.health = ENEMY_MAX_HEALTH;
+    this.health = this.gameplayTuning.enemy.combat.maxHealth;
     this.state = "HOLD";
     this.role = "rifler";
     this.dead = false;
@@ -416,12 +573,15 @@ export class EnemyController {
     this.velocityY = 0;
     this.grounded = false;
     this.reactionTimerS = 0;
+    this.reacquireTimerS = 0;
+    this.lineOfSightBreakTimerS = 0;
+    this.hadDirectSightLastFrame = false;
     this.memoryTimerS = 0;
     this.lastKnownTargetPos = null;
     this.lastVisibleTargetId = null;
 
-    this.mag = ENEMY_MAG_CAPACITY;
-    this.reserve = ENEMY_RESERVE_START;
+    this.mag = this.gameplayTuning.enemy.combat.magazineCapacity;
+    this.reserve = this.gameplayTuning.enemy.combat.reserveStart;
     this.reloading = false;
     this.reloadTimer = 0;
 
@@ -435,6 +595,9 @@ export class EnemyController {
     this.sweepDir = 1;
     this.sweepTimerS = 0;
     this.footstepTimerS = 0;
+    this.movingForSpread = false;
+    this.movementSpreadTimerS = 0;
+    this.burstCompletedSinceLastStep = false;
     this.currentTier = 0;
     this.currentMovePoint = null;
     this.currentHoldPoint = null;
@@ -488,7 +651,7 @@ export class EnemyController {
     if (this.reloading) {
       this.reloadTimer += clampedDt;
       if (this.reloadTimer >= directive.tierProfile.reloadTimeS) {
-        const needed = ENEMY_MAG_CAPACITY - this.mag;
+        const needed = this.gameplayTuning.enemy.combat.magazineCapacity - this.mag;
         const moved = Math.min(needed, this.reserve);
         this.mag += moved;
         this.reserve -= moved;
@@ -513,6 +676,20 @@ export class EnemyController {
     const visibleTarget = directive.hasDirectSight ? this.findDirectSightTarget(targets) : null;
     this.directSight = visibleTarget !== null;
     if (visibleTarget) {
+      const perception = this.gameplayTuning.enemy.perception;
+      if (
+        perception.reacquire.enabled
+        && !this.hadDirectSightLastFrame
+        && this.lineOfSightBreakTimerS > perception.lineOfSightBreakGraceS
+      ) {
+        this.reacquireTimerS = Math.max(
+          this.reacquireTimerS,
+          perception.reacquire.minimumDelayS,
+        );
+      }
+      this.lineOfSightBreakTimerS = 0;
+      this.hadDirectSightLastFrame = true;
+
       const dx = visibleTarget.position.x - this.position.x;
       const dz = visibleTarget.position.z - this.position.z;
       const distanceM = Math.hypot(dx, dz);
@@ -538,6 +715,9 @@ export class EnemyController {
         distanceM,
       });
     } else {
+      this.lineOfSightBreakTimerS += clampedDt;
+      this.hadDirectSightLastFrame = false;
+      this.reacquireTimerS = 0;
       this.reactionTimerS = Math.max(0, this.reactionTimerS - clampedDt);
       this.memoryTimerS = Math.max(0, this.memoryTimerS - clampedDt);
       if (this.memoryTimerS <= 0) {
@@ -651,9 +831,18 @@ export class EnemyController {
       if (this.position.z > pb.maxZ - hw) this.position.z = pb.maxZ - hw;
     }
 
-    const movedSq = (this.position.x - preX) ** 2 + (this.position.z - preZ) ** 2;
-    const wantedToMove = this.desiredVX !== 0 || this.desiredVZ !== 0;
-    if (wantedToMove && movedSq < ENEMY_MIN_MOVED_M * ENEMY_MIN_MOVED_M) {
+    const movedDistanceM = Math.hypot(this.position.x - preX, this.position.z - preZ);
+    const desiredSpeedMps = Math.hypot(this.desiredVX, this.desiredVZ);
+    const movementSettleS = this.gameplayTuning.enemy.combat.postMovementSettleSByTier[
+      clampEnemyTier(directive.tier)
+    ]!;
+    this.movingForSpread = desiredSpeedMps > 0.3 && movedDistanceM > ENEMY_MIN_PROGRESS_M;
+    if (this.movingForSpread) {
+      this.movementSpreadTimerS = movementSettleS;
+    } else {
+      this.movementSpreadTimerS = Math.max(0, this.movementSpreadTimerS - clampedDt);
+    }
+    if (hasInsufficientEnemyMotion(movedDistanceM, desiredSpeedMps, clampedDt)) {
       this.stuckTimer += clampedDt;
       if (this.stuckTimer >= ENEMY_STUCK_THRESHOLD_S) {
         this.stuckTimer = 0;
@@ -670,6 +859,7 @@ export class EnemyController {
 
     if (visibleTarget) {
       this.reactionTimerS = Math.max(0, this.reactionTimerS - clampedDt);
+      this.reacquireTimerS = Math.max(0, this.reacquireTimerS - clampedDt);
       this.runFiringLogic(visibleTarget, directive, clampedDt, worldColliders, enemyAabbs, targets, onEnemyShot);
     } else {
       this.burstShotsRemaining = 0;
@@ -723,6 +913,11 @@ export class EnemyController {
   getYaw(): number { return this.yaw; }
   isFiring(): boolean { return this.firingThisFrame; }
   getState(): EnemyState { return this.state; }
+  consumeCompletedBurst(): boolean {
+    const completed = this.burstCompletedSinceLastStep;
+    this.burstCompletedSinceLastStep = false;
+    return completed;
+  }
 
   nudgeWithCollision(deltaX: number, deltaZ: number, worldColliders: WorldColliders): void {
     if (this.dead) return;
@@ -770,6 +965,10 @@ export class EnemyController {
       targetNodeId: this.targetNodeId,
       memoryRemainingS: this.memoryTimerS,
       reactionRemainingS: this.reactionTimerS,
+      reacquireRemainingS: this.reacquireTimerS,
+      lineOfSightBreakS: this.lineOfSightBreakTimerS,
+      movementSpreadActive: this.movingForSpread || this.movementSpreadTimerS > 0,
+      movementSpreadRemainingS: this.movementSpreadTimerS,
       burstShotsRemaining: this.burstShotsRemaining,
       debugReason: this.debugReason,
       position: {
@@ -792,7 +991,17 @@ export class EnemyController {
     world: WorldColliders,
     enemyAabbs: readonly EnemyAabb[],
   ): boolean {
-    return this.hasLineOfSight(target.position, world, enemyAabbs);
+    const perception = this.gameplayTuning.enemy.perception;
+    if (!isTargetInsideEnemyVisionCone(
+      this.position,
+      this.yaw,
+      target.position,
+      perception.visionConeDeg,
+      perception.proximityAwarenessM,
+    )) {
+      return false;
+    }
+    return this.hasLineOfSight(target.position, target.aimHeightM, world, enemyAabbs);
   }
 
   private applyDirectiveMovement(
@@ -983,6 +1192,10 @@ export class EnemyController {
     if (this.reloading) return;
     if (this.state === "ROTATE" || this.state === "FALLBACK" || this.state === "RELOAD") return;
     if (this.reactionTimerS > 0) return;
+    if (this.reacquireTimerS > 0) return;
+
+    const combat = this.gameplayTuning.enemy.combat;
+    if (combat.requiresAimAlignment && this.aimYawErrorDeg > combat.aimToleranceDeg) return;
 
     const dx = visibleTarget.position.x - this.position.x;
     const dz = visibleTarget.position.z - this.position.z;
@@ -1003,13 +1216,19 @@ export class EnemyController {
     if (this.shootTimer > 0) return;
     this.shootTimer = directive.tierProfile.shotIntervalS;
 
-    if (this.tryFireAt(visibleTarget, world, enemyAabbs, targets, onEnemyShot, directive.tierProfile.spreadDeg)) {
+    const spreadDeg = resolveEnemyShotSpreadDeg(
+      directive.tierProfile.spreadDeg,
+      this.movingForSpread || this.movementSpreadTimerS > 0,
+      combat.movingSpreadMultiplier,
+    );
+    if (this.tryFireAt(visibleTarget, world, enemyAabbs, targets, onEnemyShot, spreadDeg)) {
       this.firingThisFrame = true;
     }
 
     this.burstShotsRemaining = Math.max(0, this.burstShotsRemaining - 1);
     if (this.burstShotsRemaining <= 0) {
-      this.burstCooldownTimerS = resolveBurstCooldownS(distanceM);
+      this.burstCooldownTimerS = resolveBurstCooldownS(distanceM, combat.burstCooldownBands);
+      this.burstCompletedSinceLastStep = true;
     }
   }
 
@@ -1067,6 +1286,7 @@ export class EnemyController {
 
   private hasLineOfSight(
     targetPos: { x: number; y: number; z: number },
+    targetAimHeightM: number,
     world: WorldColliders,
     enemyAabbs: readonly EnemyAabb[],
   ): boolean {
@@ -1074,7 +1294,7 @@ export class EnemyController {
       this.position,
       ENEMY_EYE_HEIGHT_M,
       targetPos,
-      ENEMY_EYE_HEIGHT_M,
+      targetAimHeightM,
       world,
       enemyAabbs,
       this.losScratch,
@@ -1122,21 +1342,36 @@ export class EnemyController {
     let ndy = dy * invDist;
     let ndz = dz * invDist;
 
-    const spreadRad = this.rng.range(-spreadDeg, spreadDeg) * DEG_TO_RAD;
-    const cosS = Math.cos(spreadRad);
-    const sinS = Math.sin(spreadRad);
-    const rotatedX = ndx * cosS - ndz * sinS;
-    const rotatedZ = ndx * sinS + ndz * cosS;
-    ndx = rotatedX;
-    ndz = rotatedZ;
-    ndy += this.rng.range(-0.02, 0.02);
+    if (this.gameplayTuning.enemy.combat.spreadModel === "circular") {
+      applyCircularConeSpread(
+        { x: ndx, y: ndy, z: ndz },
+        spreadDeg,
+        this.rng.next(),
+        this.rng.next(),
+        this.shotDir,
+      );
+      ndx = this.shotDir.x;
+      ndy = this.shotDir.y;
+      ndz = this.shotDir.z;
+    } else {
+      // Retain the alternate horizontal-spread model for an explicitly
+      // revisioned future experiment. No current profile selects this path.
+      const spreadRad = this.rng.range(-spreadDeg, spreadDeg) * DEG_TO_RAD;
+      const cosS = Math.cos(spreadRad);
+      const sinS = Math.sin(spreadRad);
+      const rotatedX = ndx * cosS - ndz * sinS;
+      const rotatedZ = ndx * sinS + ndz * cosS;
+      ndx = rotatedX;
+      ndz = rotatedZ;
+      ndy += this.rng.range(-0.02, 0.02);
 
-    const len = Math.sqrt(ndx * ndx + ndy * ndy + ndz * ndz);
-    if (len > 0.01) {
-      const inv = 1 / len;
-      ndx *= inv;
-      ndy *= inv;
-      ndz *= inv;
+      const len = Math.sqrt(ndx * ndx + ndy * ndy + ndz * ndz);
+      if (len > 0.01) {
+        const inv = 1 / len;
+        ndx *= inv;
+        ndy *= inv;
+        ndz *= inv;
+      }
     }
 
     const maxRange = 100;
@@ -1167,7 +1402,7 @@ export class EnemyController {
     }
 
     if (bestHitId !== null) {
-      onEnemyShot(bestHitId, ENEMY_DAMAGE_PER_HIT);
+      onEnemyShot(bestHitId, this.gameplayTuning.enemy.combat.damagePerHit);
     }
 
     return true;

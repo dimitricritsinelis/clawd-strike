@@ -11,6 +11,10 @@ import { PLAYER_EYE_HEIGHT_M, PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/Pla
 import { intersectsAabb, setAabbFromFootPosition, type MutableAabb } from "../sim/collision/Aabb";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
 import type { WorldColliderEntry, WorldColliders } from "../sim/collision/WorldColliders";
+import {
+  DESKTOP_HUMAN_GAMEPLAY_TUNING,
+  type GameplayTuning,
+} from "../tuning/gameplayTuning";
 import { DeterministicRng, deriveSubSeed, resolveRuntimeSeed } from "../utils/Rng";
 import type { RuntimeSpawnId } from "../utils/UrlParams";
 import {
@@ -44,12 +48,9 @@ import { createLineOfSightScratch, hasLineOfSight } from "./enemyLineOfSight";
 const PLAYER_HALF_WIDTH_M = PLAYER_WIDTH_M * 0.5;
 const FIXED_SPAWN_JITTER_M = 1.5;
 const ADAPTIVE_SPAWN_JITTER_M = 0.75;
-const WAVE_RESPAWN_DELAY_S = 3.0;
 const SCORE_IMPROVEMENT_THRESHOLD = 0.75;
 const LONG_SIGHT_OVERWATCH_RANGE_M = 18;
 const HUNT_MIN_OVERWATCH_RANGE_M = 1.8;
-const GUNSHOT_HEAR_RANGE_M = 44;
-const FOOTSTEP_HEAR_RANGE_M = 22;
 const ADAPTIVE_RESPAWN_DISTANCE_FLOORS_M = [26, 24, 22, 20, 18] as const;
 const ADAPTIVE_RESPAWN_EMERGENCY_DISTANCE_M = 0;
 const ADAPTIVE_RESPAWN_MAX_VISIBLE_BOTS = 1;
@@ -77,10 +78,6 @@ const SPAWN_SEARCH_RING_FACTORS = [0, 0.35, 0.7, 1] as const;
 const SPAWN_ZONE_MARGIN_M = ENEMY_HALF_WIDTH_M + 0.05;
 const SPAWN_BOUNDS_MARGIN_M = ENEMY_HALF_WIDTH_M + 0.05;
 const SPAWN_ELEVATION_EPSILON_M = 0.05;
-
-/** Hunt pressure: forces increasingly aggressive behavior over time to prevent stalling. */
-const HUNT_ACTIVATION_S = 10;
-const HUNT_FULL_S = 30;
 
 /**
  * Full directive planning (node scoring, pathfinding, search-belief updates) is
@@ -331,6 +328,42 @@ export type EnemyHitResult =
   | { hit: true; enemyId: string; distance: number; hitX: number; hitY: number; hitZ: number; feetY: number }
   | { hit: false };
 
+export type EnemyKillCallback = (
+  name: string,
+  isHeadshot: boolean,
+  deathPos: { x: number; y: number; z: number },
+  enemyIndex: number,
+  isWaveClosingKill: boolean,
+) => void;
+
+export type EnemyDeathCallbackBatch = Readonly<{
+  newlyDeadIndices: readonly number[];
+  waveClosingKillIndex: number | null;
+}>;
+
+export function resolveEnemyDeathCallbackBatch(
+  controllers: readonly Pick<EnemyController, "isDead">[],
+  previouslyReportedIndices: ReadonlySet<number>,
+): EnemyDeathCallbackBatch {
+  const newlyDeadIndices: number[] = [];
+  let allDead = controllers.length > 0;
+
+  for (let index = 0; index < controllers.length; index += 1) {
+    const dead = controllers[index]!.isDead();
+    allDead = allDead && dead;
+    if (dead && !previouslyReportedIndices.has(index)) {
+      newlyDeadIndices.push(index);
+    }
+  }
+
+  return {
+    newlyDeadIndices,
+    waveClosingKillIndex: allDead && newlyDeadIndices.length > 0
+      ? newlyDeadIndices[newlyDeadIndices.length - 1]!
+      : null,
+  };
+}
+
 export type EnemyManagerDebugSnapshot = {
   waveNumber: number;
   waveElapsedS: number;
@@ -405,14 +438,80 @@ function zoneSearchSeedReason(phase: SearchPhase, source: string): string {
 }
 
 export function resolveEnemyTier(waveNumber: number, waveElapsedS: number): number {
-  const baseTier = Math.min(Math.max(0, Math.floor((waveNumber - 1) / 2) + 1), 4);
-  const timeBonus = (waveElapsedS >= 30 ? 1 : 0) + (waveElapsedS >= 60 ? 1 : 0);
-  return clampEnemyTier(baseTier + timeBonus);
+  return resolveEnemyTierForTuning(
+    waveNumber,
+    waveElapsedS,
+    DESKTOP_HUMAN_GAMEPLAY_TUNING,
+  );
+}
+
+export function resolveEnemyTierForTuning(
+  waveNumber: number,
+  waveElapsedS: number,
+  tuning: GameplayTuning,
+): number {
+  if (waveNumber <= 0) return 0;
+  const progression = tuning.waves.tierProgression;
+  const band = progression.waveBands.find((candidate) => (
+    waveNumber >= candidate.minWave
+    && (candidate.maxWaveInclusive === null || waveNumber <= candidate.maxWaveInclusive)
+  )) ?? progression.waveBands[progression.waveBands.length - 1]!;
+  const elapsedBonus = progression.elapsedTierBonusThresholdsS.reduce(
+    (bonus, thresholdS) => bonus + (waveElapsedS >= thresholdS ? 1 : 0),
+    0,
+  );
+  return clampEnemyTier(Math.min(progression.maxTier, band.tier + elapsedBonus));
+}
+
+export type EnemyPressureTiming = Readonly<{
+  searchStartS: number;
+  fullPressureS: number;
+}>;
+
+export function resolveEnemyPressureTiming(
+  waveNumber: number,
+  tuning: GameplayTuning,
+): EnemyPressureTiming {
+  const normalizedWave = Math.max(1, Math.trunc(waveNumber));
+  const bands = tuning.waves.pressure.waveBands;
+  const band = bands.find((candidate) => (
+    normalizedWave >= candidate.minWave
+    && (candidate.maxWaveInclusive === null || normalizedWave <= candidate.maxWaveInclusive)
+  )) ?? bands[bands.length - 1]!;
+  return {
+    searchStartS: band.searchStartS,
+    fullPressureS: band.fullPressureS,
+  };
+}
+
+export function selectNextAttackTokenHolder(
+  candidateIds: readonly string[],
+  heldIds: ReadonlySet<string>,
+  startIndex: number,
+): Readonly<{ enemyId: string | null; nextIndex: number }> {
+  if (candidateIds.length === 0) return { enemyId: null, nextIndex: 0 };
+  const normalizedStart = ((Math.trunc(startIndex) % candidateIds.length) + candidateIds.length) % candidateIds.length;
+  for (let offset = 0; offset < candidateIds.length; offset += 1) {
+    const index = (normalizedStart + offset) % candidateIds.length;
+    const enemyId = candidateIds[index]!;
+    if (!heldIds.has(enemyId)) {
+      return { enemyId, nextIndex: (index + 1) % candidateIds.length };
+    }
+  }
+  return { enemyId: null, nextIndex: normalizedStart };
+}
+
+export function resolveFullHuntFirePermission(
+  hasDirectSight: boolean,
+  tuning: GameplayTuning,
+): boolean {
+  return tuning.enemy.combat.requiresDirectSightToFire ? hasDirectSight : true;
 }
 
 export class EnemyManager {
   private readonly scene: Scene;
   private readonly sharedLoader: GLTFLoader;
+  private readonly gameplayTuning: GameplayTuning;
   private controllers: EnemyController[] = [];
   private visuals: EnemyVisual[] = [];
   private nameplatesVisible = true;
@@ -428,7 +527,7 @@ export class EnemyManager {
     for (const visual of this.visuals) visual.setRenderVisible(visible);
   }
   private weaponAudio: WeaponAudio | null = null;
-  private onEnemyKilled: ((name: string, isHeadshot: boolean, deathPos: { x: number; y: number; z: number }, enemyIndex: number) => void) | null = null;
+  private onEnemyKilled: EnemyKillCallback | null = null;
 
   private readonly deathFadeStarted = new Set<number>();
   private waveNumber = 0;
@@ -493,9 +592,24 @@ export class EnemyManager {
   private readonly tacticalPathCache = new Map<string, readonly string[]>();
   private readonly zoneDistanceCache = new Map<string, Map<string, number>>();
   private framePressureProfile: PressureProfile | null = null;
+  private readonly attackTokenHolders = new Set<string>();
+  private readonly startedAttackTokenHolders = new Set<string>();
+  private nextAttackTokenCandidateIndex = 0;
+  private nextAttackTokenGrantAtS: number | null = 0;
+  private readonly lastPlayerPosition = { x: 0, y: 0, z: 0 };
+  private hasLastPlayerPosition = false;
 
-  constructor(scene: Scene) {
+  constructor(
+    scene: Scene,
+    gameplayTuning: GameplayTuning = DESKTOP_HUMAN_GAMEPLAY_TUNING,
+  ) {
     this.scene = scene;
+    this.gameplayTuning = gameplayTuning;
+    if (gameplayTuning.waves.enemiesPerWave !== ENEMIES_PER_WAVE) {
+      throw new Error(
+        `[enemy-manager] tuning requests ${gameplayTuning.waves.enemiesPerWave} enemies, runtime owns ${ENEMIES_PER_WAVE}`,
+      );
+    }
     this.sharedLoader = new GLTFLoader();
     this.targetPool = Array.from({ length: ENEMIES_PER_WAVE + 1 }, () => ({
       id: "",
@@ -534,7 +648,7 @@ export class EnemyManager {
     this.weaponAudio = audio;
   }
 
-  setKillCallback(cb: (name: string, isHeadshot: boolean, deathPos: { x: number; y: number; z: number }, enemyIndex: number) => void): void {
+  setKillCallback(cb: EnemyKillCallback): void {
     this.onEnemyKilled = cb;
   }
 
@@ -640,6 +754,10 @@ export class EnemyManager {
     this.pendingSharedReports.length = 0;
     this.squadTaskByEnemyId.clear();
     this.spawnDebugByEnemyId.clear();
+    this.attackTokenHolders.clear();
+    this.startedAttackTokenHolders.clear();
+    this.nextAttackTokenCandidateIndex = 0;
+    this.nextAttackTokenGrantAtS = 0;
     this.assumedPlayerSpawnZoneId = request.mode === "initial" && request.playerPos
       ? this.resolveRequestedPlayerSpawnZoneId(request.playerPos, request.playerSpawnId)
       : null;
@@ -682,6 +800,7 @@ export class EnemyManager {
           placement.spawnZ,
           seed,
           placement.spawnY,
+          this.gameplayTuning,
         );
         const visual = new EnemyVisual(config.name, this.scene, this.sharedLoader);
         visual.setNameVisible(this.nameplatesVisible);
@@ -707,14 +826,36 @@ export class EnemyManager {
 
   reportPlayerGunshot(position: { x: number; y: number; z: number }): void {
     if (this.isPlayerIntelSuppressed()) return;
-    this.reportHeardContact(position, "gunshot", GUNSHOT_HEAR_RANGE_M, 5.2, 0.72);
+    this.reportHeardContact(
+      position,
+      "gunshot",
+      this.gameplayTuning.enemy.perception.hearing.gunshotRangeM,
+      5.2,
+      0.72,
+    );
   }
 
-  reportPlayerFootstep(position: { x: number; y: number; z: number }, speedMps: number): void {
+  reportPlayerFootstep(
+    position: { x: number; y: number; z: number },
+    speedMps: number,
+    isCrouched = false,
+  ): void {
     if (this.isPlayerIntelSuppressed()) return;
     if (speedMps <= 0.4) return;
     const speedFactor = clamp01((speedMps - 0.4) / 4);
-    this.reportHeardContact(position, "footstep", FOOTSTEP_HEAR_RANGE_M + speedFactor * 8, 4.2 + speedFactor * 2.4, 0.58 + speedFactor * 0.14);
+    const hearing = this.gameplayTuning.enemy.perception.hearing;
+    const crouchMultiplier = isCrouched ? hearing.crouchRangeMultiplier : 1;
+    const hearRangeM = (
+      hearing.footstepBaseRangeM
+      + speedFactor * hearing.footstepSpeedBonusRangeM
+    ) * crouchMultiplier;
+    this.reportHeardContact(
+      position,
+      "footstep",
+      hearRangeM,
+      4.2 + speedFactor * 2.4,
+      0.58 + speedFactor * 0.14,
+    );
   }
 
   private assignRoles(waveSeed: number): void {
@@ -1737,13 +1878,21 @@ export class EnemyManager {
     playerHeightM = PLAYER_HEIGHT_M,
     playerEyeHeightM = PLAYER_EYE_HEIGHT_M,
   ): void {
+    this.lastPlayerPosition.x = playerPos.x;
+    this.lastPlayerPosition.y = playerPos.y;
+    this.lastPlayerPosition.z = playerPos.z;
+    this.hasLastPlayerPosition = true;
     this.currentPlayerHeightM = playerHeightM;
     this.currentPlayerEyeHeightM = playerEyeHeightM;
     this.playerHealthDelta = 0;
     if (!this.allDead()) {
       this.waveElapsedS += Math.max(0, deltaSeconds);
     }
-    this.blackboard.currentTier = resolveEnemyTier(this.waveNumber, this.waveElapsedS);
+    this.blackboard.currentTier = resolveEnemyTierForTuning(
+      this.waveNumber,
+      this.waveElapsedS,
+      this.gameplayTuning,
+    );
 
     this.playerAabb.minX = playerPos.x - PLAYER_HALF_WIDTH_M;
     this.playerAabb.minY = playerPos.y;
@@ -1789,10 +1938,15 @@ export class EnemyManager {
     if (!this.assumedPlayerSpawnZoneId && currentPlayerZone?.type === "spawn_plaza") {
       this.assumedPlayerSpawnZoneId = currentPlayerZone.id;
     }
-    const tierProfile = resolveEnemyTierProfile(this.blackboard.currentTier);
-    const huntPressure = Math.min(1.0, Math.max(0, (this.waveElapsedS - HUNT_ACTIVATION_S) / (HUNT_FULL_S - HUNT_ACTIVATION_S)));
+    const tierProfile = resolveEnemyTierProfile(this.blackboard.currentTier, this.gameplayTuning);
+    const pressureTiming = resolveEnemyPressureTiming(this.waveNumber, this.gameplayTuning);
+    const pressureDurationS = Math.max(0.001, pressureTiming.fullPressureS - pressureTiming.searchStartS);
+    const huntPressure = Math.min(
+      1.0,
+      Math.max(0, (this.waveElapsedS - pressureTiming.searchStartS) / pressureDurationS),
+    );
     const pressureProfile = this.resolvePressureProfile(huntPressure);
-    this.searchPhase = this.resolveSearchPhase();
+    this.searchPhase = this.resolveSearchPhase(pressureTiming);
     this.flushSharedReports();
     this.refreshSearchBeliefs();
     this.framePressureProfile = pressureProfile;
@@ -1812,7 +1966,10 @@ export class EnemyManager {
       }
     }
 
-    const onFootstep = this.weaponAudio ? this.handleFootstep : undefined;
+    const preparedUpdates: Array<{
+      controller: EnemyController;
+      directive: EnemyDirective;
+    }> = [];
     for (let index = 0; index < this.controllers.length; index += 1) {
       const controller = this.controllers[index]!;
       if (controller.isDead()) continue;
@@ -1864,6 +2021,16 @@ export class EnemyManager {
         directive.directiveAgeS = this.waveElapsedS - (memory?.startedAtS ?? this.waveElapsedS);
       }
 
+      // Token coordination mutates allowFire for this frame. Restore the
+      // tactical planner's durable intent before every coordination pass.
+      directive.allowFire = directive.tacticalAllowFire ?? directive.allowFire;
+      preparedUpdates.push({ controller, directive });
+    }
+
+    this.coordinateAttackTokens(preparedUpdates, this.blackboard.currentTier);
+
+    const onFootstep = this.weaponAudio ? this.handleFootstep : undefined;
+    for (const { controller, directive } of preparedUpdates) {
       controller.step(
         deltaSeconds,
         directive,
@@ -1878,17 +2045,13 @@ export class EnemyManager {
 
     this.resolveLiveBotOverlaps(worldColliders);
 
-    if (this.allDead()) {
-      if (this.waveRespawnTimer === null) {
-        this.waveRespawnTimer = WAVE_RESPAWN_DELAY_S;
-      } else {
-        this.waveRespawnTimer -= deltaSeconds;
-        if (this.waveRespawnTimer <= 0 && this.worldCollidersRef) {
-          this.spawn(this.worldCollidersRef, { mode: "respawn", playerPos });
-          this.onNewWave?.(this.waveNumber);
-        }
-      }
-    }
+    this.updateWaveTransition(deltaSeconds);
+
+    const deathCallbackBatch = resolveEnemyDeathCallbackBatch(
+      this.controllers,
+      this.deathFadeStarted,
+    );
+    const newlyDeadIndexSet = new Set(deathCallbackBatch.newlyDeadIndices);
 
     for (let i = 0; i < this.controllers.length; i += 1) {
       const controller = this.controllers[i]!;
@@ -1896,11 +2059,17 @@ export class EnemyManager {
       const pos = controller.getPosition();
 
       if (controller.isDead()) {
-        if (!this.deathFadeStarted.has(i)) {
+        if (newlyDeadIndexSet.has(i)) {
           this.deathFadeStarted.add(i);
           visual.startDeathFade();
           const deathPos = controller.getPosition();
-          this.onEnemyKilled?.(controller.name, controller.wasLastHitHeadshot(), { x: deathPos.x, y: deathPos.y, z: deathPos.z }, i);
+          this.onEnemyKilled?.(
+            controller.name,
+            controller.wasLastHitHeadshot(),
+            { x: deathPos.x, y: deathPos.y, z: deathPos.z },
+            i,
+            i === deathCallbackBatch.waveClosingKillIndex,
+          );
         }
         visual.updateDeathFade(deltaSeconds);
         continue;
@@ -1922,6 +2091,137 @@ export class EnemyManager {
       }
       visual.updateFx(deltaSeconds);
     }
+  }
+
+  private coordinateAttackTokens(
+    preparedUpdates: readonly {
+      controller: EnemyController;
+      directive: EnemyDirective;
+    }[],
+    tier: number,
+  ): void {
+    const clampedTier = clampEnemyTier(tier);
+    const attackerLimit = this.gameplayTuning.waves.simultaneousAttackerLimitByTier[clampedTier]!;
+    const staggerS = this.gameplayTuning.waves.burstStartStaggerMsByTier[clampedTier]! / 1_000;
+    const usesCoordination = attackerLimit < ENEMIES_PER_WAVE || staggerS > 0;
+
+    if (!usesCoordination) {
+      this.attackTokenHolders.clear();
+      this.startedAttackTokenHolders.clear();
+      this.nextAttackTokenGrantAtS = 0;
+      for (const { controller, directive } of preparedUpdates) {
+        controller.consumeCompletedBurst();
+        directive.allowFire = directive.tacticalAllowFire ?? directive.allowFire;
+      }
+      return;
+    }
+
+    const candidateIds = preparedUpdates
+      .filter(({ directive }) => (
+        (directive.tacticalAllowFire ?? directive.allowFire)
+        && directive.hasDirectSight
+      ))
+      .map(({ controller }) => controller.id);
+    const candidateIdSet = new Set(candidateIds);
+
+    for (const { controller } of preparedUpdates) {
+      if (
+        this.attackTokenHolders.has(controller.id)
+        && !this.startedAttackTokenHolders.has(controller.id)
+        && controller.isFiring()
+      ) {
+        this.startedAttackTokenHolders.add(controller.id);
+        if (staggerS > 0) {
+          const nextGrantAtS = this.waveElapsedS + staggerS;
+          this.nextAttackTokenGrantAtS = this.nextAttackTokenGrantAtS === null
+            ? nextGrantAtS
+            : Math.max(this.nextAttackTokenGrantAtS, nextGrantAtS);
+        }
+      }
+
+      const completedBurst = controller.consumeCompletedBurst();
+      if (
+        this.attackTokenHolders.has(controller.id)
+        && (completedBurst || !candidateIdSet.has(controller.id))
+      ) {
+        const hadStarted = this.startedAttackTokenHolders.delete(controller.id);
+        this.attackTokenHolders.delete(controller.id);
+        if (!hadStarted && this.nextAttackTokenGrantAtS === null) {
+          this.nextAttackTokenGrantAtS = this.waveElapsedS + staggerS;
+        }
+      }
+    }
+    for (const enemyId of this.attackTokenHolders) {
+      if (!candidateIdSet.has(enemyId)) {
+        const hadStarted = this.startedAttackTokenHolders.delete(enemyId);
+        this.attackTokenHolders.delete(enemyId);
+        if (!hadStarted && this.nextAttackTokenGrantAtS === null) {
+          this.nextAttackTokenGrantAtS = this.waveElapsedS + staggerS;
+        }
+      }
+    }
+
+    while (
+      this.attackTokenHolders.size < attackerLimit
+      && this.nextAttackTokenGrantAtS !== null
+      && this.waveElapsedS + 1e-9 >= this.nextAttackTokenGrantAtS
+    ) {
+      const selection = selectNextAttackTokenHolder(
+        candidateIds,
+        this.attackTokenHolders,
+        this.nextAttackTokenCandidateIndex,
+      );
+      this.nextAttackTokenCandidateIndex = selection.nextIndex;
+      if (!selection.enemyId) break;
+      this.attackTokenHolders.add(selection.enemyId);
+      this.startedAttackTokenHolders.delete(selection.enemyId);
+      if (staggerS > 0) {
+        // The next stagger begins when this newly admitted shooter actually
+        // starts its burst, not when it begins turning/reacting. Otherwise all
+        // reaction timers can expire together and defeat the burst stagger.
+        this.nextAttackTokenGrantAtS = null;
+        break;
+      }
+      this.nextAttackTokenGrantAtS = this.waveElapsedS;
+    }
+
+    for (const { controller, directive } of preparedUpdates) {
+      const tacticalAllowFire = directive.tacticalAllowFire ?? directive.allowFire;
+      directive.allowFire = tacticalAllowFire && this.attackTokenHolders.has(controller.id);
+    }
+  }
+
+  /**
+   * Advances only the between-wave clock. Game can call this while normal
+   * simulation is suspended so AI, player, and buff clocks remain frozen.
+   */
+  updateWaveTransition(deltaSeconds: number): boolean {
+    if (!this.allDead()) return false;
+
+    if (this.waveRespawnTimer === null) {
+      this.waveRespawnTimer = this.gameplayTuning.flow.intermissionDurationS;
+      if (this.waveRespawnTimer > 0) return false;
+    } else if (this.gameplayTuning.flow.autoAdvance) {
+      this.waveRespawnTimer = Math.max(0, this.waveRespawnTimer - Math.max(0, deltaSeconds));
+    }
+
+    if (this.waveRespawnTimer > 0 || !this.worldCollidersRef || !this.hasLastPlayerPosition) {
+      return false;
+    }
+
+    this.spawn(this.worldCollidersRef, {
+      mode: "respawn",
+      playerPos: this.lastPlayerPosition,
+    });
+    this.onNewWave?.(this.waveNumber);
+    return true;
+  }
+
+  /** Marks an active all-dead countdown ready; updateWaveTransition(0) spawns. */
+  skipWaveCountdown(): boolean {
+    if (!this.allDead() || this.waveRespawnTimer === null) return false;
+    this.waveRespawnTimer = 0;
+    return true;
   }
 
   private resolveLiveBotOverlaps(worldColliders: WorldColliders): void {
@@ -2193,7 +2493,7 @@ export class EnemyManager {
 
     if (pressureProfile.fullHunt && knowledge && state !== "RELOAD" && state !== "FALLBACK") {
       state = hasDirectSight ? "PRESSURE" : "INVESTIGATE";
-      allowFire = true;
+      allowFire = resolveFullHuntFirePermission(hasDirectSight, this.gameplayTuning);
       debugReason = "full hunt mode";
     }
 
@@ -2241,6 +2541,7 @@ export class EnemyManager {
       holdPoint,
       focusPoint,
       peekOffsetM: activeRole === "anchor" ? 0.7 : activeRole === "flanker" ? 1.1 : 0.9,
+      tacticalAllowFire: allowFire,
       allowFire,
       aggressive: state === "PRESSURE" || (pressureProfile.fullHunt && state === "INVESTIGATE"),
       hasDirectSight,
@@ -2284,9 +2585,13 @@ export class EnemyManager {
     }
   }
 
-  private resolveSearchPhase(): SearchPhase {
-    if (this.waveElapsedS < HUNT_ACTIVATION_S) return "caution";
-    const normalizedPressure = Math.min(1.0, Math.max(0, (this.waveElapsedS - HUNT_ACTIVATION_S) / (HUNT_FULL_S - HUNT_ACTIVATION_S)));
+  private resolveSearchPhase(timing: EnemyPressureTiming): SearchPhase {
+    if (this.waveElapsedS < timing.searchStartS) return "caution";
+    const pressureDurationS = Math.max(0.001, timing.fullPressureS - timing.searchStartS);
+    const normalizedPressure = Math.min(
+      1.0,
+      Math.max(0, (this.waveElapsedS - timing.searchStartS) / pressureDurationS),
+    );
     if (normalizedPressure < (1 / 3)) return "probe";
     if (normalizedPressure < (7 / 9)) return "sweep";
     if (normalizedPressure < 1) return "collapse";
@@ -3013,8 +3318,13 @@ export class EnemyManager {
     const dy = dir.y;
     const dz = dir.z;
 
-    for (const aabb of this.aabbScratch) {
-      if (aabb.id === "player") continue;
+    // Combat must read live controller state. The perception scratch list is
+    // rebuilt before controllers move, so using it here made player shots hit
+    // prior-frame positions (and it was empty for the first shot after spawn).
+    // It could also retain a target killed by an earlier low-FPS catch-up shot.
+    for (const controller of this.controllers) {
+      if (controller.isDead()) continue;
+      const aabb = controller.getAabb();
       const t = rayVsAabb(ox, oy, oz, dx, dy, dz, maxDist, aabb);
       if (t < bestDist) {
         bestDist = t;
@@ -3059,6 +3369,11 @@ export class EnemyManager {
     this.pendingSharedReports.length = 0;
     this.lastSpawnTelemetry = null;
     this.spawnDebugByEnemyId.clear();
+    this.attackTokenHolders.clear();
+    this.startedAttackTokenHolders.clear();
+    this.nextAttackTokenCandidateIndex = 0;
+    this.nextAttackTokenGrantAtS = 0;
+    this.hasLastPlayerPosition = false;
     this.debugPlayerIntelSuppressedUntilS = 0;
   }
 

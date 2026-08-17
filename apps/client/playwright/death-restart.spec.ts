@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -6,6 +7,16 @@ import {
   readDocumentedAgentState,
   readRuntimeState,
 } from "../scripts/lib/runtimePlaywright.mjs";
+
+const GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
+const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) => (
+  band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
+));
+if (!WAVE_ONE_PRESSURE) throw new Error("Missing desktop-agent wave-one pressure tuning");
+const COMBAT_STEP_MS = 500;
+const MAX_DEATH_STEPS = Math.ceil(
+  ((WAVE_ONE_PRESSURE.fullPressureS + 30) * 1_000) / COMBAT_STEP_MS,
+);
 
 function planarDistance(a, b) {
   return Math.hypot(a.x - b.x, a.z - b.z);
@@ -29,7 +40,7 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
   expect(initialState.bots?.aliveCount).toBe(10);
 
   let died = false;
-  for (let step = 0; step < 120 && !died; step += 1) {
+  for (let step = 0; step < MAX_DEATH_STEPS && !died; step += 1) {
     const state = await readRuntimeState(page);
     const alive = state.gameplay?.alive === true;
     const gameOverVisible = state.gameOver?.visible === true;
@@ -49,7 +60,7 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
         fire,
       });
     }, { stepIndex: step });
-    await advanceRuntime(page, 500);
+    await advanceRuntime(page, COMBAT_STEP_MS);
   }
 
   expect(died).toBe(true);

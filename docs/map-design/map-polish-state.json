@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "mapAuthorityHash": "e2838e7e12681860e9c2610cce62ad262a27e867b65fb7f2a958c4e75cda2e54",
+  "surveyedAuthorityHash": null,
+  "sourceFingerprint": null,
+  "pass": 0,
+  "surveyRequired": true,
+  "milestone": {
+    "acceptedAtLastRun": 0,
+    "required": false,
+    "full": false
+  },
+  "activeTask": null,
+  "units": [
+    { "id": "unit-caravan-court", "zoneIds": ["CARAVAN_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-covered-souk", "zoneIds": ["COVERED_SOUK"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-dyers-alley", "zoneIds": ["DYERS_ALLEY"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-dyers-dogleg", "zoneIds": ["DYERS_DOGLEG"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-fountain-court", "zoneIds": ["FOUNTAIN_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-east-mid", "zoneIds": ["LINK_EAST_MID"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-east-upper", "zoneIds": ["LINK_EAST_UPPER"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-north-east", "zoneIds": ["LINK_NORTH_EAST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-north-west", "zoneIds": ["LINK_NORTH_WEST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-south-east", "zoneIds": ["LINK_SOUTH_EAST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-south-west", "zoneIds": ["LINK_SOUTH_WEST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-west-mid", "zoneIds": ["LINK_WEST_MID"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-link-west-upper", "zoneIds": ["LINK_WEST_UPPER"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-north-court", "zoneIds": ["NORTH_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-rug-gate", "zoneIds": ["RUG_GATE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-service-north", "zoneIds": ["SERVICE_NORTH"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-service-south", "zoneIds": ["SERVICE_SOUTH"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-spawn-a-courtyard", "zoneIds": ["SPAWN_A_COURTYARD"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-spawn-b-courtyard", "zoneIds": ["SPAWN_B_COURTYARD"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-spice-street", "zoneIds": ["SPICE_STREET"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-tea-landing", "zoneIds": ["TEA_LANDING"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-tea-ramp", "zoneIds": ["TEA_RAMP"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-tea-stairs", "zoneIds": ["TEA_STAIRS"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-tea-terrace", "zoneIds": ["TEA_TERRACE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
+    { "id": "unit-textile-arcade", "zoneIds": ["TEXTILE_ARCADE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] }
+  ]
+}

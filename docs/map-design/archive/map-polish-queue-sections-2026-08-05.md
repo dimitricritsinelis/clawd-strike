@@ -3,12 +3,12 @@ Authority: archive
 Read when: tracing completed section-queue work or its REVISIT notes
 Owns: record of the section-driven Bazaar polish queue completed 2026-08-05
 Do not use for: active instructions, task status, or acceptance workflow
-Last updated: 2026-08-08
+Last updated: 2026-08-16
 
 > **Archived.** This geographic queue was completed on 2026-08-05 and reviewed at the final gate
-> (verdict: HOLD — the remaining gap was systemic, not sectional). The active queue is
-> [`docs/map-design/map-polish-queue.md`](../map-polish-queue.md). Both open REVISIT notes below
-> (areas 08 and 17) were traced to one shared trim material and route to card P1 of the active queue.
+> (verdict: HOLD — the remaining gap was systemic, not sectional). Current procedure lives in the
+> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md), and current status lives in
+> [`map-polish-state.json`](../map-polish-state.json). The REVISIT notes below are historical evidence.
 
 # Bazaar Target-Driven Visual Development Queue
 

@@ -2,6 +2,8 @@ import {
   fingerprintClientIp,
   protectJsonWriteRequest,
 } from "./highScoreSecurity.js";
+import { parseCurrentGameplayProfileIdentity } from "../apps/shared/highScore.js";
+import type { GameplayProfileIdentity } from "../apps/shared/gameplayProfile.js";
 import type { SharedChampionAuditEvent, SharedChampionStore } from "./highScoreStore.js";
 
 const MAX_POST_BODY_BYTES = 1024;
@@ -36,6 +38,30 @@ async function recordAuditEvent(
   }
 }
 
+function parseChampionReadIdentity(request: Request): {
+  valid: boolean;
+  identity: GameplayProfileIdentity | null;
+} {
+  const search = new URL(request.url).searchParams;
+  const identityFields = {
+    profileId: search.get("profileId"),
+    tuningRevision: search.get("tuningRevision"),
+    balanceSeason: search.get("balanceSeason"),
+  };
+  const providedCount = Object.values(identityFields).filter((value) => value !== null).length;
+  if (providedCount === 0) {
+    return { valid: true, identity: null };
+  }
+  if (providedCount !== 3) {
+    return { valid: false, identity: null };
+  }
+  const identity = parseCurrentGameplayProfileIdentity(identityFields);
+  return {
+    valid: identity !== null,
+    identity,
+  };
+}
+
 export async function handleSharedChampionRequest(
   request: Request,
   store: SharedChampionStore | null,
@@ -59,7 +85,14 @@ export async function handleSharedChampionRequest(
 
   try {
     if (request.method === "GET") {
-      const champion = await store.getChampion();
+      const parsedIdentity = parseChampionReadIdentity(request);
+      if (!parsedIdentity.valid) {
+        return errorResponse(
+          400,
+          "Expected a complete current { profileId, tuningRevision, balanceSeason } identity.",
+        );
+      }
+      const champion = await store.getChampion(parsedIdentity.identity);
       return jsonResponse({ champion });
     }
 

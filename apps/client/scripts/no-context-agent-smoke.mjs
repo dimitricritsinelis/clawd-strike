@@ -1,4 +1,5 @@
 import path from "node:path";
+import { tsImport } from "tsx/esm/api";
 import {
   DEFAULT_AGENT_NAME,
   DEFAULT_BASE_URL,
@@ -15,6 +16,16 @@ import {
   writeJson,
 } from "./lib/runtimePlaywright.mjs";
 
+const { getGameplayTuning } = await tsImport(
+  "../src/runtime/tuning/gameplayTuning.ts",
+  import.meta.url,
+);
+const GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
+const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) => (
+  band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
+));
+if (!WAVE_ONE_PRESSURE) throw new Error("Missing desktop-agent wave-one pressure tuning");
+
 function timestampId() {
   return new Date().toISOString().replace(/[:.]/g, "-");
 }
@@ -27,8 +38,11 @@ const SKILLS_URL = new URL(
 const AGENT_NAME = trimAgentName(process.env.AGENT_NAME, DEFAULT_AGENT_NAME);
 const HEADLESS = parseBooleanEnv(process.env.HEADLESS, true);
 const REQUIRED_DEATHS = Math.max(1, Number(process.env.REQUIRED_DEATHS ?? 2));
-const MAX_STEPS = Math.max(1, Number(process.env.MAX_STEPS ?? 120));
 const STEP_MS = Math.max(100, Number(process.env.STEP_MS ?? 500));
+const DEFAULT_MAX_STEPS = Math.ceil(
+  (REQUIRED_DEATHS * (WAVE_ONE_PRESSURE.fullPressureS + 30) * 1_000) / STEP_MS,
+);
+const MAX_STEPS = Math.max(1, Number(process.env.MAX_STEPS ?? DEFAULT_MAX_STEPS));
 const OUTPUT_DIR = path.resolve(
   process.cwd(),
   process.env.OUTPUT_DIR ?? `../../artifacts/playwright/no-context-agent-smoke/${timestampId()}`,

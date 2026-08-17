@@ -35,7 +35,6 @@ export const DEFAULT_WAYPOINT_TICK_MS = 200;
 export const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
 export const REQUIRED_CORE_SHOT_COUNT = 12;
 export const REQUIRED_CLOSEUP_SHOT_COUNT = 4;
-export const REQUIRED_AUDIT_SHOT_COUNT = 34;
 export const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
 export const DEFAULT_SHOT_CAMERA_TOLERANCE = Object.freeze({
   positionM: 0.02,
@@ -1048,6 +1047,7 @@ export async function waitForRuntimeReady(page, options = {}) {
   const bootStartedAt = Date.now();
   let lastBootState = null;
   let lastBootError = null;
+  let consecutiveProbeTimeouts = 0;
   while (Date.now() - bootStartedAt <= timeoutMs) {
     try {
       lastBootState = await withTimeout(
@@ -1090,6 +1090,7 @@ export async function waitForRuntimeReady(page, options = {}) {
         Math.min(2_000, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
         "runtime boot readiness probe",
       );
+      consecutiveProbeTimeouts = 0;
       lastBootError = null;
       const capture = lastBootState?.qaCapture;
       const captureValidation = capture
@@ -1117,16 +1118,25 @@ export async function waitForRuntimeReady(page, options = {}) {
     } catch (error) {
       if (error instanceof Error && error.message.includes("[qa-capture]")) throw error;
       if (error instanceof RuntimeOperationTimeoutError) {
-        throw new RuntimeOperationTimeoutError(
-          `[runtime-ready] lightweight boot probe stalled | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | ${error.message}`,
-          {
-            routeId,
-            shotId: expectedShotId,
-            timeoutMs: error.details?.timeoutMs ?? 2_000,
-          },
-        );
+        // Asset compilation can briefly occupy the browser main thread for
+        // more than the lightweight 2s probe budget. Treat one or two isolated
+        // stalls as boot progress; three consecutive stalls still fail fast
+        // instead of hiding a genuinely wedged runtime until the 90s deadline.
+        consecutiveProbeTimeouts += 1;
+        lastBootError = error;
+        if (consecutiveProbeTimeouts >= 3) {
+          throw new RuntimeOperationTimeoutError(
+            `[runtime-ready] lightweight boot probe stalled repeatedly | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | ${error.message}`,
+            {
+              routeId,
+              shotId: expectedShotId,
+              timeoutMs: error.details?.timeoutMs ?? 2_000,
+            },
+          );
+        }
+      } else {
+        lastBootError = error;
       }
-      lastBootError = error;
     }
     await page.waitForTimeout(50);
   }
@@ -1631,6 +1641,8 @@ export async function runWaypointRoute(page, route, options = {}) {
   let totalDistanceM = 0;
   let stationaryTicks = 0;
   let maxStationaryTicks = 0;
+  let maxStationaryAt = null;
+  let hasMoved = false;
   let collisionTicksX = 0;
   let collisionTicksY = 0;
   let collisionTicksZ = 0;
@@ -1677,11 +1689,23 @@ export async function runWaypointRoute(page, route, options = {}) {
         nextPos.z - previousPos.z,
       );
       totalDistanceM += movedDistanceM;
-      if (movedDistanceM < 0.02) {
-        stationaryTicks += 1;
-        maxStationaryTicks = Math.max(maxStationaryTicks, stationaryTicks);
-      } else {
+      if (movedDistanceM >= 0.02) {
+        // Eliminating bots can leave the next-wave countdown active. Ignore its
+        // one small spawn nudge and start stall accounting only after genuine travel.
+        if (totalDistanceM >= 0.5) hasMoved = true;
         stationaryTicks = 0;
+      } else if (hasMoved) {
+        stationaryTicks += 1;
+        if (stationaryTicks > maxStationaryTicks) {
+          maxStationaryTicks = stationaryTicks;
+          maxStationaryAt = {
+            waypointIndex,
+            targetZoneId: waypoint.zoneId,
+            tick,
+            pos: nextPos,
+            collision: nextState.player?.collision ?? null,
+          };
+        }
       }
       if (nextState.player?.collision?.hitX) collisionTicksX += 1;
       if (nextState.player?.collision?.hitY) collisionTicksY += 1;
@@ -1724,6 +1748,7 @@ export async function runWaypointRoute(page, route, options = {}) {
     finalPos,
     distanceM: totalDistanceM,
     maxStationaryTicks,
+    maxStationaryAt,
     withinPlayableBounds: finalState.player.withinPlayableBounds,
     endedAlive: finalState.gameplay.alive,
     collisionTicks: {
@@ -1869,9 +1894,8 @@ export function validateReviewShotInventory(shotsSpec) {
   const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))].sort();
   const coreShots = allShots.filter((shot) => shot?.captureKind === "core");
   const closeupShots = allShots.filter((shot) => shot?.captureKind === "closeup");
-  const auditShots = allShots.filter((shot) => shot?.captureKind === "audit");
   const reviewShots = [...coreShots, ...closeupShots];
-  const unsupportedShots = allShots.filter((shot) => !["core", "closeup", "audit"].includes(shot?.captureKind));
+  const unsupportedShots = allShots.filter((shot) => !["core", "closeup"].includes(shot?.captureKind));
   const compareId = shotsSpec?.metadata?.compareShotId ?? shotsSpec?.aliases?.compare ?? null;
   const invalidCameraIds = [];
   const duplicateCameraPairs = [];
@@ -1919,9 +1943,6 @@ export function validateReviewShotInventory(shotsSpec) {
   if (closeupShots.length !== REQUIRED_CLOSEUP_SHOT_COUNT) {
     errors.push(`expected exactly ${REQUIRED_CLOSEUP_SHOT_COUNT} closeup shots; found ${closeupShots.length}`);
   }
-  if (auditShots.length !== REQUIRED_AUDIT_SHOT_COUNT) {
-    errors.push(`expected exactly ${REQUIRED_AUDIT_SHOT_COUNT} explicitly selected audit shots; found ${auditShots.length}`);
-  }
   if (unsupportedShots.length > 0) {
     errors.push(`shots with missing/unsupported captureKind: ${unsupportedShots.map((shot) => shot?.id ?? "<unknown>").join(", ")}`);
   }
@@ -1957,7 +1978,6 @@ export function validateReviewShotInventory(shotsSpec) {
       .map((shot) => shot.id),
     coreShotIds: coreShots.map((shot) => shot.id),
     closeupShotIds: closeupShots.map((shot) => shot.id),
-    auditShotIds: auditShots.map((shot) => shot.id),
     compareShotId: compareId,
     duplicateCameraPairs,
   };

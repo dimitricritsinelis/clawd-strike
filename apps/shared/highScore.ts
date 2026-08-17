@@ -4,15 +4,25 @@ import {
   parseStoredPlayerName,
   sanitizeValidatedPlayerName,
 } from "./playerName.js";
+import {
+  getGameplayProfileIdentity,
+  isGameplayProfileId,
+  type GameplayProfileIdentity,
+  type GameplayProfileId,
+} from "./gameplayProfile.js";
 
 export const HIGH_SCORE_PLAYER_NAME_MAX_LENGTH = PLAYER_NAME_MAX_LENGTH;
 export const HIGH_SCORE_MAP_ID_MAX_LENGTH = 64;
 export const SITEWIDE_CHAMPION_SCOPE = "sitewide";
 export const SITEWIDE_CHAMPION_BOARD_KEY = "default";
 export const SHARED_CHAMPION_SCORE_RULESET = "wave-score-v4-k5-wi2-hs2x-b10";
+export const SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION = "profile-v1";
 export const SHARED_CHAMPION_WAVE_ENEMY_COUNT = 10;
-export const SHARED_CHAMPION_WAVE_RESPAWN_DELAY_S = 3;
-export const SHARED_CHAMPION_FIRE_INTERVAL_S = 0.1;
+// Fastest legal cadence across every currently registered gameplay profile.
+// All three profiles currently share the Desktop Human 0.08 s Rapid Fire
+// baseline. A future faster profile must update this validation bound as part
+// of the same revisioned balance change.
+export const SHARED_CHAMPION_FIRE_INTERVAL_S = 0.08;
 export const SHARED_CHAMPION_KILL_SCORE = 5;
 export const SHARED_CHAMPION_WAVE_SCORE_INCREMENT = 2;
 export const SHARED_CHAMPION_RUN_TOKEN_TTL_MS = 30 * 60 * 1000;
@@ -23,10 +33,15 @@ export const SHARED_CHAMPION_RUN_FINISH_ENDPOINT = "/api/run/finish";
 const SHARED_CHAMPION_MAX_STARTING_KILLS = SHARED_CHAMPION_WAVE_ENEMY_COUNT;
 const SHARED_CHAMPION_MAX_STARTING_SHOTS = 30;
 const SHARED_CHAMPION_ACCURACY_TOLERANCE = 0.2;
-const SHARED_CHAMPION_SURVIVAL_TIME_TOLERANCE_MS = 5_000;
+const SHARED_CHAMPION_ACTIVE_TIME_TOLERANCE_MS = 5_000;
 
 export type SharedChampionControlMode = "human" | "agent";
 export type SharedChampionRunDeathCause = "enemy-fire" | "unknown";
+
+export type SharedChampionBoardIdentity = GameplayProfileIdentity & {
+  boardKey: string;
+  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET;
+};
 
 export type SharedChampion = {
   holderName: string;
@@ -34,6 +49,11 @@ export type SharedChampion = {
   controlMode: SharedChampionControlMode;
   scope: typeof SITEWIDE_CHAMPION_SCOPE;
   updatedAt: string;
+  boardKey: string;
+  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET | null;
+  profileId: GameplayProfileId | null;
+  tuningRevision: string | null;
+  balanceSeason: string | null;
 };
 
 export type SharedChampionSnapshotStatus = "idle" | "loading" | "ready" | "unavailable";
@@ -67,17 +87,16 @@ export type SharedChampionPostResponse = {
   champion: SharedChampion | null;
 };
 
-export type SharedChampionRunStartRequest = {
+export type SharedChampionRunStartRequest = GameplayProfileIdentity & {
   playerName: string;
   controlMode: SharedChampionControlMode;
   mapId: string;
 };
 
-export type SharedChampionRunStartResponse = {
+export type SharedChampionRunStartResponse = SharedChampionBoardIdentity & {
   runToken: string;
   issuedAt: string;
   expiresAt: string;
-  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET;
 };
 
 export type SharedChampionRunSummary = {
@@ -92,7 +111,7 @@ export type SharedChampionRunSummary = {
   deathCause?: SharedChampionRunDeathCause;
 };
 
-export type SharedChampionRunFinishRequest = {
+export type SharedChampionRunFinishRequest = GameplayProfileIdentity & {
   runToken: string;
   summary: SharedChampionRunSummary;
 };
@@ -127,6 +146,74 @@ export function isSharedChampionControlMode(value: unknown): value is SharedCham
 
 export function isSharedChampionRunDeathCause(value: unknown): value is SharedChampionRunDeathCause {
   return value === "enemy-fire" || value === "unknown";
+}
+
+function isNonEmptyIdentityPart(value: unknown): value is string {
+  return typeof value === "string" && value.length > 0 && value.length <= 128;
+}
+
+/**
+ * Parses a persisted profile identity without requiring it to still be the
+ * registry's current revision. This keeps historical rows readable after a
+ * future tuning or season rollover.
+ */
+export function parseStoredGameplayProfileIdentity(value: unknown): GameplayProfileIdentity | null {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+  if (!isGameplayProfileId(record.profileId)) return null;
+  if (!isNonEmptyIdentityPart(record.tuningRevision)) return null;
+  if (!isNonEmptyIdentityPart(record.balanceSeason)) return null;
+  return Object.freeze({
+    profileId: record.profileId,
+    tuningRevision: record.tuningRevision,
+    balanceSeason: record.balanceSeason,
+  });
+}
+
+export function areGameplayProfileIdentitiesEqual(
+  left: GameplayProfileIdentity,
+  right: GameplayProfileIdentity,
+): boolean {
+  return left.profileId === right.profileId
+    && left.tuningRevision === right.tuningRevision
+    && left.balanceSeason === right.balanceSeason;
+}
+
+/** Accept only the current immutable registry tuple for competitive traffic. */
+export function parseCurrentGameplayProfileIdentity(value: unknown): GameplayProfileIdentity | null {
+  const parsed = parseStoredGameplayProfileIdentity(value);
+  if (!parsed) return null;
+  const current = getGameplayProfileIdentity(parsed.profileId);
+  return areGameplayProfileIdentitiesEqual(parsed, current) ? current : null;
+}
+
+export function isGameplayProfileCompatibleWithControlMode(
+  identity: GameplayProfileIdentity,
+  controlMode: SharedChampionControlMode,
+): boolean {
+  return identity.profileId === "desktop-agent"
+    ? controlMode === "agent"
+    : controlMode === "human";
+}
+
+export function deriveSharedChampionBoardKey(identity: GameplayProfileIdentity): string {
+  return [
+    SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION,
+    SHARED_CHAMPION_SCORE_RULESET,
+    identity.balanceSeason,
+    identity.profileId,
+    identity.tuningRevision,
+  ].map((part) => encodeURIComponent(part)).join(":");
+}
+
+export function createSharedChampionBoardIdentity(
+  identity: GameplayProfileIdentity,
+): SharedChampionBoardIdentity {
+  return {
+    ...identity,
+    boardKey: deriveSharedChampionBoardKey(identity),
+    ruleset: SHARED_CHAMPION_SCORE_RULESET,
+  };
 }
 
 export function clampSharedChampionName(value: string): string {
@@ -217,6 +304,7 @@ export function createSharedChampion(input: {
   score: number;
   controlMode: SharedChampionControlMode;
   updatedAt: Date | string;
+  identity?: GameplayProfileIdentity | null;
 }): SharedChampion {
   const updatedAt = input.updatedAt instanceof Date
     ? input.updatedAt.toISOString()
@@ -228,6 +316,13 @@ export function createSharedChampion(input: {
     controlMode: input.controlMode,
     scope: SITEWIDE_CHAMPION_SCOPE,
     updatedAt,
+    boardKey: input.identity
+      ? deriveSharedChampionBoardKey(input.identity)
+      : SITEWIDE_CHAMPION_BOARD_KEY,
+    ruleset: input.identity ? SHARED_CHAMPION_SCORE_RULESET : null,
+    profileId: input.identity?.profileId ?? null,
+    tuningRevision: input.identity?.tuningRevision ?? null,
+    balanceSeason: input.identity?.balanceSeason ?? null,
   };
 }
 
@@ -244,11 +339,29 @@ export function parseSharedChampion(value: unknown): SharedChampion | null {
   const updatedAt = new Date(record.updatedAt);
   if (Number.isNaN(updatedAt.getTime())) return null;
 
+  const hasAnyIdentityMetadata = record.profileId != null
+    || record.tuningRevision != null
+    || record.balanceSeason != null
+    || (record.boardKey != null && record.boardKey !== SITEWIDE_CHAMPION_BOARD_KEY)
+    || record.ruleset != null;
+  const identity = hasAnyIdentityMetadata
+    ? parseStoredGameplayProfileIdentity(record)
+    : null;
+  if (hasAnyIdentityMetadata && identity === null) return null;
+  if (identity) {
+    if (record.ruleset !== SHARED_CHAMPION_SCORE_RULESET) return null;
+    if (record.boardKey !== deriveSharedChampionBoardKey(identity)) return null;
+  } else {
+    if (record.boardKey != null && record.boardKey !== SITEWIDE_CHAMPION_BOARD_KEY) return null;
+    if (record.ruleset != null) return null;
+  }
+
   return createSharedChampion({
     holderName,
     score: normalizeScore(record.score),
     controlMode: record.controlMode,
     updatedAt,
+    identity,
   });
 }
 
@@ -322,6 +435,10 @@ export function parseSharedChampionRunStartResponse(value: unknown): SharedChamp
   if (typeof record.issuedAt !== "string") return null;
   if (typeof record.expiresAt !== "string") return null;
   if (record.ruleset !== SHARED_CHAMPION_SCORE_RULESET) return null;
+  const identity = parseCurrentGameplayProfileIdentity(record);
+  if (!identity) return null;
+  const boardKey = deriveSharedChampionBoardKey(identity);
+  if (record.boardKey !== boardKey) return null;
 
   const issuedAt = new Date(record.issuedAt);
   const expiresAt = new Date(record.expiresAt);
@@ -334,6 +451,8 @@ export function parseSharedChampionRunStartResponse(value: unknown): SharedChamp
     issuedAt: issuedAt.toISOString(),
     expiresAt: expiresAt.toISOString(),
     ruleset: SHARED_CHAMPION_SCORE_RULESET,
+    boardKey,
+    ...identity,
   };
 }
 
@@ -361,25 +480,74 @@ export function isBetterSharedChampionCandidate(
   return champion === null || candidate > champion.score;
 }
 
-export function calculateSharedChampionMaxKills(elapsedMs: number): number {
-  const normalizedElapsedMs = Math.max(0, Math.round(elapsedMs));
-  const extraWaves = Math.floor(normalizedElapsedMs / (SHARED_CHAMPION_WAVE_RESPAWN_DELAY_S * 1000));
-  return SHARED_CHAMPION_MAX_STARTING_KILLS + (extraWaves * SHARED_CHAMPION_WAVE_ENEMY_COUNT);
+/**
+ * Active-combat kill ceiling. Wave intermissions are intentionally excluded
+ * from active time, so they cannot be used as a minimum-duration signal. The
+ * first wave is available immediately; additional kills are bounded by the
+ * fastest legal weapon fire cadence once active simulation time advances.
+ */
+export function calculateSharedChampionMaxKills(activeElapsedMs: number): number {
+  const normalizedActiveElapsedMs = Number.isFinite(activeElapsedMs)
+    ? Math.max(0, Math.round(activeElapsedMs))
+    : 0;
+  const extraKills = Math.ceil(
+    normalizedActiveElapsedMs / (SHARED_CHAMPION_FIRE_INTERVAL_S * 1000),
+  );
+  return SHARED_CHAMPION_MAX_STARTING_KILLS + extraKills;
 }
 
-export function calculateSharedChampionMaxShotsFired(elapsedMs: number): number {
-  const normalizedElapsedMs = Math.max(0, Math.round(elapsedMs));
-  const extraShots = Math.ceil(normalizedElapsedMs / (SHARED_CHAMPION_FIRE_INTERVAL_S * 1000));
+export function calculateSharedChampionMaxShotsFired(activeElapsedMs: number): number {
+  const normalizedActiveElapsedMs = Number.isFinite(activeElapsedMs)
+    ? Math.max(0, Math.round(activeElapsedMs))
+    : 0;
+  const extraShots = Math.ceil(
+    normalizedActiveElapsedMs / (SHARED_CHAMPION_FIRE_INTERVAL_S * 1000),
+  );
   return SHARED_CHAMPION_MAX_STARTING_SHOTS + extraShots;
 }
 
+/**
+ * Validates a completed run against token wall time without equating the two
+ * clocks. `summary.survivalTimeS` is active simulation/combat time and is the
+ * returned `elapsedMs`; `wallElapsedMs` is only a one-sided upper bound (plus
+ * request/startup tolerance) and the token TTL remains enforced by claiming.
+ */
 export function validateSharedChampionRunSummary(
   summary: SharedChampionRunSummary,
-  elapsedMs: number,
+  wallElapsedMs: number,
 ): SharedChampionRunValidation {
-  const normalizedElapsedMs = Math.max(0, Math.round(elapsedMs));
-  const maxKills = calculateSharedChampionMaxKills(normalizedElapsedMs);
-  const maxShotsFired = calculateSharedChampionMaxShotsFired(normalizedElapsedMs);
+  const normalizedWallElapsedMs = Number.isFinite(wallElapsedMs)
+    ? Math.max(0, Math.round(wallElapsedMs))
+    : 0;
+  const hasValidActiveTime = Number.isFinite(summary.survivalTimeS)
+    && summary.survivalTimeS > 0;
+  const activeElapsedMs = hasValidActiveTime
+    ? Math.max(1, Math.round(summary.survivalTimeS * 1000))
+    : 0;
+  const maxKills = calculateSharedChampionMaxKills(activeElapsedMs);
+  const maxShotsFired = calculateSharedChampionMaxShotsFired(activeElapsedMs);
+
+  if (!hasValidActiveTime) {
+    return {
+      ok: false,
+      reason: "survival-time-invalid",
+      computedScore: 0,
+      elapsedMs: activeElapsedMs,
+      maxKills,
+      maxShotsFired,
+    };
+  }
+
+  if (activeElapsedMs > normalizedWallElapsedMs + SHARED_CHAMPION_ACTIVE_TIME_TOLERANCE_MS) {
+    return {
+      ok: false,
+      reason: "survival-time-out-of-range",
+      computedScore: 0,
+      elapsedMs: activeElapsedMs,
+      maxKills,
+      maxShotsFired,
+    };
+  }
 
   // ── Per-wave headshot validation ──────────────────────────────────────────
   const expectedWaveCount = summary.kills > 0
@@ -391,7 +559,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "headshots-per-wave-length-mismatch",
       computedScore: 0,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -409,7 +577,7 @@ export function validateSharedChampionRunSummary(
         ok: false,
         reason: "headshots-per-wave-out-of-range",
         computedScore: 0,
-        elapsedMs: normalizedElapsedMs,
+        elapsedMs: activeElapsedMs,
         maxKills,
         maxShotsFired,
       };
@@ -422,7 +590,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "headshots-per-wave-sum-mismatch",
       computedScore: 0,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -431,7 +599,6 @@ export function validateSharedChampionRunSummary(
   // ── Score computation using wave-scaled formula ───────────────────────────
   const computedScore = calculateSharedChampionScore(summary.kills, summary.headshotsPerWave);
   const expectedAccuracy = computeAccuracyPercent(summary.shotsHit, summary.shotsFired);
-  const survivalTimeDeltaMs = Math.abs((summary.survivalTimeS * 1000) - normalizedElapsedMs);
   const reportedScore = normalizeScore(summary.finalScore);
 
   if (summary.headshots > summary.kills) {
@@ -439,7 +606,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "headshots-exceed-kills",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -450,7 +617,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "shots-hit-exceed-shots-fired",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -461,7 +628,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "kills-exceed-shots-hit",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -472,7 +639,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "kills-exceed-cap",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -483,7 +650,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "shots-fired-exceed-cap",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -494,7 +661,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "score-does-not-match-stats",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -505,18 +672,7 @@ export function validateSharedChampionRunSummary(
       ok: false,
       reason: "accuracy-does-not-match-stats",
       computedScore,
-      elapsedMs: normalizedElapsedMs,
-      maxKills,
-      maxShotsFired,
-    };
-  }
-
-  if (survivalTimeDeltaMs > SHARED_CHAMPION_SURVIVAL_TIME_TOLERANCE_MS) {
-    return {
-      ok: false,
-      reason: "survival-time-out-of-range",
-      computedScore,
-      elapsedMs: normalizedElapsedMs,
+      elapsedMs: activeElapsedMs,
       maxKills,
       maxShotsFired,
     };
@@ -525,7 +681,7 @@ export function validateSharedChampionRunSummary(
   return {
     ok: true,
     computedScore,
-    elapsedMs: normalizedElapsedMs,
+    elapsedMs: activeElapsedMs,
     maxKills,
     maxShotsFired,
   };

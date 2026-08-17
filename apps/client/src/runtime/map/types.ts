@@ -101,12 +101,15 @@ export type RuntimeFrontageBay = {
   baseElevationM: number;
   datumId?: string;
   columnId?: string;
-  layoutSource?: "generated";
+  layoutSource?: RuntimeFacadeLayoutSource;
 };
 
+/** Generated layouts come from the rhythm grammar; authored layouts are composed per frontage. */
+export type RuntimeFacadeLayoutSource = "generated" | "authored";
+
 export type RuntimeFrontageLayout = {
-  source: "generated";
-  rhythm: "merchant" | "residential" | "residential_dense" | "service" | "arcade" | "hero";
+  source: RuntimeFacadeLayoutSource;
+  rhythm: "merchant" | "residential" | "residential_dense" | "service" | "arcade" | "hero" | "authored";
   storyCount: number;
   edgeMarginM: number;
   groundHeadM: number;
@@ -186,7 +189,7 @@ export type RuntimeArchitectureModulePlacement = {
   openingType: RuntimeFacadeOpeningType;
   datumId: string;
   columnId: string;
-  layoutSource: "generated";
+  layoutSource: RuntimeFacadeLayoutSource;
   center: RuntimeVec3;
   sizeM: { width: number; depth: number; height: number };
   yawDeg: number;
@@ -1705,8 +1708,10 @@ function parseRuntimeArchitecturePlacements(
       columnId: asString(entry.columnId, `${path}.columnId`),
       layoutSource: (() => {
         const layoutSource = asString(entry.layoutSource, `${path}.layoutSource`);
-        if (layoutSource !== "generated") failParse(`${path}.layoutSource`, "expected generated");
-        return "generated" as const;
+        if (layoutSource !== "generated" && layoutSource !== "authored") {
+          failParse(`${path}.layoutSource`, "expected generated or authored");
+        }
+        return layoutSource as RuntimeFacadeLayoutSource;
       })(),
       materialSlot: materialSlot as RuntimeFacadeMaterialSlot,
       collisionOpening: false,
@@ -2144,8 +2149,10 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
         ...(typeof bay.layoutSource !== "undefined" ? {
           layoutSource: (() => {
             const layoutSource = asString(bay.layoutSource, `${bayPath}.layoutSource`);
-            if (layoutSource !== "generated") failParse(`${bayPath}.layoutSource`, "expected generated");
-            return "generated" as const;
+            if (layoutSource !== "generated" && layoutSource !== "authored") {
+              failParse(`${bayPath}.layoutSource`, "expected generated or authored");
+            }
+            return layoutSource as RuntimeFacadeLayoutSource;
           })(),
         } : {}),
       };
@@ -2155,14 +2162,19 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
       const layoutPath = `${path}.layout`;
       const rawLayout = asObject(frontage.layout, layoutPath);
       const layoutSource = asString(rawLayout.source, `${layoutPath}.source`);
-      if (layoutSource !== "generated") failParse(`${layoutPath}.source`, "expected generated");
+      if (layoutSource !== "generated" && layoutSource !== "authored") {
+        failParse(`${layoutPath}.source`, "expected generated or authored");
+      }
       const rhythm = asString(rawLayout.rhythm, `${layoutPath}.rhythm`);
-      if (!["merchant", "residential", "residential_dense", "service", "arcade", "hero"].includes(rhythm)) {
+      if (!["merchant", "residential", "residential_dense", "service", "arcade", "hero", "authored"].includes(rhythm)) {
         failParse(`${layoutPath}.rhythm`, "unsupported facade rhythm");
+      }
+      if ((layoutSource === "authored") !== (rhythm === "authored")) {
+        failParse(`${layoutPath}.rhythm`, "authored layouts use rhythm 'authored' and generated layouts use a grammar rhythm");
       }
       const upperSillDatumsRaw = optionalArray(rawLayout.upperSillDatumsM, `${layoutPath}.upperSillDatumsM`) ?? [];
       layout = {
-        source: "generated",
+        source: layoutSource as RuntimeFacadeLayoutSource,
         rhythm: rhythm as RuntimeFrontageLayout["rhythm"],
         storyCount: asPositiveNumber(rawLayout.storyCount, `${layoutPath}.storyCount`),
         edgeMarginM: asPositiveNumber(rawLayout.edgeMarginM, `${layoutPath}.edgeMarginM`),
@@ -2417,8 +2429,10 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     if (isV3 && (!frontage.massingProfileId || !profile || !frontage.bays?.length || !frontage.layout)) {
       failParse(path, "format v3 frontages require massingProfileId, facadeProfileId, generated bays, and layout metadata");
     }
-    if (isV3 && frontage.bays?.some((bay) => !bay.datumId || !bay.columnId || bay.layoutSource !== "generated")) {
-      failParse(path, "format v3 frontage bays require generated datum and column metadata");
+    if (isV3 && frontage.bays?.some((bay) => (
+      !bay.datumId || !bay.columnId || (bay.layoutSource !== "generated" && bay.layoutSource !== "authored")
+    ))) {
+      failParse(path, "format v3 frontage bays require generated or authored datum and column metadata");
     }
   }
   const architecturePlacements = parseRuntimeArchitecturePlacements(

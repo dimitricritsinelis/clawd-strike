@@ -3,7 +3,7 @@ Authority: normative
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: durable internal decisions that future tasks should not rediscover
 Do not use for: current task status, temporary bug lists, per-task notes, public browser-agent behavior details
-Last updated: 2026-07-26
+Last updated: 2026-08-17
 
 # Durable Decisions
 
@@ -19,8 +19,8 @@ Last updated: 2026-07-26
 - Prefer code, scripts, specs, and runtime contracts over new prose when they can answer the question.
 
 ## DEC-003: Map authority and runtime generation
-- Map geometry authority order is `docs/map-design/specs/map_spec.json` -> `docs/map-design/refs/bazaar_v3_detailed_birdseye.png` -> `docs/map-design/blockout/topdown_layout.svg`.
-- `docs/map-design/shots.json` owns the runtime review shot contract.
+- Map geometry authority is `docs/map-design/specs/map_spec.json`; the detailed birdseye and top-down layout are derived reference evidence.
+- `docs/map-design/shots.json` owns the authored fixed signoff-shot contract. Deterministic survey poses are derived evidence and do not enter that inventory merely to provide coverage.
 - Map-design authority lives in structured files and approved refs, not prose packet docs.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
 - Do not hand-maintain drift in `apps/client/public/maps/`.
@@ -31,23 +31,24 @@ Last updated: 2026-07-26
 
 ## DEC-005: Visual cadence and repository validation have separate owners
 - Package scripts and CI own the executable validation surface.
-- The map-polish skill owns section-iteration and final-check cadence. The map quality bar owns the visual target and screenshot acceptance, while `AGENTS.md` contains only durable repository safeguards.
+- `.claude/skills/map-polish/SKILL.md` is the sole map-polish procedure. `docs/map-design/map-polish-state.json` owns current operating status, the map quality bar owns visual judgment, and `AGENTS.md` contains only durable repository safeguards.
 - Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
 ## DEC-006: The Bazaar target is a finished Middle Eastern market
 - Play-facing map work should read as a high-quality shipped Middle Eastern bazaar, with complete architecture, stalls, openings, overhead cloth, attachments, props, and material finish.
 - Preserve overall map identity and general layout by default, but allow local rebuilding and changes to directly coupled visual systems when they materially improve the bounded section. This does not imply a map-wide overhaul.
-- Rendered comparisons from the same fixed cameras are the primary evidence of improvement.
+- Rendered comparisons from the same deterministic camera poses are the primary evidence of improvement.
 
 ## DEC-007: Agent tooling stays out of the repo root surface
 - Repo-local agent tooling is not game runtime code and is not part of the public `apps/client/public/skills.md` contract.
 - Keep agent-only deploy or debug bundles outside the repo root unless agent-driven deploy or debug becomes an explicit repo workflow requirement.
 
 ## DEC-008: Hunt pressure prevents indefinite round stalling
-- Bot behavior includes a "hunt pressure" system (`HUNT_ACTIVATION_S = 10`, `HUNT_FULL_S = 30`) that forces progressively more aggressive behavior over time within a round.
+- Bot behavior includes a profile-tuned hunt-pressure system that forces progressively more aggressive behavior over time within a round.
 - Hunt pressure is independent of tier/difficulty — it ensures that no round can stall indefinitely regardless of how low the current difficulty is.
-- Effects ramp continuously from 10s to 30s: OVERWATCH hold distance shrinks (18m → 1.8m), flank budgets grow, shared-knowledge trust rises, collapse scoring strengthens, and directive commit windows shorten.
-- The search-phase ladder now compresses with that same window: caution before 10s, probe/sweep/collapse during the 10-30s ramp, and pinch at 30s full hunt.
+- The shared baseline uses search/full-pressure thresholds of 30/75s for waves 1–2, 25/60s for waves 3–4, 20/50s for waves 5–6, and 15/40s from wave 7 onward.
+- Effects ramp continuously through the active profile window: OVERWATCH hold distance shrinks, flank budgets grow, shared-knowledge trust rises, collapse scoring strengthens, and directive commit windows shorten.
+- The search-phase ladder compresses with that same window from caution through probe/sweep/collapse to full pinch.
 - Hunt uses uncertain zone/node estimates with delayed squad sharing rather than exact player-coordinate injection. Full hunt must replan destinations into likely contact zones, not just relabel states.
 - Zero-contact rounds must still bootstrap a believable search from enemy-spawn inference, cleared-zone elimination, and coordinated lane tasks; the squad may not wait forever for first sight or sound before beginning the hunt.
 - This guarantees that idle or hidden players are eventually collapsed on without wallhack-like omniscience, which is required for both human gameplay feel and RL agent training signal.
@@ -111,4 +112,16 @@ Last updated: 2026-07-26
 
 ## DEC-020: Historical map-process artifacts are not live instructions
 - Historical map planning and process documents are evidence only. They do not define the current task or hold active workflow state.
-- Current map work runs directly from the user prompt and the live authority surfaces identified in DEC-005, without a persistent task-state layer.
+- Current map-polish procedure lives only in `.claude/skills/map-polish/SKILL.md`; `docs/map-design/map-polish-state.json` holds bounded current status, and Git history holds long-term history. The user prompt remains the task boundary.
+
+## DEC-021: Gameplay profiles start from one shared balance baseline
+- `Desktop Human` is the canonical gameplay balance baseline. `Mobile Human` and `Desktop Agent` share its exact balance-bearing waves, enemy, player, buffs, and flow configuration until an explicit profile-specific change is approved.
+- Platform capability differences, such as mobile touch availability or the desktop agent control contract, do not authorize implicit difficulty differences.
+- Profile identities and competitive boards remain separate even while mechanics are equal. Any approved mechanic change must bump the affected tuning revision rather than reusing an old board.
+- `docs/gameplay-balancing.md` owns the baseline-first tuning procedure and divergence register; runtime values and equality enforcement remain authoritative in `apps/client/src/runtime/tuning/gameplayTuning.ts` and its tests.
+
+## DEC-022: Facade composition is authored, evidenced in plan, and gated absolutely
+- Where openings sit on a wall is a design decision, not a spacing rule. `frontages[].layoutIntent.mode` is `generated` (rhythm grammar, evenly spread between edge margins; quiet backdrops only) or `authored` (named columns, declared mirrors about an axis, a declared corner treatment, one ordering sentence). Both pass the same physical grammar in `apps/client/scripts/lib/facade-layout-grammar.mjs`; the runtime accepts `layoutSource` `generated | authored`.
+- The facade grammar and `gen-map-runtime.mjs` are map-visual sources reachable only by shared map-polish tasks; a pure task cannot change how the whole map composes.
+- Every map-polish task carries plan-level evidence the screenshots cannot: a site brief (frontages, current bays, exempt faces, neighbours) and a plan crop of the compiled layout; the blind review gets a neutrally labelled A/B plan pair. Bones-level Red defects require a composition brief in the work order and are `route-adjacent` (one focused traversal), and the reviewer's `compositionLogic` judgment defers arbitrary placement instead of baselining "better than blank".
+- Units whose dominant faces are all exemptions are not polish work: defer them; adding frontage or massing is an owner decision.

@@ -26,7 +26,7 @@
     "test:map-runtime": "node scripts/run-map-runtime-tests.mjs",
     "smoke:agent": "node scripts/agent-smoke-runner.mjs",
     "validate:map-layout": "node scripts/validate-map-layout.mjs",
-    "smoke:game": "node scripts/run-playwright-qa.mjs test playwright/runtime-boot.spec.ts playwright/agent-traversal.spec.ts playwright/death-restart.spec.ts",
+    "smoke:game": "node scripts/run-playwright-qa.mjs test playwright/runtime-boot.spec.ts playwright/agent-traversal.spec.ts playwright/death-restart.spec.ts playwright/desktop-human-profile.spec.ts",
     "test:map-traversal": "pnpm test:map-traversal:final",
     "test:map-traversal:blockout": "BAZAAR_TRAVERSAL_SCOPE=canonical BAZAAR_TRAVERSAL_PROFILE=blockout node scripts/run-playwright-qa.mjs test playwright/bazaar-v3-traversal.spec.ts --workers=1",
     "test:map-traversal:final": "BAZAAR_TRAVERSAL_SCOPE=canonical BAZAAR_TRAVERSAL_PROFILE=final node scripts/run-playwright-qa.mjs test playwright/bazaar-v3-traversal.spec.ts --workers=1",

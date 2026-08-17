@@ -7,6 +7,7 @@ import {
   preloadLoadingScreenAsset,
   type LoadingScreenImageAssetKey,
 } from "./assets";
+import { isMobileDevice } from "../runtime/input/MobileDetect";
 import {
   type SharedChampionSnapshot,
 } from "../../../shared/highScore";
@@ -19,6 +20,7 @@ import {
 type LoadingScreenUICallbacks = {
   onWarmupAudio: () => void;
   onMuteToggle: () => void;
+  onPreviewMode: (mode: LoadingScreenMode) => void;
   onSelectMode: (mode: LoadingScreenMode, playerName: string) => void;
 };
 
@@ -248,6 +250,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   const sharedChampionNameEl = getRequiredEl<HTMLElement>("#shared-champion-name");
   const sharedChampionScoreEl = getRequiredEl<HTMLElement>("#shared-champion-score");
   const enterGameBtn = document.getElementById("enter-game-btn");
+  const agentModeSupported = !isMobileDevice();
 
   let disposed = false;
   let bannerTimer: number | null = null;
@@ -269,7 +272,17 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   start.dataset.backgroundReady = "false";
   start.dataset.assetsReady = "false";
   start.dataset.transitioning = "false";
+  start.dataset.agentModeAvailable = agentModeSupported ? "true" : "false";
   loadingScreenOverlay.setAttribute("aria-hidden", "true");
+
+  if (!agentModeSupported) {
+    multiPlayerBtn.hidden = true;
+    multiPlayerBtn.disabled = true;
+    multiPlayerBtn.setAttribute("aria-hidden", "true");
+    enterAgentModeBtn.hidden = true;
+    enterAgentModeBtn.disabled = true;
+    enterAgentModeBtn.setAttribute("aria-hidden", "true");
+  }
 
   // Portrait lock: show overlay when mobile user rotates to landscape on loading screen
   const loadingOrientationGuard = new LoadingScreenOrientationGuard(start);
@@ -416,6 +429,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   function resetToPrimaryButtons() {
     cancelPendingSurfaceReveal();
     pendingMode = null;
+    callbacks.onPreviewMode("human");
     playerNameInput.placeholder = NAME_INPUT_DEFAULT_PLACEHOLDER;
     setNameInputValidationState("valid");
     start.dataset.nameEntryVisible = "false";
@@ -432,6 +446,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
     } = {},
   ) {
     pendingMode = mode;
+    callbacks.onPreviewMode(mode);
     playerNameInput.placeholder = mode === "agent" ? "AGENT NAME" : "HUMAN NAME";
     if (typeof options.prefillValue === "string") {
       playerNameInput.value = clampPlayerNameInput(options.prefillValue);
@@ -523,6 +538,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
 
   function closeNameAndModePanels() {
     pendingMode = null;
+    callbacks.onPreviewMode("human");
     playerNameInput.placeholder = NAME_INPUT_DEFAULT_PLACEHOLDER;
     setNameInputValidationState("valid");
     start.dataset.nameEntryVisible = "false";
@@ -546,11 +562,17 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
 
   function onSelectHuman() {
     if (disposed) return;
+    callbacks.onPreviewMode("human");
     void revealNameEntryWhenReady("human");
   }
 
   function onSelectAgent() {
     if (disposed) return;
+    if (!agentModeSupported) {
+      showBanner("Agent mode is available on desktop only");
+      return;
+    }
+    callbacks.onPreviewMode("agent");
     cancelPendingSurfaceReveal();
     pendingMode = null;
     playerNameInput.placeholder = NAME_INPUT_DEFAULT_PLACEHOLDER;
@@ -585,6 +607,11 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
 
   function onEnterAgentMode() {
     if (disposed) return;
+    if (!agentModeSupported) {
+      showBanner("Agent mode is available on desktop only");
+      return;
+    }
+    callbacks.onPreviewMode("agent");
     void revealNameEntryWhenReady("agent");
   }
 
@@ -658,6 +685,10 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       start.style.display = "grid";
     },
     primeNameEntry(state) {
+      if (state.mode === "agent" && !agentModeSupported) {
+        showBanner("Agent mode is available on desktop only", { persist: true });
+        return;
+      }
       void revealNameEntryWhenReady(state.mode, {
         prefillValue: state.playerName,
       }).then((revealed) => {

@@ -198,7 +198,6 @@ function openingServiceAabb(placement, clearanceM, lateralBufferM) {
 
 export function normalizeCompositionRules(
   raw,
-  zones,
   waiverRegistry = emptyCompositionWaiverRegistry(),
 ) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
@@ -208,27 +207,6 @@ export function normalizeCompositionRules(
   if (!clearances || typeof clearances !== "object" || Array.isArray(clearances)) {
     fail("composition_rules.clearances must be an object");
   }
-  const wallBudgets = raw.wall_budgets;
-  if (!wallBudgets || typeof wallBudgets !== "object" || Array.isArray(wallBudgets)) {
-    fail("composition_rules.wall_budgets must be an object");
-  }
-  const zoneDensityBudgets = raw.zone_density_budgets;
-  if (!zoneDensityBudgets || typeof zoneDensityBudgets !== "object" || Array.isArray(zoneDensityBudgets)) {
-    fail("composition_rules.zone_density_budgets must be an object");
-  }
-
-  const zoneIds = new Set(zones.map((zone) => zone.id));
-  const normalizedZoneBudgets = {};
-  for (const [zoneId, value] of Object.entries(zoneDensityBudgets)) {
-    if (!zoneIds.has(zoneId)) fail(`Density budget references unknown zone '${zoneId}'`);
-    if (!Number.isInteger(value) || value < 0) fail(`Density budget '${zoneId}' must be a non-negative integer`);
-    normalizedZoneBudgets[zoneId] = value;
-  }
-  const missingZones = zones.map((zone) => zone.id).filter((zoneId) => !(zoneId in normalizedZoneBudgets));
-  if (missingZones.length > 0) {
-    fail(`Density budgets missing zones: ${missingZones.join(", ")}`);
-  }
-
   return {
     clearances: {
       doorServiceM: requirePositive(clearances.door_service_m, "clearances.door_service_m"),
@@ -250,30 +228,11 @@ export function normalizeCompositionRules(
         "clearances.fixture_axis_tolerance_m",
       ),
     },
-    wallBudgets: {
-      fixtureSpacingM: requirePositive(wallBudgets.fixture_spacing_m, "wall_budgets.fixture_spacing_m"),
-      symmetryTolerance: requireNonNegative(
-        wallBudgets.symmetry_tolerance,
-        "wall_budgets.symmetry_tolerance",
-      ),
-      smallWallMaxM: requirePositive(wallBudgets.small_wall_max_m, "wall_budgets.small_wall_max_m"),
-      smallWallMaxFixtures: (() => {
-        const value = requireNonNegative(
-          wallBudgets.small_wall_max_fixtures,
-          "wall_budgets.small_wall_max_fixtures",
-        );
-        if (!Number.isInteger(value)) fail("wall_budgets.small_wall_max_fixtures must be an integer");
-        return value;
-      })(),
-    },
-    zoneDensityBudgets: normalizedZoneBudgets,
     canopyOpeningExemptions: waiverRegistry.byKind["canopy-opening"],
     hardOverlapExemptions: waiverRegistry.byKind["hard-overlap"],
     fixtureBufferExemptions: waiverRegistry.byKind["fixture-buffer"],
     openingServiceExemptions: waiverRegistry.byKind["opening-service"],
     decorationOpeningExemptions: waiverRegistry.byKind["decoration-opening"],
-    fenestrationExemptions: waiverRegistry.byKind.fenestration,
-    wallBudgetExemptions: waiverRegistry.byKind["wall-budget"],
     fixtureAxisExemptions: waiverRegistry.byKind["fixture-axis"],
   };
 }
@@ -582,82 +541,6 @@ export function validateCanopyOpeningClearance({
   return deferredConflicts;
 }
 
-export function validateSpanDerivedFenestration({ frontages, zones, moduleById, rules }) {
-  const zoneById = new Map(zones.map((zone) => [zone.id, zone]));
-  const exemptionByFrontageId = new Map(
-    (rules?.fenestrationExemptions ?? []).map((entry) => [entry.frontageId, entry]),
-  );
-  const usedExemptions = new Set();
-  const deferredConflicts = [];
-  for (const frontage of frontages) {
-    const zone = zoneById.get(frontage.zoneId);
-    if (!zone) continue;
-    const lengthM = frontageLengthM(frontage, zone);
-    const ground = frontage.bays.filter((bay) => {
-      const module = moduleById.get(bay.moduleId);
-      return bay.datumId.startsWith("GROUND_HEAD_") && module && OPENING_KINDS.has(module.kind);
-    });
-    const minimumGroundCount = lengthM <= (rules?.wallBudgets.smallWallMaxM ?? 2.5)
-      ? 0
-      : Math.ceil(lengthM / 6);
-    const violations = new Map();
-    if (ground.length < minimumGroundCount) {
-      violations.set(
-        `ground-count:${ground.length}<${minimumGroundCount}`,
-        `Frontage '${frontage.id}' has ${ground.length} ground bays; `
-        + `${minimumGroundCount} are required by its ${lengthM.toFixed(2)}m span`,
-      );
-    }
-    const upper = frontage.bays.filter((bay) => {
-      const module = moduleById.get(bay.moduleId);
-      return bay.datumId.startsWith("STORY_") && module && OPENING_KINDS.has(module.kind);
-    });
-    for (const bay of upper) {
-      const nearestGround = ground.length > 0
-        ? Math.min(...ground.map((groundBay) => Math.abs(groundBay.along - bay.along)))
-        : Number.POSITIVE_INFINITY;
-      const hasFacadeCenteredPair = upper.some((candidate) => (
-        candidate.id !== bay.id
-        && candidate.datumId === bay.datumId
-        && Math.abs(candidate.along - (1 - bay.along)) <= 0.02 + EPSILON
-      ));
-      const isFacadeCentered = Math.abs(bay.along - 0.5) <= 0.02 + EPSILON;
-      if (nearestGround > 0.18 + EPSILON && !hasFacadeCenteredPair && !isFacadeCentered) {
-        violations.set(
-          `upper:${bay.id}:${ground.length === 0 ? "no-ground-axis" : "off-rhythm"}`,
-          `Upper opening '${frontage.id}:${bay.id}' does not align to the ground bay rhythm`,
-        );
-      }
-    }
-    if (violations.size === 0) continue;
-    const exemption = exemptionByFrontageId.get(frontage.id);
-    if (!exemption) fail([...violations.values()][0]);
-    const violationIds = [...violations.keys()].sort();
-    if (
-      violationIds.length !== exemption.violationIds.length
-      || violationIds.some((violationId, index) => violationId !== exemption.violationIds[index])
-    ) {
-      fail(
-        `Fenestration exemption '${frontage.id}' must exactly match conflicts `
-        + violationIds.join(", "),
-      );
-    }
-    usedExemptions.add(frontage.id);
-    deferredConflicts.push({
-      frontageId: frontage.id,
-      violations: [...violations.entries()].map(([id, message]) => ({ id, message })),
-      ...waiverEvidence(exemption),
-    });
-  }
-  const staleExemptions = (rules?.fenestrationExemptions ?? [])
-    .filter((entry) => !usedExemptions.has(entry.frontageId))
-    .map((entry) => entry.frontageId);
-  if (staleExemptions.length > 0) {
-    fail(`Fenestration exemptions no longer match a conflict: ${staleExemptions.join(", ")}`);
-  }
-  return deferredConflicts;
-}
-
 function frontageAlongFromPosition(frontage, zone, position) {
   const fullLengthM = frontage.face === "west" || frontage.face === "east"
     ? zone.rect.h
@@ -742,151 +625,14 @@ export function validateCompiledFixtureAxes({
   return deferredConflicts;
 }
 
-export function validateWallPlacementBudgets({
-  frontages,
-  zones,
-  anchors,
-  dressingPlacements,
-  rules,
-}) {
-  const zoneById = new Map(zones.map((zone) => [zone.id, zone]));
-  const anchorById = new Map(anchors.map((anchor) => [anchor.id, anchor]));
-  const exemptionByFrontageId = new Map(
-    rules.wallBudgetExemptions.map((entry) => [entry.frontageId, entry]),
-  );
-  const usedExemptions = new Set();
-  const deferredConflicts = [];
-  for (const frontage of frontages) {
-    const zone = zoneById.get(frontage.zoneId);
-    if (!zone) continue;
-    const fixtures = dressingPlacements
-      .map((placement) => ({ placement, anchor: anchorById.get(placement.anchorId) }))
-      .filter(({ anchor }) => (
-        anchor?.frontageId === frontage.id
-        && anchor.servedBayId
-        && FIXTURE_ANCHOR_TYPES.has(anchor.type)
-      ))
-      .map(({ placement }) => ({
-        id: placement.id,
-        along: frontageAlongFromPosition(frontage, zone, placement.position),
-      }));
-    const lengthM = frontageLengthM(frontage, zone);
-    const maxFixtures = lengthM <= rules.wallBudgets.smallWallMaxM
-      ? rules.wallBudgets.smallWallMaxFixtures
-      : Math.ceil(lengthM / rules.wallBudgets.fixtureSpacingM);
-    const violations = new Map();
-    if (fixtures.length > maxFixtures) {
-      violations.set(
-        `count:${fixtures.length}>${maxFixtures}`,
-        `Frontage '${frontage.id}' has ${fixtures.length} fixtures, above its span-derived budget ${maxFixtures}`,
-      );
-    }
-    if (
-      fixtures.length === 1
-      && lengthM > rules.wallBudgets.smallWallMaxM
-      && Math.abs(fixtures[0].along - 0.5) > rules.wallBudgets.symmetryTolerance + EPSILON
-    ) {
-      violations.set(
-        `symmetry:${fixtures[0].along.toFixed(3)}`,
-        `Frontage '${frontage.id}' lone fixture ${fixtures[0].along.toFixed(3)} exceeds symmetry tolerance `
-        + `${rules.wallBudgets.symmetryTolerance.toFixed(3)}`,
-      );
-    } else if (fixtures.length >= 2) {
-      const ordered = fixtures.map((fixture) => fixture.along).sort((left, right) => left - right);
-      let hasSymmetryViolation = false;
-      for (let index = 0; index < Math.floor(ordered.length / 2); index += 1) {
-        const mirroredSum = ordered[index] + ordered[ordered.length - 1 - index];
-        if (Math.abs(mirroredSum - 1) > rules.wallBudgets.symmetryTolerance + EPSILON) {
-          violations.set(
-            `symmetry:${ordered.map((value) => value.toFixed(3)).join(",")}`,
-            `Frontage '${frontage.id}' fixture pair ${ordered[index].toFixed(3)}/`
-            + `${ordered[ordered.length - 1 - index].toFixed(3)} exceeds symmetry tolerance `
-            + `${rules.wallBudgets.symmetryTolerance.toFixed(3)}`,
-          );
-          hasSymmetryViolation = true;
-          break;
-        }
-      }
-      if (
-        !hasSymmetryViolation
-        &&
-        ordered.length % 2 === 1
-        && Math.abs(ordered[Math.floor(ordered.length / 2)] - 0.5)
-          > rules.wallBudgets.symmetryTolerance + EPSILON
-      ) {
-        violations.set(
-          `symmetry:${ordered.map((value) => value.toFixed(3)).join(",")}`,
-          `Frontage '${frontage.id}' center fixture `
-          + `${ordered[Math.floor(ordered.length / 2)].toFixed(3)} exceeds symmetry tolerance `
-          + `${rules.wallBudgets.symmetryTolerance.toFixed(3)}`,
-        );
-      }
-    }
-    if (violations.size === 0) continue;
-    const exemption = exemptionByFrontageId.get(frontage.id);
-    if (!exemption) fail([...violations.values()][0]);
-    const violationIds = [...violations.keys()].sort();
-    if (
-      violationIds.length !== exemption.violationIds.length
-      || violationIds.some((violationId, index) => violationId !== exemption.violationIds[index])
-    ) {
-      fail(
-        `Wall-budget exemption '${frontage.id}' must exactly match conflicts `
-        + violationIds.join(", "),
-      );
-    }
-    usedExemptions.add(frontage.id);
-    deferredConflicts.push({
-      frontageId: frontage.id,
-      violations: [...violations.entries()].map(([id, message]) => ({ id, message })),
-      ...waiverEvidence(exemption),
-    });
-  }
-  const staleExemptions = rules.wallBudgetExemptions
-    .filter((entry) => !usedExemptions.has(entry.frontageId))
-    .map((entry) => entry.frontageId);
-  if (staleExemptions.length > 0) {
-    fail(`Wall-budget exemptions no longer match a conflict: ${staleExemptions.join(", ")}`);
-  }
-  return deferredConflicts;
-}
-
-export function validateZoneDensityBudgets({ zones, dressingPlacements, rules }) {
-  const counts = new Map();
-  for (const placement of dressingPlacements) {
-    counts.set(placement.zoneId, (counts.get(placement.zoneId) ?? 0) + 1);
-  }
-  for (const zone of zones) {
-    const count = counts.get(zone.id) ?? 0;
-    const budget = rules.zoneDensityBudgets[zone.id];
-    if (count > budget) {
-      fail(`Zone '${zone.id}' has ${count} placements, above density budget ${budget}`);
-    }
-  }
-  return Object.fromEntries(zones.map((zone) => [
-    zone.id,
-    {
-      placementCount: counts.get(zone.id) ?? 0,
-      budget: rules.zoneDensityBudgets[zone.id],
-    },
-  ]));
-}
-
 export function validateCompositionRules({
   zones,
   frontages,
   anchors,
   architecturePlacements,
   dressingPlacements,
-  moduleById,
   rules,
 }) {
-  const deferredFenestrationConflicts = validateSpanDerivedFenestration({
-    frontages,
-    zones,
-    moduleById,
-    rules,
-  });
   const deferredOpeningServiceConflicts = validateOpeningServiceability({
     anchors,
     architecturePlacements,
@@ -914,23 +660,12 @@ export function validateCompositionRules({
     dressingPlacements,
     rules,
   });
-  const deferredWallBudgetConflicts = validateWallPlacementBudgets({
-    frontages,
-    zones,
-    anchors,
-    dressingPlacements,
-    rules,
-  });
-  const zoneDensity = validateZoneDensityBudgets({ zones, dressingPlacements, rules });
   return {
-    zoneDensity,
     deferredCanopyOpeningConflicts,
     deferredOpeningServiceConflicts,
     deferredHardPlacementOverlaps,
     deferredFixtureBufferConflicts,
     deferredDecorationOpeningConflicts,
-    deferredFenestrationConflicts,
-    deferredWallBudgetConflicts,
     deferredFixtureAxisConflicts,
   };
 }

@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -7,6 +8,18 @@ import {
   gotoAgentRuntimeViaUi,
   readDocumentedAgentState,
 } from "../scripts/lib/runtimePlaywright.mjs";
+
+const AGENT_GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
+const AGENT_WAVE_ONE_PRESSURE = AGENT_GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) => (
+  band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
+));
+if (!AGENT_WAVE_ONE_PRESSURE) throw new Error("Missing desktop-agent wave-one pressure tuning");
+const RETRY_STEP_MS = 500;
+const REQUIRED_RETRY_DEATHS = 2;
+const RETRY_COMBAT_WINDOW_S = Math.ceil(AGENT_WAVE_ONE_PRESSURE.fullPressureS + 30);
+const MAX_RETRY_STEPS = Math.ceil(
+  (REQUIRED_RETRY_DEATHS * RETRY_COMBAT_WINDOW_S * 1_000) / RETRY_STEP_MS,
+);
 
 function expectSharedChampionShape(sharedChampion: unknown) {
   if (sharedChampion === null) return;
@@ -649,7 +662,7 @@ test("supports the documented no-context death and retry loop", async ({ page },
   let respawns = 0;
   let previousAlive = true;
 
-  for (let step = 0; step < 180 && deaths < 2; step += 1) {
+  for (let step = 0; step < MAX_RETRY_STEPS && deaths < REQUIRED_RETRY_DEATHS; step += 1) {
     const state = await readDocumentedAgentState(page);
     const alive = state.gameplay?.alive === true;
     const gameOverVisible = state.gameplay?.gameOverVisible === true;
@@ -719,10 +732,10 @@ test("supports the documented no-context death and retry loop", async ({ page },
         fire,
       });
     }, { stepIndex: step });
-    await advanceRuntime(page, 500);
+    await advanceRuntime(page, RETRY_STEP_MS);
   }
 
-  expect(deaths).toBeGreaterThanOrEqual(2);
-  expect(respawns).toBeGreaterThanOrEqual(2);
+  expect(deaths).toBeGreaterThanOrEqual(REQUIRED_RETRY_DEATHS);
+  expect(respawns).toBeGreaterThanOrEqual(REQUIRED_RETRY_DEATHS);
   expect(recorder.counts().errorCount).toBe(0);
 });

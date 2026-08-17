@@ -1891,39 +1891,6 @@
       "placement_aabb_buffer_m": 0.05,
       "fixture_buffer_m": 0.08,
       "fixture_axis_tolerance_m": 0.02
-    },
-    "wall_budgets": {
-      "fixture_spacing_m": 1.4,
-      "symmetry_tolerance": 0.14,
-      "small_wall_max_m": 2.5,
-      "small_wall_max_fixtures": 1
-    },
-    "zone_density_budgets": {
-      "SPAWN_A_COURTYARD": 7,
-      "SPICE_STREET": 30,
-      "FOUNTAIN_COURT": 18,
-      "TEXTILE_ARCADE": 12,
-      "RUG_GATE": 8,
-      "SPAWN_B_COURTYARD": 2,
-      "SERVICE_SOUTH": 2,
-      "CARAVAN_COURT": 10,
-      "SERVICE_NORTH": 0,
-      "TEA_RAMP": 3,
-      "TEA_TERRACE": 13,
-      "TEA_STAIRS": 0,
-      "TEA_LANDING": 0,
-      "DYERS_ALLEY": 14,
-      "COVERED_SOUK": 18,
-      "DYERS_DOGLEG": 4,
-      "NORTH_COURT": 12,
-      "LINK_WEST_MID": 0,
-      "LINK_EAST_MID": 0,
-      "LINK_WEST_UPPER": 0,
-      "LINK_EAST_UPPER": 0,
-      "LINK_SOUTH_WEST": 0,
-      "LINK_SOUTH_EAST": 0,
-      "LINK_NORTH_WEST": 0,
-      "LINK_NORTH_EAST": 0
     }
   },
   "massing_profiles": [
@@ -8970,5 +8937,23 @@
         }
       }
     }
-  ]
+  ],
+  "map_polish_survey_camera_overrides": {
+    "LINK_NORTH_EAST": {
+      "primary": {
+        "designPosition": { "x": 45, "y": 77, "z": 1.7 },
+        "designLookAt": { "x": 40, "y": 80, "z": 1.65 },
+        "playerPosition": { "x": 45, "y": 0, "z": 77 },
+        "yawDeg": 120.9638,
+        "fovDeg": 75
+      },
+      "context": {
+        "designPosition": { "x": 45, "y": 80, "z": 1.7 },
+        "designLookAt": { "x": 42.5, "y": 78.5, "z": 1.65 },
+        "playerPosition": { "x": 45, "y": 0, "z": 80 },
+        "yawDeg": 59.0362,
+        "fovDeg": 75
+      }
+    }
+  }
 }

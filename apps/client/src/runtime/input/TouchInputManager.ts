@@ -12,7 +12,54 @@
  * suppress Safari scroll/bounce.
  */
 
-const JOYSTICK_MAX_RADIUS = 60; // px — max distance knob can travel from origin
+const DEFAULT_JOYSTICK_MAX_RADIUS_PX = 60;
+
+export type TouchInputManagerOptions = {
+  /** Maximum physical distance the floating joystick knob can travel. */
+  joystickRadiusPx?: number;
+  /** Radial movement deadzone expressed as a normalized [0, 1) radius. */
+  moveDeadzone?: number;
+  /**
+   * Aim assist is intentionally unsupported until its runtime behavior is
+   * implemented and validated. Passing true fails closed instead of silently
+   * producing an easier or harder profile than its identity promises.
+   */
+  aimAssistEnabled?: boolean;
+};
+
+export type RadialJoystickInput = {
+  moveX: number;
+  moveZ: number;
+  visualDx: number;
+  visualDy: number;
+};
+
+/**
+ * Resolve a physical joystick offset into a radially deadzoned movement vector.
+ * The post-deadzone range is remapped to [0, 1], preserving full-speed reach.
+ */
+export function resolveRadialJoystickInput(
+  dx: number,
+  dy: number,
+  radiusPx: number,
+  deadzone: number,
+): RadialJoystickInput {
+  const distance = Math.hypot(dx, dy);
+  const clampedDistance = Math.min(distance, radiusPx);
+  const rawMagnitude = distance > 0 ? clampedDistance / radiusPx : 0;
+  const magnitude = rawMagnitude <= deadzone
+    ? 0
+    : (rawMagnitude - deadzone) / (1 - deadzone);
+  const directionX = distance > 0 ? dx / distance : 0;
+  const directionY = distance > 0 ? dy / distance : 0;
+
+  return {
+    moveX: magnitude === 0 || directionX === 0 ? 0 : directionX * magnitude,
+    moveZ: magnitude === 0 || directionY === 0 ? 0 : -directionY * magnitude,
+    visualDx: directionX * clampedDistance,
+    visualDy: directionY * clampedDistance,
+  };
+}
 
 type ButtonRole = "fire" | "reload" | "jump" | "crouch";
 
@@ -48,6 +95,8 @@ export class TouchInputManager {
   private crouchToggled = false;
 
   private readonly el: HTMLElement;
+  private readonly joystickRadiusPx: number;
+  private readonly moveDeadzone: number;
 
   // While an overlay owns the screen (pause menu, How to Play, Controls, death
   // screen, orientation guard) every touch must reach that overlay's own
@@ -56,8 +105,22 @@ export class TouchInputManager {
   // entirely rather than being trusted to miss the overlay.
   private captureEnabled = true;
 
-  constructor(el: HTMLElement) {
+  constructor(el: HTMLElement, options: TouchInputManagerOptions = {}) {
+    const joystickRadiusPx = options.joystickRadiusPx ?? DEFAULT_JOYSTICK_MAX_RADIUS_PX;
+    const moveDeadzone = options.moveDeadzone ?? 0;
+    if (!Number.isFinite(joystickRadiusPx) || joystickRadiusPx <= 0) {
+      throw new Error("Touch joystick radius must be a positive finite number.");
+    }
+    if (!Number.isFinite(moveDeadzone) || moveDeadzone < 0 || moveDeadzone >= 1) {
+      throw new Error("Touch joystick deadzone must be a finite number in [0, 1).");
+    }
+    if (options.aimAssistEnabled === true) {
+      throw new Error("Touch aim assist is enabled by the gameplay profile but is not implemented.");
+    }
+
     this.el = el;
+    this.joystickRadiusPx = joystickRadiusPx;
+    this.moveDeadzone = moveDeadzone;
   }
 
   /**
@@ -189,17 +252,18 @@ export class TouchInputManager {
       if (id === this.joystickTouchId) {
         const dx = x - this.joystickOriginX;
         const dy = y - this.joystickOriginY;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const clamped = Math.min(dist, JOYSTICK_MAX_RADIUS);
-        const norm = dist > 0 ? clamped / JOYSTICK_MAX_RADIUS : 0;
-        const angle = Math.atan2(dy, dx);
-        this.moveX = Math.cos(angle) * norm;
-        this.moveZ = -Math.sin(angle) * norm; // Screen Y up = forward (negative Z in game)
+        const resolved = resolveRadialJoystickInput(
+          dx,
+          dy,
+          this.joystickRadiusPx,
+          this.moveDeadzone,
+        );
+        this.moveX = resolved.moveX;
+        this.moveZ = resolved.moveZ; // Screen Y up = forward (negative Z in game)
 
-        // Visual feedback — pass clamped dx/dy
-        const visualDx = dist > 0 ? (dx / dist) * clamped : 0;
-        const visualDy = dist > 0 ? (dy / dist) * clamped : 0;
-        this.onJoystickMove?.(visualDx, visualDy);
+        // Visual feedback remains physical and clamped, independent of the
+        // gameplay deadzone, so the knob never jumps at the threshold.
+        this.onJoystickMove?.(resolved.visualDx, resolved.visualDy);
         handled = true;
         continue;
       }

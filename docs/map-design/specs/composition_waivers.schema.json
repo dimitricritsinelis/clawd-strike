@@ -4,32 +4,10 @@
   "title": "Clawd Strike composition waiver registry",
   "type": "object",
   "additionalProperties": false,
-  "required": ["schemaVersion", "legacyMigration", "waivers"],
+  "required": ["schemaVersion", "waivers"],
   "properties": {
     "schemaVersion": {
       "const": 1
-    },
-    "legacyMigration": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["id", "closed", "recordCount", "recordsSha256"],
-      "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "closed": {
-          "const": true
-        },
-        "recordCount": {
-          "type": "integer",
-          "minimum": 0
-        },
-        "recordsSha256": {
-          "type": "string",
-          "pattern": "^[a-f0-9]{64}$"
-        }
-      }
     },
     "waivers": {
       "type": "array",
@@ -52,43 +30,48 @@
       }
     },
     "match": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "anchorId": {
-          "$ref": "#/$defs/nonEmptyString"
-        },
-        "openingIds": {
-          "$ref": "#/$defs/stringList"
-        },
-        "placementIds": {
-          "$ref": "#/$defs/stringList"
-        },
-        "placementId": {
-          "$ref": "#/$defs/nonEmptyString"
-        },
-        "openingId": {
-          "$ref": "#/$defs/nonEmptyString"
-        },
-        "frontageId": {
-          "$ref": "#/$defs/nonEmptyString"
-        },
-        "violationIds": {
-          "$ref": "#/$defs/stringList"
-        }
-      },
       "oneOf": [
         {
-          "required": ["anchorId", "openingIds"]
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["anchorId", "openingIds"],
+          "properties": {
+            "anchorId": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "openingIds": {
+              "$ref": "#/$defs/stringList"
+            }
+          }
         },
         {
-          "required": ["placementIds"]
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["placementIds"],
+          "properties": {
+            "placementIds": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/nonEmptyString"
+              }
+            }
+          }
         },
         {
-          "required": ["placementId", "openingId"]
-        },
-        {
-          "required": ["frontageId", "violationIds"]
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["placementId", "openingId"],
+          "properties": {
+            "placementId": {
+              "$ref": "#/$defs/nonEmptyString"
+            },
+            "openingId": {
+              "$ref": "#/$defs/nonEmptyString"
+            }
+          }
         }
       ]
     },
@@ -146,12 +129,10 @@
           "enum": [
             "canopy-opening",
             "decoration-opening",
-            "fenestration",
             "fixture-axis",
             "fixture-buffer",
             "hard-overlap",
-            "opening-service",
-            "wall-budget"
+            "opening-service"
           ]
         },
         "signature": {

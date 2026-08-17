@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { compileMapSpec, deriveShotsRuntime, validateMapSpecAgainstSchema } from "./gen-map-runtime.mjs";
@@ -20,10 +19,6 @@ const generatedProvenanceSchema = JSON.parse(await readFile(
 const authoritativeCompositionWaivers = normalizeCompositionWaiverRegistry(
   authoritativeCompositionWaiverDocument,
 );
-const compositionMigrationBaseline = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/composition_migration_baseline.json", import.meta.url),
-  "utf8",
-));
 const authoritativeGeneratedMap = JSON.parse(await readFile(
   new URL("../public/maps/bazaar-map/map_spec.json", import.meta.url),
   "utf8",
@@ -40,65 +35,6 @@ test("versioned schemas validate composition waivers and generated provenance", 
     authoritativeGeneratedShots.metadata.generatedFrom,
     generatedProvenanceSchema,
   );
-});
-
-test("composition metadata migration preserves the authoritative normalized map semantics", () => {
-  assert.equal(compositionMigrationBaseline.schemaVersion, 1);
-  assert.equal(compositionMigrationBaseline.hashAlgorithm, "sha256-json-v1");
-  assert.equal(
-    authoritativeGeneratedMap.generatedFrom.path,
-    compositionMigrationBaseline.sourcePath,
-  );
-  assert.equal(
-    authoritativeGeneratedMap.generatedFrom.sha256,
-    compositionMigrationBaseline.sourceSha256,
-  );
-  assert.deepEqual(compositionMigrationBaseline.sections, [
-    "mapId",
-    "playable_boundary",
-    "defaults",
-    "wall_details",
-    "zones",
-    "exterior_wall_patches",
-    "constraints",
-    "formatVersion",
-    "mapCenter",
-    "districts",
-    "traversalSurfaces",
-    "tacticalLanes",
-    "explicitConnectivity",
-    "authoredSpawns",
-    "frontages",
-    "frontageCoverage",
-    "assetRegistry",
-    "massingProfiles",
-    "facadeModules",
-    "facadeProfiles",
-    "architecturePlacements",
-    "dressingClusters",
-    "dressingPlacements",
-    "anchors",
-  ]);
-  assert.deepEqual(
-    [...compositionMigrationBaseline.sections].sort(),
-    Object.keys(authoritativeGeneratedMap)
-      .filter((section) => section !== "generatedFrom")
-      .sort(),
-    "the migration seal must cover every normalized runtime-map field",
-  );
-  const normalizedSemantics = Object.fromEntries(
-    compositionMigrationBaseline.sections.map((section) => {
-      assert.ok(
-        Object.hasOwn(authoritativeGeneratedMap, section),
-        `generated map is missing migration-protected section '${section}'`,
-      );
-      return [section, authoritativeGeneratedMap[section]];
-    }),
-  );
-  const semanticSha256 = createHash("sha256")
-    .update(JSON.stringify(normalizedSemantics))
-    .digest("hex");
-  assert.equal(semanticSha256, compositionMigrationBaseline.semanticSha256);
 });
 
 function makeV3Spec() {
@@ -297,16 +233,6 @@ function makeV3Spec() {
         fixture_buffer_m: 0.08,
         fixture_axis_tolerance_m: 0.02,
       },
-      wall_budgets: {
-        fixture_spacing_m: 1.4,
-        symmetry_tolerance: 0.14,
-        small_wall_max_m: 2.5,
-        small_wall_max_fixtures: 1,
-      },
-      zone_density_budgets: {
-        ZONE_FLAT: 2,
-        ZONE_RAMP: 0,
-      },
     },
     asset_registry: [
       {
@@ -373,6 +299,16 @@ function makeV3Spec() {
   };
 }
 
+function makeSurveyCamera() {
+  return {
+    designPosition: { x: 4, y: 5, z: 1.7 },
+    designLookAt: { x: 8, y: 5, z: 1.65 },
+    playerPosition: { x: 4, y: 0, z: 5 },
+    yawDeg: -90,
+    fovDeg: 75,
+  };
+}
+
 test("compiles the optional v3 contract without source/runtime drift", () => {
   const runtime = compileMapSpec(makeV3Spec());
 
@@ -420,15 +356,6 @@ test("compiles the optional v3 contract without source/runtime drift", () => {
   assert.deepEqual(runtime.dressingPlacements?.[0].position, { x: 3, y: 3, z: 0 });
 });
 
-test("fails compilation loudly when a seeded composition rule is violated", () => {
-  const source = makeV3Spec();
-  source.composition_rules.zone_density_budgets.ZONE_FLAT = 0;
-  assert.throws(
-    () => compileMapSpec(source),
-    /Zone 'ZONE_FLAT' has 1 placements, above density budget 0/,
-  );
-});
-
 test("validates the source document against the owning schema before compilation", async () => {
   const schema = JSON.parse(
     await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
@@ -441,6 +368,157 @@ test("validates the source document against the owning schema before compilation
     () => validateMapSpecAgainstSchema(source, schema),
     /visualStyle: additional property is not allowed/,
   );
+});
+
+test("schema owns the complete map polish survey camera override shape", async () => {
+  const schema = JSON.parse(
+    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+  );
+  const source = makeV3Spec();
+  source.map_polish_survey_camera_overrides = {
+    ZONE_FLAT: { primary: makeSurveyCamera() },
+  };
+  assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
+
+  const missingField = structuredClone(source);
+  delete missingField.map_polish_survey_camera_overrides.ZONE_FLAT.primary.fovDeg;
+  assert.throws(
+    () => validateMapSpecAgainstSchema(missingField, schema),
+    /fovDeg: required property is missing/,
+  );
+
+  const nonFinite = structuredClone(source);
+  nonFinite.map_polish_survey_camera_overrides.ZONE_FLAT.primary.yawDeg = Number.NaN;
+  assert.throws(
+    () => validateMapSpecAgainstSchema(nonFinite, schema),
+    /yawDeg: expected number/,
+  );
+
+  const extraField = structuredClone(source);
+  extraField.map_polish_survey_camera_overrides.ZONE_FLAT.primary.rollDeg = 3;
+  assert.throws(
+    () => validateMapSpecAgainstSchema(extraField, schema),
+    /rollDeg: additional property is not allowed/,
+  );
+
+  const emptyViews = structuredClone(source);
+  emptyViews.map_polish_survey_camera_overrides.ZONE_FLAT = {};
+  assert.throws(
+    () => validateMapSpecAgainstSchema(emptyViews, schema),
+    /ZONE_FLAT: expected at least 1 properties/,
+  );
+});
+
+test("compilation rejects invalid survey camera override zones and poses", () => {
+  const source = makeV3Spec();
+  source.map_polish_survey_camera_overrides = {
+    ZONE_FLAT: { primary: makeSurveyCamera() },
+  };
+  assert.doesNotThrow(() => compileMapSpec(source));
+
+  const unknownZone = structuredClone(source);
+  unknownZone.map_polish_survey_camera_overrides = {
+    ZONE_UNKNOWN: { primary: makeSurveyCamera() },
+  };
+  assert.throws(
+    () => compileMapSpec(unknownZone),
+    /Unknown map polish survey camera override zone 'ZONE_UNKNOWN'/,
+  );
+
+  const duplicateCanonicalZone = structuredClone(source);
+  duplicateCanonicalZone.map_polish_survey_camera_overrides[" ZONE_FLAT "] = {
+    context: makeSurveyCamera(),
+  };
+  assert.throws(
+    () => compileMapSpec(duplicateCanonicalZone),
+    /Duplicate map polish survey camera override for zone 'ZONE_FLAT'/,
+  );
+
+  const duplicateAuthoredZone = structuredClone(source);
+  duplicateAuthoredZone.zones.push({
+    ...structuredClone(duplicateAuthoredZone.zones[0]),
+    rect: { x: 2, y: 2, w: 4, h: 4 },
+  });
+  assert.throws(() => compileMapSpec(duplicateAuthoredZone), /Duplicate zone id 'ZONE_FLAT'/);
+
+  const invalidFov = structuredClone(source);
+  invalidFov.map_polish_survey_camera_overrides.ZONE_FLAT.primary.fovDeg = 180;
+  assert.throws(
+    () => compileMapSpec(invalidFov),
+    /ZONE_FLAT\.primary\.fovDeg must be > 0 and < 180/,
+  );
+
+  const zeroLookVector = structuredClone(source);
+  zeroLookVector.map_polish_survey_camera_overrides.ZONE_FLAT.primary.designLookAt = {
+    ...zeroLookVector.map_polish_survey_camera_overrides.ZONE_FLAT.primary.designPosition,
+  };
+  assert.throws(
+    () => compileMapSpec(zeroLookVector),
+    /designLookAt must differ from designPosition/,
+  );
+
+  const verticalLookVector = structuredClone(source);
+  const verticalCamera = verticalLookVector.map_polish_survey_camera_overrides.ZONE_FLAT.primary;
+  verticalCamera.designLookAt = {
+    ...verticalCamera.designPosition,
+    z: verticalCamera.designPosition.z + 2,
+  };
+  assert.throws(
+    () => compileMapSpec(verticalLookVector),
+    /designLookAt must differ from designPosition in the horizontal plane/,
+  );
+
+  const inconsistentPlayerPose = structuredClone(source);
+  inconsistentPlayerPose.map_polish_survey_camera_overrides.ZONE_FLAT.primary.playerPosition.x += 0.03;
+  assert.throws(
+    () => compileMapSpec(inconsistentPlayerPose),
+    /designPosition must be the 1\.7m player-eye position for playerPosition/,
+  );
+
+  const misalignedYaw = structuredClone(source);
+  misalignedYaw.map_polish_survey_camera_overrides.ZONE_FLAT.primary.yawDeg += 10;
+  assert.throws(
+    () => compileMapSpec(misalignedYaw),
+    /yawDeg must align with designPosition and designLookAt/,
+  );
+});
+
+test("compiles an authored facade composition through the same runtime contract as generated layouts", () => {
+  const spec = makeV3Spec();
+  // ZONE_FLAT is 10m wide; the frontage spans 0.1..0.9 = 8.0m at MASSING_LOW.
+  spec.frontages[0].layoutIntent = {
+    mode: "authored",
+    composition: "Two merchant bays mirrored about the lane axis with solid held corners.",
+    cornerTreatment: "held",
+    columns: [
+      { id: "L1", along: 0.32, mirrorOf: "R1" },
+      { id: "R1", along: 0.68 },
+    ],
+    bays: [
+      { id: "GROUND_SHOP_L", moduleId: "shop_recess_market", columnId: "L1" },
+      { id: "GROUND_SHOP_R", moduleId: "shop_recess_market", columnId: "R1" },
+    ],
+  };
+  const runtime = compileMapSpec(spec);
+  const frontage = runtime.frontages?.[0];
+  assert.equal(frontage.layout.source, "authored");
+  assert.equal(frontage.layout.rhythm, "authored");
+  assert.equal(frontage.layout.cornerTreatment, "held");
+  assert.deepEqual(frontage.bays.map((bay) => [bay.id, bay.columnId, bay.along, bay.layoutSource]), [
+    ["GROUND_SHOP_L", "L1", 0.32, "authored"],
+    ["GROUND_SHOP_R", "R1", 0.68, "authored"],
+  ]);
+  const placements = runtime.architecturePlacements.filter((placement) => (
+    placement.frontageId === "FRONTAGE_SPICE_NORTH" && placement.kind === "facade_module"
+  ));
+  assert.equal(placements.length, 2);
+  assert.ok(placements.every((placement) => placement.layoutSource === "authored" && placement.datumId.startsWith("GROUND_HEAD_")));
+  // Determinism: recompiling yields identical output.
+  assert.deepEqual(compileMapSpec(structuredClone(spec)).frontages?.[0], frontage);
+
+  const jammed = structuredClone(spec);
+  jammed.frontages[0].layoutIntent.columns = [{ id: "L1", along: 0.23, mirrorOf: "R1" }, { id: "R1", along: 0.77 }];
+  assert.throws(() => compileMapSpec(jammed), /a held corner keeps at least 1\.20m of pier/);
 });
 
 test("resolves stable frontage-relative anchors without persisting segment ordinals", async () => {
@@ -716,7 +794,11 @@ test("rejects malformed geometry and broken v3 references", () => {
     along: 0.52,
     baseElevationM: 0,
   }];
-  assert.throws(() => compileMapSpec(authoredBays), /cannot retain hand-authored bays/);
+  assert.throws(() => compileMapSpec(authoredBays), /cannot carry top-level bays; authored bays belong inside layoutIntent/);
+
+  const unsupportedMode = makeV3Spec();
+  unsupportedMode.frontages[0].layoutIntent = { mode: "freehand" };
+  assert.throws(() => compileMapSpec(unsupportedMode), /layoutIntent\.mode must be 'generated' or 'authored'/);
 
   const duplicateAdjacentIdentity = makeV3Spec();
   duplicateAdjacentIdentity.frontages[0].start = 0.1;

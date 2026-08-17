@@ -55,13 +55,11 @@ import {
  *
  * ## Why a kit rather than better frontages
  *
- * These returns *are* frontage-generated, so the obvious fix is to give them a
- * taller massing and a merchant facade profile. That path is closed: both
- * frontages are covered by sealed `legacy-migrated` fenestration waivers
- * recording that they have zero ground openings, and the waiver set is
- * immutable while any of it remains. Giving them real openings makes those
- * waivers stale, which fails the build. So the returns keep their authored
- * layout and this kit re-faces them, exactly as the other three sides of the
+ * These returns *are* frontage-generated, so the broad fix would be to change
+ * their authored massing and merchant-facade layout. This work is intentionally
+ * render-only, however: changing frontage geometry or openings would expand the
+ * scope into shared map composition. The returns therefore keep their authored
+ * layout while this kit re-faces them, exactly as the other three sides of the
  * courtyard are re-faced.
  *
  * ## Identity

@@ -10,6 +10,13 @@ export type BuffDefinition = {
   vignetteColor: string; // HUD/icon accent color
 };
 
+/** Nominal per-kill chance before the dry-streak safeguard is applied. */
+export const BUFF_DROP_CHANCE = 0.3;
+/** A fourth would-be miss is converted into a drop. */
+export const MAX_CONSECUTIVE_BUFF_NON_DROPS = 3;
+/** Rallying Cry now empowers one deterministic buff for longer than a normal pickup. */
+export const RALLYING_CRY_DURATION_S = 15;
+
 export const BUFF_DEFINITIONS: Record<BuffType, BuffDefinition> = {
   speed_boost: {
     type: "speed_boost",

@@ -3,23 +3,43 @@ import { createHash } from "node:crypto";
 const WAIVER_KINDS = new Set([
   "canopy-opening",
   "decoration-opening",
-  "fenestration",
   "fixture-axis",
   "fixture-buffer",
   "hard-overlap",
   "opening-service",
-  "wall-budget",
 ]);
 const LEGACY_STATUS = "legacy-migrated";
 const APPROVED_STATUS = "approved";
-const SEALED_LEGACY_MIGRATION = Object.freeze({
-  id: "visual-overhaul-roadmap-archive-2026-07-25",
-  recordCount: 28,
-  recordsSha256: "6d9301a5598ff678dadfebdb238b68f38615b8939573ef44189fd48ea8716edd",
+
+// The one-time migration is closed. Keep this per-record allowlist in exact
+// lockstep with the authoritative registry, deleting both entries together as
+// conflicts are resolved. A per-record hash lets isolated tests exercise a
+// subset without letting production authority omit and later resurrect a
+// retained waiver.
+const RETAINABLE_LEGACY_WAIVER_HASHES = Object.freeze({
+  "CW-93F37E043C9D": "bacd1dd580ff6335cb12bf1da9686c7f39dc65c68e485bd98e284bd9567cc013",
+  "CW-CCAEF9D05D21": "b96f5f6f38826042ba728b38e04d7285f5b13bedd58a93580558c31d19171790",
+  "CW-198144AB6C34": "1409cd3b4f71162f27b3a0ea97ac9af331f5cd7224077a0af84ef5b0179fd81e",
+  "CW-1AD31D32494E": "e2ad749745f025baa9b822b26418170b1380b8b02302747ec98cc9a8ef4bdc2f",
+  "CW-D82E53BBDABD": "17e9988869943604dd475e620fd30189174761dce5b3d8956477369f0d45681f",
+  "CW-19D31B5F7F42": "2db5517384c75df6a1f2708c0957f7f88b6f3c5eb4391e6aec2d8914dd2c1761",
+  "CW-D8602E151B6B": "e821797bdd6a3c9510f05ef92287e608a8cd8ec7d7b3d9a6e2a04624f11cb40a",
+  "CW-7599CB836F04": "68a4798495c507c9fc4f044b04261c1a8efdf59690c85e807ff38766e801b5c3",
+  "CW-13333D7BED23": "e4b4002c353ae1adc2ac3ca886c6105e0df58b2db9c299a6abaf456470417278",
+  "CW-A0FABA3DAE26": "88de4cebc06a8413320d64468b3f105d54d8a93b902ecdb595231a33f1f4858f",
+  "CW-216C7CBF937B": "80a17b75aef5575a40605ba050af4bb032de3569b484bc326951bc5870c13ab1",
+  "CW-F70D65F7D790": "6d2a404ef5f2b992405c8b127acc6bd6ca464303424c2ab09a02bde03199a12d",
 });
 
 function fail(message) {
   throw new Error(`[composition-waivers] ${message}`);
+}
+
+function rejectUnexpectedKeys(raw, allowedKeys, label) {
+  const unexpectedKeys = Object.keys(raw).filter((key) => !allowedKeys.includes(key));
+  if (unexpectedKeys.length > 0) {
+    fail(`${label} has unsupported fields: ${unexpectedKeys.sort().join(", ")}`);
+  }
 }
 
 function requireString(value, label) {
@@ -58,12 +78,14 @@ function normalizeMatch(kind, raw, label) {
   }
   switch (kind) {
     case "canopy-opening":
+      rejectUnexpectedKeys(raw, ["anchorId", "openingIds"], label);
       return {
         anchorId: requireString(raw.anchorId, `${label}.anchorId`),
         openingIds: requireStringList(raw.openingIds, `${label}.openingIds`),
       };
     case "hard-overlap":
     case "fixture-buffer": {
+      rejectUnexpectedKeys(raw, ["placementIds"], label);
       const placementIds = requireStringList(raw.placementIds, `${label}.placementIds`);
       if (placementIds.length !== 2) fail(`${label}.placementIds must contain exactly two ids`);
       return { placementIds };
@@ -71,15 +93,10 @@ function normalizeMatch(kind, raw, label) {
     case "opening-service":
     case "decoration-opening":
     case "fixture-axis":
+      rejectUnexpectedKeys(raw, ["placementId", "openingId"], label);
       return {
         placementId: requireString(raw.placementId, `${label}.placementId`),
         openingId: requireString(raw.openingId, `${label}.openingId`),
-      };
-    case "fenestration":
-    case "wall-budget":
-      return {
-        frontageId: requireString(raw.frontageId, `${label}.frontageId`),
-        violationIds: requireStringList(raw.violationIds, `${label}.violationIds`),
       };
     default:
       fail(`${label} has unsupported kind '${kind}'`);
@@ -102,24 +119,54 @@ function normalizeApproval(raw, label) {
   }
   const status = requireString(raw.status, `${label}.status`);
   if (status === LEGACY_STATUS) {
+    rejectUnexpectedKeys(raw, ["status", "legacyRef"], `${label} for '${LEGACY_STATUS}'`);
     return {
       status,
       legacyRef: requireString(raw.legacyRef, `${label}.legacyRef`),
     };
   }
   if (status === APPROVED_STATUS) {
-    return {
+    const approval = {
       status,
       approver: requireString(raw.approver, `${label}.approver`),
       ticket: requireString(raw.ticket, `${label}.ticket`),
     };
+    rejectUnexpectedKeys(raw, ["status", "approver", "ticket"], `${label} for '${APPROVED_STATUS}'`);
+    return approval;
   }
   fail(`${label}.status must be '${LEGACY_STATUS}' or '${APPROVED_STATUS}'`);
 }
 
-function stableLegacyRecordsHash(waivers) {
-  const legacyRecords = waivers.filter((waiver) => waiver.approval.status === LEGACY_STATUS);
-  return createHash("sha256").update(JSON.stringify(legacyRecords)).digest("hex");
+/**
+ * RFC-8785-style property ordering for the JSON-shaped waiver projection.
+ * Objects are recursively key-sorted; arrays retain their semantic order
+ * (set-like match arrays are sorted during normalization). This makes hashes
+ * independent of source key order and object-construction refactors.
+ */
+function canonicalJson(value) {
+  if (value === null || typeof value !== "object") {
+    const serialized = JSON.stringify(value);
+    if (typeof serialized !== "string") fail("legacy waiver hash contains a non-JSON value");
+    return serialized;
+  }
+  if (Array.isArray(value)) {
+    return `[${value.map((entry) => canonicalJson(entry)).join(",")}]`;
+  }
+  return `{${Object.keys(value)
+    .sort()
+    .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+    .join(",")}}`;
+}
+
+function assertRetainableLegacyWaiver(waiver, label) {
+  const expectedHash = RETAINABLE_LEGACY_WAIVER_HASHES[waiver.id];
+  const actualHash = createHash("sha256").update(canonicalJson(waiver)).digest("hex");
+  if (!expectedHash || actualHash !== expectedHash) {
+    fail(
+      `${label} must match an immutable retained legacy waiver; new or changed waivers require `
+      + `'${APPROVED_STATUS}' status with an approver and ticket`,
+    );
+  }
 }
 
 function waiverEvidence(waiver) {
@@ -138,6 +185,7 @@ export function normalizeCompositionWaiverRegistry(raw, options = {}) {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     fail("registry must be an object");
   }
+  rejectUnexpectedKeys(raw, ["schemaVersion", "waivers"], "registry");
   if (raw.schemaVersion !== 1) fail("schemaVersion must be 1");
   if (!Array.isArray(raw.waivers)) fail("waivers must be an array");
   const today = requireIsoDate(
@@ -152,6 +200,11 @@ export function normalizeCompositionWaiverRegistry(raw, options = {}) {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
       fail(`${label} must be an object`);
     }
+    rejectUnexpectedKeys(
+      entry,
+      ["id", "kind", "signature", "match", "reasonCode", "rationale", "approval", "expiresOn"],
+      label,
+    );
     const id = requireString(entry.id, `${label}.id`);
     if (!/^CW-[A-F0-9]{12}$/.test(id)) fail(`${label}.id must match CW-XXXXXXXXXXXX`);
     if (ids.has(id)) fail(`duplicate waiver id '${id}'`);
@@ -176,7 +229,7 @@ export function normalizeCompositionWaiverRegistry(raw, options = {}) {
     if (expiresOn && expiresOn < today) {
       fail(`${label}.expiresOn '${expiresOn}' has expired (today '${today}')`);
     }
-    return {
+    const waiver = {
       id,
       kind,
       signature,
@@ -186,30 +239,32 @@ export function normalizeCompositionWaiverRegistry(raw, options = {}) {
       approval: normalizeApproval(entry.approval, `${label}.approval`),
       ...(expiresOn ? { expiresOn } : {}),
     };
+    if (waiver.approval.status === LEGACY_STATUS) {
+      assertRetainableLegacyWaiver(waiver, label);
+    }
+    return waiver;
   }).sort((left, right) => left.signature.localeCompare(right.signature));
 
-  const legacyMigration = raw.legacyMigration;
-  if (!legacyMigration || typeof legacyMigration !== "object" || Array.isArray(legacyMigration)) {
-    fail("legacyMigration must seal the one-time legacy import");
-  }
-  if (legacyMigration.closed !== true) fail("legacyMigration.closed must be true");
-  requireString(legacyMigration.id, "legacyMigration.id");
-  const legacyRecords = waivers.filter((waiver) => waiver.approval.status === LEGACY_STATUS);
-  if (legacyRecords.length > 0) {
-    if (
-      legacyMigration.id !== SEALED_LEGACY_MIGRATION.id
-      || legacyMigration.recordCount !== SEALED_LEGACY_MIGRATION.recordCount
-      || legacyMigration.recordsSha256 !== SEALED_LEGACY_MIGRATION.recordsSha256
-    ) {
-      fail("legacyMigration must match the immutable 28-record migration seal");
+  // Isolated unit fixtures may opt into a subset explicitly. Authoritative
+  // generators use the default and therefore cannot leave dormant hashes that
+  // would permit a resolved waiver to be resurrected later.
+  if (options.allowLegacySubset !== true) {
+    const authoritativeLegacyIds = waivers
+      .filter((waiver) => waiver.approval.status === LEGACY_STATUS)
+      .map((waiver) => waiver.id)
+      .sort();
+    const retainedLegacyIds = Object.keys(RETAINABLE_LEGACY_WAIVER_HASHES).sort();
+    const idsMatch = authoritativeLegacyIds.length === retainedLegacyIds.length
+      && authoritativeLegacyIds.every((id, index) => id === retainedLegacyIds[index]);
+    if (!idsMatch) {
+      const missing = retainedLegacyIds.filter((id) => !authoritativeLegacyIds.includes(id));
+      const unexpected = authoritativeLegacyIds.filter((id) => !retainedLegacyIds.includes(id));
+      fail(
+        "authoritative legacy waiver ids must exactly match the retained allowlist"
+        + `${missing.length > 0 ? `; missing: ${missing.join(", ")}` : ""}`
+        + `${unexpected.length > 0 ? `; unexpected: ${unexpected.join(", ")}` : ""}`,
+      );
     }
-  }
-  if (legacyMigration.recordCount !== legacyRecords.length) {
-    fail(`legacyMigration.recordCount must equal ${legacyRecords.length}`);
-  }
-  const legacyHash = stableLegacyRecordsHash(waivers);
-  if (legacyMigration.recordsSha256 !== legacyHash) {
-    fail("legacyMigration.recordsSha256 does not match the sealed legacy records");
   }
 
   const byKind = Object.fromEntries([...WAIVER_KINDS].map((kind) => [kind, []]));

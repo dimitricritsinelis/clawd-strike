@@ -1,10 +1,18 @@
 import { expect, test } from "@playwright/test";
+import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
   advanceRuntime,
   attachConsoleRecorder,
   gotoAgentRuntime,
   readRuntimeState,
 } from "../scripts/lib/runtimePlaywright.mjs";
+
+const GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
+const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) => (
+  band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
+));
+if (!WAVE_ONE_PRESSURE) throw new Error("Missing wave-one pressure tuning");
+const COMBAT_WINDOW_S = Math.ceil(WAVE_ONE_PRESSURE.fullPressureS + 30);
 
 /**
  * Regression: enemies aimed at a hardcoded 1.5 m above the target's feet while
@@ -18,7 +26,7 @@ import {
 async function fightWhileCrouching(page, holdCrouch: boolean): Promise<number> {
   let lowestHealth = 100;
 
-  for (let tick = 0; tick < 70; tick += 1) {
+  for (let tick = 0; tick < COMBAT_WINDOW_S; tick += 1) {
     // Firing is what makes this deterministic: gunshots are reported to the
     // enemy manager as audible intel, so the squad reliably converges instead
     // of the test depending on them wandering into a silent, stationary player.

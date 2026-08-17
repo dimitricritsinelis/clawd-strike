@@ -131,14 +131,14 @@ export class PlayerController {
     const world = this.world;
     if (!world) return;
 
+    const clampedDt = Math.min(Math.max(deltaSeconds, 0), MAX_FRAME_DT_S);
+    if (clampedDt <= 0) return;
+
     const canStand = !input.crouchHeld && this.canOccupyHeight(PLAYER_HEIGHT_M, world);
     this.currentHeight = input.crouchHeld || !canStand ? CROUCH_HEIGHT_M : PLAYER_HEIGHT_M;
     const crouched = this.currentHeight === CROUCH_HEIGHT_M;
     this.currentEyeHeight = crouched ? CROUCH_EYE_HEIGHT_M : PLAYER_EYE_HEIGHT_M;
     this.solver.setHeight(this.currentHeight);
-
-    const clampedDt = Math.min(Math.max(deltaSeconds, 0), MAX_FRAME_DT_S);
-    if (clampedDt <= 0) return;
 
     const stepCount = Math.max(1, Math.ceil(clampedDt / MAX_SUBSTEP_DT_S));
     const stepDt = clampedDt / stepCount;
@@ -304,6 +304,10 @@ export class PlayerController {
 
   getCurrentEyeHeight(): number {
     return this.currentEyeHeight;
+  }
+
+  isCrouched(): boolean {
+    return this.currentHeight === CROUCH_HEIGHT_M;
   }
 
   setSpeedMultiplier(multiplier: number): void {

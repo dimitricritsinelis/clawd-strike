@@ -5,7 +5,6 @@ import path from "node:path";
 import test from "node:test";
 import sharp from "sharp";
 import {
-  REQUIRED_AUDIT_SHOT_COUNT,
   REQUIRED_CLOSEUP_SHOT_COUNT,
   REQUIRED_CORE_SHOT_COUNT,
   evaluateRuntimeShotCameraPose,
@@ -229,16 +228,14 @@ test("rejects missing tags, forbidden tags, asset mismatch, and console warnings
 });
 
 const FIXTURE_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
-const FIXTURE_SHOT_COUNT = FIXTURE_REVIEW_SHOT_COUNT + REQUIRED_AUDIT_SHOT_COUNT;
+const FIXTURE_SHOT_COUNT = FIXTURE_REVIEW_SHOT_COUNT;
 
 function validShotInventory() {
   const shots = Array.from({ length: FIXTURE_SHOT_COUNT }, (_, index) => ({
     id: `SHOT_${String(index + 1).padStart(2, "0")}_TEST`,
     captureKind: index < REQUIRED_CORE_SHOT_COUNT
       ? "core"
-      : index < FIXTURE_REVIEW_SHOT_COUNT
-        ? "closeup"
-        : "audit",
+      : "closeup",
     camera: {
       pos: { x: index, y: 2, z: 3 },
       lookAt: { x: index, y: 2, z: 4 },
@@ -275,28 +272,10 @@ test("selects the exact authored inventory and rejects synthetic compare substit
   const duplicateInventory = validateReviewShotInventory(duplicateView);
   assert.equal(duplicateInventory.passed, false);
   assert.deepEqual(duplicateInventory.duplicateCameraPairs, [[duplicateView.shots[0].id, duplicateView.shots[15].id]]);
-});
 
-test("keeps audit shots outside signoff selection and exposes them only when explicitly selected", () => {
-  const shotsSpec = validShotInventory();
-  const inventory = validateReviewShotInventory(shotsSpec);
-  assert.equal(inventory.passed, true, inventory.errors.join(" | "));
-  assert.equal(inventory.allShotIds.length, FIXTURE_SHOT_COUNT);
-  assert.equal(inventory.reviewShotIds.length, FIXTURE_REVIEW_SHOT_COUNT);
-  assert.deepEqual(
-    inventory.auditShotIds,
-    shotsSpec.shots.slice(FIXTURE_REVIEW_SHOT_COUNT).map((shot) => shot.id),
-  );
-  assert.deepEqual(selectReviewShotIds(shotsSpec), inventory.reviewShotIds);
-  assert.deepEqual(
-    selectReviewShotIds(shotsSpec, { captureKinds: ["audit"] }),
-    inventory.auditShotIds,
-  );
-
-  shotsSpec.shots[FIXTURE_SHOT_COUNT - 1].captureKind = "diagnostic";
-  const unsupported = validateReviewShotInventory(shotsSpec);
-  assert.equal(unsupported.passed, false);
-  assert.match(unsupported.errors.join(" | "), /missing\/unsupported captureKind/);
+  const unsupported = structuredClone(shotsSpec);
+  unsupported.shots[FIXTURE_SHOT_COUNT - 1].captureKind = "diagnostic";
+  assert.match(validateReviewShotInventory(unsupported).errors.join(" | "), /missing\/unsupported captureKind/);
 });
 
 test("authored closeup cameras frame the Spice door/window and canopy attachment without weakening acceptance", async () => {

@@ -95,3 +95,46 @@ test("a player standing on solid ground is never teleported", () => {
   assert.equal(player.getOutOfWorldRecoveryCount(), 0, "solid ground must not trigger recovery");
   assert.ok(player.getPosition().y > -1, "player should be resting on the slab");
 });
+
+test("a zero-delta pause step cannot change player stance or motion", () => {
+  const world = new WorldColliders(
+    [
+      {
+        id: "floor",
+        kind: "floor_slab",
+        min: { x: -20, y: -1, z: -20 },
+        max: { x: 20, y: 0, z: 20 },
+      },
+    ],
+    PLAYABLE_BOUNDARY,
+  );
+  const player = new PlayerController();
+  player.setWorld(world);
+  player.setSpawn(2, 0, 3);
+  player.step(1 / 60, IDLE_INPUT, 0);
+
+  const before = {
+    position: { ...player.getPosition() },
+    velocity: { ...player.getVelocity() },
+    height: player.getCurrentHeight(),
+    eyeHeight: player.getCurrentEyeHeight(),
+    grounded: player.getGrounded(),
+    speedMps: player.getHorizontalSpeedMps(),
+  };
+
+  player.step(0, {
+    forward: 1,
+    right: 1,
+    crouchHeld: true,
+    jumpPressed: true,
+  }, Math.PI);
+
+  assert.deepEqual({
+    position: { ...player.getPosition() },
+    velocity: { ...player.getVelocity() },
+    height: player.getCurrentHeight(),
+    eyeHeight: player.getCurrentEyeHeight(),
+    grounded: player.getGrounded(),
+    speedMps: player.getHorizontalSpeedMps(),
+  }, before);
+});

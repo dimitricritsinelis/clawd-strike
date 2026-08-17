@@ -3,6 +3,16 @@ const MIN_BAY_GAP_M = 0.42;
 const EPSILON = 1e-6;
 const MIN_AWNING_TO_UPPER_SILL_BAND_M = 0.5;
 const AWNING_TOP_ABOVE_GROUND_HEAD_M = 0.48;
+// Authored composition: a "held" corner keeps at least this much solid wall
+// between an opening and the frontage end; a "pilaster" corner needs a column
+// module whose near edge sits within this distance of the end.
+const HELD_CORNER_PIER_M = 1.2;
+const PILASTER_CORNER_REACH_M = 0.9;
+const MIRROR_TOLERANCE_M = 0.03;
+const COMPOSITION_NOTE_MAX = 240;
+export const FACADE_LAYOUT_SOURCES = Object.freeze(["generated", "authored"]);
+export const AUTHORED_CORNER_TREATMENTS = Object.freeze(["held", "pilaster", "open"]);
+const OPENING_KINDS = new Set(["door", "shop_recess", "arch"]);
 const FACADE_FACES = ["north", "south", "east", "west"];
 const FRONTAGE_EXEMPTION_REASONS = new Set([
   "open_traversal_face",
@@ -226,6 +236,254 @@ function groundBaseForSharedHead(module, groundHeadM) {
   return Math.max(0, groundHeadM - module.dimensionsM.height);
 }
 
+function familyUpperSillM(family, storyIndex) {
+  if (family === "covered_arcade") return storyIndex === 1 ? 4.15 : 6.45;
+  if (family === "hero_courtyard") return storyIndex === 1 ? 5.15 : 7.35;
+  return storyIndex === 1 ? 3.68 : 6.25;
+}
+
+function signBand(groundHeadM, upperSillDatumsM, heightM) {
+  const signBandBottomM = groundHeadM + 0.12;
+  const signBandTopM = Math.min(
+    upperSillDatumsM[0] ? upperSillDatumsM[0] - 0.12 : heightM - 0.35,
+    groundHeadM + 0.72,
+  );
+  return { signBandBottomM, signBandTopM };
+}
+
+function requireAuthoredString(value, label, { max = 120, pattern } = {}) {
+  if (typeof value !== "string" || value.trim().length === 0) fail(`${label} must be a non-empty string`);
+  if (value.length > max) fail(`${label} must be ${max} characters or fewer`);
+  if (pattern && !pattern.test(value)) fail(`${label} '${value}' must match ${pattern}`);
+  return value;
+}
+
+/**
+ * Authored composition. Unlike the generated grammar, opening positions are a
+ * design decision: every bay hangs on a named column, mirrored pairs are
+ * declared and checked about the composition axis, the corner treatment is
+ * declared and checked, and one sentence states the ordering idea. The result
+ * still passes the same physical validator as generated layouts (edge margins,
+ * shared ground head, no overlaps, parapet clearance, sign band).
+ */
+export function generateAuthoredFacadeLayout({
+  frontageId,
+  lengthM,
+  heightM,
+  family,
+  profileModuleIds,
+  moduleById,
+  intent,
+}) {
+  if (!(lengthM > EDGE_MARGIN_M * 2)) {
+    fail(`Frontage '${frontageId}' is too short for the 0.6m grammar edge margins`);
+  }
+  if (!intent || typeof intent !== "object" || Array.isArray(intent)) {
+    fail(`Frontage '${frontageId}' authored layoutIntent must be an object`);
+  }
+  const allowedKeys = new Set([
+    "mode", "composition", "axisAlong", "cornerTreatment", "columns", "bays", "groundHeadM", "upperSillDatumsM",
+  ]);
+  for (const key of Object.keys(intent)) {
+    if (!allowedKeys.has(key)) fail(`Frontage '${frontageId}' authored layoutIntent has unsupported field '${key}'`);
+  }
+  const composition = requireAuthoredString(intent.composition, `Frontage '${frontageId}' layoutIntent.composition`, {
+    max: COMPOSITION_NOTE_MAX,
+  }).trim();
+  if (!/[.!?]$/.test(composition)) {
+    fail(`Frontage '${frontageId}' layoutIntent.composition must be one complete sentence stating the ordering idea`);
+  }
+  const axisAlong = typeof intent.axisAlong === "undefined" ? 0.5 : intent.axisAlong;
+  if (typeof axisAlong !== "number" || !(axisAlong > 0 && axisAlong < 1)) {
+    fail(`Frontage '${frontageId}' layoutIntent.axisAlong must be a number strictly between 0 and 1`);
+  }
+  if (!AUTHORED_CORNER_TREATMENTS.includes(intent.cornerTreatment)) {
+    fail(
+      `Frontage '${frontageId}' layoutIntent.cornerTreatment must be one of ${AUTHORED_CORNER_TREATMENTS.join(", ")}`,
+    );
+  }
+  if (!Array.isArray(intent.columns) || intent.columns.length === 0) {
+    fail(`Frontage '${frontageId}' authored layout requires a non-empty columns array`);
+  }
+  const columnById = new Map();
+  for (const [index, column] of intent.columns.entries()) {
+    if (!column || typeof column !== "object" || Array.isArray(column)) {
+      fail(`Frontage '${frontageId}' columns[${index}] must be an object`);
+    }
+    const id = requireAuthoredString(column.id, `Frontage '${frontageId}' columns[${index}].id`, {
+      max: 32,
+      pattern: /^[A-Z][A-Z0-9_]*$/,
+    });
+    if (columnById.has(id)) fail(`Frontage '${frontageId}' repeats column id '${id}'`);
+    if (typeof column.along !== "number" || !(column.along >= 0 && column.along <= 1)) {
+      fail(`Frontage '${frontageId}' column '${id}' along must be a number between 0 and 1`);
+    }
+    if (typeof column.mirrorOf !== "undefined") {
+      requireAuthoredString(column.mirrorOf, `Frontage '${frontageId}' column '${id}' mirrorOf`, { max: 32 });
+    }
+    columnById.set(id, { id, along: column.along, mirrorOf: column.mirrorOf });
+  }
+  for (const column of columnById.values()) {
+    if (typeof column.mirrorOf === "undefined") continue;
+    const target = columnById.get(column.mirrorOf);
+    if (!target) fail(`Frontage '${frontageId}' column '${column.id}' mirrors unknown column '${column.mirrorOf}'`);
+    if (target.id === column.id) fail(`Frontage '${frontageId}' column '${column.id}' cannot mirror itself`);
+    if (typeof target.mirrorOf !== "undefined" && target.mirrorOf !== column.id) {
+      fail(`Frontage '${frontageId}' columns '${column.id}' and '${target.id}' declare inconsistent mirrors`);
+    }
+    const offsetM = (column.along - axisAlong) * lengthM;
+    const targetOffsetM = (target.along - axisAlong) * lengthM;
+    if (Math.abs(offsetM + targetOffsetM) > MIRROR_TOLERANCE_M) {
+      fail(
+        `Frontage '${frontageId}' column '${column.id}' is not mirrored about axis ${axisAlong.toFixed(3)} `
+        + `by '${target.id}' (${offsetM.toFixed(2)}m vs ${targetOffsetM.toFixed(2)}m)`,
+      );
+    }
+  }
+
+  const allowedModuleIds = new Set(profileModuleIds);
+  const storyCount = resolveStoryCount(heightM);
+  if (!Array.isArray(intent.bays) || intent.bays.length === 0) {
+    fail(`Frontage '${frontageId}' authored layout requires a non-empty bays array`);
+  }
+  const authoredBays = intent.bays.map((bay, index) => {
+    if (!bay || typeof bay !== "object" || Array.isArray(bay)) {
+      fail(`Frontage '${frontageId}' bays[${index}] must be an object`);
+    }
+    const id = requireAuthoredString(bay.id, `Frontage '${frontageId}' bays[${index}].id`, {
+      max: 48,
+      pattern: /^[A-Z][A-Z0-9_]*$/,
+    });
+    const moduleId = requireAuthoredString(bay.moduleId, `Frontage '${frontageId}' bay '${id}' moduleId`, { max: 64 });
+    const module = moduleById.get(moduleId);
+    if (!module) fail(`Frontage '${frontageId}' bay '${id}' references unknown module '${moduleId}'`);
+    if (!allowedModuleIds.has(moduleId)) {
+      fail(`Frontage '${frontageId}' bay '${id}' uses module '${moduleId}' outside its facade profile`);
+    }
+    const columnId = requireAuthoredString(bay.columnId, `Frontage '${frontageId}' bay '${id}' columnId`, { max: 32 });
+    const column = columnById.get(columnId);
+    if (!column) fail(`Frontage '${frontageId}' bay '${id}' hangs on unknown column '${columnId}'`);
+    const story = typeof bay.story === "undefined" ? 0 : bay.story;
+    if (!Number.isInteger(story) || story < 0) fail(`Frontage '${frontageId}' bay '${id}' story must be a non-negative integer`);
+    if (story >= storyCount) {
+      fail(`Frontage '${frontageId}' bay '${id}' story ${story} exceeds the ${storyCount}-story massing (${heightM.toFixed(2)}m)`);
+    }
+    return { id, module, column, story };
+  });
+  const seenBayIds = new Set();
+  const seenColumnStory = new Set();
+  for (const bay of authoredBays) {
+    if (seenBayIds.has(bay.id)) fail(`Frontage '${frontageId}' repeats bay id '${bay.id}'`);
+    seenBayIds.add(bay.id);
+    const key = `${bay.column.id}:${bay.story}`;
+    if (seenColumnStory.has(key)) {
+      fail(`Frontage '${frontageId}' column '${bay.column.id}' hosts two bays on story ${bay.story}`);
+    }
+    seenColumnStory.add(key);
+  }
+  const groundBays = authoredBays.filter((bay) => bay.story === 0);
+  if (groundBays.length === 0) fail(`Frontage '${frontageId}' authored layout has no ground-story bays`);
+  const groundOpenings = groundBays.filter((bay) => OPENING_KINDS.has(bay.module.kind));
+  const tallest = (bays) => Math.max(...bays.map((bay) => bay.module.dimensionsM.height));
+  const groundHeadM = typeof intent.groundHeadM === "undefined"
+    ? (groundOpenings.length > 0 ? tallest(groundOpenings) : tallest(groundBays))
+    : intent.groundHeadM;
+  if (typeof groundHeadM !== "number" || !(groundHeadM > 0)) {
+    fail(`Frontage '${frontageId}' layoutIntent.groundHeadM must be a positive number`);
+  }
+  for (const bay of groundBays) {
+    if (bay.module.dimensionsM.height > groundHeadM + EPSILON) {
+      fail(
+        `Frontage '${frontageId}' bay '${bay.id}' (${bay.module.dimensionsM.height.toFixed(2)}m) exceeds the shared ground head `
+        + `${groundHeadM.toFixed(2)}m; use a shorter module, raise groundHeadM, or move it to an upper story`,
+      );
+    }
+  }
+
+  const upperSillDatumsM = [];
+  const usedStories = [...new Set(authoredBays.map((bay) => bay.story).filter((story) => story > 0))].sort();
+  const declaredSills = intent.upperSillDatumsM;
+  if (typeof declaredSills !== "undefined") {
+    if (!Array.isArray(declaredSills) || declaredSills.some((value) => typeof value !== "number" || !(value > 0))) {
+      fail(`Frontage '${frontageId}' layoutIntent.upperSillDatumsM must be an array of positive numbers`);
+    }
+  }
+  const sillForStory = new Map();
+  for (let storyIndex = 1; storyIndex < storyCount; storyIndex += 1) {
+    const sillM = declaredSills?.[storyIndex - 1] ?? familyUpperSillM(family, storyIndex);
+    sillForStory.set(storyIndex, sillM);
+  }
+  for (const story of usedStories) {
+    const sillM = sillForStory.get(story);
+    const rowBays = authoredBays.filter((bay) => bay.story === story);
+    for (const bay of rowBays) {
+      if (sillM + bay.module.dimensionsM.height > heightM - 0.55 + EPSILON) {
+        fail(
+          `Frontage '${frontageId}' bay '${bay.id}' on story ${story} (sill ${sillM.toFixed(2)}m) does not fit under the `
+          + `${heightM.toFixed(2)}m parapet`,
+        );
+      }
+    }
+    upperSillDatumsM.push(sillM);
+  }
+
+  // Corner treatment is a declared design decision, checked numerically.
+  const endDistances = (bay) => {
+    const centerM = bay.column.along * lengthM;
+    const halfW = bay.module.dimensionsM.width * 0.5;
+    return { fromStart: centerM - halfW, fromEnd: lengthM - (centerM + halfW) };
+  };
+  if (intent.cornerTreatment === "held") {
+    for (const bay of groundOpenings) {
+      const { fromStart, fromEnd } = endDistances(bay);
+      if (fromStart < HELD_CORNER_PIER_M - EPSILON || fromEnd < HELD_CORNER_PIER_M - EPSILON) {
+        fail(
+          `Frontage '${frontageId}' opening '${bay.id}' sits ${Math.min(fromStart, fromEnd).toFixed(2)}m from a corner; `
+          + `a held corner keeps at least ${HELD_CORNER_PIER_M.toFixed(2)}m of pier, or declare cornerTreatment 'pilaster'/'open'`,
+        );
+      }
+    }
+  } else if (intent.cornerTreatment === "pilaster") {
+    const columns = groundBays.filter((bay) => bay.module.kind === "column");
+    const nearStart = columns.some((bay) => endDistances(bay).fromStart <= PILASTER_CORNER_REACH_M + EPSILON);
+    const nearEnd = columns.some((bay) => endDistances(bay).fromEnd <= PILASTER_CORNER_REACH_M + EPSILON);
+    if (!nearStart || !nearEnd) {
+      fail(
+        `Frontage '${frontageId}' declares pilaster corners but lacks a column module within `
+        + `${PILASTER_CORNER_REACH_M.toFixed(2)}m of ${!nearStart && !nearEnd ? "both ends" : !nearStart ? "its start" : "its end"}`,
+      );
+    }
+  }
+
+  const bays = authoredBays.map((bay) => {
+    const sillM = bay.story === 0 ? null : sillForStory.get(bay.story);
+    return {
+      id: bay.id,
+      moduleId: bay.module.id,
+      along: bay.column.along,
+      baseElevationM: bay.story === 0 ? groundBaseForSharedHead(bay.module, groundHeadM) : sillM,
+      datumId: bay.story === 0 ? `GROUND_HEAD_${groundHeadM.toFixed(2)}` : `STORY_${bay.story}_SILL_${sillM.toFixed(2)}`,
+      columnId: bay.column.id,
+      layoutSource: "authored",
+    };
+  }).sort((left, right) => left.along - right.along || left.baseElevationM - right.baseElevationM || left.id.localeCompare(right.id));
+
+  const layout = {
+    source: "authored",
+    rhythm: "authored",
+    composition,
+    axisAlong,
+    cornerTreatment: intent.cornerTreatment,
+    storyCount,
+    edgeMarginM: EDGE_MARGIN_M,
+    groundHeadM,
+    upperSillDatumsM,
+    ...signBand(groundHeadM, upperSillDatumsM, heightM),
+  };
+  validateFacadeLayout({ frontageId, lengthM, heightM, family, bays, layout, moduleById });
+  return { bays, layout };
+}
+
 export function generateFacadeLayout({
   frontageId,
   lengthM,
@@ -299,11 +557,7 @@ export function generateFacadeLayout({
       ? groundColumns
       : centeredColumns(lengthM, upperModule.dimensionsM.width, upperCount);
     for (let storyIndex = 1; storyIndex < storyCount; storyIndex += 1) {
-      const sillM = family === "covered_arcade"
-        ? (storyIndex === 1 ? 4.15 : 6.45)
-        : family === "hero_courtyard"
-          ? (storyIndex === 1 ? 5.15 : 7.35)
-          : (storyIndex === 1 ? 3.68 : 6.25);
+      const sillM = familyUpperSillM(family, storyIndex);
       if (sillM + upperModule.dimensionsM.height > heightM - 0.55 + EPSILON) continue;
       upperSillDatumsM.push(sillM);
       for (let columnIndex = 0; columnIndex < upperColumns.length; columnIndex += 1) {
@@ -320,11 +574,6 @@ export function generateFacadeLayout({
     }
   }
 
-  const signBandBottomM = groundHeadM + 0.12;
-  const signBandTopM = Math.min(
-    upperSillDatumsM[0] ? upperSillDatumsM[0] - 0.12 : heightM - 0.35,
-    groundHeadM + 0.72,
-  );
   const layout = {
     source: "generated",
     rhythm,
@@ -332,8 +581,7 @@ export function generateFacadeLayout({
     edgeMarginM: EDGE_MARGIN_M,
     groundHeadM,
     upperSillDatumsM,
-    signBandBottomM,
-    signBandTopM,
+    ...signBand(groundHeadM, upperSillDatumsM, heightM),
   };
   validateFacadeLayout({ frontageId, lengthM, heightM, family, bays, layout, moduleById });
   return { bays, layout };
@@ -350,8 +598,8 @@ export function validateFacadeLayout({ frontageId, lengthM, heightM, family, bay
   for (const bay of bays) {
     const module = moduleById.get(bay.moduleId);
     if (!module) fail(`Frontage '${frontageId}' bay '${bay.id}' references an unknown module`);
-    if (!bay.datumId || !bay.columnId || bay.layoutSource !== "generated") {
-      fail(`Frontage '${frontageId}' bay '${bay.id}' lacks a named generated datum/column`);
+    if (!bay.datumId || !bay.columnId || !FACADE_LAYOUT_SOURCES.includes(bay.layoutSource)) {
+      fail(`Frontage '${frontageId}' bay '${bay.id}' lacks a named generated/authored datum/column`);
     }
     if (bay.baseElevationM > 0 && module.kind === "door") {
       fail(`Frontage '${frontageId}' bay '${bay.id}' places an upper-story door without a balcony`);

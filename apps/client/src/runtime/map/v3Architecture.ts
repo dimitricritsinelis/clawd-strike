@@ -64,7 +64,7 @@ export type V3ArchitectureModulePlacement = {
   openingType: "none" | "recess" | "door_void" | "window_void" | "arch_void";
   datumId: string;
   columnId: string;
-  layoutSource: "generated";
+  layoutSource: "generated" | "authored";
   center: { x: number; y: number; z: number };
   sizeM: { width: number; depth: number; height: number };
   yawDeg: number;

@@ -17,6 +17,14 @@ declare global {
       qaAssetPlanHash: string | null;
     };
     __debug_scene_perf?: () => unknown;
+    __qa_gameplay_authority_state?: () => {
+      colliders: Array<{
+        id: string;
+        kind: string;
+        min: { x: number; y: number; z: number };
+        max: { x: number; y: number; z: number };
+      }>;
+    };
     __debug_render_perf?: () => unknown;
     __qa_performance_state?: () => unknown;
     __qa_capture_state?: () => QaCaptureState;

@@ -1,10 +1,15 @@
 import { expect, test } from "@playwright/test";
+import { getGameplayProfileIdentity } from "../../shared/gameplayProfile";
 import {
   attachConsoleRecorder,
   buildRuntimeUrl,
   gotoAgentRuntime,
   gotoHumanShot,
+  readDocumentedAgentState,
 } from "../scripts/lib/runtimePlaywright.mjs";
+
+const DESKTOP_AGENT_IDENTITY = getGameplayProfileIdentity("desktop-agent");
+const MOBILE_HUMAN_IDENTITY = getGameplayProfileIdentity("mobile-human");
 
 test("boots runtime in agent mode without console errors", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
@@ -19,8 +24,14 @@ test("boots runtime in agent mode without console errors", async ({ page }, test
   });
 
   expect(state.mode).toBe("runtime");
+  expect(state.profile).toEqual(DESKTOP_AGENT_IDENTITY);
   expect(state.map?.loaded).toBe(true);
   expect(state.player?.pos).toBeTruthy();
+  expect(state.gameplay?.health).toBe(100);
+  expect(state.bots).toMatchObject({ waveNumber: 1, tier: 0, aliveCount: 10 });
+  const publicState = await readDocumentedAgentState(page);
+  expect(publicState.profile).toEqual(DESKTOP_AGENT_IDENTITY);
+  expect(publicState.ammo).toMatchObject({ mag: 30, reserve: 120, reloading: false });
   expect(state.render?.viewport?.width).toBeGreaterThan(0);
   expect(recorder.counts().errorCount).toBe(0);
 });
@@ -95,7 +106,13 @@ test("boots mobile bazaar final dressing with registered models", async ({ brows
     });
 
     expect(state.mode).toBe("runtime");
+    expect(state.profile).toEqual(MOBILE_HUMAN_IDENTITY);
     expect(state.map?.loaded).toBe(true);
+    expect(state.gameplay?.health).toBe(100);
+    expect(state.bots).toMatchObject({ waveNumber: 1, tier: 0, aliveCount: 10 });
+    const publicState = await readDocumentedAgentState(page);
+    expect(publicState.profile).toEqual(MOBILE_HUMAN_IDENTITY);
+    expect(publicState.ammo).toMatchObject({ mag: 30, reserve: 120, reloading: false });
     expect(state.boot?.performanceSafeFallback).toBe(false);
     expect(state.assets?.props?.requestedVisualMode).toBe("bazaar");
     expect(state.assets?.props?.activeVisualMode).toBe("bazaar");
