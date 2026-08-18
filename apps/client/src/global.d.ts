@@ -99,6 +99,7 @@ declare global {
       y: number;
       z: number;
       yawDeg?: number;
+      pitchDeg?: number;
     }) => void;
     __debug_pick_scene?: (payload: {
       xPx: number;

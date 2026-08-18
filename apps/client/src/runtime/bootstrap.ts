@@ -4297,9 +4297,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       }
       return readState();
     };
-    window.__debug_set_player_pose = (payload: { x: number; y: number; z: number; yawDeg?: number }) => {
+    window.__debug_set_player_pose = (payload: { x: number; y: number; z: number; yawDeg?: number; pitchDeg?: number }) => {
       const yawRad = typeof payload.yawDeg === "number" ? (payload.yawDeg * Math.PI) / 180 : undefined;
-      game.debugSetPlayerPose({ x: payload.x, y: payload.y, z: payload.z }, yawRad);
+      const pitchRad = typeof payload.pitchDeg === "number" ? (payload.pitchDeg * Math.PI) / 180 : undefined;
+      game.debugSetPlayerPose({ x: payload.x, y: payload.y, z: payload.z }, yawRad, pitchRad);
     };
     window.__debug_pick_scene = (payload: { xPx: number; yPx: number }) => {
       const viewportWidth = Math.max(1, window.innerWidth);

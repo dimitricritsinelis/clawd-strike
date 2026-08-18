@@ -113,9 +113,9 @@ test("every authored zone has stable survey coverage and batches stay bounded", 
     "a newly authored zone must be detected without a maintained camera inventory",
   );
 
-  const batches = buildSurveyBatches(units, 7);
+  const batches = buildSurveyBatches(units, 5);
   assert.ok(batches.length > 0);
-  assert.ok(batches.every((batch) => batch.length >= 1 && batch.length <= 7));
+  assert.ok(batches.every((batch) => batch.length >= 1 && batch.length <= 5));
   assert.deepEqual(flattenBatchIds(batches), unitIds(units));
 });
 
@@ -126,7 +126,7 @@ test("survey camera overrides are authoritative and fail closed when malformed",
   assert.ok(authoredPrimary);
   const unit = deriveReviewUnits(spec).find((candidate) => candidate.zoneIds.includes(zoneId));
   assert.ok(unit);
-  assert.deepEqual(unit.views.primary, authoredPrimary);
+  assert.deepEqual(unit.views.find((view) => view.id === "primary")?.camera, authoredPrimary);
 
   const unknownZone = structuredClone(spec);
   unknownZone.map_polish_survey_camera_overrides = {
@@ -201,12 +201,14 @@ test("survey camera overrides are authoritative and fail closed when malformed",
   const secondZoneId = "LINK_NORTH_WEST";
   const secondUnit = deriveReviewUnits(spec).find((candidate) => candidate.zoneIds.includes(secondZoneId));
   assert.ok(secondUnit);
+  const secondPrimary = secondUnit.views.find((view) => view.id === "primary")?.camera;
+  assert.ok(secondPrimary);
   const canonicalOverrides = structuredClone(spec);
   const authoredViews = canonicalOverrides.map_polish_survey_camera_overrides?.[zoneId];
   assert.ok(authoredViews?.primary && authoredViews.context);
   canonicalOverrides.map_polish_survey_camera_overrides = {
     [zoneId]: authoredViews,
-    [secondZoneId]: { primary: secondUnit.views.primary },
+    [secondZoneId]: { primary: secondPrimary },
   };
   const reorderedOverrides = structuredClone(canonicalOverrides);
   const reversePoint = (point: { x: number; y: number; z: number }) => ({
@@ -223,7 +225,7 @@ test("survey camera overrides are authoritative and fail closed when malformed",
   });
   reorderedOverrides.map_polish_survey_camera_overrides = {
     [secondZoneId]: {
-      primary: reverseCameraKeys(secondUnit.views.primary),
+      primary: reverseCameraKeys(secondPrimary),
     },
     [zoneId]: {
       context: reverseCameraKeys(authoredViews.context),

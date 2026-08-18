@@ -26,10 +26,21 @@ export const DEFAULT_AGENT_NAME = "SmokeRunner";
 export const DEFAULT_HUMAN_NAME = "HumanProbe";
 export const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
 export const DEFAULT_RUNTIME_READY_TIMEOUT_MS = 90_000;
-export const DEFAULT_STATE_READ_TIMEOUT_MS = 9_000;
+// Software-rendered hosts (no GPU in headless Chromium) can exceed the default
+// on their first shader-compiling frame; QA_STATE_READ_TIMEOUT_MS raises the
+// budget without loosening it for provisioned machines.
+export const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
+  const override = Number(process.env.QA_STATE_READ_TIMEOUT_MS);
+  return Number.isFinite(override) && override >= 1_000 ? override : 9_000;
+})();
 export const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
 export const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
-export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = 20_000;
+// Same escape hatch as QA_STATE_READ_TIMEOUT_MS: software-rendered hosts can
+// exceed the asset budget while shaders compile on first paint.
+export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
+  const override = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  return Number.isFinite(override) && override >= 1_000 ? override : 20_000;
+})();
 export const DEFAULT_ROUTE_TICK_MS = 100;
 export const DEFAULT_WAYPOINT_TICK_MS = 200;
 export const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
@@ -1175,11 +1186,19 @@ export async function gotoAgentRuntime(page, options = {}) {
     agentName = DEFAULT_AGENT_NAME,
     spawn = "A",
     shot = null,
-    extraSearchParams = {},
+    extraSearchParams: rawExtraSearchParams = {},
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
     artifactDir = null,
     routeId = null,
   } = options;
+  // The runtime clamps this to [1s, 120s]; the env knob lets software-rendered
+  // hosts extend the in-page asset budget without touching every caller.
+  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  const extraSearchParams = Number.isFinite(assetTimeoutOverride)
+    && assetTimeoutOverride >= 1_000
+    && !("qaAssetTimeoutMs" in rawExtraSearchParams)
+    ? { ...rawExtraSearchParams, qaAssetTimeoutMs: Math.round(assetTimeoutOverride) }
+    : rawExtraSearchParams;
 
   await page.goto(
     buildRuntimeUrl(baseUrl, {

@@ -60,7 +60,7 @@ const STRICT_CHANGE_THRESHOLD = Object.freeze({
   changedPixelRatio: 0.002,
   meanAbsoluteDelta: 0.001,
 });
-const DEFAULT_BATCH_SIZE = 7;
+const DEFAULT_BATCH_SIZE = 5;
 const SYNTHETIC_WIDTH = 960;
 const SYNTHETIC_HEIGHT = 600;
 const CONTACT_WIDTH = 1000;
@@ -166,6 +166,8 @@ function normalizeCamera(raw, label) {
     z: finite(playerPositionRaw.z, `${label}.playerPosition.z`),
   };
   const yawDeg = normalizeAngleDeg(finite(raw.yawDeg, `${label}.yawDeg`));
+  const pitchDeg = raw.pitchDeg === undefined ? 0 : finite(raw.pitchDeg, `${label}.pitchDeg`);
+  if (pitchDeg <= -90 || pitchDeg >= 90) throw new Error(`${label}.pitchDeg must be between -90 and 90`);
   const fovDeg = finite(raw.fovDeg, `${label}.fovDeg`);
   if (fovDeg <= 0 || fovDeg >= 180) throw new Error(`${label}.fov must be between 0 and 180`);
   const playerEyePosition = {
@@ -190,6 +192,7 @@ function normalizeCamera(raw, label) {
     designLookAt,
     playerPosition,
     yawDeg,
+    pitchDeg,
     fovDeg,
     worldPosition: designWorldPosition,
   };
@@ -214,12 +217,24 @@ function normalizePlan(raw) {
     const zoneIds = [...new Set(candidate.zoneIds.map((zoneId, zoneIndex) => (
       nonEmptyString(zoneId, `${label}.zoneIds[${zoneIndex}]`)
     )))].sort((left, right) => left.localeCompare(right));
-    if (!isRecord(candidate.views)) throw new Error(`${label}.views must be an object`);
-    const views = {};
-    for (const viewName of ["primary", "context"]) {
-      const rawView = candidate.views[viewName];
-      if (!isRecord(rawView)) throw new Error(`${label}.views.${viewName} must be an object`);
-      views[viewName] = normalizeCamera(rawView.camera ?? rawView, `${label}.views.${viewName}.camera`);
+    if (!Array.isArray(candidate.views) || candidate.views.length === 0) {
+      throw new Error(`${label}.views must be a non-empty array`);
+    }
+    if (candidate.views.length > 12) throw new Error(`${label}.views must contain at most 12 views`);
+    const viewIds = new Set();
+    const views = candidate.views.map((rawView, viewIndex) => {
+      const viewLabel = `${label}.views[${viewIndex}]`;
+      if (!isRecord(rawView)) throw new Error(`${viewLabel} must be an object`);
+      const viewId = nonEmptyString(rawView.id, `${viewLabel}.id`);
+      if (!/^[a-zA-Z0-9:._-]+$/.test(viewId)) {
+        throw new Error(`${viewLabel}.id contains characters outside letters, digits, ':', '-', '_', '.'`);
+      }
+      if (viewIds.has(viewId)) throw new Error(`${label}.views contains duplicate view id '${viewId}'`);
+      viewIds.add(viewId);
+      return { id: viewId, camera: normalizeCamera(rawView.camera, `${viewLabel}.camera`) };
+    });
+    if (views[0]?.id !== "primary" || views[1]?.id !== "context") {
+      throw new Error("unit views must start with primary then context");
     }
     return { id, zoneIds, views };
   }).sort((left, right) => left.id.localeCompare(right.id));
@@ -321,6 +336,7 @@ function conciseExpectedCamera(camera) {
     designLookAt: camera.designLookAt,
     playerPosition: camera.playerPosition,
     yawDeg: camera.yawDeg,
+    pitchDeg: camera.pitchDeg,
     fovDeg: camera.fovDeg,
   };
 }
@@ -341,7 +357,7 @@ function cameraComparison(camera, actual) {
       position.z - camera.worldPosition.z,
     ),
     yawDeg: angleDeltaDeg(actual.yawDeg, camera.yawDeg),
-    pitchDeg: Math.abs(actual.pitchDeg),
+    pitchDeg: Math.abs(actual.pitchDeg - camera.pitchDeg),
     fovDeg: Math.abs(actual.fovDeg - camera.fovDeg),
   };
   const matches = (
@@ -366,19 +382,23 @@ async function syntheticCapture(plan, outputDir, variant) {
   const units = [];
   for (const unit of plan.units) {
     const views = {};
-    for (const viewName of ["primary", "context"]) {
-      const imagePath = path.join(outputDir, "units", sanitizeFileSegment(unit.id), `${viewName}.png`);
-      await writeSyntheticImage(imagePath, unit, viewName, variant);
+    for (const { id: viewId, camera } of unit.views) {
+      const imagePath = path.join(
+        outputDir,
+        "units",
+        sanitizeFileSegment(unit.id),
+        `${sanitizeFileSegment(viewId)}.png`,
+      );
+      await writeSyntheticImage(imagePath, unit, viewId, variant);
       const metrics = await readPngMetrics(imagePath);
-      const camera = unit.views[viewName];
-      views[viewName] = {
+      views[viewId] = {
         imagePath,
         camera: {
           expected: conciseExpectedCamera(camera),
           actual: {
             pos: camera.worldPosition,
             yawDeg: camera.yawDeg,
-            pitchDeg: 0,
+            pitchDeg: camera.pitchDeg,
             fovDeg: camera.fovDeg,
           },
         },
@@ -480,9 +500,13 @@ async function realCapture(plan, outputDir) {
     const units = [];
     for (const unit of plan.units) {
       const views = {};
-      for (const viewName of ["primary", "context"]) {
-        const camera = unit.views[viewName];
-        const imagePath = path.join(outputDir, "units", sanitizeFileSegment(unit.id), `${viewName}.png`);
+      for (const { id: viewId, camera } of unit.views) {
+        const imagePath = path.join(
+          outputDir,
+          "units",
+          sanitizeFileSegment(unit.id),
+          `${sanitizeFileSegment(viewId)}.png`,
+        );
         await rm(imagePath, { force: true });
         recorder.clear();
         const errors = [];
@@ -492,9 +516,9 @@ async function realCapture(plan, outputDir) {
         try {
           await evaluateRuntimeState(
             page,
-            ({ x, floor, north, yaw }) => {
+            ({ x, floor, north, yaw, pitch }) => {
               if (!window.__debug_set_player_pose) throw new Error("debug player-pose API is unavailable");
-              window.__debug_set_player_pose({ x, y: floor, z: north, yawDeg: yaw });
+              window.__debug_set_player_pose({ x, y: floor, z: north, yawDeg: yaw, pitchDeg: pitch });
               return true;
             },
             {
@@ -502,15 +526,16 @@ async function realCapture(plan, outputDir) {
               floor: camera.playerPosition.y,
               north: camera.playerPosition.z,
               yaw: camera.yawDeg,
+              pitch: camera.pitchDeg,
             },
-            { operation: `map-polish-pose-${unit.id}-${viewName}`, routeId: unit.id },
+            { operation: `map-polish-pose-${unit.id}-${viewId}`, routeId: unit.id },
           );
           await renderRuntimeFrame(page);
           state = await captureRuntimeSnapshot(page, {
             imagePath,
             beauty: true,
             performanceSampleFrames: 2,
-            operation: `map-polish-capture-${unit.id}-${viewName}`,
+            operation: `map-polish-capture-${unit.id}-${viewId}`,
             routeId: unit.id,
           });
           coverage = await readScreenshotCoverage(imagePath);
@@ -530,7 +555,7 @@ async function realCapture(plan, outputDir) {
         if (coverage?.skyOnly === true) errors.push("capture is sky-only");
         const cameraResult = cameraComparison(camera, state?.view?.camera);
         if (!cameraResult.matches) errors.push(cameraResult.error);
-        views[viewName] = {
+        views[viewId] = {
           imagePath,
           camera: {
             expected: conciseExpectedCamera(camera),
@@ -619,25 +644,30 @@ async function buildReferenceBoard(outputDir) {
 
 async function buildContactSheets(plan, capturedUnits, outputDir) {
   const byId = new Map(capturedUnits.map((unit) => [unit.id, unit]));
+  const planUnitById = new Map(plan.units.map((unit) => [unit.id, unit]));
   const sheets = [];
   for (const [batchIndex, batch] of plan.batches.entries()) {
-    const height = batch.unitIds.length * (CONTACT_LABEL_HEIGHT + CONTACT_VIEW_HEIGHT);
     const composites = [];
-    for (const [unitIndex, unitId] of batch.unitIds.entries()) {
+    let top = 0;
+    for (const unitId of batch.unitIds) {
       const unit = byId.get(unitId);
-      const top = unitIndex * (CONTACT_LABEL_HEIGHT + CONTACT_VIEW_HEIGHT);
+      const planViews = planUnitById.get(unitId)?.views ?? [];
       const label = labelSvg(CONTACT_WIDTH, CONTACT_LABEL_HEIGHT, [
         `${batch.label} / ${unitId}`,
         unit?.zoneIds?.join(", ") ?? "missing review unit",
       ]);
       composites.push({ input: label, left: 0, top });
-      const primary = await thumbnailOrPlaceholder(unit?.views?.primary?.imagePath, "primary");
-      const context = await thumbnailOrPlaceholder(unit?.views?.context?.imagePath, "context");
-      composites.push({ input: primary, left: 10, top: top + CONTACT_LABEL_HEIGHT });
-      composites.push({ input: context, left: 510, top: top + CONTACT_LABEL_HEIGHT });
-      composites.push({ input: labelSvg(108, 26, ["PRIMARY"]), left: 18, top: top + CONTACT_LABEL_HEIGHT + 8 });
-      composites.push({ input: labelSvg(108, 26, ["CONTEXT"]), left: 518, top: top + CONTACT_LABEL_HEIGHT + 8 });
+      for (const [viewIndex, view] of planViews.entries()) {
+        const rowTop = top + CONTACT_LABEL_HEIGHT + Math.floor(viewIndex / 2) * CONTACT_VIEW_HEIGHT;
+        const left = viewIndex % 2 === 0 ? 10 : 510;
+        const thumbnail = await thumbnailOrPlaceholder(unit?.views?.[view.id]?.imagePath, view.id);
+        composites.push({ input: thumbnail, left, top: rowTop });
+        const badgeWidth = Math.min(460, Math.ceil(28 + 9.5 * view.id.length));
+        composites.push({ input: labelSvg(badgeWidth, 26, [view.id]), left: left + 8, top: rowTop + 8 });
+      }
+      top += CONTACT_LABEL_HEIGHT + Math.ceil(planViews.length / 2) * CONTACT_VIEW_HEIGHT;
     }
+    const height = top;
     const contactSheetPath = path.join(
       outputDir,
       "contact-sheets",
@@ -675,8 +705,8 @@ async function runCapture(options) {
   const { units, protectedAuthorityHash } = capture;
   const batches = plan.contactSheets ? await buildContactSheets(plan, units, outputDir) : [];
   const referenceBoardPath = plan.contactSheets ? await buildReferenceBoard(outputDir) : null;
-  const invalidViewCount = units.reduce((sum, unit) => sum + ["primary", "context"]
-    .filter((viewName) => unit.views[viewName].valid !== true).length, 0);
+  const invalidViewCount = units.reduce((sum, unit) => sum + Object.values(unit.views)
+    .filter((view) => view.valid !== true).length, 0);
   const result = {
     schemaVersion: 1,
     authorityHash: plan.authorityHash,

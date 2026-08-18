@@ -1,1 +1,11 @@
 apps/client/public/maps/** linguist-generated=true
+# Provenance-hashed bytes must be identical on every platform: model manifests
+# record MD5s of .gltf JSON, and gen-map-runtime embeds sha256 of the design
+# spec and shots. CRLF checkout conversion breaks those hashes on Windows.
+*.gltf -text
+docs/map-design/specs/*.json text eol=lf
+docs/map-design/shots.json text eol=lf
+apps/client/public/maps/** text eol=lf
+docs/map-design/layout-reference.md text eol=lf
+docs/map-design/layout-reference.svg text eol=lf
+docs/map-design/blockout/topdown_layout.svg text eol=lf

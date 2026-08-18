@@ -589,13 +589,19 @@ function validateSurveyCamera(value, label) {
   }
   validateExactObjectKeys(
     value,
-    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "fovDeg"]),
+    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "pitchDeg", "fovDeg"]),
     label,
   );
   validateSurveyCameraPoint(value.designPosition, `${label}.designPosition`);
   validateSurveyCameraPoint(value.designLookAt, `${label}.designLookAt`);
   validateSurveyCameraPoint(value.playerPosition, `${label}.playerPosition`);
   const yawDeg = asNumber(value.yawDeg, `${label}.yawDeg`);
+  if (typeof value.pitchDeg !== "undefined") {
+    const pitchDeg = asNumber(value.pitchDeg, `${label}.pitchDeg`);
+    if (pitchDeg <= -90 || pitchDeg >= 90) {
+      fail(`${label}.pitchDeg must be > -90 and < 90`);
+    }
+  }
   const fovDeg = asNumber(value.fovDeg, `${label}.fovDeg`);
   if (fovDeg <= 0 || fovDeg >= 180) {
     fail(`${label}.fovDeg must be > 0 and < 180`);
@@ -656,16 +662,16 @@ function validateMapPolishSurveyCameraOverrides(spec, zoneIds) {
     if (!views || typeof views !== "object" || Array.isArray(views)) {
       fail(`map_polish_survey_camera_overrides.${zoneId} must be an object`);
     }
-    validateExactObjectKeys(
-      views,
-      new Set(["primary", "context"]),
-      `map_polish_survey_camera_overrides.${zoneId}`,
-    );
     const viewEntries = Object.entries(views);
     if (viewEntries.length === 0) {
-      fail(`map_polish_survey_camera_overrides.${zoneId} must define primary or context`);
+      fail(`map_polish_survey_camera_overrides.${zoneId} must define at least one view override`);
     }
+    // Survey views are an ordered derived list (primary, context, elev:*,
+    // cross-a/b, upper); overrides may target any deterministic view id.
     for (const [viewName, camera] of viewEntries) {
+      if (!/^[A-Za-z0-9][A-Za-z0-9:._-]*$/.test(viewName)) {
+        fail(`map_polish_survey_camera_overrides.${zoneId} view id '${viewName}' is invalid`);
+      }
       validateSurveyCamera(
         camera,
         `map_polish_survey_camera_overrides.${zoneId}.${viewName}`,

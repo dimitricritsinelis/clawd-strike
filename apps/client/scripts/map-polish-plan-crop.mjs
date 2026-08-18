@@ -7,6 +7,7 @@
 // and the opposite wall. Deterministic for a given SVG + zone rect.
 import { readFile, mkdir, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { pathToFileURL } from "node:url";
 import sharp from "sharp";
 
 const PIXELS_PER_METRE = 40;
@@ -123,7 +124,9 @@ async function main() {
   process.stdout.write(`${JSON.stringify(result)}\n`);
 }
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname)) {
+// URL.pathname keeps a leading slash before the drive letter on Windows, so it
+// can never equal a resolved argv path there; compare file URLs instead.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   main().catch((error) => {
     process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
     process.exit(1);

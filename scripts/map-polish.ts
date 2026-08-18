@@ -24,6 +24,7 @@ import {
   DESIGN_REVIEW_LENS,
   applyRatings,
   assertAutomaticWorktree,
+  assertSurveyCoverage,
   buildSiteBrief,
   buildSurveyBatches,
   buildWorkOrder,
@@ -31,12 +32,14 @@ import {
   cleanupRejectedArtifacts,
   collectTouchedFiles,
   compositionRequiredForUnit,
+  computeSurveyCoverage,
   conceptAllowed,
   createInitialState,
   currentCommit,
   deriveReviewUnits,
   detectProtectedChanges,
   focusedRouteForUnit,
+  formatCoverageTable,
   inferTaskRisk,
   isRelevantMapSource,
   mockSurveyRatings,
@@ -54,6 +57,7 @@ import {
   writeJsonAtomic,
   writeStateFile,
   type ActiveTask,
+  type EngineName,
   type ImagePairInput,
   type MapPolishState,
   type MapSpec,
@@ -74,16 +78,16 @@ const MAP_SPEC_PATH = "docs/map-design/specs/map_spec.json";
 const LAYOUT_REFERENCE_SVG = "docs/map-design/layout-reference.svg";
 
 class CodexInvocationError extends Error {
-  readonly telemetry: CodexCallTelemetry | null;
+  readonly telemetry: ModelCallTelemetry | null;
 
-  constructor(message: string, telemetry: CodexCallTelemetry | null = null) {
+  constructor(message: string, telemetry: ModelCallTelemetry | null = null) {
     super(message);
     this.name = "CodexInvocationError";
     this.telemetry = telemetry;
   }
 }
 
-type CommandName = "survey" | "next" | "run" | "verify";
+type CommandName = "survey" | "next" | "run" | "verify" | "coverage" | "loop";
 
 type CliIo = {
   stdout: (value: string) => void;
@@ -97,6 +101,9 @@ type CliOptions = {
   artifactsRoot: string;
   mapSpecPath: string;
   mode: RunMode;
+  engine: EngineName;
+  planner: "model" | "manual";
+  maxAccepts: number;
   dryRun: boolean;
   synthetic: boolean;
   commit: boolean;
@@ -129,9 +136,10 @@ type ProcessResult = {
   wallMs: number;
 };
 
-type CodexRole = "survey" | "writer" | "reviewer";
-type CodexEffort = "high" | "xhigh";
-type CodexUsage = {
+type ModelRole = "planner" | "survey" | "writer" | "reviewer";
+type CodexRole = ModelRole;
+type ModelEffort = "high" | "xhigh";
+type ModelUsage = {
   inputTokens: number;
   cachedInputTokens: number;
   cacheWriteInputTokens: number;
@@ -139,24 +147,28 @@ type CodexUsage = {
   reasoningOutputTokens: number;
   totalTokens: number;
 };
-type CodexCallTelemetry = {
-  role: CodexRole;
-  model: "gpt-5.6-sol";
-  effort: CodexEffort;
+type CodexUsage = ModelUsage;
+type ModelCallTelemetry = {
+  engine: EngineName;
+  role: ModelRole;
+  model: string;
+  effort: ModelEffort;
   wallMs: number;
-  usage: CodexUsage | null;
+  usage: ModelUsage | null;
+  costUsd?: number;
 };
+type CodexCallTelemetry = ModelCallTelemetry;
 type TaskPerformance = {
   startedAtMs: number;
   prepareMs: number;
   beforeCaptureMs: number;
   workOrderMs: number;
-  writer: CodexCallTelemetry | null;
+  writer: ModelCallTelemetry | null;
   postWriterValidationMs: number;
   checksMs: number;
   afterCaptureMs: number;
   comparisonPackageMs: number;
-  reviewer: CodexCallTelemetry | null;
+  reviewer: ModelCallTelemetry | null;
   finalizeMs: number;
 };
 
@@ -186,10 +198,8 @@ type CaptureView = {
 type CaptureUnit = {
   id: string;
   zoneIds: string[];
-  views: {
-    primary: CaptureView;
-    context: CaptureView;
-  };
+  /** Keyed by view id, insertion-ordered to match the plan's ordered view list. */
+  views: Record<string, CaptureView>;
 };
 
 type CaptureBatch = {
@@ -228,18 +238,28 @@ type CaptureViewAudit = {
   errors: string[];
 };
 
+type ViewPairEvidence = {
+  before: CaptureViewAudit;
+  after: CaptureViewAudit;
+  comparison: CompareResult;
+  materiallyChanged: boolean;
+  targetView: boolean;
+};
+
 type TaskValidationEvidence = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   startCommit: string;
   unitId: string;
   zoneIds: string[];
   risk: TaskRisk;
+  engine: EngineName;
   touchedFiles: string[];
   candidatePatchSha256: string;
   completedChecks: string[];
   protectedAuthority: { before: string; after: string; unchanged: boolean };
-  primary: { before: CaptureViewAudit; after: CaptureViewAudit; comparison: CompareResult };
-  context: { before: CaptureViewAudit; after: CaptureViewAudit };
+  targetViewIds: string[];
+  /** Per-view before/after audits and comparisons, keyed by view id. */
+  views: Record<string, ViewPairEvidence>;
   greenRegression?: {
     unitId: string;
     primary: { before: CaptureViewAudit; after: CaptureViewAudit };
@@ -261,6 +281,8 @@ type TaskContext = {
   unit: ReviewUnitState;
   objective: string;
   risk: TaskRisk;
+  /** Views the task must materially improve (from defects/objective; default all). */
+  targetViewIds: string[];
   startCommit: string;
   artifactDir: string;
   taskId: string;
@@ -286,6 +308,8 @@ type TaskContext = {
 type BlindReviewPackage = {
   afterLabel: "A" | "B";
   images: string[];
+  /** Human-readable image order for the reviewer prompt, from the actual list. */
+  imageOrder: string[];
 };
 
 const DESIGN_DEFECT_CRITERIA = Object.freeze([
@@ -308,11 +332,15 @@ const DESIGN_CONFIDENCE_MIN = 0.65;
 const OBJECTIVE_MAX = 260;
 const REVIEW_REASON_MAX = 220;
 const CODEX_MODEL = "gpt-5.6-sol" as const;
-const CODEX_ROLE_CONFIG: Readonly<Record<CodexRole, { effort: CodexEffort; timeoutMs: number }>> = Object.freeze({
-  survey: { effort: "high", timeoutMs: 300_000 },
-  writer: { effort: "xhigh", timeoutMs: 720_000 },
-  reviewer: { effort: "high", timeoutMs: 180_000 },
+export const CLAUDE_MODEL = "claude-fable-5" as const;
+export const CLAUDE_FALLBACK_MODEL = "claude-opus-5" as const;
+const MODEL_ROLE_CONFIG: Readonly<Record<ModelRole, { effort: ModelEffort; timeoutMs: number; maxBudgetUsd: number }>> = Object.freeze({
+  planner: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 3 },
+  survey: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 5 },
+  writer: { effort: "xhigh", timeoutMs: 720_000, maxBudgetUsd: 15 },
+  reviewer: { effort: "high", timeoutMs: 180_000, maxBudgetUsd: 3 },
 });
+const CODEX_ROLE_CONFIG = MODEL_ROLE_CONFIG;
 type DesignDefectCriterion = typeof DESIGN_DEFECT_CRITERIA[number];
 export type MapWideFinding = {
   unitIds: string[];
@@ -337,7 +365,7 @@ const DEFAULT_IO: CliIo = {
 };
 
 function helpText(): string {
-  return `Lean Codex-first map-polish workflow
+  return `Engine-agnostic map-polish workflow (Codex CLI or Claude Code CLI)
 
 Start here:
   pnpm map:survey
@@ -345,16 +373,24 @@ Start here:
   pnpm map:run
   pnpm map:verify -- --accept --commit   (continue from a clean local checkpoint)
   pnpm map:verify -- --reject            (or use --defer)
+  pnpm map:loop -- --engine codex --max-accepts 5 --commit
 
 Commands:
-  map:survey  Capture every authored zone and classify Red/Yellow/Green.
-  map:next    Print the deterministic next weak review unit.
-  map:run     Run one bounded task (default), or --max-tasks N with --commit.
-  map:verify  Resolve a pending task, validate state, or run --milestone.
+  map:survey    Capture every authored zone and classify Red/Yellow/Green.
+  map:next      Print the deterministic next weak review unit with its views/coverage.
+  map:run       Run one bounded task (default), or --max-tasks N with --commit.
+  map:verify    Resolve a pending task, validate state, or run --milestone.
+  map:coverage  Print the per-unit/per-frontage wall-coverage table (pure geometry).
+  map:loop      Deterministic bounded loop: next -> planner -> run -> verify.
 
 Common options:
-  --mode real|manual|mock   Codex, handoff package, or no-model mock (default: real)
+  --mode real|manual|mock   Model engine, handoff package, or no-model mock (default: real)
+  --engine codex|claude     Model engine for real calls (default: codex; env MAP_POLISH_ENGINE)
   --dry-run                Generate/print a plan without capture or model calls
+
+Loop options:
+  --max-accepts N          Stop map:loop after N accepted tasks (default 1)
+  --planner model|manual   model: engine plans each objective; manual: stop for an operator objective
 
 Task options:
   --objective TEXT         One bounded objective (required in real mode)
@@ -436,6 +472,7 @@ function forwardedCliArgs(options: CliOptions): string[] {
   if (options.statePath !== path.join(options.repoRoot, DEFAULT_STATE_PATH)) args.push("--state", shellArg(options.statePath));
   if (options.artifactsRoot !== path.join(options.repoRoot, DEFAULT_ARTIFACTS_PATH)) args.push("--artifacts", shellArg(options.artifactsRoot));
   if (options.mode !== "real") args.push("--mode", options.mode);
+  if (options.engine !== "codex") args.push("--engine", options.engine);
   return args;
 }
 
@@ -448,7 +485,7 @@ const VALUE_OPTIONS = new Set([
   "--repo-root", "--state", "--artifacts", "--map-spec", "--mode", "--max-tasks",
   "--risk", "--concept", "--objective", "--ratings", "--diagnosis", "--next-action",
   "--remaining-defect", "--mock-target", "--mock-review", "--shared-evidence", "--green-regression",
-  "--shared-cause",
+  "--shared-cause", "--engine", "--max-accepts", "--planner",
 ]);
 const BOOLEAN_OPTIONS = new Set([
   "--dry-run", "--synthetic", "--commit", "--keep-debug", "--milestone",
@@ -475,12 +512,18 @@ function assertKnownOptions(args: readonly string[]): void {
   }
 }
 
+function parseEngine(value: string | undefined): EngineName {
+  const candidate = value ?? process.env.MAP_POLISH_ENGINE ?? "codex";
+  if (candidate === "codex" || candidate === "claude") return candidate;
+  throw new Error(`unsupported engine '${candidate}'`);
+}
+
 function parseOptions(argv: string[]): CliOptions {
   const rawCommand = argv[0];
   if (!rawCommand || rawCommand === "--help" || rawCommand === "-h") {
     throw Object.assign(new Error(helpText()), { help: true });
   }
-  if (!["survey", "next", "run", "verify"].includes(rawCommand)) {
+  if (!["survey", "next", "run", "verify", "coverage", "loop"].includes(rawCommand)) {
     throw new Error(`unknown map-polish command '${rawCommand}'`);
   }
   const args = argv.slice(1);
@@ -524,6 +567,8 @@ function parseOptions(argv: string[]): CliOptions {
   ) {
     throw new Error("mock mode requires alternate --state and --artifacts paths; authoritative workflow state cannot contain mock evidence");
   }
+  const planner = optionValue(args, "--planner") ?? "model";
+  if (planner !== "model" && planner !== "manual") throw new Error("--planner must be model or manual");
   return {
     command: rawCommand as CommandName,
     repoRoot,
@@ -531,6 +576,9 @@ function parseOptions(argv: string[]): CliOptions {
     artifactsRoot,
     mapSpecPath,
     mode,
+    engine: parseEngine(optionValue(args, "--engine")),
+    planner,
+    maxAccepts: parsePositiveInteger(optionValue(args, "--max-accepts"), 1, "--max-accepts"),
     dryRun,
     synthetic,
     commit: parseBooleanFlag(args, "--commit"),
@@ -570,6 +618,42 @@ async function fileSha256(filePath: string): Promise<string> {
   return createHash("sha256").update(await readFile(filePath)).digest("hex");
 }
 
+/**
+ * Windows cannot spawn .cmd shims (pnpm) directly; route them through cmd.exe
+ * with the shim resolved to its absolute path (bare names can break the
+ * shim's own %~dp0 resolution). Everything else spawns as-is.
+ */
+function spawnSpec(command: string, args: readonly string[]): {
+  command: string;
+  args: string[];
+  windowsVerbatimArguments?: boolean;
+} {
+  if (process.platform !== "win32" || !["pnpm", "npm", "npx"].includes(command)) {
+    return { command, args: [...args] };
+  }
+  let resolved = command;
+  for (const directory of (process.env.PATH ?? "").split(path.delimiter)) {
+    if (!directory) continue;
+    for (const extension of [".cmd", ".CMD", ".bat", ".exe"]) {
+      const candidate = path.join(directory, `${command}${extension}`);
+      try {
+        realpathSync(candidate);
+        resolved = candidate;
+        break;
+      } catch {
+        // keep searching
+      }
+    }
+    if (resolved !== command) break;
+  }
+  const quoted = [resolved, ...args].map((value) => `"${value}"`).join(" ");
+  return {
+    command: process.env.ComSpec ?? "cmd.exe",
+    args: ["/d", "/s", "/c", `"${quoted}"`],
+    windowsVerbatimArguments: true,
+  };
+}
+
 async function runProcess(
   command: string,
   args: readonly string[],
@@ -577,10 +661,12 @@ async function runProcess(
 ): Promise<ProcessResult> {
   return new Promise((resolve, reject) => {
     const startedAt = performance.now();
-    const child = spawn(command, [...args], {
+    const spec = spawnSpec(command, args);
+    const child = spawn(spec.command, spec.args, {
       cwd: options.cwd,
       env: options.env ?? process.env,
       stdio: ["pipe", "pipe", "pipe"],
+      ...(spec.windowsVerbatimArguments ? { windowsVerbatimArguments: true } : {}),
     });
     const stdout: Buffer[] = [];
     const stderr: Buffer[] = [];
@@ -628,6 +714,11 @@ async function runChecked(
     throw new Error(`${command} ${args.join(" ")} failed (${result.code})\n${result.stderr || result.stdout}`);
   }
   return result;
+}
+
+/** Repo-relative state-file path in git's forward-slash form (Windows-safe). */
+function workflowStateFile(options: Pick<CliOptions, "repoRoot" | "statePath">): string {
+  return path.relative(options.repoRoot, options.statePath).split(path.sep).join("/");
 }
 
 function portablePath(repoRoot: string, filePath: string): string {
@@ -740,17 +831,22 @@ function captureValidityReasons(
     if (JSON.stringify([...unit.zoneIds].sort()) !== JSON.stringify([...definition.zoneIds].sort())) {
       reasons.push(`${unitId} has the wrong zone coverage`);
     }
-    for (const viewName of ["primary", "context"] as const) {
-      const view = unit.views?.[viewName];
-      if (!view || view.valid !== true) reasons.push(`${unitId}/${viewName} is invalid`);
+    const expectedViewIds = definition.views.map((view) => view.id);
+    const capturedViewIds = Object.keys(unit.views ?? {});
+    if (JSON.stringify(capturedViewIds) !== JSON.stringify(expectedViewIds)) {
+      reasons.push(`${unitId} captured views do not match the plan (${capturedViewIds.join(",")} != ${expectedViewIds.join(",")})`);
+    }
+    for (const viewId of expectedViewIds) {
+      const view = unit.views?.[viewId];
+      if (!view || view.valid !== true) reasons.push(`${unitId}/${viewId} is invalid`);
       if (!view?.imagePath || !view.sha256 || (view.width ?? 0) <= 0 || (view.height ?? 0) <= 0) {
-        reasons.push(`${unitId}/${viewName} image evidence is missing or corrupt`);
+        reasons.push(`${unitId}/${viewId} image evidence is missing or corrupt`);
       }
-      if (!view?.camera?.actual) reasons.push(`${unitId}/${viewName} camera evidence is missing`);
-      if (view?.skyOnly) reasons.push(`${unitId}/${viewName} is sky-only`);
-      if ((view?.consoleErrorCount ?? 0) > 0) reasons.push(`${unitId}/${viewName} has runtime errors`);
+      if (!view?.camera?.actual) reasons.push(`${unitId}/${viewId} camera evidence is missing`);
+      if (view?.skyOnly) reasons.push(`${unitId}/${viewId} is sky-only`);
+      if ((view?.consoleErrorCount ?? 0) > 0) reasons.push(`${unitId}/${viewId} has runtime errors`);
       if (!view?.playerZoneId || !definition.zoneIds.includes(view.playerZoneId)) {
-        reasons.push(`${unitId}/${viewName} captured the wrong review unit`);
+        reasons.push(`${unitId}/${viewId} captured the wrong review unit`);
       }
     }
   }
@@ -762,13 +858,12 @@ function captureValidityReasons(
 async function captureFileIntegrityReasons(manifest: CaptureManifest): Promise<string[]> {
   const reasons: string[] = [];
   for (const unit of manifest.units) {
-    for (const viewName of ["primary", "context"] as const) {
-      const view = unit.views[viewName];
+    for (const [viewId, view] of Object.entries(unit.views)) {
       try {
         const hash = createHash("sha256").update(await readFile(view.imagePath)).digest("hex");
-        if (hash !== view.sha256) reasons.push(`${unit.id}/${viewName} evidence changed after capture`);
+        if (hash !== view.sha256) reasons.push(`${unit.id}/${viewId} evidence changed after capture`);
       } catch {
-        reasons.push(`${unit.id}/${viewName} evidence is missing after capture`);
+        reasons.push(`${unit.id}/${viewId} evidence is missing after capture`);
       }
     }
   }
@@ -833,7 +928,7 @@ async function invokeCompare(options: CliOptions, before: string, after: string)
   return JSON.parse(result.stdout) as CompareResult;
 }
 
-function surveySchema(): unknown {
+function surveySchema(viewIds: readonly string[] = []): unknown {
   return {
     type: "object",
     additionalProperties: false,
@@ -859,6 +954,9 @@ function surveySchema(): unknown {
                 properties: {
                   criterion: { type: "string", enum: DESIGN_DEFECT_CRITERIA },
                   evidence: { type: "string", minLength: 8, maxLength: DESIGN_EVIDENCE_MAX },
+                  // Union across the batch's units; per-unit membership is
+                  // enforced by the parser.
+                  ...(viewIds.length > 0 ? { viewId: { type: "string", enum: [...viewIds] } } : {}),
                 },
               },
             },
@@ -1031,14 +1129,211 @@ function boundedDiagnostic(value: string, maxLength = 700): string {
   return normalized.length <= maxLength ? normalized : `…${normalized.slice(-(maxLength - 1))}`;
 }
 
-function codexCallTelemetry(role: CodexRole, wallMs: number, stdout: string): CodexCallTelemetry {
+function codexCallTelemetry(role: ModelRole, wallMs: number, stdout: string): ModelCallTelemetry {
   return {
+    engine: "codex",
     role,
     model: CODEX_MODEL,
-    effort: CODEX_ROLE_CONFIG[role].effort,
+    effort: MODEL_ROLE_CONFIG[role].effort,
     wallMs: Math.round(wallMs),
     usage: parseCodexUsage(stdout),
   };
+}
+
+/**
+ * Claude Code CLI headless invocation. There is no image flag: image paths go
+ * into the prompt and the isolated session reads them with its Read tool.
+ * Survey/reviewer/planner run in a fresh temp dir containing only their
+ * images/text with Read-only tools and no repo path; the writer runs with
+ * cwd = repo and edit tools but no Bash (the workflow runs generators and
+ * checks itself). Isolation is by directory + tool allowlist, not a hard
+ * sandbox.
+ */
+export function claudeInvocationArgs(options: {
+  role: ModelRole;
+  /** Serialized JSON Schema; the CLI takes the schema inline, not a file path. */
+  schemaJson: string;
+  model?: string;
+}): string[] {
+  const writer = options.role === "writer";
+  const config = MODEL_ROLE_CONFIG[options.role];
+  return [
+    "-p",
+    "--bare",
+    "--output-format",
+    "json",
+    "--json-schema",
+    options.schemaJson,
+    "--model",
+    options.model ?? CLAUDE_MODEL,
+    "--effort",
+    config.effort,
+    "--max-budget-usd",
+    String(config.maxBudgetUsd),
+    "--permission-mode",
+    writer ? "acceptEdits" : "manual",
+    "--allowedTools",
+    writer ? "Read,Edit,Write,Glob,Grep" : "Read",
+    // --allowedTools only pre-approves; it does not deny. Bash must be denied
+    // explicitly: the workflow runs generators and checks itself, and paging a
+    // 4k-line spec through `sed` burns the writer's whole role timeout.
+    "--disallowedTools",
+    writer ? "Bash,WebSearch,WebFetch,Task,Agent" : "Bash,Edit,Write,WebSearch,WebFetch,Task,Agent",
+  ];
+}
+
+type ClaudeEnvelope = {
+  structuredOutput: unknown;
+  telemetry: { usage: ModelUsage | null; costUsd?: number };
+  isError: boolean;
+  resultText: string;
+};
+
+export function parseClaudeEnvelope(stdout: string): ClaudeEnvelope {
+  const raw = JSON.parse(stdout) as Record<string, unknown>;
+  const usageRecord = isPlainRecord(raw.usage) ? raw.usage : null;
+  const token = (key: string): number => {
+    const value = usageRecord?.[key];
+    return typeof value === "number" && Number.isFinite(value) && value >= 0 ? Math.round(value) : 0;
+  };
+  const usage: ModelUsage | null = usageRecord
+    ? {
+        inputTokens: token("input_tokens"),
+        cachedInputTokens: token("cache_read_input_tokens"),
+        cacheWriteInputTokens: token("cache_creation_input_tokens"),
+        outputTokens: token("output_tokens"),
+        reasoningOutputTokens: 0,
+        totalTokens: token("input_tokens") + token("cache_read_input_tokens")
+          + token("cache_creation_input_tokens") + token("output_tokens"),
+      }
+    : null;
+  return {
+    structuredOutput: raw.structured_output,
+    telemetry: {
+      usage,
+      ...(typeof raw.total_cost_usd === "number" && Number.isFinite(raw.total_cost_usd)
+        ? { costUsd: raw.total_cost_usd }
+        : {}),
+    },
+    isError: raw.is_error === true,
+    resultText: typeof raw.result === "string" ? raw.result : "",
+  };
+}
+
+function isPlainRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function claudeImagePreamble(images: readonly string[]): string {
+  if (images.length === 0) return "";
+  const lines = images.map((image, index) => `Image ${index + 1}: ${image}`);
+  return `Read the following image files with your Read tool before answering; image numbering in the instructions refers to this list.\n${lines.join("\n")}\n\n`;
+}
+
+async function invokeClaudeJson(options: {
+  repoRoot: string;
+  prompt: string;
+  images: string[];
+  schema: unknown;
+  resultPath: string;
+  role: ModelRole;
+}): Promise<{ value: unknown; telemetry: ModelCallTelemetry }> {
+  const schemaPath = `${options.resultPath}.schema.json`;
+  await writeJsonAtomic(schemaPath, options.schema);
+  await mkdir(path.dirname(options.resultPath), { recursive: true });
+  const claudeBin = process.env.CLAUDE_BIN ?? "claude";
+  const writer = options.role === "writer";
+  const isolatedDirectory = writer
+    ? null
+    : await mkdtemp(path.join(os.tmpdir(), "clawdstrike-map-claude-"));
+  const config = MODEL_ROLE_CONFIG[options.role];
+  const telemetryFor = (wallMs: number, envelope?: ClaudeEnvelope): ModelCallTelemetry => ({
+    engine: "claude",
+    role: options.role,
+    model: CLAUDE_MODEL,
+    effort: config.effort,
+    wallMs: Math.round(wallMs),
+    usage: envelope?.telemetry.usage ?? null,
+    ...(envelope?.telemetry.costUsd !== undefined ? { costUsd: envelope.telemetry.costUsd } : {}),
+  });
+  try {
+    let images = options.images;
+    if (isolatedDirectory) {
+      // Blindness: the isolated roles see only their copied images, never the
+      // repo. Copy preserves the base name; disambiguate collisions by index.
+      const copied: string[] = [];
+      for (const [index, image] of options.images.entries()) {
+        const destination = path.join(
+          isolatedDirectory,
+          `${String(index + 1).padStart(2, "0")}-${path.basename(image)}`,
+        );
+        await copyFile(image, destination);
+        copied.push(destination);
+      }
+      images = copied;
+    }
+    const prompt = `${claudeImagePreamble(images)}${options.prompt}`;
+    const args = claudeInvocationArgs({ role: options.role, schemaJson: JSON.stringify(options.schema) });
+    let result: ProcessResult;
+    const callStartedAt = performance.now();
+    try {
+      result = await runProcess(claudeBin, args, {
+        cwd: isolatedDirectory ?? options.repoRoot,
+        input: prompt,
+        timeoutMs: config.timeoutMs,
+      });
+    } catch (error) {
+      throw new CodexInvocationError(
+        `Claude Code CLI is unavailable: ${error instanceof Error ? error.message : String(error)}`,
+        telemetryFor(performance.now() - callStartedAt),
+      );
+    }
+    if (result.code !== 0) {
+      throw new CodexInvocationError(
+        `Claude Code CLI failed (${result.code}): ${boundedDiagnostic(result.stderr || result.stdout || "no diagnostic")}`,
+        telemetryFor(result.wallMs),
+      );
+    }
+    let envelope: ClaudeEnvelope;
+    try {
+      envelope = parseClaudeEnvelope(result.stdout);
+    } catch (error) {
+      throw new CodexInvocationError(
+        `Claude Code result envelope was not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+        telemetryFor(result.wallMs),
+      );
+    }
+    const telemetry = telemetryFor(result.wallMs, envelope);
+    if (envelope.isError) {
+      throw new CodexInvocationError(
+        `Claude Code call errored: ${boundedDiagnostic(envelope.resultText || "no diagnostic")}`,
+        telemetry,
+      );
+    }
+    if (envelope.structuredOutput === undefined) {
+      throw new CodexInvocationError("Claude Code call returned no structured output", telemetry);
+    }
+    // The CLI validated against --json-schema; retain the result file so the
+    // shared retry/parse path treats both engines identically.
+    await writeJsonAtomic(options.resultPath, envelope.structuredOutput);
+    return { value: envelope.structuredOutput, telemetry };
+  } finally {
+    if (isolatedDirectory) await rm(isolatedDirectory, { recursive: true, force: true });
+  }
+}
+
+async function invokeEngineJson(
+  engine: EngineName,
+  options: {
+    repoRoot: string;
+    prompt: string;
+    images: string[];
+    schema: unknown;
+    resultPath: string;
+    role: ModelRole;
+  },
+): Promise<{ value: unknown; telemetry: ModelCallTelemetry }> {
+  return engine === "claude" ? invokeClaudeJson(options) : invokeCodexJson(options);
 }
 
 async function invokeCodexJson(options: {
@@ -1106,7 +1401,18 @@ async function invokeCodexJson(options: {
   }
 }
 
-export function parseSurveyPayload(value: unknown, expectedIds: readonly string[]): SurveyRating[] {
+/** Defect strings carry an optional evidence-view tag: `[criterion] [view:<id>] evidence`. */
+export function defectViewIds(defects: readonly string[]): string[] {
+  return [...new Set(defects
+    .map((defect) => /\[view:([A-Za-z0-9:._-]+)\]/.exec(defect)?.[1])
+    .filter((viewId): viewId is string => Boolean(viewId)))];
+}
+
+export function parseSurveyPayload(
+  value: unknown,
+  expectedIds: readonly string[],
+  viewIdsByUnit: ReadonlyMap<string, readonly string[]> = new Map(),
+): SurveyRating[] {
   if (!value || typeof value !== "object" || !Array.isArray((value as { ratings?: unknown }).ratings)) {
     throw new Error("survey response must contain ratings[]");
   }
@@ -1122,6 +1428,7 @@ export function parseSurveyPayload(value: unknown, expectedIds: readonly string[
     if (typeof candidate.unitId !== "string" || !["red", "yellow", "green"].includes(String(candidate.rating))) {
       throw new Error("survey rating has invalid unitId or category");
     }
+    const allowedViewIds = viewIdsByUnit.get(candidate.unitId);
     if (
       typeof candidate.confidence !== "number"
       || !Number.isFinite(candidate.confidence)
@@ -1131,7 +1438,11 @@ export function parseSurveyPayload(value: unknown, expectedIds: readonly string[
       || candidate.defects.length > 2
       || candidate.defects.some((defect) => {
         if (!defect || typeof defect !== "object") return true;
-        const item = defect as { criterion?: unknown; evidence?: unknown };
+        const item = defect as { criterion?: unknown; evidence?: unknown; viewId?: unknown };
+        if (item.viewId !== undefined) {
+          if (typeof item.viewId !== "string") return true;
+          if (allowedViewIds && !allowedViewIds.includes(item.viewId)) return true;
+        }
         return !DESIGN_DEFECT_CRITERIA.includes(item.criterion as DesignDefectCriterion)
           || typeof item.evidence !== "string"
           || item.evidence.trim().length < 8
@@ -1148,8 +1459,8 @@ export function parseSurveyPayload(value: unknown, expectedIds: readonly string[
       rating: candidate.rating as SurveyRating["rating"],
       confidence: candidate.confidence,
       defects: candidate.defects.map((defect) => {
-        const item = defect as { criterion: DesignDefectCriterion; evidence: string };
-        return `[${item.criterion}] ${item.evidence.trim()}`;
+        const item = defect as { criterion: DesignDefectCriterion; evidence: string; viewId?: string };
+        return `[${item.criterion}]${item.viewId ? ` [view:${item.viewId}]` : ""} ${item.evidence.trim()}`;
       }),
     };
   });
@@ -1162,7 +1473,7 @@ export function parseSurveyPayload(value: unknown, expectedIds: readonly string[
 }
 
 export function surveyPrompt(batch: CaptureBatch): string {
-  return boundedPrompt(`Image 1 is the labeled map-survey contact sheet; image 2 is the approved reference board. Calibrate absolute finish and visual coherence against image 2. Every unit in image 1 has a primary and reverse/context player-eye view.
+  return boundedPrompt(`Image 1 is the labeled map-survey contact sheet; image 2 is the approved reference board. Calibrate absolute finish and visual coherence against image 2. Every unit in image 1 shows a labeled set of player-eye views: primary and reverse/context along the traversal direction, elev:<FRONTAGE or face> square-on wall elevations (long walls split into numbered segments), cross-a/cross-b perpendicular views in squarish spaces, and an upward upper view where tall walls stand close.
 
 Red = unacceptable, broken, blockout-like, or dramatically below the map. Yellow = coherent but visibly underdeveloped or has an important defect. Green = acceptable for now.
 
@@ -1170,7 +1481,11 @@ Target a bright, readable, shipped-quality Middle Eastern bazaar with complete a
 
 Design lens: ${DESIGN_REVIEW_LENS.join(" ")} Symmetry and variation are not quotas: symmetry should reveal designed order; asymmetry should reveal function, site, history, repair, or use. Randomness without a cause is noise.
 
-Return exactly one rating for each of: ${batch.unitIds.join(", ")}. Include confidence from 0 to 1. Red/Yellow require one or two defects, highest impact first, each as {criterion, evidence}. Criterion must be one of ${DESIGN_DEFECT_CRITERIA.join(", ")}; evidence must be one complete visible-evidence sentence ending in punctuation, preferably 120 characters or fewer, rather than saying only “needs detail.” Green may have none. Do not propose or perform implementation work.`, 300, "survey prompt");
+Return exactly one rating for each of: ${batch.unitIds.join(", ")}. Include confidence from 0 to 1. Red/Yellow require one or two defects, highest impact first, each as {criterion, evidence, viewId?}. Criterion must be one of ${DESIGN_DEFECT_CRITERIA.join(", ")}; evidence must be one complete visible-evidence sentence ending in punctuation, preferably 120 characters or fewer, rather than saying only “needs detail”; viewId, when the defect is visible in one labeled view, is that view's exact label so the fix can target the wall it names. Green may have none. Do not propose or perform implementation work.`, 340, "survey prompt");
+}
+
+function manifestViewIdsByUnit(manifest: CaptureManifest): Map<string, string[]> {
+  return new Map(manifest.units.map((unit) => [unit.id, Object.keys(unit.views)]));
 }
 
 async function classifySurveyReal(
@@ -1179,22 +1494,24 @@ async function classifySurveyReal(
   surveyDir: string,
 ): Promise<SurveyRating[]> {
   const ratings: SurveyRating[] = [];
+  const viewIdsByUnit = manifestViewIdsByUnit(manifest);
   for (const batch of manifest.batches) {
+    const batchViewIds = [...new Set(batch.unitIds.flatMap((unitId) => viewIdsByUnit.get(unitId) ?? []))].sort();
     let lastError: unknown = null;
     for (let attempt = 1; attempt <= 2; attempt += 1) {
       try {
         const resultPath = path.join(surveyDir, `${batch.id}-ratings-${attempt}.json`);
         const value = await exists(resultPath)
           ? JSON.parse(await readFile(resultPath, "utf8")) as unknown
-          : (await invokeCodexJson({
+          : (await invokeEngineJson(options.engine, {
               repoRoot: options.repoRoot,
               prompt: surveyPrompt(batch),
               images: [batch.contactSheetPath, ...(manifest.referenceBoardPath ? [manifest.referenceBoardPath] : [])],
-              schema: surveySchema(),
+              schema: surveySchema(batchViewIds),
               resultPath,
               role: "survey",
             })).value;
-        ratings.push(...parseSurveyPayload(value, batch.unitIds));
+        ratings.push(...parseSurveyPayload(value, batch.unitIds, viewIdsByUnit));
         lastError = null;
         break;
       } catch (error) {
@@ -1263,7 +1580,7 @@ async function classifyMapWideCoherenceReal(
       const resultPath = path.join(surveyDir, `map-wide-findings-${attempt}.json`);
       const value = await exists(resultPath)
         ? JSON.parse(await readFile(resultPath, "utf8")) as unknown
-        : (await invokeCodexJson({
+        : (await invokeEngineJson(options.engine, {
             repoRoot: options.repoRoot,
             prompt: mapWideSurveyPrompt(unitIds),
             images: [
@@ -1308,12 +1625,16 @@ export function mergeMapWideFindings(
   return ratings.map((rating) => byId.get(rating.unitId) as SurveyRating);
 }
 
-export function parseManualSurveyPayload(value: unknown, expectedIds: readonly string[]): SurveyRating[] {
+export function parseManualSurveyPayload(
+  value: unknown,
+  expectedIds: readonly string[],
+  viewIdsByUnit: ReadonlyMap<string, readonly string[]> = new Map(),
+): SurveyRating[] {
   if (!value || typeof value !== "object" || !Array.isArray((value as { findings?: unknown }).findings)) {
     throw new Error("manual survey response must contain findings[]; use an empty array when no map-wide finding is supported");
   }
   return mergeMapWideFindings(
-    parseSurveyPayload(value, expectedIds),
+    parseSurveyPayload(value, expectedIds, viewIdsByUnit),
     parseMapWideFindings({ findings: (value as { findings: unknown[] }).findings }, expectedIds),
   );
 }
@@ -1338,6 +1659,10 @@ async function writeManualSurveyPackages(manifest: CaptureManifest, surveyDir: s
   });
 }
 
+function baselineFileName(viewId: string): string {
+  return `${viewId.replace(/[^A-Za-z0-9_-]+/g, "_")}.png`;
+}
+
 async function promoteSurveyEvidence(
   options: CliOptions,
   manifest: CaptureManifest,
@@ -1345,21 +1670,21 @@ async function promoteSurveyEvidence(
   const result = new Map<string, UnitEvidence>();
   for (const unit of manifest.units) {
     const baselineDir = path.join(options.artifactsRoot, "baselines", unit.id);
+    await rm(baselineDir, { recursive: true, force: true });
     await mkdir(baselineDir, { recursive: true });
-    const primary = path.join(baselineDir, "primary.png");
-    const context = path.join(baselineDir, "context.png");
-    await copyFile(unit.views.primary.imagePath, primary);
-    await copyFile(unit.views.context.imagePath, context);
-    result.set(unit.id, {
-      primary: portablePath(options.repoRoot, primary),
-      context: portablePath(options.repoRoot, context),
-    });
+    const evidence: UnitEvidence = { primary: null, context: null };
+    for (const [viewId, view] of Object.entries(unit.views)) {
+      const destination = path.join(baselineDir, baselineFileName(viewId));
+      await copyFile(view.imagePath, destination);
+      evidence[viewId] = portablePath(options.repoRoot, destination);
+    }
+    result.set(unit.id, evidence);
   }
   return result;
 }
 
 export async function sourceWorktreeFingerprint(options: Pick<CliOptions, "repoRoot" | "statePath">): Promise<string> {
-  const stateFile = path.relative(options.repoRoot, options.statePath);
+  const stateFile = workflowStateFile(options);
   const index = await runChecked("git", ["ls-files", "-s", "-z"], { cwd: options.repoRoot });
   const entries = new Map<string, { mode: string; objectId: string }>();
   for (const raw of index.stdout.split("\0").filter(Boolean)) {
@@ -1424,7 +1749,7 @@ async function retainedSurveyManifest(
     if (captureValidityReasons(manifest, definitions).length > 0) return null;
     if ((await captureFileIntegrityReasons(manifest)).length > 0) return null;
     for (const unit of manifest.units) {
-      for (const view of [unit.views.primary, unit.views.context]) {
+      for (const view of Object.values(unit.views)) {
         if (!(await exists(view.imagePath))) return null;
       }
     }
@@ -1446,13 +1771,16 @@ async function retainedSurveyManifest(
 
 async function survey(options: CliOptions, io: CliIo): Promise<number> {
   if (options.mode === "real" && !options.dryRun) {
-    await assertAutomaticWorktree(options.repoRoot, [path.relative(options.repoRoot, options.statePath)]);
+    await assertAutomaticWorktree(options.repoRoot, [workflowStateFile(options)]);
   }
   const loaded = await loadStateAndSpec(options);
   if (loaded.state.activeTask) {
     throw new Error(`resolve active task '${loaded.state.activeTask.id}' before surveying`);
   }
   const definitions = deriveReviewUnits(loaded.spec);
+  // Coverage is a survey gate (DEC-024): fail closed before any capture so an
+  // unseen wall can never become an unrated-but-unacceptable wall.
+  const coverageReport = assertSurveyCoverage(loaded.spec, definitions);
   const plan = capturePlan(loaded.authorityHash, definitions);
   const surveyDir = path.join(options.artifactsRoot, "survey");
   if (options.dryRun) {
@@ -1465,6 +1793,10 @@ async function survey(options: CliOptions, io: CliIo): Promise<number> {
     return 0;
   }
   const sourceFingerprint = await sourceWorktreeFingerprint(options);
+  const surveyContext = {
+    engine: options.mode === "real" ? options.engine : null,
+    coverage: coverageReport.mapWide,
+  };
   if (options.ratings) {
     const retainedManifest = await retainedSurveyManifest(
       surveyDir,
@@ -1474,7 +1806,11 @@ async function survey(options: CliOptions, io: CliIo): Promise<number> {
     );
     if (!retainedManifest) throw new Error("manual ratings require the retained current-source/current-authority survey capture");
     const payload = JSON.parse(await readFile(options.ratings, "utf8")) as unknown;
-    const ratings = parseManualSurveyPayload(payload, loaded.state.units.map((unit) => unit.id));
+    const ratings = parseManualSurveyPayload(
+      payload,
+      loaded.state.units.map((unit) => unit.id),
+      manifestViewIdsByUnit(retainedManifest),
+    );
     const evidence = await promoteSurveyEvidence(options, retainedManifest);
     const rated = applyRatings(
       loaded.state,
@@ -1482,6 +1818,7 @@ async function survey(options: CliOptions, io: CliIo): Promise<number> {
       loaded.authorityHash,
       sourceFingerprint,
       evidence,
+      surveyContext,
     );
     await writeStateFile(options.statePath, rated);
     await rm(surveyDir, { recursive: true, force: true });
@@ -1547,6 +1884,7 @@ async function survey(options: CliOptions, io: CliIo): Promise<number> {
     loaded.authorityHash,
     sourceFingerprint,
     evidence,
+    surveyContext,
   );
   await writeStateFile(options.statePath, state);
   await rm(surveyDir, { recursive: true, force: true });
@@ -1554,7 +1892,18 @@ async function survey(options: CliOptions, io: CliIo): Promise<number> {
     rating,
     state.units.filter((unit) => unit.rating === rating).length,
   ]));
-  io.stdout(`Survey complete: pass=${state.pass} red=${counts.red} yellow=${counts.yellow} green=${counts.green}\n`);
+  io.stdout(`Survey complete: pass=${state.pass} engine=${state.engine ?? "none"} red=${counts.red} yellow=${counts.yellow} green=${counts.green} coverage usable=${coverageReport.mapWide.usablePct}% full-height=${coverageReport.mapWide.fullHeightPct}%\n`);
+  return 0;
+}
+
+async function coverage(options: CliOptions, io: CliIo): Promise<number> {
+  const map = await readMapSpecFile(options.mapSpecPath);
+  const report = computeSurveyCoverage(map.spec);
+  io.stdout(formatCoverageTable(report));
+  if (report.failures.length > 0) {
+    io.stderr(`coverage failures:\n- ${report.failures.join("\n- ")}\n`);
+    return 1;
+  }
   return 0;
 }
 
@@ -1579,6 +1928,18 @@ async function next(options: CliOptions, io: CliIo): Promise<number> {
   }
   const nextAction = currentRetryAction(loaded.state, selected);
   const suggestedRisk = inferTaskRisk(selected);
+  const definition = deriveReviewUnits(loaded.spec).find((entry) => entry.id === selected.id);
+  const unitCoverage = definition
+    ? computeSurveyCoverage(loaded.spec, [definition]).rows
+        .filter((row) => selected.zoneIds.includes(row.zoneId))
+        .map((row) => ({
+          face: row.face,
+          frontageId: row.frontageId,
+          wallsM: row.lengthM,
+          usablePct: row.usablePct,
+          fullHeightPct: row.fullHeightPct,
+        }))
+    : [];
   io.stdout(`${JSON.stringify({
     id: selected.id,
     zoneIds: selected.zoneIds,
@@ -1586,6 +1947,10 @@ async function next(options: CliOptions, io: CliIo): Promise<number> {
     confidence: selected.confidence,
     defects: selected.defects,
     suggestedRisk,
+    engine: loaded.state.engine,
+    views: definition?.views.map((view) => view.id) ?? [],
+    targetViewIds: defectViewIds(selected.defects),
+    coverage: unitCoverage,
     ...(suggestedRisk === "shared" ? {
       sharedEvidenceCandidates: loaded.state.units
         .filter((unit) => unit.id !== selected.id && (unit.rating === "red" || unit.rating === "yellow"))
@@ -1740,6 +2105,20 @@ function validateSharedSelection(
   };
 }
 
+/**
+ * Engine pin (DEC-023): a pass is surveyed by one engine and its tasks must
+ * use the same engine; a failed call is a workflow failure, never an engine
+ * switch. Changing engines requires a resurvey.
+ */
+function assertEnginePin(state: MapPolishState, options: CliOptions): void {
+  if (options.mode !== "real") return;
+  if (state.engine !== null && state.engine !== options.engine) {
+    throw new Error(
+      `this pass was surveyed with engine '${state.engine}'; rerun with --engine ${state.engine} or resurvey with --engine ${options.engine}`,
+    );
+  }
+}
+
 async function prepareTask(options: CliOptions): Promise<TaskContext> {
   const taskStartedAt = performance.now();
   const loaded = await loadStateAndSpec(options);
@@ -1748,6 +2127,7 @@ async function prepareTask(options: CliOptions): Promise<TaskContext> {
     throw new Error("full-map survey is required before implementation");
   }
   if (loaded.state.milestone.required) throw new Error("milestone verification is required before another task");
+  assertEnginePin(loaded.state, options);
   const unit = selectNextUnit(loaded.state);
   if (!unit) throw new Error("no Red or Yellow review unit is eligible; stop for human owner review");
   const definition = deriveReviewUnits(loaded.spec).find((entry) => entry.id === unit.id);
@@ -1760,11 +2140,11 @@ async function prepareTask(options: CliOptions): Promise<TaskContext> {
     if (!conceptAllowed(unit)) throw new Error("concept image is not allowed for this unit's rating/defect type");
   }
   const automatic = options.mode === "real" || options.mode === "mock";
-  const workflowStateFile = path.relative(options.repoRoot, options.statePath);
+  const stateFile = workflowStateFile(options);
   const start = automatic
-    ? await assertAutomaticWorktree(options.repoRoot, [workflowStateFile])
+    ? await assertAutomaticWorktree(options.repoRoot, [stateFile])
     : await (async () => {
-        const unrelated = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== workflowStateFile);
+        const unrelated = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== stateFile);
         if (unrelated.length > 0) {
           throw new Error(`manual mode refuses unrelated uncommitted changes: ${unrelated.join(", ")}`);
         }
@@ -1810,6 +2190,13 @@ async function prepareTask(options: CliOptions): Promise<TaskContext> {
   const ownership = await traceOwnership(options.repoRoot, unit, risk);
   const permitted = permittedSourcePaths(risk, ownership);
   const objective = taskObjective(loaded.state, unit, options.objective);
+  // Target views: those the defects/objective cite; fallback is every view.
+  const allViewIds = definition.views.map((view) => view.id);
+  const citedViewIds = [
+    ...defectViewIds(unit.defects),
+    ...allViewIds.filter((viewId) => objective.includes(viewId)),
+  ].filter((viewId) => allViewIds.includes(viewId));
+  const targetViewIds = citedViewIds.length > 0 ? [...new Set(citedViewIds)] : allViewIds;
   // Design-time evidence the screenshots cannot carry: plan crop + site brief.
   const planBefore = await renderPlanCrop(
     options,
@@ -1829,8 +2216,10 @@ async function prepareTask(options: CliOptions): Promise<TaskContext> {
   const workOrder = buildWorkOrder({
     unit,
     definition,
-    primaryScreenshot: beforeUnit.views.primary.imagePath,
-    contextScreenshot: beforeUnit.views.context.imagePath,
+    primaryScreenshot: (beforeUnit.views.primary as CaptureView).imagePath,
+    contextScreenshot: (beforeUnit.views.context as CaptureView).imagePath,
+    targetViewScreenshots: targetViewImagePaths(beforeUnit, targetViewIds),
+    targetViewIds,
     ...(planBefore ? { planImage: planBefore } : {}),
     siteBriefPath,
     compositionRequired,
@@ -1853,6 +2242,7 @@ async function prepareTask(options: CliOptions): Promise<TaskContext> {
     unit,
     objective,
     risk,
+    targetViewIds,
     startCommit: start.commit,
     artifactDir,
     taskId,
@@ -1941,19 +2331,27 @@ async function readWriterRationale(artifactDir: string): Promise<{ summary?: str
   }
 }
 
-async function invokeWriter(options: CliOptions, context: TaskContext): Promise<CodexCallTelemetry | null> {
+function targetViewImagePaths(unit: CaptureUnit, targetViewIds: readonly string[]): Array<{ viewId: string; path: string }> {
+  return targetViewIds
+    .filter((viewId) => viewId !== "primary" && viewId !== "context")
+    .map((viewId) => ({ viewId, path: unit.views[viewId]?.imagePath ?? "" }))
+    .filter((entry) => entry.path.length > 0);
+}
+
+async function invokeWriter(options: CliOptions, context: TaskContext): Promise<ModelCallTelemetry | null> {
   if (options.mode === "mock") {
     await runMockWriter(options, context);
     return null;
   }
   const beforeUnit = taskCaptureUnit(context.before, context.unit.id);
   const prompt = await readFile(context.workOrderPath, "utf8");
-  const result = await invokeCodexJson({
+  const result = await invokeEngineJson(options.engine, {
     repoRoot: options.repoRoot,
     prompt,
     images: [
-      beforeUnit.views.primary.imagePath,
-      beforeUnit.views.context.imagePath,
+      (beforeUnit.views.primary as CaptureView).imagePath,
+      (beforeUnit.views.context as CaptureView).imagePath,
+      ...targetViewImagePaths(beforeUnit, context.targetViewIds).map((entry) => entry.path),
       ...(context.planImages ? [context.planImages.before] : []),
       ...(context.sharedEvidence ?? []).map((entry) => resolveFrom(options.repoRoot, entry.primaryScreenshot)),
       ...(options.concept ? [options.concept] : []),
@@ -1992,7 +2390,7 @@ export function outsidePermittedSourceFiles(permittedPaths: readonly string[], t
 async function assertCandidateUnchanged(options: CliOptions, task: ActiveTask, artifactDir: string): Promise<void> {
   const head = await currentCommit(options.repoRoot);
   if (head !== task.startCommit) throw new Error("candidate HEAD changed after capture; manual recovery is required");
-  const stateFile = path.relative(options.repoRoot, options.statePath);
+  const stateFile = workflowStateFile(options);
   const touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== stateFile);
   if (!sameStringSet(touchedFiles, task.touchedFiles)) {
     throw new Error("candidate touched-file set changed after visual validation; recapture is required");
@@ -2713,14 +3111,15 @@ function compactCompareResult(compare: CompareResult): CompareResult {
   };
 }
 
-function taskPerformanceSummary(context: TaskContext): unknown {
-  const call = (telemetry: CodexCallTelemetry | null, role: CodexRole): unknown => telemetry
+function taskPerformanceSummary(context: TaskContext, engine: EngineName = "codex"): unknown {
+  const call = (telemetry: ModelCallTelemetry | null, role: ModelRole): unknown => telemetry
     ? { calls: 1, ...telemetry }
     : {
         calls: 0,
+        engine,
         role,
-        model: CODEX_MODEL,
-        effort: CODEX_ROLE_CONFIG[role].effort,
+        model: engine === "claude" ? CLAUDE_MODEL : CODEX_MODEL,
+        effort: MODEL_ROLE_CONFIG[role].effort,
         wallMs: 0,
         usage: null,
       };
@@ -2765,10 +3164,11 @@ function taskPerformanceLine(context: TaskContext): string {
 
 async function taskValidationEvidence(
   context: TaskContext,
+  options: CliOptions,
   touchedFiles: readonly string[],
   completedChecks: readonly string[],
   after: CaptureManifest,
-  validation: { valid: boolean; reasons: string[]; compare: CompareResult },
+  validation: TaskPairValidation,
 ): Promise<TaskValidationEvidence> {
   const beforeUnit = taskCaptureUnit(context.before, context.unit.id);
   const afterUnit = taskCaptureUnit(after, context.unit.id);
@@ -2779,22 +3179,37 @@ async function taskValidationEvidence(
         return {
           unitId: context.greenRegressionUnitId as string,
           primary: {
-            before: captureViewAudit(greenBefore.views.primary),
-            after: captureViewAudit(greenAfter.views.primary),
+            before: captureViewAudit(greenBefore.views.primary as CaptureView),
+            after: captureViewAudit(greenAfter.views.primary as CaptureView),
           },
           context: {
-            before: captureViewAudit(greenBefore.views.context),
-            after: captureViewAudit(greenAfter.views.context),
+            before: captureViewAudit(greenBefore.views.context as CaptureView),
+            after: captureViewAudit(greenAfter.views.context as CaptureView),
           },
         };
       })()
     : null;
+  const views: Record<string, ViewPairEvidence> = {};
+  for (const view of context.definition.views) {
+    const compare = validation.compares[view.id];
+    const viewBefore = beforeUnit.views[view.id];
+    const viewAfter = afterUnit.views[view.id];
+    if (!compare || !viewBefore || !viewAfter) continue;
+    views[view.id] = {
+      before: captureViewAudit(viewBefore),
+      after: captureViewAudit(viewAfter),
+      comparison: compactCompareResult(compare),
+      materiallyChanged: validation.materiallyChangedViewIds.includes(view.id),
+      targetView: context.targetViewIds.includes(view.id),
+    };
+  }
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     startCommit: context.startCommit,
     unitId: context.unit.id,
     zoneIds: [...context.definition.zoneIds],
     risk: context.risk,
+    engine: options.engine,
     touchedFiles: [...touchedFiles].sort(),
     candidatePatchSha256: await fileSha256(path.join(context.artifactDir, "candidate.patch")),
     completedChecks: [...new Set([
@@ -2809,15 +3224,8 @@ async function taskValidationEvidence(
       after: after.protectedAuthorityHash,
       unchanged: context.before.protectedAuthorityHash === after.protectedAuthorityHash,
     },
-    primary: {
-      before: captureViewAudit(beforeUnit.views.primary),
-      after: captureViewAudit(afterUnit.views.primary),
-      comparison: compactCompareResult(validation.compare),
-    },
-    context: {
-      before: captureViewAudit(beforeUnit.views.context),
-      after: captureViewAudit(afterUnit.views.context),
-    },
+    targetViewIds: [...context.targetViewIds],
+    views,
     ...(greenRegression ? { greenRegression } : {}),
     valid: validation.valid,
     reasons: [...validation.reasons],
@@ -2861,12 +3269,21 @@ async function assertRetainedTaskEvidence(
   }
 }
 
+type TaskPairValidation = {
+  valid: boolean;
+  reasons: string[];
+  /** Per-view comparison keyed by view id. */
+  compares: Record<string, CompareResult>;
+  /** Views whose pixels changed materially (above the strict threshold). */
+  materiallyChangedViewIds: string[];
+};
+
 async function validateTaskPair(
   options: CliOptions,
   context: TaskContext,
   after: CaptureManifest,
   touchedFiles: readonly string[],
-): Promise<{ valid: boolean; reasons: string[]; compare: CompareResult }> {
+): Promise<TaskPairValidation> {
   const beforeUnit = taskCaptureUnit(context.before, context.unit.id);
   const afterUnit = taskCaptureUnit(after, context.unit.id);
   const expectedDefinitions = [context.definition];
@@ -2874,44 +3291,50 @@ async function validateTaskPair(
     const green = deriveReviewUnits(context.spec).find((definition) => definition.id === context.greenRegressionUnitId);
     if (green) expectedDefinitions.push(green);
   }
-  const compare = await invokeCompare(
-    options,
-    beforeUnit.views.primary.imagePath,
-    afterUnit.views.primary.imagePath,
-  );
-  const input: ImagePairInput = {
-    before: { ...captureViewInput(beforeUnit.views.primary), ...compare.before },
-    after: { ...captureViewInput(afterUnit.views.primary), ...compare.after },
-    meanAbsoluteDelta: compare.meanAbsoluteDelta,
-    changedPixelRatio: compare.changedPixelRatio,
-    expectedZoneId: context.definition.zoneIds[0] as string,
-    relevantSourceChanged: touchedFiles.some(isRelevantMapSource),
-  };
-  const primary = validateImagePair(input);
-  const reasons = [...captureValidityReasons(after, expectedDefinitions), ...primary.reasons];
+  const reasons = [...captureValidityReasons(after, expectedDefinitions)];
   if (context.before.protectedAuthorityHash !== after.protectedAuthorityHash) {
     reasons.push("runtime collision authority changed");
   }
-  const contextBefore = beforeUnit.views.context;
-  const contextAfter = afterUnit.views.context;
-  if (!contextBefore.valid || !contextAfter.valid) reasons.push("context capture is invalid");
-  if (contextBefore.playerZoneId !== context.definition.zoneIds[0] || contextAfter.playerZoneId !== context.definition.zoneIds[0]) {
-    reasons.push("context captured the wrong review unit");
-  }
-  if (contextBefore.camera.actual && contextAfter.camera.actual) {
-    const contextProbe = validateImagePair({
-      before: { ...captureViewInput(contextBefore), sha256: "before-context" },
-      after: { ...captureViewInput(contextAfter), sha256: "after-context" },
-      meanAbsoluteDelta: 1,
-      changedPixelRatio: 1,
+  const relevantSourceChanged = touchedFiles.some(isRelevantMapSource);
+  const compares: Record<string, CompareResult> = {};
+  const materiallyChangedViewIds: string[] = [];
+  const viewIds = context.definition.views.map((view) => view.id);
+  for (const viewId of viewIds) {
+    const viewBefore = beforeUnit.views[viewId];
+    const viewAfter = afterUnit.views[viewId];
+    if (!viewBefore || !viewAfter) {
+      reasons.push(`${viewId} capture is missing`);
+      continue;
+    }
+    const compare = await invokeCompare(options, viewBefore.imagePath, viewAfter.imagePath);
+    compares[viewId] = compare;
+    const materiallyChanged = !(compare.effectivelyUnchanged ?? false)
+      && compare.before.sha256 !== compare.after.sha256;
+    if (materiallyChanged) materiallyChangedViewIds.push(viewId);
+    // Per-view recapture validity: dimensions, camera drift, sky-only, zone,
+    // and console errors gate every view; the changed-pixel requirement is a
+    // target-view requirement handled below.
+    const probe = validateImagePair({
+      before: { ...captureViewInput(viewBefore), ...compare.before },
+      after: { ...captureViewInput(viewAfter), ...compare.after },
+      meanAbsoluteDelta: compare.meanAbsoluteDelta,
+      changedPixelRatio: compare.changedPixelRatio,
       expectedZoneId: context.definition.zoneIds[0] as string,
-      relevantSourceChanged: true,
+      relevantSourceChanged,
     });
-    reasons.push(...contextProbe.reasons.filter((reason) => reason.includes("camera") || reason.includes("dimensions") || reason.includes("runtime")));
-  } else {
-    reasons.push("context camera evidence is missing");
+    reasons.push(...probe.reasons
+      .filter((reason) => !reason.includes("identical") && !reason.includes("effectively unchanged"))
+      .map((reason) => `${viewId}: ${reason}`));
   }
-  return { valid: reasons.length === 0, reasons: [...new Set(reasons)], compare };
+  if (!context.targetViewIds.some((viewId) => materiallyChangedViewIds.includes(viewId))) {
+    reasons.push(`no material change in any target view (${context.targetViewIds.join(", ")})`);
+  }
+  return {
+    valid: reasons.length === 0,
+    reasons: [...new Set(reasons)],
+    compares,
+    materiallyChangedViewIds,
+  };
 }
 
 function reviewLabel(context: TaskContext): { afterLabel: "A" | "B"; beforeLabel: "A" | "B" } {
@@ -2920,9 +3343,12 @@ function reviewLabel(context: TaskContext): { afterLabel: "A" | "B"; beforeLabel
   return { afterLabel, beforeLabel: afterLabel === "A" ? "B" : "A" };
 }
 
-function reviewPrompt(context: TaskContext): string {
+function reviewPrompt(context: TaskContext, imageOrder?: readonly string[]): string {
   const objective = context.objective;
-  return boundedPrompt(`Blindly compare two versions of the same deterministic map views. Image order is A-primary, A-context, B-primary, B-context${context.greenRegressionUnitId ? ", then A-Green and B-Green regression views" : ""}. You are not told which version is newer.
+  const orderSentence = imageOrder && imageOrder.length > 0
+    ? imageOrder.join(", ")
+    : `A-primary, A-context, B-primary, B-context${context.greenRegressionUnitId ? ", then A-green and B-green regression views" : ""}`;
+  return boundedPrompt(`Blindly compare two versions of the same deterministic map views. Image order is ${orderSentence}. Views named elev:<wall> are square-on wall elevations of the named frontage/face; cross and upper are perpendicular and upward room views. You are not told which version is newer.
 
 Objective: ${objective}
 Criterion: prefer the version that more clearly meets this one objective without a visible regression, broken assembly, blocked opening, floating/intersecting geometry, or loss of clarity. Judge macro before meso before micro. ${DESIGN_REVIEW_LENS.join(" ")} Symmetry should communicate designed order; asymmetry and variation need a functional, structural, climatic, or historical cause rather than uniform jitter.
@@ -2936,6 +3362,7 @@ async function stageBlindReviewPackage(
   options: CliOptions,
   context: TaskContext,
   after: CaptureManifest,
+  materiallyChangedViewIds: readonly string[],
 ): Promise<BlindReviewPackage> {
   const labels = reviewLabel(context);
   const reviewDir = path.join(context.artifactDir, "review");
@@ -2948,12 +3375,26 @@ async function stageBlindReviewPackage(
     [labels.afterLabel, afterUnit],
   ]);
   const images: string[] = [];
-  for (const label of ["A", "B"] as const) {
-    const unit = byLabel.get(label) as CaptureUnit;
-    for (const viewName of ["primary", "context"] as const) {
-      const destination = path.join(reviewDir, `${label}-${viewName}.png`);
-      await copyFile(unit.views[viewName].imagePath, destination);
+  const imageOrder: string[] = [];
+  // A/B pairs for primary, context, and every additional view whose pixels
+  // changed materially — target or not, so collateral changes are reviewed.
+  const reviewViewIds = context.definition.views
+    .map((view) => view.id)
+    .filter((viewId) => (
+      viewId === "primary"
+      || viewId === "context"
+      || materiallyChangedViewIds.includes(viewId)
+    ));
+  for (const viewId of reviewViewIds) {
+    const fileSegment = baselineFileName(viewId).replace(/\.png$/, "");
+    for (const label of ["A", "B"] as const) {
+      const unit = byLabel.get(label) as CaptureUnit;
+      const view = unit.views[viewId];
+      if (!view) continue;
+      const destination = path.join(reviewDir, `${label}-${fileSegment}.png`);
+      await copyFile(view.imagePath, destination);
       images.push(destination);
+      imageOrder.push(`${label}-${viewId}`);
     }
   }
   if (context.greenRegressionUnitId) {
@@ -2965,8 +3406,9 @@ async function stageBlindReviewPackage(
     ]);
     for (const label of ["A", "B"] as const) {
       const destination = path.join(reviewDir, `${label}-green.png`);
-      await copyFile((greenByLabel.get(label) as CaptureUnit).views.primary.imagePath, destination);
+      await copyFile((greenByLabel.get(label) as CaptureUnit).views.primary?.imagePath as string, destination);
       images.push(destination);
+      imageOrder.push(`${label}-green`);
     }
   }
   // Plan pair: same framing, neutral labels, rendered from the pre-edit SVG
@@ -2993,12 +3435,13 @@ async function stageBlindReviewPackage(
     }
     if (rendered.length === 2) {
       images.push(...rendered);
+      imageOrder.push("A-plan", "B-plan");
       context.planImages.after = rendered[labels.afterLabel === "A" ? 0 : 1] as string;
     } else {
       for (const file of rendered) await rm(file, { force: true });
     }
   }
-  return { afterLabel: labels.afterLabel, images };
+  return { afterLabel: labels.afterLabel, images, imageOrder };
 }
 
 async function compactValidatedTaskArtifacts(artifactDir: string): Promise<void> {
@@ -3071,7 +3514,7 @@ async function reviewTask(
   options: CliOptions,
   context: TaskContext,
   reviewPackage: BlindReviewPackage,
-): Promise<{ result: ReviewerResult; afterLabel: "A" | "B"; telemetry: CodexCallTelemetry | null }> {
+): Promise<{ result: ReviewerResult; afterLabel: "A" | "B"; telemetry: ModelCallTelemetry | null }> {
   if (options.mode === "mock") {
     const preferred = options.mockReview === "accept"
       ? reviewPackage.afterLabel
@@ -3092,9 +3535,9 @@ async function reviewTask(
       },
     };
   }
-  const response = await invokeCodexJson({
+  const response = await invokeEngineJson(options.engine, {
     repoRoot: options.repoRoot,
-    prompt: reviewPrompt(context),
+    prompt: reviewPrompt(context, reviewPackage.imageOrder),
     images: reviewPackage.images,
     schema: reviewerSchema(),
     resultPath: path.join(context.artifactDir, "review-result.json"),
@@ -3104,7 +3547,7 @@ async function reviewTask(
     return { result: parseReviewer(response.value), afterLabel: reviewPackage.afterLabel, telemetry: response.telemetry };
   } catch (error) {
     throw new CodexInvocationError(
-      `Codex reviewer result was malformed: ${error instanceof Error ? error.message : String(error)}`,
+      `${options.engine} reviewer result was malformed: ${error instanceof Error ? error.message : String(error)}`,
       response.telemetry,
     );
   }
@@ -3143,8 +3586,8 @@ type AcceptedBaselineStage = {
 async function stageAcceptedBaseline(
   options: CliOptions,
   unitId: string,
-  primarySource: string,
-  contextSource: string,
+  viewIds: readonly string[],
+  viewSources: Record<string, string>,
   outcomeSummary: unknown,
   transactionDir: string,
 ): Promise<AcceptedBaselineStage> {
@@ -3156,12 +3599,28 @@ async function stageAcceptedBaseline(
     await mkdir(path.dirname(backupDir), { recursive: true });
     await rename(baselineDir, backupDir);
   }
-  const primary = path.join(baselineDir, "primary.png");
-  const contextPath = path.join(baselineDir, "context.png");
+  const evidence: UnitEvidence = { primary: null, context: null };
   try {
     await mkdir(baselineDir, { recursive: true });
-    await copyFile(primarySource, primary);
-    await copyFile(contextSource, contextPath);
+    for (const viewId of viewIds) {
+      const fileName = baselineFileName(viewId);
+      const destination = path.join(baselineDir, fileName);
+      const source = viewSources[viewId];
+      if (source) {
+        await copyFile(source, destination);
+      } else if (hadPrevious && await exists(path.join(backupDir, fileName))) {
+        // A view whose pixels did not change materially keeps its prior
+        // accepted baseline image.
+        await copyFile(path.join(backupDir, fileName), destination);
+      } else {
+        evidence[viewId] = null;
+        continue;
+      }
+      evidence[viewId] = portablePath(options.repoRoot, destination);
+    }
+    if (!evidence.primary || !evidence.context) {
+      throw new Error("accepted baseline requires primary and context view images");
+    }
     await writeJsonAtomic(path.join(baselineDir, "latest-outcome.json"), outcomeSummary);
   } catch (error) {
     await rm(baselineDir, { recursive: true, force: true });
@@ -3169,10 +3628,7 @@ async function stageAcceptedBaseline(
     throw error;
   }
   return {
-    evidence: {
-      primary: portablePath(options.repoRoot, primary),
-      context: portablePath(options.repoRoot, contextPath),
-    },
+    evidence,
     baselineDir,
     backupDir,
     hadPrevious,
@@ -3195,14 +3651,14 @@ async function commitAcceptedTask(
   context: TaskContext,
   touchedFiles: readonly string[],
 ): Promise<void> {
-  await runChecked("git", ["add", "--", ...touchedFiles, path.relative(options.repoRoot, options.statePath)], { cwd: options.repoRoot });
+  await runChecked("git", ["add", "--", ...touchedFiles, workflowStateFile(options)], { cwd: options.repoRoot });
   await runChecked("git", ["commit", "-m", `map-polish: ${context.unit.id} ${context.unit.defects[0] ?? "visual improvement"}`], {
     cwd: options.repoRoot,
   });
 }
 
 async function restoreWorkflowStateIndex(options: CliOptions, startCommit: string): Promise<void> {
-  const stateFile = path.relative(options.repoRoot, options.statePath);
+  const stateFile = workflowStateFile(options);
   const tree = await runChecked("git", ["ls-tree", startCommit, "--", stateFile], { cwd: options.repoRoot });
   const match = /^(\d+) blob ([0-9a-f]+)\t/.exec(tree.stdout.trim());
   if (match) {
@@ -3324,7 +3780,7 @@ async function finalizeAutomaticTask(
     blindAfterLabel: afterLabel,
     writer: await readWriterRationale(context.artifactDir),
     evidence,
-    performance: taskPerformanceSummary(context),
+    performance: taskPerformanceSummary(context, options.engine),
   };
   const outcomePath = path.join(context.artifactDir, "outcome.json");
   await writeJsonAtomic(outcomePath, summary);
@@ -3337,8 +3793,10 @@ async function finalizeAutomaticTask(
   const baseline = await stageAcceptedBaseline(
     options,
     context.unit.id,
-    afterUnit.views.primary.imagePath,
-    afterUnit.views.context.imagePath,
+    context.definition.views.map((view) => view.id),
+    Object.fromEntries(
+      Object.entries(afterUnit.views).map(([viewId, view]) => [viewId, view.imagePath]),
+    ),
     summary,
     context.artifactDir,
   );
@@ -3380,7 +3838,7 @@ async function finalizeAutomaticTask(
   context.performance.finalizeMs = performance.now() - finalizeStartedAt;
   await writeJsonAtomic(path.join(baseline.baselineDir, "latest-outcome.json"), {
     ...summary,
-    performance: taskPerformanceSummary(context),
+    performance: taskPerformanceSummary(context, options.engine),
   });
   return { outcome, state };
 }
@@ -3460,7 +3918,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
     context.performance.writer = await invokeWriter(options, context);
   } catch (error) {
     if (error instanceof CodexInvocationError) context.performance.writer = error.telemetry;
-    const stateFile = path.relative(options.repoRoot, options.statePath);
+    const stateFile = workflowStateFile(options);
     const touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== stateFile);
     const headChanged = await currentCommit(options.repoRoot) !== context.startCommit;
     if (!headChanged && touchedFiles.length > 0) {
@@ -3487,7 +3945,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
   }
   const postWriterStartedAt = performance.now();
   if (await currentCommit(options.repoRoot) !== context.startCommit) {
-    const touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+    const touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== workflowStateFile(options));
     const state = pruneState({
       ...context.state,
       activeTask: activeTaskFromContext(context, "blocked", touchedFiles),
@@ -3496,12 +3954,12 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
     io.stderr("Writer changed HEAD; task is blocked for manual recovery and no automated rollback was attempted.\n");
     return "pending";
   }
-  let touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+  let touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== workflowStateFile(options));
   if (candidateTouchesMapAuthority(touchedFiles)) {
     try {
       await regenerateMapEvidence(options);
       touchedFiles = (await collectTouchedFiles(options.repoRoot))
-        .filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+        .filter((file) => file !== workflowStateFile(options));
     } catch (error) {
       await rejectCandidate(options, context, touchedFiles, "reject", "Candidate map authority could not regenerate its runtime evidence.");
       io.stderr(`Candidate restored: map evidence regeneration failed (${boundedDiagnostic(error instanceof Error ? error.message : String(error))}).\n`);
@@ -3666,7 +4124,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
     io.stderr(`Candidate restored without consuming an attempt because recapture failed: ${error instanceof Error ? error.message : String(error)}\n`);
     return "reject";
   }
-  let validation: { valid: boolean; reasons: string[]; compare: CompareResult };
+  let validation: TaskPairValidation;
   const comparisonStartedAt = performance.now();
   try {
     validation = await validateTaskPair(options, context, after, touchedFiles);
@@ -3681,10 +4139,10 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
     io.stderr(`Comparison rejected before reviewer invocation: ${validation.reasons.join(" | ")}\n`);
     return "reject";
   }
-  const evidence = await taskValidationEvidence(context, touchedFiles, completedChecks, after, validation);
+  const evidence = await taskValidationEvidence(context, options, touchedFiles, completedChecks, after, validation);
   let reviewPackage: BlindReviewPackage;
   try {
-    reviewPackage = await stageBlindReviewPackage(options, context, after);
+    reviewPackage = await stageBlindReviewPackage(options, context, after, validation.materiallyChangedViewIds);
   } catch (error) {
     await abortInfrastructureFailure(options, context, touchedFiles);
     io.stderr(`Candidate restored without consuming an attempt because review packaging failed: ${error instanceof Error ? error.message : String(error)}\n`);
@@ -3707,7 +4165,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
       objective: context.objective,
       status: "manual-review-required",
       evidence,
-      performance: taskPerformanceSummary(context),
+      performance: taskPerformanceSummary(context, options.engine),
     });
     const artifactEvidenceHash = await fileSha256(outcomePath);
     await refreshPendingWorkOrder(context, requiresHumanTraversal);
@@ -3739,7 +4197,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
       proposedOutcome: outcome,
       writer: await readWriterRationale(context.artifactDir),
       evidence,
-      performance: taskPerformanceSummary(context),
+      performance: taskPerformanceSummary(context, options.engine),
     });
     const artifactEvidenceHash = await fileSha256(outcomePath);
     await refreshPendingWorkOrder(context, requiresHumanTraversal);
@@ -3829,7 +4287,7 @@ async function deferSelectedUnit(options: CliOptions, io: CliIo): Promise<number
   if (loaded.state.milestone.required) throw new Error("milestone verification is required before preflight deferral");
   const selected = selectNextUnit(loaded.state);
   if (!selected) throw new Error("no Red or Yellow review unit is eligible");
-  const stateFile = path.relative(options.repoRoot, options.statePath);
+  const stateFile = workflowStateFile(options);
   if (options.mode === "manual") {
     const unrelated = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== stateFile);
     if (unrelated.length > 0) throw new Error(`manual preflight deferral refuses unrelated changes: ${unrelated.join(", ")}`);
@@ -3870,7 +4328,7 @@ async function resolvePendingDisposition(options: CliOptions, io: CliIo, state: 
       throw new Error("candidate HEAD changed after the work order; manual recovery is required");
     }
     touchedFiles = (await collectTouchedFiles(options.repoRoot))
-      .filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+      .filter((file) => file !== workflowStateFile(options));
   } else if (patchExists) {
     await assertCandidateUnchanged(options, task, artifactDir);
   } else if (task.touchedFiles.length > 0) {
@@ -3879,7 +4337,7 @@ async function resolvePendingDisposition(options: CliOptions, io: CliIo, state: 
       throw new Error("candidate HEAD changed; automatic rollback is unsafe");
     }
     const currentTouched = (await collectTouchedFiles(options.repoRoot))
-      .filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+      .filter((file) => file !== workflowStateFile(options));
     if (!sameStringSet(currentTouched, task.touchedFiles)) {
       throw new Error("candidate touched-file set changed; manual recovery is required");
     }
@@ -3930,11 +4388,25 @@ async function resolvePendingDisposition(options: CliOptions, io: CliIo, state: 
     evidence: retainedOutcome.evidence,
     ...(retainedOutcome.performance ? { performance: retainedOutcome.performance } : {}),
   };
+  const evidenceViews = retainedOutcome.evidence.views ?? {};
+  const evidenceViewIds = Object.keys(evidenceViews);
+  const reviewSources: Record<string, string> = {};
+  for (const viewId of evidenceViewIds) {
+    const viewEvidence = evidenceViews[viewId];
+    const reviewImage = path.join(
+      artifactDir,
+      "review",
+      `${task.blindAfterLabel}-${baselineFileName(viewId)}`,
+    );
+    if ((viewId === "primary" || viewId === "context" || viewEvidence?.materiallyChanged) && await exists(reviewImage)) {
+      reviewSources[viewId] = reviewImage;
+    }
+  }
   const baseline = await stageAcceptedBaseline(
     options,
     task.unitId,
-    path.join(artifactDir, "review", `${task.blindAfterLabel}-primary.png`),
-    path.join(artifactDir, "review", `${task.blindAfterLabel}-context.png`),
+    evidenceViewIds,
+    reviewSources,
     summary,
     artifactDir,
   );
@@ -3976,11 +4448,16 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
   const definition = deriveReviewUnits(spec).find((entry) => entry.id === task.unitId);
   const unit = state.units.find((entry) => entry.id === task.unitId);
   if (!definition || !unit) throw new Error("active manual task references a missing unit");
-  let touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+  let touchedFiles = (await collectTouchedFiles(options.repoRoot)).filter((file) => file !== workflowStateFile(options));
   if (await currentCommit(options.repoRoot) !== task.startCommit) {
     throw new Error("manual candidate changed HEAD; automatic rollback is unsafe");
   }
   const ownershipPaths = await traceOwnership(options.repoRoot, unit, task.risk, task.startCommit);
+  const manualViewIds = definition.views.map((view) => view.id);
+  const manualCited = [
+    ...defectViewIds(unit.defects),
+    ...manualViewIds.filter((viewId) => task.objective.includes(viewId)),
+  ].filter((viewId) => manualViewIds.includes(viewId));
   const context: TaskContext = {
     state,
     spec,
@@ -3989,6 +4466,7 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
     unit,
     objective: task.objective,
     risk: task.risk,
+    targetViewIds: manualCited.length > 0 ? [...new Set(manualCited)] : manualViewIds,
     startCommit: task.startCommit,
     artifactDir,
     taskId: task.id,
@@ -4023,7 +4501,7 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
     try {
       await regenerateMapEvidence(options);
       touchedFiles = (await collectTouchedFiles(options.repoRoot))
-        .filter((file) => file !== path.relative(options.repoRoot, options.statePath));
+        .filter((file) => file !== workflowStateFile(options));
     } catch (error) {
       await rejectCandidate(options, context, touchedFiles, "reject", "Manual map authority could not regenerate runtime evidence.");
       io.stderr(`Manual candidate restored: map evidence regeneration failed (${boundedDiagnostic(error instanceof Error ? error.message : String(error))}).\n`);
@@ -4180,7 +4658,7 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
     io.stderr(`Manual candidate restored without consuming an attempt because recapture failed: ${error instanceof Error ? error.message : String(error)}\n`);
     return 1;
   }
-  let validation: { valid: boolean; reasons: string[]; compare: CompareResult };
+  let validation: TaskPairValidation;
   try {
     validation = await validateTaskPair(options, context, after, touchedFiles);
   } catch (error) {
@@ -4194,17 +4672,17 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
     io.stderr(`Manual comparison rejected and candidate restored: ${validation.reasons.join(" | ")}\n`);
     return 1;
   }
-  const evidence = await taskValidationEvidence(context, touchedFiles, completedChecks, after, validation);
+  const evidence = await taskValidationEvidence(context, options, touchedFiles, completedChecks, after, validation);
   let reviewPackage: BlindReviewPackage;
   try {
-    reviewPackage = await stageBlindReviewPackage(options, context, after);
+    reviewPackage = await stageBlindReviewPackage(options, context, after, validation.materiallyChangedViewIds);
   } catch (error) {
     await abortInfrastructureFailure(options, context, touchedFiles);
     io.stderr(`Manual candidate restored without consuming an attempt because review packaging failed: ${error instanceof Error ? error.message : String(error)}\n`);
     return 1;
   }
   await attachReviewPackageEvidence(context, evidence, reviewPackage.images, 0);
-  await writeFile(path.join(artifactDir, "manual-review.txt"), `${reviewPrompt(context)}\n`, "utf8");
+  await writeFile(path.join(artifactDir, "manual-review.txt"), `${reviewPrompt(context, reviewPackage.imageOrder)}\n`, "utf8");
   const outcomePath = path.join(artifactDir, "outcome.json");
   await writeJsonAtomic(outcomePath, {
     schemaVersion: 1,
@@ -4212,7 +4690,7 @@ async function continueManualTask(options: CliOptions, io: CliIo, state: MapPoli
     objective: context.objective,
     status: "manual-review-required",
     evidence,
-    performance: taskPerformanceSummary(context),
+    performance: taskPerformanceSummary(context, options.engine),
   });
   const artifactEvidenceHash = await fileSha256(outcomePath);
   await refreshPendingWorkOrder(context, context.risk === "route-adjacent" || mapRouteAdjacent);
@@ -4289,8 +4767,282 @@ async function verify(options: CliOptions, io: CliIo): Promise<number> {
   if (definitions.length !== loaded.state.units.length || uncovered.length > 0) {
     throw new Error(`state coverage is stale; run map:survey (uncovered=${uncovered.join(",") || "none"})`);
   }
-  io.stdout(`State valid: ${loaded.state.units.length} units, pass=${loaded.state.pass}, surveyRequired=${loaded.state.surveyRequired}, milestoneRequired=${loaded.state.milestone.required}.\n`);
+  const coverageReport = assertSurveyCoverage(loaded.spec, definitions);
+  io.stdout(`State valid: ${loaded.state.units.length} units, pass=${loaded.state.pass}, engine=${loaded.state.engine ?? "none"}, surveyRequired=${loaded.state.surveyRequired}, milestoneRequired=${loaded.state.milestone.required}, coverage usable=${coverageReport.mapWide.usablePct}% full-height=${coverageReport.mapWide.fullHeightPct}%.\n`);
   return 0;
+}
+
+const PLANNER_ACTIONS = ["run", "defer"] as const;
+
+type PlannerDecision = {
+  action: typeof PLANNER_ACTIONS[number];
+  objective?: string;
+  risk?: TaskRisk;
+  targetViewIds?: string[];
+  sharedCause?: string;
+  sharedEvidence?: string[];
+  greenRegression?: string;
+  diagnosis?: string;
+};
+
+function plannerSchema(viewIds: readonly string[], unitIds: readonly string[]): unknown {
+  return {
+    type: "object",
+    additionalProperties: false,
+    required: ["action"],
+    properties: {
+      action: { type: "string", enum: [...PLANNER_ACTIONS] },
+      objective: { type: "string", minLength: 12, maxLength: OBJECTIVE_MAX },
+      risk: { type: "string", enum: ["pure", "shared", "route-adjacent"] },
+      targetViewIds: {
+        type: "array",
+        maxItems: 8,
+        items: viewIds.length > 0 ? { type: "string", enum: [...viewIds] } : { type: "string" },
+      },
+      sharedCause: { type: "string", minLength: 12, maxLength: 180 },
+      sharedEvidence: {
+        type: "array",
+        maxItems: 2,
+        items: unitIds.length > 0 ? { type: "string", enum: [...unitIds] } : { type: "string" },
+      },
+      greenRegression: unitIds.length > 0 ? { type: "string", enum: [...unitIds] } : { type: "string" },
+      diagnosis: { type: "string", minLength: 12, maxLength: 220 },
+    },
+  };
+}
+
+export function parsePlannerDecision(value: unknown): PlannerDecision {
+  if (!value || typeof value !== "object") throw new Error("planner decision must be an object");
+  const decision = value as Partial<PlannerDecision>;
+  if (!PLANNER_ACTIONS.includes(decision.action as typeof PLANNER_ACTIONS[number])) {
+    throw new Error("planner action must be run or defer");
+  }
+  if (decision.action === "run") {
+    if (typeof decision.objective !== "string" || decision.objective.trim().length < 12) {
+      throw new Error("planner run decision requires a bounded objective");
+    }
+    if (decision.objective.trim().length > OBJECTIVE_MAX) {
+      throw new Error(`planner objective must be ${OBJECTIVE_MAX} characters or fewer`);
+    }
+    if (!["pure", "shared", "route-adjacent"].includes(String(decision.risk))) {
+      throw new Error("planner run decision requires an explicit risk");
+    }
+  }
+  if (decision.action === "defer" && (typeof decision.diagnosis !== "string" || decision.diagnosis.trim().length < 12)) {
+    throw new Error("planner defer decision requires a diagnosis");
+  }
+  return decision as PlannerDecision;
+}
+
+function plannerPrompt(input: {
+  unit: ReviewUnitState;
+  views: readonly string[];
+  targetViewIds: readonly string[];
+  suggestedRisk: TaskRisk;
+  rejectedTactics: readonly string[];
+  weakUnits: ReadonlyArray<{ id: string; defect: string | null }>;
+  greenUnits: readonly string[];
+}): string {
+  return boundedPrompt(`You plan exactly one bounded map-polish task for review unit ${input.unit.id} (rating ${input.unit.rating}). The attached images are the unit's current site brief plan crop and labeled current views; the site brief text follows them.
+
+Defects on record:
+${input.unit.defects.map((defect) => `- ${defect}`).join("\n") || "- none recorded"}
+
+Labeled views: ${input.views.join(", ")}. Views cited by defects: ${input.targetViewIds.join(", ") || "none"}. Suggested risk: ${input.suggestedRisk}. ${input.rejectedTactics.length > 0 ? `Rejected tactics (do not repeat): ${input.rejectedTactics.join(" | ")}` : ""}
+
+Decide: action run with one objective (max ${OBJECTIVE_MAX} chars) naming what visibly improves and in which target views, an explicit risk (composing a frontage is route-adjacent; a shared mechanism needs sharedCause plus sharedEvidence from ${input.weakUnits.map((unit) => unit.id).join(", ") || "none"} and greenRegression from ${input.greenUnits.join(", ") || "none"}), and targetViewIds; or action defer with a diagnosis when no bounded local emitter owns the defect. Do not propose implementation detail beyond the objective sentence.`, 380, "planner prompt");
+}
+
+type LoopStopReason =
+  | "max-accepts"
+  | "resurvey-required"
+  | "milestone-required"
+  | "owner-review"
+  | "protected-scope"
+  | "active-task"
+  | "blocker";
+
+async function runLoop(options: CliOptions, io: CliIo): Promise<number> {
+  if (options.maxTasks > 1) throw new Error("map:loop is bounded by --max-accepts; --max-tasks is not valid here");
+  let accepts = 0;
+  let iterations = 0;
+  const outcomes: string[] = [];
+  let stopReason: LoopStopReason | null = null;
+  let stopDetail = "";
+  const maxIterations = Math.max(options.maxAccepts * 4, 8);
+  while (accepts < options.maxAccepts && iterations < maxIterations) {
+    iterations += 1;
+    const loaded = await loadStateAndSpec(options);
+    assertEnginePin(loaded.state, options);
+    if (loaded.state.activeTask) {
+      stopReason = "active-task";
+      stopDetail = `active task ${loaded.state.activeTask.id} (${loaded.state.activeTask.status}) requires map:verify`;
+      break;
+    }
+    if (loaded.state.surveyRequired || loaded.state.surveyedAuthorityHash !== loaded.authorityHash) {
+      stopReason = "resurvey-required";
+      stopDetail = "a full-map survey is required";
+      break;
+    }
+    if (loaded.state.milestone.required) {
+      stopReason = "milestone-required";
+      stopDetail = "milestone verification is due";
+      break;
+    }
+    const selected = selectNextUnit(loaded.state);
+    if (!selected) {
+      stopReason = "owner-review";
+      stopDetail = "no Red or Yellow unit is eligible";
+      break;
+    }
+    const definition = deriveReviewUnits(loaded.spec).find((entry) => entry.id === selected.id);
+    if (!definition) throw new Error(`review definition missing for '${selected.id}'`);
+    const views = definition.views.map((view) => view.id);
+    const citedViews = defectViewIds(selected.defects).filter((viewId) => views.includes(viewId));
+    const suggestedRisk = inferTaskRisk(selected);
+    let decision: PlannerDecision;
+    if (options.planner === "manual") {
+      io.stdout(`${JSON.stringify({
+        loop: "awaiting-operator-objective",
+        unit: selected.id,
+        rating: selected.rating,
+        defects: selected.defects,
+        views,
+        targetViewIds: citedViews,
+        suggestedRisk,
+        resume: `${workflowCommand("map:run", options, ["--objective", "\"...\"", "--risk", suggestedRisk])} then ${workflowCommand("map:verify", options, ["--accept", "--commit"])}`,
+      }, null, 2)}\n`);
+      return 0;
+    }
+    if (options.mode === "mock") {
+      decision = {
+        action: "run",
+        objective: `Resolve the highest-impact visible defect: ${selected.defects[0] ?? "underdeveloped visual finish"}`,
+        risk: suggestedRisk,
+        targetViewIds: citedViews,
+      };
+    } else {
+      const weakUnits = loaded.state.units
+        .filter((unit) => unit.id !== selected.id && (unit.rating === "red" || unit.rating === "yellow"))
+        .slice(0, 3)
+        .map((unit) => ({ id: unit.id, defect: unit.defects[0] ?? null }));
+      const greenUnits = loaded.state.units.filter((unit) => unit.rating === "green").slice(0, 3).map((unit) => unit.id);
+      const plannerDir = path.join(options.artifactsRoot, "planner");
+      await rm(plannerDir, { recursive: true, force: true });
+      await mkdir(plannerDir, { recursive: true });
+      const plannerImages: string[] = [];
+      for (const viewId of ["primary", "context", ...citedViews.filter((id) => id !== "primary" && id !== "context")]) {
+        const evidencePath = selected.evidence[viewId];
+        if (evidencePath) plannerImages.push(resolveFrom(options.repoRoot, evidencePath));
+      }
+      const planCrop = await renderPlanCrop(
+        options,
+        loaded.spec,
+        definition,
+        path.join(plannerDir, "plan.png"),
+        `${selected.id} · plan`,
+      );
+      if (planCrop) plannerImages.push(planCrop);
+      const siteBriefPath = path.join(plannerDir, "site-brief.md");
+      await writeFile(siteBriefPath, buildSiteBrief(loaded.spec, definition, selected), "utf8");
+      const siteBrief = await readFile(siteBriefPath, "utf8");
+      const prompt = `${plannerPrompt({
+        unit: selected,
+        views,
+        targetViewIds: citedViews,
+        suggestedRisk,
+        rejectedTactics: selected.rejectedTactics,
+        weakUnits,
+        greenUnits,
+      })}\n\nSite brief:\n${siteBrief}`;
+      const response = await invokeEngineJson(options.engine, {
+        repoRoot: options.repoRoot,
+        prompt,
+        images: plannerImages,
+        schema: plannerSchema(views, loaded.state.units.map((unit) => unit.id)),
+        resultPath: path.join(plannerDir, "planner-decision.json"),
+        role: "planner",
+      });
+      decision = parsePlannerDecision(response.value);
+      io.stdout(`Planner (${options.engine}): ${decision.action}${decision.objective ? ` — ${decision.objective}` : ""}${decision.diagnosis ? ` — ${decision.diagnosis}` : ""}\n`);
+      await rm(plannerDir, { recursive: true, force: true });
+    }
+    if (decision.action === "defer") {
+      const deferOptions: CliOptions = {
+        ...options,
+        deferSelected: true,
+        diagnosis: decision.diagnosis as string,
+      };
+      const code = await deferSelectedUnit(deferOptions, io);
+      if (code !== 0) {
+        stopReason = "blocker";
+        stopDetail = "planner defer failed";
+        break;
+      }
+      outcomes.push(`${selected.id}: planner-deferred`);
+      continue;
+    }
+    const plannedObjective = normalizeObjective(decision.objective);
+    if (!plannedObjective) {
+      stopReason = "blocker";
+      stopDetail = "planner returned an empty objective";
+      break;
+    }
+    const runOptions: CliOptions = {
+      ...options,
+      command: "run",
+      objective: plannedObjective,
+      risk: decision.risk as TaskRisk,
+      sharedEvidence: decision.sharedEvidence ?? [],
+      ...(decision.sharedCause ? { sharedCause: decision.sharedCause } : {}),
+      ...(decision.greenRegression ? { greenRegression: decision.greenRegression } : {}),
+      maxTasks: 1,
+    };
+    const outcome = await executeTask(runOptions, io);
+    outcomes.push(`${selected.id}: ${outcome}`);
+    if (outcome === "accept") {
+      accepts += 1;
+      continue;
+    }
+    if (outcome === "pending") {
+      const after = await loadStateAndSpec(options);
+      if (after.state.activeTask) {
+        stopReason = "active-task";
+        stopDetail = `task ${after.state.activeTask.id} is ${after.state.activeTask.status}; resolve with map:verify`;
+      } else {
+        stopReason = "blocker";
+        stopDetail = "task ended pending without an active task";
+      }
+      break;
+    }
+  }
+  if (!stopReason) {
+    stopReason = accepts >= options.maxAccepts ? "max-accepts" : "blocker";
+    if (stopReason === "blocker") stopDetail = `loop exhausted ${maxIterations} iterations without reaching ${options.maxAccepts} accepts`;
+  }
+  const finalState = await loadStateAndSpec(options).then((loaded) => loaded.state).catch(() => null);
+  io.stdout(`${JSON.stringify({
+    loop: "final-report",
+    engine: options.engine,
+    accepts,
+    iterations,
+    outcomes,
+    stopReason,
+    ...(stopDetail ? { stopDetail } : {}),
+    ...(finalState ? {
+      pass: finalState.pass,
+      ratings: {
+        red: finalState.units.filter((unit) => unit.rating === "red").length,
+        yellow: finalState.units.filter((unit) => unit.rating === "yellow").length,
+        green: finalState.units.filter((unit) => unit.rating === "green").length,
+        unrated: finalState.units.filter((unit) => unit.rating === "unrated").length,
+      },
+      milestoneRequired: finalState.milestone.required,
+      surveyRequired: finalState.surveyRequired,
+      coverage: finalState.coverage,
+    } : {}),
+  }, null, 2)}\n`);
+  return stopReason === "blocker" ? 1 : 0;
 }
 
 export async function runMapPolishCli(argv: string[], io: CliIo = DEFAULT_IO): Promise<number> {
@@ -4298,6 +5050,8 @@ export async function runMapPolishCli(argv: string[], io: CliIo = DEFAULT_IO): P
     const options = parseOptions(argv);
     if (options.command === "survey") return await survey(options, io);
     if (options.command === "next") return await next(options, io);
+    if (options.command === "coverage") return await coverage(options, io);
+    if (options.command === "loop") return await runLoop(options, io);
     if (options.command === "run") {
       return options.deferSelected ? await deferSelectedUnit(options, io) : await runTasks(options, io);
     }

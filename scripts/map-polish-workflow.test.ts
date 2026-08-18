@@ -226,7 +226,10 @@ test("design-lens survey and blind-review contracts are structured and chronolog
       label: "Zone A",
       zoneType: "market",
       macroLane: null,
-      views: { primary: cameraPose, context: cameraPose },
+      views: [
+        { id: "primary", camera: cameraPose },
+        { id: "context", camera: cameraPose },
+      ],
     },
     primaryScreenshot: "primary.png",
     contextScreenshot: "context.png",
@@ -324,7 +327,9 @@ test("design-lens survey and blind-review contracts are structured and chronolog
 
   const prompt = surveyPrompt({ id: "batch-01", unitIds: ["unit-a"], contactSheetPath: "sheet.png" });
   assert.match(prompt, /Image 1 is the labeled map-survey contact sheet; image 2 is the approved reference board/);
-  assert.ok(prompt.trim().split(/\s+/).length <= 300);
+  assert.match(prompt, /elev:<FRONTAGE or face>/);
+  assert.match(prompt, /viewId/);
+  assert.ok(prompt.trim().split(/\s+/).length <= 340);
 
   for (const afterLabel of ["A", "B"] as const) {
     const beforeLabel = afterLabel === "A" ? "B" : "A";
@@ -920,7 +925,15 @@ test("survey capture builds one compact local reference board", async () => {
       schemaVersion: 1,
       authorityHash: "reference-board-test",
       contactSheets: true,
-      units: [{ id: "unit-a", zoneIds: ["ZONE_A"], views: { primary: camera, context: camera } }],
+      units: [{
+        id: "unit-a",
+        zoneIds: ["ZONE_A"],
+        views: [
+          { id: "primary", camera },
+          { id: "context", camera },
+          { id: "elev:FRONTAGE_A", camera: { ...camera, pitchDeg: 12 } },
+        ],
+      }],
       batches: [{ id: "batch-01", unitIds: ["unit-a"] }],
     })}\n`, "utf8");
     await execFile(process.execPath, [
@@ -1117,15 +1130,21 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     const firstUnitId = firstPending.activeTask?.unitId;
     assert.ok(firstUnitId);
     const firstArtifactDir = path.resolve(repoRoot, firstPending.activeTask?.artifactDir ?? "missing");
+    // Square test zones derive cross views; the synthetic after-variant changes
+    // every view, so the blind package carries every materially changed pair.
     assert.deepEqual(await readdir(path.join(firstArtifactDir, "review")), [
       "A-context.png",
+      "A-cross-a.png",
+      "A-cross-b.png",
       "A-primary.png",
       "B-context.png",
+      "B-cross-a.png",
+      "B-cross-b.png",
       "B-primary.png",
     ]);
     const retained = await allFiles(firstArtifactDir);
-    // Four review images, work order, site brief, review result, outcome, candidate patch.
-    assert.ok(retained.length <= 9, `pending artifact set must stay bounded, got: ${retained.join(", ")}`);
+    // Review image pairs for each changed view, work order, site brief, review result, outcome, candidate patch.
+    assert.ok(retained.length <= 13, `pending artifact set must stay bounded, got: ${retained.join(", ")}`);
     assert.ok(retained.includes("site-brief.md"), "the human deciding the pending package gets the plan-level site brief");
     assert.ok(retained.every((file) => !/(^|\/)(before|after)(\/|$)|trace\.zip/.test(file)));
     const pendingOutcome = JSON.parse(await readFile(path.join(firstArtifactDir, "outcome.json"), "utf8")) as Record<string, unknown>;
@@ -1148,29 +1167,39 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     assert.deepEqual(taskPerformance.warnings, []);
     const evidence = pendingOutcome.evidence as {
       startCommit: string;
+      engine: string;
       touchedFiles: string[];
       completedChecks: string[];
       protectedAuthority: { unchanged: boolean };
-      primary: {
+      targetViewIds: string[];
+      views: Record<string, {
         before: { sha256: string; camera: unknown; consoleErrorCount: number };
         after: { sha256: string; camera: unknown; consoleErrorCount: number };
         comparison: { changedPixelRatio: number };
-      };
+        materiallyChanged: boolean;
+        targetView: boolean;
+      }>;
       valid: boolean;
       reasons: string[];
     };
     assert.equal(evidence.startCommit, baselineCommit);
+    assert.equal(evidence.engine, "codex");
     assert.deepEqual(evidence.touchedFiles, [targetRelative]);
     assert.ok(evidence.completedChecks.includes("protected-domain diff"));
     assert.ok(evidence.completedChecks.includes("mock scoped checks passed"));
     assert.ok(evidence.completedChecks.includes("exact same-camera recapture"));
     assert.equal(evidence.protectedAuthority.unchanged, true);
-    assert.notEqual(evidence.primary.before.sha256, evidence.primary.after.sha256);
-    assert.ok(evidence.primary.before.camera);
-    assert.ok(evidence.primary.after.camera);
-    assert.equal(evidence.primary.before.consoleErrorCount, 0);
-    assert.equal(evidence.primary.after.consoleErrorCount, 0);
-    assert.ok(evidence.primary.comparison.changedPixelRatio > 0);
+    assert.ok(evidence.targetViewIds.length > 0);
+    const primaryEvidence = evidence.views.primary;
+    assert.ok(primaryEvidence, "per-view evidence must include primary");
+    assert.notEqual(primaryEvidence.before.sha256, primaryEvidence.after.sha256);
+    assert.ok(primaryEvidence.before.camera);
+    assert.ok(primaryEvidence.after.camera);
+    assert.equal(primaryEvidence.before.consoleErrorCount, 0);
+    assert.equal(primaryEvidence.after.consoleErrorCount, 0);
+    assert.ok(primaryEvidence.comparison.changedPixelRatio > 0);
+    assert.equal(primaryEvidence.materiallyChanged, true);
+    assert.equal(primaryEvidence.targetView, true);
     assert.equal(evidence.valid, true);
     assert.deepEqual(evidence.reasons, []);
     const outcomeBytes = await readFile(path.join(firstArtifactDir, "outcome.json"));
@@ -1393,9 +1422,13 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     const sharedArtifactDir = path.resolve(repoRoot, sharedPending.activeTask?.artifactDir ?? "missing");
     assert.deepEqual(await readdir(path.join(sharedArtifactDir, "review")), [
       "A-context.png",
+      "A-cross-a.png",
+      "A-cross-b.png",
       "A-green.png",
       "A-primary.png",
       "B-context.png",
+      "B-cross-a.png",
+      "B-cross-b.png",
       "B-green.png",
       "B-primary.png",
     ]);

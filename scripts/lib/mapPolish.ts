@@ -15,10 +15,17 @@ import { promisify } from "node:util";
 
 const execFile = promisify(execFileCallback);
 
-export const MAP_POLISH_SCHEMA_VERSION = 1;
+export const MAP_POLISH_SCHEMA_VERSION = 2;
+/**
+ * Version of the deterministic pose-derivation rules. Hashed into the survey
+ * authority so changing how views are generated invalidates old surveys even
+ * when the map itself did not change.
+ */
+export const SURVEY_POSE_RULESET_VERSION = 2;
 export const DEFAULT_STATE_PATH = "docs/map-design/map-polish-state.json";
 export const DEFAULT_ARTIFACTS_PATH = "artifacts/map-polish";
-export const SURVEY_BATCH_SIZE = 7;
+export const SURVEY_BATCH_SIZE = 5;
+export const SURVEY_VIEW_CAP = 10;
 export const MAX_DEFECTS = 2;
 export const MAX_REJECTED_TACTICS = 2;
 export const EFFECTIVE_MEAN_DELTA_THRESHOLD = 0.001;
@@ -26,6 +33,34 @@ export const EFFECTIVE_CHANGED_PIXEL_THRESHOLD = 0.002;
 const MAP_POLISH_PLAYER_EYE_HEIGHT_M = 1.7;
 const MAP_POLISH_CAMERA_POSITION_TOLERANCE_M = 0.02;
 const MAP_POLISH_CAMERA_YAW_TOLERANCE_DEG = 0.35;
+// Player-eye survey optics: 75° vertical FOV at the 1440×900 review viewport.
+const SURVEY_VERTICAL_HALF_ANGLE_DEG = 37.5;
+const SURVEY_VIEWPORT_ASPECT = 1440 / 900;
+const SURVEY_HORIZONTAL_HALF_ANGLE_DEG =
+  (Math.atan(Math.tan((SURVEY_VERTICAL_HALF_ANGLE_DEG * Math.PI) / 180) * SURVEY_VIEWPORT_ASPECT) * 180) / Math.PI;
+// Elevation-view pose rules (ruleset v2).
+const ELEV_WALL_CLEARANCE_M = 0.6;
+const ELEV_MIN_STANDOFF_M = 2.5;
+const ELEV_STANDOFF_HEIGHT_FACTOR = 1.3;
+const ELEV_SEGMENT_WIDTH_FACTOR = 0.8;
+const ELEV_MIN_FACE_LENGTH_M = 3;
+const FULL_HEIGHT_FRAME_FRACTION = 0.8;
+const CROSS_VIEW_ASPECT_MAX = 1.6;
+const UPPER_VIEW_PITCH_DEG = 20;
+const UPPER_VIEW_WALL_MIN_HEIGHT_M = 7;
+const UPPER_VIEW_WALL_MAX_DISTANCE_M = 9;
+const DEFAULT_WALL_HEIGHT_M = 7;
+const OPEN_FACE_REASON = "open_traversal_face";
+// Coverage sampling and thresholds (survey gate; see DEC-024).
+const COVERAGE_SAMPLE_STEP_M = 0.25;
+const COVERAGE_USABLE_DISTANCE_M = 30;
+const COVERAGE_USABLE_INCIDENCE_DEG = 60;
+export const COVERAGE_FACE_GATE_LENGTH_M = 6;
+export const COVERAGE_FACE_USABLE_MIN_PCT = 80;
+export const COVERAGE_FRONTAGE_USABLE_MIN_PCT = 90;
+export const COVERAGE_FRONTAGE_FULL_HEIGHT_MIN_PCT = 85;
+export const COVERAGE_MAP_FULL_HEIGHT_MIN_PCT = 85;
+const VIEW_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9:._-]*$/;
 export const DESIGN_REVIEW_LENS = Object.freeze([
   "Intent and hierarchy: establish one readable purpose, hero, supporting rhythm, and quiet visual rest before adding detail.",
   "Ordered bones, lived-in layers: architecture follows datums, alignment, repetition, and purposeful symmetry; later occupation adds bounded irregularity with a reason.",
@@ -36,7 +71,8 @@ export const DESIGN_REVIEW_LENS = Object.freeze([
 export type Rating = "unrated" | "red" | "yellow" | "green";
 export type RunMode = "real" | "manual" | "mock";
 export type TaskRisk = "pure" | "shared" | "route-adjacent";
-export type ViewName = "primary" | "context";
+export type EngineName = "codex" | "claude";
+export type WallFaceName = "west" | "east" | "north" | "south";
 
 type JsonRecord = Record<string, unknown>;
 
@@ -78,7 +114,7 @@ export type MapSpec = JsonRecord & {
   zones: MapZone[];
   traversal_surfaces?: TraversalSurface[];
   explicit_connectivity?: ConnectivityEdge[];
-  map_polish_survey_camera_overrides?: Record<string, Partial<Record<ViewName, CameraPose>>>;
+  map_polish_survey_camera_overrides?: Record<string, Record<string, CameraPose>>;
 };
 
 export type CameraPose = {
@@ -86,7 +122,14 @@ export type CameraPose = {
   designLookAt: { x: number; y: number; z: number };
   playerPosition: { x: number; y: number; z: number };
   yawDeg: number;
+  /** Look elevation in degrees, positive up; absent means 0 (level). */
+  pitchDeg?: number;
   fovDeg: number;
+};
+
+export type ReviewUnitView = {
+  id: string;
+  camera: CameraPose;
 };
 
 export type ReviewUnitDefinition = {
@@ -95,12 +138,25 @@ export type ReviewUnitDefinition = {
   label: string;
   zoneType: string;
   macroLane: string | null;
-  views: Record<ViewName, CameraPose>;
+  /** Ordered named views; primary and context are always the first two. */
+  views: ReviewUnitView[];
 };
 
-export type UnitEvidence = {
-  primary: string | null;
-  context: string | null;
+/** Current evidence/baseline image per view id; primary and context always present. */
+export type UnitEvidence = Record<string, string | null>;
+
+export type WallFaceDescriptor = {
+  zoneId: string;
+  face: WallFaceName;
+  kind: "frontage" | "exemption";
+  frontageId: string | null;
+  /** Wall run in map coordinates; along +y for west/east faces, +x for north/south. */
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+  lengthM: number;
+  heightM: number;
+  /** Unit normal pointing into the zone. */
+  inwardNormal: { x: number; y: number };
 };
 
 export type LastAttemptedPass = {
@@ -147,13 +203,25 @@ export type ActiveTask = {
   artifactEvidenceHash?: string;
 };
 
+export type SurveyCoverageSummary = {
+  /** Map-wide percentage of wall length usable in at least one own-zone view. */
+  usablePct: number;
+  /** Map-wide percentage of wall length seen with the wall's full height in frame. */
+  fullHeightPct: number;
+  /** Percentage of authored-frontage length usable in at least one own-zone view. */
+  frontageUsablePct: number;
+};
+
 export type MapPolishState = {
   schemaVersion: number;
   mapAuthorityHash: string;
   surveyedAuthorityHash: string | null;
   sourceFingerprint: string | null;
+  /** Engine pinned at survey time; tasks in this pass must use it (DEC-023). */
+  engine: EngineName | null;
   pass: number;
   surveyRequired: boolean;
+  coverage: SurveyCoverageSummary | null;
   milestone: {
     acceptedAtLastRun: number;
     required: boolean;
@@ -225,6 +293,9 @@ export type WorkOrderInput = {
   definition: ReviewUnitDefinition;
   primaryScreenshot: string;
   contextScreenshot: string;
+  /** Additional labeled evidence views: elevation/cross/upper screenshots cited by the task. */
+  targetViewScreenshots?: Array<{ viewId: string; path: string }>;
+  targetViewIds?: string[];
   conceptImage?: string;
   /** Plan crop of the unit's zone (compiled layout with facade modules), when available. */
   planImage?: string;
@@ -338,6 +409,38 @@ function elevationAt(surface: TraversalSurface | undefined, point: { x: number; 
   return start + (end - start) * ratio;
 }
 
+function degToRad(value: number): number {
+  return (value * Math.PI) / 180;
+}
+
+function radToDeg(value: number): number {
+  return (value * 180) / Math.PI;
+}
+
+function yawTowards(from: { x: number; y: number }, to: { x: number; y: number }): number {
+  return round(radToDeg(Math.atan2(-(to.x - from.x), -(to.y - from.y))));
+}
+
+function cameraAt(
+  surface: TraversalSurface | undefined,
+  position: { x: number; y: number },
+  target: { x: number; y: number },
+  pitchDeg: number,
+): CameraPose {
+  const floor = elevationAt(surface, position);
+  const eye = floor + MAP_POLISH_PLAYER_EYE_HEIGHT_M;
+  const distance = Math.hypot(target.x - position.x, target.y - position.y);
+  const lookZ = eye + distance * Math.tan(degToRad(pitchDeg));
+  return {
+    designPosition: { x: round(position.x), y: round(position.y), z: round(eye) },
+    designLookAt: { x: round(target.x), y: round(target.y), z: round(lookZ) },
+    playerPosition: { x: round(position.x), y: round(floor), z: round(position.y) },
+    yawDeg: yawTowards(position, target),
+    ...(pitchDeg !== 0 ? { pitchDeg: round(pitchDeg, 2) } : {}),
+    fovDeg: 75,
+  };
+}
+
 function makeCamera(
   zone: MapZone,
   surface: TraversalSurface | undefined,
@@ -379,6 +482,212 @@ function makeCamera(
     yawDeg: round(yawDeg),
     fovDeg: 75,
   };
+}
+
+const WALL_FACES: readonly WallFaceName[] = Object.freeze(["west", "east", "north", "south"] as const);
+
+function wallHeightDefault(spec: MapSpec): number {
+  const global = spec.global_dimensions;
+  const value = isRecord(global) ? global.wall_height_default : undefined;
+  return finiteNumber(value) && value > 0 ? value : DEFAULT_WALL_HEIGHT_M;
+}
+
+function faceGeometry(zone: MapZone, face: WallFaceName, startFraction: number, endFraction: number): {
+  start: { x: number; y: number };
+  end: { x: number; y: number };
+  inwardNormal: { x: number; y: number };
+} {
+  const rect = zone.rect;
+  // Distances along a frontage: west/east faces run from the south end (+y),
+  // north/south faces from the west end (+x); +y is north.
+  if (face === "west" || face === "east") {
+    const x = face === "west" ? rect.x : rect.x + rect.w;
+    return {
+      start: { x, y: rect.y + startFraction * rect.h },
+      end: { x, y: rect.y + endFraction * rect.h },
+      inwardNormal: { x: face === "west" ? 1 : -1, y: 0 },
+    };
+  }
+  const y = face === "south" ? rect.y : rect.y + rect.h;
+  return {
+    start: { x: rect.x + startFraction * rect.w, y },
+    end: { x: rect.x + endFraction * rect.w, y },
+    inwardNormal: { x: 0, y: face === "south" ? 1 : -1 },
+  };
+}
+
+/**
+ * Every wall face of a zone that review evidence must show: authored frontages
+ * with their massing height, plus exempt faces (they are walls the player sees
+ * even when nothing composes them). Only `open_traversal_face` is skipped — it
+ * is not a wall.
+ */
+export function deriveWallFaces(spec: MapSpec, zone: MapZone): WallFaceDescriptor[] {
+  const defaultHeight = wallHeightDefault(spec);
+  const massings = new Map(
+    (Array.isArray(spec.massing_profiles) ? spec.massing_profiles : [])
+      .filter(isRecord)
+      .map((massing) => [String(massing.id), massing]),
+  );
+  const faces: WallFaceDescriptor[] = [];
+  for (const frontage of (Array.isArray(spec.frontages) ? spec.frontages : []).filter(isRecord)) {
+    if (frontage.zoneId !== zone.id || !WALL_FACES.includes(frontage.face as WallFaceName)) continue;
+    const face = frontage.face as WallFaceName;
+    const startFraction = finiteNumber(frontage.start) ? frontage.start : 0;
+    const endFraction = finiteNumber(frontage.end) ? frontage.end : 1;
+    const geometry = faceGeometry(zone, face, startFraction, endFraction);
+    const massing = massings.get(String(frontage.massingProfileId));
+    const heightM = finiteNumber(massing?.heightM) && (massing?.heightM as number) > 0
+      ? massing?.heightM as number
+      : defaultHeight;
+    faces.push({
+      zoneId: zone.id,
+      face,
+      kind: "frontage",
+      frontageId: String(frontage.id),
+      start: geometry.start,
+      end: geometry.end,
+      lengthM: Math.hypot(geometry.end.x - geometry.start.x, geometry.end.y - geometry.start.y),
+      heightM,
+      inwardNormal: geometry.inwardNormal,
+    });
+  }
+  for (const exemption of (Array.isArray(spec.frontage_exemptions) ? spec.frontage_exemptions : []).filter(isRecord)) {
+    if (exemption.zoneId !== zone.id || !WALL_FACES.includes(exemption.face as WallFaceName)) continue;
+    if (exemption.reason === OPEN_FACE_REASON) continue;
+    const face = exemption.face as WallFaceName;
+    const geometry = faceGeometry(zone, face, 0, 1);
+    faces.push({
+      zoneId: zone.id,
+      face,
+      kind: "exemption",
+      frontageId: null,
+      start: geometry.start,
+      end: geometry.end,
+      lengthM: Math.hypot(geometry.end.x - geometry.start.x, geometry.end.y - geometry.start.y),
+      heightM: defaultHeight,
+      inwardNormal: geometry.inwardNormal,
+    });
+  }
+  return faces.sort((left, right) => (
+    (left.frontageId ?? `zzz:${left.face}`).localeCompare(right.frontageId ?? `zzz:${right.face}`)
+  ));
+}
+
+function insetClamp(zone: MapZone, point: { x: number; y: number }): { x: number; y: number } {
+  const rect = zone.rect;
+  const clampAxis = (value: number, low: number, high: number): number => (
+    low > high ? (low + high) / 2 : Math.max(low, Math.min(high, value))
+  );
+  return {
+    x: clampAxis(point.x, rect.x + ELEV_WALL_CLEARANCE_M, rect.x + rect.w - ELEV_WALL_CLEARANCE_M),
+    y: clampAxis(point.y, rect.y + ELEV_WALL_CLEARANCE_M, rect.y + rect.h - ELEV_WALL_CLEARANCE_M),
+  };
+}
+
+function elevationStandoff(zone: MapZone, face: WallFaceDescriptor): number {
+  const depth = face.face === "west" || face.face === "east" ? zone.rect.w : zone.rect.h;
+  const ideal = Math.max(ELEV_MIN_STANDOFF_M, ELEV_STANDOFF_HEIGHT_FACTOR * (face.heightM - MAP_POLISH_PLAYER_EYE_HEIGHT_M));
+  return Math.max(ELEV_WALL_CLEARANCE_M, Math.min(depth - ELEV_WALL_CLEARANCE_M, ideal));
+}
+
+function elevationPitchDeg(standoffM: number, heightM: number): number {
+  const visibleTop = MAP_POLISH_PLAYER_EYE_HEIGHT_M
+    + standoffM * Math.tan(degToRad(SURVEY_VERTICAL_HALF_ANGLE_DEG));
+  if (visibleTop >= heightM) return 0;
+  // Tilt so the wall top sits at ~90% of frame height: top-of-frame is
+  // pitch+37.5°, the 90% line is pitch+30°.
+  const wallTopAngle = radToDeg(Math.atan((heightM - MAP_POLISH_PLAYER_EYE_HEIGHT_M) / standoffM));
+  return Math.min(60, Math.max(0, wallTopAngle - SURVEY_VERTICAL_HALF_ANGLE_DEG * FULL_HEIGHT_FRAME_FRACTION));
+}
+
+function elevationSegmentCount(lengthM: number, standoffM: number, widthFactor: number): number {
+  const visibleWidth = 2 * standoffM * Math.tan(degToRad(SURVEY_HORIZONTAL_HALF_ANGLE_DEG));
+  return Math.max(1, Math.ceil(lengthM / Math.max(1e-6, widthFactor * visibleWidth)));
+}
+
+function elevationViewsForFace(
+  zone: MapZone,
+  surface: TraversalSurface | undefined,
+  face: WallFaceDescriptor,
+  widthFactor: number,
+): ReviewUnitView[] {
+  const standoff = elevationStandoff(zone, face);
+  const pitch = elevationPitchDeg(standoff, face.heightM);
+  const segments = elevationSegmentCount(face.lengthM, standoff, widthFactor);
+  const baseId = face.frontageId ? `elev:${face.frontageId}` : `elev:${face.face}`;
+  const views: ReviewUnitView[] = [];
+  for (let index = 0; index < segments; index += 1) {
+    const fraction = (index + 0.5) / segments;
+    const wallPoint = {
+      x: face.start.x + (face.end.x - face.start.x) * fraction,
+      y: face.start.y + (face.end.y - face.start.y) * fraction,
+    };
+    const position = insetClamp(zone, {
+      x: wallPoint.x + face.inwardNormal.x * standoff,
+      y: wallPoint.y + face.inwardNormal.y * standoff,
+    });
+    views.push({
+      id: segments === 1 ? baseId : `${baseId}:${index + 1}`,
+      camera: cameraAt(surface, position, wallPoint, pitch),
+    });
+  }
+  return views;
+}
+
+function upperViewForZone(
+  zone: MapZone,
+  surface: TraversalSurface | undefined,
+  direction: { x: number; y: number },
+  walls: readonly WallFaceDescriptor[],
+): ReviewUnitView | null {
+  const center = insetClamp(zone, centerOf(zone.rect));
+  const tallWithinReach = walls.some((wall) => {
+    if (wall.heightM < UPPER_VIEW_WALL_MIN_HEIGHT_M) return false;
+    const perpendicular = wall.face === "west" || wall.face === "east"
+      ? Math.abs(center.x - wall.start.x)
+      : Math.abs(center.y - wall.start.y);
+    return perpendicular <= UPPER_VIEW_WALL_MAX_DISTANCE_M;
+  });
+  if (!tallWithinReach) return null;
+  const lookDistance = Math.max(2, Math.min(6, Math.max(zone.rect.w, zone.rect.h) * 0.45));
+  const target = {
+    x: center.x + direction.x * lookDistance,
+    y: center.y + direction.y * lookDistance,
+  };
+  return { id: "upper", camera: cameraAt(surface, center, target, UPPER_VIEW_PITCH_DEG) };
+}
+
+function deriveUnitViews(
+  spec: MapSpec,
+  zone: MapZone,
+  surface: TraversalSurface | undefined,
+  direction: { x: number; y: number },
+): ReviewUnitView[] {
+  const base: ReviewUnitView[] = [
+    { id: "primary", camera: makeCamera(zone, surface, direction, false) },
+    { id: "context", camera: makeCamera(zone, surface, direction, true) },
+  ];
+  const walls = deriveWallFaces(spec, zone).filter((wall) => wall.lengthM >= ELEV_MIN_FACE_LENGTH_M);
+  const aspect = Math.max(zone.rect.w, zone.rect.h) / Math.min(zone.rect.w, zone.rect.h);
+  const cross: ReviewUnitView[] = aspect <= CROSS_VIEW_ASPECT_MAX
+    ? [
+        { id: "cross-a", camera: makeCamera(zone, surface, { x: -direction.y, y: direction.x }, false) },
+        { id: "cross-b", camera: makeCamera(zone, surface, { x: -direction.y, y: direction.x }, true) },
+      ]
+    : [];
+  const upper = upperViewForZone(zone, surface, direction, walls);
+  // Wider segment budgets trade thumbnail framing for view count; escalate
+  // deterministically before dropping the supplementary views.
+  for (const widthFactor of [ELEV_SEGMENT_WIDTH_FACTOR, 1.0, 1.2, 1.4]) {
+    const elev = walls.flatMap((wall) => elevationViewsForFace(zone, surface, wall, widthFactor));
+    const views = [...base, ...elev, ...cross, ...(upper ? [upper] : [])];
+    if (views.length <= SURVEY_VIEW_CAP) return views;
+  }
+  const elev = walls.flatMap((wall) => elevationViewsForFace(zone, surface, wall, 1.4));
+  const withCross = [...base, ...elev, ...cross];
+  if (withCross.length <= SURVEY_VIEW_CAP) return withCross;
+  return [...base, ...elev];
 }
 
 function directionForZone(spec: MapSpec, zone: MapZone, zonesById: Map<string, MapZone>): { x: number; y: number } {
@@ -453,13 +762,16 @@ function validateSurveyCamera(value: unknown, label: string): asserts value is C
   if (!isRecord(value)) throw new Error(`${label} must be an object`);
   validateExactKeys(
     value,
-    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "fovDeg"]),
+    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "pitchDeg", "fovDeg"]),
     label,
   );
   validateCameraPoint(value.designPosition, `${label}.designPosition`);
   validateCameraPoint(value.designLookAt, `${label}.designLookAt`);
   validateCameraPoint(value.playerPosition, `${label}.playerPosition`);
   if (!finiteNumber(value.yawDeg)) throw new Error(`${label}.yawDeg must be finite`);
+  if (value.pitchDeg !== undefined && (!finiteNumber(value.pitchDeg) || value.pitchDeg <= -90 || value.pitchDeg >= 90)) {
+    throw new Error(`${label}.pitchDeg must be finite and between -90 and 90 when present`);
+  }
   if (!finiteNumber(value.fovDeg) || value.fovDeg <= 0 || value.fovDeg >= 180) {
     throw new Error(`${label}.fovDeg must be finite, > 0, and < 180`);
   }
@@ -513,19 +825,17 @@ function validateSurveyCameraOverrides(value: unknown, zoneIds: ReadonlySet<stri
     if (!isRecord(views)) {
       throw new Error(`map_polish_survey_camera_overrides.${zoneId} must be an object`);
     }
-    validateExactKeys(
-      views,
-      new Set<ViewName>(["primary", "context"]),
-      `map_polish_survey_camera_overrides.${zoneId}`,
-    );
     const viewEntries = Object.entries(views);
     if (viewEntries.length === 0) {
-      throw new Error(`map_polish_survey_camera_overrides.${zoneId} must define primary or context`);
+      throw new Error(`map_polish_survey_camera_overrides.${zoneId} must define at least one view override`);
     }
-    for (const [viewName, camera] of viewEntries) {
+    for (const [viewId, camera] of viewEntries) {
+      if (!VIEW_ID_PATTERN.test(viewId)) {
+        throw new Error(`map_polish_survey_camera_overrides.${zoneId} view id '${viewId}' is invalid`);
+      }
       validateSurveyCamera(
         camera,
-        `map_polish_survey_camera_overrides.${zoneId}.${viewName}`,
+        `map_polish_survey_camera_overrides.${zoneId}.${viewId}`,
       );
     }
   }
@@ -541,27 +851,206 @@ export function deriveReviewUnits(specInput: MapSpec): ReviewUnitDefinition[] {
   return zones.map((zone) => {
     const direction = directionForZone(spec, zone, zonesById);
     const surface = surfacesByZone.get(zone.id);
-    const generated = {
-      primary: makeCamera(zone, surface, direction, false),
-      context: makeCamera(zone, surface, direction, true),
-    };
     const override = spec.map_polish_survey_camera_overrides?.[zone.id];
+    const views = deriveUnitViews(spec, zone, surface, direction).map((view) => ({
+      id: view.id,
+      camera: override?.[view.id] ?? view.camera,
+    }));
     return {
       id: stableUnitId(zone.id),
       zoneIds: [zone.id],
       label: zone.label,
       zoneType: zone.type,
       macroLane: zone.macroLane ?? null,
-      views: {
-        primary: override?.primary ?? generated.primary,
-        context: override?.context ?? generated.context,
-      },
+      views,
     };
   });
 }
 
 export function hashMapAuthority(source: string | Buffer): string {
   return createHash("sha256").update(source).digest("hex");
+}
+
+export type WallCoverageRow = {
+  zoneId: string;
+  face: WallFaceName;
+  frontageId: string | null;
+  kind: "frontage" | "exemption";
+  lengthM: number;
+  heightM: number;
+  anyPct: number;
+  usablePct: number;
+  fullHeightPct: number;
+};
+
+export type SurveyCoverageReport = {
+  rows: WallCoverageRow[];
+  mapWide: SurveyCoverageSummary;
+  failures: string[];
+};
+
+type CoverageView = {
+  eye: { x: number; y: number; z: number };
+  direction: { x: number; y: number };
+  pitchDeg: number;
+};
+
+function coverageViews(definition: ReviewUnitDefinition): CoverageView[] {
+  return definition.views.map((view) => {
+    const yawRad = degToRad(view.camera.yawDeg);
+    return {
+      eye: { ...view.camera.designPosition },
+      direction: { x: -Math.sin(yawRad), y: -Math.cos(yawRad) },
+      pitchDeg: view.camera.pitchDeg ?? 0,
+    };
+  });
+}
+
+/**
+ * Pure-geometry wall coverage over own-zone views: a wall sample is "usable"
+ * when some view sees it inside the horizontal wedge, within 30 m, at ≤60°
+ * incidence, and "full-height" when that view's frame also reaches the wall
+ * top (`eye + d·tan(37.5° + pitch) ≥ H`). Because acceptance recaptures the
+ * same poses, an unseen wall is unrated *and* un-acceptable — this validator
+ * is the survey gate that prevents that (DEC-024).
+ */
+export function computeSurveyCoverage(
+  specInput: MapSpec,
+  definitionsInput?: readonly ReviewUnitDefinition[],
+): SurveyCoverageReport {
+  const spec = validateMapSpec(specInput);
+  const definitions = definitionsInput ?? deriveReviewUnits(spec);
+  const surfacesByZone = new Map((spec.traversal_surfaces ?? []).map((surface) => [surface.zoneId, surface]));
+  const definitionsByZone = new Map(
+    definitions.flatMap((definition) => definition.zoneIds.map((zoneId) => [zoneId, definition] as const)),
+  );
+  const rows: WallCoverageRow[] = [];
+  const failures: string[] = [];
+  let totalLength = 0;
+  let totalUsable = 0;
+  let totalFullHeight = 0;
+  let frontageLength = 0;
+  let frontageUsable = 0;
+  const horizontalHalfRad = degToRad(SURVEY_HORIZONTAL_HALF_ANGLE_DEG);
+  const incidenceLimitRad = degToRad(COVERAGE_USABLE_INCIDENCE_DEG);
+  for (const zone of [...spec.zones].sort((left, right) => left.id.localeCompare(right.id))) {
+    const definition = definitionsByZone.get(zone.id);
+    if (!definition) continue;
+    const surface = surfacesByZone.get(zone.id);
+    const views = coverageViews(definition);
+    for (const wall of deriveWallFaces(spec, zone)) {
+      const samples = Math.max(2, Math.ceil(wall.lengthM / COVERAGE_SAMPLE_STEP_M) + 1);
+      let seen = 0;
+      let usable = 0;
+      let fullHeight = 0;
+      for (let index = 0; index < samples; index += 1) {
+        const fraction = index / (samples - 1);
+        const sample = {
+          x: wall.start.x + (wall.end.x - wall.start.x) * fraction,
+          y: wall.start.y + (wall.end.y - wall.start.y) * fraction,
+        };
+        let sampleSeen = false;
+        let sampleUsable = false;
+        let sampleFullHeight = false;
+        for (const view of views) {
+          const toSample = { x: sample.x - view.eye.x, y: sample.y - view.eye.y };
+          const distance = Math.hypot(toSample.x, toSample.y);
+          if (distance <= 1e-6 || distance > COVERAGE_USABLE_DISTANCE_M) continue;
+          const ray = { x: toSample.x / distance, y: toSample.y / distance };
+          const wedgeCos = ray.x * view.direction.x + ray.y * view.direction.y;
+          if (wedgeCos < Math.cos(horizontalHalfRad)) continue;
+          sampleSeen = true;
+          // Incidence from the wall normal: 0° is square-on, 90° grazing.
+          const incidenceCos = Math.abs(ray.x * wall.inwardNormal.x + ray.y * wall.inwardNormal.y);
+          if (incidenceCos < Math.cos(incidenceLimitRad)) continue;
+          sampleUsable = true;
+          const floor = elevationAt(surface, insetClamp(zone, sample));
+          const visibleTop = (view.eye.z - floor)
+            + distance * Math.tan(degToRad(SURVEY_VERTICAL_HALF_ANGLE_DEG + view.pitchDeg));
+          if (visibleTop >= wall.heightM) {
+            sampleFullHeight = true;
+            break;
+          }
+        }
+        if (sampleSeen) seen += 1;
+        if (sampleUsable) usable += 1;
+        if (sampleFullHeight) fullHeight += 1;
+      }
+      const anyPct = round((seen / samples) * 100, 1);
+      const usablePct = round((usable / samples) * 100, 1);
+      const fullHeightPct = round((fullHeight / samples) * 100, 1);
+      rows.push({
+        zoneId: zone.id,
+        face: wall.face,
+        frontageId: wall.frontageId,
+        kind: wall.kind,
+        lengthM: round(wall.lengthM, 2),
+        heightM: wall.heightM,
+        anyPct,
+        usablePct,
+        fullHeightPct,
+      });
+      totalLength += wall.lengthM;
+      totalUsable += (usable / samples) * wall.lengthM;
+      totalFullHeight += (fullHeight / samples) * wall.lengthM;
+      if (wall.kind === "frontage") {
+        frontageLength += wall.lengthM;
+        frontageUsable += (usable / samples) * wall.lengthM;
+        if (usablePct < COVERAGE_FRONTAGE_USABLE_MIN_PCT) {
+          failures.push(`${wall.frontageId}: usable ${usablePct}% < ${COVERAGE_FRONTAGE_USABLE_MIN_PCT}%`);
+        }
+        if (fullHeightPct < COVERAGE_FRONTAGE_FULL_HEIGHT_MIN_PCT) {
+          failures.push(`${wall.frontageId}: full-height ${fullHeightPct}% < ${COVERAGE_FRONTAGE_FULL_HEIGHT_MIN_PCT}%`);
+        }
+      } else if (wall.lengthM >= COVERAGE_FACE_GATE_LENGTH_M && usablePct < COVERAGE_FACE_USABLE_MIN_PCT) {
+        failures.push(`${zone.id}:${wall.face} (exempt wall): usable ${usablePct}% < ${COVERAGE_FACE_USABLE_MIN_PCT}%`);
+      }
+    }
+  }
+  const mapWide: SurveyCoverageSummary = {
+    usablePct: round(totalLength > 0 ? (totalUsable / totalLength) * 100 : 100, 1),
+    fullHeightPct: round(totalLength > 0 ? (totalFullHeight / totalLength) * 100 : 100, 1),
+    frontageUsablePct: round(frontageLength > 0 ? (frontageUsable / frontageLength) * 100 : 100, 1),
+  };
+  if (mapWide.fullHeightPct < COVERAGE_MAP_FULL_HEIGHT_MIN_PCT) {
+    failures.push(`map-wide full-height ${mapWide.fullHeightPct}% < ${COVERAGE_MAP_FULL_HEIGHT_MIN_PCT}%`);
+  }
+  return { rows, mapWide, failures: [...new Set(failures)].sort() };
+}
+
+/** Survey gate (DEC-024): fail closed with the complete list of misses. */
+export function assertSurveyCoverage(
+  spec: MapSpec,
+  definitions?: readonly ReviewUnitDefinition[],
+): SurveyCoverageReport {
+  const report = computeSurveyCoverage(spec, definitions);
+  if (report.failures.length > 0) {
+    throw new Error(`survey pose coverage is below threshold:\n- ${report.failures.join("\n- ")}`);
+  }
+  return report;
+}
+
+export function formatCoverageTable(report: SurveyCoverageReport): string {
+  const lines = [
+    "zone | face | frontage | walls m | any % | usable % | full-height %",
+    "---- | ---- | -------- | ------- | ----- | -------- | -------------",
+  ];
+  for (const row of report.rows) {
+    lines.push([
+      row.zoneId,
+      row.face,
+      row.frontageId ?? `(exempt)`,
+      row.lengthM.toFixed(2),
+      row.anyPct.toFixed(1),
+      row.usablePct.toFixed(1),
+      row.fullHeightPct.toFixed(1),
+    ].join(" | "));
+  }
+  lines.push(
+    "",
+    `map-wide: usable ${report.mapWide.usablePct}% | full-height ${report.mapWide.fullHeightPct}% | authored frontages usable ${report.mapWide.frontageUsablePct}%`,
+  );
+  return `${lines.join("\n")}\n`;
 }
 
 function canonicalSurveyCamera(camera: CameraPose): CameraPose {
@@ -575,21 +1064,23 @@ function canonicalSurveyCamera(camera: CameraPose): CameraPose {
     designLookAt: point(camera.designLookAt),
     playerPosition: point(camera.playerPosition),
     yawDeg: camera.yawDeg,
+    ...(camera.pitchDeg !== undefined && camera.pitchDeg !== 0 ? { pitchDeg: camera.pitchDeg } : {}),
     fovDeg: camera.fovDeg,
   };
 }
 
 function canonicalSurveyCameraOverrides(
   overrides: MapSpec["map_polish_survey_camera_overrides"],
-): Record<string, Partial<Record<ViewName, CameraPose>>> | null {
+): Record<string, Record<string, CameraPose>> | null {
   if (!overrides) return null;
   return Object.fromEntries(
     Object.entries(overrides)
       .sort(([left], [right]) => left.localeCompare(right))
-      .map(([zoneId, views]) => [zoneId, {
-        ...(views.primary ? { primary: canonicalSurveyCamera(views.primary) } : {}),
-        ...(views.context ? { context: canonicalSurveyCamera(views.context) } : {}),
-      }]),
+      .map(([zoneId, views]) => [zoneId, Object.fromEntries(
+        Object.entries(views)
+          .sort(([left], [right]) => left.localeCompare(right))
+          .map(([viewId, camera]) => [viewId, canonicalSurveyCamera(camera)]),
+      )]),
   );
 }
 
@@ -628,6 +1119,7 @@ function canonicalConnectivityEdge(edge: ConnectivityEdge): JsonRecord {
 export function hashSurveyAuthority(specInput: MapSpec): string {
   const spec = validateMapSpec(specInput);
   const cameraAuthority = {
+    poseRulesetVersion: SURVEY_POSE_RULESET_VERSION,
     zones: [...spec.zones].sort((left, right) => left.id.localeCompare(right.id)).map((zone) => ({
       id: zone.id,
       type: zone.type,
@@ -648,6 +1140,12 @@ export function hashSurveyAuthority(specInput: MapSpec): string {
   return hashMapAuthority(JSON.stringify(cameraAuthority));
 }
 
+export function blankEvidence(viewIds: readonly string[] = ["primary", "context"]): UnitEvidence {
+  const evidence: UnitEvidence = { primary: null, context: null };
+  for (const viewId of viewIds) evidence[viewId] = null;
+  return evidence;
+}
+
 function blankUnit(definition: ReviewUnitDefinition): ReviewUnitState {
   return {
     id: definition.id,
@@ -655,7 +1153,7 @@ function blankUnit(definition: ReviewUnitDefinition): ReviewUnitState {
     rating: "unrated",
     confidence: 0,
     defects: [],
-    evidence: { primary: null, context: null },
+    evidence: blankEvidence(definition.views.map((view) => view.id)),
     lastAttemptedPass: null,
     acceptedChanges: 0,
     rejectedTactics: [],
@@ -668,8 +1166,10 @@ export function createInitialState(spec: MapSpec, mapAuthorityHash: string): Map
     mapAuthorityHash,
     surveyedAuthorityHash: null,
     sourceFingerprint: null,
+    engine: null,
     pass: 0,
     surveyRequired: true,
+    coverage: null,
     milestone: { acceptedAtLastRun: 0, required: false, full: false },
     activeTask: null,
     units: deriveReviewUnits(spec).map(blankUnit),
@@ -697,20 +1197,40 @@ function parseAttempt(value: unknown, label: string, errors: string[]): LastAtte
 function parseEvidence(value: unknown, label: string, errors: string[]): UnitEvidence {
   if (!isRecord(value)) {
     errors.push(`${label} must be an object`);
-    return { primary: null, context: null };
+    return blankEvidence();
   }
-  const parsePath = (candidate: unknown, pathLabel: string): string | null => {
-    if (candidate === null) return null;
-    if (!nonEmptyString(candidate)) {
-      errors.push(`${pathLabel} must be null or a non-empty string`);
-      return null;
+  const evidence: UnitEvidence = { primary: null, context: null };
+  for (const [viewId, candidate] of Object.entries(value)) {
+    if (!VIEW_ID_PATTERN.test(viewId)) {
+      errors.push(`${label} view id '${viewId}' is invalid`);
+      continue;
     }
-    return candidate;
+    if (candidate === null) {
+      evidence[viewId] = null;
+      continue;
+    }
+    if (!nonEmptyString(candidate)) {
+      errors.push(`${label}.${viewId} must be null or a non-empty string`);
+      evidence[viewId] = null;
+      continue;
+    }
+    evidence[viewId] = candidate;
+  }
+  if (!("primary" in evidence) || !("context" in evidence)) {
+    errors.push(`${label} must include primary and context`);
+  }
+  return evidence;
+}
+
+function sortedEvidence(evidence: UnitEvidence): UnitEvidence {
+  const head: UnitEvidence = {
+    primary: evidence.primary ?? null,
+    context: evidence.context ?? null,
   };
-  return {
-    primary: parsePath(value.primary, `${label}.primary`),
-    context: parsePath(value.context, `${label}.context`),
-  };
+  for (const viewId of Object.keys(evidence).filter((id) => id !== "primary" && id !== "context").sort()) {
+    head[viewId] = evidence[viewId] ?? null;
+  }
+  return head;
 }
 
 function parseActiveTask(value: unknown, errors: string[]): ActiveTask | null {
@@ -777,11 +1297,48 @@ function parseActiveTask(value: unknown, errors: string[]): ActiveTask | null {
   };
 }
 
-export function validateState(value: unknown): MapPolishState {
+/**
+ * Schema v1 → v2: evidence stays a record (v1's fixed {primary, context} shape
+ * is a valid subset), engine/coverage are new nullable fields, and the pass is
+ * force-resurveyed because v1 evidence lacks the new elevation views.
+ */
+function migrateStateV1(value: JsonRecord): JsonRecord {
+  const migrated = structuredClone(value);
+  migrated.schemaVersion = MAP_POLISH_SCHEMA_VERSION;
+  migrated.engine = null;
+  migrated.coverage = null;
+  migrated.surveyedAuthorityHash = null;
+  migrated.surveyRequired = true;
+  if (Array.isArray(migrated.units)) {
+    migrated.units = migrated.units.map((unit) => {
+      if (!isRecord(unit)) return unit;
+      const reset: JsonRecord = { ...unit, rating: "unrated", confidence: 0, defects: [], evidence: { primary: null, context: null } };
+      delete reset.deferredReason;
+      return reset;
+    });
+  }
+  return migrated;
+}
+
+export function validateState(rawValue: unknown): MapPolishState {
   const errors: string[] = [];
-  if (!isRecord(value)) throw new Error("map polish state must be an object");
+  if (!isRecord(rawValue)) throw new Error("map polish state must be an object");
+  const value = rawValue.schemaVersion === 1 ? migrateStateV1(rawValue) : rawValue;
   if (value.schemaVersion !== MAP_POLISH_SCHEMA_VERSION) {
     errors.push(`schemaVersion must equal ${MAP_POLISH_SCHEMA_VERSION}`);
+  }
+  if (value.engine !== null && value.engine !== "codex" && value.engine !== "claude") {
+    errors.push("engine must be null, 'codex', or 'claude'");
+  }
+  if (value.coverage !== null) {
+    if (!isRecord(value.coverage)) {
+      errors.push("coverage must be null or an object");
+    } else {
+      for (const key of ["usablePct", "fullHeightPct", "frontageUsablePct"] as const) {
+        const entry = (value.coverage as JsonRecord)[key];
+        if (!finiteNumber(entry) || entry < 0 || entry > 100) errors.push(`coverage.${key} must be between 0 and 100`);
+      }
+    }
   }
   if (!nonEmptyString(value.mapAuthorityHash)) errors.push("mapAuthorityHash must be a non-empty string");
   if (value.surveyedAuthorityHash !== null && !nonEmptyString(value.surveyedAuthorityHash)) {
@@ -863,13 +1420,20 @@ export function validateState(value: unknown): MapPolishState {
   }
   if (activeTask && !unitIds.has(activeTask.unitId)) errors.push("activeTask references an unknown unit");
   if (errors.length > 0) throw new Error(`invalid map polish state: ${errors.join(" | ")}`);
+  const coverage = value.coverage as SurveyCoverageSummary | null;
   return {
     schemaVersion: MAP_POLISH_SCHEMA_VERSION,
     mapAuthorityHash: String(value.mapAuthorityHash),
     surveyedAuthorityHash: value.surveyedAuthorityHash === null ? null : String(value.surveyedAuthorityHash),
     sourceFingerprint: value.sourceFingerprint === null ? null : String(value.sourceFingerprint),
+    engine: value.engine === "codex" || value.engine === "claude" ? value.engine : null,
     pass: Number(value.pass),
     surveyRequired: value.surveyRequired === true,
+    coverage: coverage === null ? null : {
+      usablePct: Number(coverage.usablePct),
+      fullHeightPct: Number(coverage.fullHeightPct),
+      frontageUsablePct: Number(coverage.frontageUsablePct),
+    },
     milestone: {
       acceptedAtLastRun: Number((value.milestone as JsonRecord).acceptedAtLastRun),
       required: (value.milestone as JsonRecord).required === true,
@@ -889,10 +1453,7 @@ export function pruneState(stateInput: MapPolishState): MapPolishState {
       rating: unit.rating,
       confidence: round(clamp01(unit.confidence), 3),
       defects: unit.defects.map((entry) => normalizeText(entry, 180)).filter(Boolean).slice(0, MAX_DEFECTS),
-      evidence: {
-        primary: unit.evidence.primary,
-        context: unit.evidence.context,
-      },
+      evidence: sortedEvidence(unit.evidence),
       lastAttemptedPass: unit.lastAttemptedPass
         ? {
             pass: unit.lastAttemptedPass.pass,
@@ -937,6 +1498,10 @@ export function syncStateWithSpec(
     return { ...existing, zoneIds: [...definition.zoneIds] };
   });
   const authorityChanged = state.mapAuthorityHash !== mapAuthorityHash;
+  const viewIdsByUnit = new Map(definitions.map((definition) => [
+    definition.id,
+    definition.views.map((view) => view.id),
+  ]));
   return pruneState({
     ...state,
     mapAuthorityHash,
@@ -950,7 +1515,7 @@ export function syncStateWithSpec(
         rating: "unrated",
         confidence: 0,
         defects: [],
-        evidence: { primary: null, context: null },
+        evidence: blankEvidence(viewIdsByUnit.get(unit.id)),
       };
       delete reset.deferredReason;
       return reset;
@@ -981,7 +1546,7 @@ export function syncStateWithSourceFingerprint(
         rating: "unrated",
         confidence: 0,
         defects: [],
-        evidence: { primary: null, context: null },
+        evidence: blankEvidence(Object.keys(unit.evidence)),
       };
       delete reset.deferredReason;
       return reset;
@@ -990,8 +1555,10 @@ export function syncStateWithSourceFingerprint(
 }
 
 export function buildSurveyBatches<T>(units: readonly T[], batchSize = SURVEY_BATCH_SIZE): T[][] {
-  if (!Number.isInteger(batchSize) || batchSize < 6 || batchSize > 8) {
-    throw new Error("survey batch size must be between 6 and 8");
+  // Variable multi-view contact sheets: 5–6 units per sheet keeps thumbnails
+  // at or above ~340px wide.
+  if (!Number.isInteger(batchSize) || batchSize < 5 || batchSize > 6) {
+    throw new Error("survey batch size must be 5 or 6");
   }
   if (units.length === 0) return [];
   const batchCount = Math.max(1, Math.ceil(units.length / batchSize));
@@ -1013,6 +1580,7 @@ export function applyRatings(
   surveyedAuthorityHash: string,
   sourceFingerprint: string,
   evidenceByUnit: ReadonlyMap<string, UnitEvidence> = new Map(),
+  surveyContext: { engine?: EngineName | null; coverage?: SurveyCoverageSummary | null } = {},
 ): MapPolishState {
   if (!nonEmptyString(sourceFingerprint)) throw new Error("source fingerprint must be a non-empty string");
   const state = pruneState(stateInput);
@@ -1057,6 +1625,8 @@ export function applyRatings(
     ...state,
     surveyedAuthorityHash,
     sourceFingerprint,
+    engine: surveyContext.engine !== undefined ? surveyContext.engine : state.engine,
+    coverage: surveyContext.coverage !== undefined ? surveyContext.coverage : state.coverage,
     pass: nextPass,
     surveyRequired: false,
     activeTask: null,
@@ -1330,7 +1900,7 @@ export function requiredChecks(risk: TaskRisk, unit: ReviewUnitDefinition): stri
     "Exact same-camera recapture",
     "Runtime console-error check",
     "Image-pair validity check",
-    "One short blind Codex comparison",
+    "One short blind engine A/B comparison",
   ];
   if (risk === "shared") {
     checks.push("One focused shared-mechanism test", "One Green regression view");
@@ -1433,11 +2003,17 @@ export function buildSiteBrief(spec: MapSpec, definition: ReviewUnitDefinition, 
       const massing = frontage.massingProfileId ? massings.get(frontage.massingProfileId) : undefined;
       const intent = isRecord(frontage.layoutIntent) ? frontage.layoutIntent : {};
       const lengthM = frontageLengthM(frontage, zone);
+      const elevationViews = definition.views
+        .map((view) => view.id)
+        .filter((viewId) => viewId === `elev:${frontage.id}` || viewId.startsWith(`elev:${frontage.id}:`));
       lines.push(
         `- ${frontage.id}: ${frontage.face} face, span ${(frontage.start ?? 0).toFixed(3)}–${(frontage.end ?? 1).toFixed(3)} = ${metres(lengthM)}, `
         + `profile ${frontage.facadeProfileId ?? "?"}${profile?.family ? ` (${profile.family})` : ""}, massing ${frontage.massingProfileId ?? "?"}`
         + `${typeof massing?.heightM === "number" ? ` ${metres(massing.heightM)} high` : ""}${typeof massing?.depthM === "number" ? ` ${metres(massing.depthM)} deep` : ""}`,
       );
+      if (elevationViews.length > 0) {
+        lines.push(`  - review view${elevationViews.length > 1 ? "s" : ""} ${elevationViews.map((viewId) => `\`${viewId}\``).join(", ")} show${elevationViews.length > 1 ? "" : "s"} this wall square-on: the wall you are composing`);
+      }
       if (intent.mode === "authored") {
         lines.push(`  - layout: authored — ${String(intent.composition ?? "")}`);
         const bays = Array.isArray(intent.bays) ? intent.bays.filter(isRecord) : [];
@@ -1507,12 +2083,16 @@ export function buildWorkOrder(input: WorkOrderInput): string {
     throw new Error("concept images are allowed only for Red direction/composition/identity/density problems");
   }
   const lines = [
-    "# Codex map-polish work order",
+    "# Map-polish work order",
     "",
     `Review unit: ${input.unit.id}`,
     `Zones: ${input.definition.zoneIds.join(", ")}`,
     `Primary screenshot: ${input.primaryScreenshot}`,
     `Context screenshot: ${input.contextScreenshot}`,
+    ...(input.targetViewScreenshots ?? []).map((view) => `View ${view.viewId}: ${view.path}`),
+    ...(input.targetViewIds && input.targetViewIds.length > 0
+      ? [`Target views (a material change must be visible in at least one): ${input.targetViewIds.join(", ")}`]
+      : []),
     ...(input.planImage ? [`Plan crop (compiled layout, north up, unit outlined): ${input.planImage}`] : []),
     ...(input.siteBriefPath ? [`Site brief (frontages, current bays, exempt faces, neighbours, authored-mode schema): ${input.siteBriefPath}`] : []),
     ...(input.conceptImage ? [`Advisory concept image: ${input.conceptImage}`] : []),

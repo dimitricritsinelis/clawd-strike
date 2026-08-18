@@ -1,10 +1,12 @@
 {
-  "schemaVersion": 1,
-  "mapAuthorityHash": "e2838e7e12681860e9c2610cce62ad262a27e867b65fb7f2a958c4e75cda2e54",
+  "schemaVersion": 2,
+  "mapAuthorityHash": "e830b639b9f50748068b70b9069c768bb1ac48bde0a4efed84c0fba410cfdb10",
   "surveyedAuthorityHash": null,
-  "sourceFingerprint": null,
+  "sourceFingerprint": "96b8f04ebbba9c8e3472aa6567483d182753c7ea170ff2c477a7afa56c72de97",
+  "engine": null,
   "pass": 0,
   "surveyRequired": true,
+  "coverage": null,
   "milestone": {
     "acceptedAtLastRun": 0,
     "required": false,
@@ -12,30 +14,560 @@
   },
   "activeTask": null,
   "units": [
-    { "id": "unit-caravan-court", "zoneIds": ["CARAVAN_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-covered-souk", "zoneIds": ["COVERED_SOUK"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-dyers-alley", "zoneIds": ["DYERS_ALLEY"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-dyers-dogleg", "zoneIds": ["DYERS_DOGLEG"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-fountain-court", "zoneIds": ["FOUNTAIN_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-east-mid", "zoneIds": ["LINK_EAST_MID"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-east-upper", "zoneIds": ["LINK_EAST_UPPER"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-north-east", "zoneIds": ["LINK_NORTH_EAST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-north-west", "zoneIds": ["LINK_NORTH_WEST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-south-east", "zoneIds": ["LINK_SOUTH_EAST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-south-west", "zoneIds": ["LINK_SOUTH_WEST"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-west-mid", "zoneIds": ["LINK_WEST_MID"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-link-west-upper", "zoneIds": ["LINK_WEST_UPPER"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-north-court", "zoneIds": ["NORTH_COURT"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-rug-gate", "zoneIds": ["RUG_GATE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-service-north", "zoneIds": ["SERVICE_NORTH"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-service-south", "zoneIds": ["SERVICE_SOUTH"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-spawn-a-courtyard", "zoneIds": ["SPAWN_A_COURTYARD"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-spawn-b-courtyard", "zoneIds": ["SPAWN_B_COURTYARD"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-spice-street", "zoneIds": ["SPICE_STREET"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-tea-landing", "zoneIds": ["TEA_LANDING"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-tea-ramp", "zoneIds": ["TEA_RAMP"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-tea-stairs", "zoneIds": ["TEA_STAIRS"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-tea-terrace", "zoneIds": ["TEA_TERRACE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] },
-    { "id": "unit-textile-arcade", "zoneIds": ["TEXTILE_ARCADE"], "rating": "unrated", "confidence": 0, "defects": [], "evidence": { "primary": null, "context": null }, "lastAttemptedPass": null, "acceptedChanges": 0, "rejectedTactics": [] }
+    {
+      "id": "unit-caravan-court",
+      "zoneIds": [
+        "CARAVAN_COURT"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_CARAVAN_COURT_EAST_NORTH": null,
+        "elev:FRONTAGE_CARAVAN_COURT_EAST_SOUTH": null,
+        "elev:FRONTAGE_CARAVAN_COURT_WEST:1": null,
+        "elev:FRONTAGE_CARAVAN_COURT_WEST:2": null,
+        "elev:north": null,
+        "elev:south": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-covered-souk",
+      "zoneIds": [
+        "COVERED_SOUK"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_COVERED_SOUK_EAST:1": null,
+        "elev:FRONTAGE_COVERED_SOUK_EAST:2": null,
+        "elev:FRONTAGE_COVERED_SOUK_SOUTH": null,
+        "elev:FRONTAGE_COVERED_SOUK_WEST": null,
+        "elev:north": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-dyers-alley",
+      "zoneIds": [
+        "DYERS_ALLEY"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:1": null,
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:2": null,
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:3": null,
+        "elev:FRONTAGE_DYERS_ALLEY_WEST:1": null,
+        "elev:FRONTAGE_DYERS_ALLEY_WEST:2": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-dyers-dogleg",
+      "zoneIds": [
+        "DYERS_DOGLEG"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "elev:east:1": null,
+        "elev:east:2": null,
+        "elev:west:1": null,
+        "elev:west:2": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-fountain-court",
+      "zoneIds": [
+        "FOUNTAIN_COURT"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_FOUNTAIN_COURT_EAST": null,
+        "elev:FRONTAGE_FOUNTAIN_COURT_WEST": null,
+        "elev:north": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-east-mid",
+      "zoneIds": [
+        "LINK_EAST_MID"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:north": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-east-upper",
+      "zoneIds": [
+        "LINK_EAST_UPPER"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:north": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-north-east",
+      "zoneIds": [
+        "LINK_NORTH_EAST"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_LINK_NORTH_EAST_NORTH": null,
+        "elev:east": null,
+        "elev:south": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-north-west",
+      "zoneIds": [
+        "LINK_NORTH_WEST"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:east": null,
+        "elev:north": null,
+        "elev:south": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-south-east",
+      "zoneIds": [
+        "LINK_SOUTH_EAST"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:east": null,
+        "elev:north": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-south-west",
+      "zoneIds": [
+        "LINK_SOUTH_WEST"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:north": null,
+        "elev:south": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-west-mid",
+      "zoneIds": [
+        "LINK_WEST_MID"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:north": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-link-west-upper",
+      "zoneIds": [
+        "LINK_WEST_UPPER"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-north-court",
+      "zoneIds": [
+        "NORTH_COURT"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_NORTH_COURT_EAST:1": null,
+        "elev:FRONTAGE_NORTH_COURT_EAST:2": null,
+        "elev:FRONTAGE_NORTH_COURT_NORTH": null,
+        "elev:FRONTAGE_NORTH_COURT_SOUTH": null,
+        "elev:FRONTAGE_NORTH_COURT_WEST": null,
+        "elev:FRONTAGE_NORTH_COURT_WEST_SOUTH": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-rug-gate",
+      "zoneIds": [
+        "RUG_GATE"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_RUG_GATE_EAST": null,
+        "elev:FRONTAGE_RUG_GATE_WEST": null,
+        "elev:south": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-service-north",
+      "zoneIds": [
+        "SERVICE_NORTH"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:1": null,
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:2": null,
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:3": null,
+        "elev:north": null,
+        "elev:west:1": null,
+        "elev:west:2": null,
+        "elev:west:3": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-service-south",
+      "zoneIds": [
+        "SERVICE_SOUTH"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "elev:FRONTAGE_SERVICE_SOUTH_EAST:1": null,
+        "elev:FRONTAGE_SERVICE_SOUTH_EAST:2": null,
+        "elev:south": null,
+        "elev:west:1": null,
+        "elev:west:2": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-spawn-a-courtyard",
+      "zoneIds": [
+        "SPAWN_A_COURTYARD"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_SPAWN_A_NORTH_EAST": null,
+        "elev:east": null,
+        "elev:south:1": null,
+        "elev:south:2": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-spawn-b-courtyard",
+      "zoneIds": [
+        "SPAWN_B_COURTYARD"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_SPAWN_B_SOUTH_EAST": null,
+        "elev:east": null,
+        "elev:north:1": null,
+        "elev:north:2": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-spice-street",
+      "zoneIds": [
+        "SPICE_STREET"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_SPICE_STREET_EAST:1": null,
+        "elev:FRONTAGE_SPICE_STREET_EAST:2": null,
+        "elev:FRONTAGE_SPICE_STREET_EAST:3": null,
+        "elev:FRONTAGE_SPICE_STREET_WEST:1": null,
+        "elev:FRONTAGE_SPICE_STREET_WEST:2": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-tea-landing",
+      "zoneIds": [
+        "TEA_LANDING"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "elev:north:1": null,
+        "elev:north:2": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-tea-ramp",
+      "zoneIds": [
+        "TEA_RAMP"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:east": null,
+        "elev:south": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-tea-stairs",
+      "zoneIds": [
+        "TEA_STAIRS"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:east": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-tea-terrace",
+      "zoneIds": [
+        "TEA_TERRACE"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_TEA_TERRACE_EAST": null,
+        "elev:west": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    },
+    {
+      "id": "unit-textile-arcade",
+      "zoneIds": [
+        "TEXTILE_ARCADE"
+      ],
+      "rating": "unrated",
+      "confidence": 0,
+      "defects": [],
+      "evidence": {
+        "primary": null,
+        "context": null,
+        "cross-a": null,
+        "cross-b": null,
+        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:1": null,
+        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:2": null,
+        "elev:FRONTAGE_TEXTILE_ARCADE_WEST": null,
+        "elev:north": null,
+        "upper": null
+      },
+      "lastAttemptedPass": null,
+      "acceptedChanges": 0,
+      "rejectedTactics": []
+    }
   ]
 }

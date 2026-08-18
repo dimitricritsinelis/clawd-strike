@@ -1042,10 +1042,10 @@ export class Game {
     return this.enemyManager?.eliminateAllForDebug() ?? 0;
   }
 
-  debugSetPlayerPose(position: { x: number; y: number; z: number }, yawRad?: number): void {
+  debugSetPlayerPose(position: { x: number; y: number; z: number }, yawRad?: number, pitchRad?: number): void {
     this.playerController.setSpawn(position.x, position.y, position.z);
     if (typeof yawRad === "number") {
-      this.setLookAngles(yawRad, 0);
+      this.setLookAngles(yawRad, pitchRad ?? 0);
     }
     this.updateCameraFromPlayer();
     this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
