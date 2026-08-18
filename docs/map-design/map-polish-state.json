@@ -1,12 +1,16 @@
 {
   "schemaVersion": 2,
   "mapAuthorityHash": "e830b639b9f50748068b70b9069c768bb1ac48bde0a4efed84c0fba410cfdb10",
-  "surveyedAuthorityHash": null,
-  "sourceFingerprint": "96b8f04ebbba9c8e3472aa6567483d182753c7ea170ff2c477a7afa56c72de97",
-  "engine": null,
-  "pass": 0,
-  "surveyRequired": true,
-  "coverage": null,
+  "surveyedAuthorityHash": "e830b639b9f50748068b70b9069c768bb1ac48bde0a4efed84c0fba410cfdb10",
+  "sourceFingerprint": "a5153afb3d1a5707e9650a39b017a8acffd8137c020724bb874ffbc95c87428e",
+  "engine": "claude",
+  "pass": 1,
+  "surveyRequired": false,
+  "coverage": {
+    "usablePct": 99.6,
+    "fullHeightPct": 99.5,
+    "frontageUsablePct": 100
+  },
   "milestone": {
     "acceptedAtLastRun": 0,
     "required": false,
@@ -19,23 +23,30 @@
       "zoneIds": [
         "CARAVAN_COURT"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "red",
+      "confidence": 0.55,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:FRONTAGE_CARAVAN_COURT_EAST_SOUTH] The frontage is one flat featureless brown plane with no openings, datum lines, or material breaks at any…",
+        "[plausibility-causality] [view:elev:north] The court ends in giant bare battered ramps with no gate, arcade, or animal facilities a caravan stop would need."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_CARAVAN_COURT_EAST_NORTH": null,
-        "elev:FRONTAGE_CARAVAN_COURT_EAST_SOUTH": null,
-        "elev:FRONTAGE_CARAVAN_COURT_WEST:1": null,
-        "elev:FRONTAGE_CARAVAN_COURT_WEST:2": null,
-        "elev:north": null,
-        "elev:south": null
+        "primary": "artifacts/map-polish/baselines/unit-caravan-court/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-caravan-court/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-caravan-court/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-caravan-court/cross-b.png",
+        "elev:FRONTAGE_CARAVAN_COURT_EAST_NORTH": "artifacts/map-polish/baselines/unit-caravan-court/elev_FRONTAGE_CARAVAN_COURT_EAST_NORTH.png",
+        "elev:FRONTAGE_CARAVAN_COURT_EAST_SOUTH": "artifacts/map-polish/baselines/unit-caravan-court/elev_FRONTAGE_CARAVAN_COURT_EAST_SOUTH.png",
+        "elev:FRONTAGE_CARAVAN_COURT_WEST:1": "artifacts/map-polish/baselines/unit-caravan-court/elev_FRONTAGE_CARAVAN_COURT_WEST_1.png",
+        "elev:FRONTAGE_CARAVAN_COURT_WEST:2": "artifacts/map-polish/baselines/unit-caravan-court/elev_FRONTAGE_CARAVAN_COURT_WEST_2.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-caravan-court/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-caravan-court/elev_south.png"
       },
-      "lastAttemptedPass": null,
-      "acceptedChanges": 0,
+      "lastAttemptedPass": {
+        "pass": 1,
+        "attempts": 1,
+        "accepted": true
+      },
+      "acceptedChanges": 1,
       "rejectedTactics": []
     },
     {
@@ -43,20 +54,20 @@
       "zoneIds": [
         "COVERED_SOUK"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.6,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_COVERED_SOUK_EAST:1": null,
-        "elev:FRONTAGE_COVERED_SOUK_EAST:2": null,
-        "elev:FRONTAGE_COVERED_SOUK_SOUTH": null,
-        "elev:FRONTAGE_COVERED_SOUK_WEST": null,
-        "elev:north": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-covered-souk/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-covered-souk/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-covered-souk/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-covered-souk/cross-b.png",
+        "elev:FRONTAGE_COVERED_SOUK_EAST:1": "artifacts/map-polish/baselines/unit-covered-souk/elev_FRONTAGE_COVERED_SOUK_EAST_1.png",
+        "elev:FRONTAGE_COVERED_SOUK_EAST:2": "artifacts/map-polish/baselines/unit-covered-souk/elev_FRONTAGE_COVERED_SOUK_EAST_2.png",
+        "elev:FRONTAGE_COVERED_SOUK_SOUTH": "artifacts/map-polish/baselines/unit-covered-souk/elev_FRONTAGE_COVERED_SOUK_SOUTH.png",
+        "elev:FRONTAGE_COVERED_SOUK_WEST": "artifacts/map-polish/baselines/unit-covered-souk/elev_FRONTAGE_COVERED_SOUK_WEST.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-covered-souk/elev_north.png",
+        "upper": "artifacts/map-polish/baselines/unit-covered-souk/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -67,19 +78,22 @@
       "zoneIds": [
         "DYERS_ALLEY"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[order-and-variation] [view:elev:FRONTAGE_DYERS_ALLEY_EAST:2] Identical dye-vat rows repeat with the same cloth colors, count, and spacing across the east segments.",
+        "[scale-sequence-restraint] [view:elev:south] The south end wall is a single blank plaster plane with no openings, trim, or wear at player eye level."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "elev:FRONTAGE_DYERS_ALLEY_EAST:1": null,
-        "elev:FRONTAGE_DYERS_ALLEY_EAST:2": null,
-        "elev:FRONTAGE_DYERS_ALLEY_EAST:3": null,
-        "elev:FRONTAGE_DYERS_ALLEY_WEST:1": null,
-        "elev:FRONTAGE_DYERS_ALLEY_WEST:2": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-dyers-alley/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-dyers-alley/context.png",
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:1": "artifacts/map-polish/baselines/unit-dyers-alley/elev_FRONTAGE_DYERS_ALLEY_EAST_1.png",
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:2": "artifacts/map-polish/baselines/unit-dyers-alley/elev_FRONTAGE_DYERS_ALLEY_EAST_2.png",
+        "elev:FRONTAGE_DYERS_ALLEY_EAST:3": "artifacts/map-polish/baselines/unit-dyers-alley/elev_FRONTAGE_DYERS_ALLEY_EAST_3.png",
+        "elev:FRONTAGE_DYERS_ALLEY_WEST:1": "artifacts/map-polish/baselines/unit-dyers-alley/elev_FRONTAGE_DYERS_ALLEY_WEST_1.png",
+        "elev:FRONTAGE_DYERS_ALLEY_WEST:2": "artifacts/map-polish/baselines/unit-dyers-alley/elev_FRONTAGE_DYERS_ALLEY_WEST_2.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-dyers-alley/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-dyers-alley/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -90,17 +104,20 @@
       "zoneIds": [
         "DYERS_DOGLEG"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[order-and-variation] [view:elev:east:1] A row of identical dark-red doors and shutters repeats at even spacing with no size, wear, or dressing change.",
+        "[intent-hierarchy] [view:primary] The street has no stall, sign, or focal element, so the dogleg reads as an anonymous corridor of doors."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "elev:east:1": null,
-        "elev:east:2": null,
-        "elev:west:1": null,
-        "elev:west:2": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-dyers-dogleg/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-dyers-dogleg/context.png",
+        "elev:east:1": "artifacts/map-polish/baselines/unit-dyers-dogleg/elev_east_1.png",
+        "elev:east:2": "artifacts/map-polish/baselines/unit-dyers-dogleg/elev_east_2.png",
+        "elev:west:1": "artifacts/map-polish/baselines/unit-dyers-dogleg/elev_west_1.png",
+        "elev:west:2": "artifacts/map-polish/baselines/unit-dyers-dogleg/elev_west_2.png",
+        "upper": "artifacts/map-polish/baselines/unit-dyers-dogleg/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -111,19 +128,22 @@
       "zoneIds": [
         "FOUNTAIN_COURT"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:FRONTAGE_FOUNTAIN_COURT_EAST] The court-facing frontage is a mostly unbroken tan wall with sparse openings and no arcade or trim rhythm.",
+        "[plausibility-causality] [view:context] Paving around the fountain is uniform and clean, with no water staining, wear paths, or props showing use."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_FOUNTAIN_COURT_EAST": null,
-        "elev:FRONTAGE_FOUNTAIN_COURT_WEST": null,
-        "elev:north": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-fountain-court/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-fountain-court/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-fountain-court/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-fountain-court/cross-b.png",
+        "elev:FRONTAGE_FOUNTAIN_COURT_EAST": "artifacts/map-polish/baselines/unit-fountain-court/elev_FRONTAGE_FOUNTAIN_COURT_EAST.png",
+        "elev:FRONTAGE_FOUNTAIN_COURT_WEST": "artifacts/map-polish/baselines/unit-fountain-court/elev_FRONTAGE_FOUNTAIN_COURT_WEST.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-fountain-court/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-fountain-court/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-fountain-court/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -134,17 +154,17 @@
       "zoneIds": [
         "LINK_EAST_MID"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.7,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:north": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-east-mid/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-east-mid/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-east-mid/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-east-mid/cross-b.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-east-mid/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-east-mid/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-east-mid/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -155,17 +175,20 @@
       "zoneIds": [
         "LINK_EAST_UPPER"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.65,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:north] elev:north is one huge trapezoidal plane with only a faint panel grid — no openings, trim, or human-scale features.",
+        "[order-and-variation] The same faint panel texture tiles identically across elev:south and both cross views with no variation or cause."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:north": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-east-upper/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-east-upper/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-east-upper/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-east-upper/cross-b.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-east-upper/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-east-upper/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-east-upper/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -176,19 +199,19 @@
       "zoneIds": [
         "LINK_NORTH_EAST"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.75,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_LINK_NORTH_EAST_NORTH": null,
-        "elev:east": null,
-        "elev:south": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-north-east/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-north-east/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-north-east/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-north-east/cross-b.png",
+        "elev:FRONTAGE_LINK_NORTH_EAST_NORTH": "artifacts/map-polish/baselines/unit-link-north-east/elev_FRONTAGE_LINK_NORTH_EAST_NORTH.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-link-north-east/elev_east.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-north-east/elev_south.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-link-north-east/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-north-east/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -199,19 +222,22 @@
       "zoneIds": [
         "LINK_NORTH_WEST"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "red",
+      "confidence": 0.6,
+      "defects": [
+        "[intent-hierarchy] [view:elev:east] Every elevation is a blank plaster plane with a top trim band; no hero, openings, or storefront rhythm exists.",
+        "[plausibility-causality] [view:elev:west] Full-height walls show no doors, sills, drainage, wear, or repair anywhere, so the block reads as unoccupied blockout."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:east": null,
-        "elev:north": null,
-        "elev:south": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-north-west/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-north-west/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-north-west/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-north-west/cross-b.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-link-north-west/elev_east.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-north-west/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-north-west/elev_south.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-link-north-west/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-north-west/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -222,18 +248,21 @@
       "zoneIds": [
         "LINK_SOUTH_EAST"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[order-and-variation] [view:elev:north] elev:north repeats large identical flat grey panels with no frames, hinges, or reveal depth around them.",
+        "[plausibility-causality] [view:elev:east] The ashlar wall in elev:east tiles uniformly with no course variation, lintels, or wear at ground contact."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:east": null,
-        "elev:north": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-south-east/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-south-east/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-south-east/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-south-east/cross-b.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-link-south-east/elev_east.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-south-east/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-south-east/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-south-east/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -244,18 +273,21 @@
       "zoneIds": [
         "LINK_SOUTH_WEST"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "red",
+      "confidence": 0.8,
+      "defects": [
+        "[intent-hierarchy] [view:primary] Every view is the same bare tiling sandstone wall with no hero, openings, signage, or props to state a purpose.",
+        "[plausibility-causality] [view:elev:north] Tall walls run with no doors, windows, cornice, or roofline, reading as textured blockout rather than buildings."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:north": null,
-        "elev:south": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-south-west/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-south-west/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-south-west/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-south-west/cross-b.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-south-west/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-south-west/elev_south.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-link-south-west/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-south-west/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -266,17 +298,20 @@
       "zoneIds": [
         "LINK_WEST_MID"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.7,
+      "defects": [
+        "[order-and-variation] [view:elev:north] The full-height wall repeats three identical stacked brick bands with no openings, trim, or occupation layers.",
+        "[plausibility-causality] [view:elev:south] Multi-story faces on a walkable alley show no windows, doors, or roof edge, unlike the dressed facades beyond."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:north": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-link-west-mid/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-west-mid/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-link-west-mid/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-link-west-mid/cross-b.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-link-west-mid/elev_north.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-link-west-mid/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-link-west-mid/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -287,12 +322,14 @@
       "zoneIds": [
         "LINK_WEST_UPPER"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.5,
+      "defects": [
+        "[scale-sequence-restraint] [view:context] The reverse view shows a blank ashlar corner and a featureless tan facade with no windows, trim, or dressing."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null
+        "primary": "artifacts/map-polish/baselines/unit-link-west-upper/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-link-west-upper/context.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -303,20 +340,20 @@
       "zoneIds": [
         "NORTH_COURT"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.65,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_NORTH_COURT_EAST:1": null,
-        "elev:FRONTAGE_NORTH_COURT_EAST:2": null,
-        "elev:FRONTAGE_NORTH_COURT_NORTH": null,
-        "elev:FRONTAGE_NORTH_COURT_SOUTH": null,
-        "elev:FRONTAGE_NORTH_COURT_WEST": null,
-        "elev:FRONTAGE_NORTH_COURT_WEST_SOUTH": null
+        "primary": "artifacts/map-polish/baselines/unit-north-court/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-north-court/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-north-court/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-north-court/cross-b.png",
+        "elev:FRONTAGE_NORTH_COURT_EAST:1": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_EAST_1.png",
+        "elev:FRONTAGE_NORTH_COURT_EAST:2": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_EAST_2.png",
+        "elev:FRONTAGE_NORTH_COURT_NORTH": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_NORTH.png",
+        "elev:FRONTAGE_NORTH_COURT_SOUTH": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_SOUTH.png",
+        "elev:FRONTAGE_NORTH_COURT_WEST": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_WEST.png",
+        "elev:FRONTAGE_NORTH_COURT_WEST_SOUTH": "artifacts/map-polish/baselines/unit-north-court/elev_FRONTAGE_NORTH_COURT_WEST_SOUTH.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -327,18 +364,18 @@
       "zoneIds": [
         "RUG_GATE"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.6,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_RUG_GATE_EAST": null,
-        "elev:FRONTAGE_RUG_GATE_WEST": null,
-        "elev:south": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-rug-gate/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-rug-gate/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-rug-gate/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-rug-gate/cross-b.png",
+        "elev:FRONTAGE_RUG_GATE_EAST": "artifacts/map-polish/baselines/unit-rug-gate/elev_FRONTAGE_RUG_GATE_EAST.png",
+        "elev:FRONTAGE_RUG_GATE_WEST": "artifacts/map-polish/baselines/unit-rug-gate/elev_FRONTAGE_RUG_GATE_WEST.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-rug-gate/elev_south.png",
+        "upper": "artifacts/map-polish/baselines/unit-rug-gate/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -349,20 +386,23 @@
       "zoneIds": [
         "SERVICE_NORTH"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.6,
+      "defects": [
+        "[intent-hierarchy] [view:elev:west:2] West run is three consecutive blank texture planes with no openings, datums, or hero moment along the corridor.",
+        "[plausibility-causality] [view:elev:north] Full elevation is one unbroken brick plane with no doors, windows, drainage, or wear explaining access or use."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:1": null,
-        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:2": null,
-        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:3": null,
-        "elev:north": null,
-        "elev:west:1": null,
-        "elev:west:2": null,
-        "elev:west:3": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-service-north/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-service-north/context.png",
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:1": "artifacts/map-polish/baselines/unit-service-north/elev_FRONTAGE_SERVICE_NORTH_EAST_SPINE_1.png",
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:2": "artifacts/map-polish/baselines/unit-service-north/elev_FRONTAGE_SERVICE_NORTH_EAST_SPINE_2.png",
+        "elev:FRONTAGE_SERVICE_NORTH_EAST_SPINE:3": "artifacts/map-polish/baselines/unit-service-north/elev_FRONTAGE_SERVICE_NORTH_EAST_SPINE_3.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-service-north/elev_north.png",
+        "elev:west:1": "artifacts/map-polish/baselines/unit-service-north/elev_west_1.png",
+        "elev:west:2": "artifacts/map-polish/baselines/unit-service-north/elev_west_2.png",
+        "elev:west:3": "artifacts/map-polish/baselines/unit-service-north/elev_west_3.png",
+        "upper": "artifacts/map-polish/baselines/unit-service-north/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -373,18 +413,21 @@
       "zoneIds": [
         "SERVICE_SOUTH"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.6,
+      "defects": [
+        "[intent-hierarchy] [view:elev:FRONTAGE_SERVICE_SOUTH_EAST:2] Segment is a nearly featureless plaster plane spanning the frame, with no openings, trim, or supporting rhythm.",
+        "[order-and-variation] [view:elev:west:2] Large flat parapet mass fills the view with a single uniform surface, lacking cornice, repair, or weathering variation."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "elev:FRONTAGE_SERVICE_SOUTH_EAST:1": null,
-        "elev:FRONTAGE_SERVICE_SOUTH_EAST:2": null,
-        "elev:south": null,
-        "elev:west:1": null,
-        "elev:west:2": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-service-south/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-service-south/context.png",
+        "elev:FRONTAGE_SERVICE_SOUTH_EAST:1": "artifacts/map-polish/baselines/unit-service-south/elev_FRONTAGE_SERVICE_SOUTH_EAST_1.png",
+        "elev:FRONTAGE_SERVICE_SOUTH_EAST:2": "artifacts/map-polish/baselines/unit-service-south/elev_FRONTAGE_SERVICE_SOUTH_EAST_2.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-service-south/elev_south.png",
+        "elev:west:1": "artifacts/map-polish/baselines/unit-service-south/elev_west_1.png",
+        "elev:west:2": "artifacts/map-polish/baselines/unit-service-south/elev_west_2.png",
+        "upper": "artifacts/map-polish/baselines/unit-service-south/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -395,20 +438,20 @@
       "zoneIds": [
         "SPAWN_A_COURTYARD"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.7,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_SPAWN_A_NORTH_EAST": null,
-        "elev:east": null,
-        "elev:south:1": null,
-        "elev:south:2": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/cross-b.png",
+        "elev:FRONTAGE_SPAWN_A_NORTH_EAST": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/elev_FRONTAGE_SPAWN_A_NORTH_EAST.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/elev_east.png",
+        "elev:south:1": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/elev_south_1.png",
+        "elev:south:2": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/elev_south_2.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -419,20 +462,23 @@
       "zoneIds": [
         "SPAWN_B_COURTYARD"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[intent-hierarchy] [view:elev:west] Courtyard's west side is an undifferentiated brick wall-and-roof mass with no openings or focal element facing the player.",
+        "[order-and-variation] [view:upper] Tall bare brick walls meet the sky as uniform planes with no cornice line, parapet cap, or surface variation."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_SPAWN_B_SOUTH_EAST": null,
-        "elev:east": null,
-        "elev:north:1": null,
-        "elev:north:2": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/cross-b.png",
+        "elev:FRONTAGE_SPAWN_B_SOUTH_EAST": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/elev_FRONTAGE_SPAWN_B_SOUTH_EAST.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/elev_east.png",
+        "elev:north:1": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/elev_north_1.png",
+        "elev:north:2": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/elev_north_2.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -443,20 +489,20 @@
       "zoneIds": [
         "SPICE_STREET"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.7,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_SPICE_STREET_EAST:1": null,
-        "elev:FRONTAGE_SPICE_STREET_EAST:2": null,
-        "elev:FRONTAGE_SPICE_STREET_EAST:3": null,
-        "elev:FRONTAGE_SPICE_STREET_WEST:1": null,
-        "elev:FRONTAGE_SPICE_STREET_WEST:2": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-spice-street/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-spice-street/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-spice-street/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-spice-street/cross-b.png",
+        "elev:FRONTAGE_SPICE_STREET_EAST:1": "artifacts/map-polish/baselines/unit-spice-street/elev_FRONTAGE_SPICE_STREET_EAST_1.png",
+        "elev:FRONTAGE_SPICE_STREET_EAST:2": "artifacts/map-polish/baselines/unit-spice-street/elev_FRONTAGE_SPICE_STREET_EAST_2.png",
+        "elev:FRONTAGE_SPICE_STREET_EAST:3": "artifacts/map-polish/baselines/unit-spice-street/elev_FRONTAGE_SPICE_STREET_EAST_3.png",
+        "elev:FRONTAGE_SPICE_STREET_WEST:1": "artifacts/map-polish/baselines/unit-spice-street/elev_FRONTAGE_SPICE_STREET_WEST_1.png",
+        "elev:FRONTAGE_SPICE_STREET_WEST:2": "artifacts/map-polish/baselines/unit-spice-street/elev_FRONTAGE_SPICE_STREET_WEST_2.png",
+        "upper": "artifacts/map-polish/baselines/unit-spice-street/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -467,16 +513,19 @@
       "zoneIds": [
         "TEA_LANDING"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.65,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:north:1] The full elevation is one unbroken run of uniform brick with no openings, trim, or datum breaks.",
+        "[intent-hierarchy] [view:primary] No hero or destination reads at the landing; identical bare walls give the space no stated purpose."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "elev:north:1": null,
-        "elev:north:2": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-tea-landing/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-tea-landing/context.png",
+        "elev:north:1": "artifacts/map-polish/baselines/unit-tea-landing/elev_north_1.png",
+        "elev:north:2": "artifacts/map-polish/baselines/unit-tea-landing/elev_north_2.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-tea-landing/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-tea-landing/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -487,18 +536,21 @@
       "zoneIds": [
         "TEA_RAMP"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:west] The west wall is a single flat plaster-and-brick plane with no openings or trim for the whole ramp.",
+        "[order-and-variation] [view:cross-a] Blank corner walls face the ramp with none of the shopfront rhythm established on the opposite side."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:east": null,
-        "elev:south": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-tea-ramp/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-tea-ramp/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-tea-ramp/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-tea-ramp/cross-b.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-tea-ramp/elev_east.png",
+        "elev:south": "artifacts/map-polish/baselines/unit-tea-ramp/elev_south.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-tea-ramp/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-tea-ramp/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -509,17 +561,20 @@
       "zoneIds": [
         "TEA_STAIRS"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "red",
+      "confidence": 0.75,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:east] The entire elevation is a featureless tan plane with no openings, trim, or texture variation.",
+        "[intent-hierarchy] [view:cross-b] The cross view is a blank wall edge to edge; the stair route has no hero, frontage, or readable purpose."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:east": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-tea-stairs/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-tea-stairs/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-tea-stairs/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-tea-stairs/cross-b.png",
+        "elev:east": "artifacts/map-polish/baselines/unit-tea-stairs/elev_east.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-tea-stairs/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-tea-stairs/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -530,17 +585,19 @@
       "zoneIds": [
         "TEA_TERRACE"
       ],
-      "rating": "unrated",
-      "confidence": 0,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.55,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:west] A wide blank plaster wall with one dark window encloses the terrace, far below the east frontage's finish."
+      ],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_TEA_TERRACE_EAST": null,
-        "elev:west": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-tea-terrace/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-tea-terrace/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-tea-terrace/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-tea-terrace/cross-b.png",
+        "elev:FRONTAGE_TEA_TERRACE_EAST": "artifacts/map-polish/baselines/unit-tea-terrace/elev_FRONTAGE_TEA_TERRACE_EAST.png",
+        "elev:west": "artifacts/map-polish/baselines/unit-tea-terrace/elev_west.png",
+        "upper": "artifacts/map-polish/baselines/unit-tea-terrace/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,
@@ -551,19 +608,19 @@
       "zoneIds": [
         "TEXTILE_ARCADE"
       ],
-      "rating": "unrated",
-      "confidence": 0,
+      "rating": "green",
+      "confidence": 0.7,
       "defects": [],
       "evidence": {
-        "primary": null,
-        "context": null,
-        "cross-a": null,
-        "cross-b": null,
-        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:1": null,
-        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:2": null,
-        "elev:FRONTAGE_TEXTILE_ARCADE_WEST": null,
-        "elev:north": null,
-        "upper": null
+        "primary": "artifacts/map-polish/baselines/unit-textile-arcade/primary.png",
+        "context": "artifacts/map-polish/baselines/unit-textile-arcade/context.png",
+        "cross-a": "artifacts/map-polish/baselines/unit-textile-arcade/cross-a.png",
+        "cross-b": "artifacts/map-polish/baselines/unit-textile-arcade/cross-b.png",
+        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:1": "artifacts/map-polish/baselines/unit-textile-arcade/elev_FRONTAGE_TEXTILE_ARCADE_EAST_1.png",
+        "elev:FRONTAGE_TEXTILE_ARCADE_EAST:2": "artifacts/map-polish/baselines/unit-textile-arcade/elev_FRONTAGE_TEXTILE_ARCADE_EAST_2.png",
+        "elev:FRONTAGE_TEXTILE_ARCADE_WEST": "artifacts/map-polish/baselines/unit-textile-arcade/elev_FRONTAGE_TEXTILE_ARCADE_WEST.png",
+        "elev:north": "artifacts/map-polish/baselines/unit-textile-arcade/elev_north.png",
+        "upper": "artifacts/map-polish/baselines/unit-textile-arcade/upper.png"
       },
       "lastAttemptedPass": null,
       "acceptedChanges": 0,

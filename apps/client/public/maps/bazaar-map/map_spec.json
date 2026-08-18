@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "304e397d67e92ec5049cf08b54b8ff08c1cd2e8ec0210f51f2d05401317b3743",
+    "sha256": "6925f69721dd3ef68a85708b4adaeffb40a6d203dc6f29e8829fe543c89f056e",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -1468,18 +1468,39 @@
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
+          "id": "BAY_PILASTER_S",
+          "moduleId": "pilaster_coverage",
+          "along": 0.17,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "S_PILASTER",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_TIMBER_AXIS",
           "moduleId": "timber_coverage_closure",
           "along": 0.5,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_PILASTER_N",
+          "moduleId": "pilaster_coverage",
+          "along": 0.83,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "N_PILASTER",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "A central timber service closure holds the axis of the short ochre bay, framed by a mirrored pair of relief pilasters that carry the corners.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "pilaster",
         "storyCount": 1,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.25,
@@ -1499,45 +1520,75 @@
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "door_storage_heavy",
-          "along": 0.08432539682539682,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
+          "id": "BAY_NICHE_S",
           "moduleId": "blind_niche",
-          "along": 0.3614417989417989,
+          "along": 0.09,
           "baseElevationM": 0.7,
           "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "S_NICHE",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_03",
+          "id": "BAY_DOOR_S",
           "moduleId": "door_storage_heavy",
-          "along": 0.638558201058201,
+          "along": 0.225,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "S_DOOR",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_04",
+          "id": "BAY_VENT_S",
+          "moduleId": "vent_service",
+          "along": 0.3625,
+          "baseElevationM": 2.02,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "S_VENT",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_NICHE_AXIS",
+          "moduleId": "blind_niche",
+          "along": 0.5,
+          "baseElevationM": 0.7,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_VENT_N",
+          "moduleId": "vent_service",
+          "along": 0.6375,
+          "baseElevationM": 2.02,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "N_VENT",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_DOOR_N",
           "moduleId": "door_storage_heavy",
-          "along": 0.9156746031746031,
+          "along": 0.775,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "N_DOOR",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_NICHE_N",
+          "moduleId": "blind_niche",
+          "along": 0.91,
+          "baseElevationM": 0.7,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "N_NICHE",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Two heavy storage doors at the third points serve the caravan stores, mirrored about the court centre; a resting niche holds the axis between high service vents, and outer niches carry the rhythm to the held corners.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.5,
@@ -5525,7 +5576,63 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_ochre_pilaster_relief",
+      "moduleId": "pilaster_coverage",
+      "moduleKind": "column",
+      "openingType": "none",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "N_PILASTER",
+      "layoutSource": "authored",
+      "center": {
+        "x": 14.88,
+        "y": 34.5738,
+        "z": 1.125
+      },
+      "sizeM": {
+        "width": 0.42,
+        "depth": 0.24,
+        "height": 2.25
+      },
+      "yawDeg": 270,
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_ochre_pilaster_relief",
+      "moduleId": "pilaster_coverage",
+      "moduleKind": "column",
+      "openingType": "none",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "S_PILASTER",
+      "layoutSource": "authored",
+      "center": {
+        "x": 14.88,
+        "y": 31.3662,
+        "z": 1.125
+      },
+      "sizeM": {
+        "width": 0.42,
+        "depth": 0.24,
+        "height": 2.25
+      },
+      "yawDeg": 270,
+      "materialSlot": "trim",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
       "zoneId": "CARAVAN_COURT",
@@ -5536,8 +5643,8 @@
       "moduleKind": "column",
       "openingType": "none",
       "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 14.93,
         "y": 32.97,
@@ -5589,7 +5696,7 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_01",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
       "zoneId": "CARAVAN_COURT",
@@ -5600,11 +5707,11 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "N_DOOR",
+      "layoutSource": "authored",
       "center": {
         "x": 3.125,
-        "y": 32.715,
+        "y": 43.158,
         "z": 1.25
       },
       "sizeM": {
@@ -5617,7 +5724,35 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_02",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "door_storage_heavy",
+      "moduleKind": "door",
+      "openingType": "door_void",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "S_DOOR",
+      "layoutSource": "authored",
+      "center": {
+        "x": 3.125,
+        "y": 34.842,
+        "z": 1.25
+      },
+      "sizeM": {
+        "width": 1.35,
+        "depth": 0.25,
+        "height": 2.5
+      },
+      "yawDeg": 90,
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
       "zoneId": "CARAVAN_COURT",
@@ -5628,11 +5763,11 @@
       "moduleKind": "blind_niche",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 3.09,
-        "y": 36.905,
+        "y": 39,
         "z": 1.6
       },
       "sizeM": {
@@ -5645,59 +5780,115 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_03",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "west",
       "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "N_NICHE",
+      "layoutSource": "authored",
       "center": {
-        "x": 3.125,
-        "y": 41.095,
-        "z": 1.25
+        "x": 3.09,
+        "y": 45.199200000000005,
+        "z": 1.6
       },
       "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 90,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_04",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "west",
       "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "S_NICHE",
+      "layoutSource": "authored",
       "center": {
-        "x": 3.125,
-        "y": 45.285,
-        "z": 1.25
+        "x": 3.09,
+        "y": 32.8008,
+        "z": 1.6
       },
       "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 90,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "vent_service",
+      "moduleKind": "vent",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "N_VENT",
+      "layoutSource": "authored",
+      "center": {
+        "x": 3.09,
+        "y": 41.079,
+        "z": 2.26
+      },
+      "sizeM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "yawDeg": 90,
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
+      "zoneId": "CARAVAN_COURT",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "vent_service",
+      "moduleKind": "vent",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "S_VENT",
+      "layoutSource": "authored",
+      "center": {
+        "x": 3.09,
+        "y": 36.921,
+        "z": 2.26
+      },
+      "sizeM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "yawDeg": 90,
+      "materialSlot": "metal",
       "collisionOpening": false
     },
     {

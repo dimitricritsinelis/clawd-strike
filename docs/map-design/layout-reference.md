@@ -5,7 +5,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Format: `3.0`
 - Zones: 25
 - Frontages: 33
-- Architecture placements: 141
+- Architecture placements: 146
 - Dressing placements: 126
 
 ## Facade Profiles
@@ -170,15 +170,15 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Zone/face: `CARAVAN_COURT` / `east`
 - Profile/massing: `quiet_residential_ochre_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_GROUND_01`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING`
+- Explicit bays: `BAY_PILASTER_S:pilaster_coverage@0.17`, `BAY_TIMBER_AXIS:timber_coverage_closure@0.50`, `BAY_PILASTER_N:pilaster_coverage@0.83`
+- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING`
 
 ### `FRONTAGE_CARAVAN_COURT_WEST`
 
 - Zone/face: `CARAVAN_COURT` / `west`
 - Profile/massing: `service_storage` / `MASSING_LOW_MERCHANT`
-- Explicit bays: `GROUND_01:door_storage_heavy@0.08`, `GROUND_02:blind_niche@0.36`, `GROUND_03:door_storage_heavy@0.64`, `GROUND_04:door_storage_heavy@0.92`
-- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_01`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_02`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_03`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_04`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING`
+- Explicit bays: `BAY_NICHE_S:blind_niche@0.09`, `BAY_DOOR_S:door_storage_heavy@0.23`, `BAY_VENT_S:vent_service@0.36`, `BAY_NICHE_AXIS:blind_niche@0.50`, `BAY_VENT_N:vent_service@0.64`, `BAY_DOOR_N:door_storage_heavy@0.78`, `BAY_NICHE_N:blind_niche@0.91`
+- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING`
 
 ### `FRONTAGE_COVERED_SOUK_EAST`
 

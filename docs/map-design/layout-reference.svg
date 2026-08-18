@@ -84,23 +84,38 @@
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_pilaster_relief">
 <rect x="15.000" y="44.540" width="0.960" height="5.940" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N" data-kind="facade_module" data-module="pilaster_coverage">
+<circle cx="14.880" cy="57.426" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S" data-kind="facade_module" data-module="pilaster_coverage">
+<circle cx="14.880" cy="60.634" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS" data-kind="facade_module" data-module="timber_coverage_closure">
 <circle cx="14.930" cy="59.030" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_ochre_pilaster_relief">
 <rect x="15.000" y="56.600" width="0.960" height="4.860" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_01" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="3.125" cy="59.285" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="3.125" cy="48.842" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_02" data-kind="facade_module" data-module="blind_niche">
-<circle cx="3.090" cy="55.095" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="3.125" cy="57.158" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_03" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="3.125" cy="50.905" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS" data-kind="facade_module" data-module="blind_niche">
+<circle cx="3.090" cy="53.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_GROUND_04" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="3.125" cy="46.715" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N" data-kind="facade_module" data-module="blind_niche">
+<circle cx="3.090" cy="46.801" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S" data-kind="facade_module" data-module="blind_niche">
+<circle cx="3.090" cy="59.199" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N" data-kind="facade_module" data-module="vent_service">
+<circle cx="3.090" cy="50.921" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S" data-kind="facade_module" data-module="vent_service">
+<circle cx="3.090" cy="55.079" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING" data-kind="massing" data-profile="service_storage">
 <rect x="-1.200" y="45.440" width="4.200" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>

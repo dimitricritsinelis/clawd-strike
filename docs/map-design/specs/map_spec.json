@@ -1146,8 +1146,28 @@
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "service"
+        "mode": "authored",
+        "composition": "Two heavy storage doors at the third points serve the caravan stores, mirrored about the court centre; a resting niche holds the axis between high service vents, and outer niches carry the rhythm to the held corners.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.5,
+        "columns": [
+          { "id": "S_NICHE", "along": 0.09, "mirrorOf": "N_NICHE" },
+          { "id": "S_DOOR", "along": 0.225, "mirrorOf": "N_DOOR" },
+          { "id": "S_VENT", "along": 0.3625, "mirrorOf": "N_VENT" },
+          { "id": "AXIS", "along": 0.5 },
+          { "id": "N_VENT", "along": 0.6375, "mirrorOf": "S_VENT" },
+          { "id": "N_DOOR", "along": 0.775, "mirrorOf": "S_DOOR" },
+          { "id": "N_NICHE", "along": 0.91, "mirrorOf": "S_NICHE" }
+        ],
+        "bays": [
+          { "id": "BAY_NICHE_S", "moduleId": "blind_niche", "columnId": "S_NICHE" },
+          { "id": "BAY_DOOR_S", "moduleId": "door_storage_heavy", "columnId": "S_DOOR" },
+          { "id": "BAY_VENT_S", "moduleId": "vent_service", "columnId": "S_VENT" },
+          { "id": "BAY_NICHE_AXIS", "moduleId": "blind_niche", "columnId": "AXIS" },
+          { "id": "BAY_VENT_N", "moduleId": "vent_service", "columnId": "N_VENT" },
+          { "id": "BAY_DOOR_N", "moduleId": "door_storage_heavy", "columnId": "N_DOOR" },
+          { "id": "BAY_NICHE_N", "moduleId": "blind_niche", "columnId": "N_NICHE" }
+        ]
       }
     },
     {
@@ -1370,8 +1390,20 @@
       "facadeProfileId": "quiet_residential_ochre_pilaster_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "service"
+        "mode": "authored",
+        "composition": "A central timber service closure holds the axis of the short ochre bay, framed by a mirrored pair of relief pilasters that carry the corners.",
+        "cornerTreatment": "pilaster",
+        "groundHeadM": 2.25,
+        "columns": [
+          { "id": "S_PILASTER", "along": 0.17, "mirrorOf": "N_PILASTER" },
+          { "id": "AXIS", "along": 0.5 },
+          { "id": "N_PILASTER", "along": 0.83, "mirrorOf": "S_PILASTER" }
+        ],
+        "bays": [
+          { "id": "BAY_PILASTER_S", "moduleId": "pilaster_coverage", "columnId": "S_PILASTER" },
+          { "id": "BAY_TIMBER_AXIS", "moduleId": "timber_coverage_closure", "columnId": "AXIS" },
+          { "id": "BAY_PILASTER_N", "moduleId": "pilaster_coverage", "columnId": "N_PILASTER" }
+        ]
       }
     },
     {
