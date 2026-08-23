@@ -5,7 +5,7 @@
   "sourceFingerprint": "a5153afb3d1a5707e9650a39b017a8acffd8137c020724bb874ffbc95c87428e",
   "engine": "claude",
   "pass": 1,
-  "surveyRequired": false,
+  "surveyRequired": true,
   "coverage": {
     "usablePct": 99.6,
     "fullHeightPct": 99.5,
@@ -13,8 +13,8 @@
   },
   "milestone": {
     "acceptedAtLastRun": 0,
-    "required": false,
-    "full": false
+    "required": true,
+    "full": true
   },
   "activeTask": null,
   "units": [
@@ -239,9 +239,14 @@
         "elev:west": "artifacts/map-polish/baselines/unit-link-north-west/elev_west.png",
         "upper": "artifacts/map-polish/baselines/unit-link-north-west/upper.png"
       },
-      "lastAttemptedPass": null,
+      "lastAttemptedPass": {
+        "pass": 1,
+        "attempts": 1,
+        "accepted": false
+      },
       "acceptedChanges": 0,
-      "rejectedTactics": []
+      "rejectedTactics": [],
+      "deferredReason": "No local emitter: all four faces are exempt (north is a cut edge; other returns are 1.0–1.5m, under the 2.5m frontage minimum), so the blank planes in elev:east/west belong to neighbours or an owner massing decision."
     },
     {
       "id": "unit-link-south-east",
@@ -289,9 +294,14 @@
         "elev:west": "artifacts/map-polish/baselines/unit-link-south-west/elev_west.png",
         "upper": "artifacts/map-polish/baselines/unit-link-south-west/upper.png"
       },
-      "lastAttemptedPass": null,
+      "lastAttemptedPass": {
+        "pass": 1,
+        "attempts": 1,
+        "accepted": false
+      },
       "acceptedChanges": 0,
-      "rejectedTactics": []
+      "rejectedTactics": [],
+      "deferredReason": "All four faces are exempt (N/S architectural cut edges, east open traversal, west 2.0m return under the 2.5m minimum), so no frontage can be authored locally; the cited blank-wall defects need an owner massing decision."
     },
     {
       "id": "unit-link-west-mid",
@@ -576,9 +586,14 @@
         "elev:west": "artifacts/map-polish/baselines/unit-tea-stairs/elev_west.png",
         "upper": "artifacts/map-polish/baselines/unit-tea-stairs/upper.png"
       },
-      "lastAttemptedPass": null,
+      "lastAttemptedPass": {
+        "pass": 1,
+        "attempts": 1,
+        "accepted": false
+      },
       "acceptedChanges": 0,
-      "rejectedTactics": []
+      "rejectedTactics": [],
+      "deferredReason": "The cited blank wall is an exempt retaining_wall face on a unit with no authored frontages; the brief assigns adding one to the owner as a massing decision, so no bounded local emitter owns the defect."
     },
     {
       "id": "unit-tea-terrace",
