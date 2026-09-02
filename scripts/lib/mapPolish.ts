@@ -217,7 +217,7 @@ export type MapPolishState = {
   mapAuthorityHash: string;
   surveyedAuthorityHash: string | null;
   sourceFingerprint: string | null;
-  /** Engine pinned at survey time; tasks in this pass must use it (DEC-023). */
+  /** Survey/planner/reviewer engine pinned at survey time; the writer is separate. */
   engine: EngineName | null;
   pass: number;
   surveyRequired: boolean;

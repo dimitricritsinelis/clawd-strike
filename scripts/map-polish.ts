@@ -101,6 +101,7 @@ type CliOptions = {
   artifactsRoot: string;
   mapSpecPath: string;
   mode: RunMode;
+  /** Survey/planner/reviewer engine; the map writer is fixed to Claude. */
   engine: EngineName;
   planner: "model" | "manual";
   maxAccepts: number;
@@ -253,6 +254,7 @@ type TaskValidationEvidence = {
   zoneIds: string[];
   risk: TaskRisk;
   engine: EngineName;
+  writerEngine: EngineName;
   touchedFiles: string[];
   candidatePatchSha256: string;
   completedChecks: string[];
@@ -333,6 +335,7 @@ const OBJECTIVE_MAX = 260;
 const REVIEW_REASON_MAX = 220;
 const CODEX_MODEL = "gpt-5.6-sol" as const;
 export const CLAUDE_MODEL = "claude-fable-5-1" as const;
+export const WRITER_ENGINE = "claude" as const;
 const MODEL_ROLE_CONFIG: Readonly<Record<ModelRole, { effort: ModelEffort; timeoutMs: number; maxBudgetUsd: number }>> = Object.freeze({
   planner: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 3 },
   survey: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 5 },
@@ -364,15 +367,15 @@ const DEFAULT_IO: CliIo = {
 };
 
 function helpText(): string {
-  return `Engine-agnostic map-polish workflow (Codex CLI or Claude Code CLI)
+  return `Map-polish workflow: Codex prepares and reviews; Claude Fable 5.1 edits the map
 
 Start here:
-  pnpm map:survey -- --engine claude
-  pnpm map:next -- --engine claude
-  pnpm map:run -- --engine claude --objective "..." --risk route-adjacent
+  pnpm map:survey -- --engine codex
+  pnpm map:next -- --engine codex
+  pnpm map:run -- --engine codex --objective "..." --risk route-adjacent
   pnpm map:verify -- --accept --commit   (continue from a clean local checkpoint)
   pnpm map:verify -- --reject            (or use --defer)
-  pnpm map:loop -- --engine claude --max-accepts 5 --commit
+  pnpm map:loop -- --engine codex --max-accepts 5 --commit
 
 Commands:
   map:survey    Capture every authored zone and classify Red/Yellow/Green.
@@ -384,7 +387,8 @@ Commands:
 
 Common options:
   --mode real|manual|mock   Model engine, handoff package, or no-model mock (default: real)
-  --engine codex|claude     Model engine for real calls (default: claude; env MAP_POLISH_ENGINE)
+  --engine codex            Survey/planner/reviewer engine (default: codex; env MAP_POLISH_ENGINE)
+                           Map writing always uses Claude Fable 5.1
   --dry-run                Generate/print a plan without capture or model calls
 
 Loop options:
@@ -512,8 +516,11 @@ function assertKnownOptions(args: readonly string[]): void {
 }
 
 function parseEngine(value: string | undefined): EngineName {
-  const candidate = value ?? process.env.MAP_POLISH_ENGINE ?? "claude";
-  if (candidate === "codex" || candidate === "claude") return candidate;
+  const candidate = value ?? process.env.MAP_POLISH_ENGINE ?? "codex";
+  if (candidate === "codex") return candidate;
+  if (candidate === "claude") {
+    throw new Error("Claude is reserved for map writing; use --engine codex for survey, planning, and review.");
+  }
   throw new Error(`unsupported engine '${candidate}'`);
 }
 
@@ -2106,15 +2113,14 @@ function validateSharedSelection(
 }
 
 /**
- * Engine pin (DEC-023): a pass is surveyed by one engine and its tasks must
- * use the same engine; a failed call is a workflow failure, never an engine
- * switch. Changing engines requires a resurvey.
+ * The survey/planner/reviewer engine stays pinned for the pass. The writer is
+ * always Claude; this role split is intentional, never a failure fallback.
  */
 function assertEnginePin(state: MapPolishState, options: CliOptions): void {
   if (options.mode !== "real") return;
   if (state.engine !== null && state.engine !== options.engine) {
     throw new Error(
-      `this pass was surveyed with engine '${state.engine}'; rerun with --engine ${state.engine} or resurvey with --engine ${options.engine}`,
+      `this pass was surveyed with engine '${state.engine}'; resurvey with --engine codex before map development`,
     );
   }
 }
@@ -2338,14 +2344,14 @@ function targetViewImagePaths(unit: CaptureUnit, targetViewIds: readonly string[
     .filter((entry) => entry.path.length > 0);
 }
 
-async function invokeWriter(options: CliOptions, context: TaskContext): Promise<ModelCallTelemetry | null> {
+export async function invokeWriter(options: CliOptions, context: TaskContext): Promise<ModelCallTelemetry | null> {
   if (options.mode === "mock") {
     await runMockWriter(options, context);
     return null;
   }
   const beforeUnit = taskCaptureUnit(context.before, context.unit.id);
   const prompt = await readFile(context.workOrderPath, "utf8");
-  const result = await invokeEngineJson(options.engine, {
+  const result = await invokeEngineJson(WRITER_ENGINE, {
     repoRoot: options.repoRoot,
     prompt,
     images: [
@@ -3116,9 +3122,9 @@ function taskPerformanceSummary(context: TaskContext, engine: EngineName): unkno
     ? { calls: 1, ...telemetry }
     : {
         calls: 0,
-        engine,
+        engine: role === "writer" ? WRITER_ENGINE : engine,
         role,
-        model: engine === "claude" ? CLAUDE_MODEL : CODEX_MODEL,
+        model: role === "writer" || engine === "claude" ? CLAUDE_MODEL : CODEX_MODEL,
         effort: MODEL_ROLE_CONFIG[role].effort,
         wallMs: 0,
         usage: null,
@@ -3210,6 +3216,7 @@ async function taskValidationEvidence(
     zoneIds: [...context.definition.zoneIds],
     risk: context.risk,
     engine: options.engine,
+    writerEngine: WRITER_ENGINE,
     touchedFiles: [...touchedFiles].sort(),
     candidatePatchSha256: await fileSha256(path.join(context.artifactDir, "candidate.patch")),
     completedChecks: [...new Set([
@@ -3929,7 +3936,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
         "reject",
         "Writer failed after a partial candidate edit.",
       );
-      io.stderr(`${options.engine === "claude" ? "Claude Code" : "Codex"} failed after a partial edit; the candidate was restored and no engine fallback was used. Work order: ${context.workOrderPath}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
+      io.stderr(`Claude Code failed after a partial edit; the candidate was restored and no engine fallback was used. Work order: ${context.workOrderPath}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
       return "reject";
     }
     if (headChanged) await writeJsonAtomic(path.join(context.artifactDir, "touched-files.json"), touchedFiles);
@@ -3940,7 +3947,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
         })
       : context.state;
     await writeStateFile(options.statePath, state);
-    io.stderr(`${options.engine === "claude" ? "Claude Code" : "Codex"} is unavailable or failed; no engine fallback was used. Work order: ${context.workOrderPath}${headChanged ? "\nWriter changed HEAD; manual recovery is required." : `\nNo source edit occurred; rerun ${workflowCommand("map:run", options)} or use --mode manual.`}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
+    io.stderr(`Claude Code is unavailable or failed; no engine fallback was used. Work order: ${context.workOrderPath}${headChanged ? "\nWriter changed HEAD; manual recovery is required." : `\nNo source edit occurred; rerun ${workflowCommand("map:run", options)} or use --mode manual.`}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
     return "pending";
   }
   const postWriterStartedAt = performance.now();
@@ -5039,6 +5046,7 @@ async function runLoop(options: CliOptions, io: CliIo): Promise<number> {
   io.stdout(`${JSON.stringify({
     loop: "final-report",
     engine: options.engine,
+    writerEngine: WRITER_ENGINE,
     accepts,
     iterations,
     outcomes,

@@ -6,18 +6,18 @@ description: Survey Bazaar, schedule its weakest review unit, and run one bounde
 # Map Polish
 
 This is the sole explanation of the map-polish workflow. Follow `AGENTS.md`; use `docs/map-design/quality-bar.md` only for visual judgment.
-`docs/map-design/map-polish-state.json` is the only active status source; Git holds history. Claude Code is the default runtime engine; Codex remains available via `--engine codex` (`MAP_POLISH_ENGINE` is the env fallback). The pass's engine is pinned at survey time. Never switch engines mid-pass and never fall back across engines on failure. Tests never make real model calls: fake binaries via `CODEX_BIN`/`CLAUDE_BIN`.
+`docs/map-design/map-polish-state.json` is the only active status source; Git holds history. Codex handles survey/planning/review; `--engine codex` remains accepted, and `MAP_POLISH_ENGINE`, if set, must be `codex`. The prep/review engine is pinned for the pass at survey time. Claude Code Fable 5.1 is the fixed map writer, not a prep/review option. The workflow prepares evidence/work orders and runs checks; Claude only implements the bounded map improvement. Never switch the prep/review engine mid-pass or fall back across engines on failure. Tests never make real model calls: fake binaries via `CODEX_BIN`/`CLAUDE_BIN`.
 
 ## Commands and modes
 
-- Start a Claude pass with `pnpm map:survey -- --engine claude`, inspect `pnpm map:next`, trace ownership, then run `pnpm map:run -- --engine claude --objective "..." --risk pure|shared|route-adjacent`; real mode requires both flags before capture or a writer call. Use the `suggestedRisk` from `map:next`: composing a frontage is `route-adjacent` (one focused traversal), not `pure`.
+- Start with `pnpm map:survey -- --engine codex`, inspect `pnpm map:next -- --engine codex`, trace ownership, then run `pnpm map:run -- --engine codex --objective "..." --risk pure|shared|route-adjacent`; real mode requires both flags before capture or a Claude writer call. Use the `suggestedRisk` from `map:next`: composing a frontage is `route-adjacent` (one focused traversal), not `pure`.
 - Real `pnpm map:run` runs one explicitly scoped task and stops; repeat `map:next` → `map:run` up to a chosen bound. Mock orchestration may use `--max-tasks N`. `--concept PATH` adds advisory direction. Never run an unbounded loop.
-- Bounded multi-task driver: `pnpm map:loop -- --engine claude --max-accepts 5 --commit`. For an existing Codex-pinned pass, use `--engine codex`. See the one-task loop section.
+- Bounded multi-task driver: `pnpm map:loop -- --engine codex --max-accepts 5 --commit`. Codex plans/reviews; Claude writes the map change. See the one-task loop section.
 - Without `--commit`, resolve once with `pnpm map:verify -- --accept --commit` to continue from a clean checkpoint, or use `--accept` without committing and stop. Reject/defer with the matching flag. Use `-- --milestone` only at milestone cadence.
-- Real mode invokes the pass's pinned engine CLI (Codex CLI or Claude Code CLI) installed locally. Manual mode emits complete work/review packages. Mock mode makes no external call. If the engine CLI is unavailable, emit the work order and exit or use manual mode; a failed call is a workflow failure — never fall back to the other engine, print credentials, or make a real model call in tests.
-- Real calls pin models per role and suppress unrelated plugins/config. Codex pins Sol (survey/review High, writer XHigh) with `--ignore-user-config`. Claude pins `claude-fable-5-1` headless with `--safe-mode`, `--no-session-persistence`, and per-role `--effort`/`--max-budget-usd`, retaining the existing login. It reads prompt-listed images with Read. Survey/reviewer/planner use a fresh temp dir containing copied images, exact `--tools Read`, and manual permissions; blindness is by directory plus tool restrictions, not a hard sandbox. The writer uses exact `--tools Read,Edit,Write,Glob,Grep` in the repo under `acceptEdits`. No Bash or delegated agents: the workflow runs generators and checks. Ultra is diagnostic, not the routine iteration default.
+- Real mode invokes the pass's pinned prep/review CLI and the fixed Claude writer CLI installed locally (Claude Code 2.1.251 or newer for Fable 5.1). Manual mode emits complete work/review packages. Mock mode makes no external call. If a required CLI is unavailable, emit the work order and exit or use manual mode; a failed call is a workflow failure — never fall back to the other engine, print credentials, or make a real model call in tests.
+- Real calls pin models per role and suppress unrelated plugins/config. Codex pins Sol High for survey/planning/review with `--ignore-user-config`. The Claude writer pins `claude-fable-5-1` headless with `--safe-mode`, `--no-session-persistence`, and per-role `--effort`/`--max-budget-usd`, retaining the existing login. It reads prompt-listed images with Read and uses exact `--tools Read,Edit,Write,Glob,Grep` in the repo under `acceptEdits`. No Bash or delegated agents: the workflow runs generators and checks. Ultra is diagnostic, not the routine iteration default.
 
-Automatic mode requires a clean dedicated branch and refuses unrelated changes. `map:run` and `map:loop` refuse an engine different from the one pinned in state unless the pass is resurveyed. Bind survey state to a deterministic fingerprint of tracked/untracked source (excluding state and ignored artifacts); invalidate after out-of-band drift while preserving active recovery.
+Automatic mode requires a clean dedicated branch and refuses unrelated changes. `map:run` and `map:loop` refuse a prep/review engine different from the one pinned in state unless the pass is resurveyed; the separate Claude writer does not change that pin. Bind survey state to a deterministic fingerprint of tracked/untracked source (excluding state and ignored artifacts); invalidate after out-of-band drift while preserving active recovery.
 Record the start commit and candidate patch/files. `--commit` creates one local accepted-task checkpoint and never pushes; without it, retain the candidate for manual acceptance and stop.
 
 ## Survey before editing
@@ -72,12 +72,12 @@ does not, use `pnpm map:run -- --defer-selected --diagnosis "..."` and rotate wi
 1. Select one unit; capture its exact current named views; render the plan crop and site brief.
 2. Read the unit through Purpose → Order → Exception → Evidence → Readability from the quality bar, then name one highest-impact visible defect and trace its likely emitter. Do not create a score or optimize only the hero angle.
 3. Write a work order of about 550 words or less: unit/zone IDs, the unit's view captures with the elevation view naming each frontage, plan crop, site brief, optional concept, one objective, at most two defects, a composition brief when the defect is bones-level, likely files, protected constraints, minimum checks, success, and one directly relevant rejected tactic at most.
-4. Invoke the pinned engine's writer for one bounded implementation attempt. It reads `AGENTS.md`, supplied evidence/site brief, and permitted map surfaces only; no broad repository exploration, orchestration repair, generators, or duplicate checks. A workflow failure is a concise blocker, not another development task. Return a `designRationale` (purpose, axis and entrance logic, why each opening sits where it does) for the owner.
+4. Invoke the fixed Claude writer for one bounded implementation attempt. It reads `AGENTS.md`, supplied evidence/site brief, and permitted map surfaces only; no broad repository exploration, orchestration repair, generators, or duplicate checks. A workflow failure is a concise blocker, not another development task. Return a `designRationale` (purpose, axis and entrance logic, why each opening sits where it does) for the owner.
 5. Run the smallest risk-appropriate checks, recapture the exact poses, and validate the per-view image pairs. Target views come from the task's defects and objective (fallback: all views); a material change must land in at least one target view.
-6. Run at most one fresh short blind A/B review with the pinned engine, then accept, reject, or defer.
+6. Run at most one fresh short blind A/B review with Codex, then accept, reject, or defer.
 7. Atomically update bounded state, clean temporary artifacts, and rotate to another unit.
 
-`pnpm map:loop -- --engine <e> --max-accepts N --commit` is the bounded multi-task driver: a
+`pnpm map:loop -- --engine codex --max-accepts N --commit` is the bounded multi-task driver: a
 deterministic loop of `map:next` → one fresh planner call per task → `map:run` → `map:verify`, same
 gates as above. It stops at N accepts, a resurvey/milestone due, an owner-review boundary, a task
 needing human disposition, or an unrecoverable blocker, and prints a JSON final report.
@@ -135,7 +135,7 @@ concise rejected tactic. Retry only with a changed hypothesis. On second failure
 one-line blocker/next action, defer, and rotate. Keep at most two rejected tactics per unit.
 
 State stores only the current source fingerprint, stable unit/zone IDs, rating/confidence, two current defects, per-view
-evidence records (schema v2, one baseline per named view) with the three map-wide coverage numbers, the pinned engine, last attempted pass, accepted count, two rejected tactics, and optional one-line deferred
+evidence records (schema v2, one baseline per named view) with the three map-wide coverage numbers, the pinned prep/review engine, last attempted pass, accepted count, two rejected tactics, and optional one-line deferred
 reason/next action. Write atomically in stable order; never store prompts, diffs, transcripts, or logs.
 
 Keep only the active task's per-view before/after review images plus the A/B plan pair, the plan crop, the site brief,

@@ -1175,6 +1175,7 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     const evidence = pendingOutcome.evidence as {
       startCommit: string;
       engine: string;
+      writerEngine: string;
       touchedFiles: string[];
       completedChecks: string[];
       protectedAuthority: { unchanged: boolean };
@@ -1190,7 +1191,8 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
       reasons: string[];
     };
     assert.equal(evidence.startCommit, baselineCommit);
-    assert.equal(evidence.engine, "claude");
+    assert.equal(evidence.engine, "codex");
+    assert.equal(evidence.writerEngine, "claude");
     assert.deepEqual(evidence.touchedFiles, [targetRelative]);
     assert.ok(evidence.completedChecks.includes("protected-domain diff"));
     assert.ok(evidence.completedChecks.includes("mock scoped checks passed"));

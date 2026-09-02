@@ -9,9 +9,11 @@ import { promisify } from "node:util";
 import { readStateFile, type MapSpec } from "./lib/mapPolish.js";
 import {
   CLAUDE_MODEL,
+  WRITER_ENGINE,
   claudeInvocationArgs,
   codexInvocationArgs,
   invokeEngineJson,
+  invokeWriter,
   parseClaudeEnvelope,
   parsePlannerDecision,
   parseSurveyPayload,
@@ -222,23 +224,23 @@ async function buildFixture(): Promise<Fixture> {
   };
 }
 
-test("engine defaults to claude, CLI overrides env, and resume commands always forward the selection", async () => {
+test("control engine defaults to codex, CLI overrides env, and resume commands forward codex", async () => {
   const fixture = await buildFixture();
   const previousEngine = process.env.MAP_POLISH_ENGINE;
   try {
     for (const selection of [
-      { env: undefined, args: [], expected: "claude" },
+      { env: undefined, args: [], expected: "codex" },
       { env: "codex", args: [], expected: "codex" },
-      { env: "codex", args: ["--engine", "claude"], expected: "claude" },
       { env: "claude", args: ["--engine", "codex"], expected: "codex" },
-      { env: "invalid", args: ["--engine", "claude"], expected: "claude" },
+      { env: "invalid", args: ["--engine", "codex"], expected: "codex" },
     ]) {
       if (selection.env === undefined) delete process.env.MAP_POLISH_ENGINE;
       else process.env.MAP_POLISH_ENGINE = selection.env;
       const loop = await runCli(["loop", "--repo-root", fixture.repoRoot, "--mode", "mock", ...selection.args]);
       assert.equal(loop.code, 0, loop.stderr);
-      const report = JSON.parse(loop.stdout) as { engine: string; stopReason: string };
+      const report = JSON.parse(loop.stdout) as { engine: string; writerEngine: string; stopReason: string };
       assert.equal(report.engine, selection.expected);
+      assert.equal(report.writerEngine, "claude");
       assert.equal(report.stopReason, "resurvey-required");
 
       const next = await runCli(["next", "--repo-root", fixture.repoRoot, ...selection.args]);
@@ -249,6 +251,12 @@ test("engine defaults to claude, CLI overrides env, and resume commands always f
     const invalid = await runCli(["next", "--repo-root", fixture.repoRoot]);
     assert.equal(invalid.code, 1);
     assert.match(invalid.stderr, /unsupported engine 'invalid'/);
+    for (const args of [[], ["--engine", "claude"]]) {
+      process.env.MAP_POLISH_ENGINE = "claude";
+      const claudeControl = await runCli(["next", "--repo-root", fixture.repoRoot, ...args]);
+      assert.equal(claudeControl.code, 1);
+      assert.match(claudeControl.stderr, /Claude is reserved for map writing; use --engine codex for survey, planning, and review/);
+    }
   } finally {
     if (previousEngine === undefined) delete process.env.MAP_POLISH_ENGINE;
     else process.env.MAP_POLISH_ENGINE = previousEngine;
@@ -256,7 +264,7 @@ test("engine defaults to claude, CLI overrides env, and resume commands always f
   }
 });
 
-test("engine pin: a pass surveyed as codex refuses a claude run without a resurvey", async () => {
+test("Claude control is refused and the existing survey engine pin remains enforced", async () => {
   const fixture = await buildFixture();
   try {
     const survey = await runCli(["survey", "--repo-root", fixture.repoRoot, "--mode", "mock", "--synthetic"]);
@@ -272,13 +280,22 @@ test("engine pin: a pass surveyed as codex refuses a claude run without a resurv
       "--objective", "One bounded visual objective.", "--risk", "pure",
     ]);
     assert.equal(crossEngineRun.code, 1);
-    assert.match(crossEngineRun.stderr, /surveyed with engine 'codex'/);
+    assert.match(crossEngineRun.stderr, /Claude is reserved for map writing/);
 
     const crossEngineLoop = await runCli([
       "loop", "--repo-root", fixture.repoRoot, "--mode", "real", "--engine", "claude", "--max-accepts", "1",
     ]);
     assert.equal(crossEngineLoop.code, 1);
-    assert.match(crossEngineLoop.stderr, /surveyed with engine 'codex'/);
+    assert.match(crossEngineLoop.stderr, /Claude is reserved for map writing/);
+    assert.equal((await readStateFile(fixture.statePath)).engine, "codex");
+
+    state.engine = "claude";
+    await writeFile(fixture.statePath, `${JSON.stringify(state, null, 2)}\n`, "utf8");
+    const oldClaudeSurvey = await runCli([
+      "loop", "--repo-root", fixture.repoRoot, "--mode", "real", "--engine", "codex", "--max-accepts", "1",
+    ]);
+    assert.equal(oldClaudeSurvey.code, 1);
+    assert.match(oldClaudeSurvey.stderr, /surveyed with engine 'claude'/);
   } finally {
     await rm(fixture.tempRoot, { recursive: true, force: true });
   }
@@ -365,6 +382,60 @@ process.exit(17);
   }
 });
 
+test("Codex-controlled tasks dispatch map writing only to Claude Fable 5.1", async () => {
+  assert.equal(WRITER_ENGINE, "claude");
+  const tempRoot = await mkdtemp(path.join(os.tmpdir(), "clawd-strike-writer-engine-"));
+  const callsPath = path.join(tempRoot, "calls.txt");
+  const workOrderPath = path.join(tempRoot, "work-order.md");
+  const previousCodexBin = process.env.CODEX_BIN;
+  const previousClaudeBin = process.env.CLAUDE_BIN;
+  try {
+    await writeFile(workOrderPath, "Make one bounded map edit and stop.\n", "utf8");
+    for (const engine of ["claude", "codex"] as const) {
+      const fakePath = path.join(tempRoot, `fake-${engine}.cjs`);
+      await writeFile(fakePath, `#!/usr/bin/env node
+require("node:fs").appendFileSync(${JSON.stringify(callsPath)}, ${JSON.stringify(`${engine}\n`)});
+if (${JSON.stringify(engine)} !== "claude") process.exit(98);
+let prompt = "";
+process.stdin.on("data", (chunk) => { prompt += chunk; });
+process.stdin.on("end", () => {
+  if (!prompt.includes("Make one bounded map edit and stop.")) process.exit(99);
+  process.stdout.write(JSON.stringify({ is_error: false, structured_output: {
+    summary: "One bounded edit.", designRationale: "The storage entrance establishes the frontage axis."
+  } }));
+});
+`, "utf8");
+      await chmod(fakePath, 0o755);
+      if (engine === "claude") process.env.CLAUDE_BIN = fakePath;
+      else process.env.CODEX_BIN = fakePath;
+    }
+    // Only the fields consumed by invokeWriter are needed; captures and map
+    // mutation are deliberately outside this fake-CLI routing test.
+    const options = { mode: "real", engine: "codex", repoRoot: tempRoot } as Parameters<typeof invokeWriter>[0];
+    const context = {
+      unit: { id: "unit-a" },
+      before: { units: [{ id: "unit-a", views: {
+        primary: { imagePath: path.join(tempRoot, "primary.png") },
+        context: { imagePath: path.join(tempRoot, "context.png") },
+      } }] },
+      workOrderPath,
+      artifactDir: tempRoot,
+      targetViewIds: [],
+    } as unknown as Parameters<typeof invokeWriter>[1];
+    const telemetry = await invokeWriter(options, context);
+    assert.equal(telemetry?.engine, "claude");
+    assert.equal(telemetry?.role, "writer");
+    assert.equal(telemetry?.model, "claude-fable-5-1");
+    assert.equal(await readFile(callsPath, "utf8"), "claude\n", "Codex never receives the implementation work order");
+  } finally {
+    if (previousCodexBin === undefined) delete process.env.CODEX_BIN;
+    else process.env.CODEX_BIN = previousCodexBin;
+    if (previousClaudeBin === undefined) delete process.env.CLAUDE_BIN;
+    else process.env.CLAUDE_BIN = previousClaudeBin;
+    await rm(tempRoot, { recursive: true, force: true });
+  }
+});
+
 test("map:loop in mock mode runs planner-free tasks to the accept bound and reports", async () => {
   const fixture = await buildFixture();
   const previousCodexBin = process.env.CODEX_BIN;
@@ -397,11 +468,13 @@ process.exit(97);
     assert.equal(loop.code, 0, loop.stderr);
     const report = JSON.parse(loop.stdout.slice(loop.stdout.indexOf("{"))) as {
       loop: string;
+      writerEngine: string;
       accepts: number;
       stopReason: string;
       outcomes: string[];
     };
     assert.equal(report.loop, "final-report");
+    assert.equal(report.writerEngine, "claude");
     assert.equal(report.accepts, 1);
     assert.equal(report.stopReason, "max-accepts");
     assert.equal(report.outcomes.length, 1);
