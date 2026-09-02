@@ -2,19 +2,19 @@
   "schemaVersion": 2,
   "mapAuthorityHash": "e830b639b9f50748068b70b9069c768bb1ac48bde0a4efed84c0fba410cfdb10",
   "surveyedAuthorityHash": "e830b639b9f50748068b70b9069c768bb1ac48bde0a4efed84c0fba410cfdb10",
-  "sourceFingerprint": "a5153afb3d1a5707e9650a39b017a8acffd8137c020724bb874ffbc95c87428e",
-  "engine": "claude",
-  "pass": 1,
-  "surveyRequired": true,
+  "sourceFingerprint": "83c8391456e5049b8d680cfb04c3180aec581c4f293e0c5bea9bbea6ee8e16e1",
+  "engine": "codex",
+  "pass": 3,
+  "surveyRequired": false,
   "coverage": {
     "usablePct": 99.6,
     "fullHeightPct": 99.5,
     "frontageUsablePct": 100
   },
   "milestone": {
-    "acceptedAtLastRun": 0,
-    "required": true,
-    "full": true
+    "acceptedAtLastRun": 1,
+    "required": false,
+    "full": false
   },
   "activeTask": null,
   "units": [
@@ -23,11 +23,10 @@
       "zoneIds": [
         "CARAVAN_COURT"
       ],
-      "rating": "red",
-      "confidence": 0.55,
+      "rating": "yellow",
+      "confidence": 0.93,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:FRONTAGE_CARAVAN_COURT_EAST_SOUTH] The frontage is one flat featureless brown plane with no openings, datum lines, or material breaks at any…",
-        "[plausibility-causality] [view:elev:north] The court ends in giant bare battered ramps with no gate, arcade, or animal facilities a caravan stop would need."
+        "[intent-hierarchy] [view:primary] The broad bare ground and long blank boundary wall overwhelm the small entrance and isolated furnishings."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-caravan-court/primary.png",
@@ -54,9 +53,12 @@
       "zoneIds": [
         "COVERED_SOUK"
       ],
-      "rating": "green",
-      "confidence": 0.6,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.87,
+      "defects": [
+        "[intent-hierarchy] [view:primary] Closed shutters dominate the covered route, while sparse displays weakly establish its market function.",
+        "[order-and-variation] Map-wide: The souk and textile arcade repeat alternating plaster strips and red-awning bays, blurring district identity."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-covered-souk/primary.png",
         "context": "artifacts/map-polish/baselines/unit-covered-souk/context.png",
@@ -79,10 +81,9 @@
         "DYERS_ALLEY"
       ],
       "rating": "yellow",
-      "confidence": 0.55,
+      "confidence": 0.87,
       "defects": [
-        "[order-and-variation] [view:elev:FRONTAGE_DYERS_ALLEY_EAST:2] Identical dye-vat rows repeat with the same cloth colors, count, and spacing across the east segments.",
-        "[scale-sequence-restraint] [view:elev:south] The south end wall is a single blank plaster plane with no openings, trim, or wear at player eye level."
+        "[intent-hierarchy] [view:elev:FRONTAGE_DYERS_ALLEY_EAST:1] Striped window canopies and colored tubs dominate, with no visible textiles establishing the alley's dyeing use."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-dyers-alley/primary.png",
@@ -105,10 +106,9 @@
         "DYERS_DOGLEG"
       ],
       "rating": "yellow",
-      "confidence": 0.55,
+      "confidence": 0.92,
       "defects": [
-        "[order-and-variation] [view:elev:east:1] A row of identical dark-red doors and shutters repeats at even spacing with no size, wear, or dressing change.",
-        "[intent-hierarchy] [view:primary] The street has no stall, sign, or focal element, so the dogleg reads as an anonymous corridor of doors."
+        "[scale-sequence-restraint] [view:elev:east:1] Two rows of red shutters sit on a broad flat facade with minimal depth or ground-floor threshold articulation."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-dyers-dogleg/primary.png",
@@ -129,10 +129,9 @@
         "FOUNTAIN_COURT"
       ],
       "rating": "yellow",
-      "confidence": 0.55,
+      "confidence": 0.87,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:FRONTAGE_FOUNTAIN_COURT_EAST] The court-facing frontage is a mostly unbroken tan wall with sparse openings and no arcade or trim rhythm.",
-        "[plausibility-causality] [view:context] Paving around the fountain is uniform and clean, with no water staining, wear paths, or props showing use."
+        "[intent-hierarchy] [view:primary] The fountain is crowded against a towering blank wall, leaving the broad paved center without a strong focus."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-fountain-court/primary.png",
@@ -154,9 +153,11 @@
       "zoneIds": [
         "LINK_EAST_MID"
       ],
-      "rating": "green",
-      "confidence": 0.7,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.88,
+      "defects": [
+        "[plausibility-causality] [view:elev:south] Open shop shutters expose flat gray backing with little visible interior depth behind the counters."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-east-mid/primary.png",
         "context": "artifacts/map-polish/baselines/unit-link-east-mid/context.png",
@@ -175,11 +176,11 @@
       "zoneIds": [
         "LINK_EAST_UPPER"
       ],
-      "rating": "yellow",
-      "confidence": 0.65,
+      "rating": "red",
+      "confidence": 0.99,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:north] elev:north is one huge trapezoidal plane with only a faint panel grid — no openings, trim, or human-scale features.",
-        "[order-and-variation] The same faint panel texture tiles identically across elev:south and both cross views with no variation or cause."
+        "[intent-hierarchy] [view:primary] Both close flanking walls are blank framed panels, making the passage read as unfinished facade shells.",
+        "[order-and-variation] [view:elev:north] Stone strips overshoot panel corners and cross horizontal bands without consistent junctions."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-east-upper/primary.png",
@@ -199,9 +200,11 @@
       "zoneIds": [
         "LINK_NORTH_EAST"
       ],
-      "rating": "green",
-      "confidence": 0.75,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.92,
+      "defects": [
+        "[plausibility-causality] [view:cross-b] Dense white speckling covers plaster and masonry alike, making wear read as uniform surface noise."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-north-east/primary.png",
         "context": "artifacts/map-polish/baselines/unit-link-north-east/context.png",
@@ -223,10 +226,9 @@
         "LINK_NORTH_WEST"
       ],
       "rating": "red",
-      "confidence": 0.6,
+      "confidence": 0.94,
       "defects": [
-        "[intent-hierarchy] [view:elev:east] Every elevation is a blank plaster plane with a top trim band; no hero, openings, or storefront rhythm exists.",
-        "[plausibility-causality] [view:elev:west] Full-height walls show no doors, sills, drainage, wear, or repair anywhere, so the block reads as unoccupied blockout."
+        "[scale-sequence-restraint] [view:primary] Tall blank plaster and brick planes dominate the turn, leaving the enclosure at blockout scale."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-north-west/primary.png",
@@ -245,19 +247,18 @@
         "accepted": false
       },
       "acceptedChanges": 0,
-      "rejectedTactics": [],
-      "deferredReason": "No local emitter: all four faces are exempt (north is a cut edge; other returns are 1.0–1.5m, under the 2.5m frontage minimum), so the blank planes in elev:east/west belong to neighbours or an owner massing decision."
+      "rejectedTactics": []
     },
     {
       "id": "unit-link-south-east",
       "zoneIds": [
         "LINK_SOUTH_EAST"
       ],
-      "rating": "yellow",
-      "confidence": 0.55,
+      "rating": "red",
+      "confidence": 0.98,
       "defects": [
-        "[order-and-variation] [view:elev:north] elev:north repeats large identical flat grey panels with no frames, hinges, or reveal depth around them.",
-        "[plausibility-causality] [view:elev:east] The ashlar wall in elev:east tiles uniformly with no course variation, lintels, or wear at ground contact."
+        "[plausibility-causality] [view:elev:north] Three upper shutters sit directly on continuous masonry, with no window openings or sills.",
+        "[intent-hierarchy] [view:elev:north] All three lower framed bays contain identical stone infill, making the frontage read as unfinished placeholders."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-south-east/primary.png",
@@ -278,11 +279,10 @@
       "zoneIds": [
         "LINK_SOUTH_WEST"
       ],
-      "rating": "red",
-      "confidence": 0.8,
+      "rating": "yellow",
+      "confidence": 0.89,
       "defects": [
-        "[intent-hierarchy] [view:primary] Every view is the same bare tiling sandstone wall with no hero, openings, signage, or props to state a purpose.",
-        "[plausibility-causality] [view:elev:north] Tall walls run with no doors, windows, cornice, or roofline, reading as textured blockout rather than buildings."
+        "[scale-sequence-restraint] [view:primary] Tall, uninterrupted stone planes dominate the bend, with little articulation beyond the repeated masonry texture."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-south-west/primary.png",
@@ -300,19 +300,18 @@
         "accepted": false
       },
       "acceptedChanges": 0,
-      "rejectedTactics": [],
-      "deferredReason": "All four faces are exempt (N/S architectural cut edges, east open traversal, west 2.0m return under the 2.5m minimum), so no frontage can be authored locally; the cited blank-wall defects need an owner massing decision."
+      "rejectedTactics": []
     },
     {
       "id": "unit-link-west-mid",
       "zoneIds": [
         "LINK_WEST_MID"
       ],
-      "rating": "yellow",
-      "confidence": 0.7,
+      "rating": "red",
+      "confidence": 0.97,
       "defects": [
-        "[order-and-variation] [view:elev:north] The full-height wall repeats three identical stacked brick bands with no openings, trim, or occupation layers.",
-        "[plausibility-causality] [view:elev:south] Multi-story faces on a walkable alley show no windows, doors, or roof edge, unlike the dressed facades beyond."
+        "[plausibility-causality] [view:context] A stark, untextured white band cuts across the lane opening, breaking the ground and building continuity.",
+        "[scale-sequence-restraint] [view:elev:north] Thin horizontal bands leave the towering brick face largely blank and without convincing human-scale articulation."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-west-mid/primary.png",
@@ -333,9 +332,9 @@
         "LINK_WEST_UPPER"
       ],
       "rating": "yellow",
-      "confidence": 0.5,
+      "confidence": 0.85,
       "defects": [
-        "[scale-sequence-restraint] [view:context] The reverse view shows a blank ashlar corner and a featureless tan facade with no windows, trim, or dressing."
+        "[intent-hierarchy] [view:context] The reverse approach terminates on a broad brick panel whose lone low inset provides a weak focal point."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-link-west-upper/primary.png",
@@ -350,9 +349,11 @@
       "zoneIds": [
         "NORTH_COURT"
       ],
-      "rating": "green",
-      "confidence": 0.65,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.78,
+      "defects": [
+        "[scale-sequence-restraint] [view:elev:FRONTAGE_NORTH_COURT_EAST:1] Broad plaster fields and shallow opening surrounds leave the east frontage visibly flat and underdeveloped."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-north-court/primary.png",
         "context": "artifacts/map-polish/baselines/unit-north-court/context.png",
@@ -375,7 +376,7 @@
         "RUG_GATE"
       ],
       "rating": "green",
-      "confidence": 0.6,
+      "confidence": 0.84,
       "defects": [],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-rug-gate/primary.png",
@@ -396,11 +397,11 @@
       "zoneIds": [
         "SERVICE_NORTH"
       ],
-      "rating": "yellow",
-      "confidence": 0.6,
+      "rating": "red",
+      "confidence": 0.97,
       "defects": [
-        "[intent-hierarchy] [view:elev:west:2] West run is three consecutive blank texture planes with no openings, datums, or hero moment along the corridor.",
-        "[plausibility-causality] [view:elev:north] Full elevation is one unbroken brick plane with no doors, windows, drainage, or wear explaining access or use."
+        "[scale-sequence-restraint] [view:primary] The tall brown enclosure dominates the narrow lane, reading as a textured boundary rather than resolved architecture.",
+        "[plausibility-causality] Map-wide: Blank banded walls end as exposed slabs across links and back routes, making occupied fronts read as scenery."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-service-north/primary.png",
@@ -423,11 +424,11 @@
       "zoneIds": [
         "SERVICE_SOUTH"
       ],
-      "rating": "yellow",
-      "confidence": 0.6,
+      "rating": "red",
+      "confidence": 0.94,
       "defects": [
-        "[intent-hierarchy] [view:elev:FRONTAGE_SERVICE_SOUTH_EAST:2] Segment is a nearly featureless plaster plane spanning the frame, with no openings, trim, or supporting rhythm.",
-        "[order-and-variation] [view:elev:west:2] Large flat parapet mass fills the view with a single uniform surface, lacking cornice, repair, or weathering variation."
+        "[scale-sequence-restraint] [view:context] The long brown enclosure, blank end wall, and largely bare opposite facade make the lane read as an unfinished corridor.",
+        "[plausibility-causality] [view:elev:FRONTAGE_SERVICE_SOUTH_EAST:1] An isolated capped stone strip stops midway up the plaster facade without connecting to an opening or…"
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-service-south/primary.png",
@@ -448,9 +449,11 @@
       "zoneIds": [
         "SPAWN_A_COURTYARD"
       ],
-      "rating": "green",
-      "confidence": 0.7,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.96,
+      "defects": [
+        "[plausibility-causality] [view:elev:FRONTAGE_SPAWN_A_NORTH_EAST] The arched doorway contains a flat gray infill without a visible door assembly, contrasting with the finished…"
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/primary.png",
         "context": "artifacts/map-polish/baselines/unit-spawn-a-courtyard/context.png",
@@ -472,11 +475,11 @@
       "zoneIds": [
         "SPAWN_B_COURTYARD"
       ],
-      "rating": "yellow",
-      "confidence": 0.55,
+      "rating": "red",
+      "confidence": 0.98,
       "defects": [
-        "[intent-hierarchy] [view:elev:west] Courtyard's west side is an undifferentiated brick wall-and-roof mass with no openings or focal element facing the player.",
-        "[order-and-variation] [view:upper] Tall bare brick walls meet the sky as uniform planes with no cornice line, parapet cap, or surface variation."
+        "[scale-sequence-restraint] [view:primary] Oversized blank brown walls dominate the courtyard, dwarfing the doors and sparse stacked crates.",
+        "[plausibility-causality] [view:elev:north:2] The door surround forms abrupt stepped patches of plaster and pale stone without a legible construction relationship."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-spawn-b-courtyard/primary.png",
@@ -499,9 +502,11 @@
       "zoneIds": [
         "SPICE_STREET"
       ],
-      "rating": "green",
-      "confidence": 0.7,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.88,
+      "defects": [
+        "[intent-hierarchy] [view:elev:FRONTAGE_SPICE_STREET_WEST:2] The shop displays hold only scattered vessels and boxes, leaving the spice trade weakly expressed beneath the awnings."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-spice-street/primary.png",
         "context": "artifacts/map-polish/baselines/unit-spice-street/context.png",
@@ -524,10 +529,10 @@
         "TEA_LANDING"
       ],
       "rating": "yellow",
-      "confidence": 0.65,
+      "confidence": 0.94,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:north:1] The full elevation is one unbroken run of uniform brick with no openings, trim, or datum breaks.",
-        "[intent-hierarchy] [view:primary] No hero or destination reads at the landing; identical bare walls give the space no stated purpose."
+        "[scale-sequence-restraint] [view:elev:north:1] The close north wall is a tall blank plaster panel with no intermediate datum or human-scale articulation.",
+        "[plausibility-causality] [view:elev:west] Large ashlar changes to fine brick along a jagged seam unrelated to openings or structural divisions."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-tea-landing/primary.png",
@@ -546,11 +551,11 @@
       "zoneIds": [
         "TEA_RAMP"
       ],
-      "rating": "yellow",
-      "confidence": 0.55,
+      "rating": "red",
+      "confidence": 0.97,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:west] The west wall is a single flat plaster-and-brick plane with no openings or trim for the whole ramp.",
-        "[order-and-variation] [view:cross-a] Blank corner walls face the ramp with none of the shopfront rhythm established on the opposite side."
+        "[scale-sequence-restraint] [view:elev:south] The gateway exposes a stark white ground plane that visibly breaks the surrounding textured street.",
+        "[plausibility-causality] Map-wide: Blank banded walls end as exposed slabs across links and back routes, making occupied fronts read as scenery."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-tea-ramp/primary.png",
@@ -572,10 +577,10 @@
         "TEA_STAIRS"
       ],
       "rating": "red",
-      "confidence": 0.75,
+      "confidence": 0.89,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:east] The entire elevation is a featureless tan plane with no openings, trim, or texture variation.",
-        "[intent-hierarchy] [view:cross-b] The cross view is a blank wall edge to edge; the stair route has no hero, frontage, or readable purpose."
+        "[scale-sequence-restraint] [view:elev:east] An enormous blank plaster slab with obvious rectangular texture repetition dominates the stair enclosure.",
+        "[plausibility-causality] [view:context] Oversized cobble texture runs across treads and risers without distinct stair construction or clear step edges."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-tea-stairs/primary.png",
@@ -592,8 +597,7 @@
         "accepted": false
       },
       "acceptedChanges": 0,
-      "rejectedTactics": [],
-      "deferredReason": "The cited blank wall is an exempt retaining_wall face on a unit with no authored frontages; the brief assigns adding one to the owner as a massing decision, so no bounded local emitter owns the defect."
+      "rejectedTactics": []
     },
     {
       "id": "unit-tea-terrace",
@@ -601,9 +605,9 @@
         "TEA_TERRACE"
       ],
       "rating": "yellow",
-      "confidence": 0.55,
+      "confidence": 0.96,
       "defects": [
-        "[scale-sequence-restraint] [view:elev:west] A wide blank plaster wall with one dark window encloses the terrace, far below the east frontage's finish."
+        "[plausibility-causality] [view:elev:FRONTAGE_TEA_TERRACE_EAST] The prominent shop bay beneath the orange awning is filled with plain plaster, leaving its assembly unfinished."
       ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-tea-terrace/primary.png",
@@ -623,9 +627,12 @@
       "zoneIds": [
         "TEXTILE_ARCADE"
       ],
-      "rating": "green",
-      "confidence": 0.7,
-      "defects": [],
+      "rating": "yellow",
+      "confidence": 0.95,
+      "defects": [
+        "[intent-hierarchy] [view:primary] Nearly empty pottery counters dominate the arcade, while textiles appear only as small overhead strips.",
+        "[plausibility-causality] [view:elev:FRONTAGE_TEXTILE_ARCADE_EAST:2] Counters sit flush against solid masonry bays, leaving no visible working space or shop access."
+      ],
       "evidence": {
         "primary": "artifacts/map-polish/baselines/unit-textile-arcade/primary.png",
         "context": "artifacts/map-polish/baselines/unit-textile-arcade/context.png",
