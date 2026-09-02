@@ -244,6 +244,9 @@ test("design-lens survey and blind-review contracts are structured and chronolog
   assert.match(workOrder, /Optimize the whole primary\/context pair, not one hero camera/);
   assert.match(workOrder, /Task risk: pure/);
   assert.match(workOrder, /Permitted source surfaces \(hard boundary\):/);
+  assert.match(workOrder, /Read AGENTS\.md, the supplied site brief and evidence/);
+  assert.match(workOrder, /No broad repository exploration or orchestration repair/);
+  assert.match(workOrder, /workflow-owned; do not run them/);
   assert.match(workOrder, /return a concise blocker without editing/);
   assert.ok(workOrder.trim().split(/\s+/).length <= 500);
 
@@ -1025,6 +1028,8 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
   const markerPath = path.join(tempRoot, "codex-invoked");
   const fakeCodexPath = path.join(tempRoot, "fake-codex.cjs");
   const previousCodexBin = process.env.CODEX_BIN;
+  const previousClaudeBin = process.env.CLAUDE_BIN;
+  const previousEngine = process.env.MAP_POLISH_ENGINE;
 
   try {
     await mkdir(path.dirname(specPath), { recursive: true });
@@ -1075,6 +1080,8 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     const baselineSpec = await readFile(specPath, "utf8");
     const baselineUnrelated = await readFile(unrelatedPath, "utf8");
     process.env.CODEX_BIN = fakeCodexPath;
+    process.env.CLAUDE_BIN = fakeCodexPath;
+    delete process.env.MAP_POLISH_ENGINE;
 
     await writeFile(unrelatedPath, "dirty source before real survey\n", "utf8");
     const dirtyRealSurvey = await runCli([
@@ -1183,7 +1190,7 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
       reasons: string[];
     };
     assert.equal(evidence.startCommit, baselineCommit);
-    assert.equal(evidence.engine, "codex");
+    assert.equal(evidence.engine, "claude");
     assert.deepEqual(evidence.touchedFiles, [targetRelative]);
     assert.ok(evidence.completedChecks.includes("protected-domain diff"));
     assert.ok(evidence.completedChecks.includes("mock scoped checks passed"));
@@ -1473,10 +1480,14 @@ test("mock CLI survey, accept checkpoint, and rejected retry stay bounded and mo
     const routeAccepted = await readStateFile(statePath);
     assert.equal(routeAccepted.activeTask, null);
     assert.equal(routeAccepted.units.find((unit) => unit.id === routeSelected.id)?.lastAttemptedPass?.accepted, true);
-    assert.equal(await exists(markerPath), false, "mock and manual workflow paths must never invoke Codex");
+    assert.equal(await exists(markerPath), false, "mock and manual workflow paths must never invoke either engine");
   } finally {
     if (previousCodexBin === undefined) delete process.env.CODEX_BIN;
     else process.env.CODEX_BIN = previousCodexBin;
+    if (previousClaudeBin === undefined) delete process.env.CLAUDE_BIN;
+    else process.env.CLAUDE_BIN = previousClaudeBin;
+    if (previousEngine === undefined) delete process.env.MAP_POLISH_ENGINE;
+    else process.env.MAP_POLISH_ENGINE = previousEngine;
     await rm(tempRoot, { recursive: true, force: true });
   }
 });

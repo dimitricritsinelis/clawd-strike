@@ -332,8 +332,7 @@ const DESIGN_CONFIDENCE_MIN = 0.65;
 const OBJECTIVE_MAX = 260;
 const REVIEW_REASON_MAX = 220;
 const CODEX_MODEL = "gpt-5.6-sol" as const;
-export const CLAUDE_MODEL = "claude-fable-5" as const;
-export const CLAUDE_FALLBACK_MODEL = "claude-opus-5" as const;
+export const CLAUDE_MODEL = "claude-fable-5-1" as const;
 const MODEL_ROLE_CONFIG: Readonly<Record<ModelRole, { effort: ModelEffort; timeoutMs: number; maxBudgetUsd: number }>> = Object.freeze({
   planner: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 3 },
   survey: { effort: "high", timeoutMs: 300_000, maxBudgetUsd: 5 },
@@ -368,12 +367,12 @@ function helpText(): string {
   return `Engine-agnostic map-polish workflow (Codex CLI or Claude Code CLI)
 
 Start here:
-  pnpm map:survey
-  pnpm map:next
-  pnpm map:run
+  pnpm map:survey -- --engine claude
+  pnpm map:next -- --engine claude
+  pnpm map:run -- --engine claude --objective "..." --risk route-adjacent
   pnpm map:verify -- --accept --commit   (continue from a clean local checkpoint)
   pnpm map:verify -- --reject            (or use --defer)
-  pnpm map:loop -- --engine codex --max-accepts 5 --commit
+  pnpm map:loop -- --engine claude --max-accepts 5 --commit
 
 Commands:
   map:survey    Capture every authored zone and classify Red/Yellow/Green.
@@ -385,7 +384,7 @@ Commands:
 
 Common options:
   --mode real|manual|mock   Model engine, handoff package, or no-model mock (default: real)
-  --engine codex|claude     Model engine for real calls (default: codex; env MAP_POLISH_ENGINE)
+  --engine codex|claude     Model engine for real calls (default: claude; env MAP_POLISH_ENGINE)
   --dry-run                Generate/print a plan without capture or model calls
 
 Loop options:
@@ -472,7 +471,7 @@ function forwardedCliArgs(options: CliOptions): string[] {
   if (options.statePath !== path.join(options.repoRoot, DEFAULT_STATE_PATH)) args.push("--state", shellArg(options.statePath));
   if (options.artifactsRoot !== path.join(options.repoRoot, DEFAULT_ARTIFACTS_PATH)) args.push("--artifacts", shellArg(options.artifactsRoot));
   if (options.mode !== "real") args.push("--mode", options.mode);
-  if (options.engine !== "codex") args.push("--engine", options.engine);
+  args.push("--engine", options.engine);
   return args;
 }
 
@@ -513,7 +512,7 @@ function assertKnownOptions(args: readonly string[]): void {
 }
 
 function parseEngine(value: string | undefined): EngineName {
-  const candidate = value ?? process.env.MAP_POLISH_ENGINE ?? "codex";
+  const candidate = value ?? process.env.MAP_POLISH_ENGINE ?? "claude";
   if (candidate === "codex" || candidate === "claude") return candidate;
   throw new Error(`unsupported engine '${candidate}'`);
 }
@@ -928,7 +927,7 @@ async function invokeCompare(options: CliOptions, before: string, after: string)
   return JSON.parse(result.stdout) as CompareResult;
 }
 
-function surveySchema(viewIds: readonly string[] = []): unknown {
+export function surveySchema(viewIds: readonly string[] = []): unknown {
   return {
     type: "object",
     additionalProperties: false,
@@ -950,13 +949,14 @@ function surveySchema(viewIds: readonly string[] = []): unknown {
               items: {
                 type: "object",
                 additionalProperties: false,
-                required: ["criterion", "evidence"],
+                required: ["criterion", "evidence", ...(viewIds.length > 0 ? ["viewId"] : [])],
                 properties: {
                   criterion: { type: "string", enum: DESIGN_DEFECT_CRITERIA },
                   evidence: { type: "string", minLength: 8, maxLength: DESIGN_EVIDENCE_MAX },
                   // Union across the batch's units; per-unit membership is
-                  // enforced by the parser.
-                  ...(viewIds.length > 0 ? { viewId: { type: "string", enum: [...viewIds] } } : {}),
+                  // enforced by the parser. Nullable rather than optional:
+                  // Codex strict output requires every property in `required`.
+                  ...(viewIds.length > 0 ? { viewId: { type: ["string", "null"], enum: [...viewIds, null] } } : {}),
                 },
               },
             },
@@ -1157,9 +1157,11 @@ export function claudeInvocationArgs(options: {
 }): string[] {
   const writer = options.role === "writer";
   const config = MODEL_ROLE_CONFIG[options.role];
+  const roleTools = writer ? "Read,Edit,Write,Glob,Grep" : "Read";
   return [
     "-p",
-    "--bare",
+    "--safe-mode",
+    "--no-session-persistence",
     "--output-format",
     "json",
     "--json-schema",
@@ -1172,13 +1174,11 @@ export function claudeInvocationArgs(options: {
     String(config.maxBudgetUsd),
     "--permission-mode",
     writer ? "acceptEdits" : "manual",
+    // --tools limits availability; --allowedTools pre-approves only that set.
+    "--tools",
+    roleTools,
     "--allowedTools",
-    writer ? "Read,Edit,Write,Glob,Grep" : "Read",
-    // --allowedTools only pre-approves; it does not deny. Bash must be denied
-    // explicitly: the workflow runs generators and checks itself, and paging a
-    // 4k-line spec through `sed` burns the writer's whole role timeout.
-    "--disallowedTools",
-    writer ? "Bash,WebSearch,WebFetch,Task,Agent" : "Bash,Edit,Write,WebSearch,WebFetch,Task,Agent",
+    roleTools,
   ];
 }
 
@@ -1322,7 +1322,7 @@ async function invokeClaudeJson(options: {
   }
 }
 
-async function invokeEngineJson(
+export async function invokeEngineJson(
   engine: EngineName,
   options: {
     repoRoot: string;
@@ -1439,7 +1439,7 @@ export function parseSurveyPayload(
       || candidate.defects.some((defect) => {
         if (!defect || typeof defect !== "object") return true;
         const item = defect as { criterion?: unknown; evidence?: unknown; viewId?: unknown };
-        if (item.viewId !== undefined) {
+        if (item.viewId !== undefined && item.viewId !== null) {
           if (typeof item.viewId !== "string") return true;
           if (allowedViewIds && !allowedViewIds.includes(item.viewId)) return true;
         }
@@ -3111,7 +3111,7 @@ function compactCompareResult(compare: CompareResult): CompareResult {
   };
 }
 
-function taskPerformanceSummary(context: TaskContext, engine: EngineName = "codex"): unknown {
+function taskPerformanceSummary(context: TaskContext, engine: EngineName): unknown {
   const call = (telemetry: ModelCallTelemetry | null, role: ModelRole): unknown => telemetry
     ? { calls: 1, ...telemetry }
     : {
@@ -3929,7 +3929,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
         "reject",
         "Writer failed after a partial candidate edit.",
       );
-      io.stderr(`Codex failed after a partial edit; the candidate was restored and no Claude fallback was used. Work order: ${context.workOrderPath}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
+      io.stderr(`${options.engine === "claude" ? "Claude Code" : "Codex"} failed after a partial edit; the candidate was restored and no engine fallback was used. Work order: ${context.workOrderPath}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
       return "reject";
     }
     if (headChanged) await writeJsonAtomic(path.join(context.artifactDir, "touched-files.json"), touchedFiles);
@@ -3940,7 +3940,7 @@ async function executeTask(options: CliOptions, io: CliIo): Promise<"accept" | "
         })
       : context.state;
     await writeStateFile(options.statePath, state);
-    io.stderr(`Codex is unavailable or failed; no Claude fallback was used. Work order: ${context.workOrderPath}${headChanged ? "\nWriter changed HEAD; manual recovery is required." : `\nNo source edit occurred; rerun ${workflowCommand("map:run", options)} or use --mode manual.`}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
+    io.stderr(`${options.engine === "claude" ? "Claude Code" : "Codex"} is unavailable or failed; no engine fallback was used. Work order: ${context.workOrderPath}${headChanged ? "\nWriter changed HEAD; manual recovery is required." : `\nNo source edit occurred; rerun ${workflowCommand("map:run", options)} or use --mode manual.`}\n${boundedDiagnostic(error instanceof Error ? error.message : String(error))}\n`);
     return "pending";
   }
   const postWriterStartedAt = performance.now();
@@ -4785,35 +4785,50 @@ type PlannerDecision = {
   diagnosis?: string;
 };
 
-function plannerSchema(viewIds: readonly string[], unitIds: readonly string[]): unknown {
+// Codex strict structured output requires every property to be listed in
+// `required`, so the fields that depend on `action` are nullable instead of
+// optional; the parser normalizes null back to absent.
+function nullableString(constraints: Record<string, unknown> = {}): unknown {
+  return { type: ["string", "null"], ...constraints };
+}
+
+function nullableEnum(values: readonly string[]): unknown {
+  return values.length > 0 ? { type: ["string", "null"], enum: [...values, null] } : nullableString();
+}
+
+export function plannerSchema(viewIds: readonly string[], unitIds: readonly string[]): unknown {
   return {
     type: "object",
     additionalProperties: false,
-    required: ["action"],
+    required: [
+      "action", "objective", "risk", "targetViewIds", "sharedCause", "sharedEvidence", "greenRegression", "diagnosis",
+    ],
     properties: {
       action: { type: "string", enum: [...PLANNER_ACTIONS] },
-      objective: { type: "string", minLength: 12, maxLength: OBJECTIVE_MAX },
-      risk: { type: "string", enum: ["pure", "shared", "route-adjacent"] },
+      objective: nullableString({ minLength: 12, maxLength: OBJECTIVE_MAX }),
+      risk: nullableEnum(["pure", "shared", "route-adjacent"]),
       targetViewIds: {
-        type: "array",
+        type: ["array", "null"],
         maxItems: 8,
         items: viewIds.length > 0 ? { type: "string", enum: [...viewIds] } : { type: "string" },
       },
-      sharedCause: { type: "string", minLength: 12, maxLength: 180 },
+      sharedCause: nullableString({ minLength: 12, maxLength: 180 }),
       sharedEvidence: {
-        type: "array",
+        type: ["array", "null"],
         maxItems: 2,
         items: unitIds.length > 0 ? { type: "string", enum: [...unitIds] } : { type: "string" },
       },
-      greenRegression: unitIds.length > 0 ? { type: "string", enum: [...unitIds] } : { type: "string" },
-      diagnosis: { type: "string", minLength: 12, maxLength: 220 },
+      greenRegression: nullableEnum(unitIds),
+      diagnosis: nullableString({ minLength: 12, maxLength: 220 }),
     },
   };
 }
 
 export function parsePlannerDecision(value: unknown): PlannerDecision {
   if (!value || typeof value !== "object") throw new Error("planner decision must be an object");
-  const decision = value as Partial<PlannerDecision>;
+  const decision = Object.fromEntries(
+    Object.entries(value as Record<string, unknown>).filter(([, field]) => field !== null),
+  ) as Partial<PlannerDecision>;
   if (!PLANNER_ACTIONS.includes(decision.action as typeof PLANNER_ACTIONS[number])) {
     throw new Error("planner action must be run or defer");
   }

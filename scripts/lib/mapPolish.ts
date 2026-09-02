@@ -2131,14 +2131,15 @@ export function buildWorkOrder(input: WorkOrderInput): string {
     "",
     "Permitted source surfaces (hard boundary):",
     ...input.permittedPaths.slice(0, 6).map((file) => `- ${file}`),
-    "- Do not run generators or validation commands; the workflow regenerates map/layout evidence and runs the required checks after your edit.",
+    "- Read AGENTS.md, the supplied site brief and evidence, and only these map surfaces. No broad repository exploration or orchestration repair.",
+    "- Do not run generators or duplicate checks; the workflow regenerates evidence and validates your edit.",
     "- If the objective cannot be completed inside these source surfaces and task risk, return a concise blocker without editing.",
     "",
     "Protected gameplay constraints:",
     "- Do not change collision authority, spawns, route topology, traversal surfaces, gameplay cover, doorway dimensions, major sightlines, or tactical connectivity.",
     "- Keep the player walking envelope and opening clearances unchanged.",
     "",
-    "Minimum required checks (the workflow runs these after your edit; do not duplicate them unless needed to diagnose your change):",
+    "Minimum required checks (workflow-owned; do not run them):",
     ...input.checks.map((check) => `- ${check}`),
     "",
     "Definition of success:",
@@ -2150,7 +2151,7 @@ export function buildWorkOrder(input: WorkOrderInput): string {
     "",
     "Before editing, state the place's purpose, ordered architectural scaffold, and plausible cause of each exception; return it as designRationale. Optimize the whole primary/context pair, not one hero camera.",
     "",
-    "Inspect only the relevant ownership surfaces, make one bounded implementation attempt, and stop.",
+    "Make one bounded map implementation attempt and stop; report workflow failures as blockers.",
   ];
   const result = `${lines.join("\n")}\n`;
   const words = result.trim().split(/\s+/).length;

@@ -11,9 +11,13 @@ import {
   CLAUDE_MODEL,
   claudeInvocationArgs,
   codexInvocationArgs,
+  invokeEngineJson,
   parseClaudeEnvelope,
   parsePlannerDecision,
+  parseSurveyPayload,
+  plannerSchema,
   runMapPolishCli,
+  surveySchema,
 } from "./map-polish.js";
 
 const execFile = promisify(execFileCallback);
@@ -33,11 +37,15 @@ async function runCli(args: string[]): Promise<{ code: number; stdout: string; s
   return { code, stdout, stderr };
 }
 
-test("claude engine argv per role: headless, bare, schema-validated, role-isolated tools", () => {
+test("claude engine argv per role: headless, safe-mode, schema-validated, role-isolated tools", () => {
+  assert.equal(CLAUDE_MODEL, "claude-fable-5-1");
   for (const role of ["planner", "survey", "reviewer"] as const) {
     const args = claudeInvocationArgs({ role, schemaJson: "{\"type\":\"object\"}" });
     assert.ok(args.includes("-p"), role);
-    assert.ok(args.includes("--bare"), `${role} ignores user config/plugins/MCP`);
+    assert.ok(args.includes("--safe-mode"), `${role} ignores customizations without disabling normal auth`);
+    assert.ok(args.includes("--no-session-persistence"), `${role} leaves no resumable session`);
+    assert.ok(!args.includes("--bare"));
+    assert.ok(!args.includes("--fallback-model"));
     assert.deepEqual(args.slice(args.indexOf("--output-format"), args.indexOf("--output-format") + 2), ["--output-format", "json"]);
     assert.deepEqual(
       args.slice(args.indexOf("--json-schema"), args.indexOf("--json-schema") + 2),
@@ -48,11 +56,8 @@ test("claude engine argv per role: headless, bare, schema-validated, role-isolat
     assert.deepEqual(args.slice(args.indexOf("--allowedTools"), args.indexOf("--allowedTools") + 2), ["--allowedTools", "Read"]);
     assert.deepEqual(args.slice(args.indexOf("--permission-mode"), args.indexOf("--permission-mode") + 2), ["--permission-mode", "manual"]);
     assert.ok(args.includes("--max-budget-usd"));
-    // allowedTools only pre-approves; the deny must be explicit.
-    assert.deepEqual(
-      args.slice(args.indexOf("--disallowedTools"), args.indexOf("--disallowedTools") + 2),
-      ["--disallowedTools", "Bash,Edit,Write,WebSearch,WebFetch,Task,Agent"],
-    );
+    assert.deepEqual(args.slice(args.indexOf("--tools"), args.indexOf("--tools") + 2), ["--tools", "Read"]);
+    assert.ok(!args.includes("--disallowedTools"), "an exact available-tool list needs no denylist");
   }
   const planner = claudeInvocationArgs({ role: "planner", schemaJson: "{\"type\":\"object\"}" });
   assert.deepEqual(planner.slice(planner.indexOf("--effort"), planner.indexOf("--effort") + 2), ["--effort", "high"]);
@@ -61,10 +66,15 @@ test("claude engine argv per role: headless, bare, schema-validated, role-isolat
   assert.deepEqual(writer.slice(writer.indexOf("--permission-mode"), writer.indexOf("--permission-mode") + 2), ["--permission-mode", "acceptEdits"]);
   assert.deepEqual(writer.slice(writer.indexOf("--allowedTools"), writer.indexOf("--allowedTools") + 2), ["--allowedTools", "Read,Edit,Write,Glob,Grep"]);
   assert.deepEqual(
-    writer.slice(writer.indexOf("--disallowedTools"), writer.indexOf("--disallowedTools") + 2),
-    ["--disallowedTools", "Bash,WebSearch,WebFetch,Task,Agent"],
+    writer.slice(writer.indexOf("--tools"), writer.indexOf("--tools") + 2),
+    ["--tools", "Read,Edit,Write,Glob,Grep"],
     "the writer edits; the workflow runs generators and checks",
   );
+  assert.ok(writer.includes("--safe-mode"));
+  assert.ok(writer.includes("--no-session-persistence"));
+  assert.ok(!writer.includes("--bare"));
+  assert.ok(!writer.includes("--disallowedTools"));
+  assert.ok(!writer.includes("--fallback-model"));
   // No image flags in either engine's Claude path: images travel via the prompt.
   assert.ok(!writer.includes("-i"));
 
@@ -119,10 +129,60 @@ test("planner decisions are validated closed", () => {
     parsePlannerDecision({ action: "defer", diagnosis: "No bounded local emitter owns this defect." }),
     { action: "defer", diagnosis: "No bounded local emitter owns this defect." },
   );
+  // Codex strict output schemas list every property as required, so unused
+  // fields arrive as null and must normalize to absent.
+  assert.deepEqual(
+    parsePlannerDecision({
+      action: "defer", objective: null, risk: null, targetViewIds: null, sharedCause: null, sharedEvidence: null,
+      greenRegression: null, diagnosis: "No bounded local emitter owns this defect.",
+    }),
+    { action: "defer", diagnosis: "No bounded local emitter owns this defect." },
+  );
   assert.throws(() => parsePlannerDecision({ action: "run" }), /bounded objective/);
   assert.throws(() => parsePlannerDecision({ action: "run", objective: "Do the whole map over completely.", risk: "everything" }), /explicit risk/);
   assert.throws(() => parsePlannerDecision({ action: "defer" }), /diagnosis/);
   assert.throws(() => parsePlannerDecision({ action: "replan" }), /run or defer/);
+});
+
+test("planner and survey schemas require every property and allow unused fields as null", () => {
+  type Schema = {
+    type?: string | string[];
+    required?: string[];
+    additionalProperties?: boolean;
+    properties?: Record<string, Schema>;
+    items?: Schema;
+    enum?: unknown[];
+  };
+  const assertStrictObjects = (schema: Schema): void => {
+    if (schema.type === "object") {
+      assert.equal(schema.additionalProperties, false);
+      assert.deepEqual([...(schema.required ?? [])].sort(), Object.keys(schema.properties ?? {}).sort());
+    }
+    for (const property of Object.values(schema.properties ?? {})) assertStrictObjects(property);
+    if (schema.items) assertStrictObjects(schema.items);
+  };
+  for (const schema of [surveySchema(), surveySchema(["primary"]), plannerSchema([], []), plannerSchema(["primary"], ["unit-a"])]) {
+    assertStrictObjects(schema as Schema);
+  }
+  const planner = plannerSchema(["primary"], ["unit-a"]) as Schema;
+  for (const [name, property] of Object.entries(planner.properties ?? {})) {
+    if (name !== "action") assert.ok(property.type?.includes("null"), `${name} can be unused`);
+  }
+  const survey = surveySchema(["primary"]) as Schema;
+  const viewId = survey.properties?.ratings?.items?.properties?.defects?.items?.properties?.viewId;
+  assert.deepEqual(viewId?.enum, ["primary", null]);
+
+  assert.deepEqual(parsePlannerDecision({
+    action: "run", objective: "Compose the west frontage around its storage door.", risk: "route-adjacent",
+    targetViewIds: ["primary"], sharedCause: null, sharedEvidence: null, greenRegression: null, diagnosis: null,
+  }), {
+    action: "run", objective: "Compose the west frontage around its storage door.", risk: "route-adjacent", targetViewIds: ["primary"],
+  });
+  const ratings = parseSurveyPayload({ ratings: [{
+    unitId: "unit-a", rating: "red", confidence: 0.9,
+    defects: [{ criterion: "order-and-variation", evidence: "The wall has no readable opening rhythm.", viewId: null }],
+  }] }, ["unit-a"], new Map([["unit-a", ["primary"]]]));
+  assert.deepEqual(ratings[0]?.defects, ["[order-and-variation] The wall has no readable opening rhythm."]);
 });
 
 type Fixture = {
@@ -161,6 +221,40 @@ async function buildFixture(): Promise<Fixture> {
     markerPath: path.join(tempRoot, "model-invoked"),
   };
 }
+
+test("engine defaults to claude, CLI overrides env, and resume commands always forward the selection", async () => {
+  const fixture = await buildFixture();
+  const previousEngine = process.env.MAP_POLISH_ENGINE;
+  try {
+    for (const selection of [
+      { env: undefined, args: [], expected: "claude" },
+      { env: "codex", args: [], expected: "codex" },
+      { env: "codex", args: ["--engine", "claude"], expected: "claude" },
+      { env: "claude", args: ["--engine", "codex"], expected: "codex" },
+      { env: "invalid", args: ["--engine", "claude"], expected: "claude" },
+    ]) {
+      if (selection.env === undefined) delete process.env.MAP_POLISH_ENGINE;
+      else process.env.MAP_POLISH_ENGINE = selection.env;
+      const loop = await runCli(["loop", "--repo-root", fixture.repoRoot, "--mode", "mock", ...selection.args]);
+      assert.equal(loop.code, 0, loop.stderr);
+      const report = JSON.parse(loop.stdout) as { engine: string; stopReason: string };
+      assert.equal(report.engine, selection.expected);
+      assert.equal(report.stopReason, "resurvey-required");
+
+      const next = await runCli(["next", "--repo-root", fixture.repoRoot, ...selection.args]);
+      assert.equal(next.code, 0, next.stderr);
+      assert.match(next.stdout, new RegExp(`pnpm map:survey -- .*--engine ${selection.expected}`));
+    }
+    process.env.MAP_POLISH_ENGINE = "invalid";
+    const invalid = await runCli(["next", "--repo-root", fixture.repoRoot]);
+    assert.equal(invalid.code, 1);
+    assert.match(invalid.stderr, /unsupported engine 'invalid'/);
+  } finally {
+    if (previousEngine === undefined) delete process.env.MAP_POLISH_ENGINE;
+    else process.env.MAP_POLISH_ENGINE = previousEngine;
+    await rm(fixture.tempRoot, { recursive: true, force: true });
+  }
+});
 
 test("engine pin: a pass surveyed as codex refuses a claude run without a resurvey", async () => {
   const fixture = await buildFixture();
@@ -223,10 +317,50 @@ process.stdin.on("end", () => {
     const envelope = parseClaudeEnvelope(result.stdout);
     assert.deepEqual(envelope.structuredOutput, { ok: true, promptLength: "blind review prompt".length });
     const argv = JSON.parse(await readFile(argvPath, "utf8")) as string[];
-    assert.ok(argv.includes("--bare"));
+    assert.ok(argv.includes("--safe-mode"));
+    assert.ok(argv.includes("--no-session-persistence"));
     assert.ok(argv.includes("--json-schema"));
+    assert.deepEqual(argv.slice(argv.indexOf("--tools"), argv.indexOf("--tools") + 2), ["--tools", "Read"]);
     assert.deepEqual(argv.slice(argv.indexOf("--allowedTools"), argv.indexOf("--allowedTools") + 2), ["--allowedTools", "Read"]);
   } finally {
+    await rm(tempRoot, { recursive: true, force: true });
+  }
+});
+
+test("failed engine calls identify the selected CLI and never invoke the other engine", async () => {
+  const tempRoot = await mkdtemp(path.join(os.tmpdir(), "clawd-strike-engine-failure-"));
+  const callsPath = path.join(tempRoot, "calls.txt");
+  const previousCodexBin = process.env.CODEX_BIN;
+  const previousClaudeBin = process.env.CLAUDE_BIN;
+  try {
+    for (const engine of ["claude", "codex"] as const) {
+      const fakePath = path.join(tempRoot, `fake-${engine}.cjs`);
+      await writeFile(fakePath, `#!/usr/bin/env node
+require("node:fs").appendFileSync(${JSON.stringify(callsPath)}, ${JSON.stringify(`${engine}\n`)});
+process.stderr.write(${JSON.stringify(`sentinel ${engine} failure\n`)});
+process.exit(17);
+`, "utf8");
+      await chmod(fakePath, 0o755);
+      if (engine === "claude") process.env.CLAUDE_BIN = fakePath;
+      else process.env.CODEX_BIN = fakePath;
+    }
+    for (const engine of ["claude", "codex"] as const) {
+      await assert.rejects(invokeEngineJson(engine, {
+        repoRoot: tempRoot,
+        prompt: "Return the one bounded writer result.",
+        images: [],
+        schema: { type: "object", properties: {}, required: [], additionalProperties: false },
+        resultPath: path.join(tempRoot, `${engine}-result.json`),
+        role: "writer",
+      }), new RegExp(`${engine === "claude" ? "Claude Code" : "Codex"} CLI failed \\(17\\): sentinel ${engine} failure`));
+      const calls = (await readFile(callsPath, "utf8")).trim().split("\n");
+      assert.deepEqual(calls, engine === "claude" ? ["claude"] : ["claude", "codex"]);
+    }
+  } finally {
+    if (previousCodexBin === undefined) delete process.env.CODEX_BIN;
+    else process.env.CODEX_BIN = previousCodexBin;
+    if (previousClaudeBin === undefined) delete process.env.CLAUDE_BIN;
+    else process.env.CLAUDE_BIN = previousClaudeBin;
     await rm(tempRoot, { recursive: true, force: true });
   }
 });
