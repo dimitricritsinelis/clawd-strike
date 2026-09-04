@@ -1,20 +1,18 @@
 # Building and public-space schedule
 
-**Revision 2 - all cards: proposed.** Implemented dimensions below are observed in the inspected source/compiled pair; treatments and explicitly changed axes are proposals. All heights are metres. Read [assets](assets.md) for complete assembly construction, suppression and fit contracts.
+**Revision 3 - all cards: proposed.** Implemented dimensions below are observed in the inspected source/compiled pair; treatments and explicitly changed axes are proposals. All heights are metres. Read [assets](assets.md) for complete assembly construction, suppression and fit contracts.
 
 ## Drawing-led review
 
 Open [design-atlas.pdf](design-atlas.pdf) for the presentation: district references, dimensioned plans/elevations, blank-face treatments, sections, material/assembly studies and approval handoff. The SVG building sheets in `drawings/` are derived review drawings; this document owns proposed placement decisions, `assets.md` owns construction variants, and the live spec owns implemented state. No generated concept image is a measuring instrument.
 
-**Revision 2 design judgment:** complete buildings are the production units. Shared timber sections, hinges, stone courses and material families support them; repeated whole storefronts do not define them. Different uses now receive different counter/cabinet forms and upper closures. The eastern Souk has three distinct trades, and the original booth has only one additional planned placement. The first complete-building pilot is BLD_DYERS_HOUSE, followed by BLD_DYERS_ARCADE_E, then BLD_SPICE_ROW_W. No runtime implementation starts before design approval.
-
-**Review of the first draft:** its ownership and dimensional coverage are retained. Its long repeated prose, uniform asset variants and screenshot-like concepts are superseded by the atlas, eight new concept references, and finite construction variants. Quiet walls remain quiet; variety is concentrated in entrances, occupied bays, shutters/screens, carpentry and repairs. Protected heights, footprints, openings between zones and circulation do not change.
+**Revision 3 design judgment:** spatial sequence precedes asset production. S1/S2 propose broad roof profiles; E1/G1 are explicitly gameplay alternatives. The first complete-building pilot is B18 after the graybox decision. The common rules and individual revisions below replace the former blanket roof freeze and blank-face suppression. Source dimensions remain labeled observed.
 
 ## District intent
 
 | District | Uses, palette and sequence | Busy / quiet / transition |
 |---|---|---|
-| DISTRICT_SPICE | Grain and dry-spice shops, wholesale storage, homes above; warm plaster, sandstone, brown wood, restrained teal shutters and cream/rust shade. | West counters are busy, low east stores quiet. Spawn A's civic gate stays behind; Spice Gate announces the market. Keep the view to the fountain open under the existing two high canopy spans. |
+| DISTRICT_SPICE | Grain and dry-spice shops, wholesale storage, homes above; warm plaster, sandstone, brown wood, restrained teal shutters and cream/rust shade. | West counters are busy, low east stores quiet below one setback northern room. Spawn A's civic gate stays behind; Spice Gate announces the market. Keep the fountain glimpse between supported cloth layers; S1 supplies broad roof steps without narrowing the 6 m route. |
 | DISTRICT_FOUNTAIN | Civic madrasa and merchant residence/loggia; pale cut stone, warm wash, blue tile only on the existing fountain/hero accent. | The fountain stays off-axis. Quiet lower civic walls frame the open court; activity sits at the existing south-west market edge and east tea table. Side links read as narrow service passages, not extra shops. |
 | DISTRICT_TEXTILE | Rug dealers west, light cloth south-east, packing at northern bays; ochre west, lime east, muted indigo/rust textiles. | Paired arch axes make one street. Keep the overhead compression and the open northern view to Rug Gate; stock stays in reveals, blank piers keep each shop legible. |
 | DISTRICT_RUG | Rug merchant, gatekeeper, northern receiving court; warm wash and stone, restrained blue gate accents. | One west display, closed east house. The existing gate is the arrival landmark; Spawn B and its backdrop are deliberately quiet. No second row of unrelated stalls. |
@@ -26,17 +24,127 @@ Use each frontage's existing profile slots listed on its card, except an explici
 ## Coordinate and face rules
 
 - Design coordinates: x east, y north, z up, southwest origin; runtime vectors exchange design y/z. A zone's `west` face is its west edge, facing east into the route. Never derive facing from camera-left. Along `a` starts at the **low coordinate of the named frontage span** and increases west-to-east on north/south edges, south-to-north on east/west edges. Units are metres; `along=a/L` when authoring. World span endpoints below come from the source rectangle × start/end, not screenshot estimates.
-- Every bay table is ordered by along, then height. S/H are sill/head above the local floor. Door/arch/shop sill is zero. On Tea Terrace add z=1.4 to every datum. Upper openings are fixed to the scheduled upper-floor/clerestory datum; no extra opening rows above it. `ARCH_<F>_MASSING` owns the existing envelope and roof; a table's massing height is measured from its own floor. Do not raise it to fit a part.
-- **Common face card, explicitly inherited by every BLD record:** retain its existing shell, base contact, corners, roof slab, coping, parapet and skyline fixtures. Its public/secondary face is the table below. Both perpendicular end returns are side/connector walls, zero doors/windows/props/signs/awnings; finish with the owner's same wall family and turn the base/coping around them. The opposite face is a quiet rear/service wall, zero doors/windows/props/signs/awnings. Retain existing structural piers; suppress generic return windows, fake doors and unrelated dressing on these quiet faces. No new interior route is implied. No balcony except the retained source oriels explicitly described in OWN records.
-- These return/rear dimensions are **determined**, not missing: each frontage massing is L × depth D × height H; its two perpendicular faces are D × H and opposite face L × H, reduced by existing occlusion and actual shell cutouts. Exposed party-wall portions above a lower neighbor remain blank and use the taller owner's material. Hidden shared surfaces receive no new mesh. Roof/skyline group is one per existing massing placement; retain its roof record, setbacks and all current silhouette heights. No random rooftop props.
+- Every bay table is ordered by along, then height. S/H are sill/head above the local floor. Door/arch/shop sill is zero. On Tea Terrace add z=1.4 to every datum. Upper openings follow their scheduled datums; S1 east and B21 loft are the explicitly added rows. `ARCH_<F>_MASSING` owns the existing envelope and roof; a table's massing height is measured from its own floor. Do not raise it to fit a part.
+- **Common face card:** retain the existing shell and structural piers unless a named M/G proposal below changes them. Public faces follow their bay schedules. Hidden party surfaces receive no duplicate mesh. Quiet enclosures retain zero new openings; visible inhabited returns retain useful existing backed screens, service windows and supported projections unless a named owner conflicts. Do not delete these profile-wide. The context/access schedule below distinguishes buildings, wings, screens and reliefs. No playable interior is implied.
+- These return/rear dimensions are **determined**, not missing: each frontage massing is L × depth D × height H; its two perpendicular faces are D × H and opposite face L × H, reduced by existing occlusion and actual shell cutouts. Exposed party-wall portions above a lower neighbor remain blank and use the taller owner's material. Hidden shared surfaces receive no new mesh. Roof ownership follows the current shared-shell resolver, not one roof per frontage. The roof survey records slabs, parapets, bulkheads and silhouette heads separately. S1/S2, B18 and B21 replace only their named roof features. No random rooftop props.
 - Face ownership precedence: named public/secondary face, then its physical building's side/rear, then public-space residual boundary. At the central merchant block the court and Souk frontages are opposite **public faces**, not blank rears. At Spawn A the return kits are corner fronts of their Spice owners. Retaining spines are enclosure/terrain screens, not fictitious housing. Keep stable IDs; these groupings do not merge runtime meshes.
 - **Blank intervals:** on every scheduled face, the complement of the listed assembly widths is wall, with no added openings, signs or props. New or moved door/recess bays reserve at least 1.2 m of solid pier; non-opening trim/niches reserve at least 0.6 m. The retained end arches/recesses with 0.6 m end piers are explicit existing-composition exceptions: keep their openings and surrounding masonry, do not widen or move them. Per-face reservations below make these exceptions visible. All bay widths below use the asset definition; narrow door frames cannot consume a corner reservation. Keep current columns grounded; never hang a shortened pilaster to meet a window head.
-- `ASMB_WALL_FINISH` supplies resolved blank fields, existing base/coping and contact/drainage treatment. This does not authorize adding continuous raised strips across route mouths. On body-adjacent walls new visual geometry must remain behind the existing reachable solid surface; a 0.28 m camera rule is not proof that the player's body cannot intersect it. Existing collision, cloth envelope and sightlines remain protected.
+- `ASMB_WALL_FINISH` supplies resolved blank fields, existing base/coping and contact/drainage treatment. This does not authorize adding continuous raised strips across route mouths. On body-adjacent walls new visual geometry must remain behind the existing reachable solid surface; a 0.28 m camera rule is not proof that the player's body cannot intersect it. The C asset batch preserves collision and sightlines; E1/G1 and measured overhead revisions are separate proposals.
 - All existing active dressing placements are assigned exactly once: frontage-bound anchors belong to that face's building; other anchors belong to their `zone`. Shared canopy/line anchors belong to OWN_OVERHEAD. Landmark kits use their OWN cards. **Retain** the current placement unless a named replacement/suppression below applies. Dormant anchors are retained bindings, not new placements. No implied extra furniture from prose.
+
+## Spatial design schedule
+
+**S1 / Spice, class M.** Preserve x=21..33 street and all ground bays. West three parcel ranges in y are 15.44..21.56, 21.56..27.32 and 27.32..30.56; their proposed wall/roof-base tops are +7.60, +8.40 and +7.00. Ground-to-upper-room floor remains schematic at +3.12; existing window heads +5.33 remain human scale. Full parcel depth remains 4.8 m (x=16.2..21). Set back each roof slab 0.75 m; use the existing 0.26 slab, 0.75 parapet and 0.18 coping: absolute cap tops +8.79 / +9.59 / +8.19. Replace west seeded head, rear tier and small bulkhead with these broad roof steps; do not stack both systems. Parcel joints sit between bays (a=6.12 and 11.88), never through a frame. The two closed doors serve south and north households; the middle shop shares the south internal stair. Hidden access is explanatory only.
+
+East retains the 4.5 m ground shell at x=33..37.2. A setback occupied end room spans x=34.2..37.2, y=24..30.56, roof base +7.00. Its cap is +7.71 (0.26 slab, 0.30 parapet, 0.15 coping). Two closed `window_dark_recess` modules face west on x=34.2 at y=25.8/28.1, sill +5.40/head +6.65, width 0.90. Interior stair is implied behind closed GROUND_04. Replace only east seeded head/rear tier; retain low roof/parapet outside the room. This breaks repeated high-west/low-east order without raising the entire street. Proposed room dimensions are design decisions, not permission to change the live massing profile globally.
+
+**S2 / Textile, class M.** Preserve x=24..35 street and three arches plus the actual intervening column on each face. West y=49.28..56.8 retains roof base +7.00/cap +8.19. The northern shared Tea/Textile wing y=56.8..62.72 reads behind that front at roof base +8.40/cap +9.59, matching Tea's absolute base, not an added third storey. In the overlapping x=19..24 range, treat B05 and B12 as faces of one stepped physical volume; M01 must settle the common backing and visible roof strip because the different floor/roof datums do not qualify for the present equal-height shell merge. No independent whole-building export of either face. Remove B05's small head/rear tier/bulkhead only when this shared roof is approved; retain Tea beyond y=62.72 through65.2. East stays low at +4.50/cap +5.59; replace its narrow seeded head/rear tier with a quiet flat roof and measured tie supports. No added east windows. This is a distinct rhythm from S1. End views retain Rug Gate as the distant marker and open sky between cloth spans.
+
+**E1 / Tea relationship, class G.** Trial an open-top slot **x=10..11, y=58..61** through the Service-North screen and any coincident western retaining/coping layers. Retain solid masonry below **z=2.50**; this is a **1.10 m parapet above the +1.40 platform**. The 0.96 m spine x=10..10.96 is measured; the 0.04 m gap to the platform is a junction to resolve in section, not a new floor. Match visible, projectile and LOS surfaces. Retain tall flanks outside y=58..61, with no lintel or high fixture spanning the slot. Remove the affected B15 seeded roof head/parts above the opening; never leave an invisible 7 m blocker. Keep Service's x=3..10 ground lane, Tea x=11..19, both end approaches and the existing center travel band. Existing west shade line y=62.4 is outside the slot; M03 verifies its actual support and hem beyond the slot's north edge.
+
+Test eye positions (+3.10 standing, +2.70 crouched at Tea) from x=11.7/y=59.5 against a ground bot at x=6/y=59.5, eye +1.70. A simple straight ray clears the +2.50 cap standing but intersects it crouched; the actual gun rays, bot stance and collateral objects still require M06. Lower-lane crossfire discourages a permanent hold; ramp/stair pursuits force a choice to leave north or south. No one-way drop or player-only invisible guard is authorized. The 1.10 m guard is only about 0.09 m above the theoretical 1.008 m ballistic jump rise (6.35²/(2×20)); adjacent objects and collision stepping require M05 before acceptance.
+
+**G1 / southern Textile turn, class G.** Conditional trial: solid masonry return **x=24..28, y=48..49, z=0..2.40** connected to the existing west cut edge. Remaining nominal passage **x=28..35 = 7 m**; retain at least 6 m through the entire diagonal body sweep. The first west arch starts around y=49.88; the 0.88 m nominal separation from this return is not a clearance pass. No display or stool in that pocket. From Fountain x=27/y=43 at eye +1.70 the northward x=27 ray now meets the return, while x=29.5 remains open. This is a partial offset and reload break, not a guaranteed hard dogleg. Keep the high Rug Gate crown visible above it. Test both bot pressure from Textile and the return's blind inside corner; reject if it only trades kiting for unavoidable close shots.
+
+## Sequence and encounter relationships
+
+| Route sequence, south to north | Foreground / middle / distance | Escape and bot counterplay / unresolved evidence |
+|---|---|---|
+| Spawn A 22 m court → Spice 12 m street → Fountain 16 m court | Gate/return craft; supported awnings and S1 staggered occupied parcels; off-axis fountain and civic arch | Retain main plus both side escapes. M06 measures initial threat and long retreat rays; no map shrink inferred from the 78 m spawn-center distance. |
+| Fountain → Textile 11 m street → Rug 13 m threshold → Spawn B 22 m release | Off-axis fountain edge; G1 if retained and paired cloth layers; repaired Rug Gate and stepped receiving backdrop | Mid links are alternate escape choices before entering Textile. Bots can converge from either end; no extra east connector unless repeated trap evidence survives G1 evaluation. |
+| Service South 7 m → Caravan 12 m → Service North 7 m / Tea 8 m branch | Quiet service wear; cart-handled receiving court and ramp; E1 offers one lateral contact before north-link exit | Tea's height becomes a choice between view/exposure and enclosed end approaches. The ground route remains an alternative, not a new room under a bridge. M05/M06 test recovery time, camping and two-sided pursuit. |
+| Dyers Alley 7 m → Souk 12 m → Dogleg 7 m → North Court 12 m | Dense wet-work edge; three distinct dry trades and shared shade; residential turn and open drying court | Continuous x=46..53 alignment is not proven hard cover. M06 tests pressure through Souk mid link, Dogleg reversal and north mouths before any new east elevation. |
+
+All widths above are zone footprints, not usable body clearances. Retain 6 m main / 4.5 m side / 4 m elevation / 3.5 m links, except the authored 4.5 m West Upper opening. Never fill the apparent surplus with non-colliding props. Shade compresses the view; courts release it. No overhead is declared bullet cover.
+
+## Complete volume and access relationships
+
+| Owners / classification | Physical relationship and design decision |
+|---|---|
+| B01/B02 + B32/B33: mixed-use buildings with corner kits | S1 broad parcels continue the existing south kits. Label supporting shells separately from visible 3.5×2×7.6 and 5.5×2×7.6 m kit envelopes. Kit sources, placement and integral windows remain untouched. |
+| B03: civic wings | Source spans y=33.28..36 and41..46.72 at x=14.6..20; gap stays open. Closed south service entrance implies rear access through non-playable fabric, not a bridge across the 5 m link. Main hall retains +9.5 roof base and repaired arch. |
+| B04/B17: two wings, two public faces | South y=33.28..39, north44..46.72. West shell x=36..40.8; east shell x=36.2..41; union5 m deep, 4.6 m overlap. LINK_EAST_MID y=39..44 remains open. Each wing has its own access; the north door cannot secretly serve the disconnected south shop across the passage. South dye shop is a front-served locked display with stock behind a closed backing; no player entrance. North household/trade doors imply one shared service vestibule in that wing. |
+| B05/B06/B18: merchant buildings | Per bay, public floor reaches the counter; service is explained by a closed rear store/working pocket only where M02 proves depth. B05/B12 share an overlapping physical wing, as S2 states. B06/B18 have a 4.2 m envelope extending behind the sealed boundary, not 4.2 m of playable interior. No interior mesh or new ground doorway is required. |
+| B12: raised public frontage | Tea floor +1.4, roof base +8.4; storefront opens visually onto Tea, back meets B05's overlapping northern wing. Internal household stair behind closed GROUND_02 is schematic; retain useful source upper projections with measured supports. No new accessible balcony. |
+| B14/B15/B16: retaining/enclosure spines | 0.96 m deep, not warehouses. B14 removes impossible 2.5 m under-terrace doors: two small sealed inspection panels fit below the local terrace/ramp profile where measured. B15 E1 is a changed parapet, flanked by retained tall screens. B16 remains tall for this batch; no decorative second storey. |
+| B20/B21: workshop plus domestic infill | Workshop door is for handcart/foot access, high vents serve the work volume. B21 keeps the 4.5 m wall but adds one small loft vent and roof hatch, removes seeded towers and retains a +5.59 cap. This explicitly rejects R07's apparent low roof/oversized door proportions. |
+| B23/B24: code-boundary reliefs | B23 is the closed working compound edge, with repaired gate retained. B24 represents a dwelling behind x=53, y=48..62; show a dashed explanatory 4.2 m rear depth to x=57.2, not a new runtime footprint. Retain opaque boundary. No free-standing 0.35 m-deep house export. |
+| B25/B26: bath wings / domestic boundary relief | B25 retains high hall light and sealed doors; rear ventilation/water stains follow existing service evidence. B26's 0.96 m support relief is on an implied house x=53..57.2,y=63.44..71. Keep cut stone as listed; remove contradictory whitewash instruction. Hidden rear depth is explanatory and subject to city-context fit, not production geometry. |
+| B08/B09 and enclosure owners | Gatekeeper wings stay separated by the open link. Caravan doors are 1.35 m handcart entries, not wagon portals. Yard walls at4.9 m remain in the baseline despite exceeding store walls4.5: M07 compares cap/fixture heights and loading-court hierarchy before lowering either. |
+
+## Current roof survey
+
+Static evaluation of the current `v3Architecture.ts` and compiled massings, with experimental visual cutouts enabled. Values are absolute z. The end/profile drawings include generated slab, coping, parapet, bulkhead, head and tier boxes, so a4.5 m shell is not mistaken for its skyline. Boundary segments/props were omitted from this in-memory inspection; final visibility and all active boundary fixtures still require M07. A shared non-owner has no separate emitted roof; its apparent top belongs to the opposite owner. Rug Gate silhouettes are landmark-owned; formula cap values there are omitted.
+
+| Card / frontage | Roof base | Parapet cap | Emitted roof-group maximum |
+|---|---:|---:|---:|
+| B01 / `SPICE_STREET_WEST` | 7.000 | 8.190 | 10.668 |
+| B02 / `SPICE_STREET_EAST` | 4.500 | 5.590 | 7.518 |
+| B03 / `FOUNTAIN_COURT_WEST` | 9.500 | 10.790 | 11.520 |
+| B03 / `FOUNTAIN_COURT_WEST_SOUTH` | 9.500 | 10.790 | 11.520 |
+| B04 / `FOUNTAIN_COURT_EAST` | 7.000 | shared owner / landmark | shared owner |
+| B04 / `FOUNTAIN_COURT_EAST_NORTH` | 7.000 | shared owner / landmark | shared owner |
+| B05 / `TEXTILE_ARCADE_WEST` | 7.000 | 8.190 | 9.968 |
+| B06 / `TEXTILE_ARCADE_EAST` | 4.500 | 5.590 | 7.468 |
+| B07 / `RUG_GATE_WEST` | 7.000 | shared owner / landmark | 8.870 |
+| B08 / `RUG_GATE_EAST` | 4.500 | shared owner / landmark | 4.760 |
+| B08 / `RUG_GATE_EAST_SOUTH` | 4.500 | shared owner / landmark | 4.760 |
+| B09 / `CARAVAN_COURT_WEST` | 4.500 | 5.590 | 7.618 |
+| B10 / `CARAVAN_COURT_EAST_SOUTH` | 4.900 | 5.790 | 7.918 |
+| B11 / `CARAVAN_COURT_EAST_NORTH` | 4.900 | 5.790 | 7.918 |
+| B12 / `TEA_TERRACE_EAST` | 8.400 | 9.590 | 12.068 |
+| B13 / `SERVICE_SOUTH_EAST` | 4.900 | 5.790 | 7.918 |
+| B14 / `SERVICE_NORTH_EAST_SPINE_S` | 7.000 | 7.890 | 10.118 |
+| B15 / `SERVICE_NORTH_EAST_SPINE_MID` | 7.000 | 7.890 | 10.018 |
+| B16 / `SERVICE_NORTH_EAST_SPINE_N` | 7.000 | 7.890 | 10.018 |
+| B18 / `COVERED_SOUK_EAST` | 4.500 | 5.590 | 7.468 |
+| B19 / `COVERED_SOUK_SOUTH` | 4.900 | 5.790 | 7.918 |
+| B20 / `DYERS_ALLEY_WEST_S` | 7.000 | 8.190 | 10.118 |
+| B21 / `DYERS_ALLEY_WEST_N` | 4.500 | 5.590 | 7.518 |
+| B22 / `DYERS_ALLEY_EAST` | 4.900 | 5.790 | 7.918 |
+| B25 / `NORTH_COURT_WEST` | 7.000 | 8.190 | 9.020 |
+| B25 / `NORTH_COURT_WEST_SOUTH` | 7.000 | 8.190 | 9.020 |
+| B26 / `NORTH_COURT_EAST_S` | 4.900 | 5.790 | 7.918 |
+| B27 / `NORTH_COURT_EAST_N` | 4.900 | 5.790 | 7.918 |
+| B28 / `NORTH_COURT_NORTH` | 4.900 | 5.790 | 7.918 |
+| B29 / `NORTH_COURT_SOUTH` | 4.900 | 5.790 | 7.918 |
+| B30 / `LINK_NORTH_WEST_NORTH` | 4.900 | 5.790 | 7.918 |
+| B31 / `LINK_NORTH_EAST_NORTH` | 4.900 | 5.790 | 7.918 |
+| B34 / `SPAWN_B_SOUTH_WEST` | 4.900 | 5.790 | 7.918 |
+| B35 / `SPAWN_B_SOUTH_EAST` | 4.900 | 5.790 | 7.918 |
+| B17 / `COVERED_SOUK_WEST` | 7.000 | 8.190 | 9.968 |
+| B17 / `COVERED_SOUK_WEST_NORTH` | 7.000 | 8.190 | 9.968 |
+
+B23/B24 are code-boundary treatments: this roof evaluation does not supply their missing gate/roof measurements. B32/B33 use the retained complete kits rather than the shallow supporting-shell roof. See M04/M05 and the owning cards. Proposed cap tops and replacements are in S1/S2/B18/B21; this table is baseline evidence only.
+
+## District response schedule
+
+This closes the remaining location-specific review findings. A retain decision is scoped; measurements remain pending.
+
+| Owners | Concrete disposition / evidence needed |
+|---|---|
+| B01/B02/P02 | S1 retains three west trades/two household doors; east doors serve sacks/handcarts. M03 ties, M07 two-direction skyline review; no blanket street narrowing. |
+| B03/B04/B17/P03/P19 | Repaired arches and open mid link retained. Resolve wing access above and shared roof in assembly-fit. M06 tests Fountain's four-way pressure and x=26..32 escape band. |
+| B05/B06/P04 | S2; packing bays complete, actual column preserved. Extra booth remains fit-dependent. G1 conditional; connector deferred unless repeated trap evidence. |
+| B07/B08/P05 | Keep west display/service split and Gatekeeper's separated wings/full pilaster. M05 and M07 review both upper-link approaches, gate soffit and receiving view. |
+| B09-B11/P08 | Retain locked handcart stores and yard enclosure; cart handling is a 0.8 m door-service floor plus measured turning pocket, not a wagon court claim. Keep ramp entry and mid-link options. M05/M07 decide wall hierarchy. |
+| B12-B16/P07/P09-P13 | E1 first, B14 corrected panels, Tea source shade and end grades retained. B13 keeps its three existing blind panels as enclosure joints rather than adding decoration. No niche production batch until Service's moving sequence is reviewed. |
+| B18/B19/P15 | B18 complete-building pilot. B19 is a 4.2 m-long, 4.9 m-high wall; preserve open turn. Souk north end remains solid with zero fake arches. M06 checks emerging mid-link pressure; M02/M03 handle trade/support fit. |
+| B20-B22/P14 | Wet work against east wall and workshop edge, quiet home retained. B22 keeps source high panel positions and full repairs; no extra niches for density. M05 maps racks/vats against body volume; localized dye wear follows their positions. |
+| B23/B24/P16 | Code-boundary skins with implied use, never independent thin buildings. M04 actual gate; M06 measures whether a dogleg sightline exists before adding one. M05 tests inside north turn. |
+| B25-B29/P17 | Bath, domestic edge and drying yard remain distinct. Keep open release and edge work access. Drainage is flush joint/base wear toward existing low points; no invented trench/outfall. M05/M06 inspect each mouth and escape. |
+| B30/B31/P24/P25 | Preserve repaired full-height niches and link walls; M05 checks NW service turn and NE workstation separately. No symmetrical dressing rollout. |
+| B32/B33/P01/P22/P23 | Retain complete Spawn-A kits, label visible versus support bounds. Three exits remain. M05 protects both inside turns; M06 validates actual initial placement/fallback behavior. |
+| B34/B35/P06 | Quiet receiving wings retained; do not call central gate the only escape because side links exist. M07 reviews exit recognition with O06; M06 treats B spawns independently from A. |
+| P18/P20/P21 | Mid link5×5; West Upper2 m long/4.5 m wide; East Upper7×5, clear3.5. Preserve unequal geometry. M05/M06 compare emerging threat and bot congestion, not nominal symmetry. |
+| O01/O02/O03 | Keep closed city gate, unequal domestic parcels and dye-process rear. These supply construction/occupation precedent; no changed meshes. M05 verifies source kits' full body envelope. |
+| O04/O05/O06 | Preserve open Spice/Rug portals and stepped receiving backdrop. M07 checks both-direction layer overlap and closed off-map access cues, M06 visibility around transitions. |
+| O07 | All14 overheads get endpoint/low-sag/support records; assets.md names the high-tie revisions. Retain hanging textiles and sky gaps, not arbitrary unsupported endpoints. |
+| O08/O09 | Keep sealed collision boundary and120 deterministic shells. Near visible ring0 north/east silhouettes may retain or receive two backed upper service closures per selected shell after M07 selects actual visible shell IDs; no new placement until those IDs are recorded. Distant shells remain economical. No blanket120-shell window export or blanket removal of inhabited context. |
 
 ## Registered owner cards (35)
 
-Numbers B01..B35 are diagram keys only. Every card includes the common face card above, so its sides, back, roof, blank areas and exclusions are specified even when it has one scheduled frontage.
+Numbers B01..B35 are diagram keys only. Every card includes the common face rules. The roof/context drawings and named measurements qualify what remains unresolved; a rectangular schedule alone is not complete-building approval.
 
 <a id="bld_spice_row_w"></a>
 ### B01 · BLD_SPICE_ROW_W
@@ -45,9 +153,9 @@ Numbers B01..B35 are diagram keys only. Every card includes the common face card
 
 **Composition:** Three spice tenancies and two closed household/store access doors form one mixed-use block, with five aligned upper shutters.
 
-Primary access is GROUND_02; GROUND_05 serves the north tenancy. Recesses GROUND_01/03/04 receive ASMB_SPICE_COUNTER (3); SP-D spice drawers at01, SP-G grain/balance counter at03 and SP-A apothecary cabinet at04. Retain signs SPICE_W_SIGN_1 and add the existing SPICE_W_SIGN_3 binding; one sign per named tenant, no sign at 04. Retain the three bay awnings, their wall ledger and diagonal braces; no canopy on doors. Replace all five upper shutter windows with the assigned SH-L/SH-P/SH-W constructions in assets.md. No balcony. Keep door approaches and the two end piers empty. No fruit, vats or extra shop doors. Owns the south terminal SPICE_STREET_WEST_TERMINAL and the attached Spawn-A west return card below; do not treat them as separate houses.
+Primary access is GROUND_02; GROUND_05 serves the north tenancy. Recesses GROUND_01/03/04 receive ASMB_SPICE_COUNTER (3); SP-D spice drawers at01, SP-G grain/balance counter at03 and SP-A apothecary cabinet at04. Retain signs SPICE_W_SIGN_1 and add the existing SPICE_W_SIGN_3 binding; one sign per named tenant, no sign at 04. Retain the three bay awnings, their wall ledger and diagonal braces; no canopy on doors. Replace all five upper shutter windows with the assigned SH-L/SH-P/SH-W constructions in assets.md. S1 changes the parcel roofs; useful existing high backed projections may remain after M02 support review. Keep door approaches and the two end piers empty. No fruit, vats or extra shop doors. Owns the south terminal SPICE_STREET_WEST_TERMINAL and the attached Spawn-A west return card below; do not treat them as separate houses.
 
-**public front:** `F/SPICE_STREET_WEST`; zone `SPICE_STREET`, `west` edge, x=21, y=15.440..30.560; a increases +y. **Observed L×D×H:** 15.120 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; retain envelope.
+**public front:** `F/SPICE_STREET_WEST`; zone `SPICE_STREET`, `west` edge, x=21, y=15.440..30.560; a increases +y. **Observed L×D×H:** 15.120 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `active_merchant`; wall `ph_painted_plaster_warm`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`; wood/metal use that same profile's existing slots.
 
@@ -74,11 +182,11 @@ Reserved end fields to lower assemblies: **0.600 m at a=0**, **1.225 m at a=L** 
 
 [Architectural drawing](drawings/BLD_SPICE_ROW_E.svg)
 
-**Composition:** A single low wholesale store row faces the busy spice merchants with three closed entries and two blind display panels.
+**Composition:** A low wholesale row has three closed entries and two blind panels, with one northern setback household/store room under S1.
 
-Retain GROUND_01/03/04 doors and GROUND_02/05 niches; no upper floor, windows, balcony or awnings. Primary entrance GROUND_03. Retain SPICE_E_WALLBASE_STOCK_01..04, B4_SPICE_E_CART_GROUND_01 and their active placements at their current positions; goods remain at the wall, door service volumes stay empty. No new signs; no stacked threshold sacks. Attached south shop return is BLD_SPAWN_A_WALL_E, one block with a corner front, not another frontage-driven building.
+Retain GROUND_01/03/04 doors and GROUND_02/05 niches at ground. S1 adds one northern setback room and two closed dark windows; no ground awnings or playable upper floor. Primary entrance GROUND_03. Retain SPICE_E_WALLBASE_STOCK_01..04, B4_SPICE_E_CART_GROUND_01 and their active placements at their current positions; goods remain at the wall, door service volumes stay empty. No new signs; no stacked threshold sacks. Attached south shop return is BLD_SPAWN_A_WALL_E, one block with a corner front, not another frontage-driven building.
 
-**public front:** `F/SPICE_STREET_EAST`; zone `SPICE_STREET`, `east` edge, x=33, y=15.440..30.560; a increases +y. **Observed L×D×H:** 15.120 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; retain envelope.
+**public front:** `F/SPICE_STREET_EAST`; zone `SPICE_STREET`, `east` edge, x=33, y=15.440..30.560; a increases +y. **Observed L×D×H:** 15.120 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `quiet_residential_cut_stone`; wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_sun`; wood/metal use that same profile's existing slots.
 
@@ -138,7 +246,7 @@ Reserved end fields to lower assemblies: **0.835 m at a=0**, **0.835 m at a=L** 
 
 **Composition:** A merchant block has a quiet court loggia on its west front and a cloth-trade back on the Souk, with the existing cross-link between its wings.
 
-Group BLD_DYERS_ARCADE_W here as the opposite trade face: the massing rectangles overlap (M01), so they cannot be independently styled buildings. Keep both live IDs. Court main GROUND_01 remains a sealed 4.2 m loggia, with two dark clerestories; the north wing GROUND_01 is the primary closed household entrance. Replace its upper dark window with one ASMB_SCREEN_WINDOW at the same sill. No balcony: the old 2.4 m balcony has no resolved access and conflicts with the retained hero arch. No court awning or commercial sign. Access to stalls is via the existing closed north-wing trade door/off-map interior, not the cross-link. Preserve the court/Souk passage, return corners and roof envelope; walls toward the passage are quiet, zero openings.
+Group BLD_DYERS_ARCADE_W here as the opposite trade face: the massing rectangles overlap (M01), so they cannot be independently styled buildings. Keep both live IDs. Court main GROUND_01 remains a sealed 4.2 m loggia, with two dark clerestories; the north wing GROUND_01 is the primary closed household entrance. Replace its upper dark window with one ASMB_SCREEN_WINDOW at the same sill. No balcony: the old 2.4 m balcony has no resolved access and conflicts with the retained hero arch. No court awning or commercial sign. North-wing access serves only that wing; the separate south display is front-served and locked, with non-playable stock behind the backing. Preserve the court/Souk passage, return corners and roof envelope; walls toward the passage are quiet, zero openings.
 
 **public front:** `F/FOUNTAIN_COURT_EAST`; zone `FOUNTAIN_COURT`, `east` edge, x=36, y=33.280..39.000; a increases +y. **Observed L×D×H:** 5.720 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; retain envelope.
 
@@ -177,7 +285,7 @@ Reserved end fields to lower assemblies: **0.835 m at a=0**, **0.835 m at a=L** 
 
 Keep actual GROUND_01/02/03/04 bindings and 3.2133 m pitch; the old five-bay schedule is not the current architecture. ASMB_RUG_DISPLAY replaces furnishings in 01 and 03; 04 retains one existing generic textile kiosk as a packing bay. Retain the arch masonry and sealed backings. Suppress the upper window over column 02; use three ASMB_SCREEN_WINDOW at 01/03/04 axes. Retain TEXTILE_W_SIGN_1; no second sign. Retain supported awnings at the three arches; no new balcony. Merchant access is off-map behind the existing sealed packing bay; no new service door is added. Keep the column and inter-bay wall blank, no floor racks.
 
-**public front:** `F/TEXTILE_ARCADE_WEST`; zone `TEXTILE_ARCADE`, `west` edge, x=24, y=49.280..62.720; a increases +y. **Observed L×D×H:** 13.440 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; retain envelope.
+**public front:** `F/TEXTILE_ARCADE_WEST`; zone `TEXTILE_ARCADE`, `west` edge, x=24, y=49.280..62.720; a increases +y. **Observed L×D×H:** 13.440 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `covered_arcade`; wall `ph_aged_plaster_ochre`, trim `ph_stone_trim_sandstone`, roof `ph_worn_plaster_sun`; wood/metal use that same profile's existing slots.
 
@@ -205,7 +313,7 @@ Reserved end fields to lower assemblies: **0.600 m at a=0**, **0.600 m at a=L** 
 
 GROUND_01 receives ASSET_TEXTILE_BOOTH, P-BOOTH target 1; GROUND_03 receives ASMB_RUG_DISPLAY; 04 retains the existing packing kiosk and cart anchored by BPL16_TEXTILE_E_STOCK_GROUND_04. No uppers or balcony. Keep signs TEXTILE_E_SIGN_1 only; 03/04 use goods as identification. Retain the awnings on 03/04 and replace the 01 awning with the booth awning, never two covers. Merchant access is off-map behind the existing sealed north packing bay; no new service door is added. No loose ground rugs crossing the lane or extra cloth through the pillar gap.
 
-**public front:** `F/TEXTILE_ARCADE_EAST`; zone `TEXTILE_ARCADE`, `east` edge, x=35, y=49.280..62.720; a increases +y. **Observed L×D×H:** 13.440 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; retain envelope.
+**public front:** `F/TEXTILE_ARCADE_EAST`; zone `TEXTILE_ARCADE`, `east` edge, x=35, y=49.280..62.720; a increases +y. **Observed L×D×H:** 13.440 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `covered_arcade_lime`; wall `ph_painted_plaster_warm`, trim `ph_stone_trim_white`, roof `ph_worn_plaster_ochre`; wood/metal use that same profile's existing slots.
 
@@ -358,7 +466,7 @@ Reserved end fields to lower assemblies: **2.445 m at a=0**, **2.445 m at a=L** 
 
 **Composition:** A tea serving recess and a closed entrance sit under two shuttered upper rooms overlooking the raised terrace.
 
-Retain GROUND_01 serving recess and GROUND_02 entry, not two retail openings from the old brief. Primary access GROUND_02. Two ASMB_SHUTTER_WINDOW: SH-L at the serving-recess axis and SH-W over the entry; no projected gallery or balcony because no upper access has been established. Retain ASSET_TEA_SERVICE, table and stools via TEA_TERRACE; retain the existing bay awning at 01 plus route-owned high shade. Keep TEA_E_SIGN_1, suppress TEA_E_SIGN_2 member; one tea-house sign. No ground textile booth, barrels or new stools. Thresholds reference z=1.4 m, not map zero.
+Retain GROUND_01 serving recess and GROUND_02 entry, not two retail openings from the old brief. Primary access GROUND_02. Two ASMB_SHUTTER_WINDOW: SH-L at the serving-recess axis and SH-W over the entry; no new gallery or playable balcony; keep useful existing backed upper projections only after support/access review. Retain ASSET_TEA_SERVICE, table and stools via TEA_TERRACE; retain the existing bay awning at 01 plus route-owned high shade. Keep TEA_E_SIGN_1, suppress TEA_E_SIGN_2 member; one tea-house sign. No ground textile booth, barrels or new stools. Thresholds reference z=1.4 m, not map zero.
 
 **public front:** `F/TEA_TERRACE_EAST`; zone `TEA_TERRACE`, `east` edge, x=19, y=56.800..65.200; a increases +y. **Observed L×D×H:** 8.400 × 4.8 × 7; registered storeys=2, local floor z=1.4. Roof/parapet setback_flat, existing parapet height 0.75; retain envelope.
 
@@ -405,9 +513,9 @@ Reserved end fields to lower assemblies: **3.425 m at a=0**, **3.425 m at a=L** 
 
 [Architectural drawing](drawings/BLD_STORES_BACK.svg)
 
-**Composition:** Two closed under-terrace storage doors and three small high vents resolve the south retaining spine.
+**Composition:** Two small sealed inspection panels explain the retaining spine without inventing full-height storage under the ramp.
 
-This 0.96 m massing is a visual spine, not a deep two-storey warehouse. Doors move to quarter/three-quarter points to hold both corners; their existing GROUND_01/02 IDs stay bound. Three vents at quarter/half/three-quarter points. Primary service entry south door, both visually closed. No balcony, shop, awning, sign or goods. Do not connect this wall through the ramp, or claim it is the rear face of CARAVAN_STORES across the street.
+This 0.96 m massing is a retaining/enclosure screen, not a warehouse. Replace the two 2.5 m door visuals with sealed inspection panels, 1.35 m wide × 0.85 m high, sill0.25/head1.10, at a=2.328/6.984; preserve GROUND_01/02 identities. Suppress all three old upper vent visuals and any door-service signage, retaining bindings and solid collision. These are flush ASMB_WALL_FINISH panels, not entries. M02 checks that the local ramp/retaining section can contain each panel; where it cannot, finish that panel as uninterrupted masonry. No hidden excavated room or lowered floor is proposed.
 
 **public front:** `F/SERVICE_NORTH_EAST_SPINE_S`; zone `SERVICE_NORTH`, `east` edge, x=10, y=48.032..57.344; a increases +y. **Observed L×D×H:** 9.312 × 0.96 × 7; registered storeys=2, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; retain envelope.
 
@@ -417,13 +525,10 @@ Reserved end fields to lower assemblies: **1.653 m at a=0**, **1.653 m at a=L** 
 
 | Stable bay suffix | Assembly (quantity 1 each) | a | S / H |
 |---|---|---:|---:|
-| `GROUND_01` | `door_storage_heavy` | 2.328 | 0.000 / 2.500 |
-| `STORY_1_WINDOW_01` | `vent_service` | 2.328 | 3.680 / 4.160 |
-| `STORY_1_WINDOW_02` | `vent_service` | 4.656 | 3.680 / 4.160 |
-| `GROUND_02` | `door_storage_heavy` | 6.984 | 0.000 / 2.500 |
-| `STORY_1_WINDOW_03` | `vent_service` | 6.984 | 3.680 / 4.160 |
+| `GROUND_01` | `ASMB_WALL_FINISH` sealed inspection panel | 2.328 | 0.250 / 1.100 |
+| `GROUND_02` | `ASMB_WALL_FINISH` sealed inspection panel | 6.984 | 0.250 / 1.100 |
 
-**Face totals:** 2 closed doors; 0 windows; 0 sealed architectural arches; 0 shop recesses; 3 vents; 0 blind niches; 0 columns/pilasters.
+**Face totals:** 0 doors; 0 windows; 0 arches; 0 shop recesses; 0 vents; 2 sealed inspection panels. Three upper vent IDs remain dormant bindings. Baseline wall/roof retained; panel fit unresolved at M02.
 
 
 <a id="bld_tea_house_back"></a>
@@ -431,11 +536,11 @@ Reserved end fields to lower assemblies: **1.653 m at a=0**, **1.653 m at a=L** 
 
 [Architectural drawing](drawings/BLD_TEA_HOUSE_BACK.svg)
 
-**Composition:** Two high blind panels articulate the retaining wall below the terrace without suggesting inhabited upper rooms.
+**Composition:** Two high blind panels articulate the retaining/enclosure screen beside the terrace, with E1 opening a tested overlook.
 
-Retain GROUND_01/02 IDs but put their niches at thirds, sill 1.3/head 3.1; suppress the extra STORY_1_WINDOW_01 niche. Zero doors/windows, no balcony, shop, sign or awning. Name is legacy: this x=10 retaining spine is not the back of the tea building at x=19. Keep the 7 m screen/roof silhouette; do not shrink it to match the wall role. Blank lower field and terrain-side face, one continuous contact course.
+Retain GROUND_01/02 IDs but put their niches at thirds, sill 1.3/head 3.1; suppress the extra STORY_1_WINDOW_01 niche. Zero doors/windows, no balcony, shop, sign or awning. Name is legacy: this x=10 retaining spine is not the back of the tea building at x=19. Baseline retains the 7 m screen; E1 separately cuts the y=58..61 slot and affected roof pieces above +2.50. The two niche rows below describe the retained baseline only; E1 suppresses any overlapping niche geometry. Blank lower field and terrain-side face, one continuous contact course.
 
-**compound/service wall:** `F/SERVICE_NORTH_EAST_SPINE_MID`; zone `SERVICE_NORTH`, `east` edge, x=10, y=57.344..66.656; a increases +y. **Observed L×D×H:** 9.312 × 0.96 × 7; registered storeys=2, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; retain envelope.
+**compound/service wall:** `F/SERVICE_NORTH_EAST_SPINE_MID`; zone `SERVICE_NORTH`, `east` edge, x=10, y=57.344..66.656; a increases +y. **Observed L×D×H:** 9.312 × 0.96 × 7; registered storeys=2, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `quiet_residential_warmwash_relief`; wall `ph_whitewashed_brick_warm`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_sun`; wood/metal use that same profile's existing slots.
 
@@ -479,7 +584,7 @@ Reserved end fields to lower assemblies: **2.579 m at a=0**, **2.579 m at a=L** 
 
 **Composition:** The Souk-facing side of the central merchant block has one cloth-trade arch, a cross-link, and one narrow closed service door.
 
-Part of BLD_MERCHANT_HOUSE, not a separate building. Keep the south arch; replace its generic kiosk with ASMB_DYE_COUNTER (DY-S) and retain its supported awning. No full textile booth here. Three ASMB_SCREEN_WINDOW: two existing south-wing windows and one north-wing window. Primary trade service entry is north GROUND_01. Keep DYE_W_SIGN_1; suppress DYE_W_SIGN_2 member so the service door is quiet. No balcony. Retain the cart and rug bindings via COVERED_SOUK; no new goods at the cross-link turn. M01 chooses the visible roof/return skin, preserving both shells and every anchor.
+Part of BLD_MERCHANT_HOUSE, not a separate building. Keep the south arch; replace its generic kiosk with ASMB_DYE_COUNTER (DY-S) and retain its supported awning. No full textile booth here. Three ASMB_SCREEN_WINDOW: two existing south-wing windows and one north-wing window. Primary trade service entry is north GROUND_01. Keep DYE_W_SIGN_1; suppress DYE_W_SIGN_2 member so the service door is quiet. No balcony. Retain the cart and rug bindings via COVERED_SOUK; no new goods at the cross-link turn. M01 verifies the existing shared owner (Souk massing for each wing), preserving both IDs, repairs and every anchor.
 
 **public front:** `F/COVERED_SOUK_WEST`; zone `COVERED_SOUK`, `west` edge, x=41, y=33.280..39.000; a increases +y. **Observed L×D×H:** 5.720 × 4.8 × 7; registered storeys=2, local floor z=0. Roof/parapet setback_flat, existing parapet height 0.75; retain envelope.
 
@@ -518,7 +623,9 @@ Reserved end fields to lower assemblies: **0.785 m at a=0**, **0.785 m at a=L** 
 
 GROUND_02 is the approved textile pilot and remains untouched. GROUND_03 receives ASMB_DYE_COUNTER (DY-S); GROUND_01 retains a smaller closed packing cabinet with restrained bolts. Three arches, zero doors/windows/uppers, no balcony. Service access is off-map behind the existing sealed commercial backing; no new door or traversable interior is advertised. Keep DYE_E_SIGN_1/2 and existing southern auto sign, one per bay maximum. The approved booth owns the02 awning; retain the independently supported01/03 awnings. Preserve wide blank piers and grounded arch thresholds; no additional floor stock. M02/M03 govern the north dye counter and its existing awning below CANOPY_DYERS_01.
 
-**public front:** `F/COVERED_SOUK_EAST`; zone `COVERED_SOUK`, `east` edge, x=53, y=33.280..46.720; a increases +y. **Observed L×D×H:** 13.440 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; retain envelope.
+**Proposed complete roof (M):** retain the 4.50 m wall, slab top4.76, 0.45 m setback and parapet cap5.59. Replace this owner's seeded roof head/rear tier with a broad roof-access room x=54.6..56.4,y=40.9..44.7, base4.76, wall top7.15, flat cap7.35 (0.20 m). It has one closed west-facing roof door1.0×2.10 centered y=42.2 on x=54.6, opening only to the non-playable roof; the stair is implied behind the north trade bay. Both room end walls are blank; rear gets one0.58×0.48 vent centered y=42.8,sill6.20. Keep existing low service vent/exhaust cluster toward y≈38.33. No room extends over the walking lane. The two outer end walls retain wall base, existing useful supported details, roof returns and source closures; no new ground entry. Rear is sealed boundary fabric; no modeled interior. Exterior roof falls are represented by flush stains toward existing low rear joints, with no invented drain pipe or outlet until M02 confirms a route. See assets.md for exact exports and suppression.
+
+**public front:** `F/COVERED_SOUK_EAST`; zone `COVERED_SOUK`, `east` edge, x=53, y=33.280..46.720; a increases +y. **Observed L×D×H:** 13.440 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `covered_arcade_lime`; wall `ph_painted_plaster_warm`, trim `ph_stone_trim_white`, roof `ph_worn_plaster_ochre`; wood/metal use that same profile's existing slots.
 
@@ -540,7 +647,7 @@ Reserved end fields to lower assemblies: **0.600 m at a=0**, **0.600 m at a=L** 
 
 **Composition:** One high niche resolves the low south enclosure at the Souk arrival.
 
-Zero doors/windows, no balcony, shop, sign, awning or loose dressing. Existing side route is the entrance; retain the 4.2 m wall and open path beside it. Base, ends and coping use ASMB_WALL_FINISH.
+Zero doors/windows, no balcony, shop, sign, awning or loose dressing. Existing side route is the entrance; retain the 4.2 m-long, 4.9 m-high wall and open path beside it. Base, ends and coping use ASMB_WALL_FINISH.
 
 **compound/service wall:** `F/COVERED_SOUK_SOUTH`; zone `COVERED_SOUK`, `south` edge, y=32, x=41.360..45.560; a increases +x. **Observed L×D×H:** 4.200 × 0.96 × 4.9; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; retain envelope.
 
@@ -589,9 +696,9 @@ Reserved end fields to lower assemblies: **1.385 m at a=0**, **1.385 m at a=L** 
 
 **Composition:** A single-storey home steps down beside the workshop, with one centered closed door and two equal screened windows.
 
-Retain BAY_DOOR at axis, use two ASMB_SCREEN_WINDOW, SC-D diamond-lattice construction, at BAY_WINDOW_S/N; no upper windows. Proposed finish for R07: `ph_beige_wall_002` pale lime-plaster field on front/side/rear, with existing `ph_sandstone_blocks_05` exposed base/corner stone and `ph_trim_sanded_01` surrounds. The profile slots below record the existing implementation; the approved Blender skin will own this proposed material treatment without repainting other uses of that profile. Primary entry BAY_DOOR. No balcony, awning, sign, shop, vats or stacked goods. Keep the full door approach and southern party-wall corner empty. The taller works party-wall strip is owned by the works and remains blank stone above this roof.
+Retain BAY_DOOR at axis, use two ASMB_SCREEN_WINDOW, SC-D diamond-lattice construction, at BAY_WINDOW_S/N; no upper windows. Proposed finish for R07: `ph_beige_wall_002` pale lime-plaster field on front/side/rear, with existing `ph_sandstone_blocks_05` exposed base/corner stone and `ph_trim_sanded_01` surrounds. The profile slots below record the existing implementation; the approved Blender skin will own this proposed material treatment without repainting other uses of that profile. Primary entry BAY_DOOR. No balcony, awning, sign, shop, vats or stacked goods. Proposed roof: retain slab4.50..4.76 and parapet/cap top5.59; remove this owner's seeded head/rear tier, add a closed flush roof hatch x=42.4..43.4,y=23..24, top4.94. One existing-type vent_service at a=4.125, sill3.50/head3.98,width0.58 explains a ventilated loft above the2.7 m ceiling. Human-scale door1.05×2.25 and screens1.0×1.4 remain unchanged. Hidden household stair/hatch access is explanatory, not playable. Keep the full door approach and southern party-wall corner empty. The taller works party-wall strip is owned by the works and remains blank stone above this roof.
 
-**public front:** `F/DYERS_ALLEY_WEST_N`; zone `DYERS_ALLEY`, `west` edge, x=46, y=21.990..30.240; a increases +y. **Observed L×D×H:** 8.250 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; retain envelope.
+**public front:** `F/DYERS_ALLEY_WEST_N`; zone `DYERS_ALLEY`, `west` edge, x=46, y=21.990..30.240; a increases +y. **Observed L×D×H:** 8.250 × 4.2 × 4.5; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.65; observed baseline, with the named revision above proposed separately.
 
 Material assignment: `quiet_residential_cut_stone`; wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_sun`; wood/metal use that same profile's existing slots.
 
@@ -603,7 +710,9 @@ Reserved end fields to lower assemblies: **1.300 m at a=0**, **1.300 m at a=L** 
 | `BAY_DOOR` | `door_residential_timber` | 4.125 | 0.000 / 2.250 |
 | `BAY_WINDOW_N` | `ASMB_SCREEN_WINDOW` | 6.450 | 0.850 / 2.250 |
 
-**Face totals:** 1 closed doors; 2 windows; 0 sealed architectural arches; 0 shop recesses; 0 vents; 0 blind niches; 0 columns/pilasters.
+| `LOFT_VENT_PROPOSED` | `vent_service` | 4.125 | 3.500 / 3.980 |
+
+**Face totals:** 1 closed doors; 2 windows; 0 sealed architectural arches; 0 shop recesses; 1 vents; 0 blind niches; 0 columns/pilasters.
 
 
 <a id="bld_alley_backs"></a>
@@ -698,7 +807,7 @@ Reserved end fields to lower assemblies: **1.255 m at a=0**, **1.255 m at a=L** 
 
 **Composition:** A quiet single-storey dwelling faces the court with a centered closed door and paired dark windows.
 
-Retain BAY_DOOR and BAY_WINDOW_S/N exactly. No uppers, balcony, awning, sign or shop goods. Do not add pottery at the threshold from the old brief. The existing east planter belongs to NORTH_COURT and stays at its current anchor. Quiet ends and base, whitewash field, sandstone trim.
+Retain BAY_DOOR and BAY_WINDOW_S/N exactly. No uppers, balcony, awning, sign or shop goods. Do not add pottery at the threshold from the old brief. The existing east planter belongs to NORTH_COURT and stays at its current anchor. Quiet ends and base, retain the listed cut-stone field and sandstone trim; no whitewash substitution.
 
 **public front:** `F/NORTH_COURT_EAST_S`; zone `NORTH_COURT`, `east` edge, x=53, y=63.440..71.000; a increases +y. **Observed L×D×H:** 7.560 × 0.96 × 4.9; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; retain envelope.
 
@@ -866,7 +975,7 @@ Visible bay counts and source-local positions are in the overlay card above; zer
 
 **Composition:** A small quiet enclosure wing frames the north arrival without competing with the Rug Gate.
 
-One high niche, zero doors/windows. No balcony, shop, sign or awning. Retain coping and sandstone, with empty lower field and gate return. The open central arrival is the only route.
+One high niche, zero doors/windows. No balcony, shop, sign or awning. Retain coping and sandstone, with empty lower field and gate return. The central arrival and both existing side links remain legible routes.
 
 **compound/service wall:** `F/SPAWN_B_SOUTH_WEST`; zone `SPAWN_B_COURTYARD`, `south` edge, y=78, x=17.660..20.300; a increases +x. **Observed L×D×H:** 2.640 × 0.96 × 4.9; registered storeys=1, local floor z=0. Roof/parapet flat_parapet, existing parapet height 0.45; retain envelope.
 
@@ -905,7 +1014,7 @@ Reserved end fields to lower assemblies: **1.345 m at a=0**, **1.345 m at a=L** 
 
 ## Public-space and route cards (25)
 
-Each existing zone ID is its public-space owner. Paving, freestanding active dressing, cover, residual collision-wall fields, connector cut edges and short returns are included. Frontage faces defer to their BLD card; no second facade is added. `open` means no treatment geometry. On a partially open edge, apply finish **only to the existing supported wall intervals**, never across the union of adjoining traversal surfaces. Boundary heights and supports stay as built; there is no new wall-height proposal.
+Each existing zone ID is its public-space owner. Paving, freestanding active dressing, cover, residual collision-wall fields, connector cut edges and short returns are included. Frontage faces defer to their BLD card; no second facade is added. `open` means no treatment geometry. On a partially open edge, apply finish **only to the existing supported wall intervals**, never across the union of adjoining traversal surfaces. Baseline boundaries remain; E1/G1 and S1/S2 are the only spatial alternatives here. They require separate approval and the README tests.
 
 `ASMB_GROUND_FINISH` means retain the authored surface and floor material, resolve material transitions and contact wear at the existing footprint edges. Drainage here is existing joints and localized flush stain, not excavated channels or collision. New trim stays off every opening/turn, including the inner line of diagonal movement. World rect is (x,y,w,h); along for east/west walls increases y, for north/south walls x. Linear passage floors increase toward their destination; stair/ramp elevation follows source y.
 
@@ -941,7 +1050,7 @@ Edge ownership: north: architectural_cut_edge; east: BLD_MERCHANT_HOUSE, BLD_MER
 
 Observed rect **(24,48,11,16)**, surface `SURFACE_TEXTILE_ARCADE`, material `cobblestone_color`, authored clear width **6 m**. One ASMB_GROUND_FINISH schedule; existing surface geometry retained. Review unit `unit-textile-arcade`.
 
-Retain COVER_TEXTILE_01 and east north cart. Three arch axes face the same axes across the lane. Only the existing overhead canopy/laundry compress the passage; keep the north reveal and both cut returns quiet. No new center rugs or piers. Keep cobblestone boundaries at y=48/64; edge contact dirt follows existing walls, not a full-width strip.
+Retain COVER_TEXTILE_01 and east north cart. Three arch axes face the same axes across the lane. Overhead canopy/laundry and S2 roof order compress the passage; G1 separately tests one southern return. Keep the north reveal quiet. No new center rugs or piers. Keep cobblestone boundaries at y=48/64; edge contact dirt follows existing walls, not a full-width strip.
 
 Edge ownership: north: short_wall_return; east: BLD_RUG_ARCADE_E; south: open_traversal_face; west: BLD_RUG_ARCADE_W. All unscheduled supported fragments receive ASMB_WALL_FINISH with zero openings; named code/kit overlays take precedence. No assembly spans an open fragment.
 
@@ -1076,7 +1185,7 @@ Edge ownership: north: architectural_cut_edge; east: open_traversal_face; south:
 
 Observed rect **(36,39,5,5)**, surface `SURFACE_LINK_EAST_MID`, material `cobblestone_pavement`, authored clear width **3.5 m**. One ASMB_GROUND_FINISH schedule; existing surface geometry retained. Review unit `unit-link-east-mid`.
 
-Five-metre passage through the central merchant block. North/south walls belong to that same block, zero openings/props; use continuous quiet plaster over the existing stone base. East/west remain completely open. No new door, merchandise, canopy or curb. M01 resolves double skins where the two frontage masses meet the connector.
+Five-metre passage through the central merchant block. North/south walls belong to that same block, zero openings/props; use continuous quiet plaster over the existing stone base. East/west remain completely open. No new door, merchandise, canopy or curb. M01 verifies existing shared-shell ownership and exposed strips where the two frontage masses meet the connector; duplication is not an established current bug.
 
 Edge ownership: north: architectural_cut_edge; east: open_traversal_face; south: architectural_cut_edge; west: open_traversal_face. All unscheduled supported fragments receive ASMB_WALL_FINISH with zero openings; named code/kit overlays take precedence. No assembly spans an open fragment.
 
@@ -1179,7 +1288,7 @@ Keep the shared base .72, string 2.45..2.9, quiet plaster and all existing roof/
 <a id="own_overhead"></a>
 ### O07 · OWN_OVERHEAD
 
-**Shared supported shade and drying structures.** Retain six `ASSET_CLOTH_CANOPY` and eight `ASSET_LAUNDRY_LINE` instances at their exact active anchors; the complete list is in assets. Shared ownership prevents both street faces adding the same rope. Each has two attachment ends, resolved load path, bound hem and restrained sag. M03 verifies masonry/roof support and minimum cloth height before adaptation; do not invent a floating ledger or new route post. Roof attachments stay within existing skyline/sightline envelopes. Keep all current cloth widths and openings between spans; no new variants, spans or added hanging goods. Bay awnings belong to their shops and are not counted here. Covered Souk north structural end wall belongs to COVERED_SOUK; it does not need another arch bay.
+**Shared supported shade and drying structures.** Retain six `ASSET_CLOTH_CANOPY` and eight `ASSET_LAUNDRY_LINE` instances at their exact active anchors; the complete list is in assets. Shared ownership prevents both street faces adding the same rope. Each has two attachment ends, resolved load path, bound hem and restrained sag. M03 verifies masonry/roof support and minimum cloth height before adaptation; do not invent a floating ledger or new route post. Roof attachments follow the finite M03 options in assets.md; revisions outside existing envelopes are class M/L. Preserve or improve sky gaps; no new variants, spans or added hanging goods. Bay awnings belong to their shops and are not counted here. Covered Souk north structural end wall belongs to COVERED_SOUK; it does not need another arch bay.
 
 <a id="own_city_boundary"></a>
 ### O08 · OWN_CITY_BOUNDARY
@@ -1189,7 +1298,7 @@ Keep the shared base .72, string 2.45..2.9, quiet plaster and all existing roof/
 <a id="own_city_backdrop"></a>
 ### O09 · OWN_CITY_BACKDROP
 
-**Four city belts, 120 massing shells total.** Retain `resolveBackgroundShellPlacements` and its deterministic order: rings0..3 contain south/north 4/5/6/7 shells each, west/east 6/7/8/9 each, plus four corner shells per ring (24+28+32+36=120). Each existing shell keeps its `shellIndex`, profile, dimensions, walls, roof/crown, water tank if present, and material assignment. Three existing minaret flags (ring0: north last, east penultimate, south slot1) remain; no new minaret or dome. Primary city-facing surfaces are quiet masonry, side/rear/exposed party faces equally resolved; **zero doors/windows** on each shell face; retain existing roof/tank/minaret details as part of the group. No accessible floors, foreground goods, balconies, awnings or signs. Keep sealed background ground and roof continuity, existing profile heights (party9.5/terrace11.15/rearStep8.35/tower13.45 before existing ring/jitter rules), and all silhouette gaps. These are retained group rules, not permission to regenerate random variants or force every building to the same height.
+**Four city belts, 120 massing shells total.** Retain `resolveBackgroundShellPlacements` and its deterministic order: rings0..3 contain south/north 4/5/6/7 shells each, west/east 6/7/8/9 each, plus four corner shells per ring (24+28+32+36=120). Each existing shell keeps its `shellIndex`, profile, dimensions, walls, roof/crown, water tank if present, and material assignment. Three existing minaret flags (ring0: north last, east penultimate, south slot1) remain; no new minaret or dome. Primary city-facing surfaces are quiet masonry, side/rear/exposed party faces equally resolved; **zero ground doors/windows added**; selected near-city upper closures remain conditional on exact visible shell IDs at M07, retain existing roof/tank/minaret details as part of the group. No accessible floors, foreground goods, balconies, awnings or signs. Keep sealed background ground and roof continuity, existing profile heights (party9.5/terrace11.15/rearStep8.35/tower13.45 before existing ring/jitter rules), and all silhouette gaps. These are retained group rules, not permission to regenerate random variants or force every building to the same height.
 
 ## Suppression boundary and finish line
 

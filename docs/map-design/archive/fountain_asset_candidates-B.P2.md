@@ -7,9 +7,9 @@ Last updated: 2026-08-16
 
 > **Archived.** Roadmap card B.P2 was completed and the roadmap retired. The constraint
 > lines below (restyle ban, 1.6M scene cap, per-asset tri/texture caps) reflect that era's
-> budgets and are NOT current policy. Current procedure and status live in the
-> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md) and
-> [`map-polish-state.json`](../map-polish-state.json); the CC0 source list remains historical evidence.
+> budgets and are NOT current policy. Current procedure lives in the
+> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md); current design proposals live in the
+> [development plan](../development-plan/README.md). The current user task owns scope and status; the CC0 source list remains historical evidence.
 
 # B.P2 fountain asset scouting brief
 

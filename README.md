@@ -49,7 +49,7 @@ Use the canonical playtest URL from the current short-term memory snapshot.
 - Normal game work: `pnpm typecheck && pnpm test:server && pnpm smoke:game`
 - Bot work: add `pnpm bot:smoke`
 - Public-contract work: add `pnpm verify:skills-contract && pnpm smoke:no-context`
-- Map/visual checkpoint: `pnpm qa:completion`
+- Map/visual work: follow the [development plan](docs/map-design/development-plan/README.md) and [map-polish checks](.claude/skills/map-polish/SKILL.md#safety-and-performance); `pnpm qa:completion` applies at district or release milestones.
 - Release candidate: `pnpm qa:release`
 - Full browser regression sweep: `pnpm test:playwright:full` for loading-screen, public-selector, public-payload, or shared-champion changes
 

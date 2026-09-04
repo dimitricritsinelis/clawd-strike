@@ -8,9 +8,9 @@ Last updated: 2026-08-16
 # Archived Bazaar Visual Overhaul Roadmap
 
 > Historical record only. This file does not define current status, scope,
-> acceptance, or workflow. Current procedure and status live in the
-> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md) and
-> [`map-polish-state.json`](../map-polish-state.json).
+> acceptance, or workflow. Current procedure lives in the
+> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md); current design proposals live in the
+> [development plan](../development-plan/README.md). The current user task owns scope and status.
 
 Quality target (owner reset 2026-07-23): the five CS2 daylight references `docs/map-design/refs/cs2_daylight_ref_1..5.png` — measured roles and target bands live in the ART DIRECTION RESET preamble below. `docs/map-design/refs/bazaar_main_hall_reference.png` is the THEME/CONTENT reference only (architecture vocabulary, market dressing: dense clutter, layered facades, hanging cloth); its dusk mood, darkness, and saturation are explicitly NOT the target.
 Scope split: main lane (the SHOT_02/03/04/07/09/11/12 corridor) = hyper-detail; outer zones = complete-but-simpler.

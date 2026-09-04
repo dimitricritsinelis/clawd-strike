@@ -1,20 +1,29 @@
 # Curated design references
 
-**Revision 2 / proposed.** These eight GPT-generated images replace the old main-hall and `visual-targets/*/target.jpg` concepts as the active design-review set. Old images remain available as history; they are not concurrent targets. Keep the five authentic CS2 daylight screenshots as external finish/readability benchmarks and the original booth game images as approval evidence.
+**Revision 3 / proposed.** These eight GPT-generated images are secondary design-review proposals. The [original Bazaar main-hall image](../refs/bazaar_main_hall_reference.png) remains the primary artistic reference, as defined by the [quality bar](../quality-bar.md#visual-target). The numbered concepts are preserved in the [historical archive](../archive/README.md); they are not current design targets. Keep the five authentic CS2 daylight screenshots as external finish/readability benchmarks and the original booth game images as approval evidence.
 
 The generated references show **visual character and craft**. Dimensioned building cards/drawings determine geometry, counts, clearances and placement. No image is evidence of an implemented map, collision safety, performance, exact dimensions or visual approval. Reject image-only changes to openings, supports, thresholds, cover or skyline. Do not silently reinterpret a generated detail as an approved feature.
+
+## Revision 3 interpretation
+
+The founding image opens the revised atlas. Read close trade edges, staggered broad upper rooms, alternating supported cloth/sky gaps and a distant arch as one sequence. S1/S2 translate those relationships into dimensioned roofs while preserving the ground route baseline. Warm sunlight on stone/plaster and readable bounced shade are the active direction. No golden haze, crushed black shade or global orange overlay is prescribed.
+
+R01/R03 retain joinery and trade vocabulary but do not set corridor breadth or skyline. R05 supplies tea materials; E1 replaces its enclosed-corridor premise as a test. R06 supplies the three-business idea; the actual center booth asset remains authoritative. R07's door-to-wall proportion does not match B21: keep the2.25 m door and4.5 m wall, add the specified loft/roof treatment, and do not scale the image into a building. B18 becomes the complete-building pilot.
+
+All eight image files and exact historical prompts below are preserved. Their instructions to keep heights fixed and use neutral daylight are provenance, not the current design brief. Their incidental supports, shutters, paving and cloth are not measurements. Compare proposed silhouettes and warm-light readability through M07 in README.md before any engine tuning.
 
 ## Reference register and visual review
 
 | ID | Image / owning scope | Adopt | Do not infer |
 |---|---|---|---|
+| R00 | [Founding Bazaar street](../refs/bazaar_main_hall_reference.png) | Primary authority: layered depth, occupied upper rooms, supported shade interpretation, trade edges and warmth. | Ambiguous cable endpoints, blocked walking space, lettering or exact dimensions are not construction requirements. |
 | R01 | [Spice Street](references/spice-street.png) | District palette, three distinct trades, rich west / quiet east. | Cabinet depth, incidental background openings and the cover cabinet silhouette are not approved geometry. |
 | R02 | [Fountain Court](references/fountain-court.png) | Civic masonry, readable shade, restrained blue waterline, contact and carving. | Fountain size/position and background opening counts remain the measured source values. |
 | R03 | [Textile Arcade](references/textile-arcade.png) | Hanging galleries versus roll chests, supported shade, quiet piers. | No extra arch bays, projected floor stock or changed walking width. |
 | R04 | [Rug Gate](references/rug-gate.png) | Voussoirs, cornice, blue accent and quiet receiving backdrop. | No new step under the portal, changed arch span or narrowed sightline. |
 | R05 | [Caravan / Tea Terrace](references/tea-terrace.png) | Serving joinery, brass/porcelain/linen, wall repairs and overhead support. | Furniture quantity, cloth low points and all route grades require the source schedule and M02/M03. |
 | R06 | [Covered Dyers Souk](references/covered-souk.png) | Exactly three different trade compositions in one retained arcade. | The approved center booth stays its existing asset; the generated depiction does not revise its geometry. |
-| R07 | [Dyers House pilot](references/dyers-house.png) | One dwelling, one door, two screens, quiet side wall and flush entrance. | Dimensions come from B21, not perspective measurement; no new route or extra window. |
+| R07 | [Dyers House study](references/dyers-house.png) | One dwelling, one door, two screens, quiet side wall and flush entrance. | Dimensions come from B21, not perspective measurement; no new route or extra window. |
 | R08 | [Construction and trade study](references/craft-and-trade.png) | Finished frames, lattice, supported cloth, trade-specific cabinets and stock. | Detail study only: panel photographs are not measured sections or production textures. |
 
 All eight final images were visually reviewed. R07 had one targeted correction: its initial raised entrance was removed so the final door meets continuous paving. No repeated redesign cycle was used. R06 keeps the approved booth as the source-of-truth asset and assigns the north bay a different dye-sample seller. The first six images use existing game views as spatial references; their lighting/materials are artistic proposals.
@@ -35,7 +44,7 @@ All eight final images were visually reviewed. R07 had one targeted correction: 
 | 14 Service South | B13/P07; R05 quiet plaster/contact treatment |
 | 15-16 Caravan / Tea | R05/R08 + B09-B16 and P08-P13 |
 | 17-18 Spawn B | R04 + B34/B35, O06 and P06 |
-| 19 Skyline | O08/O09 and masterplan; source-generated silhouettes remain unchanged |
+| 19 Skyline | O08/O09 and masterplan; S1/S2 roof sections and owner-specific M proposals govern proposed silhouettes |
 
 ## Generation provenance and prompts
 
@@ -119,7 +128,7 @@ Use case: stylized-concept. Make a premium architectural visualization for a pro
 
 </details>
 
-### R07 · Dyers House pilot
+### R07 · Dyers House study
 
 File: `references/dyers-house.png` · MD5 `46c31055bf5bdea813b1f7e11c547c71`.
 
