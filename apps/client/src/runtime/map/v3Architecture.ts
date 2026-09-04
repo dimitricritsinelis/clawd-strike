@@ -5317,7 +5317,9 @@ function pushSimpleModule(
           uvProjection: "world",
         });
 
-        if (!isHeroArch) {
+        // The central east bay is furnished by the authored Blender asset.
+        // Keep its masonry and sealed backing, but emit no duplicate booth.
+        if (!isHeroArch && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02") {
           const marketVariant = stableUnitInterval(`${placement.id}:arcade-kiosk`);
           const counterHeightM = 0.52 + marketVariant * 0.14;
           const counterWidthM = placement.sizeM.width * (0.62 + marketVariant * 0.14);

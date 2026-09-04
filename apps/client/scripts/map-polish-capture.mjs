@@ -7,6 +7,7 @@ import { PNG } from "pngjs";
 import sharp from "sharp";
 import { installSignalCleanup } from "./lib/childLifecycle.mjs";
 import { comparePngMetrics, readPngMetrics } from "./lib/imageMetrics.mjs";
+import { BAZAAR_PERFORMANCE_BUDGET, summarizePerformanceSamples } from "./lib/performanceAcceptance.mjs";
 import { startQaServer } from "./lib/qaServer.mjs";
 import {
   DEFAULT_VIEWPORT,
@@ -513,6 +514,7 @@ async function realCapture(plan, outputDir) {
         let state = null;
         let coverage = null;
         let metrics = null;
+        let performanceSample = null;
         try {
           await evaluateRuntimeState(
             page,
@@ -538,6 +540,25 @@ async function realCapture(plan, outputDir) {
             operation: `map-polish-capture-${unit.id}-${viewId}`,
             routeId: unit.id,
           });
+          // The runtime's rolling median includes earlier cameras. Time fresh
+          // synchronous QA frames in-page, excluding Playwright and pacing waits.
+          const frameTimes = await evaluateRuntimeState(page, async () => {
+            if (!window.__qa_render_frame) throw new Error("QA frame timing is unavailable");
+            const samples = [];
+            for (let index = 0; index < 7; index += 1) {
+              const start = performance.now();
+              window.__qa_render_frame();
+              samples.push(performance.now() - start);
+              await new Promise((resolve) => setTimeout(resolve, 50));
+            }
+            return samples;
+          }, undefined, { operation: `map-polish-perf-${unit.id}-${viewId}`, routeId: unit.id });
+          performanceSample = {
+            ...summarizePerformanceSamples(frameTimes.map((cpuFrameMedianMs) => ({
+              ...state, perf: { ...state.perf, cpuFrameMedianMs },
+            }))),
+            measurement: "per-view-qa-frame",
+          };
           coverage = await readScreenshotCoverage(imagePath);
           metrics = await readPngMetrics(imagePath);
         } catch (error) {
@@ -566,6 +587,7 @@ async function realCapture(plan, outputDir) {
           skyRatio: coverage?.skyRatio ?? null,
           skyOnly: coverage?.skyOnly ?? true,
           consoleErrorCount: consoleErrors.length,
+          performance: performanceSample,
           width: metrics?.width ?? 0,
           height: metrics?.height ?? 0,
           sha256: metrics?.hash ?? "",
@@ -711,6 +733,7 @@ async function runCapture(options) {
     schemaVersion: 1,
     authorityHash: plan.authorityHash,
     protectedAuthorityHash,
+    performanceBudget: BAZAAR_PERFORMANCE_BUDGET,
     synthetic: variant !== null,
     ...(variant === null ? {} : { syntheticVariant: variant }),
     valid: invalidViewCount === 0,

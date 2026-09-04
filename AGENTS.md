@@ -7,6 +7,12 @@ Last updated: 2026-09-04
 
 # AGENTS.md — Clawd Strike Operating Contract
 
+## Map development
+
+- Before designing or placing map assets, read [the development plan](docs/map-design/development-plan/README.md), then the relevant building card and asset assignments.
+- Approved designs guide implementation; `docs/map-design/specs/map_spec.json` owns implemented state. A proposed document is not approval.
+- Surface design conflicts instead of improvising. The plan's authority notes resolve older roadmap, schedule, and prose guidance; historical documents do not create development requirements. All safeguards below remain in force.
+
 ## Branch and worktree safety
 
 - Stay on the current branch and preserve unrelated worktree changes.

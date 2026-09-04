@@ -11,7 +11,7 @@ Last updated: 2026-09-04
 
 **The bar is a shipped Counter-Strike 2 map.** Mirage, Anubis, and Dust 2 are the finish level: nothing lower is acceptable. The target is a high-quality shipped Middle Eastern bazaar, not a collection of loosely placed procedural decorations. Preserve the map's overall identity and general layout by default, while allowing a bounded section to be refined, rebuilt, or locally redesigned when that clearly improves the result.
 
-Use [`bazaar_main_hall_reference.png`](refs/bazaar_main_hall_reference.png) for bazaar identity: layered architecture, market density, hanging cloth, stalls, facade vocabulary, and the feeling of a place built as a whole. Its dusk darkness and saturation are not lighting targets.
+Use the proposed [Bazaar design atlas](development-plan/design-atlas.pdf) and [curated reference set](development-plan/references.md) for current design review: building composition, trade identity, material craft and attachment detail. These replace the old main-hall image and `visual-targets/*/target.jpg` as active design targets. They remain proposed until the user approves them. Generated images guide visual character; the dimensioned cards and drawings govern exact counts and fit. The original booth approval remains location-specific.
 
 Use the five [`cs2_daylight_ref_1.png`](refs/cs2_daylight_ref_1.png) through [`cs2_daylight_ref_5.png`](refs/cs2_daylight_ref_5.png) images for bright desert daylight, readable shade, value separation, material clarity, and shipped-game finish. Judge the references holistically; a metric or source declaration does not outrank a visibly stronger render.
 
@@ -33,7 +33,7 @@ These are holistic judgment lenses, not numeric gates. Symmetry is evidence of d
 
 ## Buildings
 
-A wall is part of a building before it is a facade. `buildings[]` in `map_spec.json` names every building on the map with a type, a storey count, and a one-line brief; every frontage carries a `buildingId`. Design the wall from the building, and judge it against the type. A face that needs more than one building is split into one frontage per building, so parapets step and door counts match what stands behind them.
+A wall is part of a building before it is a facade. `buildings[]` in `map_spec.json` names every building on the map with a type, a storey count, and a one-line brief; every frontage carries a `buildingId`. Design the wall from the building, and judge it against the type. A face that needs more than one building is split into one frontage per building, so parapets step and entrances match its use. A house and a store row need different entrance counts. The brief, `walls[]` schedule, compiled layout, and rendered building must agree; a schedule is an authored proposal that can require correction, not proof of quality.
 
 | Type | What it is | What the wall needs |
 |---|---|---|
@@ -93,3 +93,7 @@ Local structural changes are allowed when composition needs them. Do not preserv
 Rendered before/after screenshots from the same deterministic camera poses are the primary quality signal. A stronger result reads more clearly as a finished bazaar and shows a material improvement in composition, assembly, depth, and finish.
 
 Floating or intersecting geometry, blocked openings, unsupported structures, broken load paths, exposed unfinished surfaces, placeholder-looking materials, and disconnected dressing block visual acceptance when visible in the review views.
+
+Acceptance applies to the named scope. Resolve its defect and finish the affected assembly without introducing regressions. Existing unrelated defects do not force a whole-unit rebuild, but must not be presented as finished. Required missing assets keep that outcome incomplete. Whole-building or district signoff still requires all applicable criteria above, including route sequence and transitions between views.
+
+Performance is part of acceptance. Use the existing budgets in `apps/client/scripts/lib/performanceAcceptance.mjs`, matching before/after poses and render settings, and the procedure in map-polish. More detail is justified only while performance stays within budget without a repeatable frame-time regression. Missing telemetry is unverified performance, not a pass.

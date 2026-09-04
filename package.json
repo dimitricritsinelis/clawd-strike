@@ -32,7 +32,7 @@
     "map:shoot": "node --import tsx scripts/map-shoot.ts",
     "map:check": "node --import tsx scripts/map-shoot.ts check",
     "validate:map-layout": "pnpm --filter @clawd-strike/client validate:map-layout",
-    "test:map-tooling": "pnpm --filter @clawd-strike/client test:map-tooling",
+    "test:map-tooling": "node --import tsx --test scripts/lib/mapShoot.test.ts && pnpm --filter @clawd-strike/client test:map-tooling",
     "test:qa-tooling": "pnpm --filter @clawd-strike/client test:qa-tooling",
     "test:map-runtime": "pnpm --filter @clawd-strike/client test:map-runtime",
     "typecheck": "pnpm --filter @clawd-strike/client exec tsc -p ../../tsconfig.json --noEmit && pnpm --filter @clawd-strike/client typecheck",

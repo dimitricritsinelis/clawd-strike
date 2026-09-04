@@ -6,7 +6,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Zones: 25
 - Frontages: 38
 - Architecture placements: 146
-- Dressing placements: 126
+- Dressing placements: 127
 
 ## Facade Profiles
 
@@ -548,6 +548,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_TEA_STOOL_WEST_SOUTH_LMK_TEA_TERRACE_01`: `ASSET_CC0_TEA_STOOL` at `LMK_TEA_TERRACE_01` (16.45, 60.85, 1.40), size 0.38×0.41×0.58m, yaw 70.00deg
 - `PLACE_TEA_TABLE_LMK_TEA_TERRACE_01`: `ASSET_CC0_TEA_TABLE` at `LMK_TEA_TERRACE_01` (17.15, 61.30, 1.40), size 1.13×0.71×0.80m, yaw 90.00deg
 - `PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01`: `ASSET_CLOTH_CANOPY` at `TEA_TERRACE_SHADE_01` (15.00, 62.40, 5.70), size 1.90×6.80×0.18m, yaw 90.00deg
+- `PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH`: `ASSET_TEXTILE_BOOTH` at `DYE_E_TEXTILE_BOOTH` (52.73, 40.00, 0.00), size 2.68×1.29×3.64m, yaw 450.00deg
 - `PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01`: `ASSET_CLOTH_CANOPY` at `CANOPY_TEXTILE_01` (29.50, 54.39, 4.20), size 4.00×11.00×0.18m, yaw 90.00deg
 - `PLACE_TEXTILE_COVER_COVER_TEXTILE_01`: `ASSET_COVER_GOODS` at `COVER_TEXTILE_01` (32.60, 58.20, 0.00), size 1.50×0.75×1.00m, yaw 90.00deg
 - `PLACE_TEXTILE_LANTERN_LANTERN_TEXTILE_01`: `ASSET_CC0_LANTERN` at `LANTERN_TEXTILE_01` (24.45, 55.20, 4.15), size 0.22×0.23×0.53m, yaw 90.00deg

@@ -170,6 +170,30 @@
         "wooden_crate_01/textures/wooden_crate_01_diff_1k.jpg": "266e0462d06e77c5745f66e89820544f",
         "wooden_crate_01/textures/wooden_crate_01_nor_gl_1k.jpg": "e31626a1fcf6f7062c2ffd9fc982b942"
       }
+    },
+    {
+      "id": "original_textile_booth",
+      "url": "textile_booth/textile_booth.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "textile_booth/textile_booth.glb"
+        }
+      },
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "source": "https://polyhaven.com/a/wooden_table_02",
+          "license": "CC0-1.0",
+          "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+          "md5": "07075a87918208594260c86c727e4396"
+        }
+      ],
+      "reference": "https://www.sewatelierm.com/where-and-how-to-buy-the-best-fabrics-in-marrakech/",
+      "md5": {
+        "textile_booth/textile_booth.glb": "7437a13441ccba7a7b598a9f1e2b0c19"
+      }
     }
   ]
 }

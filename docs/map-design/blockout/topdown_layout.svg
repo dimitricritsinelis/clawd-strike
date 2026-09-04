@@ -879,6 +879,9 @@
 <g id="PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="6.800" data-width-m="1.900">
 <line x1="11.600" y1="29.600" x2="18.400" y2="29.600" stroke="#c66832" stroke-width="1.900" stroke-linecap="butt" opacity="0.72"/>
 </g>
+<g id="PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH" data-kind="dressing" data-asset="ASSET_TEXTILE_BOOTH">
+<rect x="52.575" y="51.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
 <g id="PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01" data-kind="dressing" data-asset="ASSET_CLOTH_CANOPY" data-span-m="11.000" data-width-m="4.000">
 <line x1="24.000" y1="37.613" x2="35.000" y2="37.613" stroke="#c66832" stroke-width="4.000" stroke-linecap="butt" opacity="0.72"/>
 </g>

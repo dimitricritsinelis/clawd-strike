@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "b5960d7361dc09db3fca68b871860b7ca825c2daaed90cff9df9b0366af773c6",
+    "sha256": "eb1dcf02c1b550272f7b08588150049eb5ed41cf767382fc342ff7d259384d4f",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -4890,6 +4890,39 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_tea_service"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_TEXTILE_BOOTH",
+      "label": "Original central Souk textile merchant booth",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/textile-booth/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.683,
+        "depth": 1.291,
+        "height": 3.64
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "original_textile_booth",
+        "uri": "/assets/models/environment/bazaar/props/textile_booth/textile_booth.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -10211,6 +10244,7 @@
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
       "anchors": [
+        "DYE_E_TEXTILE_BOOTH",
         "DYE_W_SIGN_1",
         "DYE_W_SIGN_2",
         "DYE_E_SIGN_1",
@@ -10218,6 +10252,7 @@
         "LMK_DYERS_DISTRICT"
       ],
       "assetIds": [
+        "ASSET_TEXTILE_BOOTH",
         "ASSET_SIGNBOARD",
         "ASSET_DYERS_SEALED_VAT",
         "ASSET_DYERS_CERAMIC_VESSEL",
@@ -14974,6 +15009,40 @@
       }
     },
     {
+      "id": "PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_TEXTILE_BOOTH",
+      "anchorId": "DYE_E_TEXTILE_BOOTH",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 52.735,
+        "y": 40,
+        "z": 0
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.683,
+        "depth": 1.291,
+        "height": 3.64
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "original_textile_booth",
+        "uri": "/assets/models/environment/bazaar/props/textile_booth/textile_booth.glb"
+      }
+    },
+    {
       "id": "PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01",
       "clusterId": "CLUSTER_TEXTILE_CANOPY",
       "assetId": "ASSET_CLOTH_CANOPY",
@@ -15833,6 +15902,21 @@
       "along": 0.8586309523809523,
       "servedBayId": "GROUND_03",
       "notes": "Signboard aligned to the merchant bay."
+    },
+    {
+      "id": "DYE_E_TEXTILE_BOOTH",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 52.735,
+        "y": 40,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "along": 0.5,
+      "servedBayId": "GROUND_02",
+      "notes": "Visual-only Blender booth; the original shop anchor retains gameplay collision."
     },
     {
       "id": "DYE_W_SHOP_1",

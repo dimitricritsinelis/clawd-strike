@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { MeshStandardMaterial, type InstancedMesh } from "three";
+import { DoubleSide, Mesh, MeshStandardMaterial, Raycaster, Vector3, type InstancedMesh } from "three";
+import { createArchSpandrelGeometry, createOpenBottomArchRecessGeometry, createOpenBottomPointedArchFrameGeometry } from "./wallDetailFamilies/arches";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
 import {
@@ -1415,6 +1416,31 @@ test("boundary chamfer buckets preserve a physical diagonal facet on wide and na
   }
 });
 
+test("arch meshes leave a real opening facing the frontage and masonry above the curve", () => {
+  const material = new MeshStandardMaterial({ side: DoubleSide });
+  const frame = new Mesh(createOpenBottomPointedArchFrameGeometry(), material);
+  const spandrel = new Mesh(createArchSpandrelGeometry(), material);
+  const back = new Mesh(createOpenBottomArchRecessGeometry(), material);
+  const hit = (mesh: Mesh, x: number, y: number) => new Raycaster(
+    new Vector3(x, y, -2), new Vector3(0, 0, 1),
+  ).intersectObject(mesh).length > 0;
+  try {
+    for (const y of [-0.49, 0, 0.25]) {
+      assert.equal(hit(frame, 0, y), false, "arch frame closes its aperture");
+      assert.equal(hit(spandrel, 0, y), false, "spandrel seals the opening");
+      assert.equal(hit(back, 0, y), true, "recess backing faces sideways");
+    }
+    assert.equal(hit(frame, -0.44, -0.2), true, "left jamb missing");
+    assert.equal(hit(frame, 0.44, -0.2), true, "right jamb missing");
+    assert.equal(hit(frame, 0, 0.44), true, "arch crown missing");
+    assert.equal(hit(spandrel, -0.46, 0.46), true, "left spandrel missing");
+    assert.equal(hit(spandrel, 0.46, 0.46), true, "right spandrel missing");
+  } finally {
+    for (const mesh of [frame, spandrel, back]) mesh.geometry.dispose();
+    material.dispose();
+  }
+});
+
 test("authored arch cutouts stay facade-aligned with no coplanar infill overlap", () => {
   const archPlacement = modulePlacement(
     "ARCH_AXIS_REGRESSION",
@@ -2721,4 +2747,24 @@ test("v3 renderer rejects unresolved modules and refuses to bury future collisio
     () => build([massingPlacement(), connector], true, true),
     /cannot place a closed backing volume behind collision opening 'MOD_OPEN'/,
   );
+});
+
+test("the single Blender textile booth replaces furnishings but preserves its masonry", () => {
+  const targetId = "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02";
+  const target = modulePlacement(targetId, "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 });
+  const neighbor = modulePlacement("NEIGHBOR_ARCH", "arch_arcade", "arch", { x: 10, y: 20, z: 1.8 });
+  const result = build([massingPlacement(), target, neighbor]);
+  const own = result.instances.filter((instance) => instance.placementId?.startsWith(targetId));
+  const adjacent = result.instances.filter((instance) => instance.placementId?.startsWith(neighbor.id));
+  const furniture = (instance: WallDetailInstance) => instance.moduleId === "covered_arcade_served_kiosk"
+    || instance.semanticClass === "arcade_arch_complete_grille"
+    || instance.placementId?.includes("awning");
+  assert.equal(own.filter(furniture).length, 0);
+  assert.ok(adjacent.some(furniture));
+  for (const semantic of ["arcade_arch", "screened_arch_interior", "screened_arch_threshold", "arcade_arch_masonry_return"]) {
+    assert.equal(
+      own.filter((instance) => instance.semanticClass === semantic).length,
+      adjacent.filter((instance) => instance.semanticClass === semantic).length,
+    );
+  }
 });

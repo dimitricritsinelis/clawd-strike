@@ -5555,6 +5555,7 @@
       "districtId": "DISTRICT_DYERS",
       "classification": "soft_visual",
       "anchors": [
+        "DYE_E_TEXTILE_BOOTH",
         "DYE_W_SIGN_1",
         "DYE_W_SIGN_2",
         "DYE_E_SIGN_1",
@@ -5562,6 +5563,7 @@
         "LMK_DYERS_DISTRICT"
       ],
       "assetIds": [
+        "ASSET_TEXTILE_BOOTH",
         "ASSET_SIGNBOARD",
         "ASSET_DYERS_SEALED_VAT",
         "ASSET_DYERS_CERAMIC_VESSEL",
@@ -6562,6 +6564,15 @@
         "z": 1
       },
       "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_TEXTILE_BOOTH",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_TEXTILE_BOOTH",
+      "anchorIds": ["DYE_E_TEXTILE_BOOTH"],
+      "offsetM": {"x": 0, "y": 0, "z": 0},
+      "scale": {"x": 1, "y": 1, "z": 1},
+      "yawOffsetDeg": 180
     },
     {
       "id": "PLACE_DYERS_SIGNS",
@@ -9008,6 +9019,16 @@
       "notes": "Signboard aligned to the merchant bay."
     },
     {
+      "id": "DYE_E_TEXTILE_BOOTH",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "servedBayId": "GROUND_02",
+      "along": 0.5,
+      "inset_m": 0.265,
+      "notes": "Visual-only Blender booth; the original shop anchor retains gameplay collision."
+    },
+    {
       "id": "DYE_E_SHOP_1",
       "type": "shopfront_anchor",
       "zone": "COVERED_SOUK",
@@ -10966,6 +10987,19 @@
           "z": 1
         }
       }
+    },
+    {
+      "id": "ASSET_TEXTILE_BOOTH",
+      "label": "Original central Souk textile merchant booth",
+      "source": {"kind": "project_original", "uri": "repo://assets/source/textile-booth/build.py"},
+      "license": "Project-Original",
+      "dimensionsM": {"width": 2.683, "depth": 1.291, "height": 3.64},
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {"mode": "model", "id": "original_textile_booth", "uri": "/assets/models/environment/bazaar/props/textile_booth/textile_booth.glb"},
+      "transform": {"pivot": "base_center", "upAxis": "+y", "forwardAxis": "+z", "authoredScale": {"x": 1, "y": 1, "z": 1}}
     },
     {
       "id": "ASSET_DYERS_WORKSTATION",

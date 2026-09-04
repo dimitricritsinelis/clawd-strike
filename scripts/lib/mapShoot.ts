@@ -120,6 +120,7 @@ export type WallFaceDescriptor = {
 
 const PROTECTED_TOP_LEVEL_KEYS = Object.freeze([
   "global_dimensions",
+  "map_center",
   "traversal_surfaces",
   "tactical_lanes",
   "explicit_connectivity",
@@ -132,6 +133,7 @@ const PROTECTED_TOP_LEVEL_KEYS = Object.freeze([
 
 const PROTECTED_FILE_PATTERNS = Object.freeze([
   /^apps\/client\/src\/runtime\/sim\//,
+  /^apps\/client\/src\/runtime\/(?:combat|tuning)\//,
   /^apps\/client\/src\/runtime\/enemies\/TacticalGraph(?:\.test)?\.ts$/,
   /^apps\/client\/src\/runtime\/enemies\/enemyLineOfSight\.ts$/,
   /^apps\/client\/src\/runtime\/game\/Game\.ts$/,
@@ -710,10 +712,19 @@ export function protectedDomainProjection(specInput: MapSpec): JsonRecord {
       collisionOpening: entry.collisionOpening,
     }));
   const registry = Array.isArray(spec.asset_registry) ? spec.asset_registry : [];
+  const clusters = (Array.isArray(spec.dressing_clusters) ? spec.dressing_clusters : []).filter(isRecord);
+  const gameplayClusters = clusters.filter((entry) => entry.classification === "gameplay_cover");
+  const gameplayAssetIds = new Set(gameplayClusters.flatMap((entry) => Array.isArray(entry.assetIds) ? entry.assetIds : []));
+  const gameplayClusterIds = new Set(gameplayClusters.map((entry) => entry.id));
+  projection.gameplayDressingClusters = gameplayClusters.map(({ id, zoneId, surfaceId, anchors, assetIds }) => ({
+    id, zoneId, surfaceId, anchors, assetIds,
+  }));
   const collidingAssetIds = new Set(
     registry
-      // "overhead" assets get no gameplay collider at runtime (buildProps rejects any under 2.2 m clearance), so they are render-only here.
-      .filter((entry) => isRecord(entry) && entry.collisionClass !== "none" && entry.collisionClass !== "overhead")
+      // Compiled visual placements do not create colliders. Preserve gameplay-cover
+      // dimensions, but allow soft_visual/overhead dressing to be composed freely.
+      // Actual legacy-anchor and builder colliders are also compared by paired shoots.
+      .filter((entry) => isRecord(entry) && gameplayAssetIds.has(String(entry.id)))
       .map((entry) => String((entry as JsonRecord).id)),
   );
   projection.collidingAssetAuthority = registry
@@ -723,22 +734,33 @@ export function protectedDomainProjection(specInput: MapSpec): JsonRecord {
       collisionClass: entry.collisionClass,
       dimensionsM: entry.dimensionsM,
       runtimeId: isRecord(entry.runtime) ? entry.runtime.id : null,
+      transform: entry.transform,
     }));
   const placements = Array.isArray(spec.dressing_placements) ? spec.dressing_placements : [];
   projection.collidingDressingPlacements = placements
-    .filter((entry) => isRecord(entry) && collidingAssetIds.has(String(entry.assetId)))
+    .filter((entry) => isRecord(entry) && gameplayClusterIds.has(entry.clusterId))
     .map((entry) => ({
       id: entry.id,
       assetId: entry.assetId,
+      clusterId: entry.clusterId,
       anchorIds: entry.anchorIds,
       offsetM: entry.offsetM,
       scale: entry.scale,
       yawOffsetDeg: entry.yawOffsetDeg,
     }));
   const anchors = Array.isArray(spec.anchors) ? spec.anchors : [];
-  projection.gameplayCoverAnchors = anchors
-    .filter((entry) => isRecord(entry) && ["cover_cluster", "spawn_cover"].includes(String(entry.type)))
-    .map((entry) => entry);
+  const classificationByAnchor = new Map(clusters.flatMap((entry) =>
+    (Array.isArray(entry.anchors) ? entry.anchors : []).map((id) => [String(id), entry.classification] as const)));
+  projection.gameplayAnchors = anchors.filter(isRecord)
+    .filter((entry) => {
+      // open_node affects the tactical graph; landmark's fountain collider ignores
+      // cluster classification. Shop/hero anchors otherwise honor visual classes.
+      if (["cover_cluster", "spawn_cover", "open_node", "landmark"].includes(String(entry.type))) return true;
+      const classification = classificationByAnchor.get(String(entry.id));
+      return ["shopfront_anchor", "hero_landmark"].includes(String(entry.type))
+        && classification !== "soft_visual" && classification !== "overhead";
+    })
+    .map(({ notes: _notes, ...authority }) => authority);
   return projection;
 }
 
@@ -750,9 +772,50 @@ export function detectProtectedChanges(
   const reasons = touchedFiles
     .filter((file) => PROTECTED_FILE_PATTERNS.some((pattern) => pattern.test(file)))
     .map((file) => `protected gameplay file changed: ${file}`);
-  const base = JSON.stringify(protectedDomainProjection(baseSpec));
-  const current = JSON.stringify(protectedDomainProjection(currentSpec));
-  if (base !== current) reasons.push("protected map authority changed");
+  const base = protectedDomainProjection(baseSpec);
+  const current = protectedDomainProjection(currentSpec);
+  for (const key of Object.keys(base)) {
+    if (JSON.stringify(base[key]) !== JSON.stringify(current[key])) reasons.push(`protected map authority changed: ${key}`);
+  }
   return reasons;
 }
 
+export type CaptureEvidence = {
+  valid: boolean;
+  synthetic: boolean;
+  protectedAuthorityHash: string;
+  units: Array<{ id: string; views: Record<string, { valid: boolean }> }>;
+};
+
+export type FramePerformance = {
+  drawCalls: number;
+  triangles: number;
+  medianFrameMs: number | null;
+  measurement?: string;
+};
+
+export function hasFrameMeasurement(perf?: FramePerformance): perf is FramePerformance & { medianFrameMs: number } {
+  return Boolean(perf && perf.measurement === "per-view-qa-frame"
+    && [perf.drawCalls, perf.triangles, perf.medianFrameMs].every((value) =>
+      typeof value === "number" && Number.isFinite(value) && value > 0));
+}
+
+/** Evidence checks are independent of the aesthetic decision to keep an edit. */
+export function captureEvidenceErrors(current: CaptureEvidence, before?: CaptureEvidence): string[] {
+  const reasons: string[] = [];
+  for (const [label, capture] of [["current", current], ["before", before]] as const) {
+    if (!capture) continue;
+    if (capture.valid !== true || capture.synthetic !== false || !capture.protectedAuthorityHash
+      || !capture.units.length || capture.units.some((unit) => !Object.keys(unit.views).length
+        || Object.values(unit.views).some((view) => view.valid !== true))) {
+      reasons.push(`${label} capture is invalid, synthetic, empty, or missing runtime collider evidence`);
+    }
+  }
+  if (before) {
+    if (current.protectedAuthorityHash !== before.protectedAuthorityHash) reasons.push("runtime colliders changed since before capture");
+    const viewIds = (capture: CaptureEvidence) => capture.units.flatMap((unit) =>
+      Object.keys(unit.views).map((view) => `${unit.id}/${view}`)).sort();
+    if (JSON.stringify(viewIds(current)) !== JSON.stringify(viewIds(before))) reasons.push("before/after view sets differ");
+  }
+  return reasons;
+}
