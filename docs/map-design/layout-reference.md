@@ -4,8 +4,8 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Format: `3.0`
 - Zones: 25
-- Frontages: 34
-- Architecture placements: 150
+- Frontages: 38
+- Architecture placements: 146
 - Dressing placements: 126
 
 ## Facade Profiles
@@ -78,7 +78,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Family: `quiet_residential`
 - Massing: `MASSING_MID_MIXED`
 - Materials: wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, roof `ph_worn_plaster_sun`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_beige_001`
-- Modules: `door_residential_timber`, `window_dark_recess`, `window_screened`, `blind_niche`, `pilaster_facade`
+- Modules: `door_residential_timber`, `window_dark_recess`, `window_screened`, `blind_niche`, `pilaster_facade`, `door_shop_timber`, `window_shuttered`
 
 ### `quiet_residential_cut_stone_pilaster_relief` — Coursed-limestone timber-closure relief
 
@@ -155,30 +155,30 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Family: `service_storage`
 - Massing: `MASSING_LOW_MERCHANT`
 - Materials: wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_white`, roof `ph_worn_plaster_ochre`, timber `ph_rough_pine_door`, metal `tm_balcony_painted_metal`, accent `ph_band_beige_002`
-- Modules: `door_storage_heavy`, `vent_service`, `blind_niche`, `pilaster_facade`
+- Modules: `door_storage_heavy`, `vent_service`, `window_dark_recess`, `blind_niche`, `pilaster_facade`
 
 ## Frontage Placements
 
 ### `FRONTAGE_CARAVAN_COURT_EAST_NORTH`
 
 - Zone/face: `CARAVAN_COURT` / `east`
-- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_GROUND_01`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_MASSING`
+- Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_BAY_01`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_MASSING`
 
 ### `FRONTAGE_CARAVAN_COURT_EAST_SOUTH`
 
 - Zone/face: `CARAVAN_COURT` / `east`
-- Profile/massing: `quiet_residential_ochre_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `BAY_PILASTER_S:pilaster_coverage@0.17`, `BAY_TIMBER_AXIS:timber_coverage_closure@0.50`, `BAY_PILASTER_N:pilaster_coverage@0.83`
-- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING`
+- Profile/massing: `quiet_residential_ochre_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_01`, `ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING`
 
 ### `FRONTAGE_CARAVAN_COURT_WEST`
 
 - Zone/face: `CARAVAN_COURT` / `west`
 - Profile/massing: `service_storage` / `MASSING_LOW_MERCHANT`
-- Explicit bays: `BAY_NICHE_S:blind_niche@0.09`, `BAY_DOOR_S:door_storage_heavy@0.23`, `BAY_VENT_S:vent_service@0.36`, `BAY_NICHE_AXIS:blind_niche@0.50`, `BAY_VENT_N:vent_service@0.64`, `BAY_DOOR_N:door_storage_heavy@0.78`, `BAY_NICHE_N:blind_niche@0.91`
-- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING`
+- Explicit bays: `BAY_NICHE_S:blind_niche@0.14`, `BAY_DOOR_S:door_storage_heavy@0.32`, `BAY_NICHE_AXIS:blind_niche@0.50`, `BAY_DOOR_N:door_storage_heavy@0.68`, `BAY_NICHE_N:blind_niche@0.86`
+- Compiled placements: `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S`, `ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING`
 
 ### `FRONTAGE_COVERED_SOUK_EAST`
 
@@ -190,9 +190,9 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 ### `FRONTAGE_COVERED_SOUK_SOUTH`
 
 - Zone/face: `COVERED_SOUK` / `south`
-- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_GROUND_01`, `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_MASSING`
+- Profile/massing: `quiet_residential_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_BAY_01`, `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_MASSING`
 
 ### `FRONTAGE_COVERED_SOUK_WEST`
 
@@ -215,12 +215,19 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Explicit bays: `GROUND_01:blind_niche@0.06`, `GROUND_02:pilaster_niche_coverage@0.35`, `GROUND_03:pilaster_niche_coverage@0.65`, `GROUND_04:pilaster_niche_coverage@0.94`
 - Compiled placements: `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_01`, `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_02`, `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_03`, `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_04`, `ARCH_FRONTAGE_DYERS_ALLEY_EAST_MASSING`
 
-### `FRONTAGE_DYERS_ALLEY_WEST`
+### `FRONTAGE_DYERS_ALLEY_WEST_N`
+
+- Zone/face: `DYERS_ALLEY` / `west`
+- Profile/massing: `quiet_residential_cut_stone` / `MASSING_LOW_MERCHANT`
+- Explicit bays: `BAY_WINDOW_S:window_screened@0.22`, `BAY_DOOR:door_residential_timber@0.50`, `BAY_WINDOW_N:window_screened@0.78`
+- Compiled placements: `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_DOOR`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_N`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_S`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_MASSING`
+
+### `FRONTAGE_DYERS_ALLEY_WEST_S`
 
 - Zone/face: `DYERS_ALLEY` / `west`
 - Profile/massing: `service_storage` / `MASSING_MID_MIXED`
-- Explicit bays: `GROUND_01:door_storage_heavy@0.07`, `GROUND_02:door_storage_heavy@0.36`, `GROUND_03:door_storage_heavy@0.64`, `GROUND_04:blind_niche@0.93`, `STORY_1_WINDOW_01:vent_service@0.07`, `STORY_1_WINDOW_02:vent_service@0.36`, `STORY_1_WINDOW_03:vent_service@0.64`, `STORY_1_WINDOW_04:vent_service@0.93`
-- Compiled placements: `ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_01`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_02`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_03`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_04`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_MASSING`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_01`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_02`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_03`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_04`
+- Explicit bays: `BAY_NICHE_S:blind_niche@0.21`, `BAY_VENT_S:vent_service@0.21`, `BAY_CART_DOOR:door_storage_heavy@0.50`, `BAY_VENT_AXIS:vent_service@0.50`, `BAY_NICHE_N:blind_niche@0.79`, `BAY_VENT_N:vent_service@0.79`
+- Compiled placements: `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_CART_DOOR`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_N`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_S`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_AXIS`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_N`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_S`, `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_MASSING`
 
 ### `FRONTAGE_FOUNTAIN_COURT_EAST`
 
@@ -261,29 +268,36 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Zone/face: `LINK_NORTH_WEST` / `north`
 - Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `BAY_NICHE_W:blind_niche@0.21`, `BAY_NICHE_AXIS:blind_niche@0.50`, `BAY_NICHE_E:blind_niche@0.79`
-- Compiled placements: `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING`
+- Explicit bays: `BAY_NICHE_AXIS:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING`
 
-### `FRONTAGE_NORTH_COURT_EAST`
+### `FRONTAGE_NORTH_COURT_EAST_N`
 
 - Zone/face: `NORTH_COURT` / `east`
-- Profile/massing: `quiet_residential_ochre_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:blind_niche@0.07`, `GROUND_02:blind_niche@0.36`, `GROUND_03:blind_niche@0.64`, `GROUND_04:blind_niche@0.93`
-- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_01`, `ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_02`, `ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_03`, `ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_04`, `ARCH_FRONTAGE_NORTH_COURT_EAST_MASSING`
+- Profile/massing: `quiet_residential_cut_stone` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_NICHE_S:blind_niche@0.31`, `BAY_NICHE_N:blind_niche@0.69`
+- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_N`, `ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_S`, `ARCH_FRONTAGE_NORTH_COURT_EAST_N_MASSING`
+
+### `FRONTAGE_NORTH_COURT_EAST_S`
+
+- Zone/face: `NORTH_COURT` / `east`
+- Profile/massing: `quiet_residential` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_WINDOW_S:window_dark_recess@0.22`, `BAY_DOOR:door_residential_timber@0.50`, `BAY_WINDOW_N:window_dark_recess@0.78`
+- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_DOOR`, `ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_N`, `ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_S`, `ARCH_FRONTAGE_NORTH_COURT_EAST_S_MASSING`
 
 ### `FRONTAGE_NORTH_COURT_NORTH`
 
 - Zone/face: `NORTH_COURT` / `north`
-- Profile/massing: `quiet_residential_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.19`, `GROUND_02:pilaster_coverage@0.81`
-- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_01`, `ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_02`, `ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING`
+- Profile/massing: `quiet_residential_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.33`, `BAY_02:blind_niche@0.67`
+- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_01`, `ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_02`, `ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING`
 
 ### `FRONTAGE_NORTH_COURT_SOUTH`
 
 - Zone/face: `NORTH_COURT` / `south`
-- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_SOUTH_GROUND_01`, `ARCH_FRONTAGE_NORTH_COURT_SOUTH_MASSING`
+- Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_NORTH_COURT_SOUTH_BAY_01`, `ARCH_FRONTAGE_NORTH_COURT_SOUTH_MASSING`
 
 ### `FRONTAGE_NORTH_COURT_WEST`
 
@@ -302,16 +316,16 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 ### `FRONTAGE_RUG_GATE_EAST`
 
 - Zone/face: `RUG_GATE` / `east`
-- Profile/massing: `active_merchant_ochre` / `MASSING_LOW_MERCHANT`
-- Explicit bays: `GROUND_01:shop_recess_market@0.50`
-- Compiled placements: `ARCH_FRONTAGE_RUG_GATE_EAST_GROUND_01`, `ARCH_FRONTAGE_RUG_GATE_EAST_MASSING`
+- Profile/massing: `quiet_residential` / `MASSING_LOW_MERCHANT`
+- Explicit bays: `BAY_01:door_residential_timber@0.36`, `BAY_02:window_dark_recess@0.65`
+- Compiled placements: `ARCH_FRONTAGE_RUG_GATE_EAST_BAY_01`, `ARCH_FRONTAGE_RUG_GATE_EAST_BAY_02`, `ARCH_FRONTAGE_RUG_GATE_EAST_MASSING`
 
 ### `FRONTAGE_RUG_GATE_EAST_SOUTH`
 
 - Zone/face: `RUG_GATE` / `east`
-- Profile/massing: `active_merchant` / `MASSING_LOW_MERCHANT`
-- Explicit bays: `GROUND_01:pilaster_facade@0.50`
-- Compiled placements: `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_GROUND_01`, `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING`
+- Profile/massing: `quiet_residential_cut_stone` / `MASSING_LOW_MERCHANT`
+- Explicit bays: `BAY_01:pilaster_facade@0.50`
+- Compiled placements: `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_BAY_01`, `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING`
 
 ### `FRONTAGE_RUG_GATE_WEST`
 
@@ -320,19 +334,33 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Explicit bays: `GROUND_01:shop_recess_market@0.26`, `GROUND_02:shop_recess_market@0.74`, `STORY_1_WINDOW_01:window_shuttered@0.26`, `STORY_1_WINDOW_02:window_shuttered@0.74`
 - Compiled placements: `ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_01`, `ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_02`, `ARCH_FRONTAGE_RUG_GATE_WEST_MASSING`, `ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_01`, `ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_02`
 
-### `FRONTAGE_SERVICE_NORTH_EAST_SPINE`
+### `FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID`
+
+- Zone/face: `SERVICE_NORTH` / `east`
+- Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_SERVICE_SPINE`
+- Explicit bays: `GROUND_01:blind_niche@0.12`, `GROUND_02:blind_niche@0.88`, `STORY_1_WINDOW_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_MASSING`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_STORY_1_WINDOW_01`
+
+### `FRONTAGE_SERVICE_NORTH_EAST_SPINE_N`
+
+- Zone/face: `SERVICE_NORTH` / `east`
+- Profile/massing: `quiet_residential_relief` / `MASSING_SERVICE_SPINE`
+- Explicit bays: `BAY_01:blind_niche@0.33`, `BAY_02:blind_niche@0.67`
+- Compiled placements: `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_MASSING`
+
+### `FRONTAGE_SERVICE_NORTH_EAST_SPINE_S`
 
 - Zone/face: `SERVICE_NORTH` / `east`
 - Profile/massing: `service_storage` / `MASSING_SERVICE_SPINE`
-- Explicit bays: `GROUND_01:door_storage_heavy@0.05`, `GROUND_02:blind_niche@0.20`, `GROUND_03:door_storage_heavy@0.35`, `GROUND_04:door_storage_heavy@0.50`, `GROUND_05:blind_niche@0.65`, `GROUND_06:door_storage_heavy@0.80`, `GROUND_07:door_storage_heavy@0.95`, `STORY_1_WINDOW_01:vent_service@0.05`, `STORY_1_WINDOW_02:vent_service@0.20`, `STORY_1_WINDOW_03:vent_service@0.35`, `STORY_1_WINDOW_04:vent_service@0.50`, `STORY_1_WINDOW_05:vent_service@0.65`, `STORY_1_WINDOW_06:vent_service@0.80`, `STORY_1_WINDOW_07:vent_service@0.95`
-- Compiled placements: `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_03`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_04`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_05`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_06`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_07`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MASSING`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_03`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_04`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_05`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_06`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_07`
+- Explicit bays: `GROUND_01:door_storage_heavy@0.14`, `GROUND_02:door_storage_heavy@0.86`, `STORY_1_WINDOW_01:vent_service@0.10`, `STORY_1_WINDOW_02:vent_service@0.50`, `STORY_1_WINDOW_03:vent_service@0.90`
+- Compiled placements: `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_MASSING`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_01`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_02`, `ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_03`
 
 ### `FRONTAGE_SERVICE_SOUTH_EAST`
 
 - Zone/face: `SERVICE_SOUTH` / `east`
-- Profile/massing: `quiet_residential_warmwash_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.07`, `GROUND_02:pilaster_coverage@0.36`, `GROUND_03:timber_coverage_closure@0.64`, `GROUND_04:timber_coverage_closure@0.93`
-- Compiled placements: `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_01`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_02`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_03`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_04`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_MASSING`
+- Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.25`, `BAY_02:blind_niche@0.50`, `BAY_03:blind_niche@0.75`
+- Compiled placements: `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_01`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_02`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_03`, `ARCH_FRONTAGE_SERVICE_SOUTH_EAST_MASSING`
 
 ### `FRONTAGE_SPAWN_A_NORTH_EAST`
 
@@ -351,16 +379,16 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 ### `FRONTAGE_SPAWN_B_SOUTH_EAST`
 
 - Zone/face: `SPAWN_B_COURTYARD` / `south`
-- Profile/massing: `quiet_residential_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_GROUND_01`, `ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_MASSING`
+- Profile/massing: `quiet_residential_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_BAY_01`, `ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_MASSING`
 
 ### `FRONTAGE_SPAWN_B_SOUTH_WEST`
 
 - Zone/face: `SPAWN_B_COURTYARD` / `south`
-- Profile/massing: `quiet_residential_cut_stone_pilaster_relief` / `MASSING_FRONTAGE_RELIEF`
-- Explicit bays: `GROUND_01:timber_coverage_closure@0.50`
-- Compiled placements: `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_GROUND_01`, `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_MASSING`
+- Profile/massing: `quiet_residential_cut_stone` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_01:blind_niche@0.50`
+- Compiled placements: `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_BAY_01`, `ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_MASSING`
 
 ### `FRONTAGE_SPICE_STREET_EAST`
 
@@ -450,6 +478,7 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_L34_CARAVAN_CART_L34_CARAVAN_CART_01`: `ASSET_MARKET_CART` at `L34_CARAVAN_CART_01` (14.10, 45.05, 0.00), size 1.30×0.81×0.96m, yaw 261.00deg
 - `PLACE_L34_CARAVAN_PACK_LINE_L34_CARAVAN_PACK_LINE_01`: `ASSET_LAUNDRY_LINE` at `L34_CARAVAN_PACK_LINE_01` (9.00, 47.80, 4.38), size 1.20×11.30×0.85m, yaw 90.00deg
 - `PLACE_L34_COVERED_SOUK_BASKET_LMK_DYERS_DISTRICT`: `ASSET_CC0_BASKET` at `LMK_DYERS_DISTRICT` (42.38, 43.82, 0.00), size 0.41×0.30×0.24m, yaw -12.00deg
+- `PLACE_L34_DOGLEG_DYERS_LINE_L34_DOGLEG_DYERS_LINE_01`: `ASSET_LAUNDRY_LINE` at `L34_DOGLEG_DYERS_LINE_01` (49.50, 60.40, 4.65), size 1.30×6.96×0.85m, yaw 90.00deg
 - `PLACE_L34_DOGLEG_VAT_02_L34_DOGLEG_VAT_02`: `ASSET_DYERS_SEALED_VAT` at `L34_DOGLEG_VAT_02` (46.55, 61.55, 0.00), size 0.56×0.57×0.65m, yaw 101.00deg
 - `PLACE_L34_DOGLEG_VAT_L34_DOGLEG_VAT_01`: `ASSET_DYERS_SEALED_VAT` at `L34_DOGLEG_VAT_01` (46.55, 59.35, 0.00), size 0.56×0.57×0.65m, yaw 82.00deg
 - `PLACE_L34_DOGLEG_WALL_RACK_L34_DOGLEG_WALL_RACK_01`: `ASSET_DYERS_HANGING_TEXTILES` at `L34_DOGLEG_WALL_RACK_01` (46.18, 60.40, 1.18), size 2.36×0.17×1.63m, yaw 90.00deg
@@ -475,7 +504,6 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - `PLACE_RUG_ARCH_LMK_RUG_GATE_01`: `ASSET_HERO_ARCH` at `LMK_RUG_GATE_01` (27.50, 76.30, 0.00), size 13.00×0.80×6.80m, yaw 180.00deg
 - `PLACE_RUG_COVER_COVER_RUG_01`: `ASSET_COVER_GOODS` at `COVER_RUG_01` (23.00, 68.20, 0.00), size 1.50×0.75×1.00m, yaw 0.00deg
 - `PLACE_RUG_LANTERN_LANTERN_RUG_01`: `ASSET_CC0_LANTERN` at `LANTERN_RUG_01` (32.50, 70.00, 4.25), size 0.22×0.23×0.53m, yaw 270.00deg
-- `PLACE_RUG_SIGNS_RUG_E_SIGN_1`: `ASSET_SIGNBOARD` at `RUG_E_SIGN_1` (33.88, 74.44, 3.32), size 2.20×0.12×0.38m, yaw 270.00deg
 - `PLACE_RUG_SIGNS_RUG_W_SIGN_1`: `ASSET_SIGNBOARD` at `RUG_W_SIGN_1` (21.12, 66.92, 3.32), size 2.20×0.12×0.38m, yaw 90.00deg
 - `PLACE_RUG_SIGNS_RUG_W_SIGN_2`: `ASSET_SIGNBOARD` at `RUG_W_SIGN_2` (21.12, 70.20, 3.32), size 2.20×0.12×0.38m, yaw 90.00deg
 - `PLACE_SPAWN_A_COVER_SPAWN_A_COVER_01`: `ASSET_SPAWN_COVER` at `SPAWN_A_COVER_01` (20.20, 5.20, 0.00), size 2.20×1.10×1.30m, yaw 0.00deg

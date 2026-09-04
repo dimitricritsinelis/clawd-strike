@@ -78,44 +78,32 @@
 <g id="ZONE_TEXTILE_ARCADE">
 <rect x="24" y="28" width="11" height="16" fill="#b7a58a" stroke="#342f27" stroke-width="0.12"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="14.930" cy="47.510" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="14.910" cy="47.510" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_pilaster_relief">
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
 <rect x="15.000" y="44.540" width="0.960" height="5.940" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N" data-kind="facade_module" data-module="pilaster_coverage">
-<circle cx="14.880" cy="57.426" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="14.910" cy="59.030" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S" data-kind="facade_module" data-module="pilaster_coverage">
-<circle cx="14.880" cy="60.634" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="14.930" cy="59.030" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_ochre_pilaster_relief">
+<g id="ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_ochre_relief">
 <rect x="15.000" y="56.600" width="0.960" height="4.860" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_N" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="3.125" cy="48.842" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<circle cx="3.125" cy="50.255" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_DOOR_S" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="3.125" cy="57.158" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<circle cx="3.125" cy="55.745" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_AXIS" data-kind="facade_module" data-module="blind_niche">
 <circle cx="3.090" cy="53.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_N" data-kind="facade_module" data-module="blind_niche">
-<circle cx="3.090" cy="46.801" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<circle cx="3.090" cy="47.510" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_NICHE_S" data-kind="facade_module" data-module="blind_niche">
-<circle cx="3.090" cy="59.199" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N" data-kind="facade_module" data-module="vent_service">
-<circle cx="3.090" cy="50.921" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S" data-kind="facade_module" data-module="vent_service">
-<circle cx="3.090" cy="55.079" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<circle cx="3.090" cy="58.490" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
 <g id="ARCH_FRONTAGE_CARAVAN_COURT_WEST_MASSING" data-kind="massing" data-profile="service_storage">
 <rect x="-1.200" y="45.440" width="4.200" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
@@ -132,10 +120,10 @@
 <g id="ARCH_FRONTAGE_COVERED_SOUK_EAST_MASSING" data-kind="massing" data-profile="covered_arcade_lime">
 <rect x="53.000" y="45.280" width="4.200" height="13.440" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_COVERED_SOUK_SOUTH_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="43.460" cy="59.930" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_COVERED_SOUK_SOUTH_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="43.460" cy="59.910" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_COVERED_SOUK_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_pilaster_relief">
+<g id="ARCH_FRONTAGE_COVERED_SOUK_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_relief">
 <rect x="41.360" y="60.000" width="4.200" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_COVERED_SOUK_WEST_GROUND_01" data-kind="facade_module" data-module="arch_arcade">
@@ -174,32 +162,38 @@
 <g id="ARCH_FRONTAGE_DYERS_ALLEY_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_niche_coverage_relief">
 <rect x="53.000" y="61.760" width="0.960" height="18.480" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_01" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="46.125" cy="77.725" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_DOOR" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="46.100" cy="65.885" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_02" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="46.125" cy="72.828" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_N" data-kind="facade_module" data-module="window_screened">
+<circle cx="46.120" cy="63.560" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_03" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="46.125" cy="67.932" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_S" data-kind="facade_module" data-module="window_screened">
+<circle cx="46.120" cy="68.210" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_04" data-kind="facade_module" data-module="blind_niche">
-<circle cx="46.090" cy="63.035" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_MASSING" data-kind="massing" data-profile="quiet_residential_cut_stone">
+<rect x="41.800" y="61.760" width="4.200" height="8.250" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_MASSING" data-kind="massing" data-profile="service_storage">
-<rect x="41.200" y="61.760" width="4.800" height="17.240" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_CART_DOOR" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="46.125" cy="74.505" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_01" data-kind="facade_module" data-module="vent_service">
-<circle cx="46.090" cy="77.725" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_N" data-kind="facade_module" data-module="blind_niche">
+<circle cx="46.090" cy="71.920" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_02" data-kind="facade_module" data-module="vent_service">
-<circle cx="46.090" cy="72.828" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_S" data-kind="facade_module" data-module="blind_niche">
+<circle cx="46.090" cy="77.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_03" data-kind="facade_module" data-module="vent_service">
-<circle cx="46.090" cy="67.932" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_AXIS" data-kind="facade_module" data-module="vent_service">
+<circle cx="46.090" cy="74.505" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_04" data-kind="facade_module" data-module="vent_service">
-<circle cx="46.090" cy="63.035" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_N" data-kind="facade_module" data-module="vent_service">
+<circle cx="46.090" cy="71.920" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_S" data-kind="facade_module" data-module="vent_service">
+<circle cx="46.090" cy="77.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_MASSING" data-kind="massing" data-profile="service_storage">
+<rect x="41.200" y="70.010" width="4.800" height="8.990" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_GROUND_01" data-kind="facade_module" data-module="arch_hero_courtyard">
 <circle cx="35.750" cy="55.860" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
@@ -252,43 +246,43 @@
 <g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS" data-kind="facade_module" data-module="blind_niche">
 <circle cx="13.500" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E" data-kind="facade_module" data-module="blind_niche">
-<circle cx="15.200" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W" data-kind="facade_module" data-module="blind_niche">
-<circle cx="11.800" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
 <g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
 <rect x="10.560" y="10.040" width="5.880" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_01" data-kind="facade_module" data-module="blind_niche">
-<circle cx="52.910" cy="27.435" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_N" data-kind="facade_module" data-module="blind_niche">
+<circle cx="52.910" cy="15.785" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_02" data-kind="facade_module" data-module="blind_niche">
-<circle cx="52.910" cy="23.145" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_S" data-kind="facade_module" data-module="blind_niche">
+<circle cx="52.910" cy="18.655" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_03" data-kind="facade_module" data-module="blind_niche">
-<circle cx="52.910" cy="18.855" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_N_MASSING" data-kind="massing" data-profile="quiet_residential_cut_stone">
+<rect x="53.000" y="13.440" width="0.960" height="7.560" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_04" data-kind="facade_module" data-module="blind_niche">
-<circle cx="52.910" cy="14.565" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_DOOR" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="52.900" cy="24.780" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_ochre_relief">
-<rect x="53.000" y="13.440" width="0.960" height="15.120" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_N" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="52.860" cy="22.700" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="47.175" cy="12.070" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_S" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="52.860" cy="26.860" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_02" data-kind="facade_module" data-module="pilaster_coverage">
-<circle cx="50.865" cy="12.120" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_EAST_S_MASSING" data-kind="massing" data-profile="quiet_residential">
+<rect x="53.000" y="21.000" width="0.960" height="7.560" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_pilaster_relief">
+<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="48.013" cy="12.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_02" data-kind="facade_module" data-module="blind_niche">
+<circle cx="50.027" cy="12.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_relief">
 <rect x="46.000" y="11.040" width="6.040" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_SOUTH_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="43.460" cy="29.930" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_NORTH_COURT_SOUTH_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="43.460" cy="29.910" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_NORTH_COURT_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_pilaster_relief">
+<g id="ARCH_FRONTAGE_NORTH_COURT_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
 <rect x="41.360" y="30.000" width="4.200" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_NORTH_COURT_WEST_GROUND_01" data-kind="facade_module" data-module="door_residential_timber">
@@ -309,16 +303,19 @@
 <g id="ARCH_FRONTAGE_NORTH_COURT_WEST_STORY_1_WINDOW_01" data-kind="facade_module" data-module="window_dark_recess">
 <circle cx="41.140" cy="18.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_RUG_GATE_EAST_GROUND_01" data-kind="facade_module" data-module="shop_recess_market">
-<circle cx="33.325" cy="17.560" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_BAY_01" data-kind="facade_module" data-module="door_residential_timber">
+<circle cx="33.900" cy="18.225" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_RUG_GATE_EAST_MASSING" data-kind="massing" data-profile="active_merchant_ochre">
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_BAY_02" data-kind="facade_module" data-module="window_dark_recess">
+<circle cx="33.860" cy="16.820" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_MASSING" data-kind="massing" data-profile="quiet_residential">
 <rect x="34.000" y="15.120" width="4.200" height="4.880" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_GROUND_01" data-kind="facade_module" data-module="pilaster_facade">
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_BAY_01" data-kind="facade_module" data-module="pilaster_facade">
 <circle cx="33.880" cy="25.940" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING" data-kind="massing" data-profile="active_merchant">
+<g id="ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING" data-kind="massing" data-profile="quiet_residential_cut_stone">
 <rect x="34.000" y="25.000" width="4.200" height="1.880" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_01" data-kind="facade_module" data-module="shop_recess_market">
@@ -336,64 +333,55 @@
 <g id="ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_02" data-kind="facade_module" data-module="window_shuttered">
 <circle cx="21.120" cy="21.800" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_01" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="9.875" cy="42.693" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="33.531" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_02" data-kind="facade_module" data-module="blind_niche">
-<circle cx="9.910" cy="38.462" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_02" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="26.469" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_03" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="9.875" cy="34.231" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
+<rect x="10.000" y="25.344" width="0.960" height="9.312" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_04" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="9.875" cy="30.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_05" data-kind="facade_module" data-module="blind_niche">
-<circle cx="9.910" cy="25.769" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_06" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="9.875" cy="21.538" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_07" data-kind="facade_module" data-module="door_storage_heavy">
-<circle cx="9.875" cy="17.307" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MASSING" data-kind="massing" data-profile="service_storage">
-<rect x="10.000" y="16.032" width="0.960" height="27.936" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_01" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="42.693" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_02" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="38.462" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_03" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="34.231" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
-</g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_04" data-kind="facade_module" data-module="vent_service">
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_STORY_1_WINDOW_01" data-kind="facade_module" data-module="blind_niche">
 <circle cx="9.910" cy="30.000" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_05" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="25.769" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="22.240" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_06" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="21.538" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_02" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="19.136" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_07" data-kind="facade_module" data-module="vent_service">
-<circle cx="9.910" cy="17.307" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_MASSING" data-kind="massing" data-profile="quiet_residential_relief">
+<rect x="10.000" y="16.032" width="0.960" height="9.312" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="9.930" cy="77.225" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_01" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="9.875" cy="42.693" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_02" data-kind="facade_module" data-module="pilaster_coverage">
-<circle cx="9.880" cy="72.742" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_02" data-kind="facade_module" data-module="door_storage_heavy">
+<circle cx="9.875" cy="35.931" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_03" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="9.930" cy="68.258" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_MASSING" data-kind="massing" data-profile="service_storage">
+<rect x="10.000" y="34.656" width="0.960" height="9.312" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_04" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="9.930" cy="63.775" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_01" data-kind="facade_module" data-module="vent_service">
+<circle cx="9.910" cy="43.078" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_pilaster_relief">
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_02" data-kind="facade_module" data-module="vent_service">
+<circle cx="9.910" cy="39.312" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_03" data-kind="facade_module" data-module="vent_service">
+<circle cx="9.910" cy="35.546" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="74.450" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_02" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="70.500" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_03" data-kind="facade_module" data-module="blind_niche">
+<circle cx="9.910" cy="66.550" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_SERVICE_SOUTH_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
 <rect x="10.000" y="62.600" width="0.960" height="15.800" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_SPAWN_A_NORTH_EAST_GROUND_01" data-kind="facade_module" data-module="blind_niche">
@@ -408,16 +396,16 @@
 <g id="ARCH_FRONTAGE_SPAWN_A_NORTH_WEST_MASSING" data-kind="massing" data-profile="quiet_residential_niche_coverage_relief">
 <rect x="17.660" y="77.040" width="2.640" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="36.470" cy="13.930" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="36.470" cy="13.910" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_pilaster_relief">
+<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_MASSING" data-kind="massing" data-profile="quiet_residential_relief">
 <rect x="34.600" y="14.000" width="3.740" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
-<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_GROUND_01" data-kind="facade_module" data-module="timber_coverage_closure">
-<circle cx="18.980" cy="13.930" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_BAY_01" data-kind="facade_module" data-module="blind_niche">
+<circle cx="18.980" cy="13.910" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>
-<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_MASSING" data-kind="massing" data-profile="quiet_residential_cut_stone_pilaster_relief">
+<g id="ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_MASSING" data-kind="massing" data-profile="quiet_residential_cut_stone">
 <rect x="17.660" y="14.000" width="2.640" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
 <g id="ARCH_FRONTAGE_SPICE_STREET_EAST_GROUND_01" data-kind="facade_module" data-module="door_residential_timber">
@@ -681,6 +669,9 @@
 <g id="PLACE_L34_COVERED_SOUK_BASKET_LMK_DYERS_DISTRICT" data-kind="dressing" data-asset="ASSET_CC0_BASKET">
 <rect x="42.220" y="48.020" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
 </g>
+<g id="PLACE_L34_DOGLEG_DYERS_LINE_L34_DOGLEG_DYERS_LINE_01" data-kind="dressing" data-asset="ASSET_LAUNDRY_LINE">
+<rect x="49.340" y="31.440" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
+</g>
 <g id="PLACE_L34_DOGLEG_VAT_02_L34_DOGLEG_VAT_02" data-kind="dressing" data-asset="ASSET_DYERS_SEALED_VAT">
 <rect x="46.390" y="30.290" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
 </g>
@@ -755,9 +746,6 @@
 </g>
 <g id="PLACE_RUG_LANTERN_LANTERN_RUG_01" data-kind="dressing" data-asset="ASSET_CC0_LANTERN">
 <rect x="32.340" y="21.840" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
-</g>
-<g id="PLACE_RUG_SIGNS_RUG_E_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
-<rect x="33.720" y="17.400" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>
 </g>
 <g id="PLACE_RUG_SIGNS_RUG_W_SIGN_1" data-kind="dressing" data-asset="ASSET_SIGNBOARD">
 <rect x="20.960" y="24.920" width="0.32" height="0.32" rx="0.06" fill="#c66832" stroke="#54250f" stroke-width="0.06"/>

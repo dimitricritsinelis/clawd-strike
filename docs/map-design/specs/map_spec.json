@@ -974,6 +974,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_SPICE",
+      "buildingId": "BLD_SPICE_ROW_W",
       "facadeProfileId": "active_merchant",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -988,6 +989,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_SPICE",
+      "buildingId": "BLD_SPICE_ROW_E",
       "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
@@ -1002,6 +1004,7 @@
       "start": 0.5625,
       "end": 0.92,
       "districtId": "DISTRICT_FOUNTAIN",
+      "buildingId": "BLD_MADRASA",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_TALL_HERO",
       "layoutIntent": {
@@ -1017,6 +1020,7 @@
       "start": 0.08,
       "end": 0.25,
       "districtId": "DISTRICT_FOUNTAIN",
+      "buildingId": "BLD_MADRASA",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_TALL_HERO",
       "layoutIntent": {
@@ -1031,6 +1035,7 @@
       "start": 0.08,
       "end": 0.4375,
       "districtId": "DISTRICT_FOUNTAIN",
+      "buildingId": "BLD_MERCHANT_HOUSE",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1045,6 +1050,7 @@
       "start": 0.75,
       "end": 0.92,
       "districtId": "DISTRICT_FOUNTAIN",
+      "buildingId": "BLD_MERCHANT_HOUSE",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1053,17 +1059,75 @@
       }
     },
     {
-      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "face": "east",
       "start": 0.001,
-      "end": 0.874,
+      "end": 0.292,
       "districtId": "DISTRICT_CARAVAN",
+      "buildingId": "BLD_STORES_BACK",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_SERVICE_SPINE",
       "layoutIntent": {
         "mode": "generated",
         "rhythm": "service"
+      }
+    },
+    {
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "face": "east",
+      "start": 0.292,
+      "end": 0.583,
+      "districtId": "DISTRICT_CARAVAN",
+      "buildingId": "BLD_TEA_HOUSE_BACK",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "layoutIntent": {
+        "mode": "generated",
+        "rhythm": "residential_dense",
+        "accentModuleId": "blind_niche"
+      }
+    },
+    {
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+      "zoneId": "SERVICE_NORTH",
+      "face": "east",
+      "start": 0.583,
+      "end": 0.874,
+      "districtId": "DISTRICT_CARAVAN",
+      "buildingId": "BLD_NORTH_YARD_WALL",
+      "facadeProfileId": "quiet_residential_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "layoutIntent": {
+        "mode": "authored",
+        "composition": "Yard wall on the spine: two niches at the third points with two above them, string course, nothing else (the grammar wants two bays on a 9.3 m span).",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.33333,
+            "mirrorOf": "C2"
+          },
+          {
+            "id": "C2",
+            "along": 0.66667,
+            "mirrorOf": "C1"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          },
+          {
+            "id": "BAY_02",
+            "moduleId": "blind_niche",
+            "columnId": "C2"
+          }
+        ]
       }
     },
     {
@@ -1073,6 +1137,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_TEXTILE",
+      "buildingId": "BLD_RUG_ARCADE_W",
       "facadeProfileId": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1087,6 +1152,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_TEXTILE",
+      "buildingId": "BLD_RUG_ARCADE_E",
       "facadeProfileId": "covered_arcade_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
@@ -1101,6 +1167,7 @@
       "start": 0.08,
       "end": 0.5714285714285714,
       "districtId": "DISTRICT_RUG",
+      "buildingId": "BLD_RUG_MERCHANT",
       "facadeProfileId": "active_merchant_warmwash",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1115,11 +1182,36 @@
       "start": 0.5714285714285714,
       "end": 0.92,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "active_merchant_ochre",
+      "buildingId": "BLD_GATE_KEEPER",
+      "facadeProfileId": "quiet_residential",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "merchant"
+        "mode": "authored",
+        "composition": "Profile becomes quiet_residential. Door south, dark-recess window north, 1.25 m piers, 0.45 m between.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.25,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.36373
+          },
+          {
+            "id": "C2",
+            "along": 0.65164
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "door_residential_timber",
+            "columnId": "C1"
+          },
+          {
+            "id": "BAY_02",
+            "moduleId": "window_dark_recess",
+            "columnId": "C2"
+          }
+        ]
       }
     },
     {
@@ -1129,11 +1221,27 @@
       "start": 0.08,
       "end": 0.21428571428571427,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "active_merchant",
+      "buildingId": "BLD_GATE_KEEPER",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "merchant"
+        "mode": "authored",
+        "composition": "1.9 m blank return of the same house in cut stone (the validator wants adjacent frontages to differ in material): one pilaster on its axis.",
+        "cornerTreatment": "open",
+        "groundHeadM": 3.4,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "pilaster_facade",
+            "columnId": "C1"
+          }
+        ]
       }
     },
     {
@@ -1143,30 +1251,66 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_CARAVAN",
+      "buildingId": "BLD_CARAVAN_STORES",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
         "mode": "authored",
-        "composition": "Two heavy storage doors at the third points serve the caravan stores, mirrored about the court centre; a resting niche holds the axis between high service vents, and outer niches carry the rhythm to the held corners.",
+        "composition": "Niche, door, niche, door, niche march at one 1.545 m gap under one 2.5 m head: the two storage doors mirror about the court axis, a niche holds the axis and one closes each held corner.",
         "cornerTreatment": "held",
         "groundHeadM": 2.5,
         "columns": [
-          { "id": "S_NICHE", "along": 0.09, "mirrorOf": "N_NICHE" },
-          { "id": "S_DOOR", "along": 0.225, "mirrorOf": "N_DOOR" },
-          { "id": "S_VENT", "along": 0.3625, "mirrorOf": "N_VENT" },
-          { "id": "AXIS", "along": 0.5 },
-          { "id": "N_VENT", "along": 0.6375, "mirrorOf": "S_VENT" },
-          { "id": "N_DOOR", "along": 0.775, "mirrorOf": "S_DOOR" },
-          { "id": "N_NICHE", "along": 0.91, "mirrorOf": "S_NICHE" }
+          {
+            "id": "S_NICHE",
+            "along": 0.1369,
+            "mirrorOf": "N_NICHE"
+          },
+          {
+            "id": "S_DOOR",
+            "along": 0.31845,
+            "mirrorOf": "N_DOOR"
+          },
+          {
+            "id": "AXIS",
+            "along": 0.5
+          },
+          {
+            "id": "N_DOOR",
+            "along": 0.68155,
+            "mirrorOf": "S_DOOR"
+          },
+          {
+            "id": "N_NICHE",
+            "along": 0.8631,
+            "mirrorOf": "S_NICHE"
+          }
         ],
         "bays": [
-          { "id": "BAY_NICHE_S", "moduleId": "blind_niche", "columnId": "S_NICHE" },
-          { "id": "BAY_DOOR_S", "moduleId": "door_storage_heavy", "columnId": "S_DOOR" },
-          { "id": "BAY_VENT_S", "moduleId": "vent_service", "columnId": "S_VENT" },
-          { "id": "BAY_NICHE_AXIS", "moduleId": "blind_niche", "columnId": "AXIS" },
-          { "id": "BAY_VENT_N", "moduleId": "vent_service", "columnId": "N_VENT" },
-          { "id": "BAY_DOOR_N", "moduleId": "door_storage_heavy", "columnId": "N_DOOR" },
-          { "id": "BAY_NICHE_N", "moduleId": "blind_niche", "columnId": "N_NICHE" }
+          {
+            "id": "BAY_NICHE_S",
+            "moduleId": "blind_niche",
+            "columnId": "S_NICHE"
+          },
+          {
+            "id": "BAY_DOOR_S",
+            "moduleId": "door_storage_heavy",
+            "columnId": "S_DOOR"
+          },
+          {
+            "id": "BAY_NICHE_AXIS",
+            "moduleId": "blind_niche",
+            "columnId": "AXIS"
+          },
+          {
+            "id": "BAY_DOOR_N",
+            "moduleId": "door_storage_heavy",
+            "columnId": "N_DOOR"
+          },
+          {
+            "id": "BAY_NICHE_N",
+            "moduleId": "blind_niche",
+            "columnId": "N_NICHE"
+          }
         ]
       }
     },
@@ -1177,6 +1321,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_CARAVAN",
+      "buildingId": "BLD_TEA_HOUSE",
       "facadeProfileId": "active_merchant_ochre",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1191,6 +1336,7 @@
       "start": 0.08,
       "end": 0.4375,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_DYERS_ARCADE_W",
       "facadeProfileId": "covered_arcade",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1205,6 +1351,7 @@
       "start": 0.75,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_DYERS_ARCADE_W",
       "facadeProfileId": "covered_arcade_wash",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1219,6 +1366,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_DYERS_ARCADE_E",
       "facadeProfileId": "covered_arcade_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "layoutIntent": {
@@ -1227,17 +1375,121 @@
       }
     },
     {
-      "id": "FRONTAGE_DYERS_ALLEY_WEST",
+      "id": "FRONTAGE_DYERS_ALLEY_WEST_S",
       "zoneId": "DYERS_ALLEY",
       "face": "west",
       "start": 0.13636363636363635,
-      "end": 0.92,
+      "end": 0.545,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_DYE_WORKS",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "service"
+        "mode": "authored",
+        "composition": "One cart door on the axis of the works between two blind niches at equal gaps under one head, a vent over each bay lighting the dye floor; the piers hold both corners.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.5,
+        "columns": [
+          {
+            "id": "S_NICHE",
+            "along": 0.2125,
+            "mirrorOf": "N_NICHE"
+          },
+          {
+            "id": "AXIS",
+            "along": 0.5
+          },
+          {
+            "id": "N_NICHE",
+            "along": 0.7875,
+            "mirrorOf": "S_NICHE"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_NICHE_S",
+            "moduleId": "blind_niche",
+            "columnId": "S_NICHE"
+          },
+          {
+            "id": "BAY_CART_DOOR",
+            "moduleId": "door_storage_heavy",
+            "columnId": "AXIS"
+          },
+          {
+            "id": "BAY_NICHE_N",
+            "moduleId": "blind_niche",
+            "columnId": "N_NICHE"
+          },
+          {
+            "id": "BAY_VENT_S",
+            "moduleId": "vent_service",
+            "columnId": "S_NICHE",
+            "story": 1
+          },
+          {
+            "id": "BAY_VENT_AXIS",
+            "moduleId": "vent_service",
+            "columnId": "AXIS",
+            "story": 1
+          },
+          {
+            "id": "BAY_VENT_N",
+            "moduleId": "vent_service",
+            "columnId": "N_NICHE",
+            "story": 1
+          }
+        ]
+      }
+    },
+    {
+      "id": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "face": "west",
+      "start": 0.545,
+      "end": 0.92,
+      "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_DYERS_HOUSE",
+      "facadeProfileId": "quiet_residential_cut_stone",
+      "massingProfileId": "MASSING_LOW_MERCHANT",
+      "layoutIntent": {
+        "mode": "authored",
+        "composition": "A timber door on the axis of the house with one screened window mirrored each side at equal 1.3 m gaps under one head; 1.3 m piers hold both corners.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.25,
+        "columns": [
+          {
+            "id": "S_WINDOW",
+            "along": 0.21818,
+            "mirrorOf": "N_WINDOW"
+          },
+          {
+            "id": "AXIS",
+            "along": 0.5
+          },
+          {
+            "id": "N_WINDOW",
+            "along": 0.78182,
+            "mirrorOf": "S_WINDOW"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_WINDOW_S",
+            "moduleId": "window_screened",
+            "columnId": "S_WINDOW"
+          },
+          {
+            "id": "BAY_DOOR",
+            "moduleId": "door_residential_timber",
+            "columnId": "AXIS"
+          },
+          {
+            "id": "BAY_WINDOW_N",
+            "moduleId": "window_screened",
+            "columnId": "N_WINDOW"
+          }
+        ]
       }
     },
     {
@@ -1247,6 +1499,7 @@
       "start": 0.5555555555555556,
       "end": 0.7777777777777778,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_HAMMAM",
       "facadeProfileId": "hero_courtyard_beige",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1261,6 +1514,7 @@
       "start": 0.08,
       "end": 0.2777777777777778,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_HAMMAM",
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
@@ -1275,25 +1529,129 @@
       "start": 0.4166666666666667,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_pilaster_relief",
+      "buildingId": "BLD_NORTH_YARD_WALL_N",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "Yard wall: two niches at the third points (a 6 m span needs two bays).",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.33333,
+            "mirrorOf": "C2"
+          },
+          {
+            "id": "C2",
+            "along": 0.66667,
+            "mirrorOf": "C1"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          },
+          {
+            "id": "BAY_02",
+            "moduleId": "blind_niche",
+            "columnId": "C2"
+          }
+        ]
       }
     },
     {
-      "id": "FRONTAGE_NORTH_COURT_EAST",
+      "id": "FRONTAGE_NORTH_COURT_EAST_S",
       "zoneId": "NORTH_COURT",
       "face": "east",
       "start": 0.08,
-      "end": 0.92,
+      "end": 0.5,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_ochre_relief",
+      "buildingId": "BLD_NORTH_HOUSE_S",
+      "facadeProfileId": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "A door on the axis of the house with one dark-recess window mirrored each side, 1.25 m piers holding the corners; the limewash marks it as the older of the two houses.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.25,
+        "columns": [
+          {
+            "id": "S_WINDOW",
+            "along": 0.22487,
+            "mirrorOf": "N_WINDOW"
+          },
+          {
+            "id": "AXIS",
+            "along": 0.5
+          },
+          {
+            "id": "N_WINDOW",
+            "along": 0.77513,
+            "mirrorOf": "S_WINDOW"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_WINDOW_S",
+            "moduleId": "window_dark_recess",
+            "columnId": "S_WINDOW"
+          },
+          {
+            "id": "BAY_DOOR",
+            "moduleId": "door_residential_timber",
+            "columnId": "AXIS"
+          },
+          {
+            "id": "BAY_WINDOW_N",
+            "moduleId": "window_dark_recess",
+            "columnId": "N_WINDOW"
+          }
+        ]
+      }
+    },
+    {
+      "id": "FRONTAGE_NORTH_COURT_EAST_N",
+      "zoneId": "NORTH_COURT",
+      "face": "east",
+      "start": 0.5,
+      "end": 0.92,
+      "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_NORTH_DYERS_YARD",
+      "facadeProfileId": "quiet_residential_cut_stone",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "layoutIntent": {
+        "mode": "authored",
+        "composition": "Two blind niches at equal 1.82 m gaps flank the axis of the yard where the dyers rack hangs; the wall is a working wall, its door is the cart gate in the Dogleg.",
+        "cornerTreatment": "held",
+        "groundHeadM": 2.5,
+        "columns": [
+          {
+            "id": "S_NICHE",
+            "along": 0.3102,
+            "mirrorOf": "N_NICHE"
+          },
+          {
+            "id": "N_NICHE",
+            "along": 0.6898,
+            "mirrorOf": "S_NICHE"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_NICHE_S",
+            "moduleId": "blind_niche",
+            "columnId": "S_NICHE"
+          },
+          {
+            "id": "BAY_NICHE_N",
+            "moduleId": "blind_niche",
+            "columnId": "N_NICHE"
+          }
+        ]
       }
     },
     {
@@ -1302,7 +1660,8 @@
       "face": "north",
       "start": 0.08,
       "end": 0.92,
-      "districtId": "DISTRICT_DYERS",
+      "districtId": "DISTRICT_RUG",
+      "buildingId": "BLD_LINK_WALL_NE",
       "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
@@ -1317,22 +1676,26 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_RUG",
+      "buildingId": "BLD_LINK_WALL_NW",
       "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
         "mode": "authored",
-        "composition": "Three blind niches march at 1.7m centres across the head wall of the connector, the middle one on the approach axis from the Tea Landing, so the wall reads as the closed back of the house behind; the stone quoins hold both corners.",
+        "composition": "A garden wall closing the connector: coping, one string course, and a single blind niche on the axis of the approach from Tea Landing; the stone quoins hold both corners.",
         "cornerTreatment": "held",
         "groundHeadM": 3.1,
         "columns": [
-          { "id": "W_NICHE", "along": 0.210884, "mirrorOf": "E_NICHE" },
-          { "id": "AXIS", "along": 0.5 },
-          { "id": "E_NICHE", "along": 0.789116, "mirrorOf": "W_NICHE" }
+          {
+            "id": "AXIS",
+            "along": 0.5
+          }
         ],
         "bays": [
-          { "id": "BAY_NICHE_W", "moduleId": "blind_niche", "columnId": "W_NICHE" },
-          { "id": "BAY_NICHE_AXIS", "moduleId": "blind_niche", "columnId": "AXIS" },
-          { "id": "BAY_NICHE_E", "moduleId": "blind_niche", "columnId": "E_NICHE" }
+          {
+            "id": "BAY_NICHE_AXIS",
+            "moduleId": "blind_niche",
+            "columnId": "AXIS"
+          }
         ]
       }
     },
@@ -1343,6 +1706,7 @@
       "start": 0.03,
       "end": 0.15,
       "districtId": "DISTRICT_SPICE",
+      "buildingId": "BLD_SPAWN_A_WALL_W",
       "facadeProfileId": "quiet_residential_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
@@ -1357,6 +1721,7 @@
       "start": 0.76,
       "end": 0.97,
       "districtId": "DISTRICT_SPICE",
+      "buildingId": "BLD_SPAWN_A_WALL_E",
       "facadeProfileId": "quiet_residential_ochre_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
@@ -1371,11 +1736,27 @@
       "start": 0.03,
       "end": 0.15,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_cut_stone_pilaster_relief",
+      "buildingId": "BLD_SPAWN_B_WALL_W",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "Spawn edge wall, 2.6 m, cut stone: one niche on the axis, corners open by size.",
+        "cornerTreatment": "open",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
+        ]
       }
     },
     {
@@ -1385,11 +1766,27 @@
       "start": 0.8,
       "end": 0.97,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_pilaster_relief",
+      "buildingId": "BLD_SPAWN_B_WALL_E",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "Spawn edge wall: one niche on the axis.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
+        ]
       }
     },
     {
@@ -1399,11 +1796,47 @@
       "start": 0.18,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "buildingId": "BLD_SPICE_BACKS",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "service"
+        "mode": "authored",
+        "composition": "Back of the Spice Street shops: three high blind recesses (sill 1.6 m) at the quarter points, no door; access is from the street side.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.4,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.25,
+            "mirrorOf": "C3"
+          },
+          {
+            "id": "C2",
+            "along": 0.5
+          },
+          {
+            "id": "C3",
+            "along": 0.75,
+            "mirrorOf": "C1"
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          },
+          {
+            "id": "BAY_02",
+            "moduleId": "blind_niche",
+            "columnId": "C2"
+          },
+          {
+            "id": "BAY_03",
+            "moduleId": "blind_niche",
+            "columnId": "C3"
+          }
+        ]
       }
     },
     {
@@ -1413,22 +1846,26 @@
       "start": 0.03,
       "end": 0.3,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_ochre_pilaster_relief",
+      "buildingId": "BLD_CARAVAN_YARD_WALL_S",
+      "facadeProfileId": "quiet_residential_ochre_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
         "mode": "authored",
-        "composition": "A central timber service closure holds the axis of the short ochre bay, framed by a mirrored pair of relief pilasters that carry the corners.",
-        "cornerTreatment": "pilaster",
-        "groundHeadM": 2.25,
+        "composition": "Yard wall: string course and one blind niche on the axis, held corners. Replaces the timber closure that pretended to be a door.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
         "columns": [
-          { "id": "S_PILASTER", "along": 0.17, "mirrorOf": "N_PILASTER" },
-          { "id": "AXIS", "along": 0.5 },
-          { "id": "N_PILASTER", "along": 0.83, "mirrorOf": "S_PILASTER" }
+          {
+            "id": "C1",
+            "along": 0.5
+          }
         ],
         "bays": [
-          { "id": "BAY_PILASTER_S", "moduleId": "pilaster_coverage", "columnId": "S_PILASTER" },
-          { "id": "BAY_TIMBER_AXIS", "moduleId": "timber_coverage_closure", "columnId": "AXIS" },
-          { "id": "BAY_PILASTER_N", "moduleId": "pilaster_coverage", "columnId": "N_PILASTER" }
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
         ]
       }
     },
@@ -1439,11 +1876,27 @@
       "start": 0.64,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "buildingId": "BLD_CARAVAN_YARD_WALL_N",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "service"
+        "mode": "authored",
+        "composition": "Mirror of the south yard wall in warm wash.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
+        ]
       }
     },
     {
@@ -1453,6 +1906,7 @@
       "start": 0.08,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
+      "buildingId": "BLD_ALLEY_BACKS",
       "facadeProfileId": "quiet_residential_niche_coverage_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
@@ -1467,11 +1921,27 @@
       "start": 0.03,
       "end": 0.38,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "buildingId": "BLD_NORTH_YARD_WALL_S",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "Yard wall: one niche on the axis.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
+        ]
       }
     },
     {
@@ -1481,11 +1951,27 @@
       "start": 0.03,
       "end": 0.38,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "buildingId": "BLD_SOUK_YARD_WALL",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "residential_dense"
+        "mode": "authored",
+        "composition": "Yard wall: one niche on the axis.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          {
+            "id": "C1",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "BAY_01",
+            "moduleId": "blind_niche",
+            "columnId": "C1"
+          }
+        ]
       }
     }
   ],
@@ -1935,6 +2421,2063 @@
       "note": "No collision-wall span exists on the 11.00m south edge; the full face remains an authored traversal opening."
     }
   ],
+  "buildings": [
+    {
+      "id": "BLD_SPICE_ROW_W",
+      "type": "shop row",
+      "label": "Spice Street west shop row",
+      "storeys": 2,
+      "brief": "Five equal shopfronts under one continuous head, each with its own recess or door, awnings under the string course, shuttered windows above aligned over the openings.",
+      "faces": [
+        {
+          "zoneId": "SPICE_STREET",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+          "lengthM": 15.12,
+          "corners": "held",
+          "groundHeadM": 2.7,
+          "bays": [
+            {
+              "id": "GROUND_01",
+              "module": "shop_recess_market",
+              "alongM": 2.45,
+              "along": 0.16204,
+              "story": 0
+            },
+            {
+              "id": "GROUND_02",
+              "module": "door_shop_timber",
+              "alongM": 5.005,
+              "along": 0.33102,
+              "story": 0
+            },
+            {
+              "id": "GROUND_03",
+              "module": "shop_recess_market",
+              "alongM": 7.56,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "GROUND_04",
+              "module": "door_shop_timber",
+              "alongM": 10.115,
+              "along": 0.66898,
+              "story": 0
+            },
+            {
+              "id": "GROUND_05",
+              "module": "shop_recess_market",
+              "alongM": 12.67,
+              "along": 0.83796,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_shuttered",
+              "alongM": 2.45,
+              "along": 0.16204,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_screened",
+              "alongM": 5.005,
+              "along": 0.33102,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_03",
+              "module": "window_shuttered",
+              "alongM": 7.56,
+              "along": 0.5,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_04",
+              "module": "window_screened",
+              "alongM": 10.115,
+              "along": 0.66898,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_05",
+              "module": "window_shuttered",
+              "alongM": 12.67,
+              "along": 0.83796,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CLOTH_CANOPY",
+              "where": "existing spans CANOPY_SPICE_01 and CANOPY_SPICE_02, keep"
+            },
+            {
+              "assetId": "ASSET_SIGNBOARD",
+              "where": "over the head of recesses 1 and 3 (existing SPICE_W_SIGN_1, SPICE_W_SIGN_3)"
+            },
+            {
+              "assetId": "ASSET_CC0_SPICE_SACK",
+              "where": "at each recess threshold, against the jamb, never past the awning line"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "one over each shop door head"
+            },
+            {
+              "assetId": "ASSET_LAUNDRY_LINE",
+              "where": "existing B6_LAUNDRY_SPICE_01..03, keep"
+            }
+          ],
+          "needs": [
+            "awning_single_opening: a cloth awning module that belongs to one recess, supported from the wall, top under the string course"
+          ],
+          "note": "Bay ids GROUND_01..05 are kept so the existing dressing anchors (servedBayId) stay bound. Five equal fronts, 0.8 m piers between, 1.2 m at the corners."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPICE_ROW_E",
+      "type": "shop row",
+      "label": "Spice Street east shop row",
+      "storeys": 1,
+      "brief": "Quieter cut-stone shop row facing the spice merchants: equal narrow fronts, goods at the thresholds, no awnings so the west side reads as the busy side.",
+      "faces": [
+        {
+          "zoneId": "SPICE_STREET",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPICE_STREET_EAST",
+          "lengthM": 15.12,
+          "corners": "held",
+          "groundHeadM": 2.7,
+          "bays": [
+            {
+              "id": "GROUND_01",
+              "module": "door_shop_timber",
+              "alongM": 1.825,
+              "along": 0.1207,
+              "story": 0
+            },
+            {
+              "id": "GROUND_02",
+              "module": "window_shuttered",
+              "alongM": 4.692,
+              "along": 0.31035,
+              "story": 0
+            },
+            {
+              "id": "GROUND_03",
+              "module": "door_shop_timber",
+              "alongM": 7.56,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "GROUND_04",
+              "module": "window_shuttered",
+              "alongM": 10.428,
+              "along": 0.68965,
+              "story": 0
+            },
+            {
+              "id": "GROUND_05",
+              "module": "door_shop_timber",
+              "alongM": 13.295,
+              "along": 0.8793,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_MARKET_CART",
+              "where": "existing B4_SPICE_E_CART at GROUND_01, keep"
+            },
+            {
+              "assetId": "ASSET_SPICE_GOODS",
+              "where": "existing at GROUND_03 and GROUND_04, keep"
+            },
+            {
+              "assetId": "ASSET_SIGNBOARD",
+              "where": "over the axis door (GROUND_03)"
+            }
+          ],
+          "needs": [],
+          "note": "Profile quiet_residential_cut_stone gains door_shop_timber and window_shuttered. No awnings: the quiet side of the street."
+        }
+      ]
+    },
+    {
+      "id": "BLD_MADRASA",
+      "type": "landmark",
+      "label": "Madrasa",
+      "storeys": 2,
+      "brief": "The building the minaret belongs to. One grand pointed arch on the axis of the court, two high arched windows, plain ashlar below, parapet raised over the door bay.",
+      "faces": [
+        {
+          "zoneId": "FOUNTAIN_COURT",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_FOUNTAIN_COURT_WEST",
+          "lengthM": 5.72,
+          "corners": "open",
+          "groundHeadM": 4.85,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "arch_hero_courtyard",
+              "alongM": 2.86,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_landmark_stained",
+              "alongM": 1.76,
+              "along": 0.30769,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_landmark_stained",
+              "alongM": 3.96,
+              "along": 0.69231,
+              "story": 1
+            },
+            {
+              "id": "UPPER2_01",
+              "module": "window_dark_recess",
+              "alongM": 1.76,
+              "along": 0.30769,
+              "story": 2
+            },
+            {
+              "id": "UPPER2_02",
+              "module": "window_dark_recess",
+              "alongM": 3.96,
+              "along": 0.69231,
+              "story": 2
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "flanking the arch at 0.60 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "flanking the arch at 5.12 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_COURT_PLANTER",
+              "where": "one each side of the arch, 0.4 m off the wall"
+            }
+          ],
+          "needs": [
+            "raised_parapet: massing option lifting the parapet 1.2 m over the arch bay",
+            "inscription_band: carved band module between arch head and stained windows"
+          ],
+          "note": "The arch is the facade; corners are open by design. Stained glass above the arch, small dark recesses on the third storey."
+        },
+        {
+          "frontageId": "FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH",
+          "lengthM": 2.72,
+          "corners": "open",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_dark_recess",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [],
+          "note": "Blank flank of the madrasa: one niche, one high recess."
+        }
+      ]
+    },
+    {
+      "id": "BLD_MERCHANT_HOUSE",
+      "type": "house",
+      "label": "Merchant's house on the fountain",
+      "storeys": 2,
+      "brief": "One tall door, paired windows about it, a projecting timber balcony over the door looking at the fountain.",
+      "faces": [
+        {
+          "zoneId": "FOUNTAIN_COURT",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST",
+          "lengthM": 5.72,
+          "corners": "held",
+          "groundHeadM": 2.25,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "door_residential_timber",
+              "alongM": 2.86,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_screened",
+              "alongM": 1.66,
+              "along": 0.29021,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_screened",
+              "alongM": 4.06,
+              "along": 0.70979,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "over the door head at 2.86 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_COURT_PLANTER",
+              "where": "pair at 0.9 m and 4.8 m along, against the plinth"
+            }
+          ],
+          "needs": [
+            "balcony_timber: projecting timber balcony module 2.4 m wide over the door, sill at the upper storey datum, brackets to the wall"
+          ],
+          "note": "One tall door alone on the ground, 2.3 m piers; the balcony over it is the hero element facing the fountain."
+        },
+        {
+          "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
+          "lengthM": 2.72,
+          "corners": "open",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_dark_recess",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [],
+          "note": "House flank."
+        }
+      ]
+    },
+    {
+      "id": "BLD_RUG_ARCADE_W",
+      "type": "arcade",
+      "label": "Rug arcade, west",
+      "storeys": 2,
+      "brief": "Five arches on one rhythm with rugs hung inside, piers between, screened windows over every second arch.",
+      "faces": [
+        {
+          "zoneId": "TEXTILE_ARCADE",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+          "lengthM": 13.44,
+          "corners": "held",
+          "groundHeadM": 3.55,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "arch_arcade",
+              "alongM": 2.55,
+              "along": 0.18973,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "column_arcade",
+              "alongM": 4.635,
+              "along": 0.34487,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "arch_arcade",
+              "alongM": 6.72,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_04",
+              "module": "column_arcade",
+              "alongM": 8.805,
+              "along": 0.65513,
+              "story": 0
+            },
+            {
+              "id": "BAY_05",
+              "module": "arch_arcade",
+              "alongM": 10.89,
+              "along": 0.81027,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_screened",
+              "alongM": 2.55,
+              "along": 0.18973,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_03",
+              "module": "window_screened",
+              "alongM": 6.72,
+              "along": 0.5,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_05",
+              "module": "window_screened",
+              "alongM": 10.89,
+              "along": 0.81027,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "one rug hung from each arch head, inside the arch"
+            },
+            {
+              "assetId": "ASSET_GROUND_RUG",
+              "where": "threshold of the middle arch"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "on each column, 2.6 m up"
+            }
+          ],
+          "needs": [],
+          "note": "Three arches, two columns, 0.59 m reveals between. Windows over arches only."
+        }
+      ]
+    },
+    {
+      "id": "BLD_RUG_ARCADE_E",
+      "type": "arcade",
+      "label": "Rug arcade, east",
+      "storeys": 1,
+      "brief": "Mirror of the west arcade in lime wash so the passage reads as one designed street.",
+      "faces": [
+        {
+          "zoneId": "TEXTILE_ARCADE",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
+          "lengthM": 13.44,
+          "corners": "held",
+          "groundHeadM": 3.55,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "arch_arcade",
+              "alongM": 2.55,
+              "along": 0.18973,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "column_arcade",
+              "alongM": 4.635,
+              "along": 0.34487,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "arch_arcade",
+              "alongM": 6.72,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_04",
+              "module": "column_arcade",
+              "alongM": 8.805,
+              "along": 0.65513,
+              "story": 0
+            },
+            {
+              "id": "BAY_05",
+              "module": "arch_arcade",
+              "alongM": 10.89,
+              "along": 0.81027,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_MARKET_STALL",
+              "where": "inside the middle arch, counter facing the lane"
+            },
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "hung in the two outer arches"
+            },
+            {
+              "assetId": "ASSET_SIGNBOARD",
+              "where": "over the middle arch head"
+            }
+          ],
+          "needs": [],
+          "note": "Same rhythm as the west arcade, one storey, lime wash."
+        }
+      ]
+    },
+    {
+      "id": "BLD_RUG_MERCHANT",
+      "type": "shop",
+      "label": "Rug merchant",
+      "storeys": 2,
+      "brief": "One wide opening with rugs on a rail, door beside it, two upper windows over the openings, one sign on the axis.",
+      "faces": [
+        {
+          "zoneId": "RUG_GATE",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_RUG_GATE_WEST",
+          "lengthM": 6.88,
+          "corners": "held",
+          "groundHeadM": 2.7,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "shop_recess_market",
+              "alongM": 2.45,
+              "along": 0.3561,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "door_shop_timber",
+              "alongM": 5.055,
+              "along": 0.73474,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_shuttered",
+              "alongM": 2.45,
+              "along": 0.3561,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_screened",
+              "alongM": 5.055,
+              "along": 0.73474,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "rugs on a rail across the recess head"
+            },
+            {
+              "assetId": "ASSET_SIGNBOARD",
+              "where": "over the recess head"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "over the house door at 5.05 m along, under the head"
+            }
+          ],
+          "needs": [],
+          "note": "Shop recess south, house door north; asymmetric because a shop and its dwelling door are two things. Uppers sit over each."
+        }
+      ]
+    },
+    {
+      "id": "BLD_GATE_KEEPER",
+      "type": "house",
+      "label": "Gatekeeper's house",
+      "storeys": 1,
+      "brief": "Small house beside the northern gate: one door, one window beside, one above. The 1.9 m return is its blank flank.",
+      "faces": [
+        {
+          "zoneId": "RUG_GATE",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_RUG_GATE_EAST",
+          "lengthM": 4.88,
+          "corners": "held",
+          "groundHeadM": 2.25,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "door_residential_timber",
+              "alongM": 1.775,
+              "along": 0.36373,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "window_dark_recess",
+              "alongM": 3.18,
+              "along": 0.65164,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "over the door at 1.77 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_COURT_PLANTER",
+              "where": "under the window"
+            }
+          ],
+          "needs": [],
+          "note": "Profile becomes quiet_residential. Door south, dark-recess window north, 1.25 m piers, 0.45 m between."
+        },
+        {
+          "frontageId": "FRONTAGE_RUG_GATE_EAST_SOUTH",
+          "lengthM": 1.88,
+          "corners": "open",
+          "groundHeadM": 3.4,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "pilaster_facade",
+              "alongM": 0.94,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [],
+          "note": "1.9 m blank return of the same house in cut stone (the validator wants adjacent frontages to differ in material): one pilaster on its axis."
+        }
+      ]
+    },
+    {
+      "id": "BLD_CARAVAN_STORES",
+      "type": "store row",
+      "label": "Caravanserai stores",
+      "storeys": 1,
+      "brief": "Niche, door, niche, door, niche under one head at one gap; the two store doors mirror about the court axis.",
+      "faces": [
+        {
+          "zoneId": "CARAVAN_COURT",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
+          "lengthM": 15.12,
+          "corners": "held",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.07,
+              "along": 0.1369,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "door_storage_heavy",
+              "alongM": 4.815,
+              "along": 0.31845,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "blind_niche",
+              "alongM": 7.56,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_04",
+              "module": "door_storage_heavy",
+              "alongM": 10.305,
+              "along": 0.68155,
+              "story": 0
+            },
+            {
+              "id": "BAY_05",
+              "module": "blind_niche",
+              "alongM": 13.05,
+              "along": 0.8631,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CARAVAN_LOAD_CRATE",
+              "where": "a stack beside each store door, on the pier side"
+            },
+            {
+              "assetId": "ASSET_COVER_GOODS",
+              "where": "existing COVER_CARAVAN_01, keep"
+            },
+            {
+              "assetId": "ASSET_LAUNDRY_LINE",
+              "where": "existing L34_CARAVAN_PACK_LINE_01, keep"
+            }
+          ],
+          "needs": [],
+          "note": "Already authored. Equal 1.545 m gaps everywhere including the corners."
+        }
+      ]
+    },
+    {
+      "id": "BLD_CARAVAN_YARD_WALL_S",
+      "type": "compound wall",
+      "label": "Caravan yard wall, south",
+      "storeys": 1,
+      "brief": "Yard wall flanking the West Mid Link: coping and string course only.",
+      "faces": [
+        {
+          "zoneId": "CARAVAN_COURT",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
+          "lengthM": 4.86,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.43,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping: stone coping course on compound walls"
+          ],
+          "note": "Yard wall: string course and one blind niche on the axis, held corners. Replaces the timber closure that pretended to be a door."
+        }
+      ]
+    },
+    {
+      "id": "BLD_CARAVAN_YARD_WALL_N",
+      "type": "compound wall",
+      "label": "Caravan yard wall, north",
+      "storeys": 1,
+      "brief": "Yard wall flanking the West Mid Link: coping and string course only.",
+      "faces": [
+        {
+          "zoneId": "CARAVAN_COURT",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_NORTH",
+          "lengthM": 5.94,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.97,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Mirror of the south yard wall in warm wash."
+        }
+      ]
+    },
+    {
+      "id": "BLD_TEA_HOUSE",
+      "type": "tea house",
+      "label": "Tea house",
+      "storeys": 2,
+      "brief": "Wide openings onto the raised terrace, a screened gallery above, lanterns on the wall, benches against it. The most open wall on the map.",
+      "faces": [
+        {
+          "zoneId": "TEA_TERRACE",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_TEA_TERRACE_EAST",
+          "lengthM": 8.4,
+          "corners": "held",
+          "groundHeadM": 2.7,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "shop_recess_market",
+              "alongM": 2.45,
+              "along": 0.29167,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "shop_recess_market",
+              "alongM": 5.95,
+              "along": 0.70833,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_shuttered",
+              "alongM": 2.45,
+              "along": 0.29167,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_shuttered",
+              "alongM": 5.95,
+              "along": 0.70833,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_TEA_TABLE",
+              "where": "existing terrace anchors, keep; add one table at each recess threshold"
+            },
+            {
+              "assetId": "ASSET_CC0_TEA_STOOL",
+              "where": "two per table"
+            },
+            {
+              "assetId": "ASSET_TEA_SERVICE",
+              "where": "on the tables"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "wall lantern at 1.20 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "wall lantern on the axis at 4.20 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "wall lantern at 7.20 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_SIGNBOARD",
+              "where": "on the axis pier between the recesses, above head height"
+            },
+            {
+              "assetId": "ASSET_CLOTH_CANOPY",
+              "where": "existing TEA_TERRACE_SHADE_01, keep"
+            }
+          ],
+          "needs": [
+            "screened_gallery: timber mashrabiya gallery spanning both upper windows, projecting 0.6 m, on brackets"
+          ],
+          "note": "Two wide openings at 2.45 m from each end, a 1.1 m pier on the axis carrying the sign; the gallery above makes it the most open wall on the map."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPICE_BACKS",
+      "type": "service back",
+      "label": "Back of the Spice Street shops",
+      "storeys": 2,
+      "brief": "Blank, two high vents, one hatch, drain staining at the base, one string course.",
+      "faces": [
+        {
+          "zoneId": "SERVICE_SOUTH",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SERVICE_SOUTH_EAST",
+          "lengthM": 15.8,
+          "corners": "held",
+          "groundHeadM": 3.4,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 3.95,
+              "along": 0.25,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "blind_niche",
+              "alongM": 7.9,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "blind_niche",
+              "alongM": 11.85,
+              "along": 0.75,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "drain_stain: base staining decal under a drain spout"
+          ],
+          "note": "Back of the Spice Street shops: three high blind recesses (sill 1.6 m) at the quarter points, no door; access is from the street side."
+        }
+      ]
+    },
+    {
+      "id": "BLD_STORES_BACK",
+      "type": "service back",
+      "label": "Back of the caravan stores",
+      "storeys": 2,
+      "brief": "Retaining spine, south third: one hatch and high vents, stained base.",
+      "faces": [
+        {
+          "zoneId": "SERVICE_NORTH",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
+          "lengthM": 9.31,
+          "corners": "held",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "door_storage_heavy",
+              "alongM": 4.656,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "vent_service",
+              "alongM": 2.328,
+              "along": 0.25,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "vent_service",
+              "alongM": 4.656,
+              "along": 0.5,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_03",
+              "module": "vent_service",
+              "alongM": 6.984,
+              "along": 0.75,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_BARREL",
+              "where": "one beside the hatch on the north pier side"
+            }
+          ],
+          "needs": [
+            "drain_stain"
+          ],
+          "note": "One hatch, three vents above at quarter points."
+        }
+      ]
+    },
+    {
+      "id": "BLD_TEA_HOUSE_BACK",
+      "type": "service back",
+      "label": "Back of the tea house",
+      "storeys": 2,
+      "brief": "Retaining spine, middle third: warm plaster, blind niches high, a drain, nothing at ground.",
+      "faces": [
+        {
+          "zoneId": "SERVICE_NORTH",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+          "lengthM": 9.31,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 3.104,
+              "along": 0.33333,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "blind_niche",
+              "alongM": 6.208,
+              "along": 0.66667,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "blind_niche",
+              "alongM": 3.104,
+              "along": 0.33333,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "blind_niche",
+              "alongM": 6.208,
+              "along": 0.66667,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "drain_stain"
+          ],
+          "note": "Plaster back with high niches at the third points, nothing at ground."
+        }
+      ]
+    },
+    {
+      "id": "BLD_NORTH_YARD_WALL",
+      "type": "compound wall",
+      "label": "North yard wall",
+      "storeys": 2,
+      "brief": "Retaining spine, north third: cut stone with pilasters and coping toward the link. Reads as a wall, not a building.",
+      "faces": [
+        {
+          "zoneId": "SERVICE_NORTH",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+          "lengthM": 9.31,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 3.104,
+              "along": 0.33333,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "blind_niche",
+              "alongM": 6.208,
+              "along": 0.66667,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "blind_niche",
+              "alongM": 3.104,
+              "along": 0.33333,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "blind_niche",
+              "alongM": 6.208,
+              "along": 0.66667,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Yard wall on the spine: two niches at the third points with two above them, string course, nothing else (the grammar wants two bays on a 9.3 m span)."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DYERS_ARCADE_W",
+      "type": "arcade",
+      "label": "Dyers' arcade, west",
+      "storeys": 2,
+      "brief": "Dyers' stalls behind arches on one rhythm; cloth hung to dry inside them.",
+      "faces": [
+        {
+          "zoneId": "COVERED_SOUK",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+          "lengthM": 5.72,
+          "corners": "held",
+          "groundHeadM": 3.55,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "arch_arcade",
+              "alongM": 2.86,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_screened",
+              "alongM": 2.86,
+              "along": 0.5,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "dyed cloth hung inside the arch"
+            },
+            {
+              "assetId": "ASSET_DYERS_SEALED_VAT",
+              "where": "one against each pier"
+            }
+          ],
+          "needs": [],
+          "note": "One arch on the axis, 1.55 m piers."
+        },
+        {
+          "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
+          "lengthM": 2.72,
+          "corners": "open",
+          "groundHeadM": 2.7,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "door_shop_timber",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_screened",
+              "alongM": 1.36,
+              "along": 0.5,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [],
+          "note": "Stall door in the 2.7 m return."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DYERS_ARCADE_E",
+      "type": "arcade",
+      "label": "Dyers' arcade, east",
+      "storeys": 1,
+      "brief": "Same rhythm as the west arcade in lime wash.",
+      "faces": [
+        {
+          "zoneId": "COVERED_SOUK",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+          "lengthM": 13.44,
+          "corners": "held",
+          "groundHeadM": 3.55,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "arch_arcade",
+              "alongM": 2.55,
+              "along": 0.18973,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "column_arcade",
+              "alongM": 4.635,
+              "along": 0.34487,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "arch_arcade",
+              "alongM": 6.72,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_04",
+              "module": "column_arcade",
+              "alongM": 8.805,
+              "along": 0.65513,
+              "story": 0
+            },
+            {
+              "id": "BAY_05",
+              "module": "arch_arcade",
+              "alongM": 10.89,
+              "along": 0.81027,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "dyed cloth in each arch"
+            },
+            {
+              "assetId": "ASSET_DYERS_WORKSTATION",
+              "where": "threshold of the middle arch"
+            },
+            {
+              "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
+              "where": "one at each outer arch jamb"
+            }
+          ],
+          "needs": [],
+          "note": "Three arches, two columns, lime wash, one storey."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SOUK_YARD_WALL",
+      "type": "compound wall",
+      "label": "Souk yard wall",
+      "storeys": 1,
+      "brief": "Coping and string course.",
+      "faces": [
+        {
+          "zoneId": "COVERED_SOUK",
+          "face": "south"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_COVERED_SOUK_SOUTH",
+          "lengthM": 4.2,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.1,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Yard wall: one niche on the axis."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DYE_WORKS",
+      "type": "workshop",
+      "label": "Dye works",
+      "storeys": 2,
+      "brief": "One cart door on the axis between two blind niches at equal gaps; vents above light the dye floor; the base is stained by the trade; vats and the rack stand at the door.",
+      "faces": [
+        {
+          "zoneId": "DYERS_ALLEY",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
+          "lengthM": 8.99,
+          "corners": "held",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.91,
+              "along": 0.2125,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "door_storage_heavy",
+              "alongM": 4.495,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "blind_niche",
+              "alongM": 7.08,
+              "along": 0.7875,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "vent_service",
+              "alongM": 1.91,
+              "along": 0.2125,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "vent_service",
+              "alongM": 4.495,
+              "along": 0.5,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_03",
+              "module": "vent_service",
+              "alongM": 7.08,
+              "along": 0.7875,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_SEALED_VAT",
+              "where": "two beside the cart door on the south pier"
+            },
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "drying rack on the north niche"
+            },
+            {
+              "assetId": "ASSET_DYERS_WORKSTATION",
+              "where": "under the south niche"
+            }
+          ],
+          "needs": [
+            "drain_stain"
+          ],
+          "note": "Authored. Cart door on axis, niches at equal gaps, vents over each bay."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DYERS_HOUSE",
+      "type": "house",
+      "label": "Dyers' house",
+      "storeys": 1,
+      "brief": "Single-storey cut-stone house north of the works: one timber door on its axis, one screened window mirrored each side, piers holding both corners. The parapet steps down 2.5 m from the works.",
+      "faces": [
+        {
+          "zoneId": "DYERS_ALLEY",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+          "lengthM": 8.25,
+          "corners": "held",
+          "groundHeadM": 2.25,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "window_screened",
+              "alongM": 1.8,
+              "along": 0.21818,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "door_residential_timber",
+              "alongM": 4.125,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "window_screened",
+              "alongM": 6.45,
+              "along": 0.78182,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "over the door at 4.13 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_POTTERY",
+              "where": "under the north window"
+            }
+          ],
+          "needs": [],
+          "note": "Authored. Single storey, 4.5 m; the parapet steps down from the works."
+        }
+      ]
+    },
+    {
+      "id": "BLD_ALLEY_BACKS",
+      "type": "service back",
+      "label": "Backs onto Dyers Alley",
+      "storeys": 1,
+      "brief": "Map edge. Blank with high openings so the alley is lit, a drain at the base, one string course.",
+      "faces": [
+        {
+          "zoneId": "DYERS_ALLEY",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_DYERS_ALLEY_EAST",
+          "lengthM": 18.48,
+          "corners": "held",
+          "groundHeadM": 3.4,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 3.696,
+              "along": 0.2,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "pilaster_niche_coverage",
+              "alongM": 6.468,
+              "along": 0.35,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "blind_niche",
+              "alongM": 9.24,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_04",
+              "module": "pilaster_niche_coverage",
+              "alongM": 12.012,
+              "along": 0.65,
+              "story": 0
+            },
+            {
+              "id": "BAY_05",
+              "module": "blind_niche",
+              "alongM": 14.784,
+              "along": 0.8,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "drain_stain"
+          ],
+          "note": "Head at 3.4 m so the niches sit high (sill 1.6 m) and read as light openings of the backs, not doors."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DYE_WORKS_GATE",
+      "type": "workshop",
+      "label": "Dye works cart gate",
+      "storeys": 2,
+      "brief": "Code-owned identity plane (pushCoreBoundaryFacadeGrammar). The works' cart gate at the north end and a blank working wall; the gate surround must read as an arch, not a slab.",
+      "faces": [
+        {
+          "zoneId": "DYERS_DOGLEG",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "face": "west",
+          "corners": "held",
+          "groundHeadM": 2.965,
+          "bays": [],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_SEALED_VAT",
+              "where": "existing dogleg cluster, keep"
+            }
+          ],
+          "needs": [
+            "arch_surround: replace the arch_pointed_frame slab with a real arch surround with a visible void, springers and a keystone"
+          ],
+          "note": "Code-owned (pushCoreBoundaryFacadeGrammar, DYERS_DOGLEG_WEST). Cart gate at the north end, blank working wall south of it, two high vents."
+        }
+      ]
+    },
+    {
+      "id": "BLD_DOGLEG_HOUSE",
+      "type": "house",
+      "label": "Dogleg house",
+      "storeys": 2,
+      "brief": "Code-owned identity plane. A house wall: one door, paired windows, thresholds. Not nine identical blind bays.",
+      "faces": [
+        {
+          "zoneId": "DYERS_DOGLEG",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "face": "east",
+          "corners": "held",
+          "groundHeadM": 2.25,
+          "bays": [],
+          "dressing": [],
+          "needs": [],
+          "note": "Code-owned (DYERS_DOGLEG_EAST). One door on the axis, one window mirrored each side, three uppers over; not nine identical blind bays."
+        }
+      ]
+    },
+    {
+      "id": "BLD_HAMMAM",
+      "type": "landmark",
+      "label": "Hammam",
+      "storeys": 1,
+      "brief": "One arched door on the axis, no ground windows, small high windows, a raised parapet or dome behind.",
+      "faces": [
+        {
+          "zoneId": "NORTH_COURT",
+          "face": "west"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_WEST",
+          "lengthM": 4,
+          "corners": "open",
+          "groundHeadM": 2.965,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "door_fortified_gate",
+              "alongM": 2,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_dark_recess",
+              "alongM": 1.1,
+              "along": 0.275,
+              "story": 1
+            },
+            {
+              "id": "UPPER1_02",
+              "module": "window_dark_recess",
+              "alongM": 2.9,
+              "along": 0.725,
+              "story": 1
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "flanking the gate at 0.50 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "flanking the gate at 3.50 m along, under the head"
+            }
+          ],
+          "needs": [
+            "raised_parapet or dome: the hammam needs a roof form above the parapet"
+          ],
+          "note": "One heavy gate on the axis, two small high recesses, nothing else at ground."
+        },
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_WEST_SOUTH",
+          "lengthM": 3.56,
+          "corners": "held",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.78,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "UPPER1_01",
+              "module": "window_dark_recess",
+              "alongM": 1.78,
+              "along": 0.5,
+              "story": 1
+            }
+          ],
+          "dressing": [],
+          "needs": [],
+          "note": "Hammam flank."
+        }
+      ]
+    },
+    {
+      "id": "BLD_NORTH_HOUSE_S",
+      "type": "house",
+      "label": "North Court house, south",
+      "storeys": 1,
+      "brief": "Limewashed single-storey house: door on its axis, one dark-recess window mirrored each side, 1.25 m piers at the corners. Its neighbour to the north is the dyers yard wall, not another house.",
+      "faces": [
+        {
+          "zoneId": "NORTH_COURT",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_EAST_S",
+          "lengthM": 7.56,
+          "corners": "held",
+          "groundHeadM": 2.25,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "window_dark_recess",
+              "alongM": 1.7,
+              "along": 0.22487,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "door_residential_timber",
+              "alongM": 3.78,
+              "along": 0.5,
+              "story": 0
+            },
+            {
+              "id": "BAY_03",
+              "module": "window_dark_recess",
+              "alongM": 5.86,
+              "along": 0.77513,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_CC0_LANTERN",
+              "where": "over the door at 3.78 m along, under the head"
+            },
+            {
+              "assetId": "ASSET_CC0_POTTERY",
+              "where": "beside the door on the north side"
+            }
+          ],
+          "needs": [],
+          "note": "Authored."
+        }
+      ]
+    },
+    {
+      "id": "BLD_NORTH_DYERS_YARD",
+      "type": "workshop",
+      "label": "Dyers yard wall, North Court",
+      "storeys": 1,
+      "brief": "The dyers works yard: a cut-stone working wall with two blind niches flanking the axis where the rack hangs, vats and stall at its base, no door because the cart gate is in the Dogleg.",
+      "faces": [
+        {
+          "zoneId": "NORTH_COURT",
+          "face": "east"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_EAST_N",
+          "lengthM": 7.56,
+          "corners": "held",
+          "groundHeadM": 2.5,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.345,
+              "along": 0.3102,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "blind_niche",
+              "alongM": 5.215,
+              "along": 0.6898,
+              "story": 0
+            }
+          ],
+          "dressing": [
+            {
+              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
+              "where": "existing rack L3R0_NORTH_DYERS_BAY_01, keep"
+            },
+            {
+              "assetId": "ASSET_DYERS_SEALED_VAT",
+              "where": "existing, keep"
+            },
+            {
+              "assetId": "ASSET_MARKET_STALL",
+              "where": "existing, keep; asset itself is on the parts list"
+            }
+          ],
+          "needs": [],
+          "note": "Authored. Working wall, no door."
+        }
+      ]
+    },
+    {
+      "id": "BLD_NORTH_YARD_WALL_N",
+      "type": "compound wall",
+      "label": "North Court yard wall, north",
+      "storeys": 1,
+      "brief": "Coping and string course.",
+      "faces": [
+        {
+          "zoneId": "NORTH_COURT",
+          "face": "north"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+          "lengthM": 6.04,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.013,
+              "along": 0.33333,
+              "story": 0
+            },
+            {
+              "id": "BAY_02",
+              "module": "blind_niche",
+              "alongM": 4.027,
+              "along": 0.66667,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Yard wall: two niches at the third points (a 6 m span needs two bays)."
+        }
+      ]
+    },
+    {
+      "id": "BLD_NORTH_YARD_WALL_S",
+      "type": "compound wall",
+      "label": "North Court yard wall, south",
+      "storeys": 1,
+      "brief": "Coping and string course.",
+      "faces": [
+        {
+          "zoneId": "NORTH_COURT",
+          "face": "south"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_NORTH_COURT_SOUTH",
+          "lengthM": 4.2,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.1,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Yard wall: one niche on the axis."
+        }
+      ]
+    },
+    {
+      "id": "BLD_LINK_WALL_NW",
+      "type": "compound wall",
+      "label": "Garden wall closing the north-west link",
+      "storeys": 1,
+      "brief": "Coping, one string course, a single blind niche on the axis of the approach from Tea Landing.",
+      "faces": [
+        {
+          "zoneId": "LINK_NORTH_WEST",
+          "face": "north"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+          "lengthM": 5.88,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.94,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Authored. One niche on the axis."
+        }
+      ]
+    },
+    {
+      "id": "BLD_LINK_WALL_NE",
+      "type": "compound wall",
+      "label": "Garden wall closing the north-east link",
+      "storeys": 1,
+      "brief": "Mirror of the north-west wall.",
+      "faces": [
+        {
+          "zoneId": "LINK_NORTH_EAST",
+          "face": "north"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_LINK_NORTH_EAST_NORTH",
+          "lengthM": 5.88,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.94,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Mirror of the north-west wall."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPAWN_A_WALL_W",
+      "type": "compound wall",
+      "label": "Spawn A edge wall, west",
+      "storeys": 1,
+      "brief": "Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.",
+      "faces": [
+        {
+          "zoneId": "SPAWN_A_COURTYARD",
+          "face": "north"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPAWN_A_NORTH_WEST",
+          "lengthM": 2.64,
+          "corners": "open",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.32,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Spawn edge wall, 2.6 m: one niche on the axis, corners open by size."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPAWN_A_WALL_E",
+      "type": "compound wall",
+      "label": "Spawn A edge wall, east",
+      "storeys": 1,
+      "brief": "Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.",
+      "faces": [
+        {
+          "zoneId": "SPAWN_A_COURTYARD",
+          "face": "north"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPAWN_A_NORTH_EAST",
+          "lengthM": 4.62,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 2.31,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Spawn edge wall: one niche on the axis."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPAWN_B_WALL_W",
+      "type": "compound wall",
+      "label": "Spawn B edge wall, west",
+      "storeys": 1,
+      "brief": "Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.",
+      "faces": [
+        {
+          "zoneId": "SPAWN_B_COURTYARD",
+          "face": "south"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPAWN_B_SOUTH_WEST",
+          "lengthM": 2.64,
+          "corners": "open",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.32,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Spawn edge wall, 2.6 m, cut stone: one niche on the axis, corners open by size."
+        }
+      ]
+    },
+    {
+      "id": "BLD_SPAWN_B_WALL_E",
+      "type": "compound wall",
+      "label": "Spawn B edge wall, east",
+      "storeys": 1,
+      "brief": "Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.",
+      "faces": [
+        {
+          "zoneId": "SPAWN_B_COURTYARD",
+          "face": "south"
+        }
+      ],
+      "walls": [
+        {
+          "frontageId": "FRONTAGE_SPAWN_B_SOUTH_EAST",
+          "lengthM": 3.74,
+          "corners": "held",
+          "groundHeadM": 3.1,
+          "bays": [
+            {
+              "id": "BAY_01",
+              "module": "blind_niche",
+              "alongM": 1.87,
+              "along": 0.5,
+              "story": 0
+            }
+          ],
+          "dressing": [],
+          "needs": [
+            "coping"
+          ],
+          "note": "Spawn edge wall: one niche on the axis."
+        }
+      ]
+    }
+  ],
   "composition_rules": {
     "clearances": {
       "door_service_m": 0.8,
@@ -2337,7 +4880,9 @@
         "window_dark_recess",
         "window_screened",
         "blind_niche",
-        "pilaster_facade"
+        "pilaster_facade",
+        "door_shop_timber",
+        "window_shuttered"
       ]
     },
     {
@@ -2536,6 +5081,7 @@
       "moduleIds": [
         "door_storage_heavy",
         "vent_service",
+        "window_dark_recess",
         "blind_niche",
         "pilaster_facade"
       ]
@@ -2938,7 +5484,6 @@
       "anchors": [
         "RUG_W_SIGN_1",
         "RUG_W_SIGN_2",
-        "RUG_E_SIGN_1",
         "LMK_RUG_GATE_01"
       ],
       "assetIds": [
@@ -3364,12 +5909,14 @@
         "L34_DOGLEG_WALL_RACK_01",
         "L34_DOGLEG_VAT_01",
         "L34_DOGLEG_VAT_02",
-        "L34_DOGLEG_WORKSTATION_01"
+        "L34_DOGLEG_WORKSTATION_01",
+        "L34_DOGLEG_DYERS_LINE_01"
       ],
       "assetIds": [
         "ASSET_DYERS_HANGING_TEXTILES",
         "ASSET_DYERS_SEALED_VAT",
-        "ASSET_DYERS_WORKSTATION"
+        "ASSET_DYERS_WORKSTATION",
+        "ASSET_LAUNDRY_LINE"
       ]
     },
     {
@@ -3811,8 +6358,7 @@
       "assetId": "ASSET_SIGNBOARD",
       "anchorIds": [
         "RUG_W_SIGN_1",
-        "RUG_W_SIGN_2",
-        "RUG_E_SIGN_1"
+        "RUG_W_SIGN_2"
       ],
       "offsetM": {
         "x": 0,
@@ -5336,6 +7882,25 @@
       "yawOffsetDeg": 0
     },
     {
+      "id": "PLACE_L34_DOGLEG_DYERS_LINE",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorIds": [
+        "L34_DOGLEG_DYERS_LINE_01"
+      ],
+      "offsetM": {
+        "x": 0,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
       "id": "PLACE_L34_NORTH_WORKSTATION_02",
       "clusterId": "CLUSTER_L34_NORTH_EDGE",
       "assetId": "ASSET_DYERS_WORKSTATION",
@@ -5389,9 +7954,9 @@
         "z": 1.18
       },
       "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 1,
+        "y": 1,
+        "z": 1
       },
       "yawOffsetDeg": 0
     },
@@ -5409,9 +7974,9 @@
         "z": 0
       },
       "scale": {
-        "x": 1.0,
-        "y": 1.0,
-        "z": 1.0
+        "x": 1,
+        "y": 1,
+        "z": 1
       },
       "yawOffsetDeg": 11
     },
@@ -6395,30 +8960,6 @@
       "notes": "Signboard aligned to the merchant bay."
     },
     {
-      "id": "RUG_E_SHOP_1",
-      "type": "shopfront_anchor",
-      "zone": "RUG_GATE",
-      "frontageId": "FRONTAGE_RUG_GATE_EAST",
-      "servedBayId": "GROUND_01",
-      "along": 0.5,
-      "inset_m": 0.16,
-      "width_m": 1.7,
-      "height_m": 2.8,
-      "notes": "Stable frontage-relative merchant bay."
-    },
-    {
-      "id": "RUG_E_SIGN_1",
-      "type": "signage_anchor",
-      "zone": "RUG_GATE",
-      "frontageId": "FRONTAGE_RUG_GATE_EAST",
-      "servedBayId": "GROUND_01",
-      "along": 0.5,
-      "vertical_offset_m": 3.32,
-      "inset_m": 0.12,
-      "width_m": 2.2,
-      "notes": "Signboard aligned to the merchant bay."
-    },
-    {
       "id": "DYE_W_SHOP_1",
       "type": "shopfront_anchor",
       "zone": "COVERED_SOUK",
@@ -6688,7 +9229,7 @@
       "z": 0,
       "width_m": 3,
       "height_m": 1.32,
-      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26\u201332 six-meter rotation lane clear."
+      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear."
     },
     {
       "id": "LMK_SPICE_DISTRICT",
@@ -7322,6 +9863,19 @@
       "z": 0,
       "yaw_deg": 90,
       "notes": "L3.4 R5 authored override: the reusable wet-workstation is grounded in the west 1.25 m edge band; its 0.62 m rotated half-depth ends at x=47.22 before the x=47.25 clear-lane boundary."
+    },
+    {
+      "id": "L34_DOGLEG_DYERS_LINE_01",
+      "type": "cloth_canopy_span",
+      "zone": "DYERS_DOGLEG",
+      "x": 46.02,
+      "y": 60.4,
+      "z": 4.75,
+      "end_x": 52.98,
+      "end_y": 60.4,
+      "end_z": 4.55,
+      "width_m": 1.3,
+      "notes": "Dogleg drying line: one dyed-textile line hangs over the west wet-work cluster (rack, vats, workstation at y 59.35-61.55), ends 2 cm inside both dogleg wall lines so the rope buries in the 5 cm identity-plane relief at the upper-screen datum, and continues the North Court dyers line south into the lane above the 3.5 m hem clearance."
     },
     {
       "id": "L34_NORTH_WORKSTATION_02",
@@ -8993,16 +11547,40 @@
   "map_polish_survey_camera_overrides": {
     "LINK_NORTH_EAST": {
       "primary": {
-        "designPosition": { "x": 45, "y": 77, "z": 1.7 },
-        "designLookAt": { "x": 40, "y": 80, "z": 1.65 },
-        "playerPosition": { "x": 45, "y": 0, "z": 77 },
+        "designPosition": {
+          "x": 45,
+          "y": 77,
+          "z": 1.7
+        },
+        "designLookAt": {
+          "x": 40,
+          "y": 80,
+          "z": 1.65
+        },
+        "playerPosition": {
+          "x": 45,
+          "y": 0,
+          "z": 77
+        },
         "yawDeg": 120.9638,
         "fovDeg": 75
       },
       "context": {
-        "designPosition": { "x": 45, "y": 80, "z": 1.7 },
-        "designLookAt": { "x": 42.5, "y": 78.5, "z": 1.65 },
-        "playerPosition": { "x": 45, "y": 0, "z": 80 },
+        "designPosition": {
+          "x": 45,
+          "y": 80,
+          "z": 1.7
+        },
+        "designLookAt": {
+          "x": 42.5,
+          "y": 78.5,
+          "z": 1.65
+        },
+        "playerPosition": {
+          "x": 45,
+          "y": 0,
+          "z": 80
+        },
         "yawDeg": 59.0362,
         "fovDeg": 75
       }

@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "01a25b3115eca9faee8126b74aeb0d2853332034f43f676fc893a3ca3e6bfe20",
+    "sha256": "b5960d7361dc09db3fca68b871860b7ca825c2daaed90cff9df9b0366af773c6",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -1433,28 +1433,31 @@
       "start": 0.64,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Mirror of the south yard wall in warm wash.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -1464,49 +1467,31 @@
       "start": 0.03,
       "end": 0.3,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_ochre_pilaster_relief",
+      "facadeProfileId": "quiet_residential_ochre_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "BAY_PILASTER_S",
-          "moduleId": "pilaster_coverage",
-          "along": 0.17,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "S_PILASTER",
-          "layoutSource": "authored"
-        },
-        {
-          "id": "BAY_TIMBER_AXIS",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "AXIS",
-          "layoutSource": "authored"
-        },
-        {
-          "id": "BAY_PILASTER_N",
-          "moduleId": "pilaster_coverage",
-          "along": 0.83,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "N_PILASTER",
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
           "layoutSource": "authored"
         }
       ],
       "layout": {
         "source": "authored",
         "rhythm": "authored",
-        "composition": "A central timber service closure holds the axis of the short ochre bay, framed by a mirrored pair of relief pilasters that carry the corners.",
+        "composition": "Yard wall: string course and one blind niche on the axis, held corners. Replaces the timber closure that pretended to be a door.",
         "axisAlong": 0.5,
-        "cornerTreatment": "pilaster",
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -1522,7 +1507,7 @@
         {
           "id": "BAY_NICHE_S",
           "moduleId": "blind_niche",
-          "along": 0.09,
+          "along": 0.1369,
           "baseElevationM": 0.7,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "S_NICHE",
@@ -1531,19 +1516,10 @@
         {
           "id": "BAY_DOOR_S",
           "moduleId": "door_storage_heavy",
-          "along": 0.225,
+          "along": 0.31845,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "S_DOOR",
-          "layoutSource": "authored"
-        },
-        {
-          "id": "BAY_VENT_S",
-          "moduleId": "vent_service",
-          "along": 0.3625,
-          "baseElevationM": 2.02,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "S_VENT",
           "layoutSource": "authored"
         },
         {
@@ -1556,18 +1532,9 @@
           "layoutSource": "authored"
         },
         {
-          "id": "BAY_VENT_N",
-          "moduleId": "vent_service",
-          "along": 0.6375,
-          "baseElevationM": 2.02,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "N_VENT",
-          "layoutSource": "authored"
-        },
-        {
           "id": "BAY_DOOR_N",
           "moduleId": "door_storage_heavy",
-          "along": 0.775,
+          "along": 0.68155,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "N_DOOR",
@@ -1576,7 +1543,7 @@
         {
           "id": "BAY_NICHE_N",
           "moduleId": "blind_niche",
-          "along": 0.91,
+          "along": 0.8631,
           "baseElevationM": 0.7,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "N_NICHE",
@@ -1586,7 +1553,7 @@
       "layout": {
         "source": "authored",
         "rhythm": "authored",
-        "composition": "Two heavy storage doors at the third points serve the caravan stores, mirrored about the court centre; a resting niche holds the axis between high service vents, and outer niches carry the rhythm to the held corners.",
+        "composition": "Niche, door, niche, door, niche march at one 1.545 m gap under one 2.5 m head: the two storage doors mirror about the court axis, a niche holds the axis and one closes each held corner.",
         "axisAlong": 0.5,
         "cornerTreatment": "held",
         "storyCount": 1,
@@ -1653,28 +1620,31 @@
       "start": 0.03,
       "end": 0.38,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Yard wall: one niche on the axis.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -1829,91 +1799,128 @@
       }
     },
     {
-      "id": "FRONTAGE_DYERS_ALLEY_WEST",
+      "id": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "face": "west",
+      "start": 0.545,
+      "end": 0.92,
+      "districtId": "DISTRICT_DYERS",
+      "facadeProfileId": "quiet_residential_cut_stone",
+      "massingProfileId": "MASSING_LOW_MERCHANT",
+      "bays": [
+        {
+          "id": "BAY_WINDOW_S",
+          "moduleId": "window_screened",
+          "along": 0.21818,
+          "baseElevationM": 0.8500000000000001,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "S_WINDOW",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_DOOR",
+          "moduleId": "door_residential_timber",
+          "along": 0.5,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_WINDOW_N",
+          "moduleId": "window_screened",
+          "along": 0.78182,
+          "baseElevationM": 0.8500000000000001,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "N_WINDOW",
+          "layoutSource": "authored"
+        }
+      ],
+      "layout": {
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "A timber door on the axis of the house with one screened window mirrored each side at equal 1.3 m gaps under one head; 1.3 m piers hold both corners.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
+        "storyCount": 1,
+        "edgeMarginM": 0.6,
+        "groundHeadM": 2.25,
+        "upperSillDatumsM": [],
+        "signBandBottomM": 2.37,
+        "signBandTopM": 2.9699999999999998
+      }
+    },
+    {
+      "id": "FRONTAGE_DYERS_ALLEY_WEST_S",
       "zoneId": "DYERS_ALLEY",
       "face": "west",
       "start": 0.13636363636363635,
-      "end": 0.92,
+      "end": 0.545,
       "districtId": "DISTRICT_DYERS",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_MID_MIXED",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "door_storage_heavy",
-          "along": 0.07395591647331785,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
-          "moduleId": "door_storage_heavy",
-          "along": 0.3579853054911059,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_03",
-          "moduleId": "door_storage_heavy",
-          "along": 0.6420146945088939,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_04",
+          "id": "BAY_NICHE_S",
           "moduleId": "blind_niche",
-          "along": 0.926044083526682,
+          "along": 0.2125,
           "baseElevationM": 0.7,
           "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "S_NICHE",
+          "layoutSource": "authored"
         },
         {
-          "id": "STORY_1_WINDOW_01",
+          "id": "BAY_VENT_S",
           "moduleId": "vent_service",
-          "along": 0.07395591647331785,
+          "along": 0.2125,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "S_NICHE",
+          "layoutSource": "authored"
         },
         {
-          "id": "STORY_1_WINDOW_02",
-          "moduleId": "vent_service",
-          "along": 0.3579853054911059,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
+          "id": "BAY_CART_DOOR",
+          "moduleId": "door_storage_heavy",
+          "along": 0.5,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         },
         {
-          "id": "STORY_1_WINDOW_03",
+          "id": "BAY_VENT_AXIS",
           "moduleId": "vent_service",
-          "along": 0.6420146945088939,
+          "along": 0.5,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         },
         {
-          "id": "STORY_1_WINDOW_04",
+          "id": "BAY_NICHE_N",
+          "moduleId": "blind_niche",
+          "along": 0.7875,
+          "baseElevationM": 0.7,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "N_NICHE",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_VENT_N",
           "moduleId": "vent_service",
-          "along": 0.926044083526682,
+          "along": 0.7875,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "N_NICHE",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "One cart door on the axis of the works between two blind niches at equal gaps under one head, a vent over each bay lighting the dye floor; the piers hold both corners.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.5,
@@ -2117,7 +2124,7 @@
       "face": "north",
       "start": 0.08,
       "end": 0.92,
-      "districtId": "DISTRICT_DYERS",
+      "districtId": "DISTRICT_RUG",
       "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
@@ -2153,15 +2160,6 @@
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "BAY_NICHE_W",
-          "moduleId": "blind_niche",
-          "along": 0.210884,
-          "baseElevationM": 1.3,
-          "datumId": "GROUND_HEAD_3.10",
-          "columnId": "W_NICHE",
-          "layoutSource": "authored"
-        },
-        {
           "id": "BAY_NICHE_AXIS",
           "moduleId": "blind_niche",
           "along": 0.5,
@@ -2169,21 +2167,12 @@
           "datumId": "GROUND_HEAD_3.10",
           "columnId": "AXIS",
           "layoutSource": "authored"
-        },
-        {
-          "id": "BAY_NICHE_E",
-          "moduleId": "blind_niche",
-          "along": 0.789116,
-          "baseElevationM": 1.3,
-          "datumId": "GROUND_HEAD_3.10",
-          "columnId": "E_NICHE",
-          "layoutSource": "authored"
         }
       ],
       "layout": {
         "source": "authored",
         "rhythm": "authored",
-        "composition": "Three blind niches march at 1.7m centres across the head wall of the connector, the middle one on the approach axis from the Tea Landing, so the wall reads as the closed back of the house behind; the stone quoins hold both corners.",
+        "composition": "A garden wall closing the connector: coping, one string course, and a single blind niche on the axis of the approach from Tea Landing; the stone quoins hold both corners.",
         "axisAlong": 0.5,
         "cornerTreatment": "held",
         "storyCount": 1,
@@ -2195,61 +2184,98 @@
       }
     },
     {
-      "id": "FRONTAGE_NORTH_COURT_EAST",
+      "id": "FRONTAGE_NORTH_COURT_EAST_N",
       "zoneId": "NORTH_COURT",
       "face": "east",
-      "start": 0.08,
+      "start": 0.5,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_ochre_relief",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
+          "id": "BAY_NICHE_S",
           "moduleId": "blind_niche",
-          "along": 0.0744047619047619,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "along": 0.3102,
+          "baseElevationM": 0.7,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "S_NICHE",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_02",
+          "id": "BAY_NICHE_N",
           "moduleId": "blind_niche",
-          "along": 0.35813492063492064,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_03",
-          "moduleId": "blind_niche",
-          "along": 0.6418650793650793,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_04",
-          "moduleId": "blind_niche",
-          "along": 0.925595238095238,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "along": 0.6898,
+          "baseElevationM": 0.7,
+          "datumId": "GROUND_HEAD_2.50",
+          "columnId": "N_NICHE",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Two blind niches at equal 1.82 m gaps flank the axis of the yard where the dyers rack hangs; the wall is a working wall, its door is the cart gate in the Dogleg.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 1.8,
+        "groundHeadM": 2.5,
         "upperSillDatumsM": [],
-        "signBandBottomM": 1.92,
-        "signBandTopM": 2.52
+        "signBandBottomM": 2.62,
+        "signBandTopM": 3.2199999999999998
+      }
+    },
+    {
+      "id": "FRONTAGE_NORTH_COURT_EAST_S",
+      "zoneId": "NORTH_COURT",
+      "face": "east",
+      "start": 0.08,
+      "end": 0.5,
+      "districtId": "DISTRICT_DYERS",
+      "facadeProfileId": "quiet_residential",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "bays": [
+        {
+          "id": "BAY_WINDOW_S",
+          "moduleId": "window_dark_recess",
+          "along": 0.22487,
+          "baseElevationM": 1,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "S_WINDOW",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_DOOR",
+          "moduleId": "door_residential_timber",
+          "along": 0.5,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_WINDOW_N",
+          "moduleId": "window_dark_recess",
+          "along": 0.77513,
+          "baseElevationM": 1,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "N_WINDOW",
+          "layoutSource": "authored"
+        }
+      ],
+      "layout": {
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "A door on the axis of the house with one dark-recess window mirrored each side, 1.25 m piers holding the corners; the limewash marks it as the older of the two houses.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
+        "storyCount": 1,
+        "edgeMarginM": 0.6,
+        "groundHeadM": 2.25,
+        "upperSillDatumsM": [],
+        "signBandBottomM": 2.37,
+        "signBandTopM": 2.9699999999999998
       }
     },
     {
@@ -2259,37 +2285,40 @@
       "start": 0.4166666666666667,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_pilaster_relief",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
-          "along": 0.19453642384105954,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
+          "along": 0.33333,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_02",
-          "moduleId": "pilaster_coverage",
-          "along": 0.8054635761589405,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "id": "BAY_02",
+          "moduleId": "blind_niche",
+          "along": 0.66667,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C2",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Yard wall: two niches at the third points (a 6 m span needs two bays).",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -2299,28 +2328,31 @@
       "start": 0.03,
       "end": 0.38,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Yard wall: one niche on the axis.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -2414,28 +2446,40 @@
       "start": 0.5714285714285714,
       "end": 0.92,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "active_merchant_ochre",
+      "facadeProfileId": "quiet_residential",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "shop_recess_market",
-          "along": 0.5,
+          "id": "BAY_01",
+          "moduleId": "door_residential_timber",
+          "along": 0.36373,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "C1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_02",
+          "moduleId": "window_dark_recess",
+          "along": 0.65164,
+          "baseElevationM": 1,
+          "datumId": "GROUND_HEAD_2.25",
+          "columnId": "C2",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "merchant",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Profile becomes quiet_residential. Door south, dark-recess window north, 1.25 m piers, 0.45 m between.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.7,
+        "groundHeadM": 2.25,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.8200000000000003,
-        "signBandTopM": 3.42
+        "signBandBottomM": 2.37,
+        "signBandTopM": 2.9699999999999998
       }
     },
     {
@@ -2445,22 +2489,25 @@
       "start": 0.08,
       "end": 0.21428571428571427,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "active_merchant",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "bays": [
         {
-          "id": "GROUND_01",
+          "id": "BAY_01",
           "moduleId": "pilaster_facade",
           "along": 0.5,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.40",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "merchant",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "1.9 m blank return of the same house in cut stone (the validator wants adjacent frontages to differ in material): one pilaster on its axis.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 1,
         "edgeMarginM": 0.6,
         "groundHeadM": 3.4,
@@ -2530,11 +2577,105 @@
       }
     },
     {
-      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "face": "east",
+      "start": 0.292,
+      "end": 0.583,
+      "districtId": "DISTRICT_CARAVAN",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "bays": [
+        {
+          "id": "GROUND_01",
+          "moduleId": "blind_niche",
+          "along": 0.1208118556701031,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_1.80",
+          "columnId": "COLUMN_01",
+          "layoutSource": "generated"
+        },
+        {
+          "id": "GROUND_02",
+          "moduleId": "blind_niche",
+          "along": 0.8791881443298969,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_1.80",
+          "columnId": "COLUMN_02",
+          "layoutSource": "generated"
+        },
+        {
+          "id": "STORY_1_WINDOW_01",
+          "moduleId": "blind_niche",
+          "along": 0.5,
+          "baseElevationM": 3.68,
+          "datumId": "STORY_1_SILL_3.68",
+          "columnId": "UPPER_COLUMN_01",
+          "layoutSource": "generated"
+        }
+      ],
+      "layout": {
+        "source": "generated",
+        "rhythm": "residential_dense",
+        "storyCount": 2,
+        "edgeMarginM": 0.6,
+        "groundHeadM": 1.8,
+        "upperSillDatumsM": [
+          3.68
+        ],
+        "signBandBottomM": 1.92,
+        "signBandTopM": 2.52
+      }
+    },
+    {
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+      "zoneId": "SERVICE_NORTH",
+      "face": "east",
+      "start": 0.583,
+      "end": 0.874,
+      "districtId": "DISTRICT_CARAVAN",
+      "facadeProfileId": "quiet_residential_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "bays": [
+        {
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
+          "along": 0.33333,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_02",
+          "moduleId": "blind_niche",
+          "along": 0.66667,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C2",
+          "layoutSource": "authored"
+        }
+      ],
+      "layout": {
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Yard wall on the spine: two niches at the third points with two above them, string course, nothing else (the grammar wants two bays on a 9.3 m span).",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
+        "storyCount": 2,
+        "edgeMarginM": 0.6,
+        "groundHeadM": 3.1,
+        "upperSillDatumsM": [],
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
+      }
+    },
+    {
+      "id": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "face": "east",
       "start": 0.001,
-      "end": 0.874,
+      "end": 0.292,
       "districtId": "DISTRICT_CARAVAN",
       "facadeProfileId": "service_storage",
       "massingProfileId": "MASSING_SERVICE_SPINE",
@@ -2542,7 +2683,7 @@
         {
           "id": "GROUND_01",
           "moduleId": "door_storage_heavy",
-          "along": 0.045640034364261166,
+          "along": 0.13692010309278352,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "COLUMN_01",
@@ -2550,62 +2691,17 @@
         },
         {
           "id": "GROUND_02",
-          "moduleId": "blind_niche",
-          "along": 0.1970933562428408,
-          "baseElevationM": 0.7,
+          "moduleId": "door_storage_heavy",
+          "along": 0.8630798969072164,
+          "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.50",
           "columnId": "COLUMN_02",
           "layoutSource": "generated"
         },
         {
-          "id": "GROUND_03",
-          "moduleId": "door_storage_heavy",
-          "along": 0.3485466781214204,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_04",
-          "moduleId": "door_storage_heavy",
-          "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_05",
-          "moduleId": "blind_niche",
-          "along": 0.6514533218785795,
-          "baseElevationM": 0.7,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_05",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_06",
-          "moduleId": "door_storage_heavy",
-          "along": 0.802906643757159,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_06",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_07",
-          "moduleId": "door_storage_heavy",
-          "along": 0.9543599656357388,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_07",
-          "layoutSource": "generated"
-        },
-        {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "vent_service",
-          "along": 0.045640034364261166,
+          "along": 0.09557560137457044,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_01",
@@ -2614,7 +2710,7 @@
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "vent_service",
-          "along": 0.1970933562428408,
+          "along": 0.5000000000000001,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_02",
@@ -2623,46 +2719,10 @@
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "vent_service",
-          "along": 0.3485466781214204,
+          "along": 0.9044243986254297,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
           "columnId": "UPPER_COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_04",
-          "moduleId": "vent_service",
-          "along": 0.5,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_04",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_05",
-          "moduleId": "vent_service",
-          "along": 0.6514533218785795,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_05",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_06",
-          "moduleId": "vent_service",
-          "along": 0.802906643757159,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_06",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_07",
-          "moduleId": "vent_service",
-          "along": 0.9543599656357388,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_07",
           "layoutSource": "generated"
         }
       ],
@@ -2686,55 +2746,49 @@
       "start": 0.18,
       "end": 0.97,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "quiet_residential_warmwash_pilaster_relief",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
-          "along": 0.07436708860759492,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
+          "along": 0.25,
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "C1",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_02",
-          "moduleId": "pilaster_coverage",
-          "along": 0.35812236286919835,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "id": "BAY_02",
+          "moduleId": "blind_niche",
+          "along": 0.5,
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "C2",
+          "layoutSource": "authored"
         },
         {
-          "id": "GROUND_03",
-          "moduleId": "timber_coverage_closure",
-          "along": 0.6418776371308018,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_04",
-          "moduleId": "timber_coverage_closure",
-          "along": 0.9256329113924052,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "id": "BAY_03",
+          "moduleId": "blind_niche",
+          "along": 0.75,
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "C3",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Back of the Spice Street shops: three high blind recesses (sill 1.6 m) at the quarter points, no door; access is from the street side.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.4,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.52,
+        "signBandTopM": 4.12
       }
     },
     {
@@ -2806,28 +2860,31 @@
       "start": 0.8,
       "end": 0.97,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_pilaster_relief",
+      "facadeProfileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Spawn edge wall: one niche on the axis.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -2837,28 +2894,31 @@
       "start": 0.03,
       "end": 0.15,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "quiet_residential_cut_stone_pilaster_relief",
+      "facadeProfileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "timber_coverage_closure",
+          "id": "BAY_01",
+          "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "C1",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Spawn edge wall, 2.6 m, cut stone: one niche on the axis, corners open by size.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -5352,7 +5412,9 @@
         "window_dark_recess",
         "window_screened",
         "blind_niche",
-        "pilaster_facade"
+        "pilaster_facade",
+        "door_shop_timber",
+        "window_shuttered"
       ]
     },
     {
@@ -5551,6 +5613,7 @@
       "moduleIds": [
         "door_storage_heavy",
         "vent_service",
+        "window_dark_recess",
         "blind_niche",
         "pilaster_facade"
       ]
@@ -5558,31 +5621,31 @@
   ],
   "architecturePlacements": [
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_NORTH_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_NORTH",
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
-        "x": 14.93,
+        "x": 14.91,
         "y": 44.489999999999995,
-        "z": 1.125
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -5592,7 +5655,7 @@
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 15.48,
@@ -5608,7 +5671,7 @@
       "materialSlots": {
         "wall": "ph_whitewashed_brick_warm",
         "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_ochre",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_beige_001"
@@ -5622,87 +5685,31 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_N",
+      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_ochre_pilaster_relief",
-      "moduleId": "pilaster_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "N_PILASTER",
+      "profileId": "quiet_residential_ochre_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
       "layoutSource": "authored",
       "center": {
-        "x": 14.88,
-        "y": 34.5738,
-        "z": 1.125
-      },
-      "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 2.25
-      },
-      "yawDeg": 270,
-      "materialSlot": "trim",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_PILASTER_S",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
-      "zoneId": "CARAVAN_COURT",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "quiet_residential_ochre_pilaster_relief",
-      "moduleId": "pilaster_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "S_PILASTER",
-      "layoutSource": "authored",
-      "center": {
-        "x": 14.88,
-        "y": 31.3662,
-        "z": 1.125
-      },
-      "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 2.25
-      },
-      "yawDeg": 270,
-      "materialSlot": "trim",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_EAST_SOUTH_BAY_TIMBER_AXIS",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_CARAVAN_COURT_EAST_SOUTH",
-      "zoneId": "CARAVAN_COURT",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "quiet_residential_ochre_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "AXIS",
-      "layoutSource": "authored",
-      "center": {
-        "x": 14.93,
+        "x": 14.91,
         "y": 32.97,
-        "z": 1.125
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -5712,7 +5719,7 @@
       "zoneId": "CARAVAN_COURT",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_ochre_pilaster_relief",
+      "profileId": "quiet_residential_ochre_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 15.48,
@@ -5728,7 +5735,7 @@
       "materialSlots": {
         "wall": "ph_plastered_wall",
         "trim": "ph_stone_trim_white",
-        "roof": "ph_worn_plaster_sun",
+        "roof": "ph_worn_plaster_ochre",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_plastered"
@@ -5757,7 +5764,7 @@
       "layoutSource": "authored",
       "center": {
         "x": 3.125,
-        "y": 43.158,
+        "y": 41.745036,
         "z": 1.25
       },
       "sizeM": {
@@ -5785,7 +5792,7 @@
       "layoutSource": "authored",
       "center": {
         "x": 3.125,
-        "y": 34.842,
+        "y": 36.254964,
         "z": 1.25
       },
       "sizeM": {
@@ -5841,7 +5848,7 @@
       "layoutSource": "authored",
       "center": {
         "x": 3.09,
-        "y": 45.199200000000005,
+        "y": 44.490072,
         "z": 1.6
       },
       "sizeM": {
@@ -5869,7 +5876,7 @@
       "layoutSource": "authored",
       "center": {
         "x": 3.09,
-        "y": 32.8008,
+        "y": 33.509928,
         "z": 1.6
       },
       "sizeM": {
@@ -5879,62 +5886,6 @@
       },
       "yawDeg": 90,
       "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_N",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
-      "zoneId": "CARAVAN_COURT",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "N_VENT",
-      "layoutSource": "authored",
-      "center": {
-        "x": 3.09,
-        "y": 41.079,
-        "z": 2.26
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_CARAVAN_COURT_WEST_BAY_VENT_S",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_CARAVAN_COURT_WEST",
-      "zoneId": "CARAVAN_COURT",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "S_VENT",
-      "layoutSource": "authored",
-      "center": {
-        "x": 3.09,
-        "y": 36.921,
-        "z": 2.26
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
       "collisionOpening": false
     },
     {
@@ -6094,31 +6045,31 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_COVERED_SOUK_SOUTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_COVERED_SOUK_SOUTH_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_COVERED_SOUK_SOUTH",
       "zoneId": "COVERED_SOUK",
       "districtId": "DISTRICT_DYERS",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
         "x": 43.46,
-        "y": 32.07,
-        "z": 1.125
+        "y": 32.09,
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 0,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -6128,7 +6079,7 @@
       "zoneId": "COVERED_SOUK",
       "districtId": "DISTRICT_DYERS",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 43.46,
@@ -6142,12 +6093,12 @@
       },
       "yawDeg": 0,
       "materialSlots": {
-        "wall": "ph_whitewashed_brick_warm",
-        "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_ochre",
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
-        "accent": "ph_band_beige_001"
+        "accent": "ph_band_lime_soft"
       },
       "roof": {
         "style": "flat_parapet",
@@ -6518,9 +6469,129 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_01",
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_DOOR",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "quiet_residential_cut_stone",
+      "moduleId": "door_residential_timber",
+      "moduleKind": "door",
+      "openingType": "door_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.1,
+        "y": 26.115000000000002,
+        "z": 1.125
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.2,
+        "height": 2.25
+      },
+      "yawDeg": 90,
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_N",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "quiet_residential_cut_stone",
+      "moduleId": "window_screened",
+      "moduleKind": "window",
+      "openingType": "window_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "N_WINDOW",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.12,
+        "y": 28.440015000000002,
+        "z": 1.55
+      },
+      "sizeM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "yawDeg": 90,
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "quiet_residential_cut_stone",
+      "moduleId": "window_screened",
+      "moduleKind": "window",
+      "openingType": "window_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "S_WINDOW",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.12,
+        "y": 23.789985,
+        "z": 1.55
+      },
+      "sizeM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "yawDeg": 90,
+      "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "quiet_residential_cut_stone",
+      "massingProfileId": "MASSING_LOW_MERCHANT",
+      "center": {
+        "x": 43.9,
+        "y": 26.115000000000002,
+        "z": 2.25
+      },
+      "sizeM": {
+        "width": 8.25,
+        "depth": 4.2,
+        "height": 4.5
+      },
+      "yawDeg": 90,
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "roof": {
+        "style": "flat_parapet",
+        "setbackM": 0.45,
+        "parapetHeightM": 0.65,
+        "upperStorySetbackM": 0.35,
+        "elevationM": 4.5
+      }
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_CART_DOOR",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
@@ -6529,11 +6600,11 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 46.125,
-        "y": 14.274999999999999,
+        "y": 17.495,
         "z": 1.25
       },
       "sizeM": {
@@ -6546,65 +6617,9 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_02",
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_N",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.125,
-        "y": 19.171666666666667,
-        "z": 1.25
-      },
-      "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
-      },
-      "yawDeg": 90,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_03",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.125,
-        "y": 24.06833333333333,
-        "z": 1.25
-      },
-      "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
-      },
-      "yawDeg": 90,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_GROUND_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
@@ -6613,11 +6628,11 @@
       "moduleKind": "blind_niche",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "N_NICHE",
+      "layoutSource": "authored",
       "center": {
         "x": 46.09,
-        "y": 28.964999999999996,
+        "y": 20.079625,
         "z": 1.6
       },
       "sizeM": {
@@ -6630,9 +6645,121 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_MASSING",
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "S_NICHE",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.09,
+        "y": 14.910375,
+        "z": 1.6
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 90,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_AXIS",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "vent_service",
+      "moduleKind": "vent",
+      "openingType": "recess",
+      "datumId": "STORY_1_SILL_3.68",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.09,
+        "y": 17.495,
+        "z": 3.92
+      },
+      "sizeM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "yawDeg": 90,
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_N",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "vent_service",
+      "moduleKind": "vent",
+      "openingType": "recess",
+      "datumId": "STORY_1_SILL_3.68",
+      "columnId": "N_NICHE",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.09,
+        "y": 20.079625,
+        "z": 3.92
+      },
+      "sizeM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "yawDeg": 90,
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "face": "west",
+      "profileId": "service_storage",
+      "moduleId": "vent_service",
+      "moduleKind": "vent",
+      "openingType": "recess",
+      "datumId": "STORY_1_SILL_3.68",
+      "columnId": "S_NICHE",
+      "layoutSource": "authored",
+      "center": {
+        "x": 46.09,
+        "y": 14.910375,
+        "z": 3.92
+      },
+      "sizeM": {
+        "width": 0.58,
+        "depth": 0.18,
+        "height": 0.48
+      },
+      "yawDeg": 90,
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_MASSING",
       "kind": "massing",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_S",
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
@@ -6640,11 +6767,11 @@
       "massingProfileId": "MASSING_MID_MIXED",
       "center": {
         "x": 43.6,
-        "y": 21.62,
+        "y": 17.495,
         "z": 3.5
       },
       "sizeM": {
-        "width": 17.240000000000002,
+        "width": 8.990000000000002,
         "depth": 4.8,
         "height": 7
       },
@@ -6664,118 +6791,6 @@
         "upperStorySetbackM": 0.65,
         "elevationM": 7
       }
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_01",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.09,
-        "y": 14.274999999999999,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_02",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.09,
-        "y": 19.171666666666667,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_03",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_03",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.09,
-        "y": 24.06833333333333,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_DYERS_ALLEY_WEST_STORY_1_WINDOW_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST",
-      "zoneId": "DYERS_ALLEY",
-      "districtId": "DISTRICT_DYERS",
-      "face": "west",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_04",
-      "layoutSource": "generated",
-      "center": {
-        "x": 46.09,
-        "y": 28.964999999999996,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 90,
-      "materialSlot": "metal",
-      "collisionOpening": false
     },
     {
       "id": "ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_GROUND_01",
@@ -7206,7 +7221,7 @@
       "kind": "facade_module",
       "frontageId": "FRONTAGE_LINK_NORTH_EAST_NORTH",
       "zoneId": "LINK_NORTH_EAST",
-      "districtId": "DISTRICT_DYERS",
+      "districtId": "DISTRICT_RUG",
       "face": "north",
       "profileId": "quiet_residential_warmwash_relief",
       "moduleId": "blind_niche",
@@ -7234,7 +7249,7 @@
       "kind": "massing",
       "frontageId": "FRONTAGE_LINK_NORTH_EAST_NORTH",
       "zoneId": "LINK_NORTH_EAST",
-      "districtId": "DISTRICT_DYERS",
+      "districtId": "DISTRICT_RUG",
       "face": "north",
       "profileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
@@ -7294,62 +7309,6 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
-      "zoneId": "LINK_NORTH_WEST",
-      "districtId": "DISTRICT_RUG",
-      "face": "north",
-      "profileId": "quiet_residential_warmwash_relief",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_3.10",
-      "columnId": "E_NICHE",
-      "layoutSource": "authored",
-      "center": {
-        "x": 15.20000208,
-        "y": 80.91,
-        "z": 2.2
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 180,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
-      "zoneId": "LINK_NORTH_WEST",
-      "districtId": "DISTRICT_RUG",
-      "face": "north",
-      "profileId": "quiet_residential_warmwash_relief",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_3.10",
-      "columnId": "W_NICHE",
-      "layoutSource": "authored",
-      "center": {
-        "x": 11.79999792,
-        "y": 80.91,
-        "z": 2.2
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 180,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
       "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING",
       "kind": "massing",
       "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
@@ -7386,23 +7345,23 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_01",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_N",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_EAST",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_N",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "face": "east",
-      "profileId": "quiet_residential_ochre_relief",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "N_NICHE",
+      "layoutSource": "authored",
       "center": {
         "x": 52.91,
-        "y": 64.565,
-        "z": 0.9
+        "y": 76.214888,
+        "z": 1.6
       },
       "sizeM": {
         "width": 1.05,
@@ -7414,23 +7373,23 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_02",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_N_BAY_NICHE_S",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_EAST",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_N",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "face": "east",
-      "profileId": "quiet_residential_ochre_relief",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_2.50",
+      "columnId": "S_NICHE",
+      "layoutSource": "authored",
       "center": {
         "x": 52.91,
-        "y": 68.855,
-        "z": 0.9
+        "y": 73.345112,
+        "z": 1.6
       },
       "sizeM": {
         "width": 1.05,
@@ -7442,88 +7401,32 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_03",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_EAST",
-      "zoneId": "NORTH_COURT",
-      "districtId": "DISTRICT_DYERS",
-      "face": "east",
-      "profileId": "quiet_residential_ochre_relief",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
-      "center": {
-        "x": 52.91,
-        "y": 73.145,
-        "z": 0.9
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 270,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_EAST",
-      "zoneId": "NORTH_COURT",
-      "districtId": "DISTRICT_DYERS",
-      "face": "east",
-      "profileId": "quiet_residential_ochre_relief",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
-      "center": {
-        "x": 52.91,
-        "y": 77.435,
-        "z": 0.9
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 270,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_MASSING",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_N_MASSING",
       "kind": "massing",
-      "frontageId": "FRONTAGE_NORTH_COURT_EAST",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_N",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "face": "east",
-      "profileId": "quiet_residential_ochre_relief",
+      "profileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 53.48,
-        "y": 71,
+        "y": 74.78,
         "z": 2.45
       },
       "sizeM": {
-        "width": 15.120000000000001,
+        "width": 7.5600000000000005,
         "depth": 0.96,
         "height": 4.9
       },
       "yawDeg": 270,
       "materialSlots": {
-        "wall": "ph_plastered_wall",
-        "trim": "ph_stone_trim_white",
-        "roof": "ph_worn_plaster_ochre",
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
-        "accent": "ph_band_plastered"
+        "accent": "ph_band_beige_001"
       },
       "roof": {
         "style": "flat_parapet",
@@ -7534,81 +7437,109 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_DOOR",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_S",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
-      "face": "north",
-      "profileId": "quiet_residential_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
+      "face": "east",
+      "profileId": "quiet_residential",
+      "moduleId": "door_residential_timber",
+      "moduleKind": "door",
+      "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
-        "x": 47.175,
-        "y": 79.93,
+        "x": 52.9,
+        "y": 67.22,
         "z": 1.125
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
+        "width": 1.05,
+        "depth": 0.2,
         "height": 2.25
       },
-      "yawDeg": 180,
+      "yawDeg": 270,
       "materialSlot": "timber",
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_GROUND_02",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_N",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_S",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
-      "face": "north",
-      "profileId": "quiet_residential_pilaster_relief",
-      "moduleId": "pilaster_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
+      "face": "east",
+      "profileId": "quiet_residential",
+      "moduleId": "window_dark_recess",
+      "moduleKind": "window",
+      "openingType": "window_void",
       "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "N_WINDOW",
+      "layoutSource": "authored",
       "center": {
-        "x": 50.865,
-        "y": 79.88,
-        "z": 1.125
+        "x": 52.86,
+        "y": 69.2999828,
+        "z": 1.625
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 2.25
+        "width": 0.9,
+        "depth": 0.28,
+        "height": 1.25
       },
-      "yawDeg": 180,
-      "materialSlot": "trim",
+      "yawDeg": 270,
+      "materialSlot": "metal",
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING",
-      "kind": "massing",
-      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_S_BAY_WINDOW_S",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_S",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
-      "face": "north",
-      "profileId": "quiet_residential_pilaster_relief",
+      "face": "east",
+      "profileId": "quiet_residential",
+      "moduleId": "window_dark_recess",
+      "moduleKind": "window",
+      "openingType": "window_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "S_WINDOW",
+      "layoutSource": "authored",
+      "center": {
+        "x": 52.86,
+        "y": 65.1400172,
+        "z": 1.625
+      },
+      "sizeM": {
+        "width": 0.9,
+        "depth": 0.28,
+        "height": 1.25
+      },
+      "yawDeg": 270,
+      "materialSlot": "metal",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_NORTH_COURT_EAST_S_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_NORTH_COURT_EAST_S",
+      "zoneId": "NORTH_COURT",
+      "districtId": "DISTRICT_DYERS",
+      "face": "east",
+      "profileId": "quiet_residential",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
-        "x": 49.02,
-        "y": 80.48,
+        "x": 53.48,
+        "y": 67.22,
         "z": 2.45
       },
       "sizeM": {
-        "width": 6.040000000000001,
+        "width": 7.56,
         "depth": 0.96,
         "height": 4.9
       },
-      "yawDeg": 180,
+      "yawDeg": 270,
       "materialSlots": {
         "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
@@ -7626,31 +7557,123 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_NORTH_COURT_SOUTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_01",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "zoneId": "NORTH_COURT",
+      "districtId": "DISTRICT_DYERS",
+      "face": "north",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
+      "center": {
+        "x": 48.0133132,
+        "y": 79.91,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 180,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_BAY_02",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "zoneId": "NORTH_COURT",
+      "districtId": "DISTRICT_DYERS",
+      "face": "north",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C2",
+      "layoutSource": "authored",
+      "center": {
+        "x": 50.0266868,
+        "y": 79.91,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 180,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_NORTH_COURT_NORTH_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_NORTH_COURT_NORTH",
+      "zoneId": "NORTH_COURT",
+      "districtId": "DISTRICT_DYERS",
+      "face": "north",
+      "profileId": "quiet_residential_relief",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "center": {
+        "x": 49.02,
+        "y": 80.48,
+        "z": 2.45
+      },
+      "sizeM": {
+        "width": 6.040000000000001,
+        "depth": 0.96,
+        "height": 4.9
+      },
+      "yawDeg": 180,
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "roof": {
+        "style": "flat_parapet",
+        "setbackM": 0.08,
+        "parapetHeightM": 0.45,
+        "upperStorySetbackM": 0,
+        "elevationM": 4.9
+      }
+    },
+    {
+      "id": "ARCH_FRONTAGE_NORTH_COURT_SOUTH_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_NORTH_COURT_SOUTH",
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
         "x": 43.46,
-        "y": 62.07,
-        "z": 1.125
+        "y": 62.09,
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 0,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -7660,7 +7683,7 @@
       "zoneId": "NORTH_COURT",
       "districtId": "DISTRICT_DYERS",
       "face": "south",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 43.46,
@@ -7676,7 +7699,7 @@
       "materialSlots": {
         "wall": "ph_whitewashed_brick_warm",
         "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_ochre",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_beige_001"
@@ -7874,31 +7897,59 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_RUG_GATE_EAST_GROUND_01",
+      "id": "ARCH_FRONTAGE_RUG_GATE_EAST_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_RUG_GATE_EAST",
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "east",
-      "profileId": "active_merchant_ochre",
-      "moduleId": "shop_recess_market",
-      "moduleKind": "shop_recess",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential",
+      "moduleId": "door_residential_timber",
+      "moduleKind": "door",
+      "openingType": "door_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
-        "x": 33.325,
-        "y": 74.44,
-        "z": 1.35
+        "x": 33.9,
+        "y": 73.7750024,
+        "z": 1.125
       },
       "sizeM": {
-        "width": 2.4,
-        "depth": 1.35,
-        "height": 2.7
+        "width": 1.05,
+        "depth": 0.2,
+        "height": 2.25
       },
       "yawDeg": 270,
       "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_RUG_GATE_EAST_BAY_02",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_RUG_GATE_EAST",
+      "zoneId": "RUG_GATE",
+      "districtId": "DISTRICT_RUG",
+      "face": "east",
+      "profileId": "quiet_residential",
+      "moduleId": "window_dark_recess",
+      "moduleKind": "window",
+      "openingType": "window_void",
+      "datumId": "GROUND_HEAD_2.25",
+      "columnId": "C2",
+      "layoutSource": "authored",
+      "center": {
+        "x": 33.86,
+        "y": 75.1800032,
+        "z": 1.625
+      },
+      "sizeM": {
+        "width": 0.9,
+        "depth": 0.28,
+        "height": 1.25
+      },
+      "yawDeg": 270,
+      "materialSlot": "metal",
       "collisionOpening": false
     },
     {
@@ -7908,7 +7959,7 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "east",
-      "profileId": "active_merchant_ochre",
+      "profileId": "quiet_residential",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "center": {
         "x": 36.1,
@@ -7922,12 +7973,12 @@
       },
       "yawDeg": 270,
       "materialSlots": {
-        "wall": "ph_beige_wall_002",
-        "trim": "ph_stone_trim_white",
-        "roof": "ph_worn_plaster_sun",
-        "timber": "ph_worn_planks",
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
-        "accent": "ph_band_plastered"
+        "accent": "ph_band_lime_soft"
       },
       "roof": {
         "style": "flat_parapet",
@@ -7938,19 +7989,19 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_GROUND_01",
+      "id": "ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_RUG_GATE_EAST_SOUTH",
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "east",
-      "profileId": "active_merchant",
+      "profileId": "quiet_residential_cut_stone",
       "moduleId": "pilaster_facade",
       "moduleKind": "column",
       "openingType": "none",
       "datumId": "GROUND_HEAD_3.40",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
         "x": 33.88,
         "y": 66.06,
@@ -7972,7 +8023,7 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "east",
-      "profileId": "active_merchant",
+      "profileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "center": {
         "x": 36.1,
@@ -7986,12 +8037,12 @@
       },
       "yawDeg": 270,
       "materialSlots": {
-        "wall": "ph_painted_plaster_warm",
-        "trim": "ph_stone_trim_sandstone",
+        "wall": "ph_sandstone_blocks_05",
+        "trim": "ph_trim_sanded_01",
         "roof": "ph_worn_plaster_sun",
-        "timber": "ph_worn_planks",
+        "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
-        "accent": "ph_band_lime_soft"
+        "accent": "ph_band_beige_001"
       },
       "roof": {
         "style": "flat_parapet",
@@ -8150,9 +8201,221 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_01",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_01",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_1.80",
+      "columnId": "COLUMN_01",
+      "layoutSource": "generated",
+      "center": {
+        "x": 9.91,
+        "y": 58.469,
+        "z": 0.9
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 270,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_GROUND_02",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_1.80",
+      "columnId": "COLUMN_02",
+      "layoutSource": "generated",
+      "center": {
+        "x": 9.91,
+        "y": 65.531,
+        "z": 0.9
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 270,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "center": {
+        "x": 10.48,
+        "y": 62,
+        "z": 3.5
+      },
+      "sizeM": {
+        "width": 9.312,
+        "depth": 0.96,
+        "height": 7
+      },
+      "yawDeg": 270,
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_warm",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "roof": {
+        "style": "flat_parapet",
+        "setbackM": 0.08,
+        "parapetHeightM": 0.45,
+        "upperStorySetbackM": 0,
+        "elevationM": 7
+      }
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_STORY_1_WINDOW_01",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "STORY_1_SILL_3.68",
+      "columnId": "UPPER_COLUMN_01",
+      "layoutSource": "generated",
+      "center": {
+        "x": 9.91,
+        "y": 62,
+        "z": 4.58
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 270,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_01",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
+      "center": {
+        "x": 9.91,
+        "y": 69.75996896,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 270,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_BAY_02",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C2",
+      "layoutSource": "authored",
+      "center": {
+        "x": 9.91,
+        "y": 72.86403104,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 270,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_N_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_N",
+      "zoneId": "SERVICE_NORTH",
+      "districtId": "DISTRICT_CARAVAN",
+      "face": "east",
+      "profileId": "quiet_residential_relief",
+      "massingProfileId": "MASSING_SERVICE_SPINE",
+      "center": {
+        "x": 10.48,
+        "y": 71.312,
+        "z": 3.5
+      },
+      "sizeM": {
+        "width": 9.312000000000001,
+        "depth": 0.96,
+        "height": 7
+      },
+      "yawDeg": 270,
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_sandstone",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_lime_soft"
+      },
+      "roof": {
+        "style": "flat_parapet",
+        "setbackM": 0.08,
+        "parapetHeightM": 0.45,
+        "upperStorySetbackM": 0,
+        "elevationM": 7
+      }
+    },
+    {
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_01",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
@@ -8178,50 +8441,22 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_02",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_GROUND_02",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
       "profileId": "service_storage",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
+      "moduleId": "door_storage_heavy",
+      "moduleKind": "door",
+      "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.50",
       "columnId": "COLUMN_02",
       "layoutSource": "generated",
       "center": {
-        "x": 9.91,
-        "y": 53.538,
-        "z": 1.6
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 270,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_03",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
-      "center": {
         "x": 9.875,
-        "y": 57.769,
+        "y": 56.069,
         "z": 1.25
       },
       "sizeM": {
@@ -8234,121 +8469,9 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.875,
-        "y": 62,
-        "z": 1.25
-      },
-      "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
-      },
-      "yawDeg": 270,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_05",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "blind_niche",
-      "moduleKind": "blind_niche",
-      "openingType": "recess",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_05",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.91,
-        "y": 66.231,
-        "z": 1.6
-      },
-      "sizeM": {
-        "width": 1.05,
-        "depth": 0.18,
-        "height": 1.8
-      },
-      "yawDeg": 270,
-      "materialSlot": "wall",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_06",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_06",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.875,
-        "y": 70.46199999999999,
-        "z": 1.25
-      },
-      "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
-      },
-      "yawDeg": 270,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_GROUND_07",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_07",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.875,
-        "y": 74.693,
-        "z": 1.25
-      },
-      "sizeM": {
-        "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
-      },
-      "yawDeg": 270,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MASSING",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_MASSING",
       "kind": "massing",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
@@ -8356,11 +8479,11 @@
       "massingProfileId": "MASSING_SERVICE_SPINE",
       "center": {
         "x": 10.48,
-        "y": 62,
+        "y": 52.688,
         "z": 3.5
       },
       "sizeM": {
-        "width": 27.936,
+        "width": 9.312,
         "depth": 0.96,
         "height": 7
       },
@@ -8382,9 +8505,9 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_01",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_01",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
@@ -8397,7 +8520,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 49.307,
+        "y": 48.922,
         "z": 3.92
       },
       "sizeM": {
@@ -8410,9 +8533,9 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_02",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_02",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
@@ -8425,7 +8548,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 53.538,
+        "y": 52.688,
         "z": 3.92
       },
       "sizeM": {
@@ -8438,9 +8561,9 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_03",
+      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_S_STORY_1_WINDOW_03",
       "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
+      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S",
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
@@ -8453,7 +8576,7 @@
       "layoutSource": "generated",
       "center": {
         "x": 9.91,
-        "y": 57.769,
+        "y": 56.454,
         "z": 3.92
       },
       "sizeM": {
@@ -8466,227 +8589,87 @@
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_04",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.91,
-        "y": 62,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 270,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_05",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_05",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.91,
-        "y": 66.231,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 270,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_06",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_06",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.91,
-        "y": 70.46199999999999,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 270,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_STORY_1_WINDOW_07",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_NORTH_EAST_SPINE",
-      "zoneId": "SERVICE_NORTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "vent_service",
-      "moduleKind": "vent",
-      "openingType": "recess",
-      "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_07",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.91,
-        "y": 74.693,
-        "z": 3.92
-      },
-      "sizeM": {
-        "width": 0.58,
-        "depth": 0.18,
-        "height": 0.48
-      },
-      "yawDeg": 270,
-      "materialSlot": "metal",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_01",
+      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_SERVICE_SOUTH_EAST",
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
-        "x": 9.93,
-        "y": 14.774999999999999,
-        "z": 1.125
+        "x": 9.91,
+        "y": 17.55,
+        "z": 2.5
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_02",
+      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_02",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_SERVICE_SOUTH_EAST",
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "pilaster_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "C2",
+      "layoutSource": "authored",
       "center": {
-        "x": 9.88,
-        "y": 19.258333333333333,
-        "z": 1.125
+        "x": 9.91,
+        "y": 21.5,
+        "z": 2.5
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
-      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_03",
+      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_BAY_03",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_SERVICE_SOUTH_EAST",
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "C3",
+      "layoutSource": "authored",
       "center": {
-        "x": 9.93,
-        "y": 23.74166666666667,
-        "z": 1.125
+        "x": 9.91,
+        "y": 25.45,
+        "z": 2.5
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_SERVICE_SOUTH_EAST_GROUND_04",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_SERVICE_SOUTH_EAST",
-      "zoneId": "SERVICE_SOUTH",
-      "districtId": "DISTRICT_CARAVAN",
-      "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
-      "center": {
-        "x": 9.93,
-        "y": 28.225,
-        "z": 1.125
-      },
-      "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
-      },
-      "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -8696,7 +8679,7 @@
       "zoneId": "SERVICE_SOUTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "quiet_residential_warmwash_pilaster_relief",
+      "profileId": "quiet_residential_warmwash_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 10.48,
@@ -8712,7 +8695,7 @@
       "materialSlots": {
         "wall": "ph_whitewashed_brick_warm",
         "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_ochre",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_beige_001"
@@ -8854,31 +8837,31 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_GROUND_01",
+      "id": "ARCH_FRONTAGE_SPAWN_B_SOUTH_EAST_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_SPAWN_B_SOUTH_EAST",
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
         "x": 36.47,
-        "y": 78.07,
-        "z": 1.125
+        "y": 78.09,
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 0,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -8888,7 +8871,7 @@
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_pilaster_relief",
+      "profileId": "quiet_residential_relief",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 36.47,
@@ -8904,7 +8887,7 @@
       "materialSlots": {
         "wall": "ph_sandstone_blocks_06",
         "trim": "ph_stone_trim_sandstone",
-        "roof": "ph_worn_plaster_ochre",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_lime_soft"
@@ -8918,31 +8901,31 @@
       }
     },
     {
-      "id": "ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_GROUND_01",
+      "id": "ARCH_FRONTAGE_SPAWN_B_SOUTH_WEST_BAY_01",
       "kind": "facade_module",
       "frontageId": "FRONTAGE_SPAWN_B_SOUTH_WEST",
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_cut_stone_pilaster_relief",
-      "moduleId": "timber_coverage_closure",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "quiet_residential_cut_stone",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "C1",
+      "layoutSource": "authored",
       "center": {
         "x": 18.98,
-        "y": 78.07,
-        "z": 1.125
+        "y": 78.09,
+        "z": 2.2
       },
       "sizeM": {
-        "width": 1.15,
-        "depth": 0.14,
-        "height": 2.25
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
       },
       "yawDeg": 0,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -8952,7 +8935,7 @@
       "zoneId": "SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "face": "south",
-      "profileId": "quiet_residential_cut_stone_pilaster_relief",
+      "profileId": "quiet_residential_cut_stone",
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 18.98,
@@ -8968,7 +8951,7 @@
       "materialSlots": {
         "wall": "ph_sandstone_blocks_05",
         "trim": "ph_trim_sanded_01",
-        "roof": "ph_worn_plaster_ochre",
+        "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
         "metal": "tm_balcony_painted_metal",
         "accent": "ph_band_beige_001"
@@ -10325,12 +10308,14 @@
         "L34_DOGLEG_WALL_RACK_01",
         "L34_DOGLEG_VAT_01",
         "L34_DOGLEG_VAT_02",
-        "L34_DOGLEG_WORKSTATION_01"
+        "L34_DOGLEG_WORKSTATION_01",
+        "L34_DOGLEG_DYERS_LINE_01"
       ],
       "assetIds": [
         "ASSET_DYERS_HANGING_TEXTILES",
         "ASSET_DYERS_SEALED_VAT",
-        "ASSET_DYERS_WORKSTATION"
+        "ASSET_DYERS_WORKSTATION",
+        "ASSET_LAUNDRY_LINE"
       ]
     },
     {
@@ -10446,7 +10431,6 @@
       "anchors": [
         "RUG_W_SIGN_1",
         "RUG_W_SIGN_2",
-        "RUG_E_SIGN_1",
         "LMK_RUG_GATE_01"
       ],
       "assetIds": [
@@ -12591,6 +12575,51 @@
       }
     },
     {
+      "id": "PLACE_L34_DOGLEG_DYERS_LINE_L34_DOGLEG_DYERS_LINE_01",
+      "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
+      "assetId": "ASSET_LAUNDRY_LINE",
+      "anchorId": "L34_DOGLEG_DYERS_LINE_01",
+      "zoneId": "DYERS_DOGLEG",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 49.5,
+        "y": 60.4,
+        "z": 4.65
+      },
+      "yawDeg": 90,
+      "spanSeats": {
+        "start": {
+          "x": 46.02,
+          "y": 60.4,
+          "z": 4.75
+        },
+        "end": {
+          "x": 52.98,
+          "y": 60.4,
+          "z": 4.55
+        }
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.3,
+        "depth": 6.959999999999994,
+        "height": 0.85
+      },
+      "collisionClass": "overhead",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "overhead",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_laundry_line"
+      }
+    },
+    {
       "id": "PLACE_L34_DOGLEG_VAT_02_L34_DOGLEG_VAT_02",
       "clusterId": "CLUSTER_L34_DYERS_DOGLEG_EDGE",
       "assetId": "ASSET_DYERS_SEALED_VAT",
@@ -13434,39 +13463,6 @@
         "mode": "model",
         "id": "ph_wooden_lantern_01",
         "uri": "/assets/models/environment/bazaar/props/wooden_lantern_01/wooden_lantern_01_1k.gltf"
-      }
-    },
-    {
-      "id": "PLACE_RUG_SIGNS_RUG_E_SIGN_1",
-      "clusterId": "CLUSTER_RUG_GATE",
-      "assetId": "ASSET_SIGNBOARD",
-      "anchorId": "RUG_E_SIGN_1",
-      "zoneId": "RUG_GATE",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 33.88,
-        "y": 74.44,
-        "z": 3.32
-      },
-      "yawDeg": 270,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 2.2,
-        "depth": 0.12,
-        "height": 0.38
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "none",
-      "lodEligible": true,
-      "semanticClass": "signage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_signboard"
       }
     },
     {
@@ -15990,6 +15986,23 @@
       "notes": "L3.4 R4 zone-derived caravan pack-textile line spans opposing edge bands above a 3.5 m hem clearance, adding frame-scale loading identity without entering the 4.5 m court route."
     },
     {
+      "id": "L34_DOGLEG_DYERS_LINE_01",
+      "type": "cloth_canopy_span",
+      "zone": "DYERS_DOGLEG",
+      "pos": {
+        "x": 46.02,
+        "y": 60.4,
+        "z": 4.75
+      },
+      "endPos": {
+        "x": 52.98,
+        "y": 60.4,
+        "z": 4.55
+      },
+      "widthM": 1.3,
+      "notes": "Dogleg drying line: one dyed-textile line hangs over the west wet-work cluster (rack, vats, workstation at y 59.35-61.55), ends 2 cm inside both dogleg wall lines so the rope buries in the 5 cm identity-plane relief at the upper-screen datum, and continues the North Court dyers line south into the lane above the 3.5 m hem clearance."
+    },
+    {
       "id": "L34_DOGLEG_VAT_01",
       "type": "dressing_anchor",
       "zone": "DYERS_DOGLEG",
@@ -16491,39 +16504,6 @@
       },
       "heightM": 7.8,
       "notes": "North court silhouette marker."
-    },
-    {
-      "id": "RUG_E_SHOP_1",
-      "type": "shopfront_anchor",
-      "zone": "RUG_GATE",
-      "pos": {
-        "x": 33.84,
-        "y": 74.44,
-        "z": 0
-      },
-      "yawDeg": 270,
-      "widthM": 1.7,
-      "heightM": 2.8,
-      "frontageId": "FRONTAGE_RUG_GATE_EAST",
-      "along": 0.5,
-      "servedBayId": "GROUND_01",
-      "notes": "Stable frontage-relative merchant bay."
-    },
-    {
-      "id": "RUG_E_SIGN_1",
-      "type": "signage_anchor",
-      "zone": "RUG_GATE",
-      "pos": {
-        "x": 33.88,
-        "y": 74.44,
-        "z": 3.32
-      },
-      "yawDeg": 270,
-      "widthM": 2.2,
-      "frontageId": "FRONTAGE_RUG_GATE_EAST",
-      "along": 0.5,
-      "servedBayId": "GROUND_01",
-      "notes": "Signboard aligned to the merchant bay."
     },
     {
       "id": "RUG_W_SHOP_1",

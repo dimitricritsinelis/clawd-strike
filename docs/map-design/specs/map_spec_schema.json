@@ -1596,6 +1596,10 @@
               },
               "additionalProperties": false
             }
+          },
+          "buildingId": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "dependentRequired": {
@@ -2417,6 +2421,212 @@
             ]
           }
         ]
+      }
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "label",
+          "storeys",
+          "brief",
+          "faces",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^BLD_[A-Z0-9_]+$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "shop",
+              "shop row",
+              "house",
+              "tea house",
+              "workshop",
+              "store row",
+              "landmark",
+              "arcade",
+              "service back",
+              "compound wall"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeys": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "brief": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 400
+          },
+          "faces": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "zoneId",
+                "face"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "zoneId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "face": {
+                  "type": "string",
+                  "enum": [
+                    "north",
+                    "south",
+                    "east",
+                    "west"
+                  ]
+                }
+              }
+            }
+          },
+          "walls": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "corners",
+                "groundHeadM",
+                "bays",
+                "dressing",
+                "needs",
+                "note"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "frontageId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "face": {
+                  "type": "string",
+                  "enum": [
+                    "north",
+                    "south",
+                    "east",
+                    "west"
+                  ]
+                },
+                "lengthM": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "corners": {
+                  "type": "string",
+                  "enum": [
+                    "held",
+                    "pilaster",
+                    "open"
+                  ]
+                },
+                "groundHeadM": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "bays": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "module",
+                      "alongM",
+                      "story"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "module": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "alongM": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "along": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "story": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 2
+                      }
+                    }
+                  }
+                },
+                "dressing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "assetId",
+                      "where"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "assetId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "where": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "needs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
