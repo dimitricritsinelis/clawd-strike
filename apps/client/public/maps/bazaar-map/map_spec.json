@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "6925f69721dd3ef68a85708b4adaeffb40a6d203dc6f29e8829fe543c89f056e",
+    "sha256": "01a25b3115eca9faee8126b74aeb0d2853332034f43f676fc893a3ca3e6bfe20",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -2143,6 +2143,58 @@
       }
     },
     {
+      "id": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "face": "north",
+      "start": 0.08,
+      "end": 0.92,
+      "districtId": "DISTRICT_RUG",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "bays": [
+        {
+          "id": "BAY_NICHE_W",
+          "moduleId": "blind_niche",
+          "along": 0.210884,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "W_NICHE",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_NICHE_AXIS",
+          "moduleId": "blind_niche",
+          "along": 0.5,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "BAY_NICHE_E",
+          "moduleId": "blind_niche",
+          "along": 0.789116,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "E_NICHE",
+          "layoutSource": "authored"
+        }
+      ],
+      "layout": {
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Three blind niches march at 1.7m centres across the head wall of the connector, the middle one on the approach axis from the Tea Landing, so the wall reads as the closed back of the house behind; the stone quoins hold both corners.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
+        "storyCount": 1,
+        "edgeMarginM": 0.6,
+        "groundHeadM": 3.1,
+        "upperSillDatumsM": [],
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
+      }
+    },
+    {
       "id": "FRONTAGE_NORTH_COURT_EAST",
       "zoneId": "NORTH_COURT",
       "face": "east",
@@ -3207,8 +3259,8 @@
   ],
   "frontageCoverage": {
     "totalFaceCount": 100,
-    "frontageFaceCount": 25,
-    "exemptionFaceCount": 75,
+    "frontageFaceCount": 26,
+    "exemptionFaceCount": 74,
     "exemptions": [
       {
         "zoneId": "CARAVAN_COURT",
@@ -3347,12 +3399,6 @@
         "face": "east",
         "reason": "short_wall_return",
         "note": "Only 1.50m of the 5.00m east edge is collision wall; no continuous return reaches the 2.50m frontage minimum."
-      },
-      {
-        "zoneId": "LINK_NORTH_WEST",
-        "face": "north",
-        "reason": "architectural_cut_edge",
-        "note": "The 7.00m north wall caps an authored connector and is not a served facade plane."
       },
       {
         "zoneId": "LINK_NORTH_WEST",
@@ -7194,6 +7240,126 @@
       "massingProfileId": "MASSING_FRONTAGE_RELIEF",
       "center": {
         "x": 42.5,
+        "y": 81.48,
+        "z": 2.45
+      },
+      "sizeM": {
+        "width": 5.880000000000001,
+        "depth": 0.96,
+        "height": 4.9
+      },
+      "yawDeg": 180,
+      "materialSlots": {
+        "wall": "ph_whitewashed_brick_warm",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "roof": {
+        "style": "flat_parapet",
+        "setbackM": 0.08,
+        "parapetHeightM": 0.45,
+        "upperStorySetbackM": 0,
+        "elevationM": 4.9
+      }
+    },
+    {
+      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "districtId": "DISTRICT_RUG",
+      "face": "north",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
+      "center": {
+        "x": 13.5,
+        "y": 80.91,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 180,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "districtId": "DISTRICT_RUG",
+      "face": "north",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "E_NICHE",
+      "layoutSource": "authored",
+      "center": {
+        "x": 15.20000208,
+        "y": 80.91,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 180,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W",
+      "kind": "facade_module",
+      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "districtId": "DISTRICT_RUG",
+      "face": "north",
+      "profileId": "quiet_residential_warmwash_relief",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "W_NICHE",
+      "layoutSource": "authored",
+      "center": {
+        "x": 11.79999792,
+        "y": 80.91,
+        "z": 2.2
+      },
+      "sizeM": {
+        "width": 1.05,
+        "depth": 0.18,
+        "height": 1.8
+      },
+      "yawDeg": 180,
+      "materialSlot": "wall",
+      "collisionOpening": false
+    },
+    {
+      "id": "ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING",
+      "kind": "massing",
+      "frontageId": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "districtId": "DISTRICT_RUG",
+      "face": "north",
+      "profileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "center": {
+        "x": 13.5,
         "y": 81.48,
         "z": 2.45
       },

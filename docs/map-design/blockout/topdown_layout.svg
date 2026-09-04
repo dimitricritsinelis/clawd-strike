@@ -249,6 +249,18 @@
 <g id="ARCH_FRONTAGE_LINK_NORTH_EAST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
 <rect x="39.560" y="10.040" width="5.880" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
 </g>
+<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS" data-kind="facade_module" data-module="blind_niche">
+<circle cx="13.500" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E" data-kind="facade_module" data-module="blind_niche">
+<circle cx="15.200" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W" data-kind="facade_module" data-module="blind_niche">
+<circle cx="11.800" cy="11.090" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
+</g>
+<g id="ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING" data-kind="massing" data-profile="quiet_residential_warmwash_relief">
+<rect x="10.560" y="10.040" width="5.880" height="0.960" fill="#6f5942" stroke="#241d17" stroke-width="0.16"/>
+</g>
 <g id="ARCH_FRONTAGE_NORTH_COURT_EAST_GROUND_01" data-kind="facade_module" data-module="blind_niche">
 <circle cx="52.910" cy="27.435" r="0.24" fill="#1f8a85" stroke="#0f3f3d" stroke-width="0.08"/>
 </g>

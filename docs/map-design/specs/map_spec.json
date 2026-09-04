@@ -1311,6 +1311,32 @@
       }
     },
     {
+      "id": "FRONTAGE_LINK_NORTH_WEST_NORTH",
+      "zoneId": "LINK_NORTH_WEST",
+      "face": "north",
+      "start": 0.08,
+      "end": 0.92,
+      "districtId": "DISTRICT_RUG",
+      "facadeProfileId": "quiet_residential_warmwash_relief",
+      "massingProfileId": "MASSING_FRONTAGE_RELIEF",
+      "layoutIntent": {
+        "mode": "authored",
+        "composition": "Three blind niches march at 1.7m centres across the head wall of the connector, the middle one on the approach axis from the Tea Landing, so the wall reads as the closed back of the house behind; the stone quoins hold both corners.",
+        "cornerTreatment": "held",
+        "groundHeadM": 3.1,
+        "columns": [
+          { "id": "W_NICHE", "along": 0.210884, "mirrorOf": "E_NICHE" },
+          { "id": "AXIS", "along": 0.5 },
+          { "id": "E_NICHE", "along": 0.789116, "mirrorOf": "W_NICHE" }
+        ],
+        "bays": [
+          { "id": "BAY_NICHE_W", "moduleId": "blind_niche", "columnId": "W_NICHE" },
+          { "id": "BAY_NICHE_AXIS", "moduleId": "blind_niche", "columnId": "AXIS" },
+          { "id": "BAY_NICHE_E", "moduleId": "blind_niche", "columnId": "E_NICHE" }
+        ]
+      }
+    },
+    {
       "id": "FRONTAGE_SPAWN_A_NORTH_WEST",
       "zoneId": "SPAWN_A_COURTYARD",
       "face": "north",
@@ -1595,12 +1621,6 @@
       "face": "west",
       "reason": "short_wall_return",
       "note": "Only 2.00m of the 5.00m west edge is collision wall; no continuous return reaches the 2.50m frontage minimum."
-    },
-    {
-      "zoneId": "LINK_NORTH_WEST",
-      "face": "north",
-      "reason": "architectural_cut_edge",
-      "note": "The 7.00m north wall caps an authored connector and is not a served facade plane."
     },
     {
       "zoneId": "LINK_NORTH_WEST",

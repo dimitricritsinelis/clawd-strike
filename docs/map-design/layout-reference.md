@@ -4,8 +4,8 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 
 - Format: `3.0`
 - Zones: 25
-- Frontages: 33
-- Architecture placements: 146
+- Frontages: 34
+- Architecture placements: 150
 - Dressing placements: 126
 
 ## Facade Profiles
@@ -256,6 +256,13 @@ Generated from `docs/map-design/specs/map_spec.json` through the shared v3 compi
 - Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
 - Explicit bays: `GROUND_01:blind_niche@0.50`
 - Compiled placements: `ARCH_FRONTAGE_LINK_NORTH_EAST_NORTH_GROUND_01`, `ARCH_FRONTAGE_LINK_NORTH_EAST_NORTH_MASSING`
+
+### `FRONTAGE_LINK_NORTH_WEST_NORTH`
+
+- Zone/face: `LINK_NORTH_WEST` / `north`
+- Profile/massing: `quiet_residential_warmwash_relief` / `MASSING_FRONTAGE_RELIEF`
+- Explicit bays: `BAY_NICHE_W:blind_niche@0.21`, `BAY_NICHE_AXIS:blind_niche@0.50`, `BAY_NICHE_E:blind_niche@0.79`
+- Compiled placements: `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_AXIS`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_E`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_BAY_NICHE_W`, `ARCH_FRONTAGE_LINK_NORTH_WEST_NORTH_MASSING`
 
 ### `FRONTAGE_NORTH_COURT_EAST`
 
