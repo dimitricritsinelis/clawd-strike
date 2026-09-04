@@ -3,7 +3,7 @@ Authority: normative
 Read when: implementation work
 Owns: durable repository-wide safeguards
 Do not use for: task status, map-polish procedure, or historical rationale
-Last updated: 2026-08-16
+Last updated: 2026-09-04
 
 # AGENTS.md — Clawd Strike Operating Contract
 
@@ -12,11 +12,11 @@ Last updated: 2026-08-16
 - Stay on the current branch and preserve unrelated worktree changes.
 - Before a Git operation that could change `HEAD`, inspect `git status --short` and `git branch --show-current`.
 - Change branches, commit, or push only when the current user prompt includes that work.
-- Never use destructive Git operations such as reset, clean, checkout/restore rollback, stash, or auto-stash. Never discard or overwrite unrelated changes.
+- Never use destructive Git operations such as reset, clean, stash, or auto-stash, and never discard or overwrite unrelated changes. Never use checkout or restore as a rollback either. Revert your own edit by restoring the file from a snapshot taken before the edit.
 
 ## Generated-file authority
 
-- `docs/map-design/specs/map_spec.json` is map authority. `docs/map-design/shots.json` owns authored fixed signoff cameras and their requirements; deterministic survey cameras are derived evidence and must not be added there merely for coverage.
+- `docs/map-design/specs/map_spec.json` is map authority. `docs/map-design/shots.json` owns the authored fixed signoff cameras; the per-unit review cameras used by `pnpm map:shoot` are derived from the spec and do not belong there.
 - Generated map files, layout references, top-down views, screenshots, and other artifacts are evidence, not authority.
 - Regenerate map outputs with `pnpm --filter @clawd-strike/client gen:layout-reference` and `pnpm --filter @clawd-strike/client gen:maps`. Never hand-edit generated map files.
 

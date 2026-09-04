@@ -3,7 +3,7 @@ Authority: normative
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: durable internal decisions that future tasks should not rediscover
 Do not use for: current task status, temporary bug lists, per-task notes, public browser-agent behavior details
-Last updated: 2026-08-17
+Last updated: 2026-09-04
 
 # Durable Decisions
 
@@ -20,7 +20,7 @@ Last updated: 2026-08-17
 
 ## DEC-003: Map authority and runtime generation
 - Map geometry authority is `docs/map-design/specs/map_spec.json`; the detailed birdseye and top-down layout are derived reference evidence.
-- `docs/map-design/shots.json` owns the authored fixed signoff-shot contract. Deterministic survey poses are derived evidence and do not enter that inventory merely to provide coverage.
+- `docs/map-design/shots.json` owns the authored fixed signoff-shot contract. The per-unit review poses used by `pnpm map:shoot` are derived from the spec and do not enter that inventory.
 - Map-design authority lives in structured files and approved refs, not prose packet docs.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
 - Do not hand-maintain drift in `apps/client/public/maps/`.
@@ -31,7 +31,7 @@ Last updated: 2026-08-17
 
 ## DEC-005: Visual cadence and repository validation have separate owners
 - Package scripts and CI own the executable validation surface.
-- `.claude/skills/map-polish/SKILL.md` is the sole map-polish procedure. `docs/map-design/map-polish-state.json` owns current operating status, the map quality bar owns visual judgment, and `AGENTS.md` contains only durable repository safeguards.
+- `.claude/skills/map-polish/SKILL.md` is the sole map-polish procedure, the map quality bar owns visual judgment, `AGENTS.md` contains only durable repository safeguards, and Git history is the only record of what was done.
 - Command cadence, temporary gate composition, and current CI coverage must not be frozen in this decision log.
 
 ## DEC-006: The Bazaar target is a finished Middle Eastern market
@@ -112,7 +112,7 @@ Last updated: 2026-08-17
 
 ## DEC-020: Historical map-process artifacts are not live instructions
 - Historical map planning and process documents are evidence only. They do not define the current task or hold active workflow state.
-- Current map-polish procedure lives only in `.claude/skills/map-polish/SKILL.md`; `docs/map-design/map-polish-state.json` holds bounded current status, and Git history holds long-term history. The user prompt remains the task boundary.
+- Current map-polish procedure lives only in `.claude/skills/map-polish/SKILL.md`; Git history holds what was done. The user prompt remains the task boundary.
 
 ## DEC-021: Gameplay profiles start from one shared balance baseline
 - `Desktop Human` is the canonical gameplay balance baseline. `Mobile Human` and `Desktop Agent` share its exact balance-bearing waves, enemy, player, buffs, and flow configuration until an explicit profile-specific change is approved.
@@ -122,20 +122,33 @@ Last updated: 2026-08-17
 
 ## DEC-022: Facade composition is authored, evidenced in plan, and gated absolutely
 - Where openings sit on a wall is a design decision, not a spacing rule. `frontages[].layoutIntent.mode` is `generated` (rhythm grammar, evenly spread between edge margins; quiet backdrops only) or `authored` (named columns, declared mirrors about an axis, a declared corner treatment, one ordering sentence). Both pass the same physical grammar in `apps/client/scripts/lib/facade-layout-grammar.mjs`; the runtime accepts `layoutSource` `generated | authored`.
-- The facade grammar and `gen-map-runtime.mjs` are map-visual sources reachable only by shared map-polish tasks; a pure task cannot change how the whole map composes.
-- Every map-polish task carries plan-level evidence the screenshots cannot: a site brief (frontages, current bays, exempt faces, neighbours) and a plan crop of the compiled layout; the blind review gets a neutrally labelled A/B plan pair. Bones-level Red defects require a composition brief in the work order and are `route-adjacent` (one focused traversal), and the reviewer's `compositionLogic` judgment defers arbitrary placement instead of baselining "better than blank".
-- Units whose dominant faces are all exemptions are not polish work: defer them; adding frontage or massing is an owner decision.
+- Where openings belong is decided from the plan (`pnpm map:shoot` renders a north-up plan crop of the unit) and its neighbours, never from a corridor screenshot alone. Better than blank is not the bar; arbitrary placement is not a fix.
+- Units whose dominant faces are all exemptions need frontage or massing, which is an owner decision: ask rather than decorate.
 
-## DEC-023: Map-polish is engine-agnostic with a per-pass engine pin and a code-owned loop
+## DEC-023 (superseded by DEC-025): Map-polish is engine-agnostic with a per-pass engine pin and a code-owned loop
 - The workflow owns correctness: the bounded loop, gates, and validators live in code (`map:loop` → planner → `map:run` → `map:verify`); agents launch it and babysit its stop reasons, they do not orchestrate.
 - A single ModelEngine abstraction (`--engine codex|claude`, env fallback `MAP_POLISH_ENGINE`) serves four roles — planner, survey, writer, reviewer — with generalized per-call telemetry `{engine, role, model, effort, wallMs, usage, costUsd?}`.
 - The engine is pinned in state at survey time; `map:run`/`map:loop` refuse a different engine unless the pass is resurveyed. A failed call is a workflow failure, never a cross-engine fallback; no mid-pass switch.
 - Claude runs the Claude Code CLI headless (`--bare`, pinned `claude-fable-5`, per-role `--effort`/`--max-budget-usd`); images are read via its Read tool, not an image flag. Survey/reviewer/planner are isolated in a fresh temp dir with only image copies and `--allowedTools Read` — blindness by directory plus tool allowlist, not a hard sandbox. The writer edits the repo under `acceptEdits` with Read/Edit/Write/Glob/Grep and no Bash.
 - Tests never make real model calls; they use fake binaries via `CODEX_BIN`/`CLAUDE_BIN`.
 
-## DEC-024: Survey wall coverage is a fail-closed survey gate
+## DEC-024 (superseded by DEC-025): Survey wall coverage is a fail-closed survey gate
 - Geometry-derived named views (`primary`, `context`, `elev:*`, `cross-a`/`cross-b`, `upper`) must cover every wall face: a sample is usable when it sits inside a view's horizontal wedge at ≤30 m with incidence ≤60°, and full-height when the frame reaches the wall top.
 - Thresholds block `map:survey` and `map:verify` when unmet: every wall face ≥6 m needs ≥80% usable; every authored frontage needs ≥90% usable and ≥85% full-height; map-wide full-height must be ≥85%. `pnpm map:coverage` prints the per-face table.
 - `SURVEY_POSE_RULESET_VERSION` is hashed into survey authority, so pose-rule changes invalidate old surveys and force resurvey.
 - Acceptance recaptures the same named poses, so a wall no view can see can never be silently unrated-and-unacceptable.
 - Remaining blind spots — overhead/canopy interiors and rooftops — are documented, not gated.
+
+## DEC-025: Map polish is a fast in-session loop, not an orchestrated pipeline
+- The survey/schedule/plan/write/verify/blind-review pipeline (DEC-023, DEC-024) shipped one accepted change in 18 days across roughly 11,000 lines of orchestration. It is removed. Everything on the map needs work, so ranking it first is wasted motion.
+- The loop is the agent in the session: pick a unit (owner-named or random), `pnpm map:shoot <unit>` for every player-eye view plus a plan crop in about 10 seconds, name the worst thing, fix it in `map_spec.json` or render-only code, `pnpm map:check` (regenerate plus protected-gameplay diff against HEAD), reshoot with `--tag after`, keep or revert, commit, move on.
+- The only hard gate is gameplay safety: `map:check` fails on any change to the protected projection of `map_spec.json` (dimensions, traversal surfaces, lanes, connectivity, spawns, constraints, doorway and opening dimensions, colliding assets and placements, cover anchors) or to protected runtime files. `pnpm validate:map-layout` (12 traversal routes) runs after route-adjacent placement and before a session ends.
+- Quality judgment is the same model looking at before/after views against `docs/map-design/quality-bar.md`; the owner reviews commits. No state file, ratings, fingerprints, engine pins, coverage gate, or blind reviewer.
+- The bar is a shipped Counter-Strike 2 map.
+
+## DEC-026: Every wall belongs to a building
+- `buildings[]` in `map_spec.json` is the design layer above frontages: id, type (shop, shop row, house, tea house, workshop, store row, landmark, arcade, service back, compound wall), storeys, a one-line brief, and the zone faces it owns. Every frontage carries `buildingId`; `map:check` fails a frontage without one. Code-owned identity planes are registered as buildings with faces and no frontage.
+- A face that holds more than one building is split into one frontage per building. Three faces were split on 2026-09-04: Dyers Alley west (dye works, dyers' house), North Court east (two houses), Service North spine (stores back, tea house back, yard wall). Spice Street keeps one frontage per side as a shop row because its dressing anchors bind to generated bay ids.
+- The type table in `docs/map-design/quality-bar.md` is the design authority for what a wall of each type needs; the skill's building test judges the after image against it. Generated layout mode is retired face by face as each building is authored.
+- Massing heights on the Service North retaining spine were left at 7 m: the spine holds the raised Tea Terrace's sightline and height is a gameplay matter.
+- Addendum 2026-09-04: every building carries `walls[]`, the wall schedule: per frontage the corners, ground head, every bay with module and position (metres and `along`), dressing assets with placement, assets still needed, and a one-line rule. 40 walls, 123 bays, 54 dressing items scheduled. Compound walls are one blind niche on the axis (two on spans over 6 m), never a lone pilaster: a 2.25 m pilaster module standing alone reads as a bollard. Eleven frontages are authored from the schedule; the remaining 27 are implemented by the loop, one building per iteration. The runtime no longer invents upper openings; upper bays come only from compiled STORY_ placements.

@@ -1,152 +1,84 @@
 ---
 name: map-polish
-description: Survey Bazaar, schedule its weakest review unit, and run one bounded engine-written visual iteration with matched-view evidence and gameplay safeguards.
+description: SWAT loop for the Bazaar map. Pick a unit, shoot it, name the worst thing, fix it in map_spec, reshoot, move on. The owner commits. Fast iterations, no survey, no orchestration.
 ---
 
 # Map Polish
 
-This is the sole explanation of the map-polish workflow. Follow `AGENTS.md`; use `docs/map-design/quality-bar.md` only for visual judgment.
-`docs/map-design/map-polish-state.json` is the only active status source; Git holds history. Codex handles survey/planning/review; `--engine codex` remains accepted, and `MAP_POLISH_ENGINE`, if set, must be `codex`. The prep/review engine is pinned for the pass at survey time. Claude Code Fable 5.1 is the fixed map writer, not a prep/review option. The workflow prepares evidence/work orders and runs checks; Claude only implements the bounded map improvement. Never switch the prep/review engine mid-pass or fall back across engines on failure. Tests never make real model calls: fake binaries via `CODEX_BIN`/`CLAUDE_BIN`.
+**The bar is a shipped Counter-Strike 2 map.** Mirage, Anubis, Dust 2 finish: every wall reads as designed, every prop is placed for a reason, materials hold up at arm's length. Everything on this map currently needs work, so do not survey or rank it. Go to a unit and make it better. Follow `AGENTS.md` for safety and `docs/map-design/quality-bar.md` for judgment.
 
-## Commands and modes
+## The loop
 
-- Start with `pnpm map:survey -- --engine codex`, inspect `pnpm map:next -- --engine codex`, trace ownership, then run `pnpm map:run -- --engine codex --objective "..." --risk pure|shared|route-adjacent`; real mode requires both flags before capture or a Claude writer call. Use the `suggestedRisk` from `map:next`: composing a frontage is `route-adjacent` (one focused traversal), not `pure`.
-- Real `pnpm map:run` runs one explicitly scoped task and stops; repeat `map:next` → `map:run` up to a chosen bound. Mock orchestration may use `--max-tasks N`. `--concept PATH` adds advisory direction. Never run an unbounded loop.
-- Bounded multi-task driver: `pnpm map:loop -- --engine codex --max-accepts 5 --commit`. Codex plans/reviews; Claude writes the map change. See the one-task loop section.
-- Without `--commit`, resolve once with `pnpm map:verify -- --accept --commit` to continue from a clean checkpoint, or use `--accept` without committing and stop. Reject/defer with the matching flag. Use `-- --milestone` only at milestone cadence.
-- Real mode invokes the pass's pinned prep/review CLI and the fixed Claude writer CLI installed locally (Claude Code 2.1.251 or newer for Fable 5.1). Manual mode emits complete work/review packages. Mock mode makes no external call. If a required CLI is unavailable, emit the work order and exit or use manual mode; a failed call is a workflow failure — never fall back to the other engine, print credentials, or make a real model call in tests.
-- Real calls pin models per role and suppress unrelated plugins/config. Codex pins Sol High for survey/planning/review with `--ignore-user-config`. The Claude writer pins `claude-fable-5-1` headless with `--safe-mode`, `--no-session-persistence`, and per-role `--effort`/`--max-budget-usd`, retaining the existing login. It reads prompt-listed images with Read and uses exact `--tools Read,Edit,Write,Glob,Grep` in the repo under `acceptEdits`. No Bash or delegated agents: the workflow runs generators and checks. Ultra is diagnostic, not the routine iteration default.
+1. **Pick a unit.** `pnpm map:shoot` lists all 25 with their view ids. Take the one the owner named, otherwise `random`. Do not return to a unit you touched this session unless asked. If the worst thing is a shared part, do a part iteration instead (below).
+2. **Shoot it.** `pnpm map:shoot <unit>` boots the game headless and captures every player-eye view of that unit in about 10 seconds, plus a north-up plan crop, and prints the zone's spec context: its record, its frontages, its exempt faces, and the zones it connects to. Read `primary`, `context`, the `plan.png`, and the `elev:*` view of whichever wall you will work on. Read the rest only if you need them. The plan is north up with east on the right; in game, looking north puts east on your left, so the plan is mirrored relative to what the player sees. A face listed as `elev:north` rather than `elev:FRONTAGE_*` has no frontage. Its exemption reason says who owns it: `architectural_cut_edge` and `sealed_perimeter` faces can take a frontage (delete the exemption); `short_wall_return` and `open_traversal_face` have no wall to compose; `retaining_wall` is terrain; `system_articulated_boundary` faces are identity planes drawn by `pushCoreBoundaryFacadeGrammar` in `apps/client/src/runtime/map/v3Architecture.ts` with no spec lever, so they are code work (a part iteration).
+3. **Name the worst thing.** One sentence. Judge macro before micro: is the wall composed (axis, held corners, paired or marching openings, datums that line up with the neighbour)? Then assemblies (are stalls, windows, awnings complete and supported)? Then materials and wear. A blank plane, a door jammed in a corner, or a floating awning outranks any texture complaint.
+4. **Design the fix from the plan, then implement it.** Decide where openings and elements belong from `plan.png` and the zone's neighbours, not from where a spacing rule left room. Edit `docs/map-design/specs/map_spec.json` (frontages and `layoutIntent`, facade modules and profiles, massing, `wall_details`, `exterior_wall_patches`, dressing clusters and placements, materials, asset registry) or render-only runtime code under `apps/client/src/runtime/map/`. Before editing a code file, copy it into the unit's before directory; that copy is your revert. Prefer `layoutIntent.mode: "authored"` for any wall a player reads (rules below). Overhead dressing (canopies, laundry and dye lines) is allowed; the runtime gives it no collider and drops any hung under 2.2 m. Edit the JSON by text insertion, not by reserialising the file; it mixes one-line and multi-line objects and a reserialise touches a thousand unrelated lines. Use `DeterministicRng` for variation. New textures and models are CC0 with provenance in the owning manifest.
+5. **Check and reshoot.** `pnpm map:check` regenerates maps and fails if collision, routes, spawns, doorway dimensions, cover, or protected runtime files changed. If you edited code, also `pnpm typecheck` (map:check does not). Then `pnpm map:shoot <unit> --tag after`, which reuses the exact before poses and prints how much each view changed; read the changed views and compare. Better in the target view and no regression elsewhere: keep. Otherwise revert by copying back the snapshots in `artifacts/map-shoot/<unit>/before/` (the spec, and any code file you copied there) over the originals. Never `git checkout`; earlier kept changes are still uncommitted in those files. Then try a different idea or move on.
+6. **Move on.** Do not commit. Kept changes accumulate in the worktree and the owner commits after reviewing. Keep a running list of `unit: what changed and why` and the before/after paths, and report it when the session ends or the owner asks.
 
-Automatic mode requires a clean dedicated branch and refuses unrelated changes. `map:run` and `map:loop` refuse a prep/review engine different from the one pinned in state unless the pass is resurveyed; the separate Claude writer does not change that pin. Bind survey state to a deterministic fingerprint of tracked/untracked source (excluding state and ignored artifacts); invalidate after out-of-band drift while preserving active recovery.
-Record the start commit and candidate patch/files. `--commit` creates one local accepted-task checkpoint and never pushes; without it, retain the candidate for manual acceptance and stop.
+Run `pnpm validate:map-layout` (12 traversal routes, about 2.5 minutes) only when you added colliding geometry, props, or dressing into the floor area of a route, and once before the session ends. Wall modules and facade changes do not need it per iteration. A still frame cannot see a snag. Fix or revert anything that breaks a route.
 
-## Survey before editing
+## Part iterations
 
-Derive units from every authored zone in `map_spec.json`; never hard-code the count. Include every connector, service/transition, spawn, elevated piece, and edge; fail newly uncovered zones.
-Generate a stable ordered list of named player-eye views per unit from authority and traversal direction: `primary` and `context` always first; square-on `elev:<FRONTAGE_ID>` / `elev:<face>` wall elevations (long walls split into `:1`, `:2`… segments; pitch tilts up when the wall top would not fit at ~90% of frame height); `cross-a`/`cross-b` in squarish zones (aspect ≤ 1.6); `upper` (+20° pitch) where walls ≥ 7 m stand within 9 m. Cap ~10 views per unit; keep fovDeg 75 player-eye honesty; `pitchDeg` is a real pose field. Allow tiny overrides only for invalid poses; never add survey poses to `shots.json` merely for coverage.
+When the worst thing on a wall is a part every wall shares, fix the part, not the wall. A part is a facade module (`facade_modules[]`: kind, dimensions, material slot), a profile (`facade_profiles[]`: which modules a wall may use), a material, or the render code that builds them in `apps/client/src/runtime/map/`. Trigger: the same defect on two or more walls, or a module whose render contradicts its label.
 
-Before capture, `assertSurveyCoverage` gates the pose set and fails closed on pure geometry with own-zone views: it samples every wall face; usable = inside a view's horizontal wedge, ≤30 m, incidence ≤60°; full-height = the frame reaches the wall top. Every wall face ≥6 m needs ≥80% usable; every authored frontage ≥90% usable and ≥85% full-height; map-wide full-height ≥85%. The same gate runs inside `map:verify`; `pnpm map:coverage` prints the per-face table; the three map-wide numbers are stored in state, and `SURVEY_POSE_RULESET_VERSION` is hashed into survey authority so pose-rule changes invalidate old surveys.
+1. Shoot two or three units that show the part, `pnpm map:shoot <unit> --tag <part>-before`. Judge the square-on `elev:*` view for composition and an oblique view (`primary`, `cross-*`, `upper`) for depth, reveals, and shadow; a recess or frame change is invisible square on.
+2. Fix the part once. Widen a profile's `moduleIds` rather than creating a new profile.
+3. `pnpm map:check`, then reshoot the same units with `--tag <part>-after`. Every wall using the part must improve; one regression means revert from the `<part>-before` snapshot.
 
-Capture every named view per unit. Group 5 labeled units per sheet with variable per-unit thumbnail grids labeled by view id, plus one compact approved reference board; ask for structured `rating`, `confidence`, and at most two criterion-grounded visible defects; a defect may name the wall it saw inline as `[view:<id>]`.
-Run one short map-wide synthesis on the same sheets; retain at most three findings in existing defect slots. Retry malformed output once. Never implement during survey.
+Do part iterations first while the parts are weak. Known weak parts: `door_storage_heavy` renders a steel stall frame, a corrugated awning that punches through the string course, and loose goods, so every storage frontage reads as a shanty stall; `vent_service` is a dark square with no surround, floating at head height; the relief profiles allow no window or door, so a quiet wall cannot have an opening where the plan wants one; the `arch_pointed_frame` surround (Dogleg gate, arcade arches) renders as a solid pale slab with a slit; stone frames around openings read as flat cards; the `blind_niche` recess is now plaster but its arris is a bright flat strip. When a module renders wrong, the render code is `v3Architecture.ts`, materials are `kitMaterials.ts`, both under `apps/client/src/runtime/map/`; only the cutout branches render, the non-cutout twins are dead.
 
-- **Red:** unacceptable, broken, blockout-like, or dramatically below the map.
-- **Yellow:** coherent but underdeveloped or carrying an important visible defect.
-- **Green:** acceptable for now.
+## Authored facade rules
 
-Eliminate Red, resurvey, improve the highest-impact Yellow, then stop for human review. Do not use
-completion percentages or demand an abstract final score from every minor space.
+The grammar in `apps/client/scripts/lib/facade-layout-grammar.mjs` validates every frontage. What it enforces, so you do not have to read it:
 
-## Deterministic scheduling
+- **Modules come from the profile.** Authored bays may only use the `facadeProfileId`'s `moduleIds`. The `*_relief` profiles allow only `blind_niche` + `pilaster_facade` (or the coverage pair); a wall that should have doors or windows needs `quiet_residential`, `active_merchant`, `service_storage`, or another full profile. Generated mode is looser and picks by family, so a generated twin is not proof a module is allowed.
+- **Two storeys need upper modules.** Massings of 5.4 m or more generate an upper storey from the family's upper candidates (residential: windows; service: vents then niches). A relief profile on a two-storey massing fails unless `accentModuleId` names an allowed module (`blind_niche` for high blind recesses).
+- **Positions.** `columns[].along` is 0..1 along the frontage, west to east on north/south faces and south to north on east/west faces. Bays are centred on their column. Keep 0.6 m edge margin and 0.42 m between bays.
+- **Corners.** `held` keeps a solid 1.2 m pier at each end; `pilaster` needs a pilaster within 0.9 m of each end; `open` must be justified in `composition`.
+- **Mirrors.** `mirrorOf` pairs must sit symmetric about the frontage centre within 0.03 m.
+- **Heads line up.** Every ground bay's top equals `groundHeadM`. Doors stand on the ground at their own height, so on a wall with doors `groundHeadM` must equal the door height (2.5 m for `door_storage_heavy`, 2.25 residential, 2.7 shop) and a 3.4 m `pilaster_facade` cannot share that storey. Other modules hang from the head, so a 1.8 m niche under a 2.5 m head has its sill at 0.7 m.
+- **Storeys** come from the massing height (`resolveStoryCount`: under 5.4 m is one storey), not from you. On a one-storey massing nothing can sit above a door in the same column; a vent beside a door at head height is the only option, and the composition test rejects it, so leave vents off such walls. Upper openings on taller massings are generated over the ground bays.
+- **Segments.** `elev:<FRONTAGE>:1` is the segment nearest the camera's left when facing the wall, which on a west face is the north half, opposite to the `along` direction.
+- **The composition sentence is unchecked prose.** The grammar validates only its length and punctuation. Write it from the numbers you actually placed.
+- **`composition`** is one sentence, under 240 characters, ending in . ! or ?, stating the ordering idea.
+- **Module labels lie about materials.** `blind_niche` renders as a dark timber board in a stone frame, not plaster; three of them read as boarded windows. Shoot a wall that already uses a module before you commit a design to it.
 
-Sort by rating (`unrated`, Red, Yellow, Green), least recently attempted, fewest accepts, then stable ID. Never select Green while Red remains except as a shared regression view.
-Allow one accepted change per unit/pass and two attempts. A second needs new evidence and a materially different hypothesis; after two failures defer. Resurvey after every Red receives attention.
+## The building test
 
-Shared-system work may override geography only when `--shared-cause` names one cause supported by
-at least two Red/Yellow units, one Green regression view is included, and the objective stays bounded.
+Every frontage names a building in `buildings[]`; `map:shoot` prints it under the frontage. Each building carries `walls[]`: the wall schedule. Per frontage it gives the corner treatment, the ground head, every bay with its module and its position in metres and as `along`, the dressing assets and where they sit, the assets that do not exist yet (`needs`), and a note stating the rule. **The schedule is the design. A unit iteration implements it**: write the `layoutIntent` from the scheduled bays (`columns[].along` from `along`, `mirrorOf` for symmetric pairs, `story: 1` for upper bays), place the scheduled dressing, shoot, and judge the render against the note. Deviate only when the render proves the schedule wrong, and then change the schedule too, with the reason in its note. The type table in `docs/map-design/quality-bar.md` says what each type needs. A frontage with no building fails `map:check`: assign one first. Splitting a face into buildings is one frontage per building with its own `start`/`end`, `buildingId`, profile, and massing; the parapet steps where the massing changes.
 
-## Compose before polish
+Before keeping a change, answer from the after image:
 
-Screenshots alone cannot tell a writer where a door belongs. Every task therefore also gets a
-**site brief** (`site-brief.md`: the unit's frontages with their current bays and positions, exempt
-faces and why, connected zones and neighbouring frontages as alignment references, and the
-authored-layout schema) and a **plan crop** (`plan-before.png`: the compiled layout around the unit,
-north up, unit outlined). The work order and site brief name the elevation view that shows each
-frontage (review view `elev:FRONTAGE_X` shows this wall square-on: the wall you are composing).
-Read both before deciding anything.
+- **Is it its type?** Door count equals building count. A house has one door and paired windows; a store row has many equal doors; a compound wall has none; a service back has a hatch at most.
+- **Where does one building end and the next begin?** A material change, a parapet step, or a party-wall pier. If you cannot point to it, the two buildings read as one long wall.
+- **Neighbours differ, correlated.** Same rule, different stone or window or storey count. Not clones, not strangers.
 
-Facade openings are placed by `layoutIntent`. `generated` spreads modules evenly between the edge
-margins by rhythm and is only for quiet backdrops; any frontage a player reads should be `authored`:
-named columns, declared mirrors about an axis, a declared corner treatment (`held`, `pilaster`, or
-`open`), one sentence stating the ordering idea, validated by the same physical grammar. A Red unit
-whose defect is bones-level (blank, blockout, arbitrary, no readable purpose) is a **composition
-task**: the work order demands a composition brief, and a profile, material, or rhythm swap alone is
-not a resolution. If the unit has no composable frontage (every dominant face is an exemption),
-`--defer-selected` it with that diagnosis: adding frontage or massing is an owner decision.
+## The composition test
 
-## One-task loop
+Passing the grammar is not composition. A wall can mirror perfectly in the JSON and still look random, because the eye reads rendered sizes, frames, and datums, not column fractions. Before keeping a change, look at the after image as a stranger and answer from the picture alone:
 
-Before capture or a paid writer call, confirm the selected defect has a bounded local emitter. If it
-does not, use `pnpm map:run -- --defer-selected --diagnosis "..."` and rotate without a model call.
+- **Can you state the rule in one sentence?** "Niche, door, niche, door, niche at one gap under one head, doors mirrored about the axis." If the sentence needs the word "then" more than once, there is no rule.
+- **Like with like.** Rhythm is made of equal elements at equal spacing. A door, a 0.5 m vent, and a niche spaced evenly are three different things, not a rhythm. Pair doors with doors, niches with niches; put service elements (vents, hatches) above or inside the bay they serve, not beside it.
+- **Datums hold.** Sills, heads, string courses, and cornices are continuous lines. Nothing attached to an opening (awning, canopy, sign, frame) may cross the string course above it or hang below the sill line of its neighbours.
+- **Every opening is framed and grounded.** No dark rectangle floating in a wall. A vent has a surround; a niche has a sill; a door has a threshold and a lintel.
+- **Attachments belong to one opening.** An awning spans its own door, sits under the head, and is supported from the wall. If a module brings a projecting frame, posts, or goods with it, judge those as part of the wall.
+- **Edges, not centres.** Check the gaps between element edges are equal or clearly graded; equal centre spacing with unequal widths reads as drift.
 
-1. Select one unit; capture its exact current named views; render the plan crop and site brief.
-2. Read the unit through Purpose → Order → Exception → Evidence → Readability from the quality bar, then name one highest-impact visible defect and trace its likely emitter. Do not create a score or optimize only the hero angle.
-3. Write a work order of about 550 words or less: unit/zone IDs, the unit's view captures with the elevation view naming each frontage, plan crop, site brief, optional concept, one objective, at most two defects, a composition brief when the defect is bones-level, likely files, protected constraints, minimum checks, success, and one directly relevant rejected tactic at most.
-4. Invoke the fixed Claude writer for one bounded implementation attempt. It reads `AGENTS.md`, supplied evidence/site brief, and permitted map surfaces only; no broad repository exploration, orchestration repair, generators, or duplicate checks. A workflow failure is a concise blocker, not another development task. Return a `designRationale` (purpose, axis and entrance logic, why each opening sits where it does) for the owner.
-5. Run the smallest risk-appropriate checks, recapture the exact poses, and validate the per-view image pairs. Target views come from the task's defects and objective (fallback: all views); a material change must land in at least one target view.
-6. Run at most one fresh short blind A/B review with Codex, then accept, reject, or defer.
-7. Atomically update bounded state, clean temporary artifacts, and rotate to another unit.
+If any answer is no, the change is not done. Fix the composition or the part; do not keep "better than before".
 
-`pnpm map:loop -- --engine codex --max-accepts N --commit` is the bounded multi-task driver: a
-deterministic loop of `map:next` → one fresh planner call per task → `map:run` → `map:verify`, same
-gates as above. It stops at N accepts, a resurvey/milestone due, an owner-review boundary, a task
-needing human disposition, or an unrecoverable blocker, and prints a JSON final report.
-`--planner manual` stops before each task and prints the unit context for an operator-written
-objective. Real `map:run` still refuses `--max-tasks`; the loop is the only multi-task path.
+## What good looks like
 
-A concept image is advisory and only appropriate for a Red unit whose direction, composition,
-identity, or density is unclear. Do not use one for UV/normal/shader/emitter/grounding defects,
-obvious geometry fixes, or small material corrections.
+- **Intentional, not decorated.** Symmetry, alignment, and repetition are evidence of design. Irregularity is fine when it has a cause: circulation, terrain, ownership, repair, use. Randomness without provenance is noise.
+- **Complete assemblies.** Windows have jambs, heads, sills, reveals, closures. Stalls have structure, counter, cover, stock, ground contact. Awnings are attached, supported, tensioned. Nothing floats, clips, or reads paper-thin.
+- **Walls without doors still say something.** A service face is blank because access is elsewhere, and shows it with niches, vents, pilasters, a string course, drainage, and wear where water and hands go.
+- **Density at the edges.** Dressing belongs against wall bases, in recesses, on counters and sills, and above head height. The walking envelope stays clear whether or not the prop collides.
+- **A swap is not a design.** Changing a profile, material, or rhythm without deciding where things belong is not a fix.
 
-Before review, reject stale/missing/corrupt/sky-only captures, wrong units, dimension or camera/FOV
-drift, runtime errors, no relevant source change, and tasks with no materially changed target view
-(identical or effectively unchanged pairs under the strict threshold). These are workflow failures,
-never critic ties.
+## Do not
 
-Randomize A/B labels. Keep review instruction concise and give only the blind package: A/B pairs for
-primary, context, and every view whose pixels changed materially, the
-neutrally labelled A/B plan crops (identical framing, rendered from the pre-edit and post-edit layouts), the
-Green regression view when the task is shared, the
-objective, and the same design lens—never diff, rationale, chronology, or history. The reviewer
-prompt's image-order sentence is generated from the actual image list. Require
-chronology-neutral preferred/design/objective/blocking-defect fields, a `compositionLogic`
-judgment (legible/arbitrary/unclear: is the preferred version's placement of openings and elements
-on an axis, paired, held from corners, aligned to something, or a justified exception?), confidence, and one concise reason.
-A candidate that wins the pair with arbitrary placement is deferred for the owner, never baselined:
-better than blank is not the bar. If the engine cannot inspect images, emit the package for manual review.
-Use objective technical/crop evidence once when uncertain; otherwise defer, without critic debate.
-
-## Checks and boundaries
-
-Default checks are: protected-domain diff, fastest relevant scoped typecheck, exact recapture,
-runtime console-error check, image-pair validity, and one short visual comparison.
-
-- Pure visual work adds an existing focused test only when it directly covers the mechanism.
-- A shared visual system adds one justified mechanism test and one Green regression view.
-- Route-adjacent props, placement, openings, frontage composition, or geometry preflight and rerun the smallest relevant props-on agent route; a passing focused traversal is acceptance evidence. Reserve hands-on confirmation for a retained legacy/manual task that explicitly requires it.
-- Shared composition work (the facade grammar `apps/client/scripts/lib/facade-layout-grammar.mjs` or its generator) runs the grammar/generator tests as its focused mechanism test and needs the usual two weak units plus one Green regression view.
-- Never add per-task snapshots, cameras, or tests for an ordinary aesthetic choice.
-
-Normal polish cannot change collision authority, spawns, route topology, traversal surfaces,
-gameplay cover, doorway dimensions, major sightlines, or tactical connectivity. If it does, restore
-only the candidate-touched files and stop for explicit owner scope. Never reset, stash, checkout,
-or alter unrelated work.
-
-## Outcomes, state, and artifacts
-
-Accept only a valid, visibly or technically improved candidate with required checks green, a
-material change in at least one target view, no material regression in any view or the Green
-regression view, and protected authority unchanged. A clear partial
-improvement may land; retain the remaining defect in one sentence and rotate. Human map approval is
-always required.
-
-On first failure, restore the captured candidate patch, inspect one small diagnostic, and retain one
-concise rejected tactic. Retry only with a changed hypothesis. On second failure, restore, retain a
-one-line blocker/next action, defer, and rotate. Keep at most two rejected tactics per unit.
-
-State stores only the current source fingerprint, stable unit/zone IDs, rating/confidence, two current defects, per-view
-evidence records (schema v2, one baseline per named view) with the three map-wide coverage numbers, the pinned prep/review engine, last attempted pass, accepted count, two rejected tactics, and optional one-line deferred
-reason/next action. Write atomically in stable order; never store prompts, diffs, transcripts, or logs.
-
-Keep only the active task's per-view before/after review images plus the A/B plan pair, the plan crop, the site brief,
-compact work order/review/outcome, and candidate patch when needed. Accepted after-images replace prior baselines. Rejection deletes captures and ephemera unless
-`--keep-debug`; always delete traces, duplicates, temporary diagnostics, and empty console dumps.
-Generated task artifacts are never committed.
-
-Each current outcome retains only compact phase timing and per-call telemetry (`engine`, `role`, `model`, `effort`, `wallMs`, `usage`, `costUsd` when known). Target ≤10 minutes writer,
-≤2 minutes reviewer, ≤3 minutes non-model tooling, and ≤15 minutes end to end; warnings do not weaken
-quality gates. Confirm the defaults against the first five real tasks rather than optimizing one sample.
-
-After about five ordinary accepts, run the small completion/map-tooling/typecheck/build checkpoint.
-Use the full traversal, smoke, completion, tooling, typecheck, and build milestone after shared work,
-a complete Red pass, and before owner review. Never weaken gates or raise budgets.
+- Survey the whole map, rate units, or write reports before working.
+- Build orchestration, state files, planners, reviewers, or tests for an aesthetic choice.
+- Hand-edit generated files under `apps/client/public/maps/` or the layout reference. `map:shoot` and `map:check` regenerate them.
+- Touch collision, spawns, routes, traversal surfaces, gameplay cover, doorway dimensions, or sightlines. `map:check` blocks these; if you need one, stop and ask the owner.
+- Commit, or use `git reset`, `stash`, `clean`, `checkout`, or `restore` at all. Reverting is done from the before snapshot.

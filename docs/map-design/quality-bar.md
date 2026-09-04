@@ -3,13 +3,13 @@ Authority: visual quality contract
 Read when: map-visual or map-geometry work
 Owns: Bazaar reference roles, finish criteria, and screenshot acceptance
 Do not use for: task status, iteration procedure, or historical scores
-Last updated: 2026-08-17
+Last updated: 2026-09-04
 
 # Bazaar Map Quality Bar
 
 ## Visual target
 
-The target is a high-quality shipped Middle Eastern bazaar, not a collection of loosely placed procedural decorations. Preserve the map's overall identity and general layout by default, while allowing a bounded section to be refined, rebuilt, or locally redesigned when that clearly improves the result.
+**The bar is a shipped Counter-Strike 2 map.** Mirage, Anubis, and Dust 2 are the finish level: nothing lower is acceptable. The target is a high-quality shipped Middle Eastern bazaar, not a collection of loosely placed procedural decorations. Preserve the map's overall identity and general layout by default, while allowing a bounded section to be refined, rebuilt, or locally redesigned when that clearly improves the result.
 
 Use [`bazaar_main_hall_reference.png`](refs/bazaar_main_hall_reference.png) for bazaar identity: layered architecture, market density, hanging cloth, stalls, facade vocabulary, and the feeling of a place built as a whole. Its dusk darkness and saturation are not lighting targets.
 
@@ -31,6 +31,25 @@ Review macro before meso before micro: massing, identity, and spatial sequence; 
 
 These are holistic judgment lenses, not numeric gates. Symmetry is evidence of design; asymmetry is evidence of site, history, adaptation, or use. A coherent irregular composition can beat a perfect grid, and disciplined repetition can beat forced novelty. Randomness without provenance is noise.
 
+## Buildings
+
+A wall is part of a building before it is a facade. `buildings[]` in `map_spec.json` names every building on the map with a type, a storey count, and a one-line brief; every frontage carries a `buildingId`. Design the wall from the building, and judge it against the type. A face that needs more than one building is split into one frontage per building, so parapets step and door counts match what stands behind them.
+
+| Type | What it is | What the wall needs |
+|---|---|---|
+| shop | A trade at street level, living above | One door and one display recess or wide opening per shop, on the shop's own axis. Awning or shade under the string course, one sign. Upper windows aligned over the ground openings. Goods at the threshold, never in the lane. |
+| shop row | A souk street of equal fronts | Equal narrow shopfronts under one continuous head, each with its own opening; awnings on the busy side only; uppers aligned over the fronts. |
+| house | A dwelling, one or two storeys | One door, held off the corner. Windows in mirrored pairs about the door. Upper storey carries a balcony or a timber screen. Coping. No shop goods. |
+| tea house | Public room with a raised terrace | Wide openings onto the terrace, a balcony or screened gallery above, lanterns, cloth shade, seating against the wall. |
+| workshop | Making, not selling | One wide working door, high small windows or vents for light and smoke, a blank lower wall that shows wear and staining from the work, tools and vessels clustered at the door. |
+| store row | Caravanserai or warehouse bays | Repeated equal storage doors under one continuous head, niches or piers between, no ground windows. The one type where a row of identical doors is correct. |
+| landmark | Mosque, madrasa, hammam | One grand arched door on the axis, taller than anything on the street. Few and high windows. Plain lower wall. The roofline steps up: dome, minaret, or raised parapet. |
+| arcade | A covered passage lined with stalls | Arches on one rhythm, piers between, no doors in the arches. Upper windows over every second arch at most. Goods and cloth hang inside the arches. |
+| service back | The rear of something else | Blank plaster or stone, one hatch at most, vents high, a drain and staining at the base, one string course. It says access is elsewhere. |
+| compound wall | A garden or yard wall | Coping, one string course, no openings, at most one niche on the axis. Lower than the buildings beside it. Nothing else. |
+
+Two neighbours of the same type must differ in something correlated: material, storey count, window module, or parapet height. Same rule, different stone. Never two clones and never two random strangers.
+
 ## Facade composition
 
 A wall is a designed thing before it is a textured thing. For every frontage a player reads, decide from the plan — not from a corridor screenshot — what the wall faces, where people enter and look, and what the primary axis is; then place openings so the placement has a legible logic:
@@ -40,7 +59,7 @@ A wall is a designed thing before it is a textured thing. For every frontage a p
 - **Pairs, rhythm, alignment:** repeat openings as mirrored pairs about the axis or as a marching rhythm at one spacing; align upper openings over lower ones and, where two walls face each other or meet, relate their datums and bays. Alignment to something visible is what makes symmetry read as design.
 - **Walls without doors** still need a reason and articulation: a service face is blank because access is elsewhere, and says so with niches, vents, pilasters, a string course, drainage, or wear at the right places — not with nothing, and not with a door pasted on to fill the void.
 - **Generated versus authored:** `layoutIntent.mode: "generated"` spreads modules evenly between the edge margins by rhythm and is acceptable only for quiet backdrops. Anything the player reads should be `authored`: named columns, declared mirrors about an axis, a declared corner treatment, and one sentence stating the ordering idea, checked by the same physical grammar.
-- **A swap is not a design:** changing a facade profile, material, or rhythm without deciding where openings belong resolves nothing about intent or order, even when the result beats a blank wall in a blind comparison.
+- **A swap is not a design:** changing a facade profile, material, or rhythm without deciding where openings belong resolves nothing about intent or order, even when the result beats a blank wall.
 
 ## Complete visual assemblies
 
