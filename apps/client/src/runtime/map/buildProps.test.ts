@@ -1106,7 +1106,7 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const trestles = mesh(root, "v3-canopy-wall-trestles");
   assert.equal(trestles.count, 12, "each of the six cloth spans needs one trestle on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.equal(root.children.length, 68, "served-souk canopy families drifted from their deterministic batch budget");
+  assert.equal(root.children.length, 66, "served-souk canopy families drifted from their deterministic batch budget");
 });
 
 test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {

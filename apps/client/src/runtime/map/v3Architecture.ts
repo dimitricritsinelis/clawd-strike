@@ -144,6 +144,16 @@ const PARAPET_COPING_HEIGHT_M = 0.18;
 const PARAPET_COPING_OVERHANG_M = 0.07;
 const FRAME_WIDTH_M = 0.13;
 const FRAME_DEPTH_M = 0.11;
+// Merchant window and door surrounds share one pale timber tint so the
+// openings of a shop read as one joinery set (see pushWindow for its history).
+const MERCHANT_FRAME_TINT_HEX = 0xb2916a;
+// Blind-niche plaster tints, absolute instance colours on the wall material:
+// the recess back sits in full shade, the reveals in half shade, the arris
+// catches sun. Wall tints sit around 0xd8d3ca, so these are ~0.72 / 0.87 / 1.02.
+// The back also receives the head's cast shadow, so 0.62 read as a black void.
+const NICHE_BACK_TINT_HEX = 0x9c9385;
+const NICHE_REVEAL_TINT_HEX = 0xbcb4a6;
+const NICHE_ARRIS_TINT_HEX = 0xddd5c5;
 const PANEL_DEPTH_M = 0.055;
 const SHOP_RECESS_MIN_DEPTH_M = 1;
 const SHOP_RECESS_MAX_DEPTH_M = 2;
@@ -1111,10 +1121,10 @@ function pushMerchantUpperScreen(
 /**
  * Carries the generated facade datums onto otherwise uninterrupted wall
  * planes. The transition course is derived from the shared ground head and,
- * when present, the first upper sill. Quiet residential facades without an
- * authored upper opening receive shallow blind screens on the SAME generated
- * column centerlines as their ground bays. This is render-only relief: the
- * backing shell and every gameplay envelope remain untouched.
+ * when present, the first upper sill. It never adds an upper opening: upper
+ * bays come only from compiled STORY_ placements, so a frontage without them
+ * keeps a blank upper wall. This is render-only relief: the backing shell and
+ * every gameplay envelope remain untouched.
  */
 /**
  * Merchant elevation order: base course, bay piers, opening head beams, and
@@ -1746,159 +1756,6 @@ function pushFacadeStoryDatumGrammar(
     detailTintHex: courseTint,
     uvProjection: "world",
   });
-
-  // Active and service facades use the same opening-derived story datum as a
-  // building identity seam. Adjacent buildings keep their own trim material
-  // and deterministic tint rather than visually merging into one long shell.
-
-  if (profile.family !== "quiet_residential" || upperModules.length > 0) return;
-  const blindSillY = courseY + courseHeightM * 0.5 + 0.24;
-  const blindHeadLimitY = facadeTopY - 0.42;
-  const maximumBlindHeightM = blindHeadLimitY - blindSillY;
-  if (maximumBlindHeightM < 0.62) return;
-
-  for (const [index, ground] of groundModules.entries()) {
-    const variation = stableUnitInterval(`${placement.id}:${ground.module.columnId}:blind-screen`);
-    const blindWidthM = Math.min(1.02, Math.max(0.76, ground.module.sizeM.width * (0.8 + variation * 0.1)));
-    const blindHeightM = Math.min(maximumBlindHeightM, 0.9 + variation * 0.22);
-    const blindCenterY = blindSillY + blindHeightM * 0.5;
-    const frameWidthM = 0.085;
-    const reliefDepthM = 0.055;
-    const timberTint = scaleHexColor(0x8c6244, 0.82 + variation * 0.3);
-    const id = `${placement.id}:blind-upper:${ground.module.columnId}`;
-
-    pushInstance(instances, {
-      placementId: `${id}:recess`,
-      moduleId: "quiet_residential_served_blind_screen",
-      semanticClass: "quiet_residential_upper_blind_recess",
-      meshId: "window_recess_timber",
-      position: offsetPosition(
-        { ...center, y: blindCenterY },
-        placement.face,
-        ground.alongM,
-        placement.sizeM.depth * 0.5 + reliefDepthM * 0.25,
-      ),
-      scale: { x: blindWidthM, y: blindHeightM, z: reliefDepthM },
-      backingPlacementId,
-      structurallyBacked: true,
-      yawRad,
-      detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: scaleHexColor(timberTint, 0.66),
-      uvProjection: "world",
-    });
-
-    for (const side of [-1, 1] as const) {
-      pushInstance(instances, {
-        placementId: `${id}:jamb:${side}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_upper_blind_frame",
-        meshId: "door_jamb",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + side * (blindWidthM * 0.5 + frameWidthM * 0.5),
-          placement.sizeM.depth * 0.5 + reliefDepthM,
-        ),
-        scale: { x: frameWidthM, y: blindHeightM + frameWidthM * 2, z: 0.085 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        trimMaterialId: placement.materialSlots.trim,
-        uvProjection: "world",
-      });
-    }
-    for (const [edge, y] of [
-      ["sill", blindSillY - frameWidthM * 0.5],
-      ["head", blindSillY + blindHeightM + frameWidthM * 0.5],
-    ] as const) {
-      pushInstance(instances, {
-        placementId: `${id}:${edge}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_upper_blind_frame",
-        meshId: "door_lintel",
-        position: offsetPosition(
-          { ...center, y },
-          placement.face,
-          ground.alongM,
-          placement.sizeM.depth * 0.5 + reliefDepthM,
-        ),
-        scale: { x: blindWidthM + frameWidthM * 2, y: frameWidthM, z: 0.085 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        trimMaterialId: placement.materialSlots.trim,
-        uvProjection: "world",
-      });
-    }
-
-    const screenBarCount = 2 + Math.floor(variation * 3);
-    for (let barIndex = 0; barIndex < screenBarCount; barIndex += 1) {
-      const normalized = screenBarCount === 1 ? 0 : barIndex / (screenBarCount - 1) - 0.5;
-      pushInstance(instances, {
-        placementId: `${id}:screen-bar:${barIndex + 1}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_varied_upper_closure",
-        meshId: "window_screen_bar",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + normalized * blindWidthM * 0.62,
-          placement.sizeM.depth * 0.5 + reliefDepthM + 0.012,
-        ),
-        scale: { x: 0.045, y: blindHeightM - 0.12, z: 0.052 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: timberTint,
-        uvProjection: "world",
-      });
-    }
-    pushInstance(instances, {
-      placementId: `${id}:screen-rail`,
-      moduleId: "quiet_residential_served_blind_screen",
-      semanticClass: "quiet_residential_varied_upper_closure",
-      meshId: "window_screen_bar",
-      position: offsetPosition(
-        { ...center, y: blindCenterY + (variation - 0.5) * blindHeightM * 0.28 },
-        placement.face,
-        ground.alongM,
-        placement.sizeM.depth * 0.5 + reliefDepthM + 0.012,
-      ),
-      scale: { x: blindWidthM - 0.12, y: 0.045, z: 0.052 },
-      backingPlacementId,
-      structurallyBacked: true,
-      yawRad,
-      detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: timberTint,
-      uvProjection: "world",
-    });
-
-    // Break the five-bay copy read with seeded shuttered closures while all
-    // frames remain aligned on their shared story sill/head datums.
-    if ((index + Math.floor(variation * 5)) % 3 === 0) {
-      const shutterSide: -1 | 1 = variation < 0.5 ? -1 : 1;
-      pushInstance(instances, {
-        placementId: `${id}:shutter`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_varied_upper_closure",
-        meshId: "window_shutter",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + shutterSide * blindWidthM * 0.23,
-          placement.sizeM.depth * 0.5 + reliefDepthM + 0.022,
-        ),
-        scale: { x: blindWidthM * 0.46, y: blindHeightM - 0.1, z: 0.055 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad: yawRad + shutterSide * (0.05 + variation * 0.12),
-        detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: scaleHexColor(timberTint, 0.88),
-        uvProjection: "world",
-      });
-    }
-  }
 }
 
 function pushServiceStorageBackGrammar(
@@ -3637,6 +3494,10 @@ function pushFrame(
     depthM?: number;
     inwardM?: number;
     tintHex?: number;
+    // Mesh for all three members. The frame meshes are dressed trim and take
+    // no wall finish; a plaster arris in the wall's own material needs the
+    // wall finish, which the kit keys off the mesh id.
+    meshId?: WallDetailMeshId;
   } = {},
 ): void {
   const frameWidthM = options.widthM ?? FRAME_WIDTH_M;
@@ -3649,7 +3510,7 @@ function pushFrame(
       placementId: `${placement.id}:jamb:${side}`,
       moduleId: placement.moduleId,
       semanticClass,
-      meshId: "door_jamb",
+      meshId: options.meshId ?? "door_jamb",
       position: offsetPosition(center, placement.face, side * (halfW + frameWidthM * 0.5), inwardM),
       scale: { x: frameWidthM, y: placement.sizeM.height + frameWidthM, z: frameDepthM },
       yawRad,
@@ -3661,7 +3522,7 @@ function pushFrame(
     placementId: `${placement.id}:lintel`,
     moduleId: placement.moduleId,
     semanticClass,
-    meshId: "door_lintel",
+    meshId: options.meshId ?? "door_lintel",
     position: offsetPosition(center, placement.face, 0, inwardM, halfH + frameWidthM * 0.5),
     scale: { x: placement.sizeM.width + frameWidthM * 2, y: frameWidthM, z: frameDepthM },
     yawRad,
@@ -4000,6 +3861,13 @@ function pushDoor(
       : family === "service_storage"
         ? { widthM: 0.19, depthM: 0.17, inwardM: 0.075 }
         : { widthM: 0.145, depthM: 0.14, inwardM: 0.065 };
+  // Every non-merchant door sits in a dressed stone surround, so its frame
+  // keeps the untinted stone trim like the window and niche surrounds beside
+  // it; the dark reveal behind it still carries the mouth. Tinted with the
+  // reveal colour, the stone jambs rendered as dark grey channels and read as
+  // a steel stall frame. Merchant doors take the pale timber tint their
+  // windows use.
+  const stoneSurround = family !== "active_merchant";
   pushFrame(
     placement,
     instances,
@@ -4007,13 +3875,19 @@ function pushDoor(
     yawRad,
     frameMaterialId,
     fortified ? "fortified_gate" : `${family}_door_frame`,
-    { ...frameDimensions, tintHex: doorRevealTintHex },
+    stoneSurround ? frameDimensions : { ...frameDimensions, tintHex: MERCHANT_FRAME_TINT_HEX },
   );
 
   // A lighter inset frame sits proud of the alternating plank leaf. These
   // connected rails read as joinery at gameplay distance, unlike isolated
-  // decorative bars, and reuse the existing timber frame batches.
+  // decorative bars, and reuse the existing timber frame batches. On the stone
+  // service profile the trim slot is stone, so the rails take the door timber
+  // instead of rendering as pale stone bars across the leaf.
   const quietDoor = family === "quiet_residential";
+  const joineryMaterialId = stoneSurround ? "ph_rough_pine_door" : frameMaterialId;
+  const joineryTint = family === "service_storage"
+    ? { detailTintHex: 0x4a3626, uvProjection: "world" as const }
+    : {};
   const joineryInwardM = experimentalVisualCutouts
     ? doorPlaneInwardM + (quietDoor ? 0.075 : 0.085)
     : quietDoor ? 0.125 : 0.145;
@@ -4035,7 +3909,8 @@ function pushDoor(
         z: quietDoor ? 0.05 : 0.065,
       },
       yawRad,
-      trimMaterialId: frameMaterialId,
+      trimMaterialId: joineryMaterialId,
+      ...joineryTint,
     });
   }
   const joineryRails = quietDoor
@@ -4062,7 +3937,8 @@ function pushDoor(
         z: quietDoor ? 0.05 : 0.065,
       },
       yawRad,
-      trimMaterialId: frameMaterialId,
+      trimMaterialId: joineryMaterialId,
+      ...joineryTint,
     });
   }
 
@@ -4358,74 +4234,10 @@ function pushDoor(
       yawRad,
       MERCHANT_TIMBER_MATERIAL_ID,
     );
-  } else if (!fortified && family === "service_storage" && lowerId.includes("storage")) {
-    // Court-edge storage doors become shallow loading/display bays. All mass
-    // stays within the closed opening width and is derived from its threshold,
-    // so the clear court center and gameplay envelope remain untouched.
-    const bottomY = center.y - placement.sizeM.height * 0.5;
-    const storageUnit = stableUnitInterval(`${placement.id}:storage-apron`);
-    const apronWidthM = placement.sizeM.width * (0.7 + storageUnit * 0.12);
-    const apronHeightM = 0.16 + storageUnit * 0.05;
-    const timberTintHex = storageUnit < 0.34
-      ? 0x8f684c
-      : storageUnit < 0.67
-        ? 0x65877c
-        : 0x9b8059;
-    pushInstance(instances, {
-      placementId: `${placement.id}:storage-loading-apron`,
-      moduleId: "service_storage_served_loading_bay",
-      semanticClass: "service_storage_generic_loading_apron",
-      meshId: "shop_counter",
-      position: offsetPosition(
-        { ...center, y: bottomY + apronHeightM * 0.5 },
-        placement.face,
-        0,
-        0.17,
-      ),
-      scale: { x: apronWidthM, y: apronHeightM, z: 0.46 },
-      yawRad,
-      trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: timberTintHex,
-      uvProjection: "world",
-    });
-    const storageSizes = storageUnit < 0.5
-      ? [
-        { along: -0.23, x: 0.46, y: 0.42, z: 0.4 },
-        { along: 0.22, x: 0.38, y: 0.58, z: 0.36 },
-      ]
-      : [
-        { along: -0.2, x: 0.38, y: 0.54, z: 0.36 },
-        { along: 0.25, x: 0.5, y: 0.38, z: 0.42 },
-      ];
-    for (const [index, storage] of storageSizes.entries()) {
-      pushInstance(instances, {
-        placementId: `${placement.id}:storage-load:${index + 1}`,
-        moduleId: "service_storage_served_loading_bay",
-        semanticClass: "service_storage_generic_loading_stock",
-        meshId: index === 0 ? "merchant_goods_basket" : "shop_counter",
-        position: offsetPosition(
-          { ...center, y: bottomY + apronHeightM + 0.025 + storage.y * 0.5 },
-          placement.face,
-          storage.along * apronWidthM,
-          0.13,
-        ),
-        scale: { x: storage.x, y: storage.y, z: storage.z },
-        yawRad: yawRad + (index === 0 ? -0.045 : 0.035) * (0.8 + storageUnit * 0.4),
-        trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: index === 0
-          ? scaleHexColor(timberTintHex, 1.04)
-          : scaleHexColor(timberTintHex, 0.84),
-        uvProjection: "world",
-      });
-    }
-    pushSupportedAwning(
-      placement,
-      instances,
-      center,
-      yawRad,
-      MERCHANT_TIMBER_MATERIAL_ID,
-    );
   }
+  // Storage doors carry no loading bay, stock, or awning: a heavy door in a
+  // dressed stone surround is the whole assembly. The former apron, goods and
+  // corrugated awning read as a shanty stall and cut the string course.
   if (fortified) {
     pushInstance(instances, {
       placementId: `${placement.id}:center-strap`,
@@ -4608,7 +4420,6 @@ function pushWindow(
   // reflection; with that film removed the frames were the brightest, most
   // saturated element on the shaded west elevation and read as copper pipe
   // against the shutters they surround.
-  const MERCHANT_FRAME_TINT_HEX = 0xb2916a;
   const usesMerchantFrameTint = profile.family === "active_merchant";
   pushFrame(
     placement,
@@ -5029,7 +4840,7 @@ function pushSimpleModule(
           0,
           experimentalVisualCutouts ? -revealDepthM * 0.48 : 0.09,
         ),
-        scale: { x: placement.sizeM.width * 0.92, y: placement.sizeM.height * 0.86, z: revealDepthM },
+        scale: { x: placement.sizeM.width * 0.96, y: placement.sizeM.height * 0.94, z: revealDepthM },
         yawRad,
         detailMaterialId: "tm_service_interior",
       });
@@ -5043,6 +4854,41 @@ function pushSimpleModule(
         materialId,
         experimentalVisualCutouts ? -revealDepthM + 0.055 : undefined,
       );
+      // A vent is a framed opening, not a dark square floating in the wall: a
+      // dressed stone surround of the same 0.19 m section as the storage door
+      // frame, sized to the visible recess so its head lands on the door's
+      // frame head under the string course, on a projecting sill that gives
+      // it a base line.
+      const ventSurroundWidthM = 0.19;
+      const ventOpening = {
+        ...placement,
+        sizeM: { ...placement.sizeM, width: placement.sizeM.width * 0.96, height: placement.sizeM.height * 0.94 },
+      };
+      pushFrame(
+        ventOpening,
+        instances,
+        center,
+        yawRad,
+        trimMaterialId,
+        "service_vent_surround",
+        { widthM: ventSurroundWidthM, depthM: 0.14, inwardM: 0.02 },
+      );
+      pushInstance(instances, {
+        placementId: `${placement.id}:vent-sill`,
+        moduleId: placement.moduleId,
+        semanticClass: "service_vent_sill",
+        meshId: "door_lintel",
+        position: offsetPosition(
+          center,
+          placement.face,
+          0,
+          0.03,
+          -ventOpening.sizeM.height * 0.5 - ventSurroundWidthM - 0.04,
+        ),
+        scale: { x: ventOpening.sizeM.width + ventSurroundWidthM * 2 + 0.12, y: 0.08, z: 0.2 },
+        yawRad,
+        trimMaterialId,
+      });
       return;
     }
     case "column":
@@ -5166,6 +5012,10 @@ function pushSimpleModule(
         : 0;
       const bottomY = center.y - placement.sizeM.height * 0.5;
       const readsAsDoor = bottomY <= 0.28 && placement.sizeM.height >= 1.5;
+      // A blind niche is a recess in the same plaster as the wall, not a board
+      // in a frame. The template nicheRecess material is a dark ochre that read
+      // as timber on every wall using the module. The back and reveals carry the
+      // wall material with a shade tint, since GI cannot supply the occlusion.
       pushInstance(instances, {
         placementId: placement.id,
         moduleId: placement.moduleId,
@@ -5185,7 +5035,11 @@ function pushSimpleModule(
             detailTintHex: 0x72523d,
             uvProjection: "world" as const,
           }
-          : {}),
+          : {
+            detailMaterialId: wallMaterialId,
+            detailTintHex: NICHE_BACK_TINT_HEX,
+            uvProjection: "world" as const,
+          }),
       });
       if (experimentalVisualCutouts) {
         for (const side of [-1, 1] as const) {
@@ -5203,6 +5057,7 @@ function pushSimpleModule(
             scale: { x: 0.07, y: placement.sizeM.height, z: revealDepthM },
             yawRad,
             wallMaterialId,
+            ...(readsAsDoor ? {} : { detailTintHex: NICHE_REVEAL_TINT_HEX, uvProjection: "world" as const }),
           });
         }
         pushInstance(instances, {
@@ -5220,18 +5075,35 @@ function pushSimpleModule(
           scale: { x: placement.sizeM.width, y: 0.07, z: revealDepthM },
           yawRad,
           wallMaterialId,
+          ...(readsAsDoor ? {} : { detailTintHex: NICHE_REVEAL_TINT_HEX, uvProjection: "world" as const }),
         });
       }
+      // The closed-door variant keeps its dressed stone surround. The plaster
+      // niche gets an 8 cm plaster arris, 5 cm proud, so the shadow line comes
+      // from the recess itself rather than from a stone card. It runs on the
+      // recessed-panel mesh so it takes the wall finish like the shell around
+      // it; on the frame meshes it rendered raw albedo and read as a bright
+      // painted strip against the finished wall.
+      const arris = {
+        widthM: 0.08,
+        depthM: 0.08,
+        tintHex: NICHE_ARRIS_TINT_HEX,
+        meshId: "recessed_panel_back" as const,
+      };
       pushFrame(
         placement,
         instances,
         center,
         yawRad,
-        trimMaterialId,
+        readsAsDoor ? trimMaterialId : wallMaterialId,
         readsAsDoor ? "closed_door_frame" : "blind_niche",
         experimentalVisualCutouts
-          ? { widthM: 0.14, depthM: 0.15, inwardM: 0.02 }
-          : {},
+          ? readsAsDoor
+            ? { widthM: 0.14, depthM: 0.15, inwardM: 0.02 }
+            : { ...arris, inwardM: 0.01 }
+          : readsAsDoor
+            ? {}
+            : arris,
       );
       if (readsAsDoor) {
         const leafInwardM = experimentalVisualCutouts ? -revealDepthM + 0.065 : 0.025;
@@ -6370,11 +6242,13 @@ function pushFacadeModule(
         doorModelPlacements,
         center,
         yawRad,
+        // The door surround is the same material as the window surrounds of
+        // its family: merchant joinery timber, otherwise the dressed stone
+        // trim. A residential door in the timber slot rendered a dark timber
+        // channel between pale stone window frames.
         profile.family === "active_merchant"
           ? MERCHANT_TIMBER_MATERIAL_ID
-          : profile.family === "quiet_residential"
-            ? profile.materialSlots.timber
-            : profile.materialSlots.trim,
+          : profile.materialSlots.trim,
         profile.family,
         fortifiedDoorModelAvailable,
         experimentalVisualCutouts,

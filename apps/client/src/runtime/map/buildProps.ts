@@ -117,6 +117,8 @@ import {
   createMarketStallCanopyGeometry,
   createMarketStallGeometry,
   createMarketStallSlattedBackGeometry,
+  FRONT_RAIL_Y,
+  REAR_RAIL_Y,
 } from "./propFamilies/marketStalls";
 import {
   BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
@@ -1791,10 +1793,6 @@ function buildCompiledDressing(
       castShadow: false,
       roughness: 0.93,
     }),
-    canopyCrossRopes: createBatch("v3-canopy-cross-ropes", 0x96734d, "canopy", () => createUnitRopeGeometry("x"), {
-      castShadow: false,
-      roughness: 0.93,
-    }),
     canopyHangRopes: createBatch("v3-canopy-hang-ropes", 0x96734d, "canopy", () => createUnitRopeGeometry("y"), {
       castShadow: false,
       roughness: 0.93,
@@ -1863,21 +1861,14 @@ function buildCompiledDressing(
       normalScale: 0.38,
       albedoBoost: 1.35,
     }),
+    // Near-neutral woven cloth so the per-stall dye tint reads as the dye
+    // (ochre, indigo, madder); the warm stripe texture cannot be tinted indigo.
     stallCanopy: createBatch("v3-market-stall-cloth-canopy", 0xffffff, "canopy", createMarketStallCanopyGeometry, {
       castShadow: true,
       receiveShadow: true,
       doubleSided: true,
-      textureUrl: BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
-      textureRepeat: [0.75, 1],
-      roughness: 0.97,
-      vertexColors: true,
-    }),
-    stallValance: createBatch("v3-market-stall-scalloped-valance", 0xffffff, "canopy", createCanopyScallopedValanceGeometry, {
-      castShadow: true,
-      receiveShadow: true,
-      doubleSided: true,
-      textureUrl: BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
-      textureRepeat: [0.75, 0.32],
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [1.4, 1],
       roughness: 0.97,
       vertexColors: true,
     }),
@@ -2927,10 +2918,13 @@ function buildCompiledDressing(
       case "bazaar_market_stall": {
         const variant = (stallOrdinalById.get(placement.id) ?? 0) % 6;
         const isDyersWorkshop = placement.id.includes("L3R0_NORTH");
-        const canopyTints = [0xd88455, 0x67a294, 0xb97454, 0xd3a24f, 0x7f8f67, 0xa9666e] as const;
+        // Dye palette: ochre, indigo, madder, saffron, deep indigo, madder-brown.
+        const canopyTints = [0xd39b3e, 0x3a4c78, 0xa9443a, 0xdcb35a, 0x2e3f66, 0x9a4d3c] as const;
         const textileTints = [0xf0b064, 0x7bc3bc, 0xc47b63, 0xe3bd70, 0xa9b37b, 0xc98991] as const;
-        const timberTints = [0xb98761, 0x8f765f, 0xa66f50, 0x927f68, 0xaa805b, 0x8e6d59] as const;
-        const canopyTintHex = isDyersWorkshop ? 0x3f7880 : canopyTints[variant]!;
+        // Near-neutral: the oak albedo and the geometry's vertex stops carry the
+        // wood hue; a warm instance tint on top stacked into saturated red.
+        const timberTints = [0xc6b9a9, 0xbcb0a2, 0xc2b4a0, 0xb8afa3, 0xcabdaa, 0xb3a696] as const;
+        const canopyTintHex = isDyersWorkshop ? 0x3a4c78 : canopyTints[variant]!;
         const textileTintHex = isDyersWorkshop ? 0xd59a35 : textileTints[variant]!;
         const timberTintHex = timberTints[variant]!;
         const structureWidthFactors = [0.94, 1, 0.9, 0.97, 0.92, 1.02] as const;
@@ -3021,8 +3015,8 @@ function buildCompiledDressing(
           yawRad,
           {
             x: 0,
-            y: height * (0.79 + (variant % 2) * 0.025),
-            z: forwardM - depth * 0.405,
+            y: height * (0.855 + (variant % 2) * 0.012),
+            z: forwardM + depth * 0.36,
             tintHex: timberTintHex,
           },
           {
@@ -3031,35 +3025,22 @@ function buildCompiledDressing(
             z: 0.09,
           },
         );
+        // The cloth is authored in frame units with its origin at the rear
+        // ridge, so it is instanced at the stall height and pitches down onto
+        // the front rail; its skirts hang from the edges.
         pushLocalInstance(
           batches.stallCanopy,
           world,
           yawRad,
-          { x: 0, y: height - 0.06, z: forwardM, tintHex: canopyTintHex },
-          { x: width * canopyWidthFactors[variant]!, y: 0.62, z: depth * canopyDepthFactors[variant]! },
+          { x: 0, y: height * (0.5 + REAR_RAIL_Y + 0.04), z: forwardM, tintHex: canopyTintHex },
+          { x: width * canopyWidthFactors[variant]!, y: height, z: depth * canopyDepthFactors[variant]! },
         );
-        pushLocalInstance(
-          batches.stallValance,
-          world,
-          yawRad,
-          { x: 0, y: height - 0.24, z: forwardM - depth * 0.49, tintHex: canopyTintHex },
-          { x: width * (canopyWidthFactors[variant]! - 0.02), y: [1, 0.78, 1.18, 0.9, 1.08, 0.84][variant]!, z: 0.045 },
-        );
-        for (const seamFraction of [-0.3, 0, 0.3]) {
-          pushLocalInstance(
-            batches.canopyCrossRopes,
-            world,
-            yawRad,
-            { x: 0, y: height - 0.105, z: forwardM + depth * seamFraction },
-            { x: width * 1.04, y: 0.016, z: 0.016 },
-          );
-        }
         for (const side of [-1, 1] as const) {
           pushLocalInstance(
             batches.stallTieRing,
             world,
             yawRad,
-            { x: side * width * 0.5, y: height - 0.16, z: forwardM - depth * 0.48 },
+            { x: side * width * 0.5, y: height * (0.5 + FRONT_RAIL_Y), z: forwardM - depth * 0.43 },
             { x: 0.13, y: 0.13, z: 0.055 },
           );
         }
@@ -3081,7 +3062,7 @@ function buildCompiledDressing(
         const hangingBottomM = height * 0.61;
         const hangingBasketHeightM = 0.28;
         const cordBottomM = hangingBottomM + hangingBasketHeightM;
-        const cordTopM = height - 0.14;
+        const cordTopM = height * (0.5 + FRONT_RAIL_Y - 0.03);
         for (const side of [-1, 1] as const) {
           pushLocalInstance(
             batches.stallHangerCord,

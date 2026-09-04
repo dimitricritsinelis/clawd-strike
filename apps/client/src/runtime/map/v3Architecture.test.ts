@@ -489,7 +489,7 @@ test("Dyers service returns use the same bounded structural bay grammar instead 
   assert.equal("colliders" in result, false, "Dyers return relief changed gameplay authority");
 });
 
-test("facade story courses and residential blind screens derive from authored heads, sills, and columns", () => {
+test("facade story courses derive from authored heads and sills and never invent upper openings", () => {
   const residentialMassing = massingPlacement("quiet_residential", "RESIDENTIAL_DATUM_GRAMMAR", { heightM: 4.5 });
   residentialMassing.sizeM = { width: 10, depth: 3, height: 4.5 };
   const residentialGround = [12.5, 16, 19.5].map((designY, index) => modulePlacement(
@@ -506,25 +506,15 @@ test("facade story courses and residential blind screens derive from authored he
   const residentialCourse = residential.instances.find((instance) => (
     instance.semanticClass === "quiet_residential_story_transition_course"
   ));
-  const blindRecesses = residential.instances.filter((instance) => (
-    instance.semanticClass === "quiet_residential_upper_blind_recess"
-  ));
-  const blindFrames = residential.instances.filter((instance) => (
-    instance.semanticClass === "quiet_residential_upper_blind_frame"
-  ));
-  const variedClosures = residential.instances.filter((instance) => (
-    instance.semanticClass === "quiet_residential_varied_upper_closure"
+  const inventedUppers = residential.instances.filter((instance) => (
+    instance.semanticClass?.startsWith("quiet_residential_upper_blind_")
+    || instance.semanticClass === "quiet_residential_varied_upper_closure"
   ));
 
   assert.ok(residentialCourse, "shared ground head did not emit a story-transition course");
   assert.ok(Math.abs(residentialCourse.position.y - 2.55) <= 0.001);
   assert.equal(residentialCourse.scale.x, 9.3, "story course stopped respecting derived edge margins");
-  assert.equal(blindRecesses.length, residentialGround.length, "each ground column needs one served blind upper screen");
-  assert.equal(blindFrames.length, residentialGround.length * 4, "blind upper screens lost their shared sill/head frames");
-  assert.ok(blindRecesses.every((instance) => instance.backingPlacementId === residentialMassing.id));
-  assert.ok(new Set(variedClosures.map((instance) => (
-    `${instance.placementId?.split(":screen-")[0]}:${instance.scale.x.toFixed(3)}:${instance.scale.y.toFixed(3)}:${instance.detailTintHex}`
-  ))).size >= 3, "seeded blind-screen closures collapsed into readable copies");
+  assert.equal(inventedUppers.length, 0, "a frontage with no STORY_ placements grew runtime-invented upper openings");
   assert.equal("colliders" in residential, false, "render-only facade relief changed gameplay authority");
 
   const coveredProfile: V3FacadeProfile = {
@@ -2100,7 +2090,7 @@ test("closed merchant doors derive generic displays and supported hoods from the
   assert.equal("colliders" in result, false, "render-only closed-shop occupancy changed gameplay authority");
 });
 
-test("service-storage doors derive grounded loading bays without entering the court route", () => {
+test("service-storage doors are a heavy door in an untinted stone surround with no stall, goods, or awning", () => {
   const door = modulePlacement(
     "COURT_SERVICE_STORAGE_OCCUPANCY",
     "door_storage_heavy",
@@ -2113,20 +2103,20 @@ test("service-storage doors derive grounded loading bays without entering the co
     massingPlacement("service_storage", "COURT_SERVICE_STORAGE_MASS"),
     door,
   ], true, true);
-  const apron = result.instances.find((instance) => (
-    instance.semanticClass === "service_storage_generic_loading_apron"
-  ));
-  const stock = result.instances.filter((instance) => (
-    instance.semanticClass === "service_storage_generic_loading_stock"
-  ));
-  assert.ok(apron);
-  assert.ok(apron.position.y - apron.scale.y * 0.5 <= 0.001, "loading apron lost threshold grounding");
-  assert.ok(apron.scale.x <= door.sizeM.width, "loading apron escaped its served opening width");
-  assert.equal(stock.length, 2);
   assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith(`${door.id}:awning-pole:`)).length,
-    2,
+    result.instances.filter((instance) => instance.moduleId === "service_storage_served_loading_bay").length,
+    0,
+    "storage door regained its loading apron or stock",
   );
+  assert.equal(
+    result.instances.some((instance) => instance.placementId?.startsWith(`${door.id}:awning`)),
+    false,
+    "storage door regained an awning",
+  );
+  const frame = result.instances.filter((instance) => instance.semanticClass === "service_storage_door_frame");
+  assert.equal(frame.length, 3, "storage door lost its two jambs and lintel");
+  assert.ok(frame.every((instance) => instance.detailTintHex === undefined), "stone surround was tinted");
+  assert.ok(result.instances.some((instance) => instance.semanticClass === "door_threshold"));
   assert.equal("colliders" in result, false, "render-only storage occupancy changed gameplay authority");
 });
 

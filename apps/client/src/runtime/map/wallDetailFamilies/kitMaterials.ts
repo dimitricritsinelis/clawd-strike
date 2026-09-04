@@ -146,9 +146,14 @@ export function resolveKitMaterialFinish(
     // A recessed wall panel is a facade feature, not an interior: it keeps the
     // wall's own plaster so it does not sink to interior value at player height.
     case "recessed_panel_back":
+    // A blind niche is 20-30 cm deep and its back carries the wall material
+    // with an explicit shade tint from the placer. Under the interior recess
+    // multiplier that tint compounded to ~0.2 of the albedo and the back read
+    // as a black void with no visible material; the wall finish keeps the
+    // texture and lets the tint supply the shade.
+    case "niche_recess_back":
       return "merchant-plaster";
     case "shop_recess_back":
-    case "niche_recess_back":
     // An arcade bay behind an arch is as deep as a shop recess and reads under
     // the same cloth shade, so it takes the same interior value. Without a
     // finish it rendered the raw exterior albedo and lifted the bay back to
@@ -343,7 +348,7 @@ ${isRecess ? `
 // Interior backing for a merchant bay that is 1.35 m deep. At 0.62 the back
 // plane rendered at luma 63 against a target of 32, so a genuinely deep shop
 // still read as a shallow lit panel and gave the pier nothing to stand against.
-// This multiplier reaches only shop_recess_back and niche_recess_back.
+// This multiplier reaches only shop_recess_back and arch_recess_back.
 //
 // Headroom check before lowering further: crushed black inside the bays
 // measured 1.2-9.7% of pixels against 37-49% in the target, and bay highlight
