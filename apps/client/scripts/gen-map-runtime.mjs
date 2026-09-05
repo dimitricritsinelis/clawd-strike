@@ -39,6 +39,7 @@ const KNOWN_ANCHOR_TYPES = new Set([
   "open_node",
   "service_door_anchor",
   "shopfront_anchor",
+  "window_anchor",
   "signage_anchor",
   "spawn_cover",
 ]);

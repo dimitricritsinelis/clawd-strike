@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { DoubleSide, Mesh, MeshStandardMaterial, Raycaster, Vector3, type InstancedMesh } from "three";
+import { DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
 import { createArchSpandrelGeometry, createOpenBottomArchRecessGeometry, createOpenBottomPointedArchFrameGeometry } from "./wallDetailFamilies/arches";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
@@ -1970,6 +1970,14 @@ test("opposing Fountain Court and Covered Souk frontages share one closed shell 
   assert.ok(bothFaces.length > 0);
   assert.ok(bothFaces.every((instance) => instance.structurallyBacked === true));
   assert.ok(bothFaces.every((instance) => instance.backingPlacementId === covered.id));
+  assert.ok(bothFaces.every((instance) => instance.meshId === "facade_wall_shell"), "paired infill must be solid masonry, not a displaced face plane");
+  for (const instance of bothFaces) {
+    if (instance.placementId?.startsWith(covered.id)) {
+      assert.ok(instance.position.x - instance.scale.z * .5 >= 40.38 - .001, "Souk infill invaded Court recesses");
+    } else if (instance.placementId?.startsWith(fountain.id)) {
+      assert.ok(instance.position.x + instance.scale.z * .5 <= 36.62 + .001, "Court infill invaded Souk recesses");
+    }
+  }
   assert.equal(
     result.instances.some((instance) => instance.placementId === `${fountain.id}:roof`),
     false,
@@ -2766,5 +2774,37 @@ test("the single Blender textile booth replaces furnishings but preserves its ma
       own.filter((instance) => instance.semanticClass === semantic).length,
       adjacent.filter((instance) => instance.semanticClass === semantic).length,
     );
+  }
+});
+
+test("B18 counters replace only their furniture and retain independent awnings and masonry", () => {
+  for (const suffix of ["01", "03"]) {
+    const id = `ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_${suffix}`;
+    const target = modulePlacement(id, "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 });
+    const neighbor = modulePlacement("NEIGHBOR_ARCH", "arch_arcade", "arch", { x: 10, y: 20, z: 1.8 });
+    const result = build([massingPlacement(), target, neighbor]);
+    const own = result.instances.filter((instance) => instance.placementId?.startsWith(id));
+    const adjacent = result.instances.filter((instance) => instance.placementId?.startsWith(neighbor.id));
+    const furniture = (instance: WallDetailInstance) => instance.moduleId === "covered_arcade_served_kiosk"
+      || instance.semanticClass === "arcade_arch_complete_grille";
+    assert.equal(own.filter(furniture).length, 0);
+    assert.ok(adjacent.some(furniture));
+    for (const semantic of ["arcade_arch", "screened_arch_interior", "screened_arch_threshold", "arcade_arch_masonry_return", "canopy_attachment_ledger", "canopy_support"]) {
+      assert.ok(own.some((instance) => instance.semanticClass === semantic), `${id} lost ${semantic}`);
+      assert.equal(own.filter((instance) => instance.semanticClass === semantic).length,
+        adjacent.filter((instance) => instance.semanticClass === semantic).length);
+    }
+    for (const side of [-1, 1]) {
+      const strut = own.find((entry) => entry.placementId === `${id}:awning-pole:${side}`)!;
+      const wall = own.find((entry) => entry.placementId === `${id}:awning-bracket:${side}`)!;
+      const edge = own.find((entry) => entry.placementId === `${id}:awning-edge-socket:${side}`)!;
+      const transform = new Object3D();
+      transform.position.copy(strut.position);
+      transform.scale.copy(strut.scale);
+      transform.rotation.set(strut.pitchRad ?? 0, strut.yawRad, strut.rollRad ?? 0);
+      transform.updateMatrix();
+      assert.ok(new Vector3(0, -.5, 0).applyMatrix4(transform.matrix).distanceTo(new Vector3().copy(wall.position)) < .00001);
+      assert.ok(new Vector3(0, .5, 0).applyMatrix4(transform.matrix).distanceTo(new Vector3().copy(edge.position)) <= .021);
+    }
   }
 });

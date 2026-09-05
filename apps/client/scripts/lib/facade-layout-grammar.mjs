@@ -667,10 +667,13 @@ export function validateFixtureCenterlines({ frontage, anchors, moduleById }) {
       && anchor.type !== "shopfront_anchor"
       && anchor.type !== "dressing_anchor"
       && anchor.type !== "lantern_anchor"
+      && anchor.type !== "window_anchor"
     ) continue;
     if (!anchor.servedBayId) fail(`Fixture '${anchor.id}' must declare servedBayId`);
-    const bay = groundBayById.get(anchor.servedBayId);
-    if (!bay) fail(`Fixture '${anchor.id}' serves unknown ground bay '${anchor.servedBayId}'`);
+    const bay = anchor.type === "window_anchor"
+      ? frontage.bays.find((entry) => entry.id === anchor.servedBayId)
+      : groundBayById.get(anchor.servedBayId);
+    if (!bay) fail(`Fixture '${anchor.id}' serves unknown ${anchor.type === "window_anchor" ? "window" : "ground"} bay '${anchor.servedBayId}'`);
     if (Math.abs(anchor.along - bay.along) > EPSILON) {
       fail(`Fixture '${anchor.id}' is not centered on served bay '${anchor.servedBayId}'`);
     }
@@ -684,6 +687,9 @@ export function validateFixtureCenterlines({ frontage, anchors, moduleById }) {
     }
     const module = moduleById.get(bay.moduleId);
     if (!module) fail(`Fixture '${anchor.id}' served bay module is missing`);
+    if (anchor.type === "window_anchor" && module.kind !== "window") {
+      fail(`Window fixture '${anchor.id}' cannot serve non-window module '${module.id}'`);
+    }
     if (anchor.type === "signage_anchor") {
       const expectedWidth = expectedSignWidthM(module.dimensionsM.width);
       if (Math.abs(anchor.width_m - expectedWidth) > EPSILON) {

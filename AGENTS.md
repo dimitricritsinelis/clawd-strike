@@ -7,20 +7,28 @@ Last updated: 2026-09-04
 
 # AGENTS.md — Clawd Strike Operating Contract
 
+## Task scope and instruction authority
+
+- Apply this contract to repository work alongside global preferences. The user's explicit instructions define the current task; follow applicable system and developer instructions first.
+- Carry forward authorization and decisions within the current task. A follow-up question or status request does not revoke them. Do not infer implementation approval from a proposal or historical record.
+- Resolve apparent document conflicts through the named authority and current task context before asking. If a required decision remains unresolved, identify the exact conflicting instruction and continue unaffected authorized work.
+- Scale verification to the changed behavior and applicable acceptance criteria. Documentation-only work needs document and diff checks, not map generation or runtime captures. Required visual, traversal, gameplay, and performance gates still apply to map implementation.
+
 ## Map development
 
 - Before designing or placing map assets, read [the development plan](docs/map-design/development-plan/README.md), then the relevant building card and asset assignments.
 - Follow the plan's reading order. Load only the named owners and dependencies; do not read every Markdown file as implementation instructions. Archives, `artifacts/`, build outputs, and copied instruction snapshots are historical or generated evidence, read only when the task names them or a specific verification needs them.
 - Approved designs guide implementation; `docs/map-design/specs/map_spec.json` owns implemented state. A proposed document is not approval.
 - The [map-design archive](docs/map-design/archive/README.md) preserves superseded designs and workflow evidence. Read it only for explicitly historical work; it does not guide current development.
-- Surface design conflicts instead of improvising. The plan's authority notes resolve older roadmap, schedule, and prose guidance; historical documents do not create development requirements. All safeguards below remain in force.
+- The plan's authority notes resolve older roadmap, schedule, and prose guidance; historical documents do not create development requirements. Surface unresolved design conflicts instead of improvising. All safeguards below remain in force.
 - Minimize implementation complexity without reducing the approved visual scope or finish quality. Reuse and retained assets do not waive complete-building, traversal, or performance acceptance.
 
 ## Branch and worktree safety
 
 - Stay on the current branch and preserve unrelated worktree changes.
+- Keep one writer per checkout. Parallel workers may review read-only or author assets in isolated directories outside the checkout; the lead integrates serially. Serialize spec edits, generation, and captures, and pause competing workloads during performance measurements.
 - Before a Git operation that could change `HEAD`, inspect `git status --short` and `git branch --show-current`.
-- Change branches, commit, or push only when the current user prompt includes that work.
+- Change branches, commit, or push only when the user explicitly authorizes that action for the current task.
 - Never use destructive Git operations such as reset, clean, stash, or auto-stash, and never discard or overwrite unrelated changes. Never use checkout or restore as a rollback either. Revert your own edit by restoring the file from a snapshot taken before the edit.
 
 ## Generated-file authority
@@ -36,7 +44,7 @@ Last updated: 2026-09-04
 
 ## Gameplay and system safety
 
-- During map-visual work, broadly preserve layout, collision, traversal surfaces, spawns, routes, cover, sightlines, player movement, and combat unless the current user prompt explicitly changes that scope.
+- During map-visual work, broadly preserve layout, collision, traversal surfaces, spawns, routes, cover, sightlines, player movement, and combat unless the user explicitly changes that scope for the current task.
 - Local structural composition, render-only geometry, materials, openings, attachments, props, dressing, and directly coupled shared visual systems may change when those safeguards remain intact.
 - Render-only work must not silently change navigation, player or bot grounding, projectile collision, line of sight, opening clearance, or practical route width.
 

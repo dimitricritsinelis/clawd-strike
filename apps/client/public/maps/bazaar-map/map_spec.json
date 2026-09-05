@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "eb1dcf02c1b550272f7b08588150049eb5ed41cf767382fc342ff7d259384d4f",
+    "sha256": "7aa4e47425df965c8d8171ffd6a0c0f976d5b2b4f6a1135ec968b53c036d235a",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -3770,6 +3770,105 @@
   },
   "assetRegistry": [
     {
+      "id": "ASSET_B18_DYE_COUNTER",
+      "label": "B18 dry dye-sample cabinet",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-counters/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 2.11
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-dye-counter",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_B18_PACKING_FINISH",
+      "label": "B18 closed packing cabinet",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-counters/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_B18_ROOF_ACCESS",
+      "label": "B18 closed roof-access room",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-roof-access/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 3.8,
+        "height": 2.59
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-roof-access",
+        "uri": "/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_CARAVAN_LOAD_CRATE",
       "label": "Poly Haven caravan loading crate",
       "source": {
@@ -4570,6 +4669,39 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_date_palm"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SCREEN_SC_C",
+      "label": "SC-C closed fine-crossed merchant window",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/central-screen-sc-c/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -10181,6 +10313,34 @@
       ]
     },
     {
+      "id": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "zoneId": "COVERED_SOUK",
+      "surfaceId": "SURFACE_COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "overhead",
+      "anchors": [
+        "CENTRAL_SCREEN_SOUTH_1",
+        "CENTRAL_SCREEN_SOUTH_2",
+        "CENTRAL_SCREEN_NORTH"
+      ],
+      "assetIds": [
+        "ASSET_SCREEN_SC_C"
+      ]
+    },
+    {
+      "id": "CLUSTER_CENTRAL_SCREENS_FOUNTAIN_COURT",
+      "zoneId": "FOUNTAIN_COURT",
+      "surfaceId": "SURFACE_FOUNTAIN_COURT",
+      "districtId": "DISTRICT_FOUNTAIN",
+      "classification": "overhead",
+      "anchors": [
+        "CENTRAL_SCREEN_COURT"
+      ],
+      "assetIds": [
+        "ASSET_SCREEN_SC_C"
+      ]
+    },
+    {
       "id": "CLUSTER_DYERS_ALLEY_EAST_RACKS",
       "zoneId": "DYERS_ALLEY",
       "surfaceId": "SURFACE_DYERS_ALLEY",
@@ -10246,17 +10406,23 @@
       "anchors": [
         "DYE_E_TEXTILE_BOOTH",
         "DYE_W_SIGN_1",
-        "DYE_W_SIGN_2",
         "DYE_E_SIGN_1",
         "DYE_E_SIGN_2",
-        "LMK_DYERS_DISTRICT"
+        "LMK_DYERS_DISTRICT",
+        "B18_PACKING_DISPLAY",
+        "B18_SAMPLE_DISPLAY",
+        "B18_ROOF_ACCESS",
+        "CENTRAL_DYE_DISPLAY"
       ],
       "assetIds": [
         "ASSET_TEXTILE_BOOTH",
         "ASSET_SIGNBOARD",
         "ASSET_DYERS_SEALED_VAT",
         "ASSET_DYERS_CERAMIC_VESSEL",
-        "ASSET_CC0_BASKET"
+        "ASSET_CC0_BASKET",
+        "ASSET_B18_PACKING_FINISH",
+        "ASSET_B18_DYE_COUNTER",
+        "ASSET_B18_ROOF_ACCESS"
       ]
     },
     {
@@ -10811,6 +10977,108 @@
     }
   ],
   "dressingPlacements": [
+    {
+      "id": "PLACE_B18_DYE_COUNTER_B18_SAMPLE_DISPLAY",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_DYE_COUNTER",
+      "anchorId": "B18_SAMPLE_DISPLAY",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 53.17,
+        "y": 44.82,
+        "z": 0.14
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 2.11
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-dye-counter",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb"
+      }
+    },
+    {
+      "id": "PLACE_B18_PACKING_FINISH_B18_PACKING_DISPLAY",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_PACKING_FINISH",
+      "anchorId": "B18_PACKING_DISPLAY",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 53.17,
+        "y": 35.18,
+        "z": 0.14
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
+      }
+    },
+    {
+      "id": "PLACE_B18_ROOF_ACCESS_B18_ROOF_ACCESS",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_ROOF_ACCESS",
+      "anchorId": "B18_ROOF_ACCESS",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 55.5,
+        "y": 42.8,
+        "z": 4.76
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 3.8,
+        "height": 2.59
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-roof-access",
+        "uri": "/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb"
+      }
+    },
     {
       "id": "PLACE_B4_FOUNTAIN_RUG_B4_FOUNTAIN_E_RUG_GROUND_01",
       "clusterId": "CLUSTER_B4_FOUNTAIN_DRESSING",
@@ -11785,6 +12053,176 @@
       }
     },
     {
+      "id": "PLACE_CENTRAL_DYE_DISPLAY_CENTRAL_DYE_DISPLAY",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_DYE_COUNTER",
+      "anchorId": "CENTRAL_DYE_DISPLAY",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 40.83,
+        "y": 36.14,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 2.11
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-dye-counter",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb"
+      }
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_NORTH",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorId": "CENTRAL_SCREEN_NORTH",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "overhead",
+      "position": {
+        "x": 40.985,
+        "y": 45.36,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
+      }
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_1",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorId": "CENTRAL_SCREEN_SOUTH_1",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "overhead",
+      "position": {
+        "x": 40.985,
+        "y": 34.38,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
+      }
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_2",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorId": "CENTRAL_SCREEN_SOUTH_2",
+      "zoneId": "COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "overhead",
+      "position": {
+        "x": 40.985,
+        "y": 37.9,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
+      }
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_FOUNTAIN_COURT_CENTRAL_SCREEN_COURT",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_FOUNTAIN_COURT",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorId": "CENTRAL_SCREEN_COURT",
+      "zoneId": "FOUNTAIN_COURT",
+      "districtId": "DISTRICT_FOUNTAIN",
+      "classification": "overhead",
+      "position": {
+        "x": 36.015,
+        "y": 45.36,
+        "z": 5.15
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
+      }
+    },
+    {
       "id": "PLACE_DYERS_CANOPY_CANOPY_DYERS_01",
       "clusterId": "CLUSTER_DYERS_CANOPY",
       "assetId": "ASSET_CLOTH_CANOPY",
@@ -11793,14 +12231,14 @@
       "districtId": "DISTRICT_DYERS",
       "classification": "overhead",
       "position": {
-        "x": 47,
+        "x": 47.15,
         "y": 45.36,
         "z": 4.25
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
-          "x": 41,
+          "x": 41.3,
           "y": 45.36,
           "z": 4.4
         },
@@ -11817,7 +12255,7 @@
       },
       "dimensionsM": {
         "width": 4.4,
-        "depth": 12,
+        "depth": 11.700000000000003,
         "height": 0.18
       },
       "collisionClass": "overhead",
@@ -12251,39 +12689,6 @@
       },
       "dimensionsM": {
         "width": 2.2,
-        "depth": 0.12,
-        "height": 0.38
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "none",
-      "lodEligible": true,
-      "semanticClass": "signage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_signboard"
-      }
-    },
-    {
-      "id": "PLACE_DYERS_SIGNS_DYE_W_SIGN_2",
-      "clusterId": "CLUSTER_DYERS_MERCHANTS",
-      "assetId": "ASSET_SIGNBOARD",
-      "anchorId": "DYE_W_SIGN_2",
-      "zoneId": "COVERED_SOUK",
-      "districtId": "DISTRICT_DYERS",
-      "classification": "soft_visual",
-      "position": {
-        "x": 41.12,
-        "y": 45.36,
-        "z": 3.32
-      },
-      "yawDeg": 90,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 1.38,
         "depth": 0.12,
         "height": 0.38
       },
@@ -15223,6 +15628,48 @@
   ],
   "anchors": [
     {
+      "id": "B18_PACKING_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 53,
+        "y": 35.18,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "along": 0.14136904761904762,
+      "servedBayId": "GROUND_01",
+      "notes": "Visual-only B18 component binding; placement offset compensates actual loader bounds recentering."
+    },
+    {
+      "id": "B18_ROOF_ACCESS",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 53,
+        "y": 42.8,
+        "z": 4.76
+      },
+      "yawDeg": 180,
+      "notes": "B18 roof-only visual anchor at its street-side datum; the source placement offsets the actual loader bounds center to x55.5, y42.8. No floor or collision."
+    },
+    {
+      "id": "B18_SAMPLE_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 53,
+        "y": 44.82,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "along": 0.8586309523809523,
+      "servedBayId": "GROUND_03",
+      "notes": "Visual-only B18 component binding; placement offset compensates actual loader bounds recentering."
+    },
+    {
       "id": "B4_FOUNTAIN_E_RUG_GROUND_01",
       "type": "dressing_anchor",
       "zone": "FOUNTAIN_COURT",
@@ -15625,7 +16072,7 @@
       "type": "cloth_canopy_span",
       "zone": "COVERED_SOUK",
       "pos": {
-        "x": 41,
+        "x": 41.3,
         "y": 45.36,
         "z": 4.4
       },
@@ -15640,7 +16087,7 @@
       "along": 0.5,
       "endFrontageId": "FRONTAGE_COVERED_SOUK_EAST",
       "endAlong": 0.8988095238095238,
-      "notes": "Blue-green cloth marks the covered dyers route."
+      "notes": "B18 M03: west cloth seat projects 0.30 m from the north-wing wall to clear its complete upper window. A carrier above the window bears on the two solid piers and supports the corner drops. East seat, height datums and width remain unchanged."
     },
     {
       "id": "CANOPY_SPICE_01",
@@ -15724,6 +16171,81 @@
       },
       "widthM": 2.2,
       "notes": "Loading shade spanning the yard between the two ramp-approach piers, seated in both edge bands above the 4.5 m court route so the caravan bay finally has a supported cover."
+    },
+    {
+      "id": "CENTRAL_DYE_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 41,
+        "y": 36.14,
+        "z": 0.14
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "along": 0.5,
+      "servedBayId": "GROUND_01",
+      "notes": "Second finite DY-S placement, reusing the approved B18 model at unit scale on the retained threshold. Front-served locked display; no working pocket."
+    },
+    {
+      "id": "CENTRAL_SCREEN_COURT",
+      "type": "window_anchor",
+      "zone": "FOUNTAIN_COURT",
+      "pos": {
+        "x": 36,
+        "y": 45.36,
+        "z": 5.15
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
+      "along": 0.5,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_NORTH",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 41,
+        "y": 45.36,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
+      "along": 0.5,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_SOUTH_1",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 41,
+        "y": 34.38,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "along": 0.19230769230769232,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_SOUTH_2",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "pos": {
+        "x": 41,
+        "y": 37.9,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "along": 0.8076923076923077,
+      "servedBayId": "STORY_1_WINDOW_02",
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
     },
     {
       "id": "COVER_CARAVAN_01",
@@ -15865,11 +16387,11 @@
       },
       "yawDeg": 270,
       "widthM": 2.2,
-      "heightM": 3.1999999999999997,
+      "heightM": 0.76,
       "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
       "along": 0.8586309523809523,
       "servedBayId": "GROUND_03",
-      "notes": "Stable frontage-relative merchant bay."
+      "notes": "B18 north cabinet solid height above the 0.14 m threshold; collider follows PLACE_B18_DYE_COUNTER. North-only alignment authorized by the user; all other collision anchors retained."
     },
     {
       "id": "DYE_E_SIGN_1",
@@ -15929,28 +16451,28 @@
       },
       "yawDeg": 90,
       "widthM": 1.7,
-      "heightM": 2.8,
+      "heightM": 0.76,
       "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
       "along": 0.5,
       "servedBayId": "GROUND_01",
-      "notes": "Stable frontage-relative merchant bay."
+      "notes": "User-authorized central-block cabinet collider alignment; position and depth derive from CENTRAL_DYE_DISPLAY."
     },
     {
       "id": "DYE_W_SHOP_2",
       "type": "shopfront_anchor",
       "zone": "COVERED_SOUK",
       "pos": {
-        "x": 41.16,
+        "x": 41,
         "y": 45.36,
         "z": 0
       },
       "yawDeg": 90,
-      "widthM": 2.2,
-      "heightM": 3.1999999999999997,
+      "widthM": 1.44,
+      "heightM": 2.845,
       "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
       "along": 0.5,
       "servedBayId": "GROUND_01",
-      "notes": "Stable frontage-relative merchant bay."
+      "notes": "User-authorized closed service-door collider alignment. Stable binding retained; obsolete forward stall box removed."
     },
     {
       "id": "DYE_W_SIGN_1",
@@ -15982,7 +16504,7 @@
       "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
       "along": 0.5,
       "servedBayId": "GROUND_01",
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Retained dormant binding: Revision 3 keeps the north service door quiet."
     },
     {
       "id": "DYERS_E_RACK_01",

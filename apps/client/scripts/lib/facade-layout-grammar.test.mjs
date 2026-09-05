@@ -123,6 +123,18 @@ test("rejects unserved and off-center facade fixtures", () => {
   );
 });
 
+test("window fixtures bind to real upper windows and retain axis validation", () => {
+  const frontage = { id: "FRONTAGE_TEST", ...generate() };
+  const window = frontage.bays.find((bay) => moduleById.get(bay.moduleId).kind === "window");
+  const ground = frontage.bays.find((bay) => moduleById.get(bay.moduleId).kind === "shop_recess");
+  const anchor = { id: "SCREEN", type: "window_anchor", frontageId: frontage.id, servedBayId: window.id, along: window.along };
+  const check = (value) => validateFixtureCenterlines({ frontage, moduleById, anchors: [value] });
+  assert.doesNotThrow(() => check(anchor));
+  assert.throws(() => check({ ...anchor, along: anchor.along + .1 }), /not centered/);
+  assert.throws(() => check({ ...anchor, servedBayId: ground.id, along: ground.along }), /non-window/);
+  assert.throws(() => check({ ...anchor, servedBayId: "MISSING" }), /unknown window bay/);
+});
+
 test("frontage-served lanterns obey the same source axis contract", () => {
   const frontage = { id: "FRONTAGE_TEST", ...generate() };
   const bay = frontage.bays.find((candidate) => candidate.id === "GROUND_01");

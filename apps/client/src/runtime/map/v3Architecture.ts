@@ -1,3 +1,4 @@
+import { Euler } from "three";
 import type { BoundarySegment } from "./buildBlockout";
 import { designToWorldVec3, designYawDegToWorldYawRad } from "./coordinateTransforms";
 import type { RuntimeBlockoutZone, RuntimeTraversalSurface } from "./types";
@@ -6,6 +7,13 @@ import type { WallDetailInstance, WallDetailMeshId } from "./wallDetailKit";
 
 type FacadeFace = "north" | "south" | "east" | "west";
 type MaterialSlot = "wall" | "trim" | "roof" | "timber" | "metal" | "accent";
+
+const CENTRAL_SCREEN_BAYS = new Set([
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_02",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_STORY_1_WINDOW_01",
+]);
 
 export type V3ArchitectureMaterialSlots = Record<MaterialSlot, string>;
 
@@ -409,6 +417,17 @@ function pushInstance(
     rollRad?: number;
   },
 ): void {
+  if (/^ARCH_FRONTAGE_(COVERED_SOUK_WEST_NORTH|FOUNTAIN_COURT_EAST_NORTH)_GROUND_01:threshold-apron/.test(placement.placementId)) {
+    placement.position.y -= placement.scale.y - .002;
+  }
+  if (placement.pitchRad && /^ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_0[13]:awning/.test(placement.placementId)) {
+    // Pitch the outer awnings in their wall frame, then encode the existing
+    // renderer's XYZ angles. The approved center booth is an independent GLB.
+    const rotation = new Euler(placement.pitchRad, placement.yawRad, 0, "YXZ").reorder("XYZ");
+    placement.pitchRad = rotation.x;
+    placement.yawRad = rotation.y;
+    placement.rollRad = rotation.z;
+  }
   requirePositiveDimensions(placement.placementId, {
     width: placement.scale.x,
     depth: placement.scale.z,
@@ -662,6 +681,15 @@ function collectFacadeApertures(
         bottomY: moduleCenter.y - module.sizeM.height * 0.5,
         topY: moduleCenter.y + module.sizeM.height * 0.5,
       };
+      if (CENTRAL_SCREEN_BAYS.has(module.id)) {
+        // The structural bay remains the stable binding. Its complete SC-C
+        // frame seats on a masonry rebate around the smaller inner opening.
+        const sill = moduleCenter.y - module.sizeM.height * .5;
+        aperture.leftM = alongM - .38;
+        aperture.rightM = alongM + .38;
+        aperture.bottomY = sill + .12;
+        aperture.topY = sill + 1.28;
+      }
       if (
         aperture.leftM < facadeLeftM - FACADE_FIT_EPSILON_M
         || aperture.rightM > facadeRightM + FACADE_FIT_EPSILON_M
@@ -878,8 +906,12 @@ function pushMassingVisualShell(
     // depth. This removes the 62 cm cavity card and its separate 24 cm return.
     // Edge-tight authored bays retain their exact (never clamped) clear strip
     // only below a full-depth upper volume, where it cannot become skyline.
-    const infillDepthM = isFullDepthBoundaryMassing
-      ? placement.sizeM.depth
+    // Paired public faces need solid window rebates all the way to their
+    // shared core, without invading the opposite face's recesses.
+    const infillDepthM = sharedBacking || !ownsSharedShell
+      ? backingRecessM
+      : isFullDepthBoundaryMassing
+        ? placement.sizeM.depth
       : isNarrowEdgeFallback
         ? backingRecessM
       : isMasonryDivider
@@ -907,7 +939,7 @@ function pushMassingVisualShell(
           ? `${placement.profileId}_masonry_divider`
           : `${placement.profileId}_segmented_facade`,
       semanticClass: isMasonryDivider ? "facade_masonry_divider" : "facade_wall_infill",
-      meshId: isBoundaryMasonry
+      meshId: sharedBacking || !ownsSharedShell || isBoundaryMasonry
         ? "facade_wall_shell"
         : isMasonryDivider
           ? "facade_wall_shell"
@@ -2201,13 +2233,15 @@ function pushCoveredArcadeReturnGrammar(
   };
 
   for (const side of [-1, 1] as const) {
+    const facesMidLink = (placement.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_MASSING" && side === 1)
+      || (placement.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_MASSING" && side === -1);
     pushInstance(instances, {
       placementId: `${placement.id}:return:${side}:contact-course`,
       moduleId: "covered_arcade_return_contact_course",
       semanticClass: "covered_arcade_return_grounding",
       meshId: "plinth_strip",
       position: localToWorld(
-        side * (placement.sizeM.width * 0.5 + 0.06),
+        side * (placement.sizeM.width * 0.5 + (facesMidLink ? -.065 : .06)),
         0,
         bottomY + 0.18,
       ),
@@ -2220,6 +2254,7 @@ function pushCoveredArcadeReturnGrammar(
       uvProjection: "world",
     });
 
+    if (facesMidLink) continue;
     for (let bayIndex = 0; bayIndex < bayCount; bayIndex += 1) {
       const bayCenterM = -usableDepthM * 0.5 + bayPitchM * (bayIndex + 0.5);
       pushReturnFrame(side, bayIndex, bayCenterM, lowerSillM, lowerHeightM, "ground");
@@ -3095,6 +3130,7 @@ function pushMassing(
   // zone-level landmark seam therefore owns this silhouette as one system.
   const landmarkOwnsRoofSilhouette = placement.zoneId === RUG_GATE_ZONE_ID;
   const emitsSeededRoofSilhouette = !landmarkOwnsRoofSilhouette
+    && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_MASSING"
     && profile.family !== "hero_courtyard";
   if (emitsSeededRoofSilhouette) {
     pushInstance(instances, {
@@ -4264,6 +4300,7 @@ function pushWindow(
   profile: V3FacadeProfile,
   experimentalVisualCutouts: boolean,
 ): void {
+  if (CENTRAL_SCREEN_BAYS.has(placement.id)) return;
   const frameMaterialId = profile.family === "active_merchant"
     ? MERCHANT_TIMBER_MATERIAL_ID
     : profile.materialSlots.trim;
@@ -5317,9 +5354,12 @@ function pushSimpleModule(
           uvProjection: "world",
         });
 
-        // The central east bay is furnished by the authored Blender asset.
-        // Keep its masonry and sealed backing, but emit no duplicate booth.
-        if (!isHeroArch && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02") {
+        const hasBlenderCounter = placement.id === "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_01"
+          || placement.id === "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_03"
+          || placement.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_GROUND_01";
+        // B18 retains its three masonry assemblies and the approved center booth.
+        // Its measured packing and dye cabinets replace only their own furniture.
+        if (!isHeroArch && !hasBlenderCounter && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02") {
           const marketVariant = stableUnitInterval(`${placement.id}:arcade-kiosk`);
           const counterHeightM = 0.52 + marketVariant * 0.14;
           const counterWidthM = placement.sizeM.width * (0.62 + marketVariant * 0.14);
@@ -5537,6 +5577,9 @@ function pushSimpleModule(
               detailMaterialId: "tm_arch_screen_dark",
             });
           }
+        }
+        if (hasBlenderCounter) {
+          pushSupportedAwning(placement, instances, center, yawRad, MERCHANT_TIMBER_MATERIAL_ID);
         }
         if (isHeroArch) {
           pushInstance(instances, {

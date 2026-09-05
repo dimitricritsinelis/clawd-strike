@@ -6,6 +6,7 @@ import {
   CylinderGeometry,
   DataTexture,
   DoubleSide,
+  Euler,
   ExtrudeGeometry,
   Float32BufferAttribute,
   Group,
@@ -141,6 +142,7 @@ import {
   createCanopyFixtureGeometry,
   createCanopyScallopedValanceGeometry,
   createCanopyTrestleGeometry,
+  createDyersCanopyWestCarrierGeometry,
   createClothGeometry,
   createSignFrameGeometry,
   createSignRigGeometry,
@@ -2564,7 +2566,13 @@ function buildCompiledDressing(
     spawnCover: createBatch("v3-spawn-cover", 0x765034, "spawnCover", createCrateGeometry, { castShadow: true, roughness: 0.78 }),
   };
 
-  const compiledBatches = Object.values(batches);
+  const dyersWestCarrier: InstanceBatch = {
+    ...batches.canopyTrestles,
+    id: "v3-dyers-west-canopy-carrier",
+    createGeometry: createDyersCanopyWestCarrierGeometry,
+    instances: [],
+  };
+  const compiledBatches = [...Object.values(batches), dyersWestCarrier];
   const bbox = new Box3();
 
   const record = (
@@ -2897,8 +2905,11 @@ function buildCompiledDressing(
       continue;
     }
 
+    const isB18Canopy = placement.anchorId === "CANOPY_DYERS_01";
+    // This east/west span's local +Z points west. Match the authored low east
+    // seat without changing the other overhead owners' measured baseline.
     const spanPitchRad = placement.spanSeats
-      ? -Math.atan2(
+      ? (isB18Canopy ? 1 : -1) * Math.atan2(
           placement.spanSeats.end.z - placement.spanSeats.start.z,
           Math.max(0.001, depth),
         )
@@ -3468,6 +3479,7 @@ function buildCompiledDressing(
       }
       case "bazaar_cloth_canopy":
         {
+        const firstEdgeRope = batches.canopyEdgeRopes.instances.length;
         const canopySeed = [...placement.id].reduce((sum, character) => sum + character.charCodeAt(0), 0);
         // The reference street hangs undyed cream and tan sailcloth: value
         // varies, hue barely does. The pale cyan-green member (0xbfd8cc) put a
@@ -3492,6 +3504,10 @@ function buildCompiledDressing(
         const canopyValanceBatch = canopyIsPlain
           ? canopyPlainAlt ? batches.canopyPlainAltValance : batches.canopyPlainValance
           : batches.canopyValance;
+        if (isB18Canopy) {
+          const rotation = new Euler(transform.pitchRad ?? 0, transform.yawRad, 0, "YXZ").reorder("XYZ");
+          Object.assign(transform, { pitchRad: rotation.x, yawRad: rotation.y, rollRad: rotation.z });
+        }
         canopyClothBatch.instances.push({
           ...transform,
           tintHex: canopyTintHex,
@@ -3531,9 +3547,13 @@ function buildCompiledDressing(
         // cordage is no longer duplicated here.
 
         for (const wallSide of [-1, 1] as const) {
-          const fixtureZ = wallSide * (depth * 0.5 - 0.025);
-          const suspensionRiseM = Math.max(0.34, Math.min(0.58, height * 0.46));
-          pushLocalInstance(
+          const fixtureZ = wallSide * (depth * 0.5 + (isB18Canopy ? 0.025 : -0.025));
+          const suspensionRiseM = isB18Canopy ? 0.20 : Math.max(0.34, Math.min(0.58, height * 0.46));
+          const usesWestCarrier = isB18Canopy && wallSide === 1;
+          if (usesWestCarrier) {
+            const seat = designToWorldVec3(placement.spanSeats!.start);
+            dyersWestCarrier.instances.push({ ...seat, sx: 1, sy: 1, sz: 1, yawRad: 0 });
+          } else pushLocalInstance(
             batches.canopyTrestles,
             world,
             yawRad,
@@ -3582,7 +3602,7 @@ function buildCompiledDressing(
               {
                 x: edgeSide * width * 0.46,
                 y: suspensionRiseM,
-                z: wallSide * (depth * 0.5 - 0.025),
+                z: fixtureZ,
                 yaw: wallSide === -1 ? -Math.PI * 0.5 : Math.PI * 0.5,
                 visualQa: {
                   placementId: `${placement.id}:wall-ring:${wallSide === -1 ? "near" : "far"}:${edgeSide === -1 ? "left" : "right"}`,
@@ -3629,13 +3649,19 @@ function buildCompiledDressing(
               yawRad,
               {
                 x: width * alongFraction,
-                y: suspensionRiseM - 0.09,
+                y: usesWestCarrier ? .76 : suspensionRiseM - 0.09,
                 z: fixtureZ,
               },
-              { x: 0.034, y: 0.2, z: 0.034 },
+              { x: 0.034, y: usesWestCarrier ? 1.52 : 0.2, z: 0.034 },
               spanPitchRad,
               0,
             );
+          }
+        }
+        if (isB18Canopy) {
+          for (const rope of batches.canopyEdgeRopes.instances.slice(firstEdgeRope)) {
+            const rotation = new Euler(rope.pitchRad ?? 0, rope.yawRad, 0, "YXZ").reorder("XYZ");
+            Object.assign(rope, { pitchRad: rotation.x, yawRad: rotation.y, rollRad: rotation.z });
           }
         }
         break;
@@ -4156,7 +4182,7 @@ function buildCompiledDressing(
     for (let index = 0; index < batch.instances.length; index += 1) {
       const instance = batch.instances[index]!;
       dummy.position.set(instance.x, instance.y, instance.z);
-      dummy.rotation.set(instance.pitchRad ?? 0, instance.yawRad, 0);
+      dummy.rotation.set(instance.pitchRad ?? 0, instance.yawRad, instance.rollRad ?? 0);
       dummy.scale.set(instance.sx, instance.sy, instance.sz);
       dummy.updateMatrix();
       mesh.setMatrixAt(index, dummy.matrix);
@@ -4519,6 +4545,33 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
     }
 
     if (type === "shopfront_anchor") {
+      // User-approved B18 correction: the old 3.2 m stall box outlived its
+      // visuals. The finished cabinet sits wholly on the retained threshold.
+      // Its source anchor owns the solid height; the compiled model owns fit.
+      if (anchor.id === "DYE_E_SHOP_2" || anchor.id === "DYE_W_SHOP_1") {
+        const visualAnchor = anchor.id === "DYE_E_SHOP_2" ? "B18_SAMPLE_DISPLAY" : "CENTRAL_DYE_DISPLAY";
+        const display = options.blockout.dressingPlacements?.find((entry) => entry.anchorId === visualAnchor);
+        if (display) {
+          const origin = designToWorldVec3(display.position);
+          if (anchor.heightM === undefined) throw new Error("B18 north cabinet requires its authored solid height");
+          const cabinetHeight = anchor.heightM;
+          placeCollidingBox(anchor.id, "shop", batches.shopfront,
+            { ...origin, y: origin.y + cabinetHeight * 0.5 },
+            { x: display.dimensionsM.width, y: cabinetHeight, z: display.dimensionsM.depth },
+            designYawDegToWorldYawRad(display.yawDeg));
+          continue;
+        }
+      }
+      if (anchor.id === "DYE_W_SHOP_2") {
+        const door = options.blockout.architecturePlacements?.find((entry) => entry.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01");
+        if (!door || door.kind !== "facade_module" || anchor.widthM === undefined || anchor.heightM === undefined) {
+          throw new Error("Central service-door collider requires its authored door and envelope");
+        }
+        placeCollidingBox(anchor.id, "shop", batches.shopfront,
+          { ...base, y: base.y + anchor.heightM * .5 },
+          { x: anchor.widthM, y: anchor.heightM, z: door.sizeM.depth + .04 }, baseYaw);
+        continue;
+      }
       if (!shopfrontVisibility.has(anchor.id)) {
         continue;
       }

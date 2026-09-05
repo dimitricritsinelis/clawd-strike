@@ -194,6 +194,199 @@
       "md5": {
         "textile_booth/textile_booth.glb": "7437a13441ccba7a7b598a9f1e2b0c19"
       }
+    },
+    {
+      "id": "b18-packing-finish",
+      "url": "b18_counters/b18-packing-finish.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "b18_counters/b18-packing-finish.glb"
+        }
+      },
+      "source": "repo://assets/source/b18-counters/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "b18_counters/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "b18_counters/b18-packing-finish.glb": "d2150619ed923a4403087eac2174a4a7",
+        "b18_counters/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "b18_counters/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      },
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/wooden_table_02",
+          "license": "CC0-1.0",
+          "md5": "07075a87918208594260c86c727e4396"
+        }
+      ]
+    },
+    {
+      "id": "b18-dye-counter",
+      "url": "b18_counters/b18-dye-counter.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "b18_counters/b18-dye-counter.glb"
+        }
+      },
+      "source": "repo://assets/source/b18-counters/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "b18_counters/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "b18_counters/b18-dye-counter.glb": "1d54a1021bfb8bd11ccd1524d8114796",
+        "b18_counters/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "b18_counters/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      },
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/wooden_table_02",
+          "license": "CC0-1.0",
+          "md5": "07075a87918208594260c86c727e4396"
+        }
+      ]
+    },
+    {
+      "id": "b18-roof-access",
+      "url": "b18_roof_access/b18-roof-access.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "b18_roof_access/b18-roof-access.glb"
+        }
+      },
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "b18_roof_access/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "b18_roof_access/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "b18_roof_access/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "b18_roof_access/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "b18_roof_access/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "b18_roof_access/b18-roof-access.glb": "8c380ebd3b03067b85063993373955c3",
+        "b18_roof_access/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      },
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/painted_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "3cd079adad9d00dade84be1d700608c7"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/painted_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "d273ddf6a8d75c7f0e7e09cbe3de8d79"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/painted_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "113ddb47b677fc92710dda3b5d0f2bf9"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "16deb112a37a5e9e966609d23f86ef0e"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        }
+      ]
+    },
+    {
+      "id": "central-screen-sc-c",
+      "url": "central_screen_sc_c/central-screen-sc-c.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "central_screen_sc_c/central-screen-sc-c.glb"
+        }
+      },
+      "source": "repo://assets/source/central-screen-sc-c/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77",
+          "source": "repo://assets/source/b18-counters/build.py"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6",
+          "source": "repo://assets/source/b18-counters/build.py"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224",
+          "source": "repo://assets/source/b18-counters/build.py"
+        }
+      ],
+      "upstreamProvenance": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/wooden_table_02",
+          "license": "CC0-1.0",
+          "md5": "07075a87918208594260c86c727e4396"
+        }
+      ],
+      "md5": {
+        "central_screen_sc_c/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "central_screen_sc_c/central-screen-sc-c.glb": "e60860c188d6acdbe365a51a7310f792",
+        "central_screen_sc_c/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "central_screen_sc_c/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
     }
   ]
 }

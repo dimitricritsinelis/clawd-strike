@@ -33,6 +33,7 @@
       "open_node",
       "service_door_anchor",
       "shopfront_anchor",
+      "window_anchor",
       "signage_anchor",
       "spawn_cover"
     ]
@@ -2722,7 +2723,7 @@
       "type": "house",
       "label": "Merchant's house on the fountain",
       "storeys": 2,
-      "brief": "One tall door, paired windows about it, a projecting timber balcony over the door looking at the fountain.",
+      "brief": "Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.",
       "faces": [
         {
           "zoneId": "FOUNTAIN_COURT",
@@ -2737,41 +2738,30 @@
           "groundHeadM": 2.25,
           "bays": [
             {
-              "id": "BAY_01",
-              "module": "door_residential_timber",
+              "id": "GROUND_01",
+              "module": "arch_hero_courtyard",
               "alongM": 2.86,
-              "along": 0.5,
+              "along": 0.49999999999999994,
               "story": 0
             },
             {
-              "id": "UPPER1_01",
-              "module": "window_screened",
-              "alongM": 1.66,
-              "along": 0.29021,
+              "id": "STORY_1_WINDOW_01",
+              "module": "window_dark_recess",
+              "alongM": 1.05,
+              "along": 0.18356643356643307,
               "story": 1
             },
             {
-              "id": "UPPER1_02",
-              "module": "window_screened",
-              "alongM": 4.06,
-              "along": 0.70979,
+              "id": "STORY_1_WINDOW_02",
+              "module": "window_dark_recess",
+              "alongM": 4.67,
+              "along": 0.8164335664335668,
               "story": 1
             }
           ],
-          "dressing": [
-            {
-              "assetId": "ASSET_CC0_LANTERN",
-              "where": "over the door head at 2.86 m along, under the head"
-            },
-            {
-              "assetId": "ASSET_COURT_PLANTER",
-              "where": "pair at 0.9 m and 4.8 m along, against the plinth"
-            }
-          ],
-          "needs": [
-            "balcony_timber: projecting timber balcony module 2.4 m wide over the door, sill at the upper storey datum, brackets to the wall"
-          ],
-          "note": "One tall door alone on the ground, 2.3 m piers; the balcony over it is the hero element facing the fountain."
+          "dressing": [],
+          "needs": [],
+          "note": "Revision 3: actual stable bay axes retained. Both link-facing returns are quiet masonry with flush bases. Shared backing and roofs remain Souk-owned; no balcony or playable interior. SC-C model placements replace complete window visuals while retaining structural recess bindings."
         },
         {
           "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
@@ -2780,23 +2770,28 @@
           "groundHeadM": 2.5,
           "bays": [
             {
-              "id": "BAY_01",
-              "module": "blind_niche",
+              "id": "GROUND_01",
+              "module": "door_residential_timber",
               "alongM": 1.36,
-              "along": 0.5,
+              "along": 0.49999999999999967,
               "story": 0
             },
             {
-              "id": "UPPER1_01",
-              "module": "window_dark_recess",
+              "id": "STORY_1_WINDOW_01",
+              "module": "window_screened",
               "alongM": 1.36,
-              "along": 0.5,
+              "along": 0.49999999999999967,
               "story": 1
             }
           ],
-          "dressing": [],
+          "dressing": [
+            {
+              "assetId": "ASSET_SCREEN_SC_C",
+              "where": "complete SC-C closure at the existing 5.15 m sill"
+            }
+          ],
           "needs": [],
-          "note": "House flank."
+          "note": "Revision 3: actual stable bay axes retained. Both link-facing returns are quiet masonry with flush bases. Shared backing and roofs remain Souk-owned; no balcony or playable interior. SC-C model placements replace complete window visuals while retaining structural recess bindings."
         }
       ]
     },
@@ -3563,7 +3558,7 @@
       "type": "arcade",
       "label": "Dyers' arcade, west",
       "storeys": 2,
-      "brief": "Dyers' stalls behind arches on one rhythm; cloth hung to dry inside them.",
+      "brief": "Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.",
       "faces": [
         {
           "zoneId": "COVERED_SOUK",
@@ -3578,32 +3573,39 @@
           "groundHeadM": 3.55,
           "bays": [
             {
-              "id": "BAY_01",
+              "id": "GROUND_01",
               "module": "arch_arcade",
               "alongM": 2.86,
-              "along": 0.5,
+              "along": 0.49999999999999994,
               "story": 0
             },
             {
-              "id": "UPPER1_01",
+              "id": "STORY_1_WINDOW_01",
               "module": "window_screened",
-              "alongM": 2.86,
-              "along": 0.5,
+              "alongM": 1.1,
+              "along": 0.19230769230769257,
+              "story": 1
+            },
+            {
+              "id": "STORY_1_WINDOW_02",
+              "module": "window_screened",
+              "alongM": 4.62,
+              "along": 0.8076923076923073,
               "story": 1
             }
           ],
           "dressing": [
             {
-              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
-              "where": "dyed cloth hung inside the arch"
+              "assetId": "ASSET_SCREEN_SC_C",
+              "where": "assigned upper windows only"
             },
             {
-              "assetId": "ASSET_DYERS_SEALED_VAT",
-              "where": "one against each pier"
+              "assetId": "ASSET_B18_DYE_COUNTER",
+              "where": "south-wing GROUND_01, unit scale on its threshold"
             }
           ],
           "needs": [],
-          "note": "One arch on the axis, 1.55 m piers."
+          "note": "Revision 3: actual stable bay axes retained. Both link-facing returns are quiet masonry with flush bases. Shared backing and roofs remain Souk-owned; no balcony or playable interior. SC-C model placements replace complete window visuals while retaining structural recess bindings."
         },
         {
           "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
@@ -3612,23 +3614,28 @@
           "groundHeadM": 2.7,
           "bays": [
             {
-              "id": "BAY_01",
+              "id": "GROUND_01",
               "module": "door_shop_timber",
               "alongM": 1.36,
-              "along": 0.5,
+              "along": 0.49999999999999967,
               "story": 0
             },
             {
-              "id": "UPPER1_01",
+              "id": "STORY_1_WINDOW_01",
               "module": "window_screened",
               "alongM": 1.36,
-              "along": 0.5,
+              "along": 0.49999999999999967,
               "story": 1
             }
           ],
-          "dressing": [],
+          "dressing": [
+            {
+              "assetId": "ASSET_SCREEN_SC_C",
+              "where": "assigned upper windows only"
+            }
+          ],
           "needs": [],
-          "note": "Stall door in the 2.7 m return."
+          "note": "Revision 3: actual stable bay axes retained. Both link-facing returns are quiet masonry with flush bases. Shared backing and roofs remain Souk-owned; no balcony or playable interior. SC-C model placements replace complete window visuals while retaining structural recess bindings."
         }
       ]
     },
@@ -3637,7 +3644,7 @@
       "type": "arcade",
       "label": "Dyers' arcade, east",
       "storeys": 1,
-      "brief": "Same rhythm as the west arcade in lime wash.",
+      "brief": "Three repaired stone arches: packing south, the approved textile booth at center, dry dye samples north; one broad closed roof-access room.",
       "faces": [
         {
           "zoneId": "COVERED_SOUK",
@@ -3652,57 +3659,47 @@
           "groundHeadM": 3.55,
           "bays": [
             {
-              "id": "BAY_01",
+              "id": "GROUND_01",
               "module": "arch_arcade",
-              "alongM": 2.55,
-              "along": 0.18973,
+              "alongM": 1.9,
+              "along": 0.14136904761904762,
               "story": 0
             },
             {
-              "id": "BAY_02",
-              "module": "column_arcade",
-              "alongM": 4.635,
-              "along": 0.34487,
-              "story": 0
-            },
-            {
-              "id": "BAY_03",
+              "id": "GROUND_02",
               "module": "arch_arcade",
               "alongM": 6.72,
               "along": 0.5,
               "story": 0
             },
             {
-              "id": "BAY_04",
-              "module": "column_arcade",
-              "alongM": 8.805,
-              "along": 0.65513,
-              "story": 0
-            },
-            {
-              "id": "BAY_05",
+              "id": "GROUND_03",
               "module": "arch_arcade",
-              "alongM": 10.89,
-              "along": 0.81027,
+              "alongM": 11.54,
+              "along": 0.8586309523809523,
               "story": 0
             }
           ],
           "dressing": [
             {
-              "assetId": "ASSET_DYERS_HANGING_TEXTILES",
-              "where": "dyed cloth in each arch"
+              "assetId": "ASSET_B18_PACKING_FINISH",
+              "where": "south GROUND_01, on the retained threshold"
             },
             {
-              "assetId": "ASSET_DYERS_WORKSTATION",
-              "where": "threshold of the middle arch"
+              "assetId": "ASSET_TEXTILE_BOOTH",
+              "where": "center GROUND_02; approved file and placement unchanged"
             },
             {
-              "assetId": "ASSET_DYERS_CERAMIC_VESSEL",
-              "where": "one at each outer arch jamb"
+              "assetId": "ASSET_B18_DYE_COUNTER",
+              "where": "north GROUND_03, front-served locked sample display"
+            },
+            {
+              "assetId": "ASSET_B18_ROOF_ACCESS",
+              "where": "roof room at x54.6..56.4, y40.9..44.7, base4.76, cap7.35"
             }
           ],
           "needs": [],
-          "note": "Three arches, two columns, lime wash, one storey."
+          "note": "Revision 3 replaces the obsolete five-bay schedule with the three existing stable arch axes. Retain repaired masonry, backing, thresholds, separate outer awnings, slab, parapets, end walls and low service cluster."
         }
       ]
     },
@@ -5549,6 +5546,34 @@
       ]
     },
     {
+      "id": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "zoneId": "COVERED_SOUK",
+      "surfaceId": "SURFACE_COVERED_SOUK",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "overhead",
+      "anchors": [
+        "CENTRAL_SCREEN_SOUTH_1",
+        "CENTRAL_SCREEN_SOUTH_2",
+        "CENTRAL_SCREEN_NORTH"
+      ],
+      "assetIds": [
+        "ASSET_SCREEN_SC_C"
+      ]
+    },
+    {
+      "id": "CLUSTER_CENTRAL_SCREENS_FOUNTAIN_COURT",
+      "zoneId": "FOUNTAIN_COURT",
+      "surfaceId": "SURFACE_FOUNTAIN_COURT",
+      "districtId": "DISTRICT_FOUNTAIN",
+      "classification": "overhead",
+      "anchors": [
+        "CENTRAL_SCREEN_COURT"
+      ],
+      "assetIds": [
+        "ASSET_SCREEN_SC_C"
+      ]
+    },
+    {
       "id": "CLUSTER_DYERS_MERCHANTS",
       "zoneId": "COVERED_SOUK",
       "surfaceId": "SURFACE_COVERED_SOUK",
@@ -5557,17 +5582,23 @@
       "anchors": [
         "DYE_E_TEXTILE_BOOTH",
         "DYE_W_SIGN_1",
-        "DYE_W_SIGN_2",
         "DYE_E_SIGN_1",
         "DYE_E_SIGN_2",
-        "LMK_DYERS_DISTRICT"
+        "LMK_DYERS_DISTRICT",
+        "B18_PACKING_DISPLAY",
+        "B18_SAMPLE_DISPLAY",
+        "B18_ROOF_ACCESS",
+        "CENTRAL_DYE_DISPLAY"
       ],
       "assetIds": [
         "ASSET_TEXTILE_BOOTH",
         "ASSET_SIGNBOARD",
         "ASSET_DYERS_SEALED_VAT",
         "ASSET_DYERS_CERAMIC_VESSEL",
-        "ASSET_CC0_BASKET"
+        "ASSET_CC0_BASKET",
+        "ASSET_B18_PACKING_FINISH",
+        "ASSET_B18_DYE_COUNTER",
+        "ASSET_B18_ROOF_ACCESS"
       ]
     },
     {
@@ -6566,6 +6597,122 @@
       "yawOffsetDeg": 0
     },
     {
+      "id": "PLACE_B18_PACKING_FINISH",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_PACKING_FINISH",
+      "anchorIds": [
+        "B18_PACKING_DISPLAY"
+      ],
+      "offsetM": {
+        "x": 0.17,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 180
+    },
+    {
+      "id": "PLACE_B18_DYE_COUNTER",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_DYE_COUNTER",
+      "anchorIds": [
+        "B18_SAMPLE_DISPLAY"
+      ],
+      "offsetM": {
+        "x": 0.17,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 180
+    },
+    {
+      "id": "PLACE_B18_ROOF_ACCESS",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_ROOF_ACCESS",
+      "anchorIds": [
+        "B18_ROOF_ACCESS"
+      ],
+      "offsetM": {
+        "x": 2.5,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 0
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_COVERED_SOUK",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_COVERED_SOUK",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorIds": [
+        "CENTRAL_SCREEN_SOUTH_1",
+        "CENTRAL_SCREEN_SOUTH_2",
+        "CENTRAL_SCREEN_NORTH"
+      ],
+      "offsetM": {
+        "x": -0.015,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 180
+    },
+    {
+      "id": "PLACE_CENTRAL_SCREENS_FOUNTAIN_COURT",
+      "clusterId": "CLUSTER_CENTRAL_SCREENS_FOUNTAIN_COURT",
+      "assetId": "ASSET_SCREEN_SC_C",
+      "anchorIds": [
+        "CENTRAL_SCREEN_COURT"
+      ],
+      "offsetM": {
+        "x": 0.015,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 180
+    },
+    {
+      "id": "PLACE_CENTRAL_DYE_DISPLAY",
+      "clusterId": "CLUSTER_DYERS_MERCHANTS",
+      "assetId": "ASSET_B18_DYE_COUNTER",
+      "anchorIds": [
+        "CENTRAL_DYE_DISPLAY"
+      ],
+      "offsetM": {
+        "x": -0.17,
+        "y": 0,
+        "z": 0
+      },
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "yawOffsetDeg": 180
+    },
+    {
       "id": "PLACE_TEXTILE_BOOTH",
       "clusterId": "CLUSTER_DYERS_MERCHANTS",
       "assetId": "ASSET_TEXTILE_BOOTH",
@@ -6580,7 +6727,6 @@
       "assetId": "ASSET_SIGNBOARD",
       "anchorIds": [
         "DYE_W_SIGN_1",
-        "DYE_W_SIGN_2",
         "DYE_E_SIGN_1",
         "DYE_E_SIGN_2"
       ],
@@ -8979,8 +9125,8 @@
       "along": 0.5,
       "inset_m": 0.16,
       "width_m": 1.7,
-      "height_m": 2.8,
-      "notes": "Stable frontage-relative merchant bay."
+      "height_m": 0.76,
+      "notes": "User-authorized central-block cabinet collider alignment; position and depth derive from CENTRAL_DYE_DISPLAY."
     },
     {
       "id": "DYE_W_SIGN_1",
@@ -9001,10 +9147,10 @@
       "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
       "servedBayId": "GROUND_01",
       "along": 0.5,
-      "inset_m": 0.16,
-      "width_m": 2.2,
-      "height_m": 3.1999999999999997,
-      "notes": "Stable frontage-relative merchant bay."
+      "inset_m": 0,
+      "width_m": 1.44,
+      "height_m": 2.845,
+      "notes": "User-authorized closed service-door collider alignment. Stable binding retained; obsolete forward stall box removed."
     },
     {
       "id": "DYE_W_SIGN_2",
@@ -9016,7 +9162,94 @@
       "vertical_offset_m": 3.32,
       "inset_m": 0.12,
       "width_m": 1.38,
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Retained dormant binding: Revision 3 keeps the north service door quiet."
+    },
+    {
+      "id": "B18_PACKING_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "along": 0.14136904761904762,
+      "inset_m": 0,
+      "vertical_offset_m": 0.14,
+      "notes": "Visual-only B18 component binding; placement offset compensates actual loader bounds recentering.",
+      "servedBayId": "GROUND_01"
+    },
+    {
+      "id": "B18_SAMPLE_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_EAST",
+      "along": 0.8586309523809523,
+      "inset_m": 0,
+      "vertical_offset_m": 0.14,
+      "notes": "Visual-only B18 component binding; placement offset compensates actual loader bounds recentering.",
+      "servedBayId": "GROUND_03"
+    },
+    {
+      "id": "B18_ROOF_ACCESS",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "notes": "B18 roof-only visual anchor at its street-side datum; the source placement offsets the actual loader bounds center to x55.5, y42.8. No floor or collision.",
+      "x": 53,
+      "y": 42.8,
+      "z": 4.76,
+      "yaw_deg": 180
+    },
+    {
+      "id": "CENTRAL_SCREEN_SOUTH_1",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "servedBayId": "STORY_1_WINDOW_01",
+      "along": 0.19230769230769232,
+      "inset_m": 0,
+      "vertical_offset_m": 4.15,
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_SOUTH_2",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "servedBayId": "STORY_1_WINDOW_02",
+      "along": 0.8076923076923077,
+      "inset_m": 0,
+      "vertical_offset_m": 4.15,
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_NORTH",
+      "type": "window_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
+      "servedBayId": "STORY_1_WINDOW_01",
+      "along": 0.5,
+      "inset_m": 0,
+      "vertical_offset_m": 4.15,
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_SCREEN_COURT",
+      "type": "window_anchor",
+      "zone": "FOUNTAIN_COURT",
+      "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
+      "servedBayId": "STORY_1_WINDOW_01",
+      "along": 0.5,
+      "inset_m": 0,
+      "vertical_offset_m": 5.15,
+      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+    },
+    {
+      "id": "CENTRAL_DYE_DISPLAY",
+      "type": "shopfront_anchor",
+      "zone": "COVERED_SOUK",
+      "frontageId": "FRONTAGE_COVERED_SOUK_WEST",
+      "servedBayId": "GROUND_01",
+      "along": 0.5,
+      "inset_m": 0,
+      "vertical_offset_m": 0.14,
+      "notes": "Second finite DY-S placement, reusing the approved B18 model at unit scale on the retained threshold. Front-served locked display; no working pocket."
     },
     {
       "id": "DYE_E_TEXTILE_BOOTH",
@@ -9061,8 +9294,8 @@
       "along": 0.8586309523809523,
       "inset_m": 0.16,
       "width_m": 2.2,
-      "height_m": 3.1999999999999997,
-      "notes": "Stable frontage-relative merchant bay."
+      "height_m": 0.76,
+      "notes": "B18 north cabinet solid height above the 0.14 m threshold; collider follows PLACE_B18_DYE_COUNTER. North-only alignment authorized by the user; all other collision anchors retained."
     },
     {
       "id": "DYE_E_SIGN_2",
@@ -9234,12 +9467,13 @@
       "zone": "COVERED_SOUK",
       "frontageId": "FRONTAGE_COVERED_SOUK_WEST_NORTH",
       "along": 0.5,
+      "inset_m": 0.3,
       "vertical_offset_m": 4.4,
       "end_frontage_id": "FRONTAGE_COVERED_SOUK_EAST",
       "end_along": 0.8988095238095238,
       "end_vertical_offset_m": 4.1,
       "width_m": 4.4,
-      "notes": "Blue-green cloth marks the covered dyers route."
+      "notes": "B18 M03: west cloth seat projects 0.30 m from the north-wing wall to clear its complete upper window. A carrier above the window bears on the two solid piers and supports the corner drops. East seat, height datums and width remain unchanged."
     },
     {
       "id": "LMK_FOUNTAIN_01",
@@ -10976,6 +11210,138 @@
         "mode": "model",
         "id": "ph_wine_barrel_01",
         "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_B18_PACKING_FINISH",
+      "label": "B18 closed packing cabinet",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-counters/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_B18_DYE_COUNTER",
+      "label": "B18 dry dye-sample cabinet",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-counters/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 2.11
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-dye-counter",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_B18_ROOF_ACCESS",
+      "label": "B18 closed roof-access room",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/b18-roof-access/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 3.8,
+        "height": 2.59
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-roof-access",
+        "uri": "/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SCREEN_SC_C",
+      "label": "SC-C closed fine-crossed merchant window",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/central-screen-sc-c/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "central-screen-sc-c",
+        "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
       },
       "transform": {
         "pivot": "base_center",

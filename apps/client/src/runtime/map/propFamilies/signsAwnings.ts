@@ -7,7 +7,7 @@ import {
   PlaneGeometry,
   TorusGeometry,
 } from "three";
-import { applyGeometryTint, boxPart, mergeProceduralGeometry, tintGeometry } from "./propsCore";
+import { applyBoxProjectedUv, applyGeometryTint, boxPart, mergeProceduralGeometry, tintGeometry } from "./propsCore";
 
 export interface SignFrameGeometryOptions {
   frameWidth?: number;
@@ -464,4 +464,34 @@ export function createCanopyTrestleGeometry(): BufferGeometry {
     );
   }
   return mergeProceduralGeometry(parts);
+}
+
+/** Dyers west receiver, in metres relative to its measured cloth seat.
+ * The carrier clears the existing upper window; both knees bear on solid piers.
+ */
+export function createDyersCanopyWestCarrierGeometry(): BufferGeometry {
+  const parts: BufferGeometry[] = [
+    boxPart(.20, .20, 4.37, 0, 1.52, .005),
+  ];
+  for (const north of [-1.11, 1.09]) {
+    parts.push(boxPart(.14, .70, .18, -.30, 1.12, north));
+    parts.push(boxPart(.54, .16, .18, -.17, 1.50, north));
+    const knee = new BoxGeometry(.10, Math.hypot(.32, .68), .12);
+    knee.rotateZ(-Math.atan2(.32, .68));
+    knee.translate(-.16, 1.14, north);
+    parts.push(knee);
+    for (const height of [.88, 1.35]) {
+      const peg = new CylinderGeometry(.018, .018, .18, 8);
+      peg.rotateZ(Math.PI * .5);
+      peg.translate(-.25, height, north);
+      parts.push(tintGeometry(peg, [.28, .23, .18]));
+    }
+  }
+  for (const north of [-2.024, 2.024]) {
+    parts.push(boxPart(.20, 1.64, .20, 0, .80, north));
+  }
+  for (const part of parts) {
+    if (!part.hasAttribute("color")) applyGeometryTint(part, [.72, .50, .30]);
+  }
+  return applyBoxProjectedUv(mergeProceduralGeometry(parts));
 }

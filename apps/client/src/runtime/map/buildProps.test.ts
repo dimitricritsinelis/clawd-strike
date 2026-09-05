@@ -13,8 +13,12 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Quaternion,
+  Texture,
   Vector3,
 } from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { PlayerController } from "../sim/PlayerController";
+import { WorldColliders } from "../sim/collision/WorldColliders";
 import { buildProps } from "./buildProps";
 import {
   HERO_GATE_MAX_FIXTURE_GAP_M,
@@ -42,6 +46,71 @@ const POLISH_MODULES = new Set([
   "bazaar_court_planter",
   "bazaar_spice_goods",
 ]);
+
+test("B18 exported mounting preserves the booth and changes only the authorized north collider", async () => {
+  const raw = JSON.parse(await readFile(new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url), "utf8"));
+  const blockout = parseBlockoutSpec(raw);
+  const anchors = parseAnchorsSpec(raw);
+  const manifest = JSON.parse(await readFile(new URL("../../../public/assets/models/environment/bazaar/props/models.json", import.meta.url), "utf8"));
+  const ids = new Set(["b18-dye-counter", "b18-packing-finish", "b18-roof-access", "original_textile_booth"]);
+  blockout.dressingPlacements = blockout.dressingPlacements!.filter((entry) => entry.id.startsWith("PLACE_B18_") || entry.runtime.id === "original_textile_booth" || entry.anchorId === "CANOPY_DYERS_01");
+  const templates = new Map<string, Group>();
+  const loader = new GLTFLoader();
+  // Node has no image decoder. Keep real GLB geometry/transforms; browser QA
+  // separately exercises PropModelLibrary, PBR image loading and rendering.
+  loader.register(() => ({ name: "geometry-only-image-decode", loadTexture: async () => new Texture() }));
+  for (const entry of manifest.models.filter((entry: { id: string }) => ids.has(entry.id))) {
+    const bytes = await readFile(new URL(`../../../public/assets/models/environment/bazaar/props/${entry.url}`, import.meta.url));
+    const gltf = await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), "");
+    templates.set(entry.id, gltf.scene);
+  }
+  const models = {
+    hasModel: (id: string) => templates.has(id),
+    instantiate: (id: string) => templates.get(id)!.clone(true),
+  } as unknown as PropModelLibrary;
+  const options = { mapId: blockout.mapId, blockout, anchors, seedOverride: null,
+    propChaos: { profile: "subtle" as const, jitter: null, cluster: null, density: null },
+    propVisuals: "bazaar" as const, propModels: models, highVis: false };
+  const result = buildProps(options);
+  const expected: Record<string, number[]> = {
+    PLACE_B18_DYE_COUNTER: [53, .14, 44.08, 53.34, 2.25, 45.56],
+    PLACE_B18_PACKING_FINISH: [53, .14, 34.44, 53.34, 1.675, 35.92],
+    PLACE_B18_ROOF_ACCESS: [54.6, 4.76, 40.9, 56.4, 7.35, 44.7],
+    PLACE_TEXTILE_BOOTH: [52.0895, 0, 38.659472, 53.3805, 3.639354, 41.340528],
+  };
+  for (const [id, limits] of Object.entries(expected)) {
+    const node = result.root.children[0]?.children.find((entry) => entry.name.startsWith(`v3-dressing-${id}_`));
+    assert.ok(node, `${id} was not loaded`);
+    const bounds = new Box3().setFromObject(node);
+    [...bounds.min.toArray(), ...bounds.max.toArray()].forEach((value, index) => {
+      assert.ok(Math.abs(value - limits[index]!) < .0001, `${id} bound ${index}: ${value}`);
+    });
+  }
+  const carrier = result.root.getObjectByName("v3-dyers-west-canopy-carrier");
+  assert.ok(carrier, "west canopy lost its supported carrier");
+  const carrierBounds = new Box3().setFromObject(carrier);
+  assert.ok(carrierBounds.min.x < 41 && carrierBounds.max.x >= 41.39, "carrier no longer bears into masonry");
+  assert.ok(carrierBounds.min.y >= 4.379 && carrierBounds.max.y <= 6.021, "carrier enters the body envelope or leaves its roof datum");
+  const beforeAnchors = { ...anchors, anchors: anchors.anchors.filter((entry) => !entry.id.startsWith("B18_")).map((entry) => entry.id === "DYE_E_SHOP_2" ? { ...entry, heightM: 3.2 } : entry) };
+  const before = buildProps({ ...options, anchors: beforeAnchors,
+    blockout: { ...blockout, dressingPlacements: blockout.dressingPlacements!.filter((entry) => entry.runtime.id === "original_textile_booth") } });
+  const retained = (colliders: typeof result.colliders) => colliders.filter((entry) => entry.id !== "DYE_E_SHOP_2-shop");
+  assert.deepEqual(retained(result.colliders), retained(before.colliders));
+  const cabinet = result.colliders.find((entry) => entry.id === "DYE_E_SHOP_2-shop");
+  assert.ok(cabinet);
+  assert.ok(Math.abs(cabinet.min.x - 53) < .0001);
+  assert.ok(Math.abs(cabinet.max.y - .9) < .0001);
+  const world = new WorldColliders([...result.colliders, { id: "retained-east-wall", kind: "wall",
+    min: { x: 53, y: 0, z: 32 }, max: { x: 53.35, y: 7, z: 48 } }], blockout.playable_boundary, blockout.traversalSurfaces);
+  const player = new PlayerController();
+  player.setWorld(world);
+  player.setSpawn(52.2, 0, 44.82);
+  for (let step = 0; step < 240; step++) {
+    player.step(1 / 120, { forward: 1, right: 0, crouchHeld: false, jumpPressed: step === 0 || step === 120 }, -Math.PI / 2);
+    assert.ok(player.getPosition().y < 1.01, "cabinet introduced a jump perch");
+  }
+  assert.ok(player.getPosition().y < .001);
+});
 
 const MODEL_FIXTURE_DIMENSIONS = new Map<string, { width: number; depth: number; height: number }>([
   ["ph_wooden_table_01", { width: 1.7996479273, depth: 0.6571746469, height: 0.5488492709 }],
@@ -1104,9 +1173,11 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const hangRopes = mesh(root, "v3-canopy-hang-ropes");
   assert.ok(hangRopes.count >= 24 && hangRopes.count % 2 === 0, "canopy and laundry supports lost their paired vertical load paths");
   const trestles = mesh(root, "v3-canopy-wall-trestles");
-  assert.equal(trestles.count, 12, "each of the six cloth spans needs one trestle on both served walls");
+  const carrier = mesh(root, "v3-dyers-west-canopy-carrier");
+  assert.equal(carrier.count, 1, "Dyers west requires its window-clearing receiver");
+  assert.equal(trestles.count + carrier.count, 12, "each of the six cloth spans needs support on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.equal(root.children.length, 66, "served-souk canopy families drifted from their deterministic batch budget");
+  assert.equal(root.children.length, 67, "canopy families, including the measured Dyers receiver, exceeded their batch budget");
 });
 
 test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
