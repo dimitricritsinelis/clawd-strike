@@ -2,9 +2,31 @@
 
 **Revision 3 / proposed / 2026-09-04. Design review only. No implementation approval.**
 
-Open the revised 56-page A3 [design atlas](design-atlas.pdf), then [spatial and building schedules](buildings.md), [asset assignments](assets.md) and [reference register](references.md). The independent [design-review.md](design-review.md) remains intact. This revision answers its findings; it does not adopt every recommendation.
+Open the revised 56-page A3 [design atlas](design-atlas.pdf), then the relevant [spatial and building schedules](buildings.md), [asset assignments](assets.md) and [reference register](references.md). The [pre-Revision-3 review](design-review.md) is historical evidence, not a required implementation read. This revision answers its findings; it does not adopt every recommendation.
 
 ![Primary artistic authority: founding Bazaar street](../refs/bazaar_main_hall_reference.png)
+
+## Current build brief and reading order
+
+**Handoff updated 2026-09-04.** The user selected the existing Three.js game, current survival gameplay, and their M3 Pro / 18 GB MacBook Pro as the benchmark. Documentation cleanup does not start map production, approve the proposed designs, or establish runtime verification. A later explicit implementation instruction supplies production authorization; do not ask again for scope that instruction already grants.
+
+Read `AGENTS.md`, this handoff, the [quality bar](../quality-bar.md), and the [map-polish skill](../../../.claude/skills/map-polish/SKILL.md) once. Review the atlas for overall composition, then read only the selected owner cards, assigned assemblies, reference images, and shared dependencies. Keep the historical review, archived roadmaps, short-term rollups, and copied instructions under `artifacts/` out of the implementation reading set unless specific evidence is needed.
+
+For this buildout, select **baseline A** and defer E1, G1, new connectors, and additional playable elevation. This closes the graybox choice while preserving the current gameplay contract; the optional comparisons below remain available only for a separately authorized gameplay task. Capture current baseline traversal, combat, and performance, then use **B18 / BLD_DYERS_ARCADE_E** as the first complete-building pilot.
+
+The intended implementation scope is the finite C/M/L proposals, including measured construction, material/UV-scale, attachment, lighting, and directly coupled shared visual-code corrections within the named owners. Reuse is the baseline, not a waiver of finish quality. Preserve the original booth locks, repaired structural assemblies, collision, cover, projectile/LOS behavior, traversal, source ownership, provenance, and performance budgets. No monolithic map export, new placement database, or speculative asset library is needed.
+
+Complete B18's exterior and adjacent street context; verify fit, traversal, combat readability, and performance before the user's visual approval. That approval establishes the quality direction for the authorized finite district rollout, without a new permission request for every asset. It does not approve the finished map: complete whole-map verification and present final visual evidence after rollout. Record each owner as implemented, retained and verified, or explicitly deferred; an unresolved dependency is not completed work.
+
+### Desktop performance target
+
+Use **60 FPS at a verified 1920 × 1080 drawing buffer** as the planning target on the M3 Pro / 18 GB MacBook Pro. Use hardware-accelerated Chrome and record its version, power state, viewport, device pixel ratio, drawing-buffer dimensions, antialiasing, graphics profile, and actual scenario/seed when available. Hold these conditions constant for before/after comparisons. CSS viewport size is not drawing-buffer resolution; the existing desktop renderer caps pixel ratio at 1.10. Keep resolution an explicit calibration setting and report native Retina performance separately.
+
+After warmup, sample at least 90 seconds of early-wave combat and 90 seconds at wave 7/tier 3, with route movement, reloads, and reversals. Report sustained FPS, frame intervals including p50/p95/p99, first-load hitches, and available memory/GPU measurements alongside the existing draw, triangle, CPU, and regression limits. Label unavailable measurements; CPU timing is not GPU timing. Use fresh baselines, investigate repeatable hitches, and retain mobile-profile regression checks without claiming physical-phone certification. This paragraph is a target and measurement protocol, not a measured pass or a renderer change.
+
+## Revision 3 design record
+
+The sections below preserve the proposal, alternatives, and design-review evidence. The current build brief above resolves this buildout's sequencing; the proposal itself does not grant implementation approval.
 
 ## Concrete revision
 

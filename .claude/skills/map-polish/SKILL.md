@@ -5,11 +5,11 @@ description: Improve a bounded Bazaar building or shared render part using playe
 
 # Map Polish
 
-Read `AGENTS.md` and `docs/map-design/quality-bar.md` once. Shipped CS2 quality is the visual target. The current task defines the work, not an endless map-wide polish pass.
+Read `AGENTS.md`, the current handoff in `docs/map-design/development-plan/README.md`, and `docs/map-design/quality-bar.md` once. Read only the selected building cards and asset assignments as dependencies arise. Shipped CS2 quality is the visual target; the current task defines the finite work.
 
 ## Scope
 
-One writer per checkout. Spec edits, part edits, generation, and captures are serial: every capture regenerates from the live spec. Start with `git status --short`; preserve existing work.
+One writer per checkout. Independent workers may review read-only or author assets in isolated directories outside the checkout; the lead integrates their deliverables serially. Spec edits, part edits, generation, and captures are serial: every capture regenerates from the live spec. Pause background builds and Blender renders during performance measurements. Start with `git status --short`; preserve existing work.
 
 Work on one building or shared defect at a time. Use the owner's target; otherwise `pnpm map:shoot random` selects an initial unit. For unattended goals, use a finite ordered list of targets, not repeated random selection. Do not revisit completed work without new evidence or a request.
 
@@ -20,8 +20,8 @@ Before propagating a new building type or shared kit, finish one representative 
 ## The loop
 
 1. **Capture and inspect.** `pnpm map:shoot <unit> --tag <task>-01-before`. Use a unique tag per attempt; preserve earlier snapshots. Read `plan.png`, `primary`, `context`, and the target `elev:*`; add an oblique view for depth/material work. Open one relevant daylight reference from the quality bar once per task. Use `--views` for focused experiments after establishing context; the after shoot must include the same views.
-2. **Name the defect and finish line.** One sentence each, with visible criteria. Judge building identity and composition before assemblies or texture. Start from the printed building brief and `walls[]` schedule, but check them against the plan, module dimensions, and render. Schedules can be wrong. Correct a contradictory schedule with the reason in its note; do not decorate around a broken shared part.
-3. **Implement the complete fix.** Edit `docs/map-design/specs/map_spec.json` or the owning render code under `apps/client/src/runtime/map/`. Inspect the active implementation and callers. The before shoot saves the spec; copy each code file into that before directory before editing. Edit JSON locally, not by reserialising the file. Preserve `servedBayId` bindings and all placement `anchorIds`.
+2. **Name the defect and finish line.** One sentence each, with visible criteria. Judge building identity and composition before assemblies or texture. Start from the approved building card; check the printed brief and `walls[]` schedule against that card, module dimensions, and render. Schedules can be wrong. Correct a contradictory schedule with the reason in its note; do not decorate around a broken shared part.
+3. **Implement the complete fix.** Edit the owning Blender source/export, `docs/map-design/specs/map_spec.json`, or the owning render code under `apps/client/src/runtime/map/` as the approved outcome requires. Inspect the active implementation and callers. The before shoot saves the spec; snapshot each other file before editing, including binary art sources. Edit JSON locally, not by reserialising the file. Preserve `servedBayId` bindings and all placement `anchorIds`. Verify Blender exports through the actual model loader: its bounds recentering can move an authored mounting pivot. Keep the original booth locked as specified in `assets.md`.
 4. **Check and compare.** Run `pnpm map:check`; for code changes, also `pnpm typecheck` and the smallest relevant existing runtime check. Run `pnpm map:shoot <unit> --tag <task>-01-after`. Capture validity and runtime collider comparison must pass. Inspect all changed views and compare the target pair and neighbours. Pixel change locates effects; it does not score quality. Review performance below.
 5. **Keep or restore.** Keep only if the named defect is resolved, the affected assembly meets the quality bar, and safety/performance evidence supports it. Otherwise restore only this attempt's files from its immediate before snapshots and regenerate. Never restore an old task's full spec over later kept work. After two attempts without clear gain, reassess the owning layer; continue only with a different evidence-backed approach. Report required missing assets, authority changes, or unavailable measurements as unresolved dependencies.
 6. **Finish the bounded task.** Complete the requested list, then stop. Report accepted, reverted, or incomplete outcomes, before/after paths, checks, performance deltas, and dependencies. Do not commit. The owner reviews and commits.
@@ -54,6 +54,6 @@ Shoots retain per-view draws, triangles, and CPU frame time. Compare identical p
 
 ## Goal mode and task boundaries
 
-Keep related iterations in one task to retain module knowledge and failed attempts. Start fresh for a new building batch, unrelated shared part, or context dominated by obsolete experiments. Do not create a task per edit, automatically fork workers, or build a scheduler. Carry the target list, kept changes, evidence paths, and unresolved dependencies; the spec and worktree remain authoritative.
+Keep related iterations and an authorized finite rollout in one task to retain module knowledge and failed attempts. If the user starts a new task, carry the target list, kept changes, evidence paths, and unresolved dependencies. Independent review may support pilot and final gates; it does not replace the user's visual acceptance. Do not create a task per edit or build a scheduler. The spec and worktree remain authoritative.
 
 Example goal: "Resolve the corner-door defect on BLD_LINK_WALL_NE as a coherent compound-wall facade. Verify matching elevation and oblique views, unchanged gameplay, clear traversal, and performance within budget without a repeatable frame-time regression. Follow map-polish; preserve unrelated work; do not commit. Report required missing parts as incomplete; do not expand to the whole map."

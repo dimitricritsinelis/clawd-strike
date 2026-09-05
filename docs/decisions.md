@@ -21,7 +21,7 @@ Last updated: 2026-09-04
 ## DEC-003: Map authority and runtime generation
 - Map geometry authority is `docs/map-design/specs/map_spec.json`; the detailed birdseye and top-down layout are derived reference evidence.
 - `docs/map-design/shots.json` owns the authored fixed signoff-shot contract. The per-unit review poses used by `pnpm map:shoot` are derived from the spec and do not enter that inventory.
-- Map-design authority lives in structured files and approved refs, not prose packet docs.
+- The source spec owns implemented map state. Approved building cards and references guide intended design; translate their decisions into the owning source records. Generated views and unapproved proposals cannot replace either authority.
 - Runtime map data must be regenerated with `pnpm --filter @clawd-strike/client gen:maps`.
 - Do not hand-maintain drift in `apps/client/public/maps/`.
 
@@ -63,10 +63,10 @@ Last updated: 2026-09-04
 - The sitewide shared record is exposed separately as `sharedChampion`, shown on the loading screen and runtime score surfaces, and overwritten only by a strictly higher score.
 - The shared record stores holder name, score, mode, and timestamp, but it is not a multi-entry leaderboard.
 
-## DEC-011: Direct champion writes are internal-only
+## DEC-011: Direct champion writes are retired
 - `GET /api/high-score` remains public and read-only, but browser clients may no longer write arbitrary champion scores directly.
 - Public champion submissions now use a server-issued run token plus a server-side validator over run summary stats before any overwrite attempt.
-- Public run submissions stay enabled by default once the validated run-token flow exists; `SHARED_CHAMPION_ENABLE_PUBLIC_RUNS=false` is an emergency kill switch, and direct `POST /api/high-score` remains internal admin-only behind a secret.
+- Public run submissions stay enabled by default through `/api/run/start` and `/api/run/finish`; `SHARED_CHAMPION_ENABLE_PUBLIC_RUNS=false` is an emergency kill switch. Direct `POST /api/high-score` writes are retired, including the former admin-secret bypass. Admin stats access does not authorize champion writes.
 
 ## DEC-012: Validated run history is private server-side data
 - Every accepted validated run is persisted as a first-class server-side run record rather than only as audit JSON or the single shared champion row.

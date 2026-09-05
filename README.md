@@ -3,7 +3,7 @@ Authority: context
 Read when: tooling, docs
 Owns: quick start, basic command entry points, high-level repo map
 Do not use for: workflow policy, current task status, durable decisions, public contract rules
-Last updated: 2026-03-10
+Last updated: 2026-09-04
 
 # Clawd Strike
 
@@ -42,7 +42,23 @@ pnpm reconcile:shared-champion -- --help
 pnpm stats:admin -- --help
 ```
 
-Use the canonical playtest URL from the current short-term memory snapshot.
+For local playtests, use the URL printed by the freshly started dev or QA server. Confirm the loaded map and source identity before comparing captures or performance. URLs and pass results in short-term memory or old reports describe their recorded run, not the current server.
+
+## Documentation map
+
+Read the owner of the task, not every Markdown file in the repository.
+
+| Work | Start here |
+|---|---|
+| Repository safeguards | [AGENTS.md](AGENTS.md) |
+| Bazaar design and Blender buildout | [Development plan](docs/map-design/development-plan/README.md), which routes to the quality bar, implementation skill, and selected cards |
+| Gameplay balance | [Gameplay balancing](docs/gameplay-balancing.md) |
+| Public browser-agent behavior | [Canonical public contract](apps/client/public/skills.md); runnable learning work belongs in the companion SDK named there |
+| Security and high-score submission | [Security reference](docs/security.md) and the owning server code |
+| Durable decisions | [Decision log](docs/decisions.md) |
+| Active coordination, when needed | `pnpm stm -- show active`; historical rollups do not define the build queue |
+
+`docs/map-design/archive/`, the pre-Revision-3 design review, `artifacts/`, and build outputs preserve history or generated evidence. They are not startup instructions. Root copies of the public contract and SDK learning guides, and the one-entry refactor log, are retired; the canonical contract, exporter templates, and Git history retain their respective roles.
 
 ## Validation Ladder
 
@@ -118,7 +134,7 @@ Optional guard when the remote exists:
 pnpm export:agent-sdk -- --out ../clawd-strike-agent-sdk --expect-origin https://github.com/dimitricritsinelis/clawd-strike-agent-sdk
 ```
 
-The exporter manages the full public-safe SDK snapshot, including the mirrored `skills.md`, SDK code, learning runner, CI workflow, README, troubleshooting docs, and manifest.
+The exporter manages its public-safe SDK snapshot, including the mirrored `skills.md`, SDK code, learning runner, CI workflow, README, troubleshooting docs, and manifest. The bundled learning runtime is legacy and does not implement the full current public workflow; its [README](scripts/lib/agent-sdk-template/README.md#current-contract-gap) records that gap. A successful export or smoke check does not certify learning-contract conformance, and SDK migration is separate from map development.
 
 Compatibility alias: `pnpm export:agent-starter` still points at the same exporter for one release, but `agent-sdk` is the canonical name.
 

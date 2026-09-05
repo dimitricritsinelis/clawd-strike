@@ -35,6 +35,8 @@ These are holistic judgment lenses, not numeric gates. Symmetry is evidence of d
 
 A wall is part of a building before it is a facade. `buildings[]` in `map_spec.json` names every building on the map with a type, a storey count, and a one-line brief; every frontage carries a `buildingId`. Design the wall from the building, and judge it against the type. A face that needs more than one building is split into one frontage per building, so parapets step and entrances match its use. A house and a store row need different entrance counts. The brief, `walls[]` schedule, compiled layout, and rendered building must agree; a schedule is an authored proposal that can require correction, not proof of quality.
 
+The table below gives plausibility examples, not mandatory opening counts or a production checklist. Approved cards in the [development plan](development-plan/README.md) determine the actual composition. Do not add balconies, doors, domes, or niches, remove scheduled windows, or alter roof heights merely to match a type example. Construction quality and gameplay safeguards still apply.
+
 | Type | What it is | What the wall needs |
 |---|---|---|
 | shop | A trade at street level, living above | One door and one display recess or wide opening per shop, on the shop's own axis. Awning or shade under the string course, one sign. Upper windows aligned over the ground openings. Goods at the threshold, never in the lane. |

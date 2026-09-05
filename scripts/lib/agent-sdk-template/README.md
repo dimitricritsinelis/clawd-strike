@@ -1,65 +1,51 @@
 # Clawd Strike Agent SDK
 
-This repo is the public companion SDK for the browser-only Clawd Strike contract served at [{{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}]({{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}).
+This is the **legacy SDK snapshot produced by the game repo exporter**. The canonical public contract is served at [{{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}]({{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}); that contract wins when this snapshot differs.
 
-The main game repo exports this SDK snapshot. If the SDK and `/skills.md` ever disagree, follow the live contract.
+This snapshot supplies browser-control helpers and an older learning example. It does not implement the complete current `agentic-gameplay-v1` workflow. Updating that runtime is a separate SDK task, not a prerequisite for Three.js map or Blender asset work.
 
-## What this SDK supports
+## What this snapshot implements
 
-- Enter Agent mode through the documented public selectors.
-- Play repeated runs with a persistent browser profile.
-- Preserve local browser-session `score.best` while the same tab or browser session stays alive.
-- Store durable external memory across attempts.
-- Promote better policies over worse ones with deterministic batch evaluation.
-- Keep trying to beat `score.best` without using hidden state, map coordinates, or aimbot logic.
+- Enter Agent mode through public selectors or the documented autostart URL.
+- Read documented public state, send actions, and restart after death.
+- Run fixed-policy attempts or the legacy `agent:self-improve` loop.
+- Save episodic logs, champion parameters, candidate summaries, and semantic notes.
+- Use a persistent browser profile during the learning loop. `score.best` remains browser-session scoped; a saved profile does not guarantee it survives a new browser session.
 
-## Honest limits
+Policy mutations are seeded. This does not give the runner access to game seeds or make separate gameplay attempts identical.
 
-- `score.best` stays browser-session scoped. Keep the same tab alive, or keep one persistent browser context/profile open while iterating.
-- Durable self-improvement also requires a writable filesystem for artifacts like `episodes.jsonl`, `champion-policy.json`, and `semantic-memory.json`.
-- The controller is intentionally public-safe and not overpowered. It only uses the documented browser payload plus optional public `feedback`.
-- If the page is fully throttled or the browser is restarted into a fresh session, local progress can reset even if exported memory files remain.
+## Current contract gap
 
-## Minimum target
+The canonical contract requires `contract:check`, `agent:learn`, explicit run configuration and budgets, the `bootstrap_hit` / `bootstrap_kill` / `stabilize_score` phases, and immutable candidate history. This snapshot has no `contract:check` or `agent:learn` script and no equivalent phase-aware promotion gate.
 
-The first milestone is practical, not magical:
+Its older comparator can promote a zero-kill, zero-hit policy for longer survival. Such a promotion is not valid first-hit or first-kill evidence under the current contract. Candidate summary files are written by policy ID and can be replaced if an ID is reused; do not describe them as an immutable audit trail. A smoke pass proves only the checks the smoke script runs, not full workflow conformance.
 
-- reach at least `1` kill within `5` completed attempts
+For current benchmark work, use a companion SDK revision that implements the live contract and verify its commands before running. Do not rename this snapshot's scripts or claim conformance through documentation alone.
 
-After that, the runner optimizes for kills, score, survival time, and accuracy.
+## Inspect the legacy snapshot
 
-## Quick start
+Run these commands inside the exported SDK directory:
 
 ```bash
 pnpm install
 pnpm exec playwright install --with-deps chromium
 pnpm smoke:no-context
-pnpm agent:self-improve
+pnpm agent:baseline
 ```
 
-Useful environment overrides:
+`agent:baseline` defaults to five completed attempts and prints its results to stdout. It does not write the canonical one-attempt baseline artifact.
 
-```bash
-BASE_URL={{PUBLIC_AGENT_CANONICAL_HOST}} \
-HEADLESS=false \
-STATE_ROOT=output/self-improving-runner \
-USER_DATA_DIR=output/self-improving-runner/browser-profile \
-pnpm agent:self-improve
-```
+The optional legacy learning example is `pnpm agent:self-improve`. It accepts `BASE_URL`, `HEADLESS`, `STATE_ROOT`, `USER_DATA_DIR`, `BATCH_SIZE`, `MAX_BATCHES`, `MAX_STEPS_PER_EPISODE`, `STEP_MS`, `AGENT_NAME`, and `SEED` environment overrides. `MAX_BATCHES=0` means unlimited candidate batches. A positive value limits candidate batches, not wall-clock time; timed-out attempts are retried until a batch has enough completed deaths.
 
-## Included workflows
+## Saved artifacts
 
-- `pnpm smoke:no-context`: public contract smoke using a non-persistent browser.
-- `pnpm agent:baseline`: fixed-parameter repeated runs for manual inspection.
-- `pnpm agent:self-improve`: persistent-profile learning loop with file-backed memory and champion promotion.
+The legacy learning example uses `output/self-improving-runner/` by default:
 
-## Artifact layout
+- `episodes.jsonl`: appended episode records.
+- `champion-policy.json`: the legacy comparator's selected policy.
+- `semantic-memory.json`: recent mutation notes.
+- `hall-of-fame.json`: retained policy records.
+- `latest-session-summary.json`: the latest written session summary.
+- `candidate-summaries/*.json`: summaries keyed by candidate ID, subject to replacement on ID reuse.
 
-- `episodes.jsonl`: append-only episodic memory
-- `champion-policy.json`: current promoted policy
-- `semantic-memory.json`: durable lessons extracted from experiments
-- `hall-of-fame.json`: a small pool of strong historical policies
-- `latest-session-summary.json`: last runner session summary
-- `candidate-summaries/*.json`: per-candidate batch summaries
-
-The SDK keeps all of those files under `output/self-improving-runner/` by default.
+Review [the playbook](docs/PLAYBOOK.md), [implemented tuning parameters](docs/TUNING_GUIDE.md), and [troubleshooting](docs/troubleshooting.md). Saved files prove persistence only to the extent their actual contents and identity history support it; they do not certify canonical learning or map quality.

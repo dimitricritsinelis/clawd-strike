@@ -2,7 +2,7 @@ Audience: human, implementation-agent
 Authority: status
 Read when: map, visuals, ai, gameplay, ui, public-contract, perf, tooling, docs
 Owns: repo-wide short-lived coordination state, active task claims, current blockers, recent completed outcomes
-Do not use for: workflow policy, durable rationale, archive history, product truth already owned by specs/contracts
+Do not use for: workflow policy, durable rationale, archive history, current server discovery, product truth already owned by specs/contracts
 Schema version: stm-v2
 Canonical playtest URL: http://127.0.0.1:4174/?map=bazaar-map
 Map approval status: NOT APPROVED
@@ -16,7 +16,7 @@ Last compacted: 2026-07-25T15:52:29Z
 <!-- GENERATED END: active-snapshot -->
 
 ## Shared Ephemera
-- none
+- Historical URL and rollup results are not current build evidence; use the live dev/QA server and current development plan.
 
 ## Task Cards
 

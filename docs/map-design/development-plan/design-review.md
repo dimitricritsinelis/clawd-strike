@@ -1,5 +1,7 @@
 # Bazaar design review before Blender production
 
+> **Historical review of the pre-Revision-3 atlas. Not current implementation instructions.** The verdict, 57-page count, and observations below describe the earlier design snapshot. The current [development plan](README.md) records Revision 3's responses and the current handoff. Preserve this review as evidence; do not reopen superseded findings or treat its hold as a new approval requirement. Its original text remains below so existing atlas references stay valid.
+
 **Review date:** 2026-09-04. **Status:** recommendations, not design approval or implemented changes.
 
 ## Readiness verdict

@@ -10,9 +10,11 @@ Last updated: 2026-09-04
 ## Map development
 
 - Before designing or placing map assets, read [the development plan](docs/map-design/development-plan/README.md), then the relevant building card and asset assignments.
+- Follow the plan's reading order. Load only the named owners and dependencies; do not read every Markdown file as implementation instructions. Archives, `artifacts/`, build outputs, and copied instruction snapshots are historical or generated evidence, read only when the task names them or a specific verification needs them.
 - Approved designs guide implementation; `docs/map-design/specs/map_spec.json` owns implemented state. A proposed document is not approval.
 - The [map-design archive](docs/map-design/archive/README.md) preserves superseded designs and workflow evidence. Read it only for explicitly historical work; it does not guide current development.
 - Surface design conflicts instead of improvising. The plan's authority notes resolve older roadmap, schedule, and prose guidance; historical documents do not create development requirements. All safeguards below remain in force.
+- Minimize implementation complexity without reducing the approved visual scope or finish quality. Reuse and retained assets do not waive complete-building, traversal, or performance acceptance.
 
 ## Branch and worktree safety
 

@@ -1,31 +1,35 @@
 # Troubleshooting
 
+This document covers the legacy exported snapshot. See [the README](../README.md#current-contract-gap) before interpreting its results as current-contract evidence.
+
+## `agent:learn` or `contract:check` is missing
+
+Those commands are required by the canonical public contract but are absent from this snapshot. Its learning command is `pnpm agent:self-improve`, with different behavior. Use a compatible companion SDK revision for current benchmark work; an alias or renamed command does not add phase-aware learning, immutable history, or budget enforcement.
+
 ## `score.best` keeps resetting
 
-- Keep the same browser tab alive.
-- Use `launchPersistentBrowser(...)` with a stable `USER_DATA_DIR`.
-- Do not expect `score.best` to survive a brand new browser session; it is browser-session scoped by contract.
+- Keep the same browser tab/session alive.
+- `launchPersistentBrowser(...)` accepts a stable `USER_DATA_DIR`, but a saved profile does not guarantee browser-session score persistence after restart.
+- Use saved episode and summary files for durable experiment history; do not infer that a local score proves it survived every restart.
 
-## The runner is not learning across attempts
+## Saved state or candidate history is missing
 
-- Confirm `STATE_ROOT` points to a writable directory.
-- Confirm `episodes.jsonl`, `champion-policy.json`, and `semantic-memory.json` are being updated.
-- Do not delete the browser profile or state root between attempts.
+- Check `STATE_ROOT`, file permissions, and the actual `episodes.jsonl`, `champion-policy.json`, and `latest-session-summary.json` contents.
+- Do not delete the browser profile or state directory as a troubleshooting shortcut.
+- Candidate summaries are named by policy ID and may overwrite an earlier summary with the same ID. Do not claim immutable history from this writer.
 
-## `feedback` is missing
+## `feedback` is absent
 
-- The SDK treats `feedback` as optional.
-- The adaptive controller still works by falling back to `health`, `ammo`, `score`, and `lastRunSummary`.
+The controller tolerates missing feedback and continues its fixed movement, firing, and ammo-based reload behavior. Its panic reaction uses new `damage-taken` events; it does not infer equivalent damage reactions from health deltas. Missing feedback therefore removes that adaptation.
 
-## The browser appears stalled in a background tab
+## A batch runs longer than expected
 
-- Hidden tabs may be throttled.
-- Increase `STEP_MS` instead of spamming tiny delays.
-- Keep using `advanceTime` through the SDK helper when available.
+`MAX_BATCHES` limits candidate batches; zero means unlimited. `MAX_STEPS_PER_EPISODE` limits one attempt, but an incomplete attempt is retried until the batch contains enough completed deaths. Increasing that value is not a fix for a missing session deadline. Inspect progress and stop the process when the intended experiment budget is reached; canonical budget handling requires a compatible runner.
 
-## The agent still cannot reach the first kill
+## The browser stalls in a hidden tab
 
-- Review the last five completed episodes, not just the latest run.
-- Check whether reloads are happening too late or sweeps are too wide.
-- Reduce mutation scope so candidates differ in only `1-2` parameters.
+Hidden tabs may be throttled. The SDK helper uses `advanceTime` when available and otherwise waits. A single `STEP_MS` applies to the legacy loop; it does not automatically switch between visible and hidden cadences. Record the tab state and cadence, and do not interpret coarse stepping as real-time performance evidence.
 
+## The selected policy still has no hits or kills
+
+Review completed attempts and public hit/kill evidence. The legacy comparator can select longer survival without acquisition progress. Record that limitation instead of calling the selection a canonical bootstrap success. Any SDK runtime migration is separate from map or Blender asset development.

@@ -13,6 +13,8 @@
 - **Performance acceptance:** use the current `apps/client/scripts/lib/performanceAcceptance.mjs` budgets and map-polish matching-pose comparison. Asset targets do not override whole-view draw/triangle/CPU limits. One new booth adds up to 38,820 model triangles before suppression, so measure its actual net cost. No performance or clearance pass is claimed by this plan.
 - **Gameplay:** retain all colliders, anchor bindings, cover silhouettes, traversable surfaces, route cuts and existing sightline envelopes. New render-only elements must fit outside the entire traversed body volume. Being below the camera or above a nominal 2.45 m plane is insufficient, especially on stairs/ramps. No external collision proxies or new route obstructions are part of this asset batch.
 
+Retention is the production baseline, not a waiver of visual quality. When the implementation task authorizes the [current build brief](README.md#current-build-brief-and-reading-order), measured UV/material-scale corrections, support and junction repairs, and directly coupled visual-code fixes may improve named owners. Retention language below does not prohibit those corrections. Verify other callers of shared code; do not create another asset family or rebuild retained assets merely because they appear in the inventory. Exact booth locks, repaired structural assemblies, gameplay behavior, source transform ownership, explicit placement locks, deterministic membership, provenance, and performance budgets remain in force. Escalate a measured incompatibility instead of claiming a partial result meets the approved quality bar.
+
 ## Complete assemblies
 
 <a id="asmb_shutter_window"></a>
@@ -136,7 +138,7 @@ For each existing exposed face: one quiet field, existing grounded base, existin
 <a id="asmb_ground_finish"></a>
 ### ASMB_GROUND_FINISH
 
-**Reuse** existing floor materials, floor wear/sand/debris systems and authored surface profiles. Exactly 25 zone schedules, one per P card. Canonical footprint and grade come from `traversal_surfaces`; identity scale, no displacement or new curb. Pilot LINK_EAST_MID for flush material transitions; stair/ramp exceptions use their exact existing grade and tread count. Retain cover/contact wear beneath current props; no new floating rugs or raised drain grates. Ground dirt stays visually flat at edges without building a body-intersecting mound. Match existing texture world scale; no new shader, atlas or geometry. Suppress only duplicated finish on a shared border, never either supporting traversal surface. No new variants.
+**Reuse** existing floor materials, floor wear/sand/debris systems and authored surface profiles. Exactly 25 zone schedules, one per P card. Canonical footprint and grade come from `traversal_surfaces`; identity scale, no displacement or new curb. Pilot LINK_EAST_MID for flush material transitions; stair/ramp exceptions use their exact existing grade and tread count. Retain cover/contact wear beneath current props; no new floating rugs or raised drain grates. Ground dirt stays visually flat at edges without building a body-intersecting mound. Use a coherent measured texture world scale, correcting UV scale where player-distance review shows a mismatch. Reuse existing shaders and atlases; preserve floor geometry and grades. Suppress only duplicated finish on a shared border, never either supporting traversal surface. No new variants.
 
 ### Existing bay awnings and packing kiosks
 
