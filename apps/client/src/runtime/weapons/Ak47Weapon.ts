@@ -63,7 +63,8 @@ export class Ak47Weapon {
   onDryFire: (() => void) | null = null;
 
   // Buff modifiers
-  private unlimitedAmmo = false;
+  /** Bottomless Mag: magazines still empty and reload, but reloads do not drain reserve. */
+  private freeReloads = false;
   private reloadSpeedMultiplier = 1.0;
 
   // Dry-fire rate-limiting: only click once per trigger pull
@@ -91,12 +92,8 @@ export class Ak47Weapon {
     this.reloadQueued = true;
   }
 
-  setUnlimitedAmmo(unlimited: boolean): void {
-    this.unlimitedAmmo = unlimited;
-    if (unlimited) {
-      if (this.reloading) this.cancelReload(true);
-      this.mag = this.magazineCapacity;
-    }
+  setFreeReloads(enabled: boolean): void {
+    this.freeReloads = enabled;
   }
 
   setFireIntervalS(interval: number): void {
@@ -128,7 +125,7 @@ export class Ak47Weapon {
     this.reloadQueued = false;
     this.dryFireCooldownS = 0;
     this.wasFireHeld = false;
-    this.unlimitedAmmo = false;
+    this.freeReloads = false;
     this.reloadSpeedMultiplier = 1.0;
     this.fireController.reset();
   }
@@ -176,12 +173,12 @@ export class Ak47Weapon {
       return this.updateWithoutFiring(input);
     }
 
-    if (!this.unlimitedAmmo && wantsReload && this.mag < this.magazineCapacity && this.startReload()) {
+    if (wantsReload && this.mag < this.magazineCapacity && this.startReload()) {
       this.wasFireHeld = input.fireHeld;
       return this.updateWithoutFiring(input);
     }
 
-    if (!this.unlimitedAmmo && this.mag === 0 && this.reserve > 0 && this.startReload()) {
+    if (this.mag === 0 && this.startReload()) {
       this.wasFireHeld = input.fireHeld;
       return this.updateWithoutFiring(input);
     }
@@ -213,9 +210,9 @@ export class Ak47Weapon {
   ): Ak47FireUpdateResult {
     const fireResult = this.forwardToFireController(input, input.fireHeld, this.mag, onShot);
 
-    if (fireResult.shotsFired > 0 && !this.unlimitedAmmo) {
+    if (fireResult.shotsFired > 0) {
       this.mag = Math.max(0, this.mag - fireResult.shotsFired);
-      if (this.mag === 0 && this.reserve > 0) {
+      if (this.mag === 0) {
         this.startReload();
       }
     }
@@ -245,7 +242,8 @@ export class Ak47Weapon {
   }
 
   private startReload(): boolean {
-    if (this.reloading || this.reserve <= 0 || this.mag >= this.magazineCapacity) return false;
+    const hasAmmoToLoad = this.reserve > 0 || this.freeReloads;
+    if (this.reloading || !hasAmmoToLoad || this.mag >= this.magazineCapacity) return false;
 
     this.reloading = true;
     this.reloadTimerS = 0;
@@ -266,9 +264,9 @@ export class Ak47Weapon {
 
   private completeReload(): void {
     const needed = Math.max(0, this.magazineCapacity - this.mag);
-    const moved = Math.min(needed, this.reserve);
+    const moved = this.freeReloads ? needed : Math.min(needed, this.reserve);
     this.mag += moved;
-    this.reserve -= moved;
+    if (!this.freeReloads) this.reserve -= moved;
     this.reloading = false;
     this.reloadTimerS = 0;
   }

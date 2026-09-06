@@ -206,6 +206,7 @@ test("exposes the public agent contract before runtime boot", async ({ page }, t
   expect(state.ammo).toBeNull();
   expect("feedback" in state).toBe(true);
   expect(state.feedback ?? null).toBeNull();
+  expect(state.perception).toEqual({ visibleTargets: [], movementBlocked: false });
   expect(recorder.counts().errorCount).toBe(0);
 });
 
@@ -670,6 +671,7 @@ test("supports the documented no-context death and retry loop", async ({ page },
     if (!alive || gameOverVisible) {
       const deathLastRun = state.score?.lastRun ?? null;
       const deathLastRunSummary = state.lastRunSummary ?? null;
+      expect(state.perception).toEqual({ visibleTargets: [], movementBlocked: false });
       if (previousAlive) {
         deaths += 1;
         expect(deathLastRun).not.toBeNull();
@@ -707,6 +709,8 @@ test("supports the documented no-context death and retry loop", async ({ page },
       }, { timeout: 20_000 });
 
       const restartedState = await readDocumentedAgentState(page);
+      expect(restartedState.perception.movementBlocked).toBe(false);
+      expect(Array.isArray(restartedState.perception.visibleTargets)).toBe(true);
       expect(restartedState.health).toBe(100);
       expect(restartedState.score?.current).toBe(0);
       expect(restartedState.score?.lastRun ?? null).toBe(deathLastRun);

@@ -1,22 +1,28 @@
 # Bazaar design atlas
 
-**Revision 3 / proposed / 2026-09-04. Design review only. No implementation approval.**
+**Revision 3 design record / 2026-09-04. Build brief updated 2026-09-05.** The design record is reference; the build brief below and the map-polish skill govern the loop.
 
-Open the revised 56-page A3 [design atlas](design-atlas.pdf), then the relevant [spatial and building schedules](buildings.md), [asset assignments](assets.md) and [reference register](references.md). The [pre-Revision-3 review](design-review.md) is historical evidence, not a required implementation read. This revision answers its findings; it does not adopt every recommendation.
+Start with the current build brief below. Consult selected [building schedules](buildings.md), [asset assignments](assets.md), [references](references.md), and relevant [atlas](design-atlas.pdf) sheets as needed. The full 56-page atlas and [pre-Revision-3 review](design-review.md) are not mandatory startup reads for an ongoing rollout.
 
 ![Primary artistic authority: founding Bazaar street](../refs/bazaar_main_hall_reference.png)
 
-## Current build brief and reading order
+## Current build brief
 
-**Handoff updated 2026-09-04.** The user selected the existing Three.js game, current survival gameplay, and their M3 Pro / 18 GB MacBook Pro as the benchmark. Documentation cleanup does not start map production, approve the proposed designs, or establish runtime verification. A later explicit implementation instruction supplies production authorization; do not ask again for scope that instruction already grants.
+Codex runs [map-polish](../../../.claude/skills/map-polish/SKILL.md) unattended: an orchestrator (GPT-6 xhigh) shoots every unit, generates its target from that shot, ranks units worst-first, briefs parallel Blender builders (GPT-6 Astra medium) who compose one section GLB per zone from the kit of parts, integrates each package, shoots again, and keeps or reverts on a fresh judge's verdict ([map-critic](../../../.claude/skills/map-critic/SKILL.md)). Three cycles per unit; nothing ships worse than it started. Targets are `docs/map-design/targets/<unit>.png` (prompts in [targets.json](../targets/targets.json)). Everything below this brief is reference for a dimension or an owner, never a checklist. No building is frozen: locked means the protected domain checked by `pnpm map:check` plus the original textile booth files and placement. Gameplay decisions carried forward: baseline A; E1/G1, new connectors and additional playable elevation stay deferred to a graybox task the user starts.
 
-Read `AGENTS.md`, this handoff, the [quality bar](../quality-bar.md), and the [map-polish skill](../../../.claude/skills/map-polish/SKILL.md) once. Review the atlas for overall composition, then read only the selected owner cards, assigned assemblies, reference images, and shared dependencies. Keep the historical review, archived roadmaps, short-term rollups, and copied instructions under `artifacts/` out of the implementation reading set unless specific evidence is needed.
+### Progress
 
-For this buildout, select **baseline A** and defer E1, G1, new connectors, and additional playable elevation. This closes the graybox choice while preserving the current gameplay contract; the optional comparisons below remain available only for a separately authorized gameplay task. Capture current baseline traversal, combat, and performance, then use **B18 / BLD_DYERS_ARCADE_E** as the first complete-building pilot.
+One row per unit, written by the run. `queued <score>` is the ranked backlog (5 = furthest from target); `win` means the after render beat the before with no blockers and was kept; `open` means three cycles without a win, kept at its best state; `reverted` means every cycle lost and the unit is unchanged. Gaps the run did not fix stay in the last column for a later pass.
 
-The intended implementation scope is the finite C/M/L proposals, including measured construction, material/UV-scale, attachment, lighting, and directly coupled shared visual-code corrections within the named owners. Reuse is the baseline, not a waiver of finish quality. Preserve the original booth locks, repaired structural assemblies, collision, cover, projectile/LOS behavior, traversal, source ownership, provenance, and performance budgets. No monolithic map export, new placement database, or speculative asset library is needed.
-
-Complete B18's exterior and adjacent street context; verify fit, traversal, combat readability, and performance before the user's visual approval. That approval establishes the quality direction for the authorized finite district rollout, without a new permission request for every asset. It does not approve the finished map: complete whole-map verification and present final visual evidence after rollout. Record each owner as implemented, retained and verified, or explicitly deferred; an unresolved dependency is not completed work.
+| Unit | Cycles | Result | Remaining gap |
+|---|---|---|---|
+| unit-spawn-a-courtyard | 3 | open | After picked all rounds; repeating masonry/sharp trim, sparse dressing/striped awning, gray doorway and floating display lids remain. Guard/colliders/typecheck pass; 660 draws / 1,601,232 tris / 6.2 ms. Intermittent capture readiness hash failure; protected bootstrap fix reverted. Kit deletion deferred. |
+| unit-spice-street | 3 | open | Final critic preferred before; target remains far: sparse market frontage and insufficient material wear. Detached rug/barrel/crate cluster persists; relocation conflicts with protected authored exemptions. Guard and paired colliders pass; 626 draws / 1,490,576 tris / 6.2 ms. Kit deletion deferred. |
+| unit-fountain-court | 3 | open | After wins, target far; repeated pale masonry and identical plaster scars lack integrated wear; palm remains crude. No blockers. Side-wall slivers fixed; regression 1/1, protected guard and collider equality pass; 552 draws / 1,405,712 tris / 5.6ms. Kit deletion deferred. |
+| unit-textile-arcade | 3 | open | After preferred, target far. Repeated brown stock lacks patterned rugs/drapes; white trim and oversized plaster wear remain. Upper west shutter frame intersects stone pier. Guard passed; colliders unchanged; performance within budget. Kit deletion/lighting deferred. |
+| unit-rug-gate | 3 | open | After selected; still far: regular pale gate masonry, oversized paving, sparse left rug/awning/roof cloth. Blocker: west cart/crates in walking space. West display hidden by replacement face. Lighting and kit deletion deferred. Guard/colliders unchanged; 3/3 Rug Gate tests pass; 746 draws / 1,684,072 tris / 6.1 ms. |
+| unit-spawn-b-courtyard | 3 | open | After wins; far. Uniform masonry and repeated plaster wear remain; rigid awnings and identical pots lack target variety. Blocker: palm trunk ends in midair against upper wall. Lighting and kit deletion deferred. |
+| unit-service-south | 3 | open | After preferred; far from target, no blockers. Plaster needs cracked, mottled wear; bright trim needs warmer weathering. Kit deletion deferred. Final guard failed on unrelated `gameplayTuning.ts` and `gameplayTuning.test.ts` changes; preserved. Colliders unchanged; 656 draws / 1,662,936 tris / 6.3 ms CPU. |
 
 ### Desktop performance target
 

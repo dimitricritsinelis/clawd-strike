@@ -36,9 +36,10 @@ import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 import { buildDoorModels } from "./buildDoorModels";
+import { buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
 import { buildDecorativePalms } from "./buildDecorativePalms";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
-import { buildV3Architecture } from "./v3Architecture";
+import { buildV3Architecture, type V3ArchitectureBuildResult } from "./v3Architecture";
 import { planV3VisualWallSegments } from "./v3VisualWallSegments";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import { resolveWallShaderProfile } from "./wallShaderProfiles";
@@ -1148,6 +1149,8 @@ export type BlockoutBuildOptions = {
   anchors: RuntimeAnchorsSpec | null;
   wallDetails: BlockoutWallDetailOptions;
   doorModels: PropModelLibrary | null;
+  /** Authored facade GLBs referenced by frontages' facadeModelId. */
+  facadeModels?: PropModelLibrary | null;
 };
 
 export function usesV3AuthoredVisualWallOwnership(
@@ -2752,6 +2755,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
             .filter((anchor) => anchor.type === "shopfront_anchor" && anchor.servedBayId && anchor.frontageId)
             .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
         ),
+        sectionOwnedFaces: new Set((spec.sectionModels ?? []).flatMap((section) => section.faces.map((face) => `${section.zoneId}:${face}`))),
       })
     : buildWallDetailPlacements({
         segments: wallSegments,
@@ -3222,6 +3226,15 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       );
       root.add(doorRoot);
     }
+  }
+
+  const facadeModelPlacements = isV3 ? (wallDetailPlacements as V3ArchitectureBuildResult).facadeModelPlacements : [];
+  const packBinding = { wallMaterials: options.wallMaterials, quality: wallTextureQuality, seed: options.seed };
+  if (options.facadeModels && facadeModelPlacements.length > 0) {
+    root.add(buildFacadeModels(facadeModelPlacements, options.facadeModels, packBinding));
+  }
+  if (options.facadeModels && spec.sectionModels?.length) {
+    root.add(buildSectionModels(spec.sectionModels, options.facadeModels, packBinding));
   }
 
   const decorativePalms = buildDecorativePalms(options.anchors, options.seed, wallTextureQuality);

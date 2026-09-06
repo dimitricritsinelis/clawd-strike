@@ -1,0 +1,122 @@
+{
+  "source": "repo://assets/source/market-fixtures/build.py",
+  "license": "Project-Original",
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "685e2a249c5a16593448853a5d4359c3"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "9f330817f918cc4e4dcd1a634f931639"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "9f330817f918cc4e4dcd1a634f931639"
+    }
+  ],
+  "models": {
+    "shutter-louvered": {
+      "triangles": 1184,
+      "boundsM": [
+        [
+          -0.800000011920929,
+          0.800000011920929
+        ],
+        [
+          -0.23999999463558197,
+          0.0
+        ],
+        [
+          0.0,
+          1.6500000953674316
+        ]
+      ],
+      "md5": "b4a6b75ef75dac5ae4a8354bab29ff37"
+    },
+    "shutter-woven": {
+      "triangles": 1448,
+      "boundsM": [
+        [
+          -0.800000011920929,
+          0.800000011920929
+        ],
+        [
+          -0.23999999463558197,
+          0.0
+        ],
+        [
+          0.0,
+          1.6500000953674316
+        ]
+      ],
+      "md5": "9f5fd934b61e3ddb8fe8a7c8226efc79"
+    },
+    "spice-drawers": {
+      "triangles": 2944,
+      "boundsM": [
+        [
+          -0.8600000143051147,
+          0.8600000143051147
+        ],
+        [
+          -0.5,
+          0.0
+        ],
+        [
+          0.0,
+          1.7000000476837158
+        ]
+      ],
+      "md5": "0956875d2e8d7ab2ad002f33dea6ce3c"
+    },
+    "grain-balance": {
+      "triangles": 2648,
+      "boundsM": [
+        [
+          -0.8600000143051147,
+          0.8600000143051147
+        ],
+        [
+          -0.5,
+          -0.004999995231628418
+        ],
+        [
+          0.0,
+          1.6399998664855957
+        ]
+      ],
+      "md5": "9eb3f10887f89c63d3091f5b7297e622"
+    },
+    "apothecary": {
+      "triangles": 2872,
+      "boundsM": [
+        [
+          -0.8600000143051147,
+          0.8600000143051147
+        ],
+        [
+          -0.5,
+          0.0
+        ],
+        [
+          0.0,
+          1.7000000476837158
+        ]
+      ],
+      "md5": "76c283391188745b40fcec9d480aa8a8"
+    }
+  }
+}

@@ -1,23 +1,7 @@
 {
   "schemaVersion": 1,
   "waivers": [
-    {
-      "id": "CW-93F37E043C9D",
-      "kind": "canopy-opening",
-      "signature": "canopy-opening|anchorId=B6_LAUNDRY_TEXTILE_02|openingIds=ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_03",
-      "match": {
-        "anchorId": "B6_LAUNDRY_TEXTILE_02",
-        "openingIds": [
-          "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_03"
-        ]
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.5"
-      }
-    },
+
     {
       "id": "CW-CCAEF9D05D21",
       "kind": "canopy-opening",
@@ -35,23 +19,7 @@
         "legacyRef": "L3.5"
       }
     },
-    {
-      "id": "CW-198144AB6C34",
-      "kind": "canopy-opening",
-      "signature": "canopy-opening|anchorId=CANOPY_TEXTILE_01|openingIds=ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_02",
-      "match": {
-        "anchorId": "CANOPY_TEXTILE_01",
-        "openingIds": [
-          "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_02"
-        ]
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.5"
-      }
-    },
+
     {
       "id": "CW-1AD31D32494E",
       "kind": "canopy-opening",
@@ -84,21 +52,7 @@
         "legacyRef": "L3.3"
       }
     },
-    {
-      "id": "CW-19D31B5F7F42",
-      "kind": "decoration-opening",
-      "signature": "decoration-opening|placementId=PLACE_RUG_SIGNS_RUG_W_SIGN_2|openingId=ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_02",
-      "match": {
-        "placementId": "PLACE_RUG_SIGNS_RUG_W_SIGN_2",
-        "openingId": "ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_02"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.3"
-      }
-    },
+
     {
       "id": "CW-D8602E151B6B",
       "kind": "decoration-opening",

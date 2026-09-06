@@ -1429,6 +1429,11 @@
             "type": "string",
             "minLength": 1
           },
+          "facadeModelId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered facade GLB (facades/models.json) that owns this frontage's street face. The kit keeps the wall mass, roof edge and collision and drops its face modules. Superseded by zones[].sectionModelId, which owns every face of a zone."
+          },
           "layoutIntent": {
             "oneOf": [
               {
@@ -2298,6 +2303,18 @@
           "clearWidthM": {
             "type": "number",
             "exclusiveMinimum": 0
+          },
+          "sectionModelId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered section GLB (facades/models.json) that owns every visible face of this zone. Mounted at the rect's south-west corner on the zone floor; the kit keeps wall mass, roofs and collision and drops its face modules for the zone."
+          },
+          "sectionFaces": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "enum": ["north", "south", "east", "west"] },
+            "description": "Zone faces the section GLB owns (default all four). The kit keeps its face details on the other faces, so a builder can rework one wall without stripping the rest."
           }
         }
       }

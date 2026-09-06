@@ -1,4 +1,4 @@
-import type { BufferGeometry } from "three";
+import { BoxGeometry, Float32BufferAttribute, type BufferGeometry } from "three";
 import { mergeProceduralGeometry } from "./propsCore";
 import {
   APRON_FLAG,
@@ -462,42 +462,44 @@ function pushDyedCloth(parts: BufferGeometry[]): void {
   // sandstone and pulls the warmth out of the whole frame. So the yard is
   // drying a madder lot and a saffron lot, with one indigo piece left over.
   const cloths = [
-    { rail: 0, x: 0.15, width: 0.66, drop: 1.55, tone: DYE_MADDER, edge: DYE_MADDER_DEEP },
-    { rail: 0, x: 0.95, width: 0.5, drop: 2.05, tone: DYE_SAFFRON, edge: DYE_MADDER_DEEP },
-    { rail: 0, x: 1.62, width: 0.72, drop: 1.25, tone: DYE_MADDER, edge: DYE_MADDER_DEEP },
-    { rail: 0, x: 2.5, width: 0.58, drop: 1.85, tone: DYE_INDIGO, edge: DYE_INDIGO_DEEP },
-    { rail: 0, x: 3.28, width: 0.62, drop: 1.4, tone: DYE_SAFFRON, edge: DYE_MADDER_DEEP },
-    { rail: 1, x: 1.75, width: 0.54, drop: 0.95, tone: DYE_MADDER, edge: DYE_MADDER_DEEP },
-    { rail: 1, x: 2.62, width: 0.68, drop: 1.05, tone: DYE_SAFFRON, edge: DYE_MADDER_DEEP },
-    { rail: 1, x: 3.4, width: 0.46, drop: 0.8, tone: DYE_MADDER, edge: DYE_MADDER_DEEP },
+    { x: 0.35, width: 1.0, drop: 1.65, tone: DYE_SAFFRON },
+    { x: 1.34, width: 0.94, drop: 2.05, tone: DYE_MADDER },
+    { x: 2.29, width: 0.96, drop: 1.8, tone: DYE_TEAL },
+    { x: 3.28, width: 1.02, drop: 1.45, tone: DYE_SAFFRON },
   ] as const;
   for (const [index, cloth] of cloths.entries()) {
-    const rail = RAILS[cloth.rail]!;
-    const half = cloth.width * 0.5;
-    const bottom = Math.max(CLOTH_FLOOR_M, rail.y - cloth.drop);
-    const hangZ = rail.reachZ - 0.06 - (index % 3) * 0.05;
-    // Draped over the rail: a short return on the far side, so the cloth is
-    // hung rather than glued to a pole.
-    slab(parts, cloth.edge, cloth.x - half, cloth.x + half, rail.y - 0.02, rail.y + 0.15,
-      hangZ - 0.14, hangZ + 0.03);
-    slab(parts, cloth.tone, cloth.x - half, cloth.x + half, bottom, rail.y + 0.04,
-      hangZ, hangZ + 0.04);
-    // Selvedge bands and a weighted hem, plus one corner hanging lower.
-    slab(parts, cloth.edge, cloth.x - half, cloth.x + half, bottom, bottom + 0.1,
-      hangZ - 0.005, hangZ + 0.045);
-    slab(parts, cloth.edge, cloth.x - half, cloth.x - half + 0.05, bottom, rail.y,
-      hangZ - 0.005, hangZ + 0.045);
-    // Sagging corner, joined to the hem rather than hung below it: a panel
-    // authored clear of its own bottom edge reads as a detached fragment.
-    slab(parts, cloth.edge, cloth.x + half - 0.24, cloth.x + half, bottom - 0.14, bottom + 0.06,
-      hangZ - 0.005, hangZ + 0.045);
-    // Wet cloth is not flat: a couple of vertical folds catching light.
-    for (let fold = 0; fold < 2; fold += 1) {
-      const fx = cloth.x - half * 0.4 + fold * half * 0.8;
-      slab(parts, cloth.edge, fx - 0.03, fx + 0.03, bottom, rail.y,
-        hangZ + 0.04, hangZ + 0.06);
+    const rail = RAILS[0];
+    const geometry = new BoxGeometry(cloth.width, cloth.drop, 0.018, 24, 14, 1);
+    const positions = geometry.getAttribute("position");
+    const colors = new Float32Array(positions.count * 3);
+    for (let v = 0; v < positions.count; v += 1) {
+      const x = positions.getX(v);
+      const t = 0.5 - positions.getY(v) / cloth.drop;
+      const fold = Math.sin((x / cloth.width + 0.5) * Math.PI * 8 + index) * 0.055;
+      positions.setXYZ(v, cloth.x + x,
+        Math.max(CLOTH_FLOOR_M, rail.y - t * cloth.drop - Math.sin(Math.PI * (x / cloth.width + 0.5)) * 0.07 * t),
+        rail.reachZ + 0.035 + fold * Math.sin(t * Math.PI / 2) + positions.getZ(v));
+      colors.set(cloth.tone, v * 3);
     }
+    geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    geometry.computeVertexNormals();
+    parts.push(geometry);
   }
+  // The broad shade is carried by the existing wall brackets and front rail.
+  const shade = new BoxGeometry(4.05, 0.018, 1.03, 40, 1, 10);
+  const positions = shade.getAttribute("position");
+  const colors = new Float32Array(positions.count * 3);
+  for (let v = 0; v < positions.count; v += 1) {
+    const x = positions.getX(v);
+    const t = positions.getZ(v) / 1.03 + 0.5;
+    positions.setXYZ(v, 1.825 + x,
+      5.75 - 0.40 * t - 0.10 * Math.sin(t * Math.PI) + positions.getY(v),
+      0.52 + t * 1.03);
+    colors.set(Math.floor((x + 2.025) / 0.17) % 2 ? DYE_SAFFRON : [0.88, 0.73, 0.49], v * 3);
+  }
+  shade.setAttribute("color", new Float32BufferAttribute(colors, 3));
+  shade.computeVertexNormals();
+  parts.push(shade);
   // Skeins of dyed yarn hung directly on pegs on the wall, below the top rail.
   for (const [index, skein] of [
     { x: -0.05, y: 3.55, tone: DYE_INDIGO },

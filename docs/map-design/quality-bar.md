@@ -1,9 +1,9 @@
-Audience: implementation-agent
+Audience: map-critic (the blind judge); builders work from the target image instead
 Authority: visual quality contract
-Read when: map-visual or map-geometry work
+Read when: judging a critic brief (`artifacts/map-shoot/<unit>/<tag>-after/critic/brief.md`) or writing a target-image prompt
 Owns: Bazaar reference roles, finish criteria, and screenshot acceptance
 Do not use for: task status, iteration procedure, or historical scores
-Last updated: 2026-09-04
+Last updated: 2026-09-05
 
 # Bazaar Map Quality Bar
 

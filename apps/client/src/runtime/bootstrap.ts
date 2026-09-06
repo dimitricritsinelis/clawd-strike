@@ -37,6 +37,7 @@ import {
   createQaAssetPlan,
   preloadQaDirectTextures,
   qaDoorModelRequestId,
+  qaFacadeModelRequestId,
   qaFloorMaterialRequestId,
   qaPropModelRequestId,
   qaWallMaterialRequestId,
@@ -105,7 +106,7 @@ import {
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
 
-type ViewModelInstance = InstanceType<typeof import("./weapons/Ak47ViewModel")["Ak47ViewModel"]>;
+type ViewModelInstance = import("./weapons/Ak47AnimatedViewModel").WeaponViewModel;
 
 const OVERVIEW_VIEWMODEL_DISABLE_HEIGHT_M = 10;
 const PERF_SCENE_SAMPLE_INTERVAL_MS = 300;
@@ -115,6 +116,7 @@ const FLOOR_MANIFEST_URL = "/assets/textures/environment/bazaar/floors/bazaar_fl
 const WALL_MANIFEST_URL = "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
 const DOOR_MANIFEST_URL = "/assets/models/environment/bazaar/doors/models.json";
 const PROP_MANIFEST_URL = "/assets/models/environment/bazaar/props/models.json";
+const FACADE_MANIFEST_URL = "/assets/models/environment/bazaar/facades/models.json";
 const PBR_FLOORS_ENABLED = true;
 const PBR_WALLS_ENABLED = true;
 const MAP_PROPS_ENABLED = true;
@@ -886,6 +888,7 @@ export type PublicAgentObserveState = {
   sharedChampion: SharedChampion | null;
   lastRunSummary: PublicAgentRunSummary | null;
   feedback?: PublicAgentFeedback | null;
+  perception: ReturnType<Game["getPublicPerception"]>;
 };
 
 export type RuntimeHandle = {
@@ -1782,20 +1785,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   }
   const isLocalHostRuntime = isLocalhostHostname(window.location.hostname);
 
-  /**
-   * Manual-playtest assists: unlimited health and a boosted run speed, for a
-   * person poking at a local build by hand.
-   *
-   * These are OPT-IN (`?god=1`) and never apply otherwise. They used to switch
-   * themselves on for any localhost human run, which meant anything driving the
-   * game — an agent, an LLM, a Playwright spec, or a person who just forgot —
-   * was silently invincible and 50% faster than production. Every judgement
-   * made in that state about difficulty, damage, hit registration or movement
-   * feel was measuring a build no player will ever run.
-   *
-   * Also hard-off under automation, so a spec cannot re-enable them by passing
-   * the flag, and hard-off anywhere but localhost.
-   */
+  // Damage-free playtests are opt-in on localhost, including headless human
+  // and agent runs. Without the explicit flag, normal combat remains active.
   const isAutomatedRuntime = isAutomatedClient();
   // Local QA advances the simulation clock faster than wall time. Those
   // synthetic runs must not enter the competitive record pipeline: they would
@@ -1808,7 +1799,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     && !isAutomatedRuntime
     && runtimeParams.controlMode === "human"
     && runtimeParams.unlimitedHealthExplicit === true;
-  const effectiveUnlimitedHealth = manualPlaytestAssistsEnabled;
+  const effectiveUnlimitedHealth = isLocalHostRuntime && runtimeParams.unlimitedHealthExplicit === true;
   const warmupAssets = options.warmup ?? null;
   const warmupTimedOut = warmupAssets?.timedOut === true;
   const performanceSafeFallback = warmupTimedOut;
@@ -2138,6 +2129,34 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   }
 
+  // Authored facade GLBs referenced by frontages' facadeModelId. Loaded on every
+  // profile (mobile included): without them the owning wall shells render bare.
+  let facadeModels: PropModelLibrary | null = null;
+  const facadeModelIds = new Set([
+    ...(mapAssets?.blockout.architecturePlacements ?? []).flatMap((placement) =>
+      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []),
+    ...(mapAssets?.blockout.sectionModels ?? []).map((section) => section.modelId),
+  ]);
+  const qaFacadeRequestIds = qaAssetPlan?.facadeModelIds.map(qaFacadeModelRequestId) ?? [];
+  if (facadeModelIds.size > 0) {
+    try {
+      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.start(requestId);
+      facadeModels = await PropModelLibrary.load(FACADE_MANIFEST_URL, {
+        modelIds: facadeModelIds,
+        concurrency: 4,
+        ...(qaAssetTracker ? { requestObserver: qaAssetTracker.observer } : {}),
+      });
+      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.complete(requestId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (qaAssetTracker) {
+        for (const requestId of qaFacadeRequestIds) qaAssetTracker.fail(requestId, error);
+        throw new Error(`[qa-assets] facade model pack failed; capture is blocked: ${message}`);
+      }
+      appendWarning(`Failed to load authored facade models; their wall shells render bare.\n${message}`);
+    }
+  }
+
   let doorModels: PropModelLibrary | null = null;
   const qaDoorRequestIds = qaAssetPlan?.doorModelIds.map(qaDoorModelRequestId) ?? [];
   if (DOOR_MODELS_ENABLED && !mobile) {
@@ -2186,9 +2205,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   }
   if (viewModelEnabled && !viewModel) {
     try {
-      const { Ak47ViewModel } = await import("./weapons/Ak47ViewModel");
-      const nextViewModel = new Ak47ViewModel({
+      const { createAk47ViewModel } = await import("./weapons/Ak47AnimatedViewModel");
+      const nextViewModel = createAk47ViewModel({
         vmDebug: runtimeParams.vmDebug && runtimeParams.debug,
+        search: window.location.search,
       });
       nextViewModel.setAspect(renderer.getAspect());
       await nextViewModel.load();
@@ -2295,6 +2315,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     propVisuals: resolvedPropVisuals,
     propModels,
     doorModels,
+    facadeModels,
     freezeInput: inputFrozen,
     spawn: runtimeParams.spawn,
     debug: runtimeParams.debug,
@@ -2378,7 +2399,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     game.setPlayerSpeedMultiplier(1.0);
     game.setWeaponFireInterval(0.1);
     game.setWeaponReloadSpeed(1.0);
-    game.setWeaponUnlimitedAmmo(false);
+    game.setWeaponFreeReloads(false);
     game.setOvershield(0);
     buffVignette.clear();
   };
@@ -2400,7 +2421,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         game.setWeaponReloadSpeed(gameplayTuning.buffs.rapidReloadSpeedMultiplier);
         break;
       case "unlimited_ammo":
-        game.setWeaponUnlimitedAmmo(gameplayTuning.buffs.unlimitedAmmo);
+        game.setWeaponFreeReloads(gameplayTuning.buffs.freeReloads);
         break;
       case "health_boost":
         // Wave-start reapplication restores setter-based modifiers after the
@@ -2425,7 +2446,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         game.setWeaponReloadSpeed(1.0);
         break;
       case "unlimited_ammo":
-        game.setWeaponUnlimitedAmmo(false);
+        game.setWeaponFreeReloads(false);
         break;
       case "health_boost":
         game.setOvershield(0);
@@ -2571,6 +2592,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       lastCombatFeedbackMs = 0;
       lastKillFeedbackMs = 0;
       game.restartRun();
+      viewModel?.reset?.();
       clearAllBuffRuntimeState();
       // Per-wave headshot progress is run-scoped: without this a 10/10 wave in
       // the previous run grants a free Rallying Cry on the next run's wave 2.
@@ -2700,6 +2722,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   timerHud.setVisible(!overviewCameraAtBoot);
 
   if (viewModel) {
+    viewModel.setEnvironment?.(game.scene.environment);
     viewModel.updateFromMainCamera(game.camera, 0);
     const weaponDebug = viewModel.getAlignmentSnapshot();
     game.setWeaponDebugSnapshot(weaponDebug.loaded, weaponDebug.dot, weaponDebug.angleDeg);
@@ -3546,6 +3569,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         episodeId: feedbackEpisodeId,
         recentEvents: recentPublicFeedbackEvents.map((event) => ({ ...event })),
       },
+      perception: runtimeActive && mapLoaded ? game.getPublicPerception() : { visibleTargets: [], movementBlocked: false },
     };
   };
 
@@ -3600,6 +3624,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // Feed mobile touch input before game update
     if (touchInput) {
       touchInput.setCaptureEnabled(!simulationSuspended && !game.getIsDead());
+      swayMouseDeltaX += touchInput.lookDeltaX;
+      swayMouseDeltaY += touchInput.lookDeltaY;
       game.feedMobileInput({
         moveX: touchInput.moveX,
         moveZ: touchInput.moveZ,
@@ -3858,9 +3884,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
     if (renderFrame && viewModel) {
       viewModel.setFrameInput(speedMps, grounded, swayMouseDeltaX, swayMouseDeltaY);
+      viewModel.setAmmoState?.(game.getAmmoSnapshot());
       swayMouseDeltaX = 0;
       swayMouseDeltaY = 0;
-      viewModel.updateFromMainCamera(game.camera, dt);
+      viewModel.updateFromMainCamera(game.camera, simDt);
       const weaponDebug = viewModel.getAlignmentSnapshot();
       game.setWeaponDebugSnapshot(weaponDebug.loaded, weaponDebug.dot, weaponDebug.angleDeg);
     } else {
@@ -4167,6 +4194,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   };
   window.advanceTime = async (ms: number) => {
+    // Compatibility hook: this adds simulation time while the normal loop keeps
+    // running. Real-time SDK control must not call it.
     if (!runtimeActive) return;
     advanceSimulation(ms, {
       renderFrame: !deterministicQa && (runtimeParams.controlMode !== "agent" || document.visibilityState === "visible"),

@@ -1060,6 +1060,9 @@ export async function waitForRuntimeReady(page, options = {}) {
   let lastBootError = null;
   let consecutiveProbeTimeouts = 0;
   while (Date.now() - bootStartedAt <= timeoutMs) {
+    const launchFailure = consoleRecorderByPage.get(page)?.snapshot().find((event) =>
+      event.kind === "pageerror" || (event.type === "error" && event.text.startsWith("[runtime] launch failed")));
+    if (launchFailure) throw new Error(`[runtime-ready] ${launchFailure.text}`);
     try {
       lastBootState = await withTimeout(
         () => page.evaluate((shotId) => {

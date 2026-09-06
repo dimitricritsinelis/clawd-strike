@@ -10,6 +10,7 @@ import {
   hashQaAssetRequestIds,
   preloadQaDirectTextures,
   qaDirectTextureRequestId,
+  qaFacadeModelRequestId,
   resolveQaAssetProfile,
   resolveQaAssetTimeoutMs,
   type QaAssetPlan,
@@ -97,6 +98,7 @@ function trackerPlan(requestIds: readonly string[] = []): QaAssetPlan {
     wallMaterialIds: [],
     propModelIds: [],
     doorModelIds: [],
+    facadeModelIds: [],
     directTextureUrls: [],
     requiredLogicalRequestIds: requestIds,
     hash: hashQaAssetRequestIds("qa", requestIds),
@@ -219,6 +221,50 @@ test("QA door loading selects the 1K derivative while normal loading keeps the 2
     /if \(qaAssetTracker && qaAssetPlan\)[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL, \{[\s\S]*?quality: "1k",[\s\S]*?\}\);[\s\S]*?\} else \{[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL\)/,
     "QA must select the 1K door variant while normal loading keeps the manifest default",
   );
+});
+
+test("QA facade requests remain pending between prop and door packs until the GLB completes", async () => {
+  const map = fixtureMap();
+  map.blockout.architecturePlacements = [{
+    id: "massing", kind: "massing", frontageId: "frontage", zoneId: "A", face: "north",
+    profileId: "profile", massingProfileId: "mass", center: { x: 0, y: 0, z: 0 },
+    sizeM: { width: 4, depth: 2, height: 3 }, yawDeg: 0,
+    materialSlots: map.blockout.facadeProfiles![0]!.materialSlots,
+    roof: { style: "flat_parapet", setbackM: 0, parapetHeightM: 0.2, upperStorySetbackM: 0, elevationM: 3 },
+    facadeModelId: "spice-facade",
+  }];
+  const plan = createQaAssetPlan(map, "cell-review", {
+    floorPbr: false, wallPbr: false, wallDetails: false, bazaarProps: false, doorModels: true,
+  });
+  assert.deepEqual(plan.facadeModelIds, ["spice-facade"]);
+  const requestId = qaFacadeModelRequestId("spice-facade");
+  assert.ok(plan.requiredLogicalRequestIds.includes(requestId));
+  const tracker = new QaAssetReadinessTracker(plan, 20_000, () => 0, () => "stable");
+  let finishGlb!: () => void;
+  const loading = tracker.track(requestId, new Promise<void>((resolve) => { finishGlb = resolve; }));
+  // A poll after prior packs finish but before doors start must see the facade
+  // still pending, even when the manifest and all other requests have settled.
+  await Promise.resolve();
+  assert.deepEqual(tracker.state().pending, [requestId]);
+  assert.notEqual(tracker.state().observedPlanHash, plan.hash);
+  assert.equal(tracker.state().ready, false);
+  finishGlb();
+  await loading;
+  for (const id of plan.requiredLogicalRequestIds.filter((id) => id !== requestId)) {
+    tracker.start(id);
+    tracker.complete(id);
+  }
+  assert.deepEqual(tracker.state().pending, []);
+  assert.equal(tracker.state().observedPlanHash, plan.hash);
+
+  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  assert.match(bootstrapSource, /qaAssetPlan\?\.facadeModelIds\.map\(qaFacadeModelRequestId\)/);
+  assert.match(
+    bootstrapSource,
+    /for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\?\.start\(requestId\);\s*facadeModels = await PropModelLibrary\.load\(FACADE_MANIFEST_URL, \{[\s\S]*?requestObserver: qaAssetTracker\.observer[\s\S]*?\}\);\s*for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\?\.complete\(requestId\);/,
+    "the facade load must stay tracked across the entire awaited manifest and GLB load",
+  );
+  assert.match(bootstrapSource, /for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\.fail\(requestId, error\);/);
 });
 
 test("QA direct-texture inventory matches every static buildProps asset URL", () => {

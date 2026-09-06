@@ -15,14 +15,14 @@ test("buff effect text matches the shared gameplay baseline", () => {
   assert.deepEqual(copy.compactEffects, {
     speed_boost: "+20% Speed",
     rapid_fire: "0.08s Fire \u00B7 1.35\u00D7 Reload",
-    unlimited_ammo: "\u221E Ammo",
-    health_boost: "+50 Shield",
+    unlimited_ammo: "Free Reloads",
+    health_boost: "+30 Shield",
   });
   assert.deepEqual(copy.detailedEffects, {
     speed_boost: "+20% movement speed",
     rapid_fire: "0.08 s fire interval, 1.35\u00D7 reload speed",
-    unlimited_ammo: "Unlimited ammo, no reload needed",
-    health_boost: "+50 overshield (absorbs damage first)",
+    unlimited_ammo: "Reloads never drain reserve ammo",
+    health_boost: "+30 overshield (absorbs damage first)",
   });
   assert.equal(copy.standardDurationLabel, "10s");
   assert.equal(
@@ -40,7 +40,7 @@ test("buff copy follows a future profile tuning instead of retaining baseline nu
       speedMultiplier: 1.1,
       rapidFireIntervalS: 0.09,
       rapidReloadSpeedMultiplier: 1.2,
-      unlimitedAmmo: false,
+      freeReloads: false,
       shieldHealth: 25,
       perfectWave: { mode: "all-four" as const, durationS: 12 },
     },

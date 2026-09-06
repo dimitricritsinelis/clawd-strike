@@ -1,4 +1,4 @@
-import { Scene, Vector3 } from "three";
+import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { AK47_AUDIO_TUNING, type WeaponAudio } from "../audio/WeaponAudio";
 import type {
@@ -87,6 +87,10 @@ const SPAWN_ELEVATION_EPSILON_M = 0.05;
  * has its per-frame sight flag and age refreshed.
  */
 const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
+/** Idle bots face the strongest zone belief; below this they fall back to the node's exposure yaw. */
+const FOCUS_BELIEF_MIN = 0.16;
+/** A belief zone this close to the bot's own node gives no useful facing. */
+const FOCUS_BELIEF_MIN_DISTANCE_M = 6;
 
 const STATE_COMMIT_S: Record<EnemyState, number> = {
   HOLD: 1.0,
@@ -100,6 +104,12 @@ const STATE_COMMIT_S: Record<EnemyState, number> = {
 };
 
 export const ENEMIES_PER_WAVE = 10;
+
+export type VisibleTarget = {
+  id: string;
+  yawOffsetDeg: number;
+  pitchOffsetDeg: number;
+};
 
 const ENEMY_SPAWN_CONFIG = [
   { name: "Ghost", x: 4.75, z: 20 },
@@ -516,6 +526,71 @@ export class EnemyManager {
   private visuals: EnemyVisual[] = [];
   private nameplatesVisible = true;
   private visualsVisible = true;
+  private readonly publicTargetIds = new WeakMap<EnemyController, string>();
+  private nextPublicTargetId = 1;
+
+  getVisibleTargets(camera: PerspectiveCamera): VisibleTarget[] {
+    const world = this.worldCollidersRef;
+    if (!world || !this.visualsVisible) return [];
+    camera.updateMatrixWorld(true);
+    this.scene.updateMatrixWorld(true);
+    const meshes: Mesh[] = [];
+    this.scene.traverseVisible((object) => {
+      if (object instanceof Mesh && object.layers.test(camera.layers)) meshes.push(object);
+    });
+    const raycaster = new Raycaster();
+    raycaster.camera = camera;
+    raycaster.layers.mask = camera.layers.mask;
+    const point = new Vector3();
+    const projected = new Vector3();
+    const direction = new Vector3();
+    const forward = camera.getWorldDirection(new Vector3());
+    const cameraYaw = Math.atan2(-forward.x, -forward.z);
+    const cameraPitch = Math.atan2(forward.y, Math.hypot(forward.x, forward.z));
+    const scratch = createLineOfSightScratch();
+    const blockers = this.controllers.filter((controller) => !controller.isDead()).map((controller) => controller.getAabb());
+    const targets: VisibleTarget[] = [];
+    for (let index = 0; index < this.controllers.length; index += 1) {
+      const controller = this.controllers[index]!;
+      const visual = this.visuals[index];
+      if (controller.isDead() || !visual) continue;
+      const bounds = controller.getAabb();
+      // Sample torso then head; return only a point on this enemy's visible mesh
+      // which is also targetable by the existing combat hitboxes.
+      for (const heightFraction of [0.6, 0.9]) {
+        point.set((bounds.minX + bounds.maxX) / 2, bounds.minY + (bounds.maxY - bounds.minY) * heightFraction, (bounds.minZ + bounds.maxZ) / 2);
+        projected.copy(point).project(camera);
+        if (Math.abs(projected.x) > 1 || Math.abs(projected.y) > 1 || Math.abs(projected.z) > 1) continue;
+        if (!hasLineOfSight(camera.position, 0, point, 0, world, blockers, scratch, bounds.id)) continue;
+        direction.copy(point).sub(camera.position).normalize();
+        raycaster.set(camera.position, direction);
+        raycaster.near = camera.near;
+        raycaster.far = camera.position.distanceTo(point) + ENEMY_HALF_WIDTH_M;
+        const hit = raycaster.intersectObjects(meshes, false).find((entry) => {
+          const material = (entry.object as Mesh).material;
+          const faceMaterial = Array.isArray(material) ? material[entry.face?.materialIndex ?? 0] : material;
+          return faceMaterial?.visible && faceMaterial.opacity > 0;
+        });
+        if (!hit || !visual.ownsRenderedObject(hit.object)) continue;
+        const combatHit = this.checkRaycastHit(camera.position, direction, raycaster.far);
+        if (!combatHit.hit || combatHit.enemyId !== bounds.id) continue;
+        const targetYaw = Math.atan2(-direction.x, -direction.z);
+        const yawDelta = cameraYaw - targetYaw;
+        let id = this.publicTargetIds.get(controller);
+        if (!id) {
+          id = `target-${this.nextPublicTargetId++}`;
+          this.publicTargetIds.set(controller, id);
+        }
+        targets.push({
+          id,
+          yawOffsetDeg: Math.atan2(Math.sin(yawDelta), Math.cos(yawDelta)) * 180 / Math.PI,
+          pitchOffsetDeg: (Math.atan2(direction.y, Math.hypot(direction.x, direction.z)) - cameraPitch) * 180 / Math.PI,
+        });
+        break;
+      }
+    }
+    return targets;
+  }
 
   setNameplatesVisible(visible: boolean): void {
     this.nameplatesVisible = visible;
@@ -829,7 +904,7 @@ export class EnemyManager {
     this.reportHeardContact(
       position,
       "gunshot",
-      this.gameplayTuning.enemy.perception.hearing.gunshotRangeM,
+      this.gameplayTuning.enemy.perception.hearing.gunshotRangeMByTier[clampEnemyTier(this.blackboard.currentTier)]!,
       5.2,
       0.72,
     );
@@ -2075,7 +2150,9 @@ export class EnemyManager {
         continue;
       }
 
-      visual.update(pos.x, pos.y, pos.z, controller.getYaw(), true);
+      visual.update(pos.x, pos.y, pos.z, controller.getYaw(), true,
+        deltaSeconds, controller.isGrounded(), worldColliders.traversalSurfaces,
+        distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z));
 
       if (controller.isFiring()) {
         visual.triggerShotFx();
@@ -2562,11 +2639,32 @@ export class EnemyManager {
       };
     }
     if (!targetNode) return null;
+    // No contact yet: look toward where the squad believes the player is
+    // (the player's spawn zone at wave start, then wherever hearing points)
+    // instead of blankly facing the node's authored exposure direction.
+    const belief = this.resolveTopBeliefPoint();
+    if (belief && Math.hypot(belief.x - targetNode.x, belief.z - targetNode.z) > FOCUS_BELIEF_MIN_DISTANCE_M) {
+      return { x: belief.x, y: 1.5, z: belief.z };
+    }
     return {
       x: targetNode.x + Math.sin(targetNode.exposureYawRad) * 8,
       y: 1.5,
       z: targetNode.z + Math.cos(targetNode.exposureYawRad) * 8,
     };
+  }
+
+  private resolveTopBeliefPoint(): { x: number; z: number } | null {
+    if (!this.tacticalGraph) return null;
+    let best: ZoneSearchState | null = null;
+    for (const state of this.zoneSearchStateByZoneId.values()) {
+      if (state.belief < FOCUS_BELIEF_MIN) continue;
+      if (best === null || state.belief > best.belief || (state.belief === best.belief && state.zoneId < best.zoneId)) {
+        best = state;
+      }
+    }
+    if (!best) return null;
+    const zone = this.tacticalGraph.zoneById.get(best.zoneId);
+    return zone ? zoneCenter(zone) : null;
   }
 
   private initializeSearchState(): void {

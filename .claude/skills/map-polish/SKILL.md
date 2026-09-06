@@ -1,59 +1,68 @@
 ---
 name: map-polish
-description: Improve a bounded Bazaar building or shared render part using player-eye before/after evidence. Use for map visual implementation, not process audits. The owner commits.
+description: Unattended Bazaar map run. An orchestrator (GPT-6, xhigh) scores zones, writes one stable brief per zone, integrates packages and keeps or reverts on a blind judge's verdict; one persistent Blender builder per zone (GPT-6 Astra, high) improves the actual map from the kit of parts; a fresh judge (GPT-6 Astra, medium) per cycle. Worst zones first, score sets scope, nothing ships worse than it started. Use for map implementation.
 ---
 
 # Map Polish
 
-Read `AGENTS.md`, the current handoff in `docs/map-design/development-plan/README.md`, and `docs/map-design/quality-bar.md` once. Read only the selected building cards and asset assignments as dependencies arise. Shipped CS2 quality is the visual target; the current task defines the finite work.
+Two steps. Step 1 prepares: shoot, score, and write one brief per zone from the before shots and the design atlas. Step 2 executes the loop from the briefs alone: build in Blender, inspect, export, compare in game, keep or revert, move on. Three roles, no others. Nobody asks the user anything. No status prose; the progress table in `docs/map-design/development-plan/README.md` is the record. This file and `AGENTS.md` are the whole reading list.
 
-## Scope
+| Role | Model | Reasoning | Count | Owns |
+|---|---|---|---|---|
+| Orchestrator | GPT-6 | xhigh | 1 | step 1 entirely; in step 2 integration, captures, keep/revert, the table |
+| Builder | GPT-6 Astra | high | one per zone, kept for all of that zone's cycles; 3 zones in flight | `assets/source/<unit>/` only |
+| Judge | GPT-6 Astra | medium | fresh per cycle | `critic/verdict.json` per `.claude/skills/map-critic/SKILL.md` |
 
-One writer per checkout. Independent workers may review read-only or author assets in isolated directories outside the checkout; the lead integrates their deliverables serially. Spec edits, part edits, generation, and captures are serial: every capture regenerates from the live spec. Pause background builds and Blender renders during performance measurements. Start with `git status --short`; preserve existing work.
+## Step 1: Prepare (orchestrator alone, one run, then a ten-minute human look)
 
-Work on one building or shared defect at a time. Use the owner's target; otherwise `pnpm map:shoot random` selects an initial unit. For unattended goals, use a finite ordered list of targets, not repeated random selection. Do not revisit completed work without new evidence or a request.
+1. `pnpm map:check --baseline`, then `pnpm map:shoot <unit> --tag r0-before` for every unit listed by `pnpm map:shoot`.
+2. Score every unit 1 to 5 against the bar: `docs/map-design/refs/bazaar_main_hall_reference.png` and `cs2_daylight_ref_1..5.png`, inside the map's real constraints. Optional inspiration: one generated image per unit from its `primary.png` and the founding image (prompt in `targets.json`); never a spec.
+3. Write `docs/map-design/briefs/<unit>.md`, one page, from three sources: the before output (zone rect, wall runs as plan points with street side and heights, exemptions, buildings), the current views, and the design atlas cards for that zone's buildings in `docs/map-design/development-plan/buildings.md` and `assets.md` (building type and trade, material palette, roof datums, explicit decisions such as no door on a face, locked assets). The brief holds: score and scope, faces the section will own, protected elements (collision, openings, spawns, anchors, the original textile booth), the reference set, the view paths, the atlas facts, and the two or three biggest visual problems in order. This is the only time the atlas is read.
+4. Write the ranked table in `docs/map-design/development-plan/README.md` (`queued <score>`), calibration unit (a score 3) first, then 5s down to 2s, 1s as `skipped`. Post the table and the briefs folder and stop.
 
-Resolve the named defect completely. An accepted iteration does not mean the whole unit is finished. Unrelated defects remain follow-up work; missing parts required by the chosen outcome remain dependencies. Never call an incomplete assembly finished.
+The score sets the scope:
 
-Before propagating a new building type or shared kit, finish one representative assembly against the reference. Do not multiply a weak part across scheduled walls.
+| Score | Meaning | Scope of the brief | Cycles |
+|---|---|---|---|
+| 1 | Reads like a shipped section | Skip; row says `skipped`. | 0 |
+| 2 | Right bones, weak finish | Re-skin, wear and dressing on named walls; no new volumes. | 1 |
+| 3 | One wall or one system wrong | Only the named walls. | 2 |
+| 4 to 5 | Nothing like it | Every wall the zone sees, upper volumes, cloth, props. | 3 |
 
-## The loop
+Between steps the user may edit scores and briefs. Step 2 treats the briefs as final.
 
-1. **Capture and inspect.** `pnpm map:shoot <unit> --tag <task>-01-before`. Use a unique tag per attempt; preserve earlier snapshots. Read `plan.png`, `primary`, `context`, and the target `elev:*`; add an oblique view for depth/material work. Open one relevant daylight reference from the quality bar once per task. Use `--views` for focused experiments after establishing context; the after shoot must include the same views.
-2. **Name the defect and finish line.** One sentence each, with visible criteria. Judge building identity and composition before assemblies or texture. Start from the approved building card; check the printed brief and `walls[]` schedule against that card, module dimensions, and render. Schedules can be wrong. Correct a contradictory schedule with the reason in its note; do not decorate around a broken shared part.
-3. **Implement the complete fix.** Edit the owning Blender source/export, `docs/map-design/specs/map_spec.json`, or the owning render code under `apps/client/src/runtime/map/` as the approved outcome requires. Inspect the active implementation and callers. The before shoot saves the spec; snapshot each other file before editing, including binary art sources. Edit JSON locally, not by reserialising the file. Preserve `servedBayId` bindings and all placement `anchorIds`. Verify Blender exports through the actual model loader: its bounds recentering can move an authored mounting pivot. Keep the original booth locked as specified in `assets.md`.
-4. **Check and compare.** Run `pnpm map:check`; for code changes, also `pnpm typecheck` and the smallest relevant existing runtime check. Run `pnpm map:shoot <unit> --tag <task>-01-after`. Capture validity and runtime collider comparison must pass. Inspect all changed views and compare the target pair and neighbours. Pixel change locates effects; it does not score quality. Review performance below.
-5. **Keep or restore.** Keep only if the named defect is resolved, the affected assembly meets the quality bar, and safety/performance evidence supports it. Otherwise restore only this attempt's files from its immediate before snapshots and regenerate. Never restore an old task's full spec over later kept work. After two attempts without clear gain, reassess the owning layer; continue only with a different evidence-backed approach. Report required missing assets, authority changes, or unavailable measurements as unresolved dependencies.
-6. **Finish the bounded task.** Complete the requested list, then stop. Report accepted, reverted, or incomplete outcomes, before/after paths, checks, performance deltas, and dependencies. Do not commit. The owner reviews and commits.
+## Step 2: Execute (orchestrator, builders, judges; unattended)
 
-## Shared parts
+Reads only `docs/map-design/briefs/`, the table, this file and `AGENTS.md`. Never the atlas. Three zones in flight; take the next `queued` row in table order.
 
-Use a part iteration when a defect appears on two walls or a module contradicts its role. Capture two or three representative uses, including a cramped or differently scaled use. Fix the shared cause once. Check and reshoot those views, including an oblique view. Require improvement in intended uses and no regression elsewhere; unchanged unaffected walls are fine. Inspect callers and run the relevant existing check; a sample cannot prove every instance.
+5. Spawn one builder (Astra, high) per zone with this file's path and the brief; keep that builder for the zone's later cycles so it remembers what worked and what failed.
+6. On a package: `pnpm map:shoot <unit> --tag r-before` (fresh), `node scripts/apply-facade-package.mjs apply <unit>`, `pnpm map:shoot <unit> --tag r-after` (`r-after2`, `r-after3` later). Write `critic/problems.md` (the brief's problems, one per line) into the after shoot's `critic/` folder. Guard failure or `[section-models]` loader warnings: `revert`, send the text back to the builder verbatim.
+7. Spawn a fresh judge on `critic/brief.md`. Read `key.json` after `verdict.json` exists. **Keep** when the after render is the winner, at least one named problem improved, `regressions` and `blockers` are empty. Otherwise `revert` (restores the last accepted files) and send the builder the verdict's `biggestGap` and `regressions`, nothing else. Cycles per the score, then `open` at the best kept state. A zone never ends worse than it started.
+8. Row: unit, cycles, `win` / `open` / `reverted`, remaining gap. Replace its `queued` row.
 
-Facade rendering is in `v3Architecture.ts`; shared wall materials are in `wallDetailFamilies/kitMaterials.ts`. Trace active branches rather than similarly named dead branches. Inspect existing module output before designing around its label. Keep defect inventories in task handovers, not this skill.
+If a builder reports a material it needs and cannot find, run `node scripts/fetch-cc0-texture.mjs <polyhaven-id> --res 1k` and tell it the new id. Do not widen the pack or the kit preemptively.
 
-## Authoring facts
+Sweep, after the table is full: `pnpm qa:completion` captures the sixteen map-wide signoff cameras in `docs/map-design/shots.json`. Judge them against the founding image; any wall, roofline or corner no zone fixed gets a one-cycle brief to the owning zone's builder. Then `pnpm validate:map-layout`, `pnpm qa:completion`, post the table with both results.
 
-- The plan is north-up, east-right. Runtime coordinates put east on screen-left when facing north. `along` runs west-to-east on north/south faces and south-to-north on east/west faces; camera-left segment numbering may run the other way.
-- An `elev:<face>` without a frontage is exempt. `system_articulated_boundary` is code-owned, usually in `pushCoreBoundaryFacadeGrammar`; `retaining_wall` is terrain. Inspect the actual span before adding a frontage to a sealed perimeter or architectural cut edge. Short returns and open traversal faces do not imply walls to decorate.
-- Each frontage needs `buildingId`. A building may own several faces. Split only for real parcels, preserving attached anchors. Brief, schedule, and layout must describe the same building.
-- Authored bays must use the profile's `moduleIds`; widen an appropriate existing profile when needed. Generated family selection does not prove authored membership.
-- Doors, shop recesses, arches, and columns are grounded. Their heights must equal `groundHeadM`; other ground modules hang from that head. A 3.4 m pilaster cannot share a 2.5 m door head. Do not shorten it into a bollard to satisfy the compiler.
-- Massing under 5.4 m permits only `story: 0`. Authored uppers require explicit `story: 1` or higher; declare `upperSillDatumsM` if defaults do not fit. Only generated layouts automatically choose upper bays. The runtime consumes compiled bays. Do not raise massing to fit an opening when that changes sightlines.
-- Current grammar requires `ceil(lengthM / 6)` ground bays, a 0.6 m edge margin, no overlaps, and shared heads. Held corners reserve 1.2 m for ground doors/recesses/arches; pilaster corners require a column edge within 0.9 m. Mirrors use 0.03 m tolerance about `axisAlong` (default 0.5). Generated spacing uses a 0.42 m gap; authored spacing does not enforce it. Judge edge spacing visually.
-- `gen-map-runtime.mjs` requires different resolved wall material+tint on adjacent frontages, including nearby collinear spans and corners. Compiler restrictions are not design proof. An incoherent restriction belongs in a bounded grammar task with a regression check; never weaken gameplay safeguards to satisfy a schedule.
-- `composition` is at most 240 characters and ends in `.`, `!`, or `?`. It is unchecked design prose.
+Orchestrator rules: never model, never edit `build.py`, never fix gameplay or runtime code; you are the only writer of `map_spec.json`, manifests and the facades folder. Shared systems (floor, sky, cloth canopy, prop library, shaders, lighting) and kit code deletion are logged in the row, not touched. A command failing three times is a defect to fix inside the map scripts or a zone to skip, never a stall.
 
-## Safety and performance
+## Builder
 
-`map:check` compares protected spec fields against HEAD and checks protected runtime files. It does not prove all gameplay unchanged. The after shoot additionally compares actual runtime collider hashes. Neither proves visual sightlines, body clearance, or bot behaviour; inspect the diff and affected space.
+You improve the actual map inside its constraints. The brief is stable; later cycles change only what the verdict names.
 
-Run `pnpm validate:map-layout` after geometry, props, or dressing changes near routes, including non-colliding geometry and facade projections, and once before handing off kept map changes. It runs 12 blockout routes plus bot smoke. It cannot detect walking through render-only clutter: inspect movement through the affected final-render route when the body envelope changes. Material-only edits need no per-iteration traversal.
-
-Shoots retain per-view draws, triangles, and CPU frame time. Compare identical poses on the same machine/profile without concurrent captures. Use the existing budgets in `apps/client/scripts/lib/performanceAcceptance.mjs`. Investigate budget overruns or frame-time increases over 10%. Confirm timing regressions with one repeat of the before/after pair under comparable load, keeping the original rollback snapshot. Repeatable regressions block acceptance; missing measurements mean unverified performance. CPU timings do not prove GPU or live-combat FPS. Run `pnpm qa:completion` for desktop/mobile performance at a district or release milestone, not every facade edit.
-
-## Goal mode and task boundaries
-
-Keep related iterations and an authorized finite rollout in one task to retain module knowledge and failed attempts. If the user starts a new task, carry the target list, kept changes, evidence paths, and unresolved dependencies. Independent review may support pilot and final gates; it does not replace the user's visual acceptance. Do not create a task per edit or build a scheduler. The spec and worktree remain authoritative.
-
-Example goal: "Resolve the corner-door defect on BLD_LINK_WALL_NE as a coherent compound-wall facade. Verify matching elevation and oblique views, unchanged gameplay, clear traversal, and performance within budget without a repeatable frame-time regression. Follow map-polish; preserve unrelated work; do not commit. Report required missing parts as incomplete; do not expand to the whole map."
+1. Read the brief, `artifacts/map-shoot/<unit>/r0-before/plan.png` (north up, east right) and every current view. Coordinates are plan metres; use them as printed.
+2. Build in this order, and stop at the score's scope: large shapes and silhouette (upper volumes, parapets, piers), then openings and depth (arches, doors, windows, niches), then materials, then dressing (awnings, signs, corbels, props). Weak architecture is never fixed by adding props.
+3. Write `assets/source/<unit>/build.py` with the kit:
+   ```python
+   from facade_kit import Frame, Wall, box, export_section
+   F = Frame({'x': 39, 'y': 76, 'w': 7, 'h': 5})                 # zone rect from the brief
+   n = Wall(F, (39.56, 81.0), (45.44, 81.0), faces='S')          # plan points; street side
+   n.skin(4.9, 'ph_lime_plaster_sun'); n.plinth(0.44, 'ph_sandstone_blocks_05'); n.coping(4.9, 'ph_stone_trim_sandstone')
+   n.arch(along=2.94, width=1.0, height=2.6, mat='ph_sandstone_blocks_05')
+   export_section(F, OUT / '<unit>.glb')
+   ```
+   Parts: `skin plinth course coping pilaster corbels door window lattice arch niche awning sign upper_room` plus `box`. When the kit cannot make an important reference feature, write targeted `bmesh` geometry in the same file; do not expand the kit. Materials are pack ids from `materials.json`; the GLB carries names only and the runtime rebinds them to the kit's materials. Own only the faces the brief names (`section.faces`); the kit keeps its details on the others. Under 25k triangles per zone. Relief below 2.2 m stays within 0.35 m of the wall.
+4. Inspect before you decide: `/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python assets/source/preview.py -- <unit>.glb <out>.png --section <W,H>` renders N/E/S/W from the zone centre. Open the PNGs and state in one line what is wrong before changing anything. Blender MCP is fine for inspecting or trying a focused edit, but every accepted change is written back into `build.py`; the script is the source of truth. Six previews, then hand over.
+5. Write `assets/source/<unit>/package.json`:
+   `{ "models": [ { "id": "section_<unit>", "file": "<unit>.glb", "source": "repo://assets/source/<unit>/build.py", "license": "Project-Original" } ], "section": { "zoneId": "<ZONE_ID>", "modelId": "section_<unit>", "faces": ["north", "east"] } }`
+6. Return one line: unit, faces owned, triangle count, any missing material. Never touch `map_spec.json`, manifests, runtime code, or run captures. `assets/source/example-section/build.py` is a worked example.

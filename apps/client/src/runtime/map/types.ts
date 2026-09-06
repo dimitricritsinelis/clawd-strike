@@ -25,6 +25,9 @@ export type RuntimeBlockoutZone = {
   floorMaterialId?: string;
   facadeProfileId?: string;
   clearWidthM?: number;
+  /** Authored section GLB that owns the zone's faces listed in sectionFaces (default all four). */
+  sectionModelId?: string;
+  sectionFaces?: RuntimeFacadeFace[];
 };
 
 export type RuntimeMacroLane = "west" | "main" | "east";
@@ -174,6 +177,8 @@ export type RuntimeArchitectureMassingPlacement = {
     upperStorySetbackM: number;
     elevationM: number;
   };
+  /** Registered facade GLB that owns this frontage's street face. */
+  facadeModelId?: string;
 };
 
 export type RuntimeArchitectureModulePlacement = {
@@ -199,6 +204,18 @@ export type RuntimeArchitectureModulePlacement = {
 };
 
 export type RuntimeArchitecturePlacement = RuntimeArchitectureMassingPlacement | RuntimeArchitectureModulePlacement;
+
+/** Compiled zone section GLB: mounted at the zone rect's south-west corner on the zone floor. */
+export type RuntimeSectionModel = {
+  zoneId: string;
+  modelId: string;
+  origin: RuntimeVec3;
+  sizeM: { width: number; depth: number };
+  /** Zone faces the GLB owns; the kit keeps its face details elsewhere. */
+  faces: RuntimeFacadeFace[];
+  /** Wall-pack material ids the GLB names; preloaded alongside the kit's materials. */
+  materialIds: string[];
+};
 
 export type RuntimeDressingClassification = "gameplay_cover" | "soft_visual" | "overhead";
 
@@ -300,6 +317,7 @@ export type RuntimeBlockoutSpec = {
   facadeModules?: RuntimeFacadeModule[];
   facadeProfiles?: RuntimeFacadeProfile[];
   architecturePlacements?: RuntimeArchitecturePlacement[];
+  sectionModels?: RuntimeSectionModel[];
   assetRegistry?: RuntimeAssetRegistryEntry[];
   dressingClusters?: RuntimeDressingCluster[];
   dressingPlacements?: RuntimeDressingPlacement[];
@@ -1669,10 +1687,14 @@ function parseRuntimeArchitecturePlacements(
       const roof = asObject(entry.roof, `${path}.roof`);
       const style = asString(roof.style, `${path}.roof.style`);
       if (!RUNTIME_MASSING_ROOF_STYLES.has(style)) failParse(`${path}.roof.style`, "unsupported roof style");
+      const facadeModelId = typeof entry.facadeModelId === "undefined"
+        ? undefined
+        : asString(entry.facadeModelId, `${path}.facadeModelId`);
       return {
         ...shared,
         kind: "massing",
         massingProfileId,
+        ...(facadeModelId ? { facadeModelId } : {}),
         materialSlots: parseRuntimeMaterialSlots(entry.materialSlots, `${path}.materialSlots`),
         roof: {
           style: style as RuntimeArchitectureMassingPlacement["roof"]["style"],
@@ -1828,6 +1850,12 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
       rect,
       label: typeof zone.label === "string" ? zone.label : "",
       notes: typeof zone.notes === "string" ? zone.notes : "",
+      ...(typeof zone.sectionModelId !== "undefined"
+        ? { sectionModelId: asString(zone.sectionModelId, `${source}.zones[${index}].sectionModelId`) }
+        : {}),
+      ...(typeof zone.sectionFaces !== "undefined"
+        ? { sectionFaces: (optionalArray(zone.sectionFaces, `${source}.zones[${index}].sectionFaces`) ?? []).map((face, i) => parseRuntimeFacadeFace(face, `${source}.zones[${index}].sectionFaces[${i}]`)) }
+        : {}),
       ...(typeof zone.surfaceId !== "undefined"
         ? { surfaceId: asString(zone.surfaceId, `${source}.zones[${index}].surfaceId`) }
         : {}),
@@ -2457,6 +2485,24 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
   if (isV3 && (!architecturePlacements?.length || !dressingPlacements?.length)) {
     failParse(source, "format v3 requires compiled architecturePlacements and dressingPlacements");
   }
+  const sectionModels = optionalArray(obj.sectionModels, `${source}.sectionModels`)?.map((raw, index) => {
+    const path = `${source}.sectionModels[${index}]`;
+    const entry = asObject(raw, path);
+    const zoneId = asString(entry.zoneId, `${path}.zoneId`);
+    if (!zoneIds.has(zoneId)) failParse(`${path}.zoneId`, `unknown zone '${zoneId}'`);
+    const sizeM = asObject(entry.sizeM, `${path}.sizeM`);
+    return {
+      zoneId,
+      modelId: asString(entry.modelId, `${path}.modelId`),
+      origin: parseVec3(entry.origin, `${path}.origin`),
+      sizeM: {
+        width: asPositiveNumber(sizeM.width, `${path}.sizeM.width`),
+        depth: asPositiveNumber(sizeM.depth, `${path}.sizeM.depth`),
+      },
+      faces: (optionalArray(entry.faces, `${path}.faces`) ?? ["north", "south", "east", "west"]).map((face, i) => parseRuntimeFacadeFace(face, `${path}.faces[${i}]`)),
+      materialIds: (optionalArray(entry.materialIds, `${path}.materialIds`) ?? []).map((id, i) => asString(id, `${path}.materialIds[${i}]`)),
+    };
+  });
 
   let mapCenter: RuntimeBlockoutSpec["mapCenter"];
   if (typeof obj.mapCenter !== "undefined") {
@@ -2499,6 +2545,7 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     ...(facadeModules ? { facadeModules } : {}),
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
+    ...(sectionModels ? { sectionModels } : {}),
     ...(assetRegistry ? { assetRegistry } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),

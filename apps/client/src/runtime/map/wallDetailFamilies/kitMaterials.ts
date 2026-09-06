@@ -275,117 +275,25 @@ float kitValueNoise(vec2 p) {
     }
 
     if (finish === "merchant-plaster" || finish === "recess-plaster") {
-      // A recess reads as an interior only if it keeps its value below the
-      // sunlit wall around it. It still needs aggregate and grime so it is not
-      // a flat card, but the sun-bleached fleck and mottle that sell an
-      // exterior wall would lift it straight back out of shadow.
       const isRecess = finish === "recess-plaster";
-      const paleFleckMix = isRecess ? "0.04" : "0.27";
-      const warmMottleMix = isRecess ? "0.05" : "0.13";
-      const coolMottleMix = isRecess ? "0.14" : "0.10";
-      const grimeMix = isRecess ? "0.58" : "0.43";
+      // Installed PBR maps own plaster detail. World-space wear must remain
+      // continuous across the infill pieces that surround authored openings.
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <map_fragment>",
         `#include <map_fragment>
 // kit-${finish}-finish
 vec2 kitPlasterPlane = vec2(vKitWorldPos.x + vKitWorldPos.z, vKitWorldPos.y);
-float kitBroadAggregate = kitValueNoise(kitPlasterPlane * 0.82 + vec2(-5.2, 9.6));
-float kitAggregate = kitValueNoise(kitPlasterPlane * 5.8 + vec2(2.7, -1.4));
-float kitFineAggregate = kitValueNoise(vec2(
-  (vKitWorldPos.z - vKitWorldPos.x) * 17.0,
-  vKitWorldPos.y * 18.5
-) + vec2(7.3, -4.1));
-float kitMicroAggregate = kitValueNoise(kitPlasterPlane * 39.0 + vec2(-12.4, 6.8));
-float kitAggregateTone =
-  0.89
-  + (kitBroadAggregate - 0.5) * 0.16
-  + (kitAggregate - 0.5) * 0.23
-  + (kitFineAggregate - 0.5) * 0.12;
-diffuseColor.rgb *= kitAggregateTone;
-
-// Small limestone/ochre inclusions replace the former broad circular blotches.
-float kitWarmMottle = smoothstep(0.54, 0.82, kitAggregate);
-float kitCoolMottle = smoothstep(0.55, 0.84, 1.0 - kitBroadAggregate);
-float kitPaleFleck = smoothstep(0.68, 0.91, kitFineAggregate)
-  * smoothstep(0.51, 0.78, kitMicroAggregate);
-float kitDarkFleck = smoothstep(0.68, 0.92, 1.0 - kitMicroAggregate)
-  * smoothstep(0.42, 0.69, kitAggregate);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.69, 0.48, 0.28), kitWarmMottle * ${warmMottleMix});
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.43, 0.38, 0.31), kitCoolMottle * ${coolMottleMix});
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.82, 0.68, 0.49), kitPaleFleck * ${paleFleckMix});
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.37, 0.245, 0.135), kitDarkFleck * 0.19);
-
-// Dirt is tied to plausible collection points: base, reveals/corners, and the
-// narrow lintel/canopy line. High-frequency breakup prevents a painted stripe.
-float kitGrimeBreakup = 0.56 + kitValueNoise(kitPlasterPlane * 8.4 + vec2(4.1, 3.7)) * 0.44;
-float kitBaseGrime = (1.0 - smoothstep(-0.50, -0.12, vKitLocalPos.y)) * kitGrimeBreakup;
-float kitRevealGrime = smoothstep(0.34, 0.50, abs(vKitLocalPos.x))
-  * (0.48 + kitFineAggregate * 0.52);
-float kitLintelBand = 1.0 - smoothstep(0.09, 0.20, abs(vKitLocalPos.y - 0.32));
-float kitLintelGrime = kitLintelBand
-  * (0.54 + kitAggregate * 0.46);
-float kitCornerGrime = kitBaseGrime * kitRevealGrime;
-float kitDrip = smoothstep(0.64, 0.9, kitValueNoise(vec2(
-  (vKitWorldPos.x + vKitWorldPos.z) * 6.4,
-  2.1
-))) * smoothstep(-0.08, 0.36, vKitLocalPos.y) * (1.0 - smoothstep(0.36, 0.48, vKitLocalPos.y));
-float kitGrime = clamp(
-  kitBaseGrime * 0.68
-  + kitRevealGrime * 0.48
-  + kitLintelGrime * 0.42
-  + kitCornerGrime * 0.64
-  + kitDrip * 0.24,
-  0.0,
-  1.0
-);
-vec3 kitGrimeColor = mix(
-  vec3(0.34, 0.235, 0.13),
-  vec3(0.22, 0.16, 0.10),
-  kitBaseGrime
-);
-diffuseColor.rgb = mix(diffuseColor.rgb, kitGrimeColor, kitGrime * ${grimeMix});
-${isRecess ? `
-// Interior backing for a merchant bay that is 1.35 m deep. At 0.62 the back
-// plane rendered at luma 63 against a target of 32, so a genuinely deep shop
-// still read as a shallow lit panel and gave the pier nothing to stand against.
-// This multiplier reaches only shop_recess_back and arch_recess_back.
-//
-// Headroom check before lowering further: crushed black inside the bays
-// measured 1.2-9.7% of pixels against 37-49% in the target, and bay highlight
-// p95 is unchanged by this term — it darkens the recessed ambient floor, not
-// the stock, so shelving and goods keep their read.
-diffuseColor.rgb *= 0.34;` : `
-// Close range needs damage, not just tone. Rendered plaster carries chipped
-// arrises exposing a warmer render coat, fine craze lines, and a splash band
-// where the wall meets the pavement; without them the largest surface on the
-// street is a smooth value gradient and reads unfinished at two metres.
-float kitChipField = kitValueNoise(kitPlasterPlane * 12.5 + vec2(-3.9, 7.4));
-float kitChipFine = kitValueNoise(kitPlasterPlane * 46.0 + vec2(11.2, -5.6));
-float kitChip = smoothstep(0.74, 0.93, kitChipField * 0.68 + kitChipFine * 0.32);
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.55, 0.38, 0.24), kitChip * 0.42);
-// Craze lines are hairline shrinkage cracks, so they have to be isotropic. At
-// 62:26 the horizontal frequency was 2.4x the vertical one, which turned every
-// tall plaster shell - the Spawn-B corner towers, the Rug Gate flanks, the
-// Textile Arcade panels - into a field of vertical streaks that read as bleached
-// plywood at any range. Matching the two frequencies keeps the damage and
-// removes the grain; the strength comes down because isotropic noise covers far
-// more of the surface than a striped field did at the same amplitude.
-float kitCraze = smoothstep(0.80, 0.97, kitValueNoise(vec2(
-  (vKitWorldPos.x + vKitWorldPos.z) * 44.0,
-  vKitWorldPos.y * 44.0
-) + vec2(-6.3, 2.2)));
-diffuseColor.rgb *= 1.0 - kitCraze * 0.09;
-float kitSplash = (1.0 - smoothstep(0.0, 0.55, vKitWorldPos.y))
-  * smoothstep(0.42, 0.78, kitValueNoise(kitPlasterPlane * 17.0 + vec2(5.5, -9.1)));
-diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.31, 0.24, 0.16), kitSplash * 0.30);`}`,
+float kitLimewash = kitValueNoise(kitPlasterPlane * 0.82 + vec2(-5.2, 9.6));
+float kitGroundWear = (1.0 - smoothstep(0.05, 0.65, vKitWorldPos.y))
+  * (0.65 + 0.35 * kitValueNoise(kitPlasterPlane * 7.0));
+diffuseColor.rgb *= 0.94 + (kitLimewash - 0.5) * 0.12;
+diffuseColor.rgb *= 1.0 - kitGroundWear * 0.18;
+${isRecess ? "diffuseColor.rgb *= 0.34;" : ""}`,
       );
       shader.fragmentShader = shader.fragmentShader.replace(
         "#include <roughnessmap_fragment>",
         `#include <roughnessmap_fragment>
-float kitPlasterRoughNoise = kitValueNoise(vec2(vKitWorldPos.x + vKitWorldPos.z, vKitWorldPos.y) * 8.0);
-float kitPlasterBaseR = 1.0 - smoothstep(-0.50, -0.22, vKitLocalPos.y);
-float kitPlasterEdgeR = smoothstep(0.38, 0.50, abs(vKitLocalPos.x));
-roughnessFactor = clamp(roughnessFactor + (kitPlasterRoughNoise - 0.5) * 0.20 + max(kitPlasterBaseR, kitPlasterEdgeR) * 0.13, 0.44, 1.0);`,
+roughnessFactor = clamp(roughnessFactor + kitGroundWear * 0.08, 0.44, 1.0);`,
       );
     } else if (finish === "aged-metal") {
       shader.fragmentShader = shader.fragmentShader.replace(

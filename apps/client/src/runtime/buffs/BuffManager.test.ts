@@ -145,25 +145,26 @@ test("drop outcomes and buff choices are deterministic for a run seed", () => {
   );
 });
 
-test("a fourth consecutive would-be miss is converted into a guaranteed drop", () => {
-  // Seed 2's first four tagged drop-roll values are all >= 0.3. The first
-  // three therefore miss and the fourth proves the dry-streak safeguard.
+test("a seventh consecutive would-be miss is converted into a guaranteed drop", () => {
+  // Seed 2's first seven tagged drop-roll values are all >= 0.15. The first
+  // six therefore miss and the seventh proves the dry-streak safeguard, which
+  // is what guarantees at least one drop inside every 10-kill wave.
   const { manager } = makeManager(2);
   const maxMisses = getGameplayTuning("desktop-human").buffs.pity.maxConsecutiveMisses;
-  assert.notEqual(maxMisses, null);
+  assert.equal(maxMisses, 6);
   const results = Array.from({ length: (maxMisses ?? 0) + 1 }, (_, enemyIndex) => (
     manager.onEnemyDeath(enemyIndex, DROP_POSITION, { waveClosing: true })
   ));
 
-  assert.deepEqual(results.slice(0, 3), [
-    { dropped: false, forcedByPity: false },
-    { dropped: false, forcedByPity: false },
-    { dropped: false, forcedByPity: false },
-  ]);
-  assert.equal(results[3]!.dropped, true);
-  if (!results[3]!.dropped) assert.fail("the fourth kill should have dropped a buff");
-  assert.equal(results[3]!.forcedByPity, true);
-  assert.equal(results[3]!.disposition, "banked");
+  assert.deepEqual(
+    results.slice(0, 6),
+    Array.from({ length: 6 }, () => ({ dropped: false, forcedByPity: false })),
+  );
+  const forced = results[6]!;
+  assert.equal(forced.dropped, true);
+  if (!forced.dropped) assert.fail("the seventh kill should have dropped a buff");
+  assert.equal(forced.forcedByPity, true);
+  assert.equal(forced.disposition, "banked");
 });
 
 test("drop variety excludes both of the two most recent buff types", () => {
@@ -171,7 +172,8 @@ test("drop variety excludes both of the two most recent buff types", () => {
     .filter((result): result is Extract<BuffDropResult, { dropped: true }> => result.dropped)
     .map((result) => result.type);
 
-  assert.ok(drops.length >= 30, `pity protection should yield at least 30 drops, got ${drops.length}`);
+  // Pity alone forces one drop per 7 kills, so 120 kills cannot yield fewer than 17.
+  assert.ok(drops.length >= 17, `pity protection should yield at least 17 drops, got ${drops.length}`);
   for (let index = 0; index < drops.length; index += 1) {
     assert.notEqual(drops[index], drops[index - 1], "consecutive drops repeated a buff type");
     assert.notEqual(drops[index], drops[index - 2], "a buff repeated within the last two drops");
@@ -179,8 +181,9 @@ test("drop variety excludes both of the two most recent buff types", () => {
 });
 
 test("resetting run progress clears pity, banked rewards and restores the seeded sequence", () => {
+  // Seed 2 misses six times, so the seventh kill is the pity-forced bank.
   const { manager } = makeManager(2);
-  const initial = Array.from({ length: 4 }, (_, enemyIndex) => (
+  const initial = Array.from({ length: 7 }, (_, enemyIndex) => (
     manager.onEnemyDeath(enemyIndex, DROP_POSITION, { waveClosing: true })
   ));
   assert.equal(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs.length, 1);
@@ -188,17 +191,17 @@ test("resetting run progress clears pity, banked rewards and restores the seeded
   manager.resetWaveProgress();
 
   assert.deepEqual(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs, []);
-  const replay = Array.from({ length: 4 }, (_, enemyIndex) => (
+  const replay = Array.from({ length: 7 }, (_, enemyIndex) => (
     manager.onEnemyDeath(enemyIndex, DROP_POSITION, { waveClosing: true })
   ));
   assert.deepEqual(replay, initial, "a fresh run should replay from the injected seed");
 });
 
 test("dt=0 pauses buffs and leaves dropped-orb spawns untouched", () => {
-  const { manager } = makeManager(9);
+  const { manager } = makeManager(18);
   manager.debugActivateBuff("speed_boost");
   const drop = manager.onEnemyDeath(0, DROP_POSITION);
-  assert.equal(drop.dropped, true, "seed 9 should begin with a natural drop");
+  assert.equal(drop.dropped, true, "seed 18 should begin with a natural drop");
 
   const before = manager.getWaveCarryoverSnapshot();
   assert.equal(before.pendingOrbCount, 1);
@@ -213,10 +216,10 @@ test("dropped orbs expire on the profile lifetime using simulation time", () => 
     ...getGameplayTuning("desktop-human").buffs,
     orbLifetimeS: 0.25,
   };
-  const manager = new BuffManager(new Scene(), { seed: 9, tuning });
+  const manager = new BuffManager(new Scene(), { seed: 18, tuning });
   const camera = new PerspectiveCamera();
   const drop = manager.onEnemyDeath(0, DROP_POSITION);
-  assert.equal(drop.dropped, true, "seed 9 should begin with a natural drop");
+  assert.equal(drop.dropped, true, "seed 18 should begin with a natural drop");
 
   manager.update(0.1, PLAYER_POSITION, camera);
   assert.equal(manager.getWaveCarryoverSnapshot().orbCount, 1);
@@ -229,7 +232,7 @@ test("dropped orbs expire on the profile lifetime using simulation time", () => 
 });
 
 test("active buffs and dropped-orb state carry across a wave boundary", () => {
-  const { manager } = makeManager(9);
+  const { manager } = makeManager(18);
   manager.debugActivateBuff("rapid_fire");
   const drop = manager.onEnemyDeath(0, DROP_POSITION);
   assert.equal(drop.dropped, true);
@@ -241,10 +244,10 @@ test("active buffs and dropped-orb state carry across a wave boundary", () => {
 });
 
 test("a wave-closing drop is banked and activates at the next active wave", () => {
-  const { manager, activations } = makeManager(9);
+  const { manager, activations } = makeManager(18);
   const drop = manager.onEnemyDeath(0, DROP_POSITION, { waveClosing: true });
   assert.equal(drop.dropped, true);
-  if (!drop.dropped) assert.fail("seed 9 should begin with a natural drop");
+  if (!drop.dropped) assert.fail("seed 18 should begin with a natural drop");
   assert.equal(drop.disposition, "banked");
   assert.deepEqual(manager.getWaveCarryoverSnapshot(), {
     activeBuffs: [],

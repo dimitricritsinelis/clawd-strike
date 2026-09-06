@@ -138,3 +138,36 @@ test("a zero-delta pause step cannot change player stance or motion", () => {
     speedMps: player.getHorizontalSpeedMps(),
   }, before);
 });
+
+test("blocked movement distinguishes idle, free movement, wall sliding, release, and respawn", () => {
+  const world = new WorldColliders([
+    { id: "floor", kind: "floor_slab", min: { x: -20, y: -1, z: -20 }, max: { x: 20, y: 0, z: 20 } },
+    { id: "wall", kind: "wall", min: { x: 1, y: 0, z: -10 }, max: { x: 2, y: 3, z: 10 } },
+  ], PLAYABLE_BOUNDARY);
+  const player = new PlayerController();
+  player.setWorld(world);
+  player.setSpawn(0, 0, 0);
+  player.step(0.1, IDLE_INPUT, 0);
+  assert.equal(player.getMovementBlocked(), false, "ground contact alone is not blocked movement");
+  player.step(0.1, { ...IDLE_INPUT, right: 1 }, 0);
+  assert.equal(player.getMovementBlocked(), false);
+  player.step(0.1, { ...IDLE_INPUT, right: 1, forward: 1 }, 0);
+  assert.equal(player.getMovementBlocked(), true, "partial sliding still blocks the requested right component");
+  assert.ok(player.getPosition().z < 0, "sliding must remain possible");
+  player.step(0.1, IDLE_INPUT, 0);
+  assert.equal(player.getMovementBlocked(), false, "release clears the last collision signal");
+  player.step(0.1, { ...IDLE_INPUT, right: 1 }, 0);
+  assert.equal(player.getMovementBlocked(), true);
+  player.setSpawn(0, 0, 0);
+  assert.equal(player.getMovementBlocked(), false);
+});
+
+test("playable boundary clipping reports blocked movement only when movement was requested", () => {
+  const player = new PlayerController();
+  player.setWorld(new WorldColliders([], { x: -1, y: -1, w: 2, h: 2 }));
+  player.setSpawn(0.699, 0, 0);
+  player.step(1 / 60, { ...IDLE_INPUT, right: 1 }, 0);
+  assert.equal(player.getMovementBlocked(), true);
+  player.step(1 / 60, IDLE_INPUT, 0);
+  assert.equal(player.getMovementBlocked(), false);
+});

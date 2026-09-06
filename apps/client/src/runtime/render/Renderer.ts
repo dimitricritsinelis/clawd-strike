@@ -1,5 +1,6 @@
 import {
   ACESFilmicToneMapping,
+  DoubleSide,
   Object3D,
   PCFSoftShadowMap,
   PMREMGenerator,
@@ -99,7 +100,10 @@ function isExcludedFromAo(object: Object3D): boolean {
   return false;
 }
 
-function constrainAoOccluders(pass: GTAOPass): void {
+export function constrainAoOccluders(pass: GTAOPass): void {
+  // Cloth is visible from below in the beauty pass. Include that same
+  // surface in AO depth so background windows cannot occlude through it.
+  pass.normalMaterial.side = DoubleSide;
   const internals = pass as unknown as GtaoVisibilityInternals;
   internals._overrideVisibility = (): void => {
     internals.scene.traverse((object) => {

@@ -43,9 +43,9 @@ test("profile identities have stable unique revisions and are immutable", () => 
       ]),
     ),
     {
-      "mobile-human": "mobile-human-baseline-5aed687b2c66-r2",
-      "desktop-human": "desktop-human-baseline-5aed687b2c66-r2",
-      "desktop-agent": "desktop-agent-baseline-5aed687b2c66-r2",
+      "mobile-human": "mobile-human-baseline-f30c73c70dc0-r3",
+      "desktop-human": "desktop-human-baseline-f30c73c70dc0-r3",
+      "desktop-agent": "desktop-agent-baseline-f30c73c70dc0-r3",
     },
   );
 });

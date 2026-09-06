@@ -18,6 +18,7 @@ export type QaAssetPlan = {
   wallMaterialIds: readonly string[];
   propModelIds: readonly string[];
   doorModelIds: readonly string[];
+  facadeModelIds: readonly string[];
   directTextureUrls: readonly string[];
   requiredLogicalRequestIds: readonly string[];
   hash: string;
@@ -204,6 +205,10 @@ export function qaDoorModelRequestId(modelId: string): string {
   return `door-model:${modelId}`;
 }
 
+export function qaFacadeModelRequestId(modelId: string): string {
+  return `facade-model:${modelId}`;
+}
+
 export function qaDirectTextureRequestId(url: string): string {
   return `direct-texture:${url}`;
 }
@@ -282,6 +287,8 @@ export function createQaAssetPlan(
             ? Object.values(placement.materialSlots).filter((id) => id.startsWith("ph_"))
             : []
         )),
+        // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
+        ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
       ]);
   const propModelIds = options.bazaarProps === false
     ? []
@@ -294,6 +301,11 @@ export function createQaAssetPlan(
         )) ? ["ph_wooden_crate_01"] : [],
       ]);
   const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
+  const facadeModelIds = sortedUnique(
+    (mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
+      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []
+    )),
+  );
   const hasDecorativePalms = mapAssets.anchors.anchors.some((anchor) => (
     anchor.type.toLowerCase() === "decorative_palm"
   ));
@@ -308,6 +320,7 @@ export function createQaAssetPlan(
     ...wallMaterialIds.map(qaWallMaterialRequestId),
     ...propModelIds.map(qaPropModelRequestId),
     ...doorModelIds.map(qaDoorModelRequestId),
+    ...facadeModelIds.map(qaFacadeModelRequestId),
     ...directTextureUrls.map(qaDirectTextureRequestId),
   ]);
   return {
@@ -317,6 +330,7 @@ export function createQaAssetPlan(
     wallMaterialIds,
     propModelIds,
     doorModelIds,
+    facadeModelIds,
     directTextureUrls,
     requiredLogicalRequestIds,
     hash: hashQaAssetRequestIds(profile, requiredLogicalRequestIds),

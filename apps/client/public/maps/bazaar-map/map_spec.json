@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "7aa4e47425df965c8d8171ffd6a0c0f976d5b2b4f6a1135ec968b53c036d235a",
+    "sha256": "fa7e418e6ef9c80c22dd4a68fff58d24772117e42286f218aff67632cfbc480b",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -1754,48 +1754,51 @@
           "id": "GROUND_01",
           "moduleId": "blind_niche",
           "along": 0.060876623376623376,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_02",
-          "moduleId": "pilaster_niche_coverage",
+          "moduleId": "blind_niche",
           "along": 0.3536255411255411,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_03",
-          "moduleId": "pilaster_niche_coverage",
+          "moduleId": "blind_niche",
           "along": 0.6463744588744589,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_04",
-          "moduleId": "pilaster_niche_coverage",
+          "moduleId": "blind_niche",
           "along": 0.9391233766233766,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "baseElevationM": 1.5999999999999999,
+          "datumId": "GROUND_HEAD_3.40",
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Four complete high blind niches repeat between held corners, behind the existing edge-mounted drying racks.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 1.8,
+        "groundHeadM": 3.4,
         "upperSillDatumsM": [],
-        "signBandBottomM": 1.92,
-        "signBandTopM": 2.52
+        "signBandBottomM": 3.52,
+        "signBandTopM": 4.12
       }
     },
     {
@@ -1805,7 +1808,7 @@
       "start": 0.545,
       "end": 0.92,
       "districtId": "DISTRICT_DYERS",
-      "facadeProfileId": "quiet_residential_cut_stone",
+      "facadeProfileId": "quiet_residential_dyers_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "bays": [
         {
@@ -2132,21 +2135,24 @@
           "id": "GROUND_01",
           "moduleId": "blind_niche",
           "along": 0.5,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "One high blind niche matches the opposite link wall; the lower field and turning space stay clear.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 1,
         "edgeMarginM": 0.6,
-        "groundHeadM": 1.8,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [],
-        "signBandBottomM": 1.92,
-        "signBandTopM": 2.52
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.8200000000000003
       }
     },
     {
@@ -2367,12 +2373,12 @@
       "bays": [
         {
           "id": "GROUND_01",
-          "moduleId": "door_residential_timber",
+          "moduleId": "door_fortified_gate",
           "along": 0.5,
           "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "datumId": "GROUND_HEAD_2.96",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_01",
@@ -2380,21 +2386,24 @@
           "along": 0.5,
           "baseElevationM": 5.15,
           "datumId": "STORY_1_SILL_5.15",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "hero",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "A broad closed fortified entry and high clerestory share the bath hall axis, with the approved 0.994 m solid end piers.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.25,
+        "groundHeadM": 2.965,
         "upperSillDatumsM": [
           5.15
         ],
-        "signBandBottomM": 2.37,
-        "signBandTopM": 2.9699999999999998
+        "signBandBottomM": 3.085,
+        "signBandTopM": 3.6849999999999996
       }
     },
     {
@@ -2523,7 +2532,7 @@
       "start": 0.08,
       "end": 0.5714285714285714,
       "districtId": "DISTRICT_RUG",
-      "facadeProfileId": "active_merchant_warmwash",
+      "facadeProfileId": "active_merchant_rug_complete",
       "massingProfileId": "MASSING_MID_MIXED",
       "bays": [
         {
@@ -2532,17 +2541,8 @@
           "along": 0.2616279069767442,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
-          "moduleId": "shop_recess_market",
-          "along": 0.7383720930232558,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "DISPLAY",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_01",
@@ -2550,22 +2550,34 @@
           "along": 0.2616279069767442,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "DISPLAY",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_02",
+          "moduleId": "door_shop_timber",
+          "along": 0.7383720930232558,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.70",
+          "columnId": "SERVICE",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_02",
-          "moduleId": "window_shuttered",
+          "moduleId": "window_dark_recess",
           "along": 0.7383720930232558,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "SERVICE",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "merchant",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "A rug display and closed north service entry retain their original axes; the display has paneled shutters above and the service entry a smaller dark window.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.7,
@@ -2589,42 +2601,45 @@
         {
           "id": "GROUND_01",
           "moduleId": "blind_niche",
-          "along": 0.1208118556701031,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
-          "moduleId": "blind_niche",
-          "along": 0.8791881443298969,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_1.80",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "along": 0.3333333333333333,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "S",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "blind_niche",
-          "along": 0.5,
+          "along": 0.4999999999999999,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "DORMANT_0",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_02",
+          "moduleId": "blind_niche",
+          "along": 0.6666666666666666,
+          "baseElevationM": 1.3,
+          "datumId": "GROUND_HEAD_3.10",
+          "columnId": "N",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "residential_dense",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Two high blind niches sit at thirds; the redundant upper niche remains a dormant binding.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 2,
         "edgeMarginM": 0.6,
-        "groundHeadM": 1.8,
+        "groundHeadM": 3.1,
         "upperSillDatumsM": [
           3.68
         ],
-        "signBandBottomM": 1.92,
-        "signBandTopM": 2.52
+        "signBandBottomM": 3.22,
+        "signBandTopM": 3.56
       }
     },
     {
@@ -2677,66 +2692,69 @@
       "start": 0.001,
       "end": 0.292,
       "districtId": "DISTRICT_CARAVAN",
-      "facadeProfileId": "service_storage",
+      "facadeProfileId": "service_inspection",
       "massingProfileId": "MASSING_SERVICE_SPINE",
       "bays": [
         {
-          "id": "GROUND_01",
-          "moduleId": "door_storage_heavy",
-          "along": 0.13692010309278352,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
-          "moduleId": "door_storage_heavy",
-          "along": 0.8630798969072164,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.50",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
-        },
-        {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "vent_service",
-          "along": 0.09557560137457044,
+          "along": 0.09557560137457051,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "DORMANT_0",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_01",
+          "moduleId": "inspection_panel",
+          "along": 0.25,
+          "baseElevationM": 0.2500000000000001,
+          "datumId": "GROUND_HEAD_1.10",
+          "columnId": "S",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "vent_service",
-          "along": 0.5000000000000001,
+          "along": 0.5000000000000007,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "DORMANT_1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_02",
+          "moduleId": "inspection_panel",
+          "along": 0.75,
+          "baseElevationM": 0.2500000000000001,
+          "datumId": "GROUND_HEAD_1.10",
+          "columnId": "N",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "vent_service",
-          "along": 0.9044243986254297,
+          "along": 0.90442439862543,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "DORMANT_2",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "service",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Two sealed inspection panels articulate the solid retaining enclosure; upper bindings remain dormant.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "held",
         "storyCount": 2,
         "edgeMarginM": 0.6,
-        "groundHeadM": 2.5,
+        "groundHeadM": 1.1,
         "upperSillDatumsM": [
           3.68
         ],
-        "signBandBottomM": 2.62,
-        "signBandTopM": 3.2199999999999998
+        "signBandBottomM": 1.2200000000000002,
+        "signBandTopM": 1.82
       }
     },
     {
@@ -3001,11 +3019,20 @@
         {
           "id": "GROUND_01",
           "moduleId": "shop_recess_market",
-          "along": 0.11904761904761903,
+          "along": 0.11904761904761905,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "STORY_1_WINDOW_01",
+          "moduleId": "window_shuttered",
+          "along": 0.11904761904761905,
+          "baseElevationM": 3.68,
+          "datumId": "STORY_1_SILL_3.68",
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_02",
@@ -3013,44 +3040,8 @@
           "along": 0.30952380952380953,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_03",
-          "moduleId": "shop_recess_market",
-          "along": 0.5000000000000001,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_04",
-          "moduleId": "shop_recess_market",
-          "along": 0.6904761904761905,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_05",
-          "moduleId": "door_shop_timber",
-          "along": 0.8809523809523812,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_05",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_01",
-          "moduleId": "window_shuttered",
-          "along": 0.11904761904761903,
-          "baseElevationM": 3.68,
-          "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_02",
@@ -3058,17 +3049,35 @@
           "along": 0.30952380952380953,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_03",
+          "moduleId": "shop_recess_market",
+          "along": 0.5,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.70",
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_03",
           "moduleId": "window_shuttered",
-          "along": 0.5000000000000001,
+          "along": 0.5,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_04",
+          "moduleId": "shop_recess_market",
+          "along": 0.6904761904761905,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.70",
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_04",
@@ -3076,22 +3085,34 @@
           "along": 0.6904761904761905,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_05",
+          "moduleId": "door_shop_timber",
+          "along": 0.880952380952381,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.70",
+          "columnId": "AXIS_5",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_05",
           "moduleId": "window_shuttered",
-          "along": 0.8809523809523812,
+          "along": 0.880952380952381,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_05",
-          "layoutSource": "generated"
+          "columnId": "AXIS_5",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "merchant",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Named trade recesses and closed household/service entries retain their axes, with one complete upper closure on each axis and clear door approaches.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.7,
@@ -3115,43 +3136,46 @@
         {
           "id": "GROUND_01",
           "moduleId": "shop_recess_market",
-          "along": 0.21428571428571425,
+          "along": 0.21428571428571427,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "GROUND_02",
-          "moduleId": "door_shop_timber",
-          "along": 0.7857142857142857,
-          "baseElevationM": 0,
-          "datumId": "GROUND_HEAD_2.70",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_01",
           "moduleId": "window_shuttered",
-          "along": 0.21428571428571425,
+          "along": 0.21428571428571427,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "GROUND_02",
+          "moduleId": "door_shop_timber",
+          "along": 0.7857142857142856,
+          "baseElevationM": 0,
+          "datumId": "GROUND_HEAD_2.70",
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_02",
           "moduleId": "window_shuttered",
-          "along": 0.7857142857142857,
+          "along": 0.7857142857142856,
           "baseElevationM": 3.68,
           "datumId": "STORY_1_SILL_3.68",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "merchant",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Named trade recesses and closed household/service entries retain their axes, with one complete upper closure on each axis and clear door approaches.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.7,
@@ -3175,29 +3199,29 @@
         {
           "id": "GROUND_01",
           "moduleId": "arch_arcade",
-          "along": 0.1413690476190476,
+          "along": 0.14136904761904762,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_02",
           "moduleId": "column_arcade",
-          "along": 0.3804563492063492,
+          "along": 0.38045634920634924,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_03",
           "moduleId": "arch_arcade",
-          "along": 0.6195436507936507,
+          "along": 0.6195436507936508,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_04",
@@ -3205,13 +3229,16 @@
           "along": 0.8586309523809523,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "arcade",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Three trade arches and the retained intervening column keep their original axes; upper closures belong only to the three west display arches.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 1,
         "edgeMarginM": 0.6,
         "groundHeadM": 3.55,
@@ -3233,29 +3260,47 @@
         {
           "id": "GROUND_01",
           "moduleId": "arch_arcade",
-          "along": 0.1413690476190476,
+          "along": 0.14136904761904762,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "STORY_1_WINDOW_01",
+          "moduleId": "window_screened",
+          "along": 0.14136904761904762,
+          "baseElevationM": 4.15,
+          "datumId": "STORY_1_SILL_4.15",
+          "columnId": "AXIS_1",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_02",
           "moduleId": "column_arcade",
-          "along": 0.3804563492063492,
+          "along": 0.38045634920634924,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_02",
-          "layoutSource": "generated"
+          "columnId": "AXIS_2",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_03",
           "moduleId": "arch_arcade",
-          "along": 0.6195436507936507,
+          "along": 0.6195436507936508,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
+        },
+        {
+          "id": "STORY_1_WINDOW_03",
+          "moduleId": "window_screened",
+          "along": 0.6195436507936508,
+          "baseElevationM": 4.15,
+          "datumId": "STORY_1_SILL_4.15",
+          "columnId": "AXIS_3",
+          "layoutSource": "authored"
         },
         {
           "id": "GROUND_04",
@@ -3263,35 +3308,8 @@
           "along": 0.8586309523809523,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_3.55",
-          "columnId": "COLUMN_04",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_01",
-          "moduleId": "window_screened",
-          "along": 0.1413690476190476,
-          "baseElevationM": 4.15,
-          "datumId": "STORY_1_SILL_4.15",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_02",
-          "moduleId": "window_screened",
-          "along": 0.3804563492063492,
-          "baseElevationM": 4.15,
-          "datumId": "STORY_1_SILL_4.15",
-          "columnId": "UPPER_COLUMN_02",
-          "layoutSource": "generated"
-        },
-        {
-          "id": "STORY_1_WINDOW_03",
-          "moduleId": "window_screened",
-          "along": 0.6195436507936507,
-          "baseElevationM": 4.15,
-          "datumId": "STORY_1_SILL_4.15",
-          "columnId": "UPPER_COLUMN_03",
-          "layoutSource": "generated"
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_04",
@@ -3299,13 +3317,16 @@
           "along": 0.8586309523809523,
           "baseElevationM": 4.15,
           "datumId": "STORY_1_SILL_4.15",
-          "columnId": "UPPER_COLUMN_04",
-          "layoutSource": "generated"
+          "columnId": "AXIS_4",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "arcade",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "Three trade arches and the retained intervening column keep their original axes; upper closures belong only to the three west display arches.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 3.55,
@@ -3769,6 +3790,39 @@
     ]
   },
   "assetRegistry": [
+    {
+      "id": "ASSET_APOTHECARY",
+      "label": "apothecary",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/market-fixtures/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.5,
+        "height": 1.7000000476837158
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "apothecary",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/apothecary.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
     {
       "id": "ASSET_B18_DYE_COUNTER",
       "label": "B18 dry dye-sample cabinet",
@@ -4393,6 +4447,105 @@
       }
     },
     {
+      "id": "ASSET_DYERS_LOFT_VENT",
+      "label": "dyers loft vent",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/dyers-house/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 0.58,
+        "depth": 0.12,
+        "height": 0.48
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-loft-vent",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-loft-vent.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_ROOF_HATCH",
+      "label": "dyers roof hatch",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/dyers-house/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 1,
+        "height": 0.18
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-roof-hatch",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-roof-hatch.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_DYERS_SCREEN_SC_D",
+      "label": "dyers screen sc d",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/dyers-house/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-screen-sc-d",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_DYERS_SEALED_VAT",
       "label": "Poly Haven sealed timber dyer's vat",
       "source": {
@@ -4477,6 +4630,39 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_fountain_octagonal"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_GRAIN_BALANCE",
+      "label": "grain balance",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/market-fixtures/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.4950000047683716,
+        "height": 1.6399998664855957
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "grain-balance",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/grain-balance.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -4682,6 +4868,237 @@
       }
     },
     {
+      "id": "ASSET_ROOF_TIE_490",
+      "label": "roof tie 490",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.9700000286102293
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-490",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-490.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_ROOF_TIE_555",
+      "label": "roof tie 555",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.31999999284744235
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-555",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_ROOF_TIE_590",
+      "label": "roof tie 590",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.44999998807907104
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-590",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-590.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_ROOF_TIE_595",
+      "label": "roof tie 595",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.5
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-595",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-595.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_ROOF_TIE_610",
+      "label": "roof tie 610",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.6499999761581421
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-610",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_RUG_GALLERY",
+      "label": "rug gallery",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/rug-displays/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.302
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-gallery",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_RUG_ROLL_CHEST",
+      "label": "rug roll chest",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/rug-displays/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.3
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-roll-chest",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_SCREEN_SC_C",
       "label": "SC-C closed fine-crossed merchant window",
       "source": {
@@ -4702,6 +5119,105 @@
         "mode": "model",
         "id": "central-screen-sc-c",
         "uri": "/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SHUTTER_LOUVERED",
+      "label": "shutter louvered",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/market-fixtures/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-louvered",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SHUTTER_PANELED",
+      "label": "shutter paneled",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/textile-openings/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.6,
+        "depth": 0.24,
+        "height": 1.65
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-paneled",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SHUTTER_WOVEN",
+      "label": "shutter woven",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/market-fixtures/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-woven",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -4766,6 +5282,72 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_a_east_dye_works"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EDGE_BARREL",
+      "label": "Poly Haven Wine Barrel 01",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/wine_barrel_01"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.7419015169,
+        "depth": 0.7560357153,
+        "height": 0.871263355
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_A_EDGE_POT",
+      "label": "Poly Haven Ceramic Pot",
+      "source": {
+        "kind": "external_cc0",
+        "uri": "https://polyhaven.com/a/ceramic_pot"
+      },
+      "license": "CC0-1.0",
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
       },
       "transform": {
         "pivot": "base_center",
@@ -4907,6 +5489,137 @@
       }
     },
     {
+      "id": "ASSET_SPAWN_B_BENCH",
+      "label": "Spawn B bench",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 0.42,
+        "height": 0.495
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-bench",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_B_SHADE",
+      "label": "Spawn B shade",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 2.18,
+        "depth": 1.19,
+        "height": 0.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-shade",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_B_SKYLINE_PALM",
+      "label": "Instanced decorative palm",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://generated/bazaar/palm-frond"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.8,
+        "depth": 3.8,
+        "height": 7.8
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "foliage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_date_palm"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPAWN_B_UPPER_ROOM",
+      "label": "Spawn B upper-room",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3.3,
+        "depth": 2.68,
+        "height": 2.95
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_SPAWN_COVER",
       "label": "Spawn courtyard cover module",
       "source": {
@@ -4926,6 +5639,39 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_cover"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_DRAWERS",
+      "label": "spice drawers",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/market-fixtures/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.5,
+        "height": 1.7000000476837158
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-drawers",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/spice-drawers.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -5003,6 +5749,138 @@
       }
     },
     {
+      "id": "ASSET_SPICE_ROOF_MIDDLE",
+      "label": "spice roof middle",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 5.760000228881836,
+        "height": 2.5899999141693115
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-middle",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-middle.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_ROOF_NORTH",
+      "label": "spice roof north",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 3.240000009536743,
+        "height": 1.190000057220459
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-north",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-north.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_ROOF_SOUTH",
+      "label": "spice roof south",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 6.119999885559082,
+        "height": 1.7899999618530273
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-south",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-south.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_SPICE_UPPER_ROOM",
+      "label": "spice upper room",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/bazaar-roofs/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 3,
+        "depth": 6.559999942779541,
+        "height": 2.950000047683716
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_TEA_SERVICE",
       "label": "Low tea terrace service sideboard",
       "source": {
@@ -5055,6 +5933,39 @@
         "mode": "model",
         "id": "original_textile_booth",
         "uri": "/assets/models/environment/bazaar/props/textile_booth/textile_booth.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
+      "id": "ASSET_TEXTILE_SCREEN_SC_V",
+      "label": "textile screen sc v",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/textile-openings/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "textile-screen-sc-v",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -5224,6 +6135,19 @@
         "height": 2.5
       },
       "materialSlot": "timber",
+      "collisionOpening": false
+    },
+    {
+      "id": "inspection_panel",
+      "label": "Sealed retaining-wall inspection panel",
+      "kind": "blind_niche",
+      "openingType": "none",
+      "dimensionsM": {
+        "width": 1.35,
+        "depth": 0.035,
+        "height": 0.85
+      },
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -5398,6 +6322,28 @@
         "window_shuttered",
         "window_screened",
         "pilaster_facade"
+      ]
+    },
+    {
+      "id": "active_merchant_rug_complete",
+      "label": "Rug merchant display and closed service entry",
+      "family": "active_merchant",
+      "massingProfileId": "MASSING_MID_MIXED",
+      "materialSlots": {
+        "wall": "ph_plastered_wall",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_worn_planks",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "shop_recess_market",
+        "door_shop_timber",
+        "window_shuttered",
+        "window_screened",
+        "pilaster_facade",
+        "window_dark_recess"
       ]
     },
     {
@@ -5601,6 +6547,29 @@
       ]
     },
     {
+      "id": "quiet_residential_dyers_lime",
+      "label": "Dyers house lime plaster and cut-stone trim",
+      "family": "quiet_residential",
+      "massingProfileId": "MASSING_MID_MIXED",
+      "materialSlots": {
+        "wall": "ph_beige_wall_002",
+        "trim": "ph_trim_sanded_01",
+        "roof": "ph_worn_plaster_sun",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_001"
+      },
+      "moduleIds": [
+        "door_residential_timber",
+        "window_dark_recess",
+        "window_screened",
+        "blind_niche",
+        "pilaster_facade",
+        "door_shop_timber",
+        "window_shuttered"
+      ]
+    },
+    {
       "id": "quiet_residential_niche_coverage_relief",
       "label": "Budgeted dusty single-niche coverage relief",
       "family": "quiet_residential",
@@ -5760,6 +6729,28 @@
       "moduleIds": [
         "blind_niche",
         "pilaster_facade"
+      ]
+    },
+    {
+      "id": "service_inspection",
+      "label": "Retaining enclosure with sealed inspection panels",
+      "family": "service_storage",
+      "massingProfileId": "MASSING_LOW_MERCHANT",
+      "materialSlots": {
+        "wall": "ph_sandstone_blocks_06",
+        "trim": "ph_stone_trim_white",
+        "roof": "ph_worn_plaster_ochre",
+        "timber": "ph_rough_pine_door",
+        "metal": "tm_balcony_painted_metal",
+        "accent": "ph_band_beige_002"
+      },
+      "moduleIds": [
+        "door_storage_heavy",
+        "vent_service",
+        "window_dark_recess",
+        "blind_niche",
+        "pilaster_facade",
+        "inspection_panel"
       ]
     },
     {
@@ -6496,13 +7487,13 @@
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 52.91,
         "y": 12.885,
-        "z": 0.9
+        "z": 2.5
       },
       "sizeM": {
         "width": 1.05,
@@ -6521,24 +7512,24 @@
       "districtId": "DISTRICT_DYERS",
       "face": "east",
       "profileId": "quiet_residential_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
-        "x": 52.88,
+        "x": 52.91,
         "y": 18.295,
-        "z": 0.9
+        "z": 2.5
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
+        "width": 1.05,
+        "depth": 0.18,
         "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -6549,24 +7540,24 @@
       "districtId": "DISTRICT_DYERS",
       "face": "east",
       "profileId": "quiet_residential_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
-        "x": 52.88,
+        "x": 52.91,
         "y": 23.705,
-        "z": 0.9
+        "z": 2.5
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
+        "width": 1.05,
+        "depth": 0.18,
         "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -6577,24 +7568,24 @@
       "districtId": "DISTRICT_DYERS",
       "face": "east",
       "profileId": "quiet_residential_niche_coverage_relief",
-      "moduleId": "pilaster_niche_coverage",
-      "moduleKind": "column",
-      "openingType": "none",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "moduleId": "blind_niche",
+      "moduleKind": "blind_niche",
+      "openingType": "recess",
+      "datumId": "GROUND_HEAD_3.40",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
-        "x": 52.88,
+        "x": 52.91,
         "y": 29.115000000000002,
-        "z": 0.9
+        "z": 2.5
       },
       "sizeM": {
-        "width": 0.42,
-        "depth": 0.24,
+        "width": 1.05,
+        "depth": 0.18,
         "height": 1.8
       },
       "yawDeg": 270,
-      "materialSlot": "trim",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -6640,7 +7631,7 @@
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
-      "profileId": "quiet_residential_cut_stone",
+      "profileId": "quiet_residential_dyers_lime",
       "moduleId": "door_residential_timber",
       "moduleKind": "door",
       "openingType": "door_void",
@@ -6668,7 +7659,7 @@
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
-      "profileId": "quiet_residential_cut_stone",
+      "profileId": "quiet_residential_dyers_lime",
       "moduleId": "window_screened",
       "moduleKind": "window",
       "openingType": "window_void",
@@ -6696,7 +7687,7 @@
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
-      "profileId": "quiet_residential_cut_stone",
+      "profileId": "quiet_residential_dyers_lime",
       "moduleId": "window_screened",
       "moduleKind": "window",
       "openingType": "window_void",
@@ -6724,7 +7715,7 @@
       "zoneId": "DYERS_ALLEY",
       "districtId": "DISTRICT_DYERS",
       "face": "west",
-      "profileId": "quiet_residential_cut_stone",
+      "profileId": "quiet_residential_dyers_lime",
       "massingProfileId": "MASSING_LOW_MERCHANT",
       "center": {
         "x": 43.9,
@@ -6738,7 +7729,7 @@
       },
       "yawDeg": 90,
       "materialSlots": {
-        "wall": "ph_sandstone_blocks_05",
+        "wall": "ph_beige_wall_002",
         "trim": "ph_trim_sanded_01",
         "roof": "ph_worn_plaster_sun",
         "timber": "ph_rough_pine_door",
@@ -7392,13 +8383,13 @@
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 42.5,
         "y": 80.91,
-        "z": 0.9
+        "z": 2.2
       },
       "sizeM": {
         "width": 1.05,
@@ -7885,25 +8876,26 @@
       "districtId": "DISTRICT_DYERS",
       "face": "west",
       "profileId": "hero_courtyard_beige",
-      "moduleId": "door_residential_timber",
+      "moduleId": "door_fortified_gate",
       "moduleKind": "door",
       "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_2.96",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
-        "x": 41.1,
+        "x": 41.1695,
         "y": 74,
-        "z": 1.125
+        "z": 1.4825
       },
       "sizeM": {
-        "width": 1.05,
-        "depth": 0.2,
-        "height": 2.25
+        "width": 2.012,
+        "depth": 0.339,
+        "height": 2.965
       },
       "yawDeg": 90,
       "materialSlot": "timber",
-      "collisionOpening": false
+      "collisionOpening": false,
+      "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR"
     },
     {
       "id": "ARCH_FRONTAGE_NORTH_COURT_WEST_MASSING",
@@ -8045,8 +9037,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_5.15",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 41.14,
         "y": 74,
@@ -8224,13 +9216,13 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "west",
-      "profileId": "active_merchant_warmwash",
+      "profileId": "active_merchant_rug_complete",
       "moduleId": "shop_recess_market",
       "moduleKind": "shop_recess",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "DISPLAY",
+      "layoutSource": "authored",
       "center": {
         "x": 21.675,
         "y": 66.92,
@@ -8252,21 +9244,21 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "west",
-      "profileId": "active_merchant_warmwash",
-      "moduleId": "shop_recess_market",
-      "moduleKind": "shop_recess",
-      "openingType": "recess",
+      "profileId": "active_merchant_rug_complete",
+      "moduleId": "door_shop_timber",
+      "moduleKind": "door",
+      "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "SERVICE",
+      "layoutSource": "authored",
       "center": {
-        "x": 21.675,
+        "x": 21.11,
         "y": 70.2,
         "z": 1.35
       },
       "sizeM": {
-        "width": 2.4,
-        "depth": 1.35,
+        "width": 1.15,
+        "depth": 0.22,
         "height": 2.7
       },
       "yawDeg": 90,
@@ -8280,7 +9272,7 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "west",
-      "profileId": "active_merchant_warmwash",
+      "profileId": "active_merchant_rug_complete",
       "massingProfileId": "MASSING_MID_MIXED",
       "center": {
         "x": 18.6,
@@ -8316,13 +9308,13 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "west",
-      "profileId": "active_merchant_warmwash",
+      "profileId": "active_merchant_rug_complete",
       "moduleId": "window_shuttered",
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "DISPLAY",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
         "y": 66.92,
@@ -8344,25 +9336,25 @@
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "face": "west",
-      "profileId": "active_merchant_warmwash",
-      "moduleId": "window_shuttered",
+      "profileId": "active_merchant_rug_complete",
+      "moduleId": "window_dark_recess",
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "SERVICE",
+      "layoutSource": "authored",
       "center": {
-        "x": 21.12,
+        "x": 21.14,
         "y": 70.2,
-        "z": 4.505
+        "z": 4.305
       },
       "sizeM": {
-        "width": 1.6,
-        "depth": 0.24,
-        "height": 1.65
+        "width": 0.9,
+        "depth": 0.28,
+        "height": 1.25
       },
       "yawDeg": 90,
-      "materialSlot": "timber",
+      "materialSlot": "metal",
       "collisionOpening": false
     },
     {
@@ -8376,13 +9368,13 @@
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "S",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
-        "y": 58.469,
-        "z": 0.9
+        "y": 60.448,
+        "z": 2.2
       },
       "sizeM": {
         "width": 1.05,
@@ -8404,13 +9396,13 @@
       "moduleId": "blind_niche",
       "moduleKind": "blind_niche",
       "openingType": "recess",
-      "datumId": "GROUND_HEAD_1.80",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "datumId": "GROUND_HEAD_3.10",
+      "columnId": "N",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
-        "y": 65.531,
-        "z": 0.9
+        "y": 63.552,
+        "z": 2.2
       },
       "sizeM": {
         "width": 1.05,
@@ -8469,8 +9461,8 @@
       "moduleKind": "blind_niche",
       "openingType": "recess",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "DORMANT_0",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
         "y": 62,
@@ -8584,25 +9576,25 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "profileId": "service_inspection",
+      "moduleId": "inspection_panel",
+      "moduleKind": "blind_niche",
+      "openingType": "none",
+      "datumId": "GROUND_HEAD_1.10",
+      "columnId": "S",
+      "layoutSource": "authored",
       "center": {
-        "x": 9.875,
-        "y": 49.307,
-        "z": 1.25
+        "x": 9.9825,
+        "y": 50.36,
+        "z": 0.675
       },
       "sizeM": {
         "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
+        "depth": 0.035,
+        "height": 0.85
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -8612,25 +9604,25 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
-      "moduleId": "door_storage_heavy",
-      "moduleKind": "door",
-      "openingType": "door_void",
-      "datumId": "GROUND_HEAD_2.50",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "profileId": "service_inspection",
+      "moduleId": "inspection_panel",
+      "moduleKind": "blind_niche",
+      "openingType": "none",
+      "datumId": "GROUND_HEAD_1.10",
+      "columnId": "N",
+      "layoutSource": "authored",
       "center": {
-        "x": 9.875,
-        "y": 56.069,
-        "z": 1.25
+        "x": 9.9825,
+        "y": 55.016,
+        "z": 0.675
       },
       "sizeM": {
         "width": 1.35,
-        "depth": 0.25,
-        "height": 2.5
+        "depth": 0.035,
+        "height": 0.85
       },
       "yawDeg": 270,
-      "materialSlot": "timber",
+      "materialSlot": "wall",
       "collisionOpening": false
     },
     {
@@ -8640,7 +9632,7 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
+      "profileId": "service_inspection",
       "massingProfileId": "MASSING_SERVICE_SPINE",
       "center": {
         "x": 10.48,
@@ -8676,13 +9668,13 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
+      "profileId": "service_inspection",
       "moduleId": "vent_service",
       "moduleKind": "vent",
       "openingType": "recess",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "DORMANT_0",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
         "y": 48.922,
@@ -8704,13 +9696,13 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
+      "profileId": "service_inspection",
       "moduleId": "vent_service",
       "moduleKind": "vent",
       "openingType": "recess",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "DORMANT_1",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
         "y": 52.688,
@@ -8732,16 +9724,16 @@
       "zoneId": "SERVICE_NORTH",
       "districtId": "DISTRICT_CARAVAN",
       "face": "east",
-      "profileId": "service_storage",
+      "profileId": "service_inspection",
       "moduleId": "vent_service",
       "moduleKind": "vent",
       "openingType": "recess",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "DORMANT_2",
+      "layoutSource": "authored",
       "center": {
         "x": 9.91,
-        "y": 56.454,
+        "y": 56.45400000000001,
         "z": 3.92
       },
       "sizeM": {
@@ -9317,11 +10309,11 @@
       "moduleKind": "shop_recess",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 21.675,
-        "y": 17.24,
+        "y": 17.240000000000002,
         "z": 1.35
       },
       "sizeM": {
@@ -9345,8 +10337,8 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 21.11,
         "y": 20.12,
@@ -9373,8 +10365,8 @@
       "moduleKind": "shop_recess",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
         "x": 21.675,
         "y": 23,
@@ -9401,8 +10393,8 @@
       "moduleKind": "shop_recess",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
         "x": 21.675,
         "y": 25.880000000000003,
@@ -9429,11 +10421,11 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_05",
-      "layoutSource": "generated",
+      "columnId": "AXIS_5",
+      "layoutSource": "authored",
       "center": {
         "x": 21.11,
-        "y": 28.760000000000005,
+        "y": 28.76,
         "z": 1.35
       },
       "sizeM": {
@@ -9493,11 +10485,11 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
-        "y": 17.24,
+        "y": 17.240000000000002,
         "z": 4.505
       },
       "sizeM": {
@@ -9521,8 +10513,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
         "y": 20.12,
@@ -9549,8 +10541,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
         "y": 23,
@@ -9577,8 +10569,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
         "y": 25.880000000000003,
@@ -9605,11 +10597,11 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_05",
-      "layoutSource": "generated",
+      "columnId": "AXIS_5",
+      "layoutSource": "authored",
       "center": {
         "x": 21.12,
-        "y": 28.760000000000005,
+        "y": 28.76,
         "z": 4.505
       },
       "sizeM": {
@@ -9633,8 +10625,8 @@
       "moduleKind": "shop_recess",
       "openingType": "recess",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 18.325,
         "y": 58.6,
@@ -9661,8 +10653,8 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.70",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 18.89,
         "y": 63.4,
@@ -9725,8 +10717,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 18.88,
         "y": 58.6,
@@ -9753,8 +10745,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_3.68",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 18.88,
         "y": 63.4,
@@ -9781,8 +10773,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 34.79,
         "y": 51.18,
@@ -9809,8 +10801,8 @@
       "moduleKind": "column",
       "openingType": "none",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 34.79,
         "y": 54.39333333333333,
@@ -9837,8 +10829,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
         "x": 34.79,
         "y": 57.60666666666667,
@@ -9865,8 +10857,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
         "x": 34.79,
         "y": 60.82,
@@ -9929,8 +10921,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 24.21,
         "y": 51.18,
@@ -9957,8 +10949,8 @@
       "moduleKind": "column",
       "openingType": "none",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_02",
-      "layoutSource": "generated",
+      "columnId": "AXIS_2",
+      "layoutSource": "authored",
       "center": {
         "x": 24.21,
         "y": 54.39333333333333,
@@ -9985,8 +10977,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
         "x": 24.21,
         "y": 57.60666666666667,
@@ -10013,8 +11005,8 @@
       "moduleKind": "arch",
       "openingType": "arch_void",
       "datumId": "GROUND_HEAD_3.55",
-      "columnId": "COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
         "x": 24.21,
         "y": 60.82,
@@ -10077,39 +11069,11 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_4.15",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS_1",
+      "layoutSource": "authored",
       "center": {
         "x": 24.12,
         "y": 51.18,
-        "z": 4.8500000000000005
-      },
-      "sizeM": {
-        "width": 1,
-        "depth": 0.24,
-        "height": 1.4
-      },
-      "yawDeg": 90,
-      "materialSlot": "timber",
-      "collisionOpening": false
-    },
-    {
-      "id": "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_02",
-      "kind": "facade_module",
-      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
-      "zoneId": "TEXTILE_ARCADE",
-      "districtId": "DISTRICT_TEXTILE",
-      "face": "west",
-      "profileId": "covered_arcade",
-      "moduleId": "window_screened",
-      "moduleKind": "window",
-      "openingType": "window_void",
-      "datumId": "STORY_1_SILL_4.15",
-      "columnId": "UPPER_COLUMN_02",
-      "layoutSource": "generated",
-      "center": {
-        "x": 24.12,
-        "y": 54.39333333333333,
         "z": 4.8500000000000005
       },
       "sizeM": {
@@ -10133,8 +11097,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_4.15",
-      "columnId": "UPPER_COLUMN_03",
-      "layoutSource": "generated",
+      "columnId": "AXIS_3",
+      "layoutSource": "authored",
       "center": {
         "x": 24.12,
         "y": 57.60666666666667,
@@ -10161,8 +11125,8 @@
       "moduleKind": "window",
       "openingType": "window_void",
       "datumId": "STORY_1_SILL_4.15",
-      "columnId": "UPPER_COLUMN_04",
-      "layoutSource": "generated",
+      "columnId": "AXIS_4",
+      "layoutSource": "authored",
       "center": {
         "x": 24.12,
         "y": 60.82,
@@ -10179,6 +11143,45 @@
     }
   ],
   "dressingClusters": [
+    {
+      "id": "CLUSTER_AUTHORED_RUG_GATE",
+      "zoneId": "RUG_GATE",
+      "surfaceId": "SURFACE_RUG_GATE",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_RUG_DISPLAY_COMPLETE",
+        "MOUNT_RUG_PANELED_WINDOW"
+      ],
+      "assetIds": [
+        "ASSET_RUG_ROLL_CHEST",
+        "ASSET_SHUTTER_PANELED"
+      ]
+    },
+    {
+      "id": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "zoneId": "TEXTILE_ARCADE",
+      "surfaceId": "SURFACE_TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_TEXTILE_WEST_GROUND_01_COMPLETE",
+        "MOUNT_TEXTILE_WEST_GROUND_03_COMPLETE",
+        "MOUNT_TEXTILE_WEST_GROUND_04_COMPLETE",
+        "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+        "MOUNT_TEXTILE_EAST_GROUND_03_COMPLETE",
+        "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+        "MOUNT_TEXTILE_SCREEN_1",
+        "MOUNT_TEXTILE_SCREEN_3",
+        "MOUNT_TEXTILE_SCREEN_4"
+      ],
+      "assetIds": [
+        "ASSET_B18_PACKING_FINISH",
+        "ASSET_RUG_GALLERY",
+        "ASSET_RUG_ROLL_CHEST",
+        "ASSET_TEXTILE_SCREEN_SC_V"
+      ]
+    },
     {
       "id": "CLUSTER_B4_FOUNTAIN_DRESSING",
       "zoneId": "FOUNTAIN_COURT",
@@ -10287,6 +11290,78 @@
       ]
     },
     {
+      "id": "CLUSTER_BULK_SPICE_STREET",
+      "zoneId": "SPICE_STREET",
+      "surfaceId": "SURFACE_SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_SPICE_WINDOW_1",
+        "MOUNT_SPICE_WINDOW_2",
+        "MOUNT_SPICE_WINDOW_3",
+        "MOUNT_SPICE_WINDOW_4",
+        "MOUNT_SPICE_WINDOW_5",
+        "SPICE_W_SHOP_1",
+        "MOUNT_SPICE_COUNTER_3",
+        "MOUNT_SPICE_COUNTER_4",
+        "MOUNT_SPICE_ROOF_SOUTH",
+        "MOUNT_SPICE_ROOF_MIDDLE",
+        "MOUNT_SPICE_ROOF_NORTH",
+        "MOUNT_SPICE_UPPER_ROOM",
+        "MOUNT_SUPPORT_CANOPY_SPICE_01",
+        "MOUNT_SUPPORT_CANOPY_SPICE_02",
+        "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_01",
+        "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_02",
+        "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_03"
+      ],
+      "assetIds": [
+        "ASSET_SHUTTER_LOUVERED",
+        "ASSET_SHUTTER_PANELED",
+        "ASSET_SHUTTER_WOVEN",
+        "ASSET_SPICE_DRAWERS",
+        "ASSET_GRAIN_BALANCE",
+        "ASSET_APOTHECARY",
+        "ASSET_SPICE_ROOF_SOUTH",
+        "ASSET_SPICE_ROOF_MIDDLE",
+        "ASSET_SPICE_ROOF_NORTH",
+        "ASSET_SPICE_UPPER_ROOM",
+        "ASSET_ROOF_TIE_555",
+        "ASSET_ROOF_TIE_590",
+        "ASSET_ROOF_TIE_595",
+        "ASSET_ROOF_TIE_610"
+      ]
+    },
+    {
+      "id": "CLUSTER_BULK_TEA_TERRACE",
+      "zoneId": "TEA_TERRACE",
+      "surfaceId": "SURFACE_TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_TEA_WINDOW_1",
+        "MOUNT_TEA_WINDOW_2"
+      ],
+      "assetIds": [
+        "ASSET_SHUTTER_LOUVERED",
+        "ASSET_SHUTTER_WOVEN"
+      ]
+    },
+    {
+      "id": "CLUSTER_BULK_TEXTILE_ARCADE",
+      "zoneId": "TEXTILE_ARCADE",
+      "surfaceId": "SURFACE_TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+        "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02"
+      ],
+      "assetIds": [
+        "ASSET_ROOF_TIE_490",
+        "ASSET_ROOF_TIE_610"
+      ]
+    },
+    {
       "id": "CLUSTER_CARAVAN_COVER",
       "zoneId": "CARAVAN_COURT",
       "surfaceId": "SURFACE_CARAVAN_COURT",
@@ -10382,6 +11457,24 @@
       ],
       "assetIds": [
         "ASSET_COVER_GOODS"
+      ]
+    },
+    {
+      "id": "CLUSTER_DYERS_HOUSE_FINISH",
+      "zoneId": "DYERS_ALLEY",
+      "surfaceId": "SURFACE_DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "anchors": [
+        "DYERS_HOUSE_SCREEN_S",
+        "DYERS_HOUSE_SCREEN_N",
+        "DYERS_HOUSE_LOFT_VENT",
+        "DYERS_HOUSE_ROOF_HATCH"
+      ],
+      "assetIds": [
+        "ASSET_DYERS_SCREEN_SC_D",
+        "ASSET_DYERS_LOFT_VENT",
+        "ASSET_DYERS_ROOF_HATCH"
       ]
     },
     {
@@ -10631,7 +11724,6 @@
       "classification": "soft_visual",
       "anchors": [
         "RUG_W_SIGN_1",
-        "RUG_W_SIGN_2",
         "LMK_RUG_GATE_01"
       ],
       "assetIds": [
@@ -10675,7 +11767,10 @@
         "LMK_SPAWN_A_EAST_WORKS_01"
       ],
       "assetIds": [
-        "ASSET_SPAWN_A_EAST_DYE_WORKS"
+        "ASSET_SPAWN_A_EAST_DYE_WORKS",
+        "ASSET_SPAWN_A_EDGE_BARREL",
+        "ASSET_SPAWN_A_EDGE_POT",
+        "ASSET_DECORATIVE_CRATE"
       ]
     },
     {
@@ -10688,7 +11783,9 @@
         "LMK_SPAWN_A_EXIT_EAST_01"
       ],
       "assetIds": [
-        "ASSET_SPAWN_A_EXIT_EAST_RETURN"
+        "ASSET_SPAWN_A_EXIT_EAST_RETURN",
+        "ASSET_DECORATIVE_CRATE",
+        "ASSET_SPAWN_A_EDGE_POT"
       ]
     },
     {
@@ -10727,7 +11824,9 @@
         "LMK_SPAWN_A_WEST_BACKS_01"
       ],
       "assetIds": [
-        "ASSET_SPAWN_A_WEST_BACKS"
+        "ASSET_SPAWN_A_WEST_BACKS",
+        "ASSET_SPAWN_A_EDGE_BARREL",
+        "ASSET_SPAWN_A_EDGE_POT"
       ]
     },
     {
@@ -10741,6 +11840,33 @@
       ],
       "assetIds": [
         "ASSET_SPAWN_COVER"
+      ]
+    },
+    {
+      "id": "CLUSTER_SPAWN_B_DOMESTIC",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "surfaceId": "SURFACE_SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "anchors": [
+        "MOUNT_SPAWN_B_WEST_BENCH",
+        "MOUNT_SPAWN_B_WEST_POT",
+        "MOUNT_SPAWN_B_NORTH_POT",
+        "MOUNT_SPAWN_B_NORTH_POT_SMALL",
+        "MOUNT_SPAWN_B_DOOR_SHADE_W",
+        "MOUNT_SPAWN_B_DOOR_SHADE_E",
+        "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
+        "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
+        "MOUNT_SPAWN_B_SKYLINE_PALM",
+        "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
+        "MOUNT_SPAWN_B_PASSAGE_SHADE"
+      ],
+      "assetIds": [
+        "ASSET_SPAWN_B_BENCH",
+        "ASSET_SPAWN_A_EDGE_POT",
+        "ASSET_SPAWN_B_SHADE",
+        "ASSET_SPAWN_B_UPPER_ROOM",
+        "ASSET_SPAWN_B_SKYLINE_PALM"
       ]
     },
     {
@@ -10789,10 +11915,10 @@
       "assetIds": [
         "ASSET_DECORATIVE_CRATE",
         "ASSET_CC0_POTTERY",
+        "ASSET_SPICE_GOODS",
         "ASSET_CC0_BASKET",
         "ASSET_CC0_SPICE_SACK",
-        "ASSET_CC0_BRASS_POT",
-        "ASSET_SPICE_GOODS"
+        "ASSET_CC0_BRASS_POT"
       ]
     },
     {
@@ -10806,21 +11932,6 @@
       ],
       "assetIds": [
         "ASSET_SPICE_GATE"
-      ]
-    },
-    {
-      "id": "CLUSTER_SPICE_LANDMARK",
-      "zoneId": "SPICE_STREET",
-      "surfaceId": "SURFACE_SPICE_STREET",
-      "districtId": "DISTRICT_SPICE",
-      "classification": "soft_visual",
-      "anchors": [
-        "LMK_SPICE_DISTRICT"
-      ],
-      "assetIds": [
-        "ASSET_SPICE_GOODS",
-        "ASSET_CC0_SPICE_SACK",
-        "ASSET_CC0_BRASS_POT"
       ]
     },
     {
@@ -10843,11 +11954,10 @@
       "districtId": "DISTRICT_SPICE",
       "classification": "soft_visual",
       "anchors": [
-        "SPICE_W_SHOP_1",
-        "SPICE_W_SIGN_1"
+        "SPICE_W_SIGN_1",
+        "SPICE_W_SIGN_3"
       ],
       "assetIds": [
-        "ASSET_MARKET_STALL",
         "ASSET_SIGNBOARD"
       ]
     },
@@ -10912,7 +12022,6 @@
       "classification": "soft_visual",
       "anchors": [
         "TEA_E_SIGN_1",
-        "TEA_E_SIGN_2",
         "LMK_TEA_TERRACE_01"
       ],
       "assetIds": [
@@ -11501,19 +12610,19 @@
       "classification": "overhead",
       "position": {
         "x": 29.5,
-        "y": 58.688,
+        "y": 58.867999999999995,
         "z": 4.975
       },
       "yawDeg": 90,
       "spanSeats": {
         "start": {
           "x": 24,
-          "y": 58.688,
+          "y": 58.867999999999995,
           "z": 5.05
         },
         "end": {
           "x": 35,
-          "y": 58.688,
+          "y": 58.867999999999995,
           "z": 4.9
         }
       },
@@ -12566,6 +13675,142 @@
         "mode": "model",
         "id": "ph_ceramic_pot",
         "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_HOUSE_HATCH_DYERS_HOUSE_ROOF_HATCH",
+      "clusterId": "CLUSTER_DYERS_HOUSE_FINISH",
+      "assetId": "ASSET_DYERS_ROOF_HATCH",
+      "anchorId": "DYERS_HOUSE_ROOF_HATCH",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 42.9,
+        "y": 23.5,
+        "z": 4.76
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 1,
+        "height": 0.18
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-roof-hatch",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-roof-hatch.glb"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_N",
+      "clusterId": "CLUSTER_DYERS_HOUSE_FINISH",
+      "assetId": "ASSET_DYERS_SCREEN_SC_D",
+      "anchorId": "DYERS_HOUSE_SCREEN_N",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 45.985,
+        "y": 28.440015000000002,
+        "z": 0.85
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-screen-sc-d",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_S",
+      "clusterId": "CLUSTER_DYERS_HOUSE_FINISH",
+      "assetId": "ASSET_DYERS_SCREEN_SC_D",
+      "anchorId": "DYERS_HOUSE_SCREEN_S",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 45.985,
+        "y": 23.789985,
+        "z": 0.85
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-screen-sc-d",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb"
+      }
+    },
+    {
+      "id": "PLACE_DYERS_HOUSE_VENT_DYERS_HOUSE_LOFT_VENT",
+      "clusterId": "CLUSTER_DYERS_HOUSE_FINISH",
+      "assetId": "ASSET_DYERS_LOFT_VENT",
+      "anchorId": "DYERS_HOUSE_LOFT_VENT",
+      "zoneId": "DYERS_ALLEY",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 46,
+        "y": 26.115,
+        "z": 3.5
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.58,
+        "depth": 0.12,
+        "height": 0.48
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "dyers-loft-vent",
+        "uri": "/assets/models/environment/bazaar/props/dyers_house/dyers-loft-vent.glb"
       }
     },
     {
@@ -13872,6 +15117,40 @@
       }
     },
     {
+      "id": "PLACE_RUG_DISPLAY_COMPLETE_MOUNT_RUG_DISPLAY_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_RUG_GATE",
+      "assetId": "ASSET_RUG_ROLL_CHEST",
+      "anchorId": "MOUNT_RUG_DISPLAY_COMPLETE",
+      "zoneId": "RUG_GATE",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.84,
+        "y": 66.92,
+        "z": 0.08
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.3
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-roll-chest",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb"
+      }
+    },
+    {
       "id": "PLACE_RUG_LANTERN_LANTERN_RUG_01",
       "clusterId": "CLUSTER_RUG_LANTERN",
       "assetId": "ASSET_CC0_LANTERN",
@@ -13880,9 +15159,9 @@
       "districtId": "DISTRICT_RUG",
       "classification": "overhead",
       "position": {
-        "x": 32.5,
-        "y": 70,
-        "z": 4.25
+        "x": 33.75,
+        "y": 74.44,
+        "z": 3.65
       },
       "yawDeg": 270,
       "scale": {
@@ -13906,6 +15185,40 @@
       }
     },
     {
+      "id": "PLACE_RUG_PANELED_WINDOW_MOUNT_RUG_PANELED_WINDOW",
+      "clusterId": "CLUSTER_AUTHORED_RUG_GATE",
+      "assetId": "ASSET_SHUTTER_PANELED",
+      "anchorId": "MOUNT_RUG_PANELED_WINDOW",
+      "zoneId": "RUG_GATE",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 66.92,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.6,
+        "depth": 0.24,
+        "height": 1.65
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-paneled",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb"
+      }
+    },
+    {
       "id": "PLACE_RUG_SIGNS_RUG_W_SIGN_1",
       "clusterId": "CLUSTER_RUG_GATE",
       "assetId": "ASSET_SIGNBOARD",
@@ -13916,39 +15229,6 @@
       "position": {
         "x": 21.12,
         "y": 66.92,
-        "z": 3.32
-      },
-      "yawDeg": 90,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 2.2,
-        "depth": 0.12,
-        "height": 0.38
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "none",
-      "lodEligible": true,
-      "semanticClass": "signage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_signboard"
-      }
-    },
-    {
-      "id": "PLACE_RUG_SIGNS_RUG_W_SIGN_2",
-      "clusterId": "CLUSTER_RUG_GATE",
-      "assetId": "ASSET_SIGNBOARD",
-      "anchorId": "RUG_W_SIGN_2",
-      "zoneId": "RUG_GATE",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 21.12,
-        "y": 70.2,
         "z": 3.32
       },
       "yawDeg": 90,
@@ -14035,6 +15315,278 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_a_east_dye_works"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EAST_WORKS_BARREL_LMK_SPAWN_A_EAST_WORKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_SPAWN_A_EDGE_BARREL",
+      "anchorId": "LMK_SPAWN_A_EAST_WORKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.2,
+        "y": 1.9,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 0.95,
+        "y": 0.95,
+        "z": 0.95
+      },
+      "dimensionsM": {
+        "width": 0.7048064410549999,
+        "depth": 0.718233929535,
+        "height": 0.8277001872499999
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EAST_WORKS_CRATE_LMK_SPAWN_A_EAST_WORKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorId": "LMK_SPAWN_A_EAST_WORKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.150000000000006,
+        "y": 7,
+        "z": 0.15
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "dimensionsM": {
+        "width": 0.9078002094700001,
+        "depth": 0.44984911532000005,
+        "height": 0.38458011141000004
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EAST_WORKS_POT_LMK_SPAWN_A_EAST_WORKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "LMK_SPAWN_A_EAST_WORKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.150000000000006,
+        "y": 2.75,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 1.05,
+        "y": 1.05,
+        "z": 1.05
+      },
+      "dimensionsM": {
+        "width": 0.6888000000000001,
+        "depth": 0.5271,
+        "height": 0.3906
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EAST_WORKS_TOP_POT_LMK_SPAWN_A_EAST_WORKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_EAST_WORKS",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "LMK_SPAWN_A_EAST_WORKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_DYERS",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.150000000000006,
+        "y": 7,
+        "z": 0.535
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 0.75,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "dimensionsM": {
+        "width": 0.492,
+        "depth": 0.3765,
+        "height": 0.279
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EXIT_EAST_CRATE_LMK_SPAWN_A_EXIT_EAST_01",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "assetId": "ASSET_DECORATIVE_CRATE",
+      "anchorId": "LMK_SPAWN_A_EXIT_EAST_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 38.35,
+        "y": 12.85,
+        "z": 0.15
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "dimensionsM": {
+        "width": 0.9078002094700001,
+        "depth": 0.44984911532000005,
+        "height": 0.38458011141000004
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wooden_crate_01",
+        "uri": "/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_EXIT_EAST_POT_LMK_SPAWN_A_EXIT_EAST_01",
+      "clusterId": "CLUSTER_SPAWN_A_EXIT_EAST",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "LMK_SPAWN_A_EXIT_EAST_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 37.55,
+        "y": 12.85,
+        "z": 0.15
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_WEST_BACKS_BARREL_LMK_SPAWN_A_WEST_BACKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "assetId": "ASSET_SPAWN_A_EDGE_BARREL",
+      "anchorId": "LMK_SPAWN_A_WEST_BACKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.8,
+        "y": 2.2,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 0.9,
+        "y": 0.9,
+        "z": 0.9
+      },
+      "dimensionsM": {
+        "width": 0.66771136521,
+        "depth": 0.68043214377,
+        "height": 0.7841370195
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_wine_barrel_01",
+        "uri": "/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_A_EDGE_WEST_BACKS_POT_LMK_SPAWN_A_WEST_BACKS_01",
+      "clusterId": "CLUSTER_SPAWN_A_WEST_BACKS",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "LMK_SPAWN_A_WEST_BACKS_01",
+      "zoneId": "SPAWN_A_COURTYARD",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.82,
+        "y": 3.05,
+        "z": 0
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 0.656,
+        "depth": 0.502,
+        "height": 0.372
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
       }
     },
     {
@@ -14203,6 +15755,379 @@
       }
     },
     {
+      "id": "PLACE_SPAWN_B_DOOR_SHADE_E_MOUNT_SPAWN_B_DOOR_SHADE_E",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_SHADE",
+      "anchorId": "MOUNT_SPAWN_B_DOOR_SHADE_E",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 32.4,
+        "y": 91.24,
+        "z": 3.25
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.18,
+        "depth": 1.19,
+        "height": 0.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-shade",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_DOOR_SHADE_W_MOUNT_SPAWN_B_DOOR_SHADE_W",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_SHADE",
+      "anchorId": "MOUNT_SPAWN_B_DOOR_SHADE_W",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.6,
+        "y": 91.24,
+        "z": 3.25
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 2.18,
+        "depth": 1.19,
+        "height": 0.6
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-shade",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_NORTH_POT_MOUNT_SPAWN_B_NORTH_POT",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "MOUNT_SPAWN_B_NORTH_POT",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 18.4,
+        "y": 91.5,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1.25,
+        "y": 1.25,
+        "z": 1.25
+      },
+      "dimensionsM": {
+        "width": 0.8200000000000001,
+        "depth": 0.6275,
+        "height": 0.46499999999999997
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_NORTH_POT_SMALL_MOUNT_SPAWN_B_NORTH_POT_SMALL",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "MOUNT_SPAWN_B_NORTH_POT_SMALL",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 19.1,
+        "y": 91.6,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1.1,
+        "y": 1.1,
+        "z": 1.1
+      },
+      "dimensionsM": {
+        "width": 0.7216000000000001,
+        "depth": 0.5522,
+        "height": 0.4092
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_NORTH_UPPER_ROOM_MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
+      "anchorId": "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 21.3,
+        "y": 93.25,
+        "z": 10
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.3,
+        "depth": 2.68,
+        "height": 2.95
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_PASSAGE_SHADE_MOUNT_SPAWN_B_PASSAGE_SHADE",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_SHADE",
+      "anchorId": "MOUNT_SPAWN_B_PASSAGE_SHADE",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.78,
+        "y": 83.5,
+        "z": 3.5
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1.25,
+        "y": 1.25,
+        "z": 1.25
+      },
+      "dimensionsM": {
+        "width": 2.725,
+        "depth": 1.4874999999999998,
+        "height": 0.75
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-shade",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_SECOND_UPPER_ROOM_MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
+      "anchorId": "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 35.5,
+        "y": 93.25,
+        "z": 9.85
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.3,
+        "depth": 2.68,
+        "height": 2.95
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_SKYLINE_PALM_MOUNT_SPAWN_B_SKYLINE_PALM",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_SKYLINE_PALM",
+      "anchorId": "MOUNT_SPAWN_B_SKYLINE_PALM",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.1,
+        "y": 89.6,
+        "z": 7.4
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 0.75,
+        "y": 0.75,
+        "z": 0.75
+      },
+      "dimensionsM": {
+        "width": 2.8499999999999996,
+        "depth": 2.8499999999999996,
+        "height": 5.85
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "foliage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_date_palm"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_WEST_BENCH_MOUNT_SPAWN_B_WEST_BENCH",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_BENCH",
+      "anchorId": "MOUNT_SPAWN_B_WEST_BENCH",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.43,
+        "y": 87.8,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.8,
+        "depth": 0.42,
+        "height": 0.495
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-bench",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_WEST_POT_MOUNT_SPAWN_B_WEST_POT",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_A_EDGE_POT",
+      "anchorId": "MOUNT_SPAWN_B_WEST_POT",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 17.5,
+        "y": 89.4,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "scale": {
+        "x": 1.25,
+        "y": 1.25,
+        "z": 1.25
+      },
+      "dimensionsM": {
+        "width": 0.8200000000000001,
+        "depth": 0.6275,
+        "height": 0.46499999999999997
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": true,
+      "semanticClass": "container",
+      "runtime": {
+        "mode": "model",
+        "id": "ph_ceramic_pot",
+        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_SPAWN_B_WEST_UPPER_ROOM_MOUNT_SPAWN_B_WEST_UPPER_ROOM",
+      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
+      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
+      "anchorId": "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
+      "zoneId": "SPAWN_B_COURTYARD",
+      "districtId": "DISTRICT_RUG",
+      "classification": "soft_visual",
+      "position": {
+        "x": 15.750000000000002,
+        "y": 86.9,
+        "z": 9.85
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1.15,
+        "y": 1.15,
+        "z": 1.15
+      },
+      "dimensionsM": {
+        "width": 3.7949999999999995,
+        "depth": 3.082,
+        "height": 3.3925
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spawn-b-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
+      }
+    },
+    {
       "id": "PLACE_SPICE_BARREL_COVER_SPICE_01",
       "clusterId": "CLUSTER_SPICE_COVER",
       "assetId": "ASSET_CC0_BARREL",
@@ -14358,6 +16283,108 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_cloth_canopy"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_COUNTER_1_SPICE_W_SHOP_1",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SPICE_DRAWERS",
+      "anchorId": "SPICE_W_SHOP_1",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.75,
+        "y": 17.24,
+        "z": 0.08
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.5,
+        "height": 1.7000000476837158
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-drawers",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/spice-drawers.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_COUNTER_3_MOUNT_SPICE_COUNTER_3",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_GRAIN_BALANCE",
+      "anchorId": "MOUNT_SPICE_COUNTER_3",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.75,
+        "y": 23,
+        "z": 0.08
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.4950000047683716,
+        "height": 1.6399998664855957
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "grain-balance",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/grain-balance.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_COUNTER_4_MOUNT_SPICE_COUNTER_4",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_APOTHECARY",
+      "anchorId": "MOUNT_SPICE_COUNTER_4",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.75,
+        "y": 25.880000000000003,
+        "z": 0.08
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.7200000286102295,
+        "depth": 0.5,
+        "height": 1.7000000476837158
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "apothecary",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/apothecary.glb"
       }
     },
     {
@@ -14766,107 +16793,6 @@
       }
     },
     {
-      "id": "PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT",
-      "clusterId": "CLUSTER_SPICE_LANDMARK",
-      "assetId": "ASSET_CC0_BRASS_POT",
-      "anchorId": "LMK_SPICE_DISTRICT",
-      "zoneId": "SPICE_STREET",
-      "districtId": "DISTRICT_SPICE",
-      "classification": "soft_visual",
-      "position": {
-        "x": 22.025000000000002,
-        "y": 22.55,
-        "z": 0
-      },
-      "yawDeg": 82,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 0.3019456565,
-        "depth": 0.3016925901,
-        "height": 0.2909476549
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_brass_pot_01",
-        "uri": "/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf"
-      }
-    },
-    {
-      "id": "PLACE_SPICE_LANDMARK_GOODS_LMK_SPICE_DISTRICT",
-      "clusterId": "CLUSTER_SPICE_LANDMARK",
-      "assetId": "ASSET_SPICE_GOODS",
-      "anchorId": "LMK_SPICE_DISTRICT",
-      "zoneId": "SPICE_STREET",
-      "districtId": "DISTRICT_SPICE",
-      "classification": "soft_visual",
-      "position": {
-        "x": 21.675,
-        "y": 23,
-        "z": 0
-      },
-      "yawDeg": 90,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 1.5,
-        "depth": 0.75,
-        "height": 0.85
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_spice_goods"
-      }
-    },
-    {
-      "id": "PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT",
-      "clusterId": "CLUSTER_SPICE_LANDMARK",
-      "assetId": "ASSET_CC0_SPICE_SACK",
-      "anchorId": "LMK_SPICE_DISTRICT",
-      "zoneId": "SPICE_STREET",
-      "districtId": "DISTRICT_SPICE",
-      "classification": "soft_visual",
-      "position": {
-        "x": 22.025000000000002,
-        "y": 23.45,
-        "z": 0
-      },
-      "yawDeg": 84,
-      "scale": {
-        "x": 0.9,
-        "y": 0.9,
-        "z": 0.9
-      },
-      "dimensionsM": {
-        "width": 0.47849332095,
-        "depth": 0.47849332095,
-        "height": 0.45124227855000004
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "cc0_spice_sack",
-        "uri": "/assets/models/environment/bazaar/props/spice_sack/spice_sack_1k.gltf"
-      }
-    },
-    {
       "id": "PLACE_SPICE_LANTERN_LANTERN_SPICE_01",
       "clusterId": "CLUSTER_SPICE_LANTERN",
       "assetId": "ASSET_CC0_LANTERN",
@@ -14935,6 +16861,108 @@
       }
     },
     {
+      "id": "PLACE_SPICE_ROOF_MIDDLE_MOUNT_SPICE_ROOF_MIDDLE",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SPICE_ROOF_MIDDLE",
+      "anchorId": "MOUNT_SPICE_ROOF_MIDDLE",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 18.6,
+        "y": 24.44,
+        "z": 7
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 5.760000228881836,
+        "height": 2.5899999141693115
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-middle",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-middle.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_ROOF_NORTH_MOUNT_SPICE_ROOF_NORTH",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SPICE_ROOF_NORTH",
+      "anchorId": "MOUNT_SPICE_ROOF_NORTH",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 18.6,
+        "y": 28.94,
+        "z": 7
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 3.240000009536743,
+        "height": 1.190000057220459
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-north",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-north.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_ROOF_SOUTH_MOUNT_SPICE_ROOF_SOUTH",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SPICE_ROOF_SOUTH",
+      "anchorId": "MOUNT_SPICE_ROOF_SOUTH",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 18.6,
+        "y": 18.5,
+        "z": 7
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 4.800000190734863,
+        "depth": 6.119999885559082,
+        "height": 1.7899999618530273
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "spice-roof-south",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-south.glb"
+      }
+    },
+    {
       "id": "PLACE_SPICE_SIGNS_SPICE_W_SIGN_1",
       "clusterId": "CLUSTER_SPICE_MERCHANTS",
       "assetId": "ASSET_SIGNBOARD",
@@ -14945,18 +16973,18 @@
       "position": {
         "x": 21.12,
         "y": 17.24,
-        "z": 3.01
+        "z": 3.2
       },
       "yawDeg": 90,
       "scale": {
         "x": 1,
         "y": 1,
-        "z": 1
+        "z": 0.8
       },
       "dimensionsM": {
         "width": 2.2,
         "depth": 0.12,
-        "height": 0.38
+        "height": 0.30400000000000005
       },
       "collisionClass": "none",
       "shadowPolicy": "none",
@@ -14968,36 +16996,478 @@
       }
     },
     {
-      "id": "PLACE_SPICE_STALLS_SPICE_W_SHOP_1",
+      "id": "PLACE_SPICE_SIGNS_SPICE_W_SIGN_3",
       "clusterId": "CLUSTER_SPICE_MERCHANTS",
-      "assetId": "ASSET_MARKET_STALL",
-      "anchorId": "SPICE_W_SHOP_1",
+      "assetId": "ASSET_SIGNBOARD",
+      "anchorId": "SPICE_W_SIGN_3",
       "zoneId": "SPICE_STREET",
       "districtId": "DISTRICT_SPICE",
       "classification": "soft_visual",
       "position": {
-        "x": 21.675,
-        "y": 17.24,
-        "z": 0
+        "x": 21.12,
+        "y": 23,
+        "z": 3.2
       },
       "yawDeg": 90,
       "scale": {
-        "x": 0.82,
-        "y": 0.82,
-        "z": 0.82
+        "x": 1,
+        "y": 1,
+        "z": 0.8
       },
       "dimensionsM": {
-        "width": 1.804,
-        "depth": 1.107,
-        "height": 1.804
+        "width": 2.2,
+        "depth": 0.12,
+        "height": 0.30400000000000005
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "none",
+      "lodEligible": true,
+      "semanticClass": "signage",
+      "runtime": {
+        "mode": "procedural",
+        "id": "bazaar_signboard"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_UPPER_ROOM_MOUNT_SPICE_UPPER_ROOM",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SPICE_UPPER_ROOM",
+      "anchorId": "MOUNT_SPICE_UPPER_ROOM",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 35.7,
+        "y": 27.28,
+        "z": 4.76
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3,
+        "depth": 6.559999942779541,
+        "height": 2.950000047683716
       },
       "collisionClass": "none",
       "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "furniture",
+      "lodEligible": false,
+      "semanticClass": "architecture",
       "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_market_stall"
+        "mode": "model",
+        "id": "spice-upper-room",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_WINDOW_1_MOUNT_SPICE_WINDOW_1",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SHUTTER_LOUVERED",
+      "anchorId": "MOUNT_SPICE_WINDOW_1",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 17.240000000000002,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-louvered",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_WINDOW_2_MOUNT_SPICE_WINDOW_2",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SHUTTER_PANELED",
+      "anchorId": "MOUNT_SPICE_WINDOW_2",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 20.12,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.6,
+        "depth": 0.24,
+        "height": 1.65
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-paneled",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_WINDOW_3_MOUNT_SPICE_WINDOW_3",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SHUTTER_LOUVERED",
+      "anchorId": "MOUNT_SPICE_WINDOW_3",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 23,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-louvered",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_WINDOW_4_MOUNT_SPICE_WINDOW_4",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SHUTTER_WOVEN",
+      "anchorId": "MOUNT_SPICE_WINDOW_4",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 25.880000000000003,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-woven",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb"
+      }
+    },
+    {
+      "id": "PLACE_SPICE_WINDOW_5_MOUNT_SPICE_WINDOW_5",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_SHUTTER_PANELED",
+      "anchorId": "MOUNT_SPICE_WINDOW_5",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 20.985,
+        "y": 28.76,
+        "z": 3.68
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.6,
+        "depth": 0.24,
+        "height": 1.65
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-paneled",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_B6_LAUNDRY_SPICE_01_MOUNT_SUPPORT_B6_LAUNDRY_SPICE_01",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_ROOF_TIE_590",
+      "anchorId": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 34.875,
+        "y": 18.1616,
+        "z": 5.59
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.44999998807907104
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-590",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-590.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_B6_LAUNDRY_SPICE_02_MOUNT_SUPPORT_B6_LAUNDRY_SPICE_02",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_ROOF_TIE_595",
+      "anchorId": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_02",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 34.875,
+        "y": 23.756,
+        "z": 5.59
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.5
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-595",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-595.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_B6_LAUNDRY_SPICE_03_MOUNT_SUPPORT_B6_LAUNDRY_SPICE_03",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_ROOF_TIE_610",
+      "anchorId": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_03",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 34.875,
+        "y": 28.745600000000003,
+        "z": 5.59
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.6499999761581421
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-610",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_B6_LAUNDRY_TEXTILE_01_MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+      "clusterId": "CLUSTER_BULK_TEXTILE_ARCADE",
+      "assetId": "ASSET_ROOF_TIE_610",
+      "anchorId": "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 36.875,
+        "y": 51.6992,
+        "z": 5.59
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.6499999761581421
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-610",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_B6_LAUNDRY_TEXTILE_02_MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+      "clusterId": "CLUSTER_BULK_TEXTILE_ARCADE",
+      "assetId": "ASSET_ROOF_TIE_490",
+      "anchorId": "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 36.875,
+        "y": 58.867999999999995,
+        "z": 4.83
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.9700000286102293
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-490",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-490.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_CANOPY_SPICE_01_MOUNT_SUPPORT_CANOPY_SPICE_01",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_ROOF_TIE_555",
+      "anchorId": "MOUNT_SUPPORT_CANOPY_SPICE_01",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 34.875,
+        "y": 20.5808,
+        "z": 5.4799999999999995
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.31999999284744235
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-555",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb"
+      }
+    },
+    {
+      "id": "PLACE_SUPPORT_CANOPY_SPICE_02_MOUNT_SUPPORT_CANOPY_SPICE_02",
+      "clusterId": "CLUSTER_BULK_SPICE_STREET",
+      "assetId": "ASSET_ROOF_TIE_555",
+      "anchorId": "MOUNT_SUPPORT_CANOPY_SPICE_02",
+      "zoneId": "SPICE_STREET",
+      "districtId": "DISTRICT_SPICE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 34.875,
+        "y": 26.477600000000002,
+        "z": 5.4799999999999995
+      },
+      "yawDeg": 180,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 3.75,
+        "depth": 0.1599999964237213,
+        "height": 0.31999999284744235
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "roof-tie-555",
+        "uri": "/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb"
       }
     },
     {
@@ -15200,39 +17670,6 @@
       }
     },
     {
-      "id": "PLACE_TEA_SIGNS_TEA_E_SIGN_2",
-      "clusterId": "CLUSTER_TEA_VISUAL",
-      "assetId": "ASSET_SIGNBOARD",
-      "anchorId": "TEA_E_SIGN_2",
-      "zoneId": "TEA_TERRACE",
-      "districtId": "DISTRICT_CARAVAN",
-      "classification": "soft_visual",
-      "position": {
-        "x": 18.88,
-        "y": 63.4,
-        "z": 4.449999999999999
-      },
-      "yawDeg": 270,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 1.38,
-        "depth": 0.12,
-        "height": 0.38
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "none",
-      "lodEligible": true,
-      "semanticClass": "signage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_signboard"
-      }
-    },
-    {
       "id": "PLACE_TEA_STOOL_EAST_LMK_TEA_TERRACE_01",
       "clusterId": "CLUSTER_TEA_VISUAL",
       "assetId": "ASSET_CC0_TEA_STOOL",
@@ -15414,6 +17851,74 @@
       }
     },
     {
+      "id": "PLACE_TEA_WINDOW_1_MOUNT_TEA_WINDOW_1",
+      "clusterId": "CLUSTER_BULK_TEA_TERRACE",
+      "assetId": "ASSET_SHUTTER_LOUVERED",
+      "anchorId": "MOUNT_TEA_WINDOW_1",
+      "zoneId": "TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "soft_visual",
+      "position": {
+        "x": 19.015,
+        "y": 58.6,
+        "z": 5.08
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-louvered",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEA_WINDOW_2_MOUNT_TEA_WINDOW_2",
+      "clusterId": "CLUSTER_BULK_TEA_TERRACE",
+      "assetId": "ASSET_SHUTTER_WOVEN",
+      "anchorId": "MOUNT_TEA_WINDOW_2",
+      "zoneId": "TEA_TERRACE",
+      "districtId": "DISTRICT_CARAVAN",
+      "classification": "soft_visual",
+      "position": {
+        "x": 19.015,
+        "y": 63.4,
+        "z": 5.08
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.600000023841858,
+        "depth": 0.23999999463558197,
+        "height": 1.6500000953674316
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "shutter-woven",
+        "uri": "/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb"
+      }
+    },
+    {
       "id": "PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH",
       "clusterId": "CLUSTER_DYERS_MERCHANTS",
       "assetId": "ASSET_TEXTILE_BOOTH",
@@ -15526,6 +18031,108 @@
       }
     },
     {
+      "id": "PLACE_TEXTILE_EAST_GROUND_01_COMPLETE_MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_B18_PACKING_FINISH",
+      "anchorId": "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 35.16,
+        "y": 51.18,
+        "z": 0.14
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_EAST_GROUND_03_COMPLETE_MOUNT_TEXTILE_EAST_GROUND_03_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_RUG_GALLERY",
+      "anchorId": "MOUNT_TEXTILE_EAST_GROUND_03_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 35.16,
+        "y": 57.60666666666667,
+        "z": 0.14
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.302
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-gallery",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_EAST_GROUND_04_COMPLETE_MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_B18_PACKING_FINISH",
+      "anchorId": "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 35.16,
+        "y": 60.82,
+        "z": 0.14
+      },
+      "yawDeg": 450,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
+      }
+    },
+    {
       "id": "PLACE_TEXTILE_LANTERN_LANTERN_TEXTILE_01",
       "clusterId": "CLUSTER_TEXTILE_LANTERN",
       "assetId": "ASSET_CC0_LANTERN",
@@ -15557,6 +18164,108 @@
         "mode": "model",
         "id": "ph_wooden_lantern_01",
         "uri": "/assets/models/environment/bazaar/props/wooden_lantern_01/wooden_lantern_01_1k.gltf"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_SCREEN_1_MOUNT_TEXTILE_SCREEN_1",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_TEXTILE_SCREEN_SC_V",
+      "anchorId": "MOUNT_TEXTILE_SCREEN_1",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.985,
+        "y": 51.18,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "textile-screen-sc-v",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_SCREEN_3_MOUNT_TEXTILE_SCREEN_3",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_TEXTILE_SCREEN_SC_V",
+      "anchorId": "MOUNT_TEXTILE_SCREEN_3",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.985,
+        "y": 57.60666666666667,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "textile-screen-sc-v",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_SCREEN_4_MOUNT_TEXTILE_SCREEN_4",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_TEXTILE_SCREEN_SC_V",
+      "anchorId": "MOUNT_TEXTILE_SCREEN_4",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.985,
+        "y": 60.82,
+        "z": 4.15
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "architecture",
+      "runtime": {
+        "mode": "model",
+        "id": "textile-screen-sc-v",
+        "uri": "/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb"
       }
     },
     {
@@ -15623,6 +18332,108 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_signboard"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_WEST_GROUND_01_COMPLETE_MOUNT_TEXTILE_WEST_GROUND_01_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_RUG_GALLERY",
+      "anchorId": "MOUNT_TEXTILE_WEST_GROUND_01_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.84,
+        "y": 51.18,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.302
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-gallery",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_WEST_GROUND_03_COMPLETE_MOUNT_TEXTILE_WEST_GROUND_03_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_RUG_ROLL_CHEST",
+      "anchorId": "MOUNT_TEXTILE_WEST_GROUND_03_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.84,
+        "y": 57.60666666666667,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.32,
+        "height": 2.3
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "rug-roll-chest",
+        "uri": "/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb"
+      }
+    },
+    {
+      "id": "PLACE_TEXTILE_WEST_GROUND_04_COMPLETE_MOUNT_TEXTILE_WEST_GROUND_04_COMPLETE",
+      "clusterId": "CLUSTER_AUTHORED_TEXTILE_ARCADE",
+      "assetId": "ASSET_B18_PACKING_FINISH",
+      "anchorId": "MOUNT_TEXTILE_WEST_GROUND_04_COMPLETE",
+      "zoneId": "TEXTILE_ARCADE",
+      "districtId": "DISTRICT_TEXTILE",
+      "classification": "soft_visual",
+      "position": {
+        "x": 23.84,
+        "y": 60.82,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "scale": {
+        "x": 1,
+        "y": 1,
+        "z": 1
+      },
+      "dimensionsM": {
+        "width": 1.48,
+        "depth": 0.34,
+        "height": 1.535
+      },
+      "collisionClass": "none",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "furniture",
+      "runtime": {
+        "mode": "model",
+        "id": "b18-packing-finish",
+        "uri": "/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb"
       }
     }
   ],
@@ -15943,21 +18754,21 @@
       "zone": "TEXTILE_ARCADE",
       "pos": {
         "x": 24,
-        "y": 58.688,
+        "y": 58.867999999999995,
         "z": 5.05
       },
       "yawDeg": 90,
       "endPos": {
         "x": 35,
-        "y": 58.688,
+        "y": 58.867999999999995,
         "z": 4.9
       },
       "widthM": 1.15,
       "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
-      "along": 0.7,
+      "along": 0.713392857142857,
       "endFrontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
-      "endAlong": 0.7,
-      "notes": "B6 north Textile cross-facade line; distinct width, height, cloth layout, and tint prevent a readable repeat."
+      "endAlong": 0.713392857142857,
+      "notes": "Line shifted 0.18 m north to clear the complete upper window; east end is carried by a roof-seated hanger."
     },
     {
       "id": "B7_FOUNTAIN_MARKET_SPILL",
@@ -16563,6 +19374,60 @@
       "notes": "Dye rack station approaching the Covered Souk threshold."
     },
     {
+      "id": "DYERS_HOUSE_LOFT_VENT",
+      "type": "window_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 46,
+        "y": 26.115,
+        "z": 3.5
+      },
+      "yawDeg": 90,
+      "notes": "Closed loft ventilation relief, above the existing door; no collision opening."
+    },
+    {
+      "id": "DYERS_HOUSE_ROOF_HATCH",
+      "type": "shopfront_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 46,
+        "y": 23.5,
+        "z": 4.76
+      },
+      "yawDeg": 0,
+      "notes": "Closed non-playable roof hatch; base on the retained slab, top 4.94 m."
+    },
+    {
+      "id": "DYERS_HOUSE_SCREEN_N",
+      "type": "window_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 46,
+        "y": 28.440015000000002,
+        "z": 0.85
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "along": 0.78182,
+      "servedBayId": "BAY_WINDOW_N",
+      "notes": "SC-D rear mounting plane seats 0.135 m into the retained window rebate; unscaled export."
+    },
+    {
+      "id": "DYERS_HOUSE_SCREEN_S",
+      "type": "window_anchor",
+      "zone": "DYERS_ALLEY",
+      "pos": {
+        "x": 46,
+        "y": 23.789985,
+        "z": 0.85
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_DYERS_ALLEY_WEST_N",
+      "along": 0.21818,
+      "servedBayId": "BAY_WINDOW_S",
+      "notes": "SC-D rear mounting plane seats 0.135 m into the retained window rebate; unscaled export."
+    },
+    {
       "id": "L34_CARAVAN_CART_01",
       "type": "dressing_anchor",
       "zone": "CARAVAN_COURT",
@@ -17055,6 +19920,572 @@
       "notes": "Tea service landmark on the shared elevated route."
     },
     {
+      "id": "MOUNT_RUG_DISPLAY_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "RUG_GATE",
+      "pos": {
+        "x": 21,
+        "y": 66.92,
+        "z": 0.08
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_RUG_GATE_WEST",
+      "along": 0.2616279069767442,
+      "servedBayId": "GROUND_01",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_RUG_PANELED_WINDOW",
+      "type": "window_anchor",
+      "zone": "RUG_GATE",
+      "pos": {
+        "x": 21,
+        "y": 66.92,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_RUG_GATE_WEST",
+      "along": 0.2616279069767442,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_DOOR_SHADE_E",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 32.4,
+        "y": 91.24,
+        "z": 3.25
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_DOOR_SHADE_W",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 23.6,
+        "y": 91.24,
+        "z": 3.25
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_NORTH_POT",
+      "type": "shopfront_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 18.4,
+        "y": 91.5,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_NORTH_POT_SMALL",
+      "type": "shopfront_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 19.1,
+        "y": 91.6,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 21.3,
+        "y": 91.9,
+        "z": 10
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_PASSAGE_SHADE",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 17.78,
+        "y": 83.5,
+        "z": 3.5
+      },
+      "yawDeg": 270,
+      "notes": "Render-only roof or supported overhead shade at sealed west wall; no low relief in passage."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 35.5,
+        "y": 91.9,
+        "z": 9.85
+      },
+      "yawDeg": 0,
+      "notes": "Render-only skyline behind sealed north wall."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_SKYLINE_PALM",
+      "type": "decorative_palm",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 17.1,
+        "y": 89.6,
+        "z": 7.4
+      },
+      "yawDeg": 0,
+      "widthM": 1,
+      "heightM": 6.2,
+      "notes": "Render-only skyline behind sealed north wall."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_WEST_BENCH",
+      "type": "shopfront_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 17.43,
+        "y": 87.8,
+        "z": 0
+      },
+      "yawDeg": 90,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_WEST_POT",
+      "type": "shopfront_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 17.5,
+        "y": 89.4,
+        "z": 0
+      },
+      "yawDeg": 0,
+      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
+    },
+    {
+      "id": "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
+      "type": "window_anchor",
+      "zone": "SPAWN_B_COURTYARD",
+      "pos": {
+        "x": 17.1,
+        "y": 86.9,
+        "z": 9.85
+      },
+      "yawDeg": 270,
+      "notes": "Render-only roof or supported overhead shade at sealed west wall; no low relief in passage."
+    },
+    {
+      "id": "MOUNT_SPICE_COUNTER_3",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 23,
+        "z": 0.08
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.5,
+      "servedBayId": "GROUND_03",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_COUNTER_4",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 25.880000000000003,
+        "z": 0.08
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.6904761904761905,
+      "servedBayId": "GROUND_04",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_ROOF_MIDDLE",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 24.44,
+        "z": 7
+      },
+      "yawDeg": 0,
+      "notes": "S1 parcel roof at its authored absolute datum; the existing lower wall, openings and all collision remain."
+    },
+    {
+      "id": "MOUNT_SPICE_ROOF_NORTH",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 28.94,
+        "z": 7
+      },
+      "yawDeg": 0,
+      "notes": "S1 parcel roof at its authored absolute datum; the existing lower wall, openings and all collision remain."
+    },
+    {
+      "id": "MOUNT_SPICE_ROOF_SOUTH",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 18.5,
+        "z": 7
+      },
+      "yawDeg": 0,
+      "notes": "S1 parcel roof at its authored absolute datum; the existing lower wall, openings and all collision remain."
+    },
+    {
+      "id": "MOUNT_SPICE_UPPER_ROOM",
+      "type": "shopfront_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 27.28,
+        "z": 4.76
+      },
+      "yawDeg": 0,
+      "notes": "S1 setback room spans x34.2..37.2/y24..30.56, with two closed windows and cap7.71; no playable upper floor."
+    },
+    {
+      "id": "MOUNT_SPICE_WINDOW_1",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 17.240000000000002,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.11904761904761905,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_WINDOW_2",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 20.12,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.30952380952380953,
+      "servedBayId": "STORY_1_WINDOW_02",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_WINDOW_3",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 23,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.5,
+      "servedBayId": "STORY_1_WINDOW_03",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_WINDOW_4",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 25.880000000000003,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.6904761904761905,
+      "servedBayId": "STORY_1_WINDOW_04",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SPICE_WINDOW_5",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 21,
+        "y": 28.76,
+        "z": 3.68
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_SPICE_STREET_WEST",
+      "along": 0.880952380952381,
+      "servedBayId": "STORY_1_WINDOW_05",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_01",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 18.1616,
+        "z": 5.59
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_02",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 23.756,
+        "z": 5.59
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_B6_LAUNDRY_SPICE_03",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 28.745600000000003,
+        "z": 5.59
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+      "type": "window_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 35,
+        "y": 51.6992,
+        "z": 5.59
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+      "type": "window_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 35,
+        "y": 58.867999999999995,
+        "z": 4.83
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_CANOPY_SPICE_01",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 20.5808,
+        "z": 5.4799999999999995
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_SUPPORT_CANOPY_SPICE_02",
+      "type": "window_anchor",
+      "zone": "SPICE_STREET",
+      "pos": {
+        "x": 33,
+        "y": 26.477600000000002,
+        "z": 5.4799999999999995
+      },
+      "yawDeg": 0,
+      "notes": "Timber beam bears on both existing roof copings; the outer receiver meets this named cloth endpoint at its unchanged height."
+    },
+    {
+      "id": "MOUNT_TEA_WINDOW_1",
+      "type": "window_anchor",
+      "zone": "TEA_TERRACE",
+      "pos": {
+        "x": 19,
+        "y": 58.6,
+        "z": 5.08
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_TEA_TERRACE_EAST",
+      "along": 0.21428571428571427,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_TEA_WINDOW_2",
+      "type": "window_anchor",
+      "zone": "TEA_TERRACE",
+      "pos": {
+        "x": 19,
+        "y": 63.4,
+        "z": 5.08
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_TEA_TERRACE_EAST",
+      "along": 0.7857142857142856,
+      "servedBayId": "STORY_1_WINDOW_02",
+      "notes": "Complete native-scale visual assembly; existing gameplay authority is retained."
+    },
+    {
+      "id": "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 35,
+        "y": 51.18,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
+      "along": 0.14136904761904762,
+      "servedBayId": "GROUND_01",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_EAST_GROUND_03_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 35,
+        "y": 57.60666666666667,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
+      "along": 0.6195436507936508,
+      "servedBayId": "GROUND_03",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 35,
+        "y": 60.82,
+        "z": 0.14
+      },
+      "yawDeg": 270,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_EAST",
+      "along": 0.8586309523809523,
+      "servedBayId": "GROUND_04",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_SCREEN_1",
+      "type": "window_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 51.18,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.14136904761904762,
+      "servedBayId": "STORY_1_WINDOW_01",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_SCREEN_3",
+      "type": "window_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 57.60666666666667,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.6195436507936508,
+      "servedBayId": "STORY_1_WINDOW_03",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_SCREEN_4",
+      "type": "window_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 60.82,
+        "z": 4.15
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.8586309523809523,
+      "servedBayId": "STORY_1_WINDOW_04",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_WEST_GROUND_01_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 51.18,
+        "z": 0.14
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.14136904761904762,
+      "servedBayId": "GROUND_01",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_WEST_GROUND_03_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 57.60666666666667,
+        "z": 0.14
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.6195436507936508,
+      "servedBayId": "GROUND_03",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
+      "id": "MOUNT_TEXTILE_WEST_GROUND_04_COMPLETE",
+      "type": "shopfront_anchor",
+      "zone": "TEXTILE_ARCADE",
+      "pos": {
+        "x": 24,
+        "y": 60.82,
+        "z": 0.14
+      },
+      "yawDeg": 90,
+      "frontageId": "FRONTAGE_TEXTILE_ARCADE_WEST",
+      "along": 0.8586309523809523,
+      "servedBayId": "GROUND_04",
+      "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
+    },
+    {
       "id": "OPEN_CARAVAN_CENTER",
       "type": "open_node",
       "zone": "CARAVAN_COURT",
@@ -17171,11 +20602,11 @@
         "z": 3.32
       },
       "yawDeg": 90,
-      "widthM": 2.2,
+      "widthM": 1.38,
       "frontageId": "FRONTAGE_RUG_GATE_WEST",
       "along": 0.7383720930232558,
       "servedBayId": "GROUND_02",
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Dormant sign binding retained at the closed service entry; no sign placement remains."
     },
     {
       "id": "SPAWN_A_COVER_01",
@@ -17285,14 +20716,14 @@
       "pos": {
         "x": 21.12,
         "y": 17.24,
-        "z": 3.01
+        "z": 3.2
       },
       "yawDeg": 90,
       "widthM": 2.2,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.11904761904761903,
       "servedBayId": "GROUND_01",
-      "notes": "Signboard aligned to the merchant bay. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
+      "notes": "Trade sign remains below the upper closure and on its original wall axis."
     },
     {
       "id": "SPICE_W_SIGN_3",
@@ -17301,14 +20732,14 @@
       "pos": {
         "x": 21.12,
         "y": 23,
-        "z": 3.01
+        "z": 3.2
       },
       "yawDeg": 90,
       "widthM": 2.2,
       "frontageId": "FRONTAGE_SPICE_STREET_WEST",
       "along": 0.5000000000000001,
       "servedBayId": "GROUND_03",
-      "notes": "Restrained signboard aligned to the ordinary merchant door. Centred in the authored sign band so it reads below the upper sill rather than carrying it."
+      "notes": "Trade sign remains below the upper closure and on its original wall axis."
     },
     {
       "id": "TEA_E_SHOP_1",
@@ -17374,7 +20805,7 @@
       "frontageId": "FRONTAGE_TEA_TERRACE_EAST",
       "along": 0.7857142857142857,
       "servedBayId": "GROUND_02",
-      "notes": "Signboard aligned to the merchant bay."
+      "notes": "Dormant binding at the closed service entry; no sign is rendered."
     },
     {
       "id": "TEA_RAMP_SIGN_EAST",

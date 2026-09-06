@@ -150,7 +150,7 @@ export class BuffManager {
   }
 
   /**
-   * Called when any enemy dies. Uses a seeded 30% roll, with the fourth
+   * Called when any enemy dies. Uses a seeded 15% roll, with the seventh
    * consecutive would-be miss converted into a guaranteed drop.
    */
   onEnemyDeath(

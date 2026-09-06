@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
+import { BoxGeometry, Group, DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
 import { createArchSpandrelGeometry, createOpenBottomArchRecessGeometry, createOpenBottomPointedArchFrameGeometry } from "./wallDetailFamilies/arches";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
@@ -12,6 +12,8 @@ import {
   type V3FacadeProfile,
   type V3MassingProfile,
 } from "./v3Architecture";
+import { buildDoorModels, CASTLE_DOOR_ID } from "./buildDoorModels";
+import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { parseBlockoutSpec, type RuntimeBlockoutZone } from "./types";
 
 const massingProfiles: V3MassingProfile[] = [
@@ -610,7 +612,11 @@ test("core-shot structural walls receive closed grammar bays without changing th
   ];
   const segmentSnapshot = structuredClone(segments);
   const result = buildV3Architecture({
-    placements: [massingPlacement()],
+    placements: [massingPlacement(),
+      { ...modulePlacement("DOOR_SOURCE", "door_residential_timber", "door", { x: 10, y: 14, z: 1.125 }, "quiet_residential"), sizeM: { width: 1.05, height: 2.25, depth: .2 } },
+      { ...modulePlacement("WINDOW_SOURCE", "window_dark_recess", "window", { x: 10, y: 16, z: 4.775 }, "quiet_residential"), sizeM: { width: .9, height: 1.25, depth: .28 } },
+      { ...modulePlacement("VENT_SOURCE", "vent_service", "vent", { x: 10, y: 18, z: 6.2 }), sizeM: { width: .58, height: .48, depth: .18 } },
+    ],
     massingProfiles,
     facadeProfiles: [...facadeProfiles, coveredProfile],
     segments,
@@ -646,10 +652,14 @@ test("core-shot structural walls receive closed grammar bays without changing th
   ));
 
   assert.deepEqual(segments, segmentSnapshot, "visual grammar mutated collision boundary authority");
-  assert.equal(niches.length, 11, "the two-story Dyers gate must replace exactly one ordinary lower niche");
-  assert.equal(screens.length, 11, "the two-story Dyers gate must replace exactly one ordinary upper screen");
+  assert.equal(niches.length, 2, "only the retained Souk boundary uses generic lower niches");
+  assert.equal(screens.length, 2, "the Dogleg must use authored windows and vents, not generic upper screens");
   assert.equal(courses.length, 3, "each named structural frontage needs one continuous contact course");
-  assert.equal(variedClosures.length, 22, "ordinary lower boundary bays need two varied closed shutters");
+  assert.equal(variedClosures.length, 4, "generic Dogleg shutters must be replaced");
+  const houseWindows = result.instances.filter((instance) => instance.semanticClass === "dark_window_recess" && instance.placementId?.startsWith("ARCH_DYERS_DOGLEG_EAST_BOUNDARY_1:house-"));
+  assert.equal(houseWindows.length, 5);
+  assert.deepEqual(houseWindows.map((instance) => Math.round(instance.position.z * 10) / 10).sort(), [52.2, 52.2, 55, 57.8, 57.8]);
+  assert.equal(result.instances.filter((instance) => instance.meshId === "door_panel_timber" && instance.placementId?.startsWith("ARCH_DYERS_DOGLEG_EAST_BOUNDARY_1:house-door")).length, 1);
   assert.ok(
     twoStoryDyersGate.some((instance) => instance.semanticClass === "grammar_served_boundary_gate_stone_surround"),
     "the Dyers terminal gate lost its pointed masonry surround",
@@ -2807,4 +2817,51 @@ test("B18 counters replace only their furniture and retain independent awnings a
       assert.ok(new Vector3(0, .5, 0).applyMatrix4(transform.matrix).distanceTo(new Vector3().copy(edge.position)) <= .021);
     }
   }
+});
+
+// A recessed source leaf must remain visible ahead of its opaque backing.
+test("castle door backing stays behind closed leaves on all wall orientations", () => {
+  const source = new Group();
+  const leaf = new Mesh(new BoxGeometry(2, 3, .04), new MeshStandardMaterial());
+  leaf.name = "large_castle_door_left";
+  leaf.position.set(0, 1.5, .2);
+  leaf.rotation.y = .17;
+  source.add(leaf);
+  const models = { hasModel: () => true, instantiate: () => source.clone(true) } as unknown as PropModelLibrary;
+  for (const [x, z] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+    const root = buildDoorModels([{ wallSurfacePos: { x: 0, y: 1.4825, z: 0 },
+      doorW: 2.012, doorH: 2.965, yawRad: x ? 0 : Math.PI / 2,
+      outwardX: x!, outwardZ: z!, modelId: CASTLE_DOOR_ID }], models, .3, null, "1k", 1);
+    root.updateMatrixWorld(true);
+    const hits = new Raycaster(new Vector3(x! * 3, 1.4, z! * 3), new Vector3(-x!, 0, -z!)).intersectObject(root, true);
+    assert.equal(hits[0]?.object.name, leaf.name, "backing masked the actual door leaf");
+    assert.equal(root.getObjectByName(leaf.name)?.rotation.y, 0, "closed entry retained an open source pose");
+  }
+});
+
+test("a frontage with facadeModelId keeps its wall mass and roof edge but hands the face to the GLB", () => {
+  const massing = { ...(massingPlacement() as V3ArchitectureMassingPlacement), facadeModelId: "facade_test_row" };
+  const module = modulePlacement("ARCH_MODULE_001", "shop_recess_market", "shop_recess", { x: 10, y: 14, z: 1.35 });
+  const result = build([massing, module]);
+  assert.deepEqual(result.facadeModelPlacements, [{
+    placementId: "ARCH_MASSING_001",
+    frontageId: "FRONTAGE_001",
+    modelId: "facade_test_row",
+    base: { x: 10, y: 0, z: 16 },
+    inward: { x: 1, z: 0 },
+    widthM: 10,
+    heightM: 7,
+  }]);
+  const ids = result.instances.map((instance) => instance.placementId ?? "");
+  assert.ok(result.instances.some((instance) => instance.placementId === "ARCH_MASSING_001" && instance.meshId === "facade_wall_shell"), "wall shell still renders");
+  assert.ok(ids.some((id) => id.startsWith("ARCH_MASSING_001:roofline")), "roof edge still renders");
+  assert.ok(!ids.some((id) => id.startsWith("ARCH_MODULE_001")), "kit face modules are skipped");
+  assert.ok(!ids.some((id) => id.startsWith("ARCH_MASSING_001:facade-edge") || id === "ARCH_MASSING_001:wall-base" || id.includes(":merchant-base-apron")), "kit face accessories are skipped");
+  assert.equal(result.doorModelPlacements.length, 0);
+  const cutoutShell = build([massing, module], true, true).instances.find((instance) => instance.placementId === massing.id)!;
+  assert.equal(cutoutShell.scale.x, massing.sizeM.width - 0.04, "model-owned shell retains side-wall clearance after aperture removal");
+  assert.equal(cutoutShell.visualQaDimensions?.x, massing.sizeM.width, "authored width remains unchanged");
+  const plain = build([massingPlacement(), module]);
+  assert.equal(plain.facadeModelPlacements.length, 0);
+  assert.ok(plain.instances.some((instance) => instance.placementId?.startsWith("ARCH_MODULE_001")), "kit modules render when no facade model owns the face");
 });

@@ -535,6 +535,20 @@ function deriveZones(spec) {
     }
     const floorMaterialId = optionalString(zone.floorMaterialId, `zones[${index}].floorMaterialId`);
     const facadeProfileId = optionalString(zone.facadeProfileId, `zones[${index}].facadeProfileId`);
+    // An authored section GLB owns every visible face of this zone; the kit keeps
+    // wall mass, roofs and collision. Mounted at the rect's south-west corner.
+    const sectionModelId = optionalString(zone.sectionModelId, `zones[${index}].sectionModelId`);
+    if (sectionModelId && !getRuntimeModelCatalog().has(sectionModelId)) {
+      fail(`Zone '${id}' sectionModelId '${sectionModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
+    const sectionFaces = Array.isArray(zone.sectionFaces)
+      ? zone.sectionFaces.map((face, faceIndex) => {
+        const value = ensureString(face, `zones[${index}].sectionFaces[${faceIndex}]`);
+        if (!["north", "south", "east", "west"].includes(value)) fail(`zones[${index}].sectionFaces[${faceIndex}] must be north/south/east/west`);
+        return value;
+      })
+      : undefined;
+    if (sectionFaces && !sectionModelId) fail(`zones[${index}].sectionFaces requires sectionModelId`);
     const clearWidthM = optionalNumber(zone.clearWidthM, `zones[${index}].clearWidthM`);
     if (typeof clearWidthM !== "undefined") {
       ensurePositive(clearWidthM, `zones[${index}].clearWidthM`);
@@ -556,6 +570,8 @@ function deriveZones(spec) {
       ...(macroLane ? { macroLane } : {}),
       ...(floorMaterialId ? { floorMaterialId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
+      ...(sectionModelId ? { sectionModelId } : {}),
+      ...(sectionFaces ? { sectionFaces } : {}),
       ...(typeof clearWidthM !== "undefined" ? { clearWidthM } : {}),
     };
   });
@@ -1170,6 +1186,10 @@ function getRuntimeModelCatalog() {
       filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/doors/models.json"),
       publicBase: "/assets/models/environment/bazaar/doors",
     },
+    {
+      filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/facades/models.json"),
+      publicBase: "/assets/models/environment/bazaar/facades",
+    },
   ];
   const catalog = new Map();
   for (const manifest of manifestEntries) {
@@ -1185,11 +1205,14 @@ function getRuntimeModelCatalog() {
       const relativeUri = ensureString(model.url, `${manifest.filePath}.models[].url`);
       if (catalog.has(id)) fail(`Duplicate runtime model id '${id}' across bazaar model manifests`);
       catalog.set(id, path.posix.join(manifest.publicBase, relativeUri));
+      // Authored GLBs name their pack materials; the runtime preloads exactly these.
+      runtimeModelMaterialIds.set(id, Array.isArray(model.materialIds) ? model.materialIds.map(String) : []);
     }
   }
   runtimeModelCatalogCache = catalog;
   return catalog;
 }
+const runtimeModelMaterialIds = new Map();
 
 function deriveMassingProfiles(spec, formatVersion) {
   const source = requireV3Array(spec, "massing_profiles", formatVersion);
@@ -1371,6 +1394,12 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
     if (massingProfileId && !massingById?.has(massingProfileId)) {
       fail(`Frontage '${id}' references unknown massing profile '${massingProfileId}'`);
     }
+    // An authored facade GLB owns this frontage's street face; the runtime keeps
+    // the massing and drops the kit's face modules. It must be a registered model.
+    const facadeModelId = optionalString(entry.facadeModelId, `frontages[${index}].facadeModelId`);
+    if (facadeModelId && !getRuntimeModelCatalog().has(facadeModelId)) {
+      fail(`Frontage '${id}' facadeModelId '${facadeModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
     let bays;
     let layout;
     const layoutIntent = entry.layoutIntent;
@@ -1458,6 +1487,7 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
       ...(districtId ? { districtId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
       ...(massingProfileId ? { massingProfileId } : {}),
+      ...(facadeModelId ? { facadeModelId } : {}),
       ...(bays ? { bays } : {}),
       ...(layout ? { layout } : {}),
     };
@@ -1779,6 +1809,7 @@ function deriveArchitecturePlacements(frontages, zoneById, surfaceById, massingB
       face: frontage.face,
       profileId: profile.id,
       massingProfileId: massing.id,
+      ...(frontage.facadeModelId ? { facadeModelId: frontage.facadeModelId } : {}),
       center: { x: center2d.x, y: center2d.y, z: baseElevationM + massing.heightM * 0.5 },
       sizeM: { width: frontageLengthM, depth: massing.depthM, height: massing.heightM },
       yawDeg,
@@ -3132,6 +3163,20 @@ export function compileMapSpec(
     if (unusedAssets.length > 0) fail(`V3 asset registry contains unrendered assets: ${unusedAssets.join(", ")}`);
   }
 
+  // Zone section models: origin at the rect's south-west corner on the zone's floor.
+  const sectionModels = zones.filter((zone) => zone.sectionModelId).map((zone) => {
+    const surface = zone.surfaceId ? surfaceById.get(zone.surfaceId) : undefined;
+    const elevationM = resolveSurfaceElevationAt(surface, zone.rect.x + zone.rect.w * 0.5, zone.rect.y + zone.rect.h * 0.5);
+    getRuntimeModelCatalog();
+    return {
+      zoneId: zone.id,
+      modelId: zone.sectionModelId,
+      origin: { x: zone.rect.x, y: zone.rect.y, z: elevationM },
+      sizeM: { width: zone.rect.w, depth: zone.rect.h },
+      faces: zone.sectionFaces ?? ["north", "south", "east", "west"],
+      materialIds: runtimeModelMaterialIds.get(zone.sectionModelId) ?? [],
+    };
+  });
   const blockoutSpec = deriveBlockoutSpec(mapSpec, zones);
   const mapCenter = deriveMapCenter(mapSpec, blockoutSpec.playable_boundary);
   validateSealedPerimeter(formatVersion, blockoutSpec.playable_boundary, blockoutSpec.exterior_wall_patches);
@@ -3152,6 +3197,7 @@ export function compileMapSpec(
     ...(facadeModules ? { facadeModules } : {}),
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
+    ...(sectionModels.length ? { sectionModels } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),
     anchors,

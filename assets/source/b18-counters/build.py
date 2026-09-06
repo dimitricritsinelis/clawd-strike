@@ -40,7 +40,7 @@ roughness = np.ones_like(albedo)
 normal = np.ones_like(albedo)
 normal[:, :, :3] = (.5, .5, 1)
 roughness[:, :, :3] = .86
-albedo[:, :512, :3] = crop[np.linspace(0, 509, N).astype(int)[:, None], np.linspace(0, 139, 512).astype(int)[None, :]] * .92
+albedo[:, :512, :3] = crop[np.linspace(0, 509, N).astype(int)[:, None], np.linspace(0, 139, 512).astype(int)[None, :]] * np.array((.72, .78, .82))
 yy, xx = np.mgrid[0:512, 0:512]
 weave = .018 * np.sin(xx * 1.53) + .015 * np.cos(yy * 1.51)
 palette = [( .13,.23,.29), (.44,.18,.13), (.69,.62,.47), (.24,.33,.30), (.47,.31,.18), (.21,.27,.40)]
@@ -54,8 +54,17 @@ for i, color in enumerate(palette):
     normal[512:, 512 + lo:512 + hi, 0] += .016 * np.sin(xx[:, lo:hi] * 1.53)
     normal[512:, 512 + lo:512 + hi, 1] += .016 * np.cos(yy[:, lo:hi] * 1.51)
     regions[f'cloth{i}'] = (.5 + lo / N, .5, (hi - lo) / N, .5)
-albedo[:512, 512:942, :3] = np.array((.52, .43, .30)) * (1 + .04 * np.sin(xx[:, :430] * .083)[:, :, None] * np.cos(yy[:, :430] * .037)[:, :, None])
-roughness[:512, 512:942, :3] = .61
+# Four fired glaze batches share one atlas: indigo, celadon, madder and ochre.
+# The lower ring remains unglazed earthenware; throwing lines follow the lathe.
+for i, color in enumerate([(.15,.24,.28),(.29,.36,.28),(.40,.22,.14),(.50,.39,.23)]):
+    lo, hi = 512 + i * 107, 512 + (i + 1) * 107
+    tone = 1 + .035 * np.sin(yy[:, :107] * .24) + .025 * np.sin(xx[:, :107] * .075) * np.cos(yy[:, :107] * .043)
+    albedo[:512, lo:hi, :3] = np.array(color) * tone[:, :, None]
+    albedo[:44, lo:hi, :3] = (.43,.31,.20)
+    roughness[:512, lo:hi, :3] = .38
+    roughness[:44, lo:hi, :3] = .85
+    normal[:512, lo:hi, 1] += .008 * np.sin(yy[:, :107] * .24)
+    regions[f'ceramic{i}'] = (lo / N, 0, (hi-lo) / N, .5)
 albedo[:256, 942:, :3] = (.105, .085, .063)
 roughness[:256, 942:, :3] = .47
 albedo[256:512, 942:, :3] = (.59, .48, .32)
@@ -65,9 +74,9 @@ material.use_nodes = True
 nodes, links = material.node_tree.nodes, material.node_tree.links
 bsdf = nodes.get('Principled BSDF')
 for name, pixels, socket, noncolor in [
-    ('b18-counter-albedo', albedo, 'Base Color', False),
-    ('b18-counter-roughness', roughness, 'Roughness', True),
-    ('b18-counter-normal', normal, 'Normal', True),
+    ('b18-display-albedo', albedo, 'Base Color', False),
+    ('b18-display-roughness', roughness, 'Roughness', True),
+    ('b18-display-normal', normal, 'Normal', True),
 ]:
     im = bpy.data.images.new(name, width=N, height=N, alpha=False)
     if noncolor:
@@ -166,7 +175,7 @@ def cabinet(prefix, upper_height):
         for height in [.25, .75]:
             rod(f'{prefix} | timber drawbore', (x, -.338, height), (x, -.34, height), .008, 'wood', 8)
 
-def vessel(prefix, x, y, base):
+def vessel(prefix, x, y, base, glaze):
     # Lathed closed lidded sample jars; no open bath, fluid or loose pigment.
     profile = [(0,.066),(.014,.079),(.105,.083),(.145,.059),(.16,.059),(.165,.071),(.178,.071),(.185,.061)]
     vertices, uvs, faces = [], [], []
@@ -181,7 +190,7 @@ def vessel(prefix, x, y, base):
             a=ring*count+j; b=ring*count+(j+1)%count
             faces.append((a,b,b+count,a+count))
     faces += [tuple(reversed(range(count))), tuple((len(profile)-1)*count+j for j in range(count))]
-    surface_mesh(prefix, vertices, faces, uvs, 'ceramic')
+    surface_mesh(prefix, vertices, faces, uvs, f'ceramic{glaze}')
     rod(prefix+' | lid knob',(x,y,base+.18),(x,y,base+.20),.017,'wood',10)
 
 def dye():
@@ -192,7 +201,7 @@ def dye():
         for x in [-.615,.615]:
             rod('DY-S | shelf knee', (x,-.026,height-.13), (x,-.18,height-.024), .012,'wood')
         for j,x in enumerate([-.45,-.15,.15,.45]):
-            vessel(f'DY-S | closed sample jar {shelf*4+j+1}',x,-.116,height+.0175)
+            vessel(f'DY-S | closed sample jar {shelf*4+j+1}',x,-.116,height+.0175,(j+shelf*2)%4)
     rod('DY-S | sample rail',(-.637,-.20,1.85),(.637,-.20,1.85),.015,'wood',12)
     for x in [-.62,.62]:
         rod('DY-S | sample rail arm',(x,-.025,1.85),(x,-.20,1.85),.012,'iron')
@@ -217,6 +226,10 @@ def dye():
 def packing():
     cabinet('PACK',1.675)
     box('PACK | rear packing rail',(0,-.025,1.65),(1.28,.05,.05))
+    # Closed packing-board back makes the quiet bay a locked stock cabinet.
+    # Its existing uprights and rail carry the boards, all behind the counter.
+    for i in range(7):
+        box(f'PACK | packing back board {i+1}',(-.54+i*.18,-.022,1.275),(.177,.026,.69),bevel=.002)
     # Three bound bolts are stock for collection, each supported on the counter.
     for i,x in enumerate([-.46,0,.46]):
         box(f'PACK | folded cloth bolt {i+1}',(x,-.165,1.015),(.37,.27,.23),f'cloth{[2,3,0][i]}',.019)
@@ -275,4 +288,22 @@ for name, objects in collections.items():
     bpy.ops.export_scene.gltf(filepath=str(OUT/f'{name}.glb'), export_format='GLB', use_selection=True, export_apply=True, export_yup=True, export_extras=False)
     report['models'][name]={'triangles':triangles,'materials':len(ob.data.materials),'sourceBounds':bounds,'glbMd5':hashlib.md5((OUT/f'{name}.glb').read_bytes()).hexdigest()}
 (OUT/'provenance.json').write_text(json.dumps(report,indent=2)+'\n')
+# Export publication is part of the reproducible build, including manifest hashes.
+import shutil
+PUBLIC = ROOT / 'apps/client/public/assets/models/environment/bazaar/props'
+DEST = PUBLIC / 'b18_counters'
+for path in OUT.iterdir():
+    if path.suffix in ('.glb', '.png', '.json'):
+        shutil.copy2(path, DEST / path.name)
+manifest_path = PUBLIC / 'models.json'
+manifest_text = manifest_path.read_text()
+manifest = json.loads(manifest_text)
+for entry in manifest['models']:
+    if entry['id'] not in collections:
+        continue
+    for relative, old_hash in entry['md5'].items():
+        published = relative.replace('b18-counter-', 'b18-display-')
+        new_hash = hashlib.md5((PUBLIC / published).read_bytes()).hexdigest()
+        manifest_text = manifest_text.replace('"'+relative+'": "'+old_hash+'"', '"'+published+'": "'+new_hash+'"')
+manifest_path.write_text(manifest_text)
 print(json.dumps(report,indent=2))

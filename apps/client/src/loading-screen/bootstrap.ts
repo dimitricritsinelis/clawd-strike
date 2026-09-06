@@ -244,6 +244,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     sharedChampion: sharedChampionSnapshot.champion,
     lastRunSummary: null,
     feedback: null,
+    perception: { visibleTargets: [], movementBlocked: false },
   });
 
   window.agent_observe = () => JSON.stringify(publicObserveState());

@@ -6,7 +6,7 @@
 
 Open [design-atlas.pdf](design-atlas.pdf) for the presentation: district references, dimensioned plans/elevations, blank-face treatments, sections, material/assembly studies and approval handoff. The SVG building sheets in `drawings/` are derived review drawings; this document owns proposed placement decisions, `assets.md` owns construction variants, and the live spec owns implemented state. No generated concept image is a measuring instrument.
 
-**Revision 3 design judgment:** spatial sequence precedes asset production. S1/S2 propose broad roof profiles; E1/G1 are explicitly gameplay alternatives. The first complete-building pilot is B18 after the graybox decision. The common rules and individual revisions below replace the former blanket roof freeze and blank-face suppression. Source dimensions remain labeled observed.
+**Revision 3 design judgment:** spatial sequence precedes asset production. S1/S2 propose broad roof profiles; E1/G1 are explicitly gameplay alternatives. B18 was the first complete-building study; no building is frozen or gated behind another, and each unit is judged against its target image. The common rules and individual revisions below replace the former blanket roof freeze and blank-face suppression. Source dimensions remain labeled observed.
 
 ## District intent
 

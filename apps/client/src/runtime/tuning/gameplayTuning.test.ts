@@ -86,7 +86,7 @@ test("registry, profiles, nested records, and tuples are immutable", () => {
     (DESKTOP_HUMAN_GAMEPLAY_TUNING.flow as unknown as { intermissionDurationS: number })
       .intermissionDurationS = 0;
   }, TypeError);
-  assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.reactionTimeSByTier[0], 0.95);
+  assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.reactionTimeSByTier[0], 0.9);
   assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.flow.intermissionDurationS, 5);
 });
 
@@ -101,9 +101,9 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
     { minWave: 9, maxWaveInclusive: 10, tier: 4 },
     { minWave: 11, maxWaveInclusive: null, tier: 5 },
   ]);
-  assert.deepEqual(tuning.waves.tierProgression.elapsedTierBonusThresholdsS, []);
-  assert.deepEqual(tuning.waves.simultaneousAttackerLimitByTier, [1, 2, 2, 3, 3, 4]);
-  assert.deepEqual(tuning.waves.burstStartStaggerMsByTier, [450, 400, 350, 300, 250, 200]);
+  assert.deepEqual(tuning.waves.tierProgression.elapsedTierBonusThresholdsS, [45, 100, 170]);
+  assert.deepEqual(tuning.waves.simultaneousAttackerLimitByTier, [2, 2, 2, 3, 3, 4]);
+  assert.deepEqual(tuning.waves.burstStartStaggerMsByTier, [600, 500, 400, 320, 250, 200]);
   assert.deepEqual(tuning.waves.pressure.waveBands, [
     { minWave: 1, maxWaveInclusive: 2, searchStartS: 30, fullPressureS: 75 },
     { minWave: 3, maxWaveInclusive: 4, searchStartS: 25, fullPressureS: 60 },
@@ -113,18 +113,23 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
 
   assert.equal(tuning.enemy.combat.damagePerHit, 20);
   assert.equal(tuning.enemy.combat.spreadModel, "circular");
-  assert.deepEqual(tuning.enemy.combat.reactionTimeSByTier, [0.95, 0.85, 0.72, 0.6, 0.48, 0.4]);
-  assert.deepEqual(tuning.enemy.combat.spreadDegByTier, [13, 11, 9, 8, 7, 6.5]);
+  assert.deepEqual(tuning.enemy.combat.reactionTimeSByTier, [0.9, 0.8, 0.7, 0.6, 0.5, 0.4]);
+  assert.deepEqual(tuning.enemy.combat.spreadDegByTier, [19, 15, 11, 8.5, 7, 6.5]);
   assert.equal(tuning.enemy.combat.requiresAimAlignment, true);
   assert.equal(tuning.enemy.combat.requiresDirectSightToFire, true);
   assert.equal(tuning.enemy.combat.aimToleranceDeg, 8);
-  assert.equal(tuning.enemy.combat.movingSpreadMultiplier, 1.6);
-  assert.deepEqual(tuning.enemy.combat.postMovementSettleSByTier, [0.2, 0.2, 0.2, 0, 0, 0]);
+  assert.deepEqual(tuning.enemy.combat.movingSpreadMultiplierByTier, [1.7, 1.6, 1.5, 1.4, 1.3, 1.2]);
+  assert.deepEqual(tuning.enemy.combat.postMovementSettleSByTier, [0.3, 0.25, 0.2, 0, 0, 0]);
+  assert.deepEqual(tuning.enemy.movement.strafeAmplitudeMByTier, [0.5, 0.65, 0.8, 0.95, 1.1, 1.25]);
+  assert.deepEqual(tuning.enemy.movement.strafeSpeedMpsByTier, [1.2, 1.5, 1.9, 2.3, 2.7, 3.0]);
+  assert.deepEqual(tuning.enemy.movement.strafeFlipIntervalSByTier, [1.8, 1.5, 1.2, 1.0, 0.85, 0.7]);
 
   assert.equal(tuning.enemy.perception.visionConeDeg, 120);
   assert.equal(tuning.enemy.perception.proximityAwarenessM, 4);
+  assert.deepEqual(tuning.enemy.perception.visionRangeMByTier, [70, 75, 80, 85, 90, 95]);
   assert.equal(tuning.enemy.perception.lineOfSightBreakGraceS, 0.175);
   assert.deepEqual(tuning.enemy.perception.reacquire, { enabled: true, minimumDelayS: 0.2 });
+  assert.deepEqual(tuning.enemy.perception.hearing.gunshotRangeMByTier, [32, 36, 40, 44, 50, 56]);
   assert.equal(tuning.enemy.perception.hearing.crouchRangeMultiplier, 0.25);
 
   assert.deepEqual(tuning.player.economy, {
@@ -140,9 +145,10 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
     resetAmmoEachWave: true,
     resetOvershieldEachWave: false,
   });
+  assert.equal(tuning.buffs.dropChancePerKill, 0.15);
   assert.deepEqual(tuning.buffs.pity, {
     enabled: true,
-    maxConsecutiveMisses: 3,
+    maxConsecutiveMisses: 6,
     carryAcrossWaves: true,
   });
   assert.deepEqual(tuning.buffs.selection, {
@@ -158,7 +164,8 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
   assert.equal(tuning.buffs.speedMultiplier, 1.2);
   assert.equal(tuning.buffs.rapidFireIntervalS, 0.08);
   assert.equal(tuning.buffs.rapidReloadSpeedMultiplier, 1.35);
-  assert.equal(tuning.buffs.shieldHealth, 50);
+  assert.equal(tuning.buffs.freeReloads, true);
+  assert.equal(tuning.buffs.shieldHealth, 30);
   assert.deepEqual(tuning.buffs.perfectWave, { mode: "single-deterministic", durationS: 15 });
   assert.deepEqual(tuning.flow, {
     intermissionDurationS: 5,

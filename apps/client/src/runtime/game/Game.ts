@@ -279,6 +279,7 @@ type GameOptions = {
   propVisuals: RuntimePropVisualMode;
   propModels: PropModelLibrary | null;
   doorModels: PropModelLibrary | null;
+  facadeModels?: PropModelLibrary | null;
   onTogglePerfHud?: () => void;
   mountEl?: HTMLElement;
   anchorsDebug?: {
@@ -372,6 +373,7 @@ export class Game {
   private propVisuals: RuntimePropVisualMode = "blockout";
   private propModels: PropModelLibrary | null = null;
   private doorModels: PropModelLibrary | null = null;
+  private facadeModels: PropModelLibrary | null = null;
   private propChaos: RuntimePropChaosOptions = {
     profile: "subtle",
     jitter: null,
@@ -538,6 +540,7 @@ export class Game {
     this.propVisuals = options.propVisuals;
     this.propModels = options.propModels;
     this.doorModels = options.doorModels;
+    this.facadeModels = options.facadeModels ?? null;
     this.propChaos = options.propChaos;
     this.freezeInput = options.freezeInput ?? false;
     this.spawn = options.spawn ?? "A";
@@ -680,6 +683,13 @@ export class Game {
 
   getColliderCount(): number {
     return this.runtimeColliders.length;
+  }
+
+  getPublicPerception() {
+    return {
+      visibleTargets: this.getIsDead() ? [] : this.enemyManager?.getVisibleTargets(this.camera) ?? [],
+      movementBlocked: !this.getIsDead() && this.playerController.getMovementBlocked(),
+    };
   }
 
   getPropsBuildStats(): PropsBuildStats {
@@ -1026,8 +1036,8 @@ export class Game {
     this.weapon.setReloadSpeedMultiplier(multiplier);
   }
 
-  setWeaponUnlimitedAmmo(unlimited: boolean): void {
-    this.weapon.setUnlimitedAmmo(unlimited);
+  setWeaponFreeReloads(enabled: boolean): void {
+    this.weapon.setFreeReloads(enabled);
   }
 
   checkEnemyRaycastHit(origin: Vector3, dir: Vector3, maxDist: number): EnemyHitResult {
@@ -1793,6 +1803,7 @@ export class Game {
         densityScale: this.wallDetailDensity,
       },
       doorModels: this.doorModels,
+      facadeModels: this.facadeModels,
     });
     this.wallDetailStats = builtBlockout.wallDetailStats;
     this.blockoutRoot = builtBlockout.root;

@@ -90,7 +90,7 @@ test("profile ammo starts and deterministic kill rewards respect the reserve cap
   assert.equal(weapon.getAmmoSnapshot().reserve, 120, "wave reset must restore the profile start, not the reward cap");
 });
 
-test("profile magazine capacity controls firing, reload, unlimited ammo, and reset", () => {
+test("profile magazine capacity controls firing, reload, free reloads, and reset", () => {
   const world = new WorldColliders([], PLAYABLE_BOUNDARY);
   const weapon = new Ak47Weapon({
     seed: 11,
@@ -117,12 +117,18 @@ test("profile magazine capacity controls firing, reload, unlimited ammo, and res
   assert.equal(weapon.getAmmoSnapshot().reserve, 6);
 
   weapon.update(makeInput(true, world), () => {});
-  weapon.setUnlimitedAmmo(true);
-  assert.equal(weapon.getAmmoSnapshot().mag, 5, "unlimited ammo must refill to the profile capacity");
+  assert.equal(weapon.getAmmoSnapshot().mag, 4);
+  weapon.setFreeReloads(true);
+  weapon.update(makeInput(false, world));
   weapon.update(makeInput(true, world), () => {});
-  assert.equal(weapon.getAmmoSnapshot().mag, 5, "unlimited fire must preserve the profile capacity");
+  assert.equal(weapon.getAmmoSnapshot().mag, 3, "free reloads still spend the magazine");
+  weapon.queueReload();
+  weapon.update(makeInput(false, world));
+  weapon.update({ ...makeInput(false, world), deltaSeconds: 2 });
+  assert.equal(weapon.getAmmoSnapshot().mag, 5, "free reload refills the magazine");
+  assert.equal(weapon.getAmmoSnapshot().reserve, 6, "free reload must not drain reserve");
 
-  weapon.setUnlimitedAmmo(false);
+  weapon.setFreeReloads(false);
   weapon.update(makeInput(false, world));
   weapon.update(makeInput(true, world), () => {});
   assert.equal(weapon.getAmmoSnapshot().mag, 4);

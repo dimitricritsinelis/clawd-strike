@@ -3,7 +3,7 @@ Authority: normative workflow; runtime values remain authoritative in code
 Read when: gameplay, balance, AI, player economy, buffs, rounds, input profiles, scoring, records
 Owns: shared-baseline policy and the procedure for intentional profile divergence
 Do not use for: map design, temporary playtest notes, or unapproved tuning experiments
-Last updated: 2026-08-16
+Last updated: 2026-09-05
 
 # Gameplay Balancing
 
@@ -18,16 +18,16 @@ The code authority is `DESKTOP_HUMAN_BALANCE_BASELINE` in
 `apps/client/src/runtime/tuning/gameplayTuning.ts`. Every current profile shares
 its exact immutable `waves`, `enemy`, `player`, `buffs`, and `flow` objects.
 Focused tests enforce reference equality, deep equality, and the baseline
-fingerprint `5aed687b2c66`. Every tuning revision embeds that fingerprint, so a
+fingerprint `f30c73c70dc0`. Every tuning revision embeds that fingerprint, so a
 mechanic change cannot retain an old competitive board identity.
 
 ## Current profile relationship
 
 | Profile | Balance baseline | Allowed capability difference | Tuning revision |
 |---|---|---|---|
-| Mobile Human | Desktop Human | Touch input enabled | `mobile-human-baseline-5aed687b2c66-r2` |
-| Desktop Human | Desktop Human | Mouse/keyboard input | `desktop-human-baseline-5aed687b2c66-r2` |
-| Desktop Agent | Desktop Human | Agent control contract | `desktop-agent-baseline-5aed687b2c66-r2` |
+| Mobile Human | Desktop Human | Touch input enabled | `mobile-human-baseline-f30c73c70dc0-r3` |
+| Desktop Human | Desktop Human | Mouse/keyboard input | `desktop-human-baseline-f30c73c70dc0-r3` |
+| Desktop Agent | Desktop Human | Agent control contract | `desktop-agent-baseline-f30c73c70dc0-r3` |
 
 Touch availability is not a difficulty adjustment. At this baseline, touch aim
 assist remains disabled and all numeric touch settings are neutral capability
@@ -72,19 +72,32 @@ ruleset, balance season, and tuning revision. Equal tuning does not merge boards
 
 ## Current shared baseline summary
 
-- Waves 1–2 start at tier 0; difficulty rises one tier every two waves and
-  reaches tier 5 at wave 11. Slow clears do not add hidden tier bonuses.
-- Simultaneous attackers scale `1, 2, 2, 3, 3, 4` with tier and burst starts are
-  staggered `450, 400, 350, 300, 250, 200` ms.
+- Waves 1–2 start at tier 0; the start-of-wave tier rises one step every two
+  waves and reaches tier 5 at wave 11. Within a wave the tier also rises by one
+  at 45 s, 100 s and 170 s of wave time (`elapsedTierBonusThresholdsS`), capped
+  at tier 5, so a wave that drags on gets smarter and more aggressive. This ramp
+  is time-based and visible in tuning, not performance-adaptive.
+- Tier 0 is eager but inaccurate: bots see 70 m, turn at 150 deg/s, react in
+  0.9 s and fire 2 to 4 round bursts, but a 19-degree cone makes them miss.
+  Reaction, spread, burst size, turn rate, sight, shared alerts and gunshot
+  hearing all tighten by tier.
+- Engaged bots strafe across their cover anchor (`enemy.movement`): amplitude
+  `0.5 → 1.25` m, speed `1.2 → 3.0` m/s and flip cadence `1.8 → 0.7` s by tier.
+  Moving spread scales `1.7 → 1.2` by tier so low tiers pay for movement and high
+  tiers barely do.
+- Simultaneous attackers scale `2, 2, 2, 3, 3, 4` with tier and burst starts are
+  staggered `600, 500, 400, 320, 250, 200` ms.
 - Hunt pressure is wave-banded: `30/75`, `25/60`, `20/50`, then `15/40` seconds
   for search start/full pressure.
 - Enemies deal 20 damage, use circular spread, require direct sight and aim
   alignment, and have a 120-degree vision cone with 4 m proximity awareness.
 - Players have 100 health, 30/120 starting ammunition, a 150 reserve cap, and
   receive 8 health plus 6 reserve rounds per kill.
-- Buffs use a 30% seeded drop rate, force the fourth drop after three misses,
-  carry through waves, grant 50 shield, and award one deterministic 15-second
-  buff for a perfect headshot wave.
+- Buffs use a 15% seeded drop rate and force the seventh kill to drop after six
+  misses, so every 10-kill wave drops at least once (about 2.2 on average).
+  They carry through waves, grant a 30 shield, make reloads free instead of
+  removing them (Bottomless Mag), and award one deterministic 15-second buff
+  for a perfect headshot wave.
 - Intermission lasts 5 seconds, freezes gameplay, and allows Continue after 2
   seconds. Death requires an explicit restart.
 

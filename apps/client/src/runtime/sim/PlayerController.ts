@@ -74,6 +74,7 @@ export class PlayerController {
   private outOfWorldRecoveries = 0;
   private grounded = true;
   private horizontalSpeedMps = 0;
+  private movementBlocked = false;
   private currentHeight = PLAYER_HEIGHT_M;
   private currentEyeHeight = PLAYER_EYE_HEIGHT_M;
   private readonly runSpeedMps: number;
@@ -115,6 +116,7 @@ export class PlayerController {
     this.velocityZ = 0;
     this.grounded = true;
     this.horizontalSpeedMps = 0;
+    this.movementBlocked = false;
     this.coyoteTimerS = 0;
     this.jumpBufferTimerS = 0;
     this.motionResult.hitX = false;
@@ -133,6 +135,7 @@ export class PlayerController {
 
     const clampedDt = Math.min(Math.max(deltaSeconds, 0), MAX_FRAME_DT_S);
     if (clampedDt <= 0) return;
+    this.movementBlocked = false;
 
     const canStand = !input.crouchHeld && this.canOccupyHeight(PLAYER_HEIGHT_M, world);
     this.currentHeight = input.crouchHeld || !canStand ? CROUCH_HEIGHT_M : PLAYER_HEIGHT_M;
@@ -265,7 +268,13 @@ export class PlayerController {
         this.grounded = false;
       }
 
+      const beforeClampX = this.position.x;
+      const beforeClampZ = this.position.z;
       this.clampToPlayableBounds();
+      this.movementBlocked ||= (velocityX !== 0 && this.motionResult.hitX)
+        || (velocityZ !== 0 && this.motionResult.hitZ)
+        || (velocityX !== 0 && this.position.x !== beforeClampX)
+        || (velocityZ !== 0 && this.position.z !== beforeClampZ);
     }
   }
 
@@ -287,6 +296,10 @@ export class PlayerController {
 
   getHorizontalSpeedMps(): number {
     return this.horizontalSpeedMps;
+  }
+
+  getMovementBlocked(): boolean {
+    return this.movementBlocked;
   }
 
   getLastCollisionState(): MotionResult {

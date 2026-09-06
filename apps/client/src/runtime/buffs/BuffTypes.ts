@@ -11,9 +11,9 @@ export type BuffDefinition = {
 };
 
 /** Nominal per-kill chance before the dry-streak safeguard is applied. */
-export const BUFF_DROP_CHANCE = 0.3;
-/** A fourth would-be miss is converted into a drop. */
-export const MAX_CONSECUTIVE_BUFF_NON_DROPS = 3;
+export const BUFF_DROP_CHANCE = 0.15;
+/** A seventh would-be miss is converted into a drop, so every 10-kill wave drops at least once. */
+export const MAX_CONSECUTIVE_BUFF_NON_DROPS = 6;
 /** Rallying Cry now empowers one deterministic buff for longer than a normal pickup. */
 export const RALLYING_CRY_DURATION_S = 15;
 

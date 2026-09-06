@@ -72,8 +72,15 @@ export type GameplayTuning = DeepReadonly<{
       requiresAimAlignment: boolean;
       requiresDirectSightToFire: boolean;
       aimToleranceDeg: number;
-      movingSpreadMultiplier: number;
+      movingSpreadMultiplierByTier: TierTuple<number>;
       postMovementSettleSByTier: TierTuple<number>;
+    };
+    movement: {
+      /** Lateral offset from the cover anchor a bot strafes to while engaged. */
+      strafeAmplitudeMByTier: TierTuple<number>;
+      strafeSpeedMpsByTier: TierTuple<number>;
+      /** Mean seconds between strafe direction flips; jittered +-25% per flip. */
+      strafeFlipIntervalSByTier: TierTuple<number>;
     };
     perception: {
       visionConeDeg: number;
@@ -87,7 +94,7 @@ export type GameplayTuning = DeepReadonly<{
         minimumDelayS: number;
       };
       hearing: {
-        gunshotRangeM: number;
+        gunshotRangeMByTier: TierTuple<number>;
         footstepBaseRangeM: number;
         footstepSpeedBonusRangeM: number;
         crouchRangeMultiplier: number;
@@ -136,7 +143,8 @@ export type GameplayTuning = DeepReadonly<{
     speedMultiplier: number;
     rapidFireIntervalS: number;
     rapidReloadSpeedMultiplier: number;
-    unlimitedAmmo: boolean;
+    /** Bottomless Mag: magazines still empty and reload, but reloads never drain reserve ammo. */
+    freeReloads: boolean;
     shieldHealth: number;
     perfectWave: {
       mode: "single-deterministic" | "all-four";
@@ -283,7 +291,7 @@ export function validateGameplayTuning(tuning: GameplayTuning): readonly string[
   validateTierNumbers(errors, "enemy.combat.postMovementSettleSByTier", combat.postMovementSettleSByTier, 0);
   if (typeof combat.requiresDirectSightToFire !== "boolean") errors.push("enemy.combat.requiresDirectSightToFire must be boolean");
   if (!isFiniteNumber(combat.aimToleranceDeg) || combat.aimToleranceDeg < 0 || combat.aimToleranceDeg > 180) errors.push("enemy.combat.aimToleranceDeg must be in [0, 180]");
-  if (!isFiniteNumber(combat.movingSpreadMultiplier) || combat.movingSpreadMultiplier < 1) errors.push("enemy.combat.movingSpreadMultiplier must be at least 1");
+  validateTierNumbers(errors, "enemy.combat.movingSpreadMultiplierByTier", combat.movingSpreadMultiplierByTier, 1);
   if (!Number.isInteger(combat.magazineCapacity) || combat.magazineCapacity < 1) errors.push("enemy.combat.magazineCapacity must be a positive integer");
   if (!Number.isInteger(combat.reserveStart) || combat.reserveStart < 0) errors.push("enemy.combat.reserveStart must be a non-negative integer");
   if (combat.burstByTier.length !== 6) errors.push("enemy.combat.burstByTier must contain exactly six tiers");
@@ -310,10 +318,16 @@ export function validateGameplayTuning(tuning: GameplayTuning): readonly string[
   validateTierNumbers(errors, "enemy.perception.sharedAlertRadiusMByTier", perception.sharedAlertRadiusMByTier, 0);
   if (!isFiniteNumber(perception.lineOfSightBreakGraceS) || perception.lineOfSightBreakGraceS < 0) errors.push("enemy.perception.lineOfSightBreakGraceS must be non-negative");
   if (!isFiniteNumber(perception.reacquire.minimumDelayS) || perception.reacquire.minimumDelayS < 0) errors.push("enemy.perception.reacquire.minimumDelayS must be non-negative");
+  validateTierNumbers(errors, "enemy.perception.hearing.gunshotRangeMByTier", perception.hearing.gunshotRangeMByTier, 0);
   for (const [field, value] of Object.entries(perception.hearing)) {
-    if (!isFiniteNumber(value) || value < 0) errors.push(`enemy.perception.hearing.${field} must be non-negative`);
+    if (typeof value === "number" && (!isFiniteNumber(value) || value < 0)) errors.push(`enemy.perception.hearing.${field} must be non-negative`);
   }
   if (perception.hearing.crouchRangeMultiplier > 1) errors.push("enemy.perception.hearing.crouchRangeMultiplier must not amplify crouched footsteps");
+
+  const movement = enemy.movement;
+  validateTierNumbers(errors, "enemy.movement.strafeAmplitudeMByTier", movement.strafeAmplitudeMByTier, 0);
+  validateTierNumbers(errors, "enemy.movement.strafeSpeedMpsByTier", movement.strafeSpeedMpsByTier, 0, false);
+  validateTierNumbers(errors, "enemy.movement.strafeFlipIntervalSByTier", movement.strafeFlipIntervalSByTier, 0, false);
 
   const economy = player.economy;
   for (const [field, value] of Object.entries(economy)) {
@@ -397,7 +411,8 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
         { minWave: 9, maxWaveInclusive: 10, tier: 4 },
         { minWave: 11, maxWaveInclusive: null, tier: 5 },
       ],
-      elapsedTierBonusThresholdsS: [],
+      // A wave that drags on gets smarter: +1 tier at each threshold, capped at maxTier.
+      elapsedTierBonusThresholdsS: [45, 100, 170],
       maxTier: 5,
     },
     pressure: {
@@ -409,24 +424,26 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
         { minWave: 7, maxWaveInclusive: null, searchStartS: 15, fullPressureS: 40 },
       ],
     },
-    simultaneousAttackerLimitByTier: [1, 2, 2, 3, 3, 4],
-    burstStartStaggerMsByTier: [450, 400, 350, 300, 250, 200],
+    simultaneousAttackerLimitByTier: [2, 2, 2, 3, 3, 4],
+    burstStartStaggerMsByTier: [600, 500, 400, 320, 250, 200],
   },
   enemy: {
     combat: {
       maxHealth: 100,
       damagePerHit: 20,
       spreadModel: "circular",
-      reactionTimeSByTier: [0.95, 0.85, 0.72, 0.6, 0.48, 0.4],
-      spreadDegByTier: [13, 11, 9, 8, 7, 6.5],
+      // Low tiers are eager but inaccurate: they see, turn and shoot readily,
+      // and the wide cone is what makes them miss.
+      reactionTimeSByTier: [0.9, 0.8, 0.7, 0.6, 0.5, 0.4],
+      spreadDegByTier: [19, 15, 11, 8.5, 7, 6.5],
       shotIntervalSByTier: [0.22, 0.2, 0.18, 0.14, 0.13, 0.12],
-      reloadTimeSByTier: [2.45, 2.45, 2.2, 2, 1.8, 1.6],
-      maxTurnDegPerSByTier: [120, 150, 180, 220, 235, 245],
+      reloadTimeSByTier: [2.8, 2.6, 2.3, 2, 1.8, 1.6],
+      maxTurnDegPerSByTier: [150, 165, 180, 210, 235, 245],
       burstByTier: [
-        { longRange: [1, 1], midRange: [1, 2], closeRange: [2, 3] },
-        { longRange: [1, 1], midRange: [1, 2], closeRange: [2, 4] },
+        { longRange: [1, 2], midRange: [2, 3], closeRange: [3, 4] },
         { longRange: [1, 2], midRange: [2, 3], closeRange: [3, 5] },
-        { longRange: [1, 2], midRange: [2, 3], closeRange: [5, 6] },
+        { longRange: [1, 2], midRange: [2, 3], closeRange: [3, 5] },
+        { longRange: [1, 2], midRange: [2, 3], closeRange: [4, 5] },
         { longRange: [1, 2], midRange: [2, 3], closeRange: [4, 6] },
         { longRange: [1, 2], midRange: [2, 4], closeRange: [4, 6] },
       ],
@@ -440,19 +457,24 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
       requiresAimAlignment: true,
       requiresDirectSightToFire: true,
       aimToleranceDeg: 8,
-      movingSpreadMultiplier: 1.6,
-      postMovementSettleSByTier: [0.2, 0.2, 0.2, 0, 0, 0],
+      movingSpreadMultiplierByTier: [1.7, 1.6, 1.5, 1.4, 1.3, 1.2],
+      postMovementSettleSByTier: [0.3, 0.25, 0.2, 0, 0, 0],
+    },
+    movement: {
+      strafeAmplitudeMByTier: [0.5, 0.65, 0.8, 0.95, 1.1, 1.25],
+      strafeSpeedMpsByTier: [1.2, 1.5, 1.9, 2.3, 2.7, 3.0],
+      strafeFlipIntervalSByTier: [1.8, 1.5, 1.2, 1.0, 0.85, 0.7],
     },
     perception: {
       visionConeDeg: 120,
       proximityAwarenessM: 4,
-      visionRangeMByTier: [80, 80, 85, 90, 90, 95],
+      visionRangeMByTier: [70, 75, 80, 85, 90, 95],
       memorySByTier: [0.75, 1.25, 2, 3, 4.2, 5.5],
       sharedAlertRadiusMByTier: [18, 24, 30, 40, 55, 70],
       lineOfSightBreakGraceS: 0.175,
       reacquire: { enabled: true, minimumDelayS: 0.2 },
       hearing: {
-        gunshotRangeM: 44,
+        gunshotRangeMByTier: [32, 36, 40, 44, 50, 56],
         footstepBaseRangeM: 22,
         footstepSpeedBonusRangeM: 8,
         crouchRangeMultiplier: 0.25,
@@ -475,10 +497,11 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
     },
   },
   buffs: {
-    dropChancePerKill: 0.3,
+    // ~2.2 drops per 10-kill wave; pity guarantees one inside every wave.
+    dropChancePerKill: 0.15,
     pity: {
       enabled: true,
-      maxConsecutiveMisses: 3,
+      maxConsecutiveMisses: 6,
       carryAcrossWaves: true,
     },
     selection: {
@@ -496,8 +519,8 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
     speedMultiplier: 1.2,
     rapidFireIntervalS: 0.08,
     rapidReloadSpeedMultiplier: 1.35,
-    unlimitedAmmo: true,
-    shieldHealth: 50,
+    freeReloads: true,
+    shieldHealth: 30,
     perfectWave: { mode: "single-deterministic", durationS: 15 },
   },
   flow: {

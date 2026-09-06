@@ -454,6 +454,7 @@ function pushReturnFixtures(parts: BufferGeometry[], config: ReturnConfig): void
 
   for (const bay of config.bays) {
     if (bay.kind === "door") {
+      const doorStart = parts.length;
       // Closed timber door with a braced back and a ring pull.
       for (let plank = 0; plank < 4; plank += 1) {
         const px0 = bay.center - bay.halfWidth + 0.06 + plank * ((bay.halfWidth * 2 - 0.12) / 4);
@@ -469,6 +470,7 @@ function pushReturnFixtures(parts: BufferGeometry[], config: ReturnConfig): void
       angledBox(parts, TIMBER_ROOF, bay.halfWidth * 2.1, 0.1, 0.035,
         bay.center, 1.06, 0.13, 0.7);
       box(parts, IRON_RUST, 0.1, 0.1, 0.05, bay.center + 0.3, 1.14, 0.16);
+      for (const part of parts.slice(doorStart)) part.translate(0, 0, 0.18);
       continue;
     }
 
@@ -513,7 +515,7 @@ function pushReturnFixtures(parts: BufferGeometry[], config: ReturnConfig): void
     for (let slat = 0; slat < 4; slat += 1) {
       slab(parts, slat % 2 === 0 ? TIMBER_GATE_ALT : TIMBER_GATE_EDGE,
         bay.center - bay.halfWidth, bay.center + bay.halfWidth,
-        propTop + 0.28 + slat * 0.02, propTop + 0.3 + slat * 0.02,
+        propTop + 0.36, propTop + 0.385,
         LOWER_PIER_Z_M + 0.12 * slat, LOWER_PIER_Z_M + 0.12 * slat + 0.1);
     }
     for (const side of [-1, 1] as const) {

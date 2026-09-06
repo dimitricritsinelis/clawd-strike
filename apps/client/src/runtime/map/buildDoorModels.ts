@@ -50,7 +50,6 @@ const DOOR_BACKING_MATERIAL = new MeshStandardMaterial({
   metalness: 0.0,
 });
 const DOOR_BACKING_DEPTH_M = 0.03;
-const DOOR_BACKING_FRONT_OFFSET_M = 0.05;
 const CASTLE_DOOR_MODEL_WIDTH_M = 2.012115716934204;
 const CASTLE_DOOR_MODEL_HEIGHT_M = 2.964752435684204;
 const FALLBACK_TRIM_COLOR = 0xd2c3a6;
@@ -290,7 +289,7 @@ export function buildDoorModels(
   if (placements.length === 0) return root;
 
   // Pre-compute model bounding boxes for scaling
-  const modelBboxCache = new Map<string, { width: number; height: number; depth: number; minY: number; centerX: number }>();
+  const modelBboxCache = new Map<string, { width: number; height: number; depth: number; minY: number; centerX: number; maxZ: number }>();
   const trimMaterialCache = new Map<string, MeshStandardMaterial>();
 
   function getTrimMaterial(materialId: string | null | undefined): MeshStandardMaterial {
@@ -326,7 +325,7 @@ export function buildDoorModels(
     return material;
   }
 
-  function getModelBbox(modelId: string): { width: number; height: number; depth: number; minY: number; centerX: number } | null {
+  function getModelBbox(modelId: string): { width: number; height: number; depth: number; minY: number; centerX: number; maxZ: number } | null {
     const cached = modelBboxCache.get(modelId);
     if (cached) return cached;
 
@@ -342,6 +341,7 @@ export function buildDoorModels(
       depth: _bboxSize.z,
       minY: _bbox.min.y,
       centerX: (_bbox.min.x + _bbox.max.x) * 0.5,
+      maxZ: _bbox.max.z,
     };
     modelBboxCache.set(modelId, result);
     return result;
@@ -352,6 +352,11 @@ export function buildDoorModels(
     if (!modelBbox) continue;
 
     const clone = doorModels.instantiate(placement.modelId);
+    if (placement.modelId === CASTLE_DOOR_ID) {
+      for (const name of ["large_castle_door_left", "large_castle_door_right"]) {
+        clone.getObjectByName(name)?.rotation.set(0, 0, 0);
+      }
+    }
 
     // For the rollershutter, remove the graffiti variant
     if (placement.modelId === ROLLERSHUTTER_ID) {
@@ -421,7 +426,9 @@ export function buildDoorModels(
     root.add(clone);
     if (placement.modelId === CASTLE_DOOR_ID) {
       const silhouette = resolveCastleDoorSilhouette(placement.doorH);
-      const backingCenterOffset = -(DOOR_BACKING_FRONT_OFFSET_M + DOOR_BACKING_DEPTH_M * 0.5);
+      // The source front is -Z. Put the backing behind the model's deepest
+      // extent; a fixed front-face offset occluded the actual timber leaves.
+      const backingCenterOffset = outwardOffset - modelBbox.maxZ * uniformScale - DOOR_BACKING_DEPTH_M * .5 - .005;
       root.add(createCastleDoorBacking(
         placement,
         finalRotationY,
@@ -448,7 +455,9 @@ export function buildDoorModels(
         ));
       }
     } else {
-      const backingCenterOffset = -(DOOR_BACKING_FRONT_OFFSET_M + DOOR_BACKING_DEPTH_M * 0.5);
+      // The source front is -Z. Put the backing behind the model's deepest
+      // extent; a fixed front-face offset occluded the actual timber leaves.
+      const backingCenterOffset = outwardOffset - modelBbox.maxZ * uniformScale - DOOR_BACKING_DEPTH_M * .5 - .005;
       root.add(createRectDoorBacking(
         placement,
         finalRotationY,

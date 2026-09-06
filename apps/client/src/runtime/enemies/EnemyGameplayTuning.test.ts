@@ -86,9 +86,18 @@ function createDirective(
   };
 }
 
-test("all profiles use the canonical wave-only tier and pressure schedules", () => {
+test("all profiles use the canonical wave and elapsed-time tier and pressure schedules", () => {
   const baseline = DESKTOP_HUMAN_GAMEPLAY_TUNING;
   const sampledWaves = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 99];
+
+  // Wave 1 ramps one tier per elapsed threshold and caps at maxTier.
+  assert.equal(resolveEnemyTierForTuning(1, 0, baseline), 0);
+  assert.equal(resolveEnemyTierForTuning(1, 44.9, baseline), 0);
+  assert.equal(resolveEnemyTierForTuning(1, 45, baseline), 1);
+  assert.equal(resolveEnemyTierForTuning(1, 100, baseline), 2);
+  assert.equal(resolveEnemyTierForTuning(1, 170, baseline), 3);
+  assert.equal(resolveEnemyTierForTuning(1, 3_600, baseline), 3);
+  assert.equal(resolveEnemyTierForTuning(9, 3_600, baseline), 5);
 
   for (const tuning of Object.values(GAMEPLAY_TUNINGS)) {
     for (const wave of sampledWaves) {
@@ -96,8 +105,8 @@ test("all profiles use the canonical wave-only tier and pressure schedules", () 
       assert.equal(resolveEnemyTierForTuning(wave, 0, tuning), expectedTier);
       assert.equal(
         resolveEnemyTierForTuning(wave, 3_600, tuning),
-        expectedTier,
-        `${tuning.identity.profileId} must not add elapsed-time tier spikes`,
+        resolveEnemyTierForTuning(wave, 3_600, baseline),
+        `${tuning.identity.profileId} must share the baseline elapsed-time ramp`,
       );
       assert.deepEqual(
         resolveEnemyPressureTiming(wave, tuning),
@@ -424,7 +433,9 @@ test("low-tier movement spread remains active through the configured settle wind
   });
 
   enemy.step(0.1, moving, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
-  assert.equal(enemy.getDebugSnapshot().movementSpreadRemainingS, 0.2);
+  assert.equal(enemy.getDebugSnapshot().movementSpreadRemainingS, 0.3);
+  enemy.step(0.1, stopped, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
+  assert.ok(Math.abs(enemy.getDebugSnapshot().movementSpreadRemainingS - 0.2) < 1e-9);
   enemy.step(0.1, stopped, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
   assert.ok(Math.abs(enemy.getDebugSnapshot().movementSpreadRemainingS - 0.1) < 1e-9);
   enemy.step(0.1, stopped, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
@@ -470,9 +481,9 @@ test("high-tier movement spread stays active while moving despite a zero settle 
     resolveEnemyShotSpreadDeg(
       tierProfile.spreadDeg,
       movingSnapshot.movementSpreadActive,
-      DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplier,
+      DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplierByTier[tier],
     ),
-    tierProfile.spreadDeg * DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplier,
+    tierProfile.spreadDeg * DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplierByTier[tier],
   );
 
   enemy.step(0.1, stopped, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
@@ -483,8 +494,78 @@ test("high-tier movement spread stays active while moving despite a zero settle 
     resolveEnemyShotSpreadDeg(
       tierProfile.spreadDeg,
       stoppedSnapshot.movementSpreadActive,
-      DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplier,
+      DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.movingSpreadMultiplierByTier[tier],
     ),
     tierProfile.spreadDeg,
   );
+});
+
+test("engaged hold bots strafe across the anchor, idle ones settle, higher tiers strafe faster", () => {
+  const strafeDistanceAfter = (tier: number, engaged: boolean): { x: number; z: number } => {
+    const enemy = new EnemyController("enemy-strafe", "Strafe", 0, 0, 23, 0, DESKTOP_HUMAN_GAMEPLAY_TUNING);
+    const target = createTarget(0, -5);
+    const directive = createDirective({
+      tier,
+      tierProfile: { ...resolveEnemyTierProfile(tier, DESKTOP_HUMAN_GAMEPLAY_TUNING), reactionTimeS: 0 },
+      holdPoint: { x: 0, z: 0 },
+      hasDirectSight: engaged,
+      focusPoint: engaged ? { x: 0, y: 0, z: -5 } : null,
+      allowFire: false,
+      tacticalAllowFire: false,
+    });
+    for (let i = 0; i < 15; i += 1) {
+      enemy.step(1 / 60, directive, engaged ? [target] : [], EMPTY_WORLD, [enemy.getAabb()], () => {});
+    }
+    const position = enemy.getPosition();
+    return { x: Math.abs(position.x), z: Math.abs(position.z) };
+  };
+
+  const idle = strafeDistanceAfter(0, false);
+  assert.equal(idle.x, 0, "idle hold bot stays planted on its anchor");
+  assert.equal(idle.z, 0);
+
+  const tier0 = strafeDistanceAfter(0, true);
+  assert.ok(tier0.x > 0.1, `tier 0 strafes sideways, moved ${tier0.x}`);
+  assert.ok(tier0.z < 0.01, "strafe is perpendicular to the focus direction");
+
+  const tier5 = strafeDistanceAfter(5, true);
+  assert.ok(tier5.x > tier0.x * 1.5, `tier 5 (${tier5.x}) strafes faster than tier 0 (${tier0.x})`);
+});
+
+test("horizontal velocity ramps instead of snapping to the commanded speed", () => {
+  const enemy = new EnemyController("enemy-accel", "Accel", 0, 0, 29, 0, DESKTOP_HUMAN_GAMEPLAY_TUNING);
+  const rotate = createDirective({
+    state: "ROTATE",
+    hasDirectSight: false,
+    allowFire: false,
+    tacticalAllowFire: false,
+    focusPoint: null,
+    movePoint: { x: 0, z: 10 },
+  });
+  enemy.step(1 / 60, rotate, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
+  const firstFrameM = enemy.getPosition().z;
+  // Unsmoothed ROTATE would cover 3.15 / 60 = 0.0525 m on frame one.
+  assert.ok(firstFrameM > 0 && firstFrameM < 0.01, `first frame moved ${firstFrameM}`);
+  for (let i = 0; i < 30; i += 1) enemy.step(1 / 60, rotate, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
+  const before = enemy.getPosition().z;
+  enemy.step(1 / 60, rotate, [], EMPTY_WORLD, [enemy.getAabb()], () => {});
+  const cruiseFrameM = enemy.getPosition().z - before;
+  assert.ok(Math.abs(cruiseFrameM - 3.15 / 60) < 1e-6, `reaches full speed, per-frame ${cruiseFrameM}`);
+});
+
+test("idle bots face the squad's strongest player-location belief, not the node exposure yaw", () => {
+  const manager = new EnemyManager(new Scene(), DESKTOP_HUMAN_GAMEPLAY_TUNING);
+  const harness = manager as unknown as {
+    tacticalGraph: unknown;
+    zoneSearchStateByZoneId: Map<string, { zoneId: string; belief: number }>;
+    resolveFocusPoint(node: unknown, knowledge: null): { x: number; y: number; z: number } | null;
+  };
+  harness.tacticalGraph = { zoneById: new Map([["spawn", { rect: { x: 40, y: 40, w: 10, h: 10 } }]]) };
+  const node = { x: 0, z: 0, exposureYawRad: 0 };
+
+  harness.zoneSearchStateByZoneId.set("spawn", { zoneId: "spawn", belief: 0.99 });
+  assert.deepEqual(harness.resolveFocusPoint(node, null), { x: 45, y: 1.5, z: 45 });
+
+  harness.zoneSearchStateByZoneId.set("spawn", { zoneId: "spawn", belief: 0.05 });
+  assert.deepEqual(harness.resolveFocusPoint(node, null), { x: 0, y: 1.5, z: 8 });
 });

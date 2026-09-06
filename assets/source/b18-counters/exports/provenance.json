@@ -19,10 +19,10 @@
           2.109999895095825
         ]
       ],
-      "glbMd5": "1d54a1021bfb8bd11ccd1524d8114796"
+      "glbMd5": "d9e6465fe76bf6984157131c96d4c29e"
     },
     "b18-packing-finish": {
-      "triangles": 5296,
+      "triangles": 6052,
       "materials": 1,
       "sourceBounds": [
         [
@@ -38,7 +38,7 @@
           1.5350000858306885
         ]
       ],
-      "glbMd5": "d2150619ed923a4403087eac2174a4a7"
+      "glbMd5": "e21f6a633106031b5b542e7648304a5b"
     }
   },
   "license": "Project-Original",

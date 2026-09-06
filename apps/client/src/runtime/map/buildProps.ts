@@ -2199,7 +2199,7 @@ function buildCompiledDressing(
       roughness: 0.97,
       vertexColors: true,
     }),
-    heroPillar: createBatch("v3-rug-gate-pillars", 0xffffff, "heroPillar", createHeroGatePillarGeometry, {
+    heroPillar: createBatch("v3-rug-gate-pillars", 0xdfc69a, "heroPillar", createHeroGatePillarGeometry, {
       castShadow: true,
       receiveShadow: true,
       textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
@@ -2212,7 +2212,7 @@ function buildCompiledDressing(
       vertexColors: true,
       doubleSided: true,
     }),
-    heroCrown: createBatch("v3-rug-gate-crown", 0xffffff, "heroLintel", createHeroGateCrownGeometry, {
+    heroCrown: createBatch("v3-rug-gate-crown", 0xd7b784, "heroLintel", createHeroGateCrownGeometry, {
       castShadow: true,
       receiveShadow: true,
       textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
@@ -2239,7 +2239,7 @@ function buildCompiledDressing(
       receiveShadow: true,
       doubleSided: true,
       textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-      textureRepeat: [2.2, 2.4],
+      textureRepeat: [1, 1],
       roughness: 0.86,
       albedoBoost: 1.38,
       vertexColors: true,
@@ -2266,7 +2266,7 @@ function buildCompiledDressing(
       receiveShadow: true,
       doubleSided: true,
       textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-      textureRepeat: [2.45, 2.15],
+      textureRepeat: [1, 1],
       roughness: 0.84,
       albedoBoost: 1.42,
       vertexColors: true,
@@ -2459,12 +2459,10 @@ function buildCompiledDressing(
       albedoBoost: 1.14,
       vertexColors: true,
     }),
-    // Untextured, because any timber or stone diffuse multiplies the dye tints
-    // down into the same brown. Untextured alone is not enough though: a white
-    // base at full albedo under this sun returns pastel bunting whatever the
-    // tint, so the boost is pulled well below 1 to put the cloth back at the
-    // value dyed fabric actually sits at outdoors.
+    // Woven cloth texture preserves fabric grain while vertex colors carry the dye.
     spawnAEastWorksCloth: createBatch("v3-spawn-a-east-works-cloth", 0xffffff, "heroLintel", createSpawnAEastDyeWorksClothGeometry, {
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [1, 1],
       castShadow: true,
       receiveShadow: true,
       roughness: 0.97,
@@ -2719,7 +2717,7 @@ function buildCompiledDressing(
     // stacks a broad rectangular wash beneath the whole cluster and exposes a
     // hard grey apron beyond the rug edge in close review.
     const isGroundRug = placement.runtime.id === "bazaar_ground_rug";
-    if (!centeredAtAnchor && placement.classification !== "overhead" && !isGroundRug) {
+    if (!centeredAtAnchor && anchorType !== "window_anchor" && placement.classification !== "overhead" && !isGroundRug) {
       const footprintM = Math.max(width, depth);
       if (footprintM >= 0.34) {
         batches.groundContact.instances.push({

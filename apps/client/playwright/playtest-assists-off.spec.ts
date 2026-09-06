@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -7,31 +7,33 @@ import {
   waitForRuntimeReady,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
-/**
- * Manual-playtest assists (unlimited health, boosted run speed) used to switch
- * themselves on for ANY localhost human run. That silently made every
- * automated or agent-driven playtest invincible and 50% faster than production,
- * so nothing measured in that state — difficulty, damage, hit registration,
- * movement feel — described the build real players get.
- *
- * They are now opt-in and hard-off under automation. This spec is the guard.
- */
+// Normal automated runs take damage. Explicit localhost no-damage tests may
+// opt in without changing enemy behavior or the production combat profile.
 async function bootHumanRuntime(page, baseURL: string, extra: Record<string, unknown> = {}) {
   await page.goto(
     buildRuntimeUrl(baseURL, {
       autostart: "human",
       agentName: "AssistProbe",
-      extraSearchParams: { floors: "blockout", walls: "blockout", ao: 0, ...extra },
+      extraSearchParams: { qa: 1, debug: 1, floors: "blockout", walls: "blockout", ao: 0, ...extra },
     }),
     { waitUntil: "domcontentloaded" },
   );
   await waitForRuntimeReady(page, { routeId: "AssistProbe" });
 }
 
+async function engageEnemy(page: Page) {
+  await page.evaluate(() => {
+    const state = JSON.parse(window.render_game_to_text());
+    const position = state.bots.enemies.find((enemy: { health: number; position: { x: number; y: number; z: number } }) => enemy.health > 0).position;
+    window.__debug_set_player_pose({ ...position, x: position.x + (position.x > 32 ? -1.3 : 1.3), pitchDeg: 0 });
+  });
+}
+
 test("an automated human run is not invincible", async ({ page }, testInfo) => {
   attachConsoleRecorder(page);
   await bootHumanRuntime(page, testInfo.project.use.baseURL as string);
 
+  await engageEnemy(page);
   const before = await readRuntimeState(page);
   expect(before.gameplay?.alive).toBe(true);
 
@@ -51,22 +53,26 @@ test("an automated human run is not invincible", async ({ page }, testInfo) => {
   ).toBe(true);
 });
 
-test("automation cannot switch the assists back on with the flag", async ({ page }, testInfo) => {
-  attachConsoleRecorder(page);
-  // Even asking for them explicitly must not grant them under webdriver.
-  await bootHumanRuntime(page, testInfo.project.use.baseURL as string, { god: 1 });
-
-  let damaged = false;
-  for (let i = 0; i < 40 && !damaged; i += 1) {
-    await advanceRuntime(page, 1000);
+for (const controlMode of ["human", "agent"] as const) {
+  test(`explicit localhost ${controlMode} playtests survive enemy fire`, async ({ page }, testInfo) => {
+    attachConsoleRecorder(page);
+    await page.goto(buildRuntimeUrl(testInfo.project.use.baseURL as string, {
+      autostart: controlMode,
+      agentName: "NoDamageProbe",
+      extraSearchParams: { qa: 1, debug: 1, god: 1, floors: "blockout", walls: "blockout", ao: 0 },
+    }));
+    await waitForRuntimeReady(page, { routeId: "NoDamageProbe" });
+    await engageEnemy(page);
+    let engaged = false;
+    for (let i = 0; i < 40; i += 1) {
+      await advanceRuntime(page, 1000);
+      const sample = await readRuntimeState(page);
+      engaged ||= sample.bots.enemies.some((enemy: { directSight: boolean; mag: number }) => enemy.directSight && enemy.mag < 30);
+    }
+    expect(engaged, "the no-damage scenario must include actual enemy engagement").toBe(true);
     const state = await readRuntimeState(page);
-    const health = state.gameplay?.health;
-    if (typeof health === "number" && health < 100) damaged = true;
-    if (state.gameplay?.alive === false) damaged = true;
-  }
-
-  expect(
-    damaged,
-    "?god=1 granted invincibility under automation — the webdriver guard is not holding",
-  ).toBe(true);
-});
+    expect(state.gameplay.health).toBe(100);
+    expect(state.gameplay.alive).toBe(true);
+    expect(state.bots.aliveCount).toBeGreaterThan(0);
+  });
+}

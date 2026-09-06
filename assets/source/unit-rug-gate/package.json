@@ -1,0 +1,27 @@
+{
+  "models": [
+    {
+      "id": "rug_west_face",
+      "file": "rug-west.glb",
+      "source": "repo://assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "rug_east_face",
+      "file": "rug-east.glb",
+      "source": "repo://assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "rug_east_south_face",
+      "file": "rug-east-south.glb",
+      "source": "repo://assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "frontages": {
+    "FRONTAGE_RUG_GATE_WEST": "rug_west_face",
+    "FRONTAGE_RUG_GATE_EAST": "rug_east_face",
+    "FRONTAGE_RUG_GATE_EAST_SOUTH": "rug_east_south_face"
+  }
+}

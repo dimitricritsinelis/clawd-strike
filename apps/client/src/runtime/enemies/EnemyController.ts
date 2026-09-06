@@ -29,8 +29,8 @@ const STUCK_ESCAPE_FORWARD_BLEND = 0.35;
 const STUCK_ESCAPE_SIDE_BLEND = 0.9;
 const ENEMY_MIN_PROGRESS_M = 0.005;
 const ENEMY_EXPECTED_PROGRESS_RATIO = 0.2;
-const ENEMY_PEEK_CHANGE_S_MIN = 1.2;
-const ENEMY_PEEK_CHANGE_S_MAX = 1.8;
+/** Horizontal velocity ramp so starts, stops and strafe reversals do not snap. */
+const ENEMY_ACCEL_MPS2 = 14;
 const ENEMY_SWEEP_CHANGE_S_MIN = 0.9;
 const ENEMY_SWEEP_CHANGE_S_MAX = 1.5;
 const ENEMY_MIN_NODE_RADIUS_M = 0.6;
@@ -484,6 +484,8 @@ export class EnemyController {
 
   private desiredVX = 0;
   private desiredVZ = 0;
+  private velX = 0;
+  private velZ = 0;
   private stuckEscapeTimerS = 0;
   private stuckEscapeDir = 1;
   private stuckTimer = 0;
@@ -547,8 +549,13 @@ export class EnemyController {
     this.solver = new AabbCollisionSolver(ENEMY_HALF_WIDTH_M, ENEMY_HEIGHT_M);
     this.rng = new DeterministicRng(deriveSubSeed(seed, id));
     this.shootTimer = this.rng.range(0.08, 0.22);
-    this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
+    this.peekTimerS = this.rollStrafeFlipS(0);
     this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
+  }
+
+  private rollStrafeFlipS(tier: number): number {
+    const meanS = this.gameplayTuning.enemy.movement.strafeFlipIntervalSByTier[clampEnemyTier(tier)]!;
+    return meanS * this.rng.range(0.75, 1.25);
   }
 
   reset(spawnX: number, spawnZ: number, seed: number, spawnY = 0): void {
@@ -587,6 +594,8 @@ export class EnemyController {
 
     this.desiredVX = 0;
     this.desiredVZ = 0;
+    this.velX = 0;
+    this.velZ = 0;
     this.stuckTimer = 0;
     this.stuckEscapeTimerS = 0;
     this.stuckEscapeDir = 1;
@@ -614,7 +623,7 @@ export class EnemyController {
 
     this.rng = new DeterministicRng(deriveSubSeed(seed, this.id));
     this.shootTimer = this.rng.range(0.08, 0.22);
-    this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
+    this.peekTimerS = this.rollStrafeFlipS(0);
     this.sweepTimerS = this.rng.range(ENEMY_SWEEP_CHANGE_S_MIN, ENEMY_SWEEP_CHANGE_S_MAX);
   }
 
@@ -664,7 +673,7 @@ export class EnemyController {
     this.peekTimerS -= clampedDt;
     if (this.peekTimerS <= 0) {
       this.peekDir *= -1;
-      this.peekTimerS = this.rng.range(ENEMY_PEEK_CHANGE_S_MIN, ENEMY_PEEK_CHANGE_S_MAX);
+      this.peekTimerS = this.rollStrafeFlipS(directive.tier);
     }
     this.sweepTimerS -= clampedDt;
     if (this.sweepTimerS <= 0) {
@@ -742,8 +751,19 @@ export class EnemyController {
     const stepDt = clampedDt / stepCount;
     const preX = this.position.x;
     const preZ = this.position.z;
-    let vx = this.desiredVX;
-    let vz = this.desiredVZ;
+    const maxDeltaV = ENEMY_ACCEL_MPS2 * clampedDt;
+    const dvx = this.desiredVX - this.velX;
+    const dvz = this.desiredVZ - this.velZ;
+    const dvLen = Math.hypot(dvx, dvz);
+    if (dvLen <= maxDeltaV) {
+      this.velX = this.desiredVX;
+      this.velZ = this.desiredVZ;
+    } else {
+      this.velX += (dvx / dvLen) * maxDeltaV;
+      this.velZ += (dvz / dvLen) * maxDeltaV;
+    }
+    let vx = this.velX;
+    let vz = this.velZ;
 
     // Stuck escape: flipping peek direction only helps a bot that is peeking.
     // A bot travelling into a prop or a wall corner keeps pushing straight at
@@ -820,8 +840,8 @@ export class EnemyController {
         this.grounded = false;
       }
 
-      if (this.motionResult.hitX) vx = 0;
-      if (this.motionResult.hitZ) vz = 0;
+      if (this.motionResult.hitX) vx = this.velX = 0;
+      if (this.motionResult.hitZ) vz = this.velZ = 0;
 
       const pb = worldColliders.playableBounds;
       const hw = ENEMY_HALF_WIDTH_M + BOUNDS_EPS;
@@ -832,7 +852,7 @@ export class EnemyController {
     }
 
     const movedDistanceM = Math.hypot(this.position.x - preX, this.position.z - preZ);
-    const desiredSpeedMps = Math.hypot(this.desiredVX, this.desiredVZ);
+    const desiredSpeedMps = Math.hypot(this.velX, this.velZ);
     const movementSettleS = this.gameplayTuning.enemy.combat.postMovementSettleSByTier[
       clampEnemyTier(directive.tier)
     ]!;
@@ -866,7 +886,7 @@ export class EnemyController {
     }
 
     if (onFootstep && this.grounded) {
-      const speed = Math.hypot(this.desiredVX, this.desiredVZ);
+      const speed = desiredSpeedMps;
       if (speed > 0.3) {
         const targetDistance = this.lastKnownTargetPos
           ? Math.hypot(this.lastKnownTargetPos.x - this.position.x, this.lastKnownTargetPos.z - this.position.z)
@@ -907,6 +927,7 @@ export class EnemyController {
   getMag(): number { return this.mag; }
   getReserve(): number { return this.reserve; }
   isReloading(): boolean { return this.reloading; }
+  isGrounded(): boolean { return this.grounded; }
   getTeam(): EnemyTeam { return this.team; }
   getRole(): EnemyRole { return this.role; }
   getPosition(): Readonly<MutablePosition> { return this.position; }
@@ -1022,11 +1043,6 @@ export class EnemyController {
     this.state = effectiveState;
 
     switch (effectiveState) {
-      case "OVERWATCH":
-        if (anchorPoint && Math.hypot(anchorPoint.x - this.position.x, anchorPoint.z - this.position.z) > ENEMY_MIN_NODE_RADIUS_M) {
-          this.moveTowardPoint(anchorPoint, ENEMY_HOLD_SPEED_MPS * 0.8);
-        }
-        break;
       case "ROTATE":
         this.moveTowardPoint(directive.movePoint, ENEMY_ROTATE_SPEED_MPS);
         break;
@@ -1065,12 +1081,27 @@ export class EnemyController {
           }
         }
         break;
+      case "OVERWATCH":
       case "HOLD":
-      default:
-        if (anchorPoint && Math.hypot(anchorPoint.x - this.position.x, anchorPoint.z - this.position.z) > ENEMY_MIN_NODE_RADIUS_M) {
-          this.moveTowardPoint(anchorPoint, ENEMY_HOLD_SPEED_MPS);
+      default: {
+        // Engaged bots strafe across their cover anchor instead of standing
+        // still; amplitude, speed and flip cadence scale with tier. Idle bots
+        // simply settle onto the anchor.
+        const engagedFocus = visibleTarget?.position ?? (this.memoryTimerS > 0 ? this.lastKnownTargetPos : null);
+        if (anchorPoint && engagedFocus) {
+          const tier = clampEnemyTier(directive.tier);
+          const movement = this.gameplayTuning.enemy.movement;
+          this.moveTowardPeek(
+            anchorPoint,
+            engagedFocus,
+            movement.strafeAmplitudeMByTier[tier]!,
+            movement.strafeSpeedMpsByTier[tier]!,
+          );
+        } else if (anchorPoint && Math.hypot(anchorPoint.x - this.position.x, anchorPoint.z - this.position.z) > ENEMY_MIN_NODE_RADIUS_M) {
+          this.moveTowardPoint(anchorPoint, effectiveState === "OVERWATCH" ? ENEMY_HOLD_SPEED_MPS * 0.8 : ENEMY_HOLD_SPEED_MPS);
         }
         break;
+      }
     }
 
     if (focus) {
@@ -1219,7 +1250,7 @@ export class EnemyController {
     const spreadDeg = resolveEnemyShotSpreadDeg(
       directive.tierProfile.spreadDeg,
       this.movingForSpread || this.movementSpreadTimerS > 0,
-      combat.movingSpreadMultiplier,
+      combat.movingSpreadMultiplierByTier[clampEnemyTier(directive.tier)]!,
     );
     if (this.tryFireAt(visibleTarget, world, enemyAabbs, targets, onEnemyShot, spreadDeg)) {
       this.firingThisFrame = true;

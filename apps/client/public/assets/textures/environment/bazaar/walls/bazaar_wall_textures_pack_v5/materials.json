@@ -6,7 +6,7 @@
       "tintHex": "#f0dbb5",
       "albedoBoost": 1.08,
       "roughness": 0.94,
-      "normalScale": 0.50,
+      "normalScale": 0.5,
       "aoIntensity": 0.45,
       "textures": {
         "1k": {
@@ -23,7 +23,7 @@
     },
     {
       "id": "ph_sandstone_blocks_05",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#dfc69a",
       "albedoBoost": 1.08,
       "roughness": 0.88,
@@ -69,8 +69,8 @@
       "tintHex": "#cca878",
       "albedoBoost": 1.05,
       "roughness": 0.98,
-      "normalScale": 0.60,
-      "aoIntensity": 0.60,
+      "normalScale": 0.6,
+      "aoIntensity": 0.6,
       "textures": {
         "1k": {
           "albedo": "./rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
@@ -107,7 +107,7 @@
     },
     {
       "id": "ph_whitewashed_brick",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#f5f0e8",
       "albedoBoost": 1.12,
       "roughness": 0.88,
@@ -128,10 +128,10 @@
     },
     {
       "id": "ph_beige_wall_001",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#f0e4d0",
       "albedoBoost": 1.08,
-      "roughness": 0.90,
+      "roughness": 0.9,
       "normalScale": 0.35,
       "aoIntensity": 0.35,
       "textures": {
@@ -149,12 +149,12 @@
     },
     {
       "id": "ph_beige_wall_002",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#dccca8",
       "albedoBoost": 1.05,
       "roughness": 0.92,
-      "normalScale": 0.40,
-      "aoIntensity": 0.40,
+      "normalScale": 0.4,
+      "aoIntensity": 0.4,
       "textures": {
         "1k": {
           "albedo": "./beige_wall_002/beige_wall_002_diff_1k.jpg",
@@ -170,12 +170,12 @@
     },
     {
       "id": "ph_plastered_wall",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#f5ece0",
-      "albedoBoost": 1.10,
+      "albedoBoost": 1.1,
       "roughness": 0.88,
-      "normalScale": 0.30,
-      "aoIntensity": 0.30,
+      "normalScale": 0.3,
+      "aoIntensity": 0.3,
       "textures": {
         "1k": {
           "albedo": "./plastered_wall/plastered_wall_diff_1k.jpg",
@@ -191,7 +191,7 @@
     },
     {
       "id": "ph_stone_trim_sandstone",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#e0cc9c",
       "albedoBoost": 1.05,
       "roughness": 0.96,
@@ -212,7 +212,7 @@
     },
     {
       "id": "ph_stone_trim_white",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#f0e8d8",
       "albedoBoost": 1.05,
       "roughness": 0.92,
@@ -233,7 +233,7 @@
     },
     {
       "id": "ph_band_beige_001",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#ccb898",
       "albedoBoost": 1.03,
       "roughness": 0.92,
@@ -254,12 +254,12 @@
     },
     {
       "id": "ph_band_beige_002",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#b8a888",
-      "albedoBoost": 1.00,
+      "albedoBoost": 1,
       "roughness": 0.94,
-      "normalScale": 0.40,
-      "aoIntensity": 0.50,
+      "normalScale": 0.4,
+      "aoIntensity": 0.5,
       "textures": {
         "1k": {
           "albedo": "./beige_wall_002/beige_wall_002_diff_1k.jpg",
@@ -275,12 +275,12 @@
     },
     {
       "id": "ph_band_plastered",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#d8d0c0",
       "albedoBoost": 1.05,
-      "roughness": 0.90,
-      "normalScale": 0.30,
-      "aoIntensity": 0.40,
+      "roughness": 0.9,
+      "normalScale": 0.3,
+      "aoIntensity": 0.4,
       "textures": {
         "1k": {
           "albedo": "./plastered_wall/plastered_wall_diff_1k.jpg",
@@ -298,9 +298,9 @@
       "id": "ph_whitewashed_brick_cool",
       "tileSizeM": 2.5,
       "tintHex": "#ece8e0",
-      "albedoBoost": 1.10,
-      "roughness": 0.90,
-      "normalScale": 0.50,
+      "albedoBoost": 1.1,
+      "roughness": 0.9,
+      "normalScale": 0.5,
       "aoIntensity": 0.38,
       "textures": {
         "1k": {
@@ -317,7 +317,7 @@
     },
     {
       "id": "ph_whitewashed_brick_warm",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#f5e4cc",
       "albedoBoost": 1.12,
       "roughness": 0.88,
@@ -338,7 +338,7 @@
     },
     {
       "id": "ph_whitewashed_brick_dusty",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#e8dccb",
       "albedoBoost": 1.08,
       "roughness": 0.9,
@@ -361,7 +361,7 @@
       "id": "ph_sandstone_blocks_06",
       "tileSizeM": 1.8,
       "tintHex": "#d1b48c",
-      "albedoBoost": 1.10,
+      "albedoBoost": 1.1,
       "roughness": 0.88,
       "normalScale": 0.82,
       "aoIntensity": 0.72,
@@ -380,7 +380,7 @@
     },
     {
       "id": "ph_lime_plaster_sun",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#eadfc9",
       "albedoBoost": 1.09,
       "roughness": 0.92,
@@ -443,9 +443,9 @@
     },
     {
       "id": "ph_band_lime_soft",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#c7ad83",
-      "albedoBoost": 1.00,
+      "albedoBoost": 1,
       "roughness": 0.95,
       "normalScale": 0.18,
       "aoIntensity": 0.24,
@@ -469,13 +469,16 @@
       "albedoBoost": 1.05,
       "roughness": 0.92,
       "normalScale": 0.42,
-      "aoIntensity": 0.40,
+      "aoIntensity": 0.4,
       "source": {
         "provider": "Poly Haven",
         "assetId": "painted_plaster_wall",
         "url": "https://polyhaven.com/a/painted_plaster_wall",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 2.0, "height": 2.0 },
+        "nativeDimensionsM": {
+          "width": 2,
+          "height": 2
+        },
         "downloadedResolution": "2k",
         "md5": {
           "albedo": "32f4f4e5ded7d20e55e337004d0d9691",
@@ -503,13 +506,16 @@
       "albedoBoost": 1.08,
       "roughness": 0.92,
       "normalScale": 0.48,
-      "aoIntensity": 0.50,
+      "aoIntensity": 0.5,
       "source": {
         "provider": "Poly Haven",
         "assetId": "worn_plaster_wall",
         "url": "https://polyhaven.com/a/worn_plaster_wall",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 1.8, "height": 1.8 },
+        "nativeDimensionsM": {
+          "width": 1.8,
+          "height": 1.8
+        },
         "downloadedResolution": "2k",
         "md5": {
           "albedo": "113c336124507f4b3fc7d440f6fd8346",
@@ -537,13 +543,16 @@
       "albedoBoost": 1.04,
       "roughness": 0.92,
       "normalScale": 0.48,
-      "aoIntensity": 0.50,
+      "aoIntensity": 0.5,
       "source": {
         "provider": "Poly Haven",
         "assetId": "worn_plaster_wall",
         "url": "https://polyhaven.com/a/worn_plaster_wall",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 1.8, "height": 1.8 },
+        "nativeDimensionsM": {
+          "width": 1.8,
+          "height": 1.8
+        },
         "downloadedResolution": "2k",
         "md5": {
           "albedo": "113c336124507f4b3fc7d440f6fd8346",
@@ -577,7 +586,10 @@
         "assetId": "worn_planks",
         "url": "https://polyhaven.com/a/worn_planks",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 1.4, "height": 1.4 },
+        "nativeDimensionsM": {
+          "width": 1.4,
+          "height": 1.4
+        },
         "downloadedResolution": "1k",
         "md5": {
           "albedo": "c5f7b2343880a705e9acb471938e07da",
@@ -595,18 +607,21 @@
     },
     {
       "id": "ph_rough_pine_door",
-      "tileSizeM": 2.0,
+      "tileSizeM": 2,
       "tintHex": "#ffffff",
       "albedoBoost": 1.16,
       "roughness": 0.86,
-      "normalScale": 0.50,
+      "normalScale": 0.5,
       "aoIntensity": 0.45,
       "source": {
         "provider": "Poly Haven",
         "assetId": "rough_pine_door",
         "url": "https://polyhaven.com/a/rough_pine_door",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 2.0, "height": 2.0 },
+        "nativeDimensionsM": {
+          "width": 2,
+          "height": 2
+        },
         "downloadedResolution": "1k",
         "md5": {
           "albedo": "8c1036e566fe8e925e98123458aae385",
@@ -624,7 +639,7 @@
     },
     {
       "id": "ph_rusty_metal_02",
-      "tileSizeM": 1.0,
+      "tileSizeM": 1,
       "tintHex": "#ffffff",
       "albedoBoost": 1.18,
       "roughness": 0.72,
@@ -635,7 +650,10 @@
         "assetId": "rusty_metal_02",
         "url": "https://polyhaven.com/a/rusty_metal_02",
         "license": "CC0",
-        "nativeDimensionsM": { "width": 1.0, "height": 1.0 },
+        "nativeDimensionsM": {
+          "width": 1,
+          "height": 1
+        },
         "downloadedResolution": "1k",
         "md5": {
           "albedo": "476bff9959bc727bd4b83c0a9ac4aeaa",
@@ -648,6 +666,246 @@
           "albedo": "./rusty_metal_02/rusty_metal_02_diff_1k.jpg",
           "normal": "./rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
           "arm": "./rusty_metal_02/rusty_metal_02_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_plastered_wall_04",
+      "tileSizeM": 3.2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+          "normal": "./plastered_wall_04/plastered_wall_04_nor_gl_1k.jpg",
+          "arm": "./plastered_wall_04/plastered_wall_04_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_fabric_leather_02",
+      "tileSizeM": 0.5,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "normal": "./fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "arm": "./fabric_leather_02/fabric_leather_02_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_red_plaster_weathered",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
+          "normal": "./red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
+          "arm": "./red_plaster_weathered/red_plaster_weathered_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_grey_plaster_02",
+      "tileSizeM": 1,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./grey_plaster_02/grey_plaster_02_diff_1k.jpg",
+          "normal": "./grey_plaster_02/grey_plaster_02_nor_gl_1k.jpg",
+          "arm": "./grey_plaster_02/grey_plaster_02_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_plaster_brick_pattern",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./plaster_brick_pattern/plaster_brick_pattern_diff_1k.jpg",
+          "normal": "./plaster_brick_pattern/plaster_brick_pattern_nor_gl_1k.jpg",
+          "arm": "./plaster_brick_pattern/plaster_brick_pattern_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_medieval_blocks_03",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./medieval_blocks_03/medieval_blocks_03_diff_1k.jpg",
+          "normal": "./medieval_blocks_03/medieval_blocks_03_nor_gl_1k.jpg",
+          "arm": "./medieval_blocks_03/medieval_blocks_03_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_rough_block_wall",
+      "tileSizeM": 3.04,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./rough_block_wall/rough_block_wall_diff_1k.jpg",
+          "normal": "./rough_block_wall/rough_block_wall_nor_gl_1k.jpg",
+          "arm": "./rough_block_wall/rough_block_wall_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_stone_brick_wall_001",
+      "tileSizeM": 2.5,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./stone_brick_wall_001/stone_brick_wall_001_diff_1k.jpg",
+          "normal": "./stone_brick_wall_001/stone_brick_wall_001_nor_gl_1k.jpg",
+          "arm": "./stone_brick_wall_001/stone_brick_wall_001_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_castle_brick_02_red",
+      "tileSizeM": 1.5,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./castle_brick_02_red/castle_brick_02_red_diff_1k.jpg",
+          "normal": "./castle_brick_02_red/castle_brick_02_red_nor_gl_1k.jpg",
+          "arm": "./castle_brick_02_red/castle_brick_02_red_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_weathered_brown_planks",
+      "tileSizeM": 1.8,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+          "normal": "./weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
+          "arm": "./weathered_brown_planks/weathered_brown_planks_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_rough_wood",
+      "tileSizeM": 0.5,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./rough_wood/rough_wood_diff_1k.jpg",
+          "normal": "./rough_wood/rough_wood_nor_gl_1k.jpg",
+          "arm": "./rough_wood/rough_wood_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_dark_wood",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./dark_wood/dark_wood_diff_1k.jpg",
+          "normal": "./dark_wood/dark_wood_nor_gl_1k.jpg",
+          "arm": "./dark_wood/dark_wood_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_brown_planks_03",
+      "tileSizeM": 1,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./brown_planks_03/brown_planks_03_diff_1k.jpg",
+          "normal": "./brown_planks_03/brown_planks_03_nor_gl_1k.jpg",
+          "arm": "./brown_planks_03/brown_planks_03_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_hessian_230",
+      "tileSizeM": 0.27,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./hessian_230/hessian_230_diff_1k.jpg",
+          "normal": "./hessian_230/hessian_230_nor_gl_1k.jpg",
+          "arm": "./hessian_230/hessian_230_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_dirty_carpet",
+      "tileSizeM": 0.6,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./dirty_carpet/dirty_carpet_diff_1k.jpg",
+          "normal": "./dirty_carpet/dirty_carpet_nor_gl_1k.jpg",
+          "arm": "./dirty_carpet/dirty_carpet_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_rusty_metal_04",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./rusty_metal_04/rusty_metal_04_diff_1k.jpg",
+          "normal": "./rusty_metal_04/rusty_metal_04_nor_gl_1k.jpg",
+          "arm": "./rusty_metal_04/rusty_metal_04_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_painted_metal_shutter",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./painted_metal_shutter/painted_metal_shutter_diff_1k.jpg",
+          "normal": "./painted_metal_shutter/painted_metal_shutter_nor_gl_1k.jpg",
+          "arm": "./painted_metal_shutter/painted_metal_shutter_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_corrugated_iron_02",
+      "tileSizeM": 2.7,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./corrugated_iron_02/corrugated_iron_02_diff_1k.jpg",
+          "normal": "./corrugated_iron_02/corrugated_iron_02_nor_gl_1k.jpg",
+          "arm": "./corrugated_iron_02/corrugated_iron_02_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_terracotta_floor_tiles",
+      "tileSizeM": 2.08,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./terracotta_floor_tiles/terracotta_floor_tiles_diff_1k.jpg",
+          "normal": "./terracotta_floor_tiles/terracotta_floor_tiles_nor_gl_1k.jpg",
+          "arm": "./terracotta_floor_tiles/terracotta_floor_tiles_arm_1k.jpg"
+        }
+      }
+    },
+    {
+      "id": "ph_stone_embedded_tiles",
+      "tileSizeM": 2,
+      "tintHex": "#ffffff",
+      "textures": {
+        "1k": {
+          "albedo": "./stone_embedded_tiles/stone_embedded_tiles_diff_1k.jpg",
+          "normal": "./stone_embedded_tiles/stone_embedded_tiles_nor_gl_1k.jpg",
+          "arm": "./stone_embedded_tiles/stone_embedded_tiles_arm_1k.jpg"
         }
       }
     }

@@ -25,9 +25,9 @@ export function createBuffDisplayCopy(tuning: GameplayTuning): BuffDisplayCopy {
   const shieldLabel = formatDecimal(buffs.shieldHealth, 1);
   const standardDurationLabel = `${formatDecimal(buffs.standardDurationS, 1)}s`;
   const perfectWaveDurationLabel = formatDecimal(buffs.perfectWave.durationS, 1);
-  const ammoCompact = buffs.unlimitedAmmo ? "\u221E Ammo" : "Standard Ammo";
-  const ammoDetailed = buffs.unlimitedAmmo
-    ? "Unlimited ammo, no reload needed"
+  const ammoCompact = buffs.freeReloads ? "Free Reloads" : "Standard Ammo";
+  const ammoDetailed = buffs.freeReloads
+    ? "Reloads never drain reserve ammo"
     : "Standard ammo and reload rules";
   const perfectWaveEffect = buffs.perfectWave.mode === "single-deterministic"
     ? "one deterministically selected buff"

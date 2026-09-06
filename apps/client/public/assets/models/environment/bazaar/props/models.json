@@ -207,10 +207,10 @@
       "source": "repo://assets/source/b18-counters/build.py",
       "license": "Project-Original",
       "md5": {
-        "b18_counters/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
-        "b18_counters/b18-packing-finish.glb": "d2150619ed923a4403087eac2174a4a7",
-        "b18_counters/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
-        "b18_counters/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+        "b18_counters/b18-display-normal.png": "78fc495df1c514855f4bdafbffedea1d",
+        "b18_counters/b18-packing-finish.glb": "e21f6a633106031b5b542e7648304a5b",
+        "b18_counters/b18-display-albedo.png": "b37c530f62d0506093039ae0a5bf8f73",
+        "b18_counters/b18-display-roughness.png": "19cef0aab8bf3853dabcfd766d4f6846"
       },
       "dependencies": [
         {
@@ -233,10 +233,10 @@
       "source": "repo://assets/source/b18-counters/build.py",
       "license": "Project-Original",
       "md5": {
-        "b18_counters/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
-        "b18_counters/b18-dye-counter.glb": "1d54a1021bfb8bd11ccd1524d8114796",
-        "b18_counters/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
-        "b18_counters/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+        "b18_counters/b18-display-normal.png": "78fc495df1c514855f4bdafbffedea1d",
+        "b18_counters/b18-dye-counter.glb": "d9e6465fe76bf6984157131c96d4c29e",
+        "b18_counters/b18-display-albedo.png": "b37c530f62d0506093039ae0a5bf8f73",
+        "b18_counters/b18-display-roughness.png": "19cef0aab8bf3853dabcfd766d4f6846"
       },
       "dependencies": [
         {
@@ -387,6 +387,1163 @@
         "central_screen_sc_c/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
         "central_screen_sc_c/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
       }
+    },
+    {
+      "id": "dyers-screen-sc-d",
+      "url": "dyers_house/dyers-screen-sc-d.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "dyers_house/dyers-screen-sc-d.glb"
+        }
+      },
+      "source": "repo://assets/source/dyers-house/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224"
+        }
+      ],
+      "md5": {
+        "dyers_house/dyers-screen-sc-d.glb": "6f47b013f5f32dd6ef08fa307e233e9e",
+        "dyers_house/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "dyers_house/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "dyers_house/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
+    },
+    {
+      "id": "dyers-loft-vent",
+      "url": "dyers_house/dyers-loft-vent.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "dyers_house/dyers-loft-vent.glb"
+        }
+      },
+      "source": "repo://assets/source/dyers-house/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224"
+        }
+      ],
+      "md5": {
+        "dyers_house/dyers-loft-vent.glb": "11f69c2aac7e57e890884d52bb59d153",
+        "dyers_house/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "dyers_house/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "dyers_house/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
+    },
+    {
+      "id": "dyers-roof-hatch",
+      "url": "dyers_house/dyers-roof-hatch.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "dyers_house/dyers-roof-hatch.glb"
+        }
+      },
+      "source": "repo://assets/source/dyers-house/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224"
+        }
+      ],
+      "md5": {
+        "dyers_house/dyers-roof-hatch.glb": "33c5388183e2b2b27429ab716f5735c1",
+        "dyers_house/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "dyers_house/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "dyers_house/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
+    },
+    {
+      "id": "rug-gallery",
+      "url": "rug_displays/rug-gallery.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "rug_displays/rug-gallery.glb"
+        }
+      },
+      "source": "repo://assets/source/rug-displays/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        }
+      ],
+      "md5": {
+        "rug_displays/rug-gallery.glb": "fad306ef15a96082ad834aad05b65e3a",
+        "rug_displays/rug-albedo.png": "cdea44cf6614056106517a111410e9b8",
+        "rug_displays/rug-normal.png": "2040e1c3432487d5e54a270debc969d1",
+        "rug_displays/rug-roughness.png": "0e89bc69ad64d8d23f57eddabb42d059"
+      }
+    },
+    {
+      "id": "rug-roll-chest",
+      "url": "rug_displays/rug-roll-chest.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "rug_displays/rug-roll-chest.glb"
+        }
+      },
+      "source": "repo://assets/source/rug-displays/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96",
+          "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+        }
+      ],
+      "md5": {
+        "rug_displays/rug-roll-chest.glb": "183b062e36c8c33727d35e17abb84001",
+        "rug_displays/rug-albedo.png": "cdea44cf6614056106517a111410e9b8",
+        "rug_displays/rug-normal.png": "2040e1c3432487d5e54a270debc969d1",
+        "rug_displays/rug-roughness.png": "0e89bc69ad64d8d23f57eddabb42d059"
+      }
+    },
+    {
+      "id": "textile-screen-sc-v",
+      "url": "textile_openings/textile-screen-sc-v.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "textile_openings/textile-screen-sc-v.glb"
+        }
+      },
+      "source": "repo://assets/source/textile-openings/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224"
+        }
+      ],
+      "md5": {
+        "textile_openings/textile-screen-sc-v.glb": "ce092d50bdb6c315d50c6ba2ec83a4a1",
+        "textile_openings/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "textile_openings/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "textile_openings/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
+    },
+    {
+      "id": "shutter-paneled",
+      "url": "textile_openings/shutter-paneled.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "textile_openings/shutter-paneled.glb"
+        }
+      },
+      "source": "repo://assets/source/textile-openings/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "126085959bf52533268338ff228bfd77"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "ca89ad65a1cd9de5b95e8979143e41b6"
+        },
+        {
+          "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+          "source": "repo://assets/source/b18-counters/build.py",
+          "license": "Project-Original",
+          "md5": "16d50948f5bb729c7ae85811ff387224"
+        }
+      ],
+      "md5": {
+        "textile_openings/shutter-paneled.glb": "2074d041f9bdea87d24e15592661d889",
+        "textile_openings/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "textile_openings/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "textile_openings/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6"
+      }
+    },
+    {
+      "id": "shutter-louvered",
+      "url": "market_fixtures/shutter-louvered.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "market_fixtures/shutter-louvered.glb"
+        }
+      },
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        }
+      ],
+      "md5": {
+        "market_fixtures/shutter-louvered.glb": "b4a6b75ef75dac5ae4a8354bab29ff37",
+        "market_fixtures/fixture-albedo.png": "c6c12325e5fb410598dd354caa5bbeda",
+        "market_fixtures/fixture-metalness.png": "743bae6ff0228d713114a8f7ff21e71a",
+        "market_fixtures/fixture-normal.png": "fb0ba0aad6e58ce933a4d8a255a77a87",
+        "market_fixtures/fixture-roughness.png": "665f8768f3f7cc7f61766c492da45749"
+      }
+    },
+    {
+      "id": "shutter-woven",
+      "url": "market_fixtures/shutter-woven.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "market_fixtures/shutter-woven.glb"
+        }
+      },
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        }
+      ],
+      "md5": {
+        "market_fixtures/shutter-woven.glb": "9f5fd934b61e3ddb8fe8a7c8226efc79",
+        "market_fixtures/fixture-albedo.png": "c6c12325e5fb410598dd354caa5bbeda",
+        "market_fixtures/fixture-metalness.png": "743bae6ff0228d713114a8f7ff21e71a",
+        "market_fixtures/fixture-normal.png": "fb0ba0aad6e58ce933a4d8a255a77a87",
+        "market_fixtures/fixture-roughness.png": "665f8768f3f7cc7f61766c492da45749"
+      }
+    },
+    {
+      "id": "spice-drawers",
+      "url": "market_fixtures/spice-drawers.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "market_fixtures/spice-drawers.glb"
+        }
+      },
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        }
+      ],
+      "md5": {
+        "market_fixtures/spice-drawers.glb": "0956875d2e8d7ab2ad002f33dea6ce3c",
+        "market_fixtures/fixture-albedo.png": "c6c12325e5fb410598dd354caa5bbeda",
+        "market_fixtures/fixture-metalness.png": "743bae6ff0228d713114a8f7ff21e71a",
+        "market_fixtures/fixture-normal.png": "fb0ba0aad6e58ce933a4d8a255a77a87",
+        "market_fixtures/fixture-roughness.png": "665f8768f3f7cc7f61766c492da45749"
+      }
+    },
+    {
+      "id": "grain-balance",
+      "url": "market_fixtures/grain-balance.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "market_fixtures/grain-balance.glb"
+        }
+      },
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        }
+      ],
+      "md5": {
+        "market_fixtures/grain-balance.glb": "9eb3f10887f89c63d3091f5b7297e622",
+        "market_fixtures/fixture-albedo.png": "c6c12325e5fb410598dd354caa5bbeda",
+        "market_fixtures/fixture-metalness.png": "743bae6ff0228d713114a8f7ff21e71a",
+        "market_fixtures/fixture-normal.png": "fb0ba0aad6e58ce933a4d8a255a77a87",
+        "market_fixtures/fixture-roughness.png": "665f8768f3f7cc7f61766c492da45749"
+      }
+    },
+    {
+      "id": "apothecary",
+      "url": "market_fixtures/apothecary.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "market_fixtures/apothecary.glb"
+        }
+      },
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "685e2a249c5a16593448853a5d4359c3"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "0d1449b29743e6d4ea5369f6ee6fed96"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+          "source": "repo://assets/source/textile-booth/build.py",
+          "license": "Project-Original",
+          "md5": "9f330817f918cc4e4dcd1a634f931639"
+        }
+      ],
+      "md5": {
+        "market_fixtures/apothecary.glb": "76c283391188745b40fcec9d480aa8a8",
+        "market_fixtures/fixture-albedo.png": "c6c12325e5fb410598dd354caa5bbeda",
+        "market_fixtures/fixture-metalness.png": "743bae6ff0228d713114a8f7ff21e71a",
+        "market_fixtures/fixture-normal.png": "fb0ba0aad6e58ce933a4d8a255a77a87",
+        "market_fixtures/fixture-roughness.png": "665f8768f3f7cc7f61766c492da45749"
+      }
+    },
+    {
+      "id": "spice-roof-south",
+      "url": "bazaar_roofs/spice-roof-south.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/spice-roof-south.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/spice-roof-south.glb": "54eece2e274e660551ed1d85dbbd2641",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "spice-roof-middle",
+      "url": "bazaar_roofs/spice-roof-middle.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/spice-roof-middle.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/spice-roof-middle.glb": "ab019b0ff6185032eb7236ec16239928",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "spice-roof-north",
+      "url": "bazaar_roofs/spice-roof-north.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/spice-roof-north.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/spice-roof-north.glb": "a3cd8f3be25ddce59711e53168ce7dbe",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "spice-upper-room",
+      "url": "bazaar_roofs/spice-upper-room.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/spice-upper-room.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/spice-upper-room.glb": "5763c1ccab116778797ac795d53645d0",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "roof-tie-490",
+      "url": "bazaar_roofs/roof-tie-490.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/roof-tie-490.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/roof-tie-490.glb": "58e5fc4de50223df5ec117fbe4be9e51",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "roof-tie-555",
+      "url": "bazaar_roofs/roof-tie-555.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/roof-tie-555.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/roof-tie-555.glb": "e323987c1ca640d8a60eed9d841d85ac",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "roof-tie-590",
+      "url": "bazaar_roofs/roof-tie-590.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/roof-tie-590.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/roof-tie-590.glb": "3ff7400d1f55173ad96722658083327e",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "roof-tie-595",
+      "url": "bazaar_roofs/roof-tie-595.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/roof-tie-595.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/roof-tie-595.glb": "cfb488d693242766560c57db4c9e9a51",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "roof-tie-610",
+      "url": "bazaar_roofs/roof-tie-610.glb",
+      "scale": 1,
+      "variants": {
+        "1k": {
+          "url": "bazaar_roofs/roof-tie-610.glb"
+        }
+      },
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "dependencies": [
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "c866823679a042c54d8ba4ed8a69174c"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "fa1251a461cdaeff1eb820683250572d"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+        },
+        {
+          "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+          "source": "repo://assets/source/b18-roof-access/build.py",
+          "license": "Project-Original",
+          "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+        }
+      ],
+      "md5": {
+        "bazaar_roofs/roof-tie-610.glb": "a39483c1f5f1ada8906a2c3611ce48ac",
+        "bazaar_roofs/b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+        "bazaar_roofs/b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+        "bazaar_roofs/b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+        "bazaar_roofs/b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+        "bazaar_roofs/b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+        "bazaar_roofs/b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+      }
+    },
+    {
+      "id": "spawn-b-bench",
+      "url": "spawn_b/spawn-b-bench.glb",
+      "scale": 1,
+      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "spawn_b/spawn-b-bench.glb": "61c7e0ed4c0d5bf340cab4ec16d1f7d9"
+      },
+      "sourceMd5": "42b5da60ad5ab5b243d76e5912eb0902",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "1d4acce324ac8377e0eeace283da3cc3"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "c5f7b2343880a705e9acb471938e07da"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "9a31cafe552f7e15228a513cfd25c574"
+        }
+      ]
+    },
+    {
+      "id": "spawn-b-shade",
+      "url": "spawn_b/spawn-b-shade.glb",
+      "scale": 1,
+      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "spawn_b/spawn-b-shade.glb": "45898d3512b73df5dcdaac628d798c5e"
+      },
+      "sourceMd5": "42b5da60ad5ab5b243d76e5912eb0902",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "1d4acce324ac8377e0eeace283da3cc3"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "c5f7b2343880a705e9acb471938e07da"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_planks",
+          "license": "CC0-1.0",
+          "md5": "9a31cafe552f7e15228a513cfd25c574"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "a1e746c80203a76940eb8aa7fec8d4cf"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "35256026fcf2734d558ee2aa8f939c10"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "1600b3fed674702eaa350cd627278a0f"
+        }
+      ]
+    },
+    {
+      "id": "spawn-b-upper-room",
+      "url": "spawn_b/spawn-b-upper-room.glb",
+      "scale": 1,
+      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "spawn_b/spawn-b-upper-room.glb": "b9c8ff54bc594d533d7c0ff193e6219a"
+      },
+      "sourceMd5": "42b5da60ad5ab5b243d76e5912eb0902",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/plastered_wall_04",
+          "license": "CC0-1.0",
+          "md5": "4d3c55b7cbb32cce818af5b2a1f18ffa"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/plastered_wall_04",
+          "license": "CC0-1.0",
+          "md5": "3a45e9e3ff0c6aa179371dff02bded1f"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/plastered_wall_04",
+          "license": "CC0-1.0",
+          "md5": "f18e649235bb688732fb0ef1d61a5286"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        }
+      ]
     }
   ]
 }

@@ -5,16 +5,10 @@ import type { WallDetailInstance } from "./kitCore";
 function applyFacadeWearColors(geometry: BufferGeometry): void {
   const positions = geometry.getAttribute("position");
   const colors = new Float32Array(positions.count * 3);
-  for (let index = 0; index < positions.count; index += 1) {
-    const x = positions.getX(index);
-    const y = positions.getY(index);
-    const baseMask = Math.max(0, Math.min(1, (-0.18 - y) / 0.32));
-    const revealMask = Math.max(0, Math.min(1, (Math.abs(x) - 0.36) / 0.14));
-    const grime = Math.min(1, baseMask * 0.48 + revealMask * 0.2 + baseMask * revealMask * 0.38);
-    colors[index * 3] = 1 - grime * 0.11;
-    colors[index * 3 + 1] = 1 - grime * 0.16;
-    colors[index * 3 + 2] = 1 - grime * 0.22;
-  }
+  // A generated infill rectangle is not a separate plaster panel. Coloring
+  // each local bottom/edge imprinted the triangulation around every opening.
+  // The material owns continuous world-space wear and the installed PBR maps.
+  colors.fill(1);
   geometry.setAttribute("color", new Float32BufferAttribute(colors, 3));
 }
 
