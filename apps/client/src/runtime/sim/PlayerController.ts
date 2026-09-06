@@ -74,6 +74,7 @@ export class PlayerController {
   private outOfWorldRecoveries = 0;
   private grounded = true;
   private horizontalSpeedMps = 0;
+  private movementBlocked = false;
   private currentHeight = PLAYER_HEIGHT_M;
   private currentEyeHeight = PLAYER_EYE_HEIGHT_M;
   private readonly runSpeedMps: number;
@@ -115,6 +116,7 @@ export class PlayerController {
     this.velocityZ = 0;
     this.grounded = true;
     this.horizontalSpeedMps = 0;
+    this.movementBlocked = false;
     this.coyoteTimerS = 0;
     this.jumpBufferTimerS = 0;
     this.motionResult.hitX = false;
@@ -131,14 +133,15 @@ export class PlayerController {
     const world = this.world;
     if (!world) return;
 
+    const clampedDt = Math.min(Math.max(deltaSeconds, 0), MAX_FRAME_DT_S);
+    if (clampedDt <= 0) return;
+    this.movementBlocked = false;
+
     const canStand = !input.crouchHeld && this.canOccupyHeight(PLAYER_HEIGHT_M, world);
     this.currentHeight = input.crouchHeld || !canStand ? CROUCH_HEIGHT_M : PLAYER_HEIGHT_M;
     const crouched = this.currentHeight === CROUCH_HEIGHT_M;
     this.currentEyeHeight = crouched ? CROUCH_EYE_HEIGHT_M : PLAYER_EYE_HEIGHT_M;
     this.solver.setHeight(this.currentHeight);
-
-    const clampedDt = Math.min(Math.max(deltaSeconds, 0), MAX_FRAME_DT_S);
-    if (clampedDt <= 0) return;
 
     const stepCount = Math.max(1, Math.ceil(clampedDt / MAX_SUBSTEP_DT_S));
     const stepDt = clampedDt / stepCount;
@@ -265,7 +268,13 @@ export class PlayerController {
         this.grounded = false;
       }
 
+      const beforeClampX = this.position.x;
+      const beforeClampZ = this.position.z;
       this.clampToPlayableBounds();
+      this.movementBlocked ||= (velocityX !== 0 && this.motionResult.hitX)
+        || (velocityZ !== 0 && this.motionResult.hitZ)
+        || (velocityX !== 0 && this.position.x !== beforeClampX)
+        || (velocityZ !== 0 && this.position.z !== beforeClampZ);
     }
   }
 
@@ -289,6 +298,10 @@ export class PlayerController {
     return this.horizontalSpeedMps;
   }
 
+  getMovementBlocked(): boolean {
+    return this.movementBlocked;
+  }
+
   getLastCollisionState(): MotionResult {
     return {
       hitX: this.motionResult.hitX,
@@ -304,6 +317,10 @@ export class PlayerController {
 
   getCurrentEyeHeight(): number {
     return this.currentEyeHeight;
+  }
+
+  isCrouched(): boolean {
+    return this.currentHeight === CROUCH_HEIGHT_M;
   }
 
   setSpeedMultiplier(multiplier: number): void {

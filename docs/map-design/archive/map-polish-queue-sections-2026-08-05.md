@@ -3,12 +3,12 @@ Authority: archive
 Read when: tracing completed section-queue work or its REVISIT notes
 Owns: record of the section-driven Bazaar polish queue completed 2026-08-05
 Do not use for: active instructions, task status, or acceptance workflow
-Last updated: 2026-08-08
+Last updated: 2026-08-16
 
 > **Archived.** This geographic queue was completed on 2026-08-05 and reviewed at the final gate
-> (verdict: HOLD — the remaining gap was systemic, not sectional). The active queue is
-> [`docs/map-design/map-polish-queue.md`](../map-polish-queue.md). Both open REVISIT notes below
-> (areas 08 and 17) were traced to one shared trim material and route to card P1 of the active queue.
+> (verdict: HOLD — the remaining gap was systemic, not sectional). Current procedure lives in the
+> [map-polish skill](../../../.claude/skills/map-polish/SKILL.md); current design proposals live in the
+> [development plan](../development-plan/README.md). The current user task owns scope and status. The REVISIT notes below are historical evidence.
 
 # Bazaar Target-Driven Visual Development Queue
 
@@ -20,8 +20,8 @@ This is the single ordered implementation queue for Bazaar visual development. W
 - Boundary: The continuous west façade from the southern arch return through the last visible merchant bay, including its upper windows, shop openings, stalls, awnings, plinth, and wall-base dressing.
 - Primary camera: `AUDIT_07_SPICE_WEST_ELEVATION`
 - Supporting cameras: `SHOT_11_SPICE_CANOPY`, `SHOT_13_CLOSEUP_MERCHANT_FACADE`
-- Target: [target.jpg](../visual-targets/01-spice-street-west-merchant-frontage/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/01-spice-street-west-merchant-frontage/current-target.jpg)
+- Target: [target.jpg](visual-targets/01-spice-street-west-merchant-frontage/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/01-spice-street-west-merchant-frontage/current-target.jpg)
 
 Implementation:
 
@@ -41,8 +41,8 @@ Complete when: The live primary view materially matches the target’s façade h
 - Boundary: The southern Spice Street threshold and the east-side merchant run visible from A Spawn, ending before Fountain Court.
 - Primary camera: `SHOT_02_SPAWN_A_TO_BAZAAR`
 - Supporting cameras: `SHOT_11_SPICE_CANOPY`, `AUDIT_07_SPICE_WEST_ELEVATION`
-- Target: [target.jpg](../visual-targets/02-spice-street-east-frontage-and-lane-entry/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/02-spice-street-east-frontage-and-lane-entry/current-target.jpg)
+- Target: [target.jpg](visual-targets/02-spice-street-east-frontage-and-lane-entry/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/02-spice-street-east-frontage-and-lane-entry/current-target.jpg)
 
 Implementation:
 
@@ -62,8 +62,8 @@ Complete when: The fixed view reads as a finished six-metre bazaar entrance with
 - Boundary: The overhead cloth, beams, ropes, wires, banners, and their attachment zones along Spice Street, excluding the shop interiors and ground prop clusters below.
 - Primary camera: `SHOT_11_SPICE_CANOPY`
 - Supporting cameras: `SHOT_15_CLOSEUP_CANOPY_ATTACHMENT`, `SHOT_02_SPAWN_A_TO_BAZAAR`
-- Target: [target.jpg](../visual-targets/03-spice-street-overhead-canopy-system/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/03-spice-street-overhead-canopy-system/current-target.jpg)
+- Target: [target.jpg](visual-targets/03-spice-street-overhead-canopy-system/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/03-spice-street-overhead-canopy-system/current-target.jpg)
 
 Implementation:
 
@@ -83,8 +83,8 @@ Complete when: The primary and closeup views show one believable load-bearing sh
 - Boundary: The lane floor and its two wall-edge bands from A Spawn’s exit to Fountain Court, including thresholds, gutters, cover clusters, and immediate ground-contact dressing.
 - Primary camera: `SHOT_14_CLOSEUP_PROP_GROUNDING`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_11_SPICE_CANOPY`
-- Target: [target.jpg](../visual-targets/04-spice-street-ground-cover-and-thresholds/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/04-spice-street-ground-cover-and-thresholds/current-target.jpg)
+- Target: [target.jpg](visual-targets/04-spice-street-ground-cover-and-thresholds/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/04-spice-street-ground-cover-and-thresholds/current-target.jpg)
 
 Implementation:
 
@@ -104,8 +104,8 @@ Complete when: The closeup reaches the target’s material and grounding quality
 - Boundary: A Spawn’s complete north face: the monumental main arch, both flanking returns, parapets, base treatment, and the threshold into Spice Street.
 - Primary camera: `AUDIT_01_SPAWN_A_NORTH_FRONTAGES`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`
-- Target: [target.jpg](../visual-targets/05-a-spawn-main-exit-facade/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/05-a-spawn-main-exit-facade/current-target.jpg)
+- Target: [target.jpg](visual-targets/05-a-spawn-main-exit-facade/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/05-a-spawn-main-exit-facade/current-target.jpg)
 
 Implementation:
 
@@ -125,8 +125,8 @@ Complete when: The exit reads as one monumental but buildable façade matching t
 - Boundary: The full Fountain Court release, centered on the off-axis fountain and including the palm, visible enclosing façades, edge life, and the northward frame.
 - Primary camera: `SHOT_03_FOUNTAIN_COURT`
 - Supporting cameras: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`, `SHOT_04_TEXTILE_ARCADE`
-- Target: [target.jpg](../visual-targets/06-fountain-court-hero-composition/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/06-fountain-court-hero-composition/current-target.jpg)
+- Target: [target.jpg](visual-targets/06-fountain-court-hero-composition/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/06-fountain-court-hero-composition/current-target.jpg)
 
 Implementation:
 
@@ -146,8 +146,8 @@ Complete when: The primary view approaches the target’s hero hierarchy and for
 - Boundary: The fountain basin, water, fittings, planter contact, and the immediate three-to-four-metre paving apron.
 - Primary camera: `SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL`
 - Supporting cameras: `SHOT_03_FOUNTAIN_COURT`
-- Target: [target.jpg](../visual-targets/07-fountain-basin-material-and-ground-transition/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/07-fountain-basin-material-and-ground-transition/current-target.jpg)
+- Target: [target.jpg](visual-targets/07-fountain-basin-material-and-ground-transition/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/07-fountain-basin-material-and-ground-transition/current-target.jpg)
 
 Implementation:
 
@@ -167,8 +167,8 @@ Complete when: The closeup materially matches the target’s stone, tile, water-
 - Boundary: The covered main-lane segment from Fountain Court’s north threshold to the Rug Gate approach, including both arcade walls and the overhead textile roof.
 - Primary camera: `SHOT_04_TEXTILE_ARCADE`
 - Supporting cameras: `SHOT_03_FOUNTAIN_COURT`, `SHOT_09_RUG_GATE`
-- Target: [target.jpg](../visual-targets/08-textile-arcade-south-compression/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/08-textile-arcade-south-compression/current-target.jpg)
+- Target: [target.jpg](visual-targets/08-textile-arcade-south-compression/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/08-textile-arcade-south-compression/current-target.jpg)
 
 Implementation:
 
@@ -188,8 +188,8 @@ Complete when: The fixed view matches the target’s covered-arcade depth and te
 - Boundary: The Rug Gate crown, piers, open throat, flanking rug displays, and immediate southern approach.
 - Primary camera: `SHOT_09_RUG_GATE`
 - Supporting cameras: `SHOT_04_TEXTILE_ARCADE`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](../visual-targets/09-rug-gate-hero-approach/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/09-rug-gate-hero-approach/current-target.jpg)
+- Target: [target.jpg](visual-targets/09-rug-gate-hero-approach/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/09-rug-gate-hero-approach/current-target.jpg)
 
 Implementation:
 
@@ -209,8 +209,8 @@ Complete when: The gate has the target’s hero hierarchy and complete construct
 - Boundary: The east process wall and its lane-edge band from the A south-east connector to the Covered Souk threshold.
 - Primary camera: `AUDIT_05_DYERS_ALLEY_EAST_FRONTAGE`
 - Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`
-- Target: [target.jpg](../visual-targets/10-dyers-alley-process-wall-and-drainage/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/10-dyers-alley-process-wall-and-drainage/current-target.jpg)
+- Target: [target.jpg](visual-targets/10-dyers-alley-process-wall-and-drainage/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/10-dyers-alley-process-wall-and-drainage/current-target.jpg)
 
 Implementation:
 
@@ -230,8 +230,8 @@ Complete when: The wall matches the target’s readable dye-work sequence and ev
 - Boundary: The covered souk from its southern threshold through the shaded merchant/process run to the dogleg exit.
 - Primary camera: `SHOT_07_COVERED_DYERS_SOUK`
 - Supporting cameras: `AUDIT_06_COVERED_SOUK_SOUTH_FRONTAGE`, `SHOT_08_DYERS_DOGLEG`
-- Target: [target.jpg](../visual-targets/11-covered-dyers-souk-arcade/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/11-covered-dyers-souk-arcade/current-target.jpg)
+- Target: [target.jpg](visual-targets/11-covered-dyers-souk-arcade/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/11-covered-dyers-souk-arcade/current-target.jpg)
 
 Implementation:
 
@@ -251,8 +251,8 @@ Complete when: The primary view reaches the target’s enclosed market character
 - Boundary: The continuous S-turn from the Covered Souk exit to North Court, including the inner corner, outer residential wall, and turn-edge dressing.
 - Primary camera: `SHOT_08_DYERS_DOGLEG`
 - Supporting cameras: `SHOT_07_COVERED_DYERS_SOUK`, `SHOT_10_NORTH_COURT`
-- Target: [target.jpg](../visual-targets/12-dyers-dogleg-residential-turn/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/12-dyers-dogleg-residential-turn/current-target.jpg)
+- Target: [target.jpg](visual-targets/12-dyers-dogleg-residential-turn/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/12-dyers-dogleg-residential-turn/current-target.jpg)
 
 Implementation:
 
@@ -272,8 +272,8 @@ Complete when: The view matches the target’s quiet residential contrast and la
 - Boundary: North Court from its southern threshold to the two B Spawn connectors, including the enclosing façades, palm landmark, court floor, and edge work areas.
 - Primary camera: `SHOT_10_NORTH_COURT`
 - Supporting cameras: `SHOT_08_DYERS_DOGLEG`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](../visual-targets/13-north-court-release/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/13-north-court-release/current-target.jpg)
+- Target: [target.jpg](visual-targets/13-north-court-release/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/13-north-court-release/current-target.jpg)
 
 Implementation:
 
@@ -293,8 +293,8 @@ Complete when: The court matches the target’s release, skyline, and palm hiera
 - Boundary: The long east wall and lane-edge band of Service South from the A south-west connector to Caravan Court.
 - Primary camera: `AUDIT_03_SERVICE_SOUTH_EAST_FRONTAGE`
 - Supporting cameras: `SHOT_06_CARAVAN_RAMP`
-- Target: [target.jpg](../visual-targets/14-service-south-utility-frontage/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/14-service-south-utility-frontage/current-target.jpg)
+- Target: [target.jpg](visual-targets/14-service-south-utility-frontage/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/14-service-south-utility-frontage/current-target.jpg)
 
 Implementation:
 
@@ -314,8 +314,8 @@ Complete when: The elevation matches the target’s calm service rhythm and no b
 - Boundary: Caravan Court’s load yard, east and west edges, ramp threshold, retaining faces, and the first visible rise toward Tea Terrace.
 - Primary camera: `SHOT_06_CARAVAN_RAMP`
 - Supporting cameras: `AUDIT_04_CARAVAN_EAST_FRONTAGES`, `SHOT_05_TEA_TERRACE`
-- Target: [target.jpg](../visual-targets/15-caravan-court-ramp-and-loading/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/15-caravan-court-ramp-and-loading/current-target.jpg)
+- Target: [target.jpg](visual-targets/15-caravan-court-ramp-and-loading/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/15-caravan-court-ramp-and-loading/current-target.jpg)
 
 Implementation:
 
@@ -335,8 +335,8 @@ Complete when: The court approaches the target’s load-yard composition and the
 - Boundary: The ramp crest, tea-service frontage, raised terrace, stairs, landing, and north connector as one continuous elevated route.
 - Primary camera: `SHOT_05_TEA_TERRACE`
 - Supporting cameras: `SHOT_06_CARAVAN_RAMP`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](../visual-targets/16-tea-terrace-elevated-route/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/16-tea-terrace-elevated-route/current-target.jpg)
+- Target: [target.jpg](visual-targets/16-tea-terrace-elevated-route/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/16-tea-terrace-elevated-route/current-target.jpg)
 
 Implementation:
 
@@ -356,8 +356,8 @@ Complete when: The elevated route matches the target’s tea-service identity an
 - Boundary: The open southern portal into B Spawn, its immediate returns, edge rug racks, courtyard threshold, and the framed view back through the main route.
 - Primary camera: `SHOT_12_SPAWN_B_RETURN`
 - Supporting cameras: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`, `SHOT_09_RUG_GATE`
-- Target: [target.jpg](../visual-targets/17-b-spawn-main-entrance-and-return/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/17-b-spawn-main-entrance-and-return/current-target.jpg)
+- Target: [target.jpg](visual-targets/17-b-spawn-main-entrance-and-return/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/17-b-spawn-main-entrance-and-return/current-target.jpg)
 
 Implementation:
 
@@ -377,8 +377,8 @@ Complete when: The return view matches the target’s northern gate identity and
 - Boundary: The paired south courtyard walls flanking B Spawn’s gate, including their towers, doors, windows, parapets, plinths, fixtures, and edge cover.
 - Primary camera: `AUDIT_02_SPAWN_B_SOUTH_FRONTAGES`
 - Supporting cameras: `SHOT_12_SPAWN_B_RETURN`, `SHOT_10_NORTH_COURT`
-- Target: [target.jpg](../visual-targets/18-b-spawn-south-frontages/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/18-b-spawn-south-frontages/current-target.jpg)
+- Target: [target.jpg](visual-targets/18-b-spawn-south-frontages/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/18-b-spawn-south-frontages/current-target.jpg)
 
 Implementation:
 
@@ -398,8 +398,8 @@ Complete when: The paired frontages reach the target’s built northern characte
 - Boundary: The continuous sealed perimeter ring, all visible playable roofs, parapets, roof services, and the surrounding non-playable skyline belt; traversable layout and openings are excluded.
 - Primary camera: `SHOT_01_TOPDOWN_ESTABLISHING`
 - Supporting cameras: `SHOT_02_SPAWN_A_TO_BAZAAR`, `SHOT_12_SPAWN_B_RETURN`
-- Target: [target.jpg](../visual-targets/19-perimeter-rooftops-and-skyline-integration/target.jpg)
-- Current → Target: [current-target.jpg](../visual-targets/19-perimeter-rooftops-and-skyline-integration/current-target.jpg)
+- Target: [target.jpg](visual-targets/19-perimeter-rooftops-and-skyline-integration/target.jpg)
+- Current → Target: [current-target.jpg](visual-targets/19-perimeter-rooftops-and-skyline-integration/current-target.jpg)
 
 Implementation:
 

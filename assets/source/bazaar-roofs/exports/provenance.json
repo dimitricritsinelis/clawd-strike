@@ -1,0 +1,216 @@
+{
+  "source": "repo://assets/source/bazaar-roofs/build.py",
+  "license": "Project-Original",
+  "sourceFrame": "X east/Y north/Z up; export X east/Y up/Z north",
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_albedo.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "c866823679a042c54d8ba4ed8a69174c"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_normal.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "04e5a755f4cf0f72dce14527b9f31c25"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 masonry_arm.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "fa1251a461cdaeff1eb820683250572d"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_albedo.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "b30ef19200d36c81656c91bb5e0b1c28"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_normal.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "ecdfeb0bb0cf91949c2005a911507cdf"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18 joinery_arm.png",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "md5": "f2e147736aa1e4b6d6a4f57118acab41"
+    }
+  ],
+  "models": {
+    "spice-roof-south": {
+      "triangles": 1316,
+      "sourceBoundsM": [
+        [
+          0.0,
+          4.800000190734863
+        ],
+        [
+          0.0,
+          6.119999885559082
+        ],
+        [
+          0.0,
+          1.7899999618530273
+        ]
+      ],
+      "baseElevationM": 7.0,
+      "md5": "54eece2e274e660551ed1d85dbbd2641"
+    },
+    "spice-roof-middle": {
+      "triangles": 1236,
+      "sourceBoundsM": [
+        [
+          0.0,
+          4.800000190734863
+        ],
+        [
+          0.0,
+          5.760000228881836
+        ],
+        [
+          0.0,
+          2.5899999141693115
+        ]
+      ],
+      "baseElevationM": 7.0,
+      "md5": "ab019b0ff6185032eb7236ec16239928"
+    },
+    "spice-roof-north": {
+      "triangles": 844,
+      "sourceBoundsM": [
+        [
+          0.0,
+          4.800000190734863
+        ],
+        [
+          0.0,
+          3.240000009536743
+        ],
+        [
+          0.0,
+          1.190000057220459
+        ]
+      ],
+      "baseElevationM": 7.0,
+      "md5": "a3cd8f3be25ddce59711e53168ce7dbe"
+    },
+    "spice-upper-room": {
+      "triangles": 2332,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.0
+        ],
+        [
+          0.0,
+          6.559999942779541
+        ],
+        [
+          0.0,
+          2.950000047683716
+        ]
+      ],
+      "baseElevationM": 4.76,
+      "md5": "5763c1ccab116778797ac795d53645d0"
+    },
+    "roof-tie-490": {
+      "triangles": 320,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.75
+        ],
+        [
+          -0.07999999821186066,
+          0.07999999821186066
+        ],
+        [
+          2.7755575615628914e-16,
+          0.9700000286102295
+        ]
+      ],
+      "baseElevationM": 4.83,
+      "md5": "58e5fc4de50223df5ec117fbe4be9e51"
+    },
+    "roof-tie-555": {
+      "triangles": 320,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.75
+        ],
+        [
+          -0.07999999821186066,
+          0.07999999821186066
+        ],
+        [
+          2.7755575615628914e-16,
+          0.3199999928474426
+        ]
+      ],
+      "baseElevationM": 5.4799999999999995,
+      "md5": "e323987c1ca640d8a60eed9d841d85ac"
+    },
+    "roof-tie-590": {
+      "triangles": 272,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.75
+        ],
+        [
+          -0.07999999821186066,
+          0.07999999821186066
+        ],
+        [
+          0.0,
+          0.44999998807907104
+        ]
+      ],
+      "baseElevationM": 5.59,
+      "md5": "3ff7400d1f55173ad96722658083327e"
+    },
+    "roof-tie-595": {
+      "triangles": 272,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.75
+        ],
+        [
+          -0.07999999821186066,
+          0.07999999821186066
+        ],
+        [
+          0.0,
+          0.5
+        ]
+      ],
+      "baseElevationM": 5.59,
+      "md5": "cfb488d693242766560c57db4c9e9a51"
+    },
+    "roof-tie-610": {
+      "triangles": 292,
+      "sourceBoundsM": [
+        [
+          0.0,
+          3.75
+        ],
+        [
+          -0.07999999821186066,
+          0.07999999821186066
+        ],
+        [
+          0.0,
+          0.6499999761581421
+        ]
+      ],
+      "baseElevationM": 5.59,
+      "md5": "a39483c1f5f1ada8906a2c3611ce48ac"
+    }
+  }
+}

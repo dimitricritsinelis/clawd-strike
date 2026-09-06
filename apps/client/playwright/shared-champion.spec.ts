@@ -1,9 +1,17 @@
-import { expect, test, type APIRequestContext, type APIResponse, type Page } from "@playwright/test";
+import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import {
   advanceRuntime,
   gotoAgentRuntimeViaUi,
   readDocumentedAgentState,
 } from "../scripts/lib/runtimePlaywright.mjs";
+import {
+  createSharedChampionBoardIdentity,
+  SHARED_CHAMPION_SCORE_RULESET,
+} from "../../shared/highScore";
+import {
+  getGameplayProfileIdentity,
+  type GameplayProfileIdentity,
+} from "../../shared/gameplayProfile";
 
 const STATS_ADMIN_TOKEN = process.env.STATS_ADMIN_TOKEN ?? "clawd-strike-dev-stats-admin-token";
 const SHARED_CHAMPION_ADMIN_TOKEN = process.env.SHARED_CHAMPION_ADMIN_TOKEN
@@ -22,6 +30,7 @@ function createChampion(
   score: number,
   controlMode: "human" | "agent",
   updatedAt = "2026-03-07T12:00:00.000Z",
+  identity = identityForControlMode(controlMode),
 ) {
   return {
     holderName,
@@ -29,11 +38,17 @@ function createChampion(
     controlMode,
     scope: "sitewide" as const,
     updatedAt,
+    ...createSharedChampionBoardIdentity(identity),
   };
 }
 
 const ENEMIES_PER_WAVE = 10;
-const SHARED_CHAMPION_RULESET = "wave-score-v4-k5-wi2-hs2x-b10";
+const DESKTOP_HUMAN_IDENTITY = getGameplayProfileIdentity("desktop-human");
+const DESKTOP_AGENT_IDENTITY = getGameplayProfileIdentity("desktop-agent");
+
+function identityForControlMode(controlMode: "human" | "agent"): GameplayProfileIdentity {
+  return controlMode === "agent" ? DESKTOP_AGENT_IDENTITY : DESKTOP_HUMAN_IDENTITY;
+}
 
 function waveKillValue(wave: number): number {
   return 5 + (wave - 1) * 2;
@@ -120,14 +135,21 @@ function chooseRunAtMostScore(maxScore: number): { kills: number; headshots: num
 
 function expectChampion(
   champion: unknown,
-  expected: { holderName: string; score: number; controlMode: "human" | "agent" },
+  expected: {
+    holderName: string;
+    score: number;
+    controlMode: "human" | "agent";
+    identity?: GameplayProfileIdentity;
+  },
 ) {
+  const identity = expected.identity ?? identityForControlMode(expected.controlMode);
   expect(champion).toEqual({
     holderName: expected.holderName,
     score: expected.score,
     controlMode: expected.controlMode,
     scope: "sitewide",
     updatedAt: expect.any(String),
+    ...createSharedChampionBoardIdentity(identity),
   });
 }
 
@@ -143,8 +165,16 @@ function statsAdminHeaders(token = STATS_ADMIN_TOKEN) {
   };
 }
 
-async function readSharedChampion(request: APIRequestContext, baseUrl: string) {
-  const response = await request.get(new URL("/api/high-score", baseUrl).toString(), {
+async function readSharedChampion(
+  request: APIRequestContext,
+  baseUrl: string,
+  identity: GameplayProfileIdentity,
+) {
+  const url = new URL("/api/high-score", baseUrl);
+  url.searchParams.set("profileId", identity.profileId);
+  url.searchParams.set("tuningRevision", identity.tuningRevision);
+  url.searchParams.set("balanceSeason", identity.balanceSeason);
+  const response = await request.get(url.toString(), {
     failOnStatusCode: false,
   });
   expect(response.ok()).toBe(true);
@@ -244,8 +274,14 @@ async function postDirectChampionWrite(
 async function startValidatedRun(
   request: APIRequestContext,
   baseUrl: string,
-  body: { playerName: string; controlMode: "human" | "agent"; mapId?: string },
+  body: {
+    playerName: string;
+    controlMode: "human" | "agent";
+    mapId?: string;
+    identity?: GameplayProfileIdentity;
+  },
 ) {
+  const identity = body.identity ?? identityForControlMode(body.controlMode);
   const response = await request.post(new URL("/api/run/start", baseUrl).toString(), {
     failOnStatusCode: false,
     headers: {
@@ -256,6 +292,7 @@ async function startValidatedRun(
       playerName: body.playerName,
       controlMode: body.controlMode,
       mapId: body.mapId ?? "bazaar-map",
+      ...identity,
     },
   });
   return {
@@ -267,7 +304,11 @@ async function startValidatedRun(
 async function finishValidatedRun(
   request: APIRequestContext,
   baseUrl: string,
-  body: { runToken: string; summary: ReturnType<typeof buildRunSummary> },
+  body: {
+    runToken: string;
+    summary: ReturnType<typeof buildRunSummary>;
+    identity: GameplayProfileIdentity;
+  },
 ) {
   const response = await request.post(new URL("/api/run/finish", baseUrl).toString(), {
     failOnStatusCode: false,
@@ -275,7 +316,11 @@ async function finishValidatedRun(
       ...originHeaders(baseUrl),
       "content-type": "application/json",
     },
-    data: body,
+    data: {
+      runToken: body.runToken,
+      summary: body.summary,
+      ...body.identity,
+    },
   });
   return {
     response,
@@ -288,22 +333,25 @@ async function completeValidatedRun(
   baseUrl: string,
   options: { playerName: string; controlMode: "human" | "agent"; kills: number; headshots: number },
 ) {
+  const identity = identityForControlMode(options.controlMode);
   const started = await startValidatedRun(request, baseUrl, {
     playerName: options.playerName,
     controlMode: options.controlMode,
+    identity,
   });
   expect(started.response.ok()).toBe(true);
   expect(started.body).toEqual({
     runToken: expect.any(String),
     issuedAt: expect.any(String),
     expiresAt: expect.any(String),
-    ruleset: SHARED_CHAMPION_RULESET,
+    ...createSharedChampionBoardIdentity(identity),
   });
 
   const summary = buildRunSummary(options.kills, options.headshots);
   const finished = await finishValidatedRun(request, baseUrl, {
     runToken: started.body.runToken,
     summary,
+    identity,
   });
 
   return {
@@ -370,14 +418,66 @@ test("api blocks raw writes and only accepts validated run submissions", async (
     error: "Direct shared champion writes are internal-only.",
   });
 
+  const identitylessStart = await request.post(new URL("/api/run/start", baseUrl).toString(), {
+    failOnStatusCode: false,
+    headers: {
+      ...originHeaders(baseUrl),
+      "content-type": "application/json",
+    },
+    data: {
+      playerName: "NoIdentity",
+      controlMode: "agent",
+      mapId: "bazaar-map",
+    },
+  });
+  expect(identitylessStart.status()).toBe(400);
+  expect(await identitylessStart.json()).toEqual({
+    error: "Expected { playerName, controlMode, mapId, profileId, tuningRevision, balanceSeason }.",
+  });
+
+  const identitylessFinish = await request.post(new URL("/api/run/finish", baseUrl).toString(), {
+    failOnStatusCode: false,
+    headers: {
+      ...originHeaders(baseUrl),
+      "content-type": "application/json",
+    },
+    data: {
+      runToken: "forged-token",
+      summary: buildRunSummary(1, 0),
+    },
+  });
+  expect(identitylessFinish.status()).toBe(400);
+  expect((await identitylessFinish.json()).reason).toBe("invalid-finish-payload");
+
   const forgedFinish = await finishValidatedRun(request, baseUrl, {
     runToken: "forged-token",
     summary: buildRunSummary(1, 0),
+    identity: DESKTOP_AGENT_IDENTITY,
   });
   expect(forgedFinish.response.status()).toBe(404);
   expect(forgedFinish.body.accepted).toBe(false);
   expect(forgedFinish.body.updated).toBe(false);
   expect(forgedFinish.body.reason).toBe("missing");
+
+  const mismatchedControlMode = await startValidatedRun(request, baseUrl, {
+    playerName: "WrongBoard",
+    controlMode: "agent",
+    identity: DESKTOP_HUMAN_IDENTITY,
+  });
+  expect(mismatchedControlMode.response.status()).toBe(400);
+
+  const identityBoundStart = await startValidatedRun(request, baseUrl, {
+    playerName: "IdentityBound",
+    controlMode: "agent",
+  });
+  expect(identityBoundStart.response.ok()).toBe(true);
+  const mismatchedFinish = await finishValidatedRun(request, baseUrl, {
+    runToken: identityBoundStart.body.runToken,
+    summary: buildRunSummary(1, 0),
+    identity: DESKTOP_HUMAN_IDENTITY,
+  });
+  expect(mismatchedFinish.response.status()).toBe(409);
+  expect(mismatchedFinish.body.reason).toBe("profile-identity-mismatch");
 
   const replay = await completeValidatedRun(request, baseUrl, {
     playerName: "ReplayProbe",
@@ -391,6 +491,7 @@ test("api blocks raw writes and only accepts validated run submissions", async (
   const replayAttempt = await finishValidatedRun(request, baseUrl, {
     runToken: replay.started.body.runToken,
     summary: replay.summary,
+    identity: DESKTOP_AGENT_IDENTITY,
   });
   expect(replayAttempt.response.status()).toBe(409);
   expect(replayAttempt.body.accepted).toBe(false);
@@ -405,6 +506,7 @@ test("api blocks raw writes and only accepts validated run submissions", async (
   const hugeHeadshotsPerWave = distributeHeadshots(99_999, 99_999);
   const hugeRun = await finishValidatedRun(request, baseUrl, {
     runToken: hugeRunStart.body.runToken,
+    identity: DESKTOP_HUMAN_IDENTITY,
     summary: {
       survivalTimeS: 0.5,
       kills: 99_999,
@@ -432,6 +534,7 @@ test("api blocks raw writes and only accepts validated run submissions", async (
       playerName: "TextPlain",
       controlMode: "agent",
       mapId: "bazaar-map",
+      ...DESKTOP_AGENT_IDENTITY,
     }),
   });
   expect(textPlainStart.status()).toBe(415);
@@ -451,7 +554,7 @@ test("run-start validates names while direct-write stays internal-only", async (
     });
     expect(started.response.status()).toBe(400);
     expect(started.body).toEqual({
-      error: "Expected { playerName, controlMode, mapId }.",
+      error: "Expected { playerName, controlMode, mapId, profileId, tuningRevision, balanceSeason }.",
     });
 
     const directWrite = await postDirectChampionWrite(request, baseUrl, {
@@ -484,10 +587,14 @@ test("run-start validates names while direct-write stays internal-only", async (
   });
 });
 
-test("validated run submissions keep strict overwrite rules", async ({ request }, testInfo) => {
+test("validated run submissions keep strict overwrite rules on separate profile boards", async ({ request }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
-  const current = await readSharedChampion(request, baseUrl);
-  const baseScore = typeof current.champion?.score === "number" ? current.champion.score : 0;
+  const currentAgent = await readSharedChampion(request, baseUrl, DESKTOP_AGENT_IDENTITY);
+  const currentHuman = await readSharedChampion(request, baseUrl, DESKTOP_HUMAN_IDENTITY);
+  const baseScore = Math.max(
+    typeof currentAgent.champion?.score === "number" ? currentAgent.champion.score : 0,
+    typeof currentHuman.champion?.score === "number" ? currentHuman.champion.score : 0,
+  );
   const firstRun = chooseRunAtLeastScore(baseScore + 5);
   const lowerRun = chooseRunAtMostScore(Math.max(0, firstRun.score - 5));
   const higherRun = chooseRunAtLeastScore(firstRun.score + 5);
@@ -515,26 +622,26 @@ test("validated run submissions keep strict overwrite rules", async ({ request }
   });
   expect(lower.finished.response.ok()).toBe(true);
   expect(lower.finished.body.accepted).toBe(true);
-  expect(lower.finished.body.updated).toBe(false);
+  expect(lower.finished.body.updated).toBe(true);
   expectChampion(lower.finished.body.champion, {
-    holderName: "AlphaUnit",
-    score: firstRun.score,
-    controlMode: "agent",
+    holderName: "BravoUnit",
+    score: lowerRun.score,
+    controlMode: "human",
   });
 
   const tie = await completeValidatedRun(request, baseUrl, {
     playerName: "CharlieTie",
     controlMode: "human",
-    kills: firstRun.kills,
-    headshots: firstRun.headshots,
+    kills: lowerRun.kills,
+    headshots: lowerRun.headshots,
   });
   expect(tie.finished.response.ok()).toBe(true);
   expect(tie.finished.body.accepted).toBe(true);
   expect(tie.finished.body.updated).toBe(false);
   expectChampion(tie.finished.body.champion, {
-    holderName: "AlphaUnit",
-    score: firstRun.score,
-    controlMode: "agent",
+    holderName: "BravoUnit",
+    score: lowerRun.score,
+    controlMode: "human",
   });
 
   const higher = await completeValidatedRun(request, baseUrl, {
@@ -547,6 +654,19 @@ test("validated run submissions keep strict overwrite rules", async ({ request }
   expect(higher.finished.body.accepted).toBe(true);
   expect(higher.finished.body.updated).toBe(true);
   expectChampion(higher.finished.body.champion, {
+    holderName: "DeltaLead",
+    score: higherRun.score,
+    controlMode: "human",
+  });
+
+  const agentBoard = await readSharedChampion(request, baseUrl, DESKTOP_AGENT_IDENTITY);
+  const humanBoard = await readSharedChampion(request, baseUrl, DESKTOP_HUMAN_IDENTITY);
+  expectChampion(agentBoard.champion, {
+    holderName: "AlphaUnit",
+    score: firstRun.score,
+    controlMode: "agent",
+  });
+  expectChampion(humanBoard.champion, {
     holderName: "DeltaLead",
     score: higherRun.score,
     controlMode: "human",
@@ -576,7 +696,7 @@ test("admin stats endpoints require auth and expose filtered run history", async
     error: "Invalid admin token.",
   });
 
-  const current = await readSharedChampion(request, baseUrl);
+  const current = await readSharedChampion(request, baseUrl, DESKTOP_HUMAN_IDENTITY);
   const currentScore = typeof current.champion?.score === "number" ? current.champion.score : 0;
   const leaderRun = chooseRunAtLeastScore(currentScore + 5);
 
@@ -646,7 +766,9 @@ test("admin stats endpoints require auth and expose filtered run history", async
     playerNameKey: leaderName.toLowerCase(),
     controlMode: "human",
     mapId: "bazaar-map",
-    ruleset: SHARED_CHAMPION_RULESET,
+    ruleset: SHARED_CHAMPION_SCORE_RULESET,
+    ...DESKTOP_HUMAN_IDENTITY,
+    boardKey: createSharedChampionBoardIdentity(DESKTOP_HUMAN_IDENTITY).boardKey,
     score: leaderRun.score,
     championUpdated: true,
   });
@@ -706,6 +828,7 @@ test("validated run stats store only accepted finishes", async ({ request }, tes
   const replayAttempt = await finishValidatedRun(request, baseUrl, {
     runToken: accepted.started.body.runToken,
     summary: accepted.summary,
+    identity: DESKTOP_AGENT_IDENTITY,
   });
   expect(replayAttempt.response.status()).toBe(409);
   expect(replayAttempt.body.reason).toBe("used");
@@ -719,6 +842,7 @@ test("validated run stats store only accepted finishes", async ({ request }, tes
   const rejectedHpw = distributeHeadshots(99_999, 99_999);
   const rejectedFinish = await finishValidatedRun(request, baseUrl, {
     runToken: rejectedStart.body.runToken,
+    identity: DESKTOP_HUMAN_IDENTITY,
     summary: {
       survivalTimeS: 0.5,
       kills: 99_999,
@@ -745,6 +869,9 @@ test("validated run stats store only accepted finishes", async ({ request }, tes
   expect(acceptedRuns.body.items[0]).toMatchObject({
     playerName: acceptedName,
     controlMode: "agent",
+    ruleset: SHARED_CHAMPION_SCORE_RULESET,
+    ...DESKTOP_AGENT_IDENTITY,
+    boardKey: createSharedChampionBoardIdentity(DESKTOP_AGENT_IDENTITY).boardKey,
     kills: 2,
     headshots: 1,
     shotsFired: 2,
@@ -775,7 +902,7 @@ test("validated run stats store only accepted finishes", async ({ request }, tes
 
 test("shows the same shared champion across loading, HUD, and death surfaces", async ({ browser, request }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
-  const current = await readSharedChampion(request, baseUrl);
+  const current = await readSharedChampion(request, baseUrl, DESKTOP_AGENT_IDENTITY);
   const currentScore = typeof current.champion?.score === "number" ? current.champion.score : 0;
   const nextRun = chooseRunAtLeastScore(currentScore + 5);
   const holderName = "SiteChampion";
@@ -798,6 +925,9 @@ test("shows the same shared champion across loading, HUD, and death surfaces", a
   try {
     await pageA.goto(new URL("/", baseUrl).toString(), { waitUntil: "domcontentloaded" });
     await pageB.goto(new URL("/", baseUrl).toString(), { waitUntil: "domcontentloaded" });
+
+    await pageA.getByTestId("agent-mode").click();
+    await pageB.getByTestId("agent-mode").click();
 
     await expect(pageA.getByTestId("loading-world-champion-name")).toHaveText(holderName.toUpperCase());
     await expect(pageB.getByTestId("loading-world-champion-name")).toHaveText(holderName.toUpperCase());
@@ -847,175 +977,56 @@ test("shows the same shared champion across loading, HUD, and death surfaces", a
   }
 });
 
-test("refreshes the death-time champion and skips finish when the remote record is already higher", async ({ page }, testInfo) => {
+test("automated localhost runtime reads its profile board without competitive writes", async ({ page }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
-  const callSequence: string[] = [];
-  let highScoreGetCount = 0;
-  let finishCount = 0;
-  const championAtBoot = createChampion("BootChampion", 40, "agent", "2026-03-07T12:00:00.000Z");
-  const championAtDeath = createChampion("RemoteLeader", 2_000, "human", "2026-03-07T12:05:00.000Z");
+  const agentChampion = createChampion(
+    "AutoRecord",
+    2_000,
+    "agent",
+    "2026-03-07T12:05:00.000Z",
+  );
+  let runStartCount = 0;
+  let runFinishCount = 0;
 
-  await page.route("**/api/high-score", async (route) => {
-    if (route.request().method() !== "GET") {
-      await route.fallback();
-      return;
-    }
-
-    highScoreGetCount += 1;
-    callSequence.push(`GET-high-score-${highScoreGetCount}`);
-    const champion = highScoreGetCount === 1 ? championAtBoot : championAtDeath;
+  await page.route("**/api/high-score*", async (route) => {
+    const profileId = new URL(route.request().url()).searchParams.get("profileId");
     await route.fulfill({
       status: 200,
       contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({ champion }),
+      body: JSON.stringify({
+        champion: profileId === DESKTOP_AGENT_IDENTITY.profileId ? agentChampion : null,
+      }),
     });
   });
-
   await page.route("**/api/run/start", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({
-        runToken: "death-refresh-no-submit",
-        issuedAt: "2026-03-07T12:00:01.000Z",
-        expiresAt: "2026-03-07T12:30:01.000Z",
-        ruleset: SHARED_CHAMPION_RULESET,
-      }),
-    });
+    runStartCount += 1;
+    await route.fulfill({ status: 500, body: "unexpected automated run start" });
   });
-
   await page.route("**/api/run/finish", async (route) => {
-    finishCount += 1;
-    callSequence.push("POST-run-finish");
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({
-        accepted: true,
-        updated: false,
-        champion: championAtDeath,
-        reason: null,
-      }),
-    });
+    runFinishCount += 1;
+    await route.fulfill({ status: 500, body: "unexpected automated run finish" });
   });
 
   await gotoAgentRuntimeViaUi(page, {
     baseUrl,
-    agentName: "RefreshSkip",
+    agentName: "AutomationProbe",
   });
 
-  await expect(page.getByTestId("hud-world-champion-name")).toHaveText("BOOTCHAMPION");
+  await expect(page.getByTestId("hud-world-champion-name")).toHaveText("AUTORECORD");
   await forcePositiveScoreViaDebug(page);
   await driveUntilDeath(page);
 
-  await expect(page.getByTestId("death-world-champion-name")).toHaveText("REMOTELEADER");
-  await expect(page.getByTestId("death-world-champion-score")).toHaveText(formatScore(championAtDeath.score));
-  await expect(page.getByTestId("death-world-champion-mode")).toHaveText("HUMAN");
-
   const state = await readDocumentedAgentState(page);
   expect(state.gameplay?.gameOverVisible).toBe(true);
-  expect(state.sharedChampion).toEqual(championAtDeath);
-  expect(highScoreGetCount).toBe(2);
-  expect(finishCount).toBe(0);
-  expect(callSequence).toEqual(["GET-high-score-1", "GET-high-score-2"]);
-});
-
-test("refreshes the death-time champion before finish and overwrites when the final score is higher", async ({ page }, testInfo) => {
-  const baseUrl = testInfo.project.use.baseURL as string;
-  const callSequence: string[] = [];
-  let highScoreGetCount = 0;
-  let finishCount = 0;
-  const championAtBoot = createChampion("BootChampion", 40, "agent", "2026-03-07T12:00:00.000Z");
-  const championAtDeath = createChampion("RemoteLeader", 50, "human", "2026-03-07T12:05:00.000Z");
-
-  await page.route("**/api/high-score", async (route) => {
-    if (route.request().method() !== "GET") {
-      await route.fallback();
-      return;
-    }
-
-    highScoreGetCount += 1;
-    callSequence.push(`GET-high-score-${highScoreGetCount}`);
-    const champion = highScoreGetCount === 1 ? championAtBoot : championAtDeath;
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({ champion }),
-    });
-  });
-
-  await page.route("**/api/run/start", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({
-        runToken: "death-refresh-submit",
-        issuedAt: "2026-03-07T12:00:01.000Z",
-        expiresAt: "2026-03-07T12:30:01.000Z",
-        ruleset: SHARED_CHAMPION_RULESET,
-      }),
-    });
-  });
-
-  await page.route("**/api/run/finish", async (route) => {
-    finishCount += 1;
-    callSequence.push("POST-run-finish");
-    const payload = route.request().postDataJSON() as {
-      runToken: string;
-      summary?: { finalScore?: number };
-    };
-    expect(payload.runToken).toBe("death-refresh-submit");
-
-    const finalScore = Number(payload.summary?.finalScore ?? 0);
-    const submittedChampion = createChampion(
-      "RefreshWinner",
-      finalScore,
-      "agent",
-      "2026-03-07T12:06:00.000Z",
-    );
-
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json; charset=utf-8",
-      body: JSON.stringify({
-        accepted: true,
-        updated: true,
-        champion: submittedChampion,
-        reason: null,
-      }),
-    });
-  });
-
-  await gotoAgentRuntimeViaUi(page, {
-    baseUrl,
-    agentName: "RefreshWinner",
-  });
-
-  await expect(page.getByTestId("hud-world-champion-name")).toHaveText("BOOTCHAMPION");
-  await forcePositiveScoreViaDebug(page);
-  await driveUntilDeath(page);
-
-  await expect(page.getByTestId("death-world-champion-name")).toHaveText("REFRESHWINNER");
-  const state = await readDocumentedAgentState(page);
-  expect(state.gameplay?.gameOverVisible).toBe(true);
-  expect(state.sharedChampion).toEqual({
-    holderName: "RefreshWinner",
-    score: expect.any(Number),
-    controlMode: "agent",
-    scope: "sitewide",
-    updatedAt: "2026-03-07T12:06:00.000Z",
-  });
-  expect((state.sharedChampion?.score ?? 0)).toBeGreaterThan(championAtDeath.score);
-  expect(highScoreGetCount).toBe(2);
-  expect(finishCount).toBe(1);
-  expect(callSequence.indexOf("GET-high-score-2")).toBeGreaterThan(-1);
-  expect(callSequence.indexOf("POST-run-finish")).toBeGreaterThan(-1);
-  expect(callSequence.indexOf("GET-high-score-2")).toBeLessThan(callSequence.indexOf("POST-run-finish"));
+  expect(state.profile).toEqual(DESKTOP_AGENT_IDENTITY);
+  expect(state.sharedChampion).toEqual(agentChampion);
+  expect(runStartCount).toBe(0);
+  expect(runFinishCount).toBe(0);
 });
 
 test("keeps the game bootable when the shared champion API is unavailable", async ({ page }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
-  await page.route("**/api/high-score", (route) => route.abort());
+  await page.route("**/api/high-score*", (route) => route.abort());
 
   await page.goto(new URL("/", baseUrl).toString(), { waitUntil: "domcontentloaded" });
   await expect(page.getByTestId("loading-world-champion-name")).toHaveText("RECORD OFFLINE");
@@ -1036,7 +1047,7 @@ test("keeps the game bootable when the shared champion API is unavailable", asyn
 test("treats malformed shared champion payloads as no champion instead of Unknown", async ({ page }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
 
-  await page.route("**/api/high-score", async (route) => {
+  await page.route("**/api/high-score*", async (route) => {
     if (route.request().method() !== "GET") {
       await route.fallback();
       return;

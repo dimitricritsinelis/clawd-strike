@@ -8,9 +8,18 @@ import {
   type Ak47ShotEvent,
 } from "./Ak47FireController";
 
-const MAG_CAPACITY = 30;
+const DEFAULT_MAG_CAPACITY = 30;
 const RESERVE_START = 90;
 const RELOAD_TIME_S = 1.225;
+
+export type Ak47WeaponOptions = Ak47FireControllerOptions & {
+  /** Rounds restored to the magazine at each wave/run reset. */
+  magazineCapacity?: number;
+  /** Reserve ammunition restored at the beginning of every wave/run. */
+  reserveStart?: number;
+  /** Hard ceiling for deterministic ammo rewards earned during a wave. */
+  reserveCapacity?: number;
+};
 
 export type Ak47AmmoSnapshot = {
   mag: number;
@@ -21,8 +30,11 @@ export type Ak47AmmoSnapshot = {
 
 export class Ak47Weapon {
   private readonly fireController: Ak47FireController;
+  private readonly magazineCapacity: number;
+  private readonly reserveStart: number;
+  private readonly reserveCapacity: number;
   private readonly ammoSnapshot: Ak47AmmoSnapshot = {
-    mag: MAG_CAPACITY,
+    mag: DEFAULT_MAG_CAPACITY,
     reserve: RESERVE_START,
     reloading: false,
     reloadT01: 0,
@@ -38,7 +50,7 @@ export class Ak47Weapon {
     world: null as unknown as WorldColliders,
   };
 
-  private mag = MAG_CAPACITY;
+  private mag = DEFAULT_MAG_CAPACITY;
   private reserve = RESERVE_START;
   private reloading = false;
   private reloadTimerS = 0;
@@ -51,14 +63,28 @@ export class Ak47Weapon {
   onDryFire: (() => void) | null = null;
 
   // Buff modifiers
-  private unlimitedAmmo = false;
+  /** Bottomless Mag: magazines still empty and reload, but reloads do not drain reserve. */
+  private freeReloads = false;
   private reloadSpeedMultiplier = 1.0;
 
   // Dry-fire rate-limiting: only click once per trigger pull
   private dryFireCooldownS = 0;
   private wasFireHeld = false;
 
-  constructor(options: Ak47FireControllerOptions) {
+  constructor(options: Ak47WeaponOptions) {
+    this.magazineCapacity = normalizePositiveAmmoCount(
+      options.magazineCapacity,
+      DEFAULT_MAG_CAPACITY,
+    );
+    this.reserveStart = normalizeAmmoCount(options.reserveStart, RESERVE_START);
+    this.reserveCapacity = Math.max(
+      this.reserveStart,
+      normalizeAmmoCount(options.reserveCapacity, this.reserveStart),
+    );
+    this.mag = this.magazineCapacity;
+    this.ammoSnapshot.mag = this.magazineCapacity;
+    this.reserve = this.reserveStart;
+    this.ammoSnapshot.reserve = this.reserveStart;
     this.fireController = new Ak47FireController(options);
   }
 
@@ -66,12 +92,8 @@ export class Ak47Weapon {
     this.reloadQueued = true;
   }
 
-  setUnlimitedAmmo(unlimited: boolean): void {
-    this.unlimitedAmmo = unlimited;
-    if (unlimited) {
-      if (this.reloading) this.cancelReload(true);
-      this.mag = MAG_CAPACITY;
-    }
+  setFreeReloads(enabled: boolean): void {
+    this.freeReloads = enabled;
   }
 
   setFireIntervalS(interval: number): void {
@@ -82,16 +104,28 @@ export class Ak47Weapon {
     this.reloadSpeedMultiplier = Math.max(0.1, multiplier);
   }
 
+  /**
+   * Adds reserve ammunition without touching the current magazine or reload
+   * state. Returns the amount actually granted after applying the profile cap.
+   */
+  grantReserveAmmo(amount: number): number {
+    const requested = normalizeAmmoCount(amount, 0);
+    if (requested <= 0) return 0;
+    const before = this.reserve;
+    this.reserve = Math.min(this.reserveCapacity, this.reserve + requested);
+    return this.reserve - before;
+  }
+
   reset(): void {
     if (this.reloading) {
       this.cancelReload(true);
     }
-    this.mag = MAG_CAPACITY;
-    this.reserve = RESERVE_START;
+    this.mag = this.magazineCapacity;
+    this.reserve = this.reserveStart;
     this.reloadQueued = false;
     this.dryFireCooldownS = 0;
     this.wasFireHeld = false;
-    this.unlimitedAmmo = false;
+    this.freeReloads = false;
     this.reloadSpeedMultiplier = 1.0;
     this.fireController.reset();
   }
@@ -139,12 +173,12 @@ export class Ak47Weapon {
       return this.updateWithoutFiring(input);
     }
 
-    if (!this.unlimitedAmmo && wantsReload && this.mag < MAG_CAPACITY && this.startReload()) {
+    if (wantsReload && this.mag < this.magazineCapacity && this.startReload()) {
       this.wasFireHeld = input.fireHeld;
       return this.updateWithoutFiring(input);
     }
 
-    if (!this.unlimitedAmmo && this.mag === 0 && this.reserve > 0 && this.startReload()) {
+    if (this.mag === 0 && this.startReload()) {
       this.wasFireHeld = input.fireHeld;
       return this.updateWithoutFiring(input);
     }
@@ -176,9 +210,9 @@ export class Ak47Weapon {
   ): Ak47FireUpdateResult {
     const fireResult = this.forwardToFireController(input, input.fireHeld, this.mag, onShot);
 
-    if (fireResult.shotsFired > 0 && !this.unlimitedAmmo) {
+    if (fireResult.shotsFired > 0) {
       this.mag = Math.max(0, this.mag - fireResult.shotsFired);
-      if (this.mag === 0 && this.reserve > 0) {
+      if (this.mag === 0) {
         this.startReload();
       }
     }
@@ -208,7 +242,8 @@ export class Ak47Weapon {
   }
 
   private startReload(): boolean {
-    if (this.reloading || this.reserve <= 0 || this.mag >= MAG_CAPACITY) return false;
+    const hasAmmoToLoad = this.reserve > 0 || this.freeReloads;
+    if (this.reloading || !hasAmmoToLoad || this.mag >= this.magazineCapacity) return false;
 
     this.reloading = true;
     this.reloadTimerS = 0;
@@ -228,11 +263,21 @@ export class Ak47Weapon {
   }
 
   private completeReload(): void {
-    const needed = Math.max(0, MAG_CAPACITY - this.mag);
-    const moved = Math.min(needed, this.reserve);
+    const needed = Math.max(0, this.magazineCapacity - this.mag);
+    const moved = this.freeReloads ? needed : Math.min(needed, this.reserve);
     this.mag += moved;
-    this.reserve -= moved;
+    if (!this.freeReloads) this.reserve -= moved;
     this.reloading = false;
     this.reloadTimerS = 0;
   }
+}
+
+function normalizeAmmoCount(value: number | undefined, fallback: number): number {
+  if (value === undefined || !Number.isFinite(value)) return fallback;
+  return Math.max(0, Math.floor(value));
+}
+
+function normalizePositiveAmmoCount(value: number | undefined, fallback: number): number {
+  if (value === undefined || !Number.isFinite(value)) return fallback;
+  return Math.max(1, Math.floor(value));
 }

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1188" viewBox="0 0 1680 1188">
+<title>Complete assembly fit / central ownership / B18 pilot</title>
+<rect x="0" y="0" width="1680" height="1188" fill="#faf8f1" stroke="none" stroke-width="1" stroke-dasharray=""/>
+<text x="55" y="46" font-family="Arial" font-size="19" fill="#397c78" font-weight="bold">CLAWDSTRIKE / BAZAAR</text>
+<text x="1310" y="46" font-family="Arial" font-size="18" fill="#263f44" font-weight="normal">REVISION 3 / PROPOSED</text>
+<line x1="55" y1="66" x2="1625" y2="66" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<text x="55" y="110" font-family="Arial" font-size="30" fill="#263f44" font-weight="bold">Complete assembly fit / central ownership / B18 pilot</text>
+<text x="55" y="146" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Measured source bounds are labeled. Hidden access pockets are explanations, not modeled or playable interiors.</text>
+<text x="55" y="195" font-family="Arial" font-size="19" fill="#397c78" font-weight="bold">01 / CENTRAL BLOCK: TWO PUBLIC FACES</text>
+<rect x="150" y="528.3599999999999" width="182.4" height="217.35999999999999" fill="#e4dac6" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="157.6000000000001" y="528.3599999999999" width="182.4" height="217.35999999999999" fill="none" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<line x1="150" y1="528.3599999999999" x2="150" y2="745.7199999999999" stroke="#397c78" stroke-width="5" stroke-dasharray=""/>
+<line x1="340" y1="528.3599999999999" x2="340" y2="745.7199999999999" stroke="#b15d37" stroke-width="5" stroke-dasharray=""/>
+<rect x="150" y="235.0" width="182.4" height="103.36000000000001" fill="#e4dac6" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="157.6000000000001" y="235.0" width="182.4" height="103.36000000000001" fill="none" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<line x1="150" y1="235.0" x2="150" y2="338.35999999999996" stroke="#397c78" stroke-width="5" stroke-dasharray=""/>
+<line x1="340" y1="235.0" x2="340" y2="338.35999999999996" stroke="#b15d37" stroke-width="5" stroke-dasharray=""/>
+<rect x="150" y="338.35999999999996" width="190" height="190" fill="#dce7d9" stroke="#397c78" stroke-width="2" stroke-dasharray=""/>
+<text x="143" y="414" font-family="Arial" font-size="18" fill="#397c78" font-weight="bold">LINK y39..44</text>
+<text x="148" y="446" font-family="Arial" font-size="18" fill="#263f44" font-weight="normal">5 m ×5 m</text>
+<text x="69" y="772" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">West x36..40.8 / east x36.2..41</text>
+<text x="69" y="800" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Overlap4.60 / strips0.20 each</text>
+<text x="55" y="840" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Souk massing owns common backing and roof in</text><text x="55" y="864" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">each wing. Court keeps its face modules. No</text><text x="55" y="888" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">bridge across the open link; no pair of full</text><text x="55" y="912" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">intersecting building exports. North access</text><text x="55" y="936" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">serves north wing only.</text>
+<text x="535" y="195" font-family="Arial" font-size="19" fill="#397c78" font-weight="bold">02 / ACTUAL BOOTH ENVELOPE</text>
+<rect x="587.5" y="296.25" width="325.0" height="443.75" fill="#eee4d0" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<text x="550" y="255" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Nominal arch2.60 ×3.55</text>
+<rect x="582.3679999999999" y="285.08075" width="335.132" height="62.5" fill="#decaa2" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<rect x="633.75" y="427.5" width="232.5" height="312.5" fill="none" stroke="#b15d37" stroke-width="2" stroke-dasharray="5 3"/>
+<rect x="637.5" y="627.5" width="225.0" height="112.5" fill="#aa865d" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<line x1="637.5" y1="458.75" x2="862.5" y2="458.75" stroke="#263f44" stroke-width="3" stroke-dasharray=""/>
+<rect x="668.75" y="465.0" width="53.75" height="125.0" fill="#56796e" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="735.0" y="465.0" width="53.75" height="125.0" fill="#d9caa1" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="801.25" y="465.0" width="53.75" height="125.0" fill="#9c6a4f" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="544" y="788" font-family="Arial" font-size="17" fill="#b15d37" font-weight="normal">High width2.681056 / height3.639354</text>
+<text x="544" y="818" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Depth -0.395..+0.896 from origin</text>
+<text x="535" y="858" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Low bound below2.5: |X|≤0.93, front≤0.29 is a</text><text x="535" y="882" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">source assertion, not clearance approval. M02</text><text x="535" y="906" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">samples arch spring, ledger, brace seats and all</text><text x="535" y="930" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">body sweeps. Original asset remains unchanged.</text>
+<text x="548" y="1052" font-family="Arial" font-size="17" fill="#397c78" font-weight="normal">38,820 triangles /1 primitive /1 material</text>
+<text x="1065" y="195" font-family="Arial" font-size="19" fill="#b15d37" font-weight="bold">03 / B18 ROOF + WORKING SECTION</text>
+<rect x="1140.0" y="470.0" width="378.0" height="405.0" fill="#eee6d4" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="1180.5000000000002" y="446.6" width="297.0" height="23.400000000000002" fill="#e4dac6" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="1182.3" y="371.90000000000003" width="19.8" height="74.7" fill="#e4dac6" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="1459.4999999999998" y="371.90000000000003" width="19.8" height="74.7" fill="#e4dac6" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="1284.0" y="213.5" width="162.0" height="233.1" fill="#ddbc96" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<text x="1080" y="236" font-family="Arial" font-size="17" fill="#b15d37" font-weight="normal">Room1.80 deep; top7.35</text>
+<line x1="1208.3999999999999" y1="344.0" x2="1284.0" y2="344.0" stroke="#397c78" stroke-width="2" stroke-dasharray=""/>
+<text x="1078" y="314" font-family="Arial" font-size="15" fill="#397c78" font-weight="normal">~0.84 roof access strip</text>
+<text x="1135" y="460" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Slab top4.76 / cap5.59</text>
+<rect x="1162.5" y="794.0" width="31.499999999999996" height="81.0" fill="#aa865d" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<rect x="1194.0000000000002" y="713.0" width="72.0" height="162.0" fill="none" stroke="#b15d37" stroke-width="2" stroke-dasharray="5 4"/>
+<line x1="1140.0" y1="668.0" x2="1140.0" y2="875" stroke="#397c78" stroke-width="3" stroke-dasharray=""/>
+<text x="1090" y="940" font-family="Arial" font-size="17" fill="#b15d37" font-weight="normal">0.35 counter /0.80 working pocket</text>
+<text x="1065" y="975" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Pocket is a requested usable-depth test behind</text><text x="1065" y="998" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">closed backing. If it cannot fit, use front-served</text><text x="1065" y="1021" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">locked display; no deeper shell or collider move.</text>
+<text x="55" y="1057" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">B18 full pilot includes packing01, original</text><text x="55" y="1080" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">booth02, samples03, roof, end walls, supported</text><text x="55" y="1103" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">awnings and ground contact. Three arches stay</text><text x="55" y="1126" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">repaired.</text>
+<line x1="55" y1="1144" x2="1625" y2="1144" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<text x="55" y="1172" font-family="Arial" font-size="15" fill="#263f44" font-weight="normal">METRES / green: retained route / stone: retained solid / rust: proposal / dashed: baseline or implied volume</text>
+</svg>

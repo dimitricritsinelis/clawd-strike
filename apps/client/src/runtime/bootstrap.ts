@@ -37,6 +37,7 @@ import {
   createQaAssetPlan,
   preloadQaDirectTextures,
   qaDoorModelRequestId,
+  qaFacadeModelRequestId,
   qaFloorMaterialRequestId,
   qaPropModelRequestId,
   qaWallMaterialRequestId,
@@ -74,30 +75,38 @@ import { BUFF_TYPES, type BuffType } from "./buffs/BuffTypes";
 import { BuffHud } from "./ui/BuffHud";
 import { BuffTextHud } from "./ui/BuffTextHud";
 import { BuffVignette } from "./ui/BuffVignette";
+import { getGameplayTuning } from "./tuning/gameplayTuning";
 import type { RuntimeWarmupAssets } from "./warmup";
 import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
 import {
   getSharedChampionSnapshot,
   loadSharedChampion,
-  loadSharedChampionWithMeta,
   startSharedChampionRunSession,
   submitSharedChampionRunSession,
   type SharedChampionRunSession,
 } from "../shared/sharedChampionClient";
 import {
+  SharedChampionRunLifecycle,
+  createSharedChampionRunSummary,
+  type SharedChampionRunCompletion,
+} from "../shared/sharedChampionRunLifecycle";
+import {
   SHARED_CHAMPION_SCORE_RULESET,
-  isBetterSharedChampionCandidate,
-  normalizeScore,
+  deriveSharedChampionBoardKey,
   type SharedChampion,
   type SharedChampionRunSummary,
   type SharedChampionSnapshot,
 } from "../../../shared/highScore";
 import {
+  resolveGameplayProfileIdentity,
+  type GameplayProfileIdentity,
+} from "../../../shared/gameplayProfile";
+import {
   PUBLIC_AGENT_API_VERSION,
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
 
-type ViewModelInstance = InstanceType<typeof import("./weapons/Ak47ViewModel")["Ak47ViewModel"]>;
+type ViewModelInstance = import("./weapons/Ak47AnimatedViewModel").WeaponViewModel;
 
 const OVERVIEW_VIEWMODEL_DISABLE_HEIGHT_M = 10;
 const PERF_SCENE_SAMPLE_INTERVAL_MS = 300;
@@ -107,6 +116,7 @@ const FLOOR_MANIFEST_URL = "/assets/textures/environment/bazaar/floors/bazaar_fl
 const WALL_MANIFEST_URL = "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
 const DOOR_MANIFEST_URL = "/assets/models/environment/bazaar/doors/models.json";
 const PROP_MANIFEST_URL = "/assets/models/environment/bazaar/props/models.json";
+const FACADE_MANIFEST_URL = "/assets/models/environment/bazaar/facades/models.json";
 const PBR_FLOORS_ENABLED = true;
 const PBR_WALLS_ENABLED = true;
 const MAP_PROPS_ENABLED = true;
@@ -539,6 +549,7 @@ function collectScenePerfSnapshot(worldScene: { traverse: (cb: (node: unknown) =
 export type RuntimeTextState = {
   apiVersion: number;
   mode: "runtime";
+  profile: GameplayProfileIdentity;
   map: {
     loaded: boolean;
     mapId: string;
@@ -854,6 +865,7 @@ export type PublicAgentObserveState = {
   apiVersion: number;
   contract: "public-agent-v1";
   mode: "loading-screen" | "runtime";
+  profile: GameplayProfileIdentity;
   runtimeReady: boolean;
   gameplay: {
     alive: boolean;
@@ -876,6 +888,7 @@ export type PublicAgentObserveState = {
   sharedChampion: SharedChampion | null;
   lastRunSummary: PublicAgentRunSummary | null;
   feedback?: PublicAgentFeedback | null;
+  perception: ReturnType<Game["getPublicPerception"]>;
 };
 
 export type RuntimeHandle = {
@@ -985,8 +998,8 @@ function formatMapLoadError(error: unknown): string {
   return `Failed to load map JSON\n${String(error)}`;
 }
 
-function makeScoreStorageKey(mapId: string): string {
-  return `${SCORE_STORAGE_PREFIX}:${mapId}:${SCORE_RULESET_KEY}`;
+function makeScoreStorageKey(mapId: string, boardKey: string): string {
+  return `${SCORE_STORAGE_PREFIX}:${mapId}:${SCORE_RULESET_KEY}:${boardKey}`;
 }
 
 function normalizeScoreValue(value: number): number {
@@ -1757,29 +1770,36 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     controlMode,
     playerName,
   };
+  const mobile = isMobileDevice();
+  const gameplayProfileResolution = resolveGameplayProfileIdentity({
+    controlMode: runtimeParams.controlMode,
+    isMobile: mobile,
+  });
+  if (!gameplayProfileResolution.supported) {
+    throw new Error("Agent gameplay is available on desktop only.");
+  }
+  const gameplayProfileIdentity = gameplayProfileResolution.identity;
+  const gameplayTuning = getGameplayTuning(gameplayProfileIdentity.profileId);
+  if (mobile && runtimeParams.controlMode === "human" && !gameplayTuning.touch.enabled) {
+    throw new Error(`Gameplay profile ${gameplayProfileIdentity.profileId} does not enable touch input.`);
+  }
   const isLocalHostRuntime = isLocalhostHostname(window.location.hostname);
 
-  /**
-   * Manual-playtest assists: unlimited health and a boosted run speed, for a
-   * person poking at a local build by hand.
-   *
-   * These are OPT-IN (`?god=1`) and never apply otherwise. They used to switch
-   * themselves on for any localhost human run, which meant anything driving the
-   * game — an agent, an LLM, a Playwright spec, or a person who just forgot —
-   * was silently invincible and 50% faster than production. Every judgement
-   * made in that state about difficulty, damage, hit registration or movement
-   * feel was measuring a build no player will ever run.
-   *
-   * Also hard-off under automation, so a spec cannot re-enable them by passing
-   * the flag, and hard-off anywhere but localhost.
-   */
-  const isAutomatedRuntime = navigator.webdriver === true;
+  // Damage-free playtests are opt-in on localhost, including headless human
+  // and agent runs. Without the explicit flag, normal combat remains active.
+  const isAutomatedRuntime = isAutomatedClient();
+  // Local QA advances the simulation clock faster than wall time. Those
+  // synthetic runs must not enter the competitive record pipeline: they would
+  // fail the server's wall-time anti-cheat bound (and could pollute the dev
+  // board). Production agent sessions remain eligible, as do manual localhost
+  // playtests.
+  const sharedChampionRunSubmissionEnabled = !(isLocalHostRuntime && isAutomatedRuntime);
   const manualPlaytestAssistsEnabled =
     isLocalHostRuntime
     && !isAutomatedRuntime
     && runtimeParams.controlMode === "human"
     && runtimeParams.unlimitedHealthExplicit === true;
-  const effectiveUnlimitedHealth = manualPlaytestAssistsEnabled;
+  const effectiveUnlimitedHealth = isLocalHostRuntime && runtimeParams.unlimitedHealthExplicit === true;
   const warmupAssets = options.warmup ?? null;
   const warmupTimedOut = warmupAssets?.timedOut === true;
   const performanceSafeFallback = warmupTimedOut;
@@ -1815,9 +1835,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const healthHud = new HealthHud(runtimeRoot);
   healthHud.setGodModeEnabled(effectiveUnlimitedHealth);
   const hitVignette = new HitVignette(runtimeRoot);
-  const deathScreen = new DeathScreen(runtimeRoot);
+  const deathScreen = new DeathScreen(runtimeRoot, gameplayTuning.flow.deathRestart);
   const hitMarker = new HitMarker(crosshair);
-  const scoreHud = isMobileDevice()
+  const scoreHud = mobile
     ? new MobileScoreStrip(runtimeRoot)
     : new ScoreHud(runtimeRoot, runtimeParams.playerName);
   const killFeed = new KillFeed(runtimeRoot, {
@@ -1829,7 +1849,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const headshotBanner = new HeadshotBanner(runtimeRoot);
   const damageNumbers = new DamageNumbers(runtimeRoot);
   const pauseMenu = new PauseMenu(runtimeRoot);
-  const howToPlayOverlay = new HowToPlayOverlay(runtimeRoot);
+  const howToPlayOverlay = new HowToPlayOverlay(runtimeRoot, gameplayTuning);
   const controlsOverlay = new ControlsOverlay(runtimeRoot);
   const fadeOverlay = new FadeOverlay(runtimeRoot);
   killFeed.prewarm(4);
@@ -1852,7 +1872,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       errorOverlay.style.display = "block";
   }
 
-  const mobile = isMobileDevice();
   const effectiveFloorQuality = mobile ? "1k" : runtimeParams.floorQuality;
   const qaAssetPlan = qaAssetProfile && mapAssets
     ? createQaAssetPlan(mapAssets, qaAssetProfile, {
@@ -2110,6 +2129,34 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   }
 
+  // Authored facade GLBs referenced by frontages' facadeModelId. Loaded on every
+  // profile (mobile included): without them the owning wall shells render bare.
+  let facadeModels: PropModelLibrary | null = null;
+  const facadeModelIds = new Set([
+    ...(mapAssets?.blockout.architecturePlacements ?? []).flatMap((placement) =>
+      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []),
+    ...(mapAssets?.blockout.sectionModels ?? []).map((section) => section.modelId),
+  ]);
+  const qaFacadeRequestIds = qaAssetPlan?.facadeModelIds.map(qaFacadeModelRequestId) ?? [];
+  if (facadeModelIds.size > 0) {
+    try {
+      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.start(requestId);
+      facadeModels = await PropModelLibrary.load(FACADE_MANIFEST_URL, {
+        modelIds: facadeModelIds,
+        concurrency: 4,
+        ...(qaAssetTracker ? { requestObserver: qaAssetTracker.observer } : {}),
+      });
+      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.complete(requestId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (qaAssetTracker) {
+        for (const requestId of qaFacadeRequestIds) qaAssetTracker.fail(requestId, error);
+        throw new Error(`[qa-assets] facade model pack failed; capture is blocked: ${message}`);
+      }
+      appendWarning(`Failed to load authored facade models; their wall shells render bare.\n${message}`);
+    }
+  }
+
   let doorModels: PropModelLibrary | null = null;
   const qaDoorRequestIds = qaAssetPlan?.doorModelIds.map(qaDoorModelRequestId) ?? [];
   if (DOOR_MODELS_ENABLED && !mobile) {
@@ -2158,9 +2205,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   }
   if (viewModelEnabled && !viewModel) {
     try {
-      const { Ak47ViewModel } = await import("./weapons/Ak47ViewModel");
-      const nextViewModel = new Ak47ViewModel({
+      const { createAk47ViewModel } = await import("./weapons/Ak47AnimatedViewModel");
+      const nextViewModel = createAk47ViewModel({
         vmDebug: runtimeParams.vmDebug && runtimeParams.debug,
+        search: window.location.search,
       });
       nextViewModel.setAspect(renderer.getAspect());
       await nextViewModel.load();
@@ -2249,6 +2297,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   let bulletHoles: BulletHoleManager | null = null;
 
   const game = new Game({
+    gameplayTuning,
     controlMode: runtimeParams.controlMode,
     mapId: runtimeParams.mapId,
     seedOverride: runtimeParams.seed,
@@ -2266,6 +2315,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     propVisuals: resolvedPropVisuals,
     propModels,
     doorModels,
+    facadeModels,
     freezeInput: inputFrozen,
     spawn: runtimeParams.spawn,
     debug: runtimeParams.debug,
@@ -2282,6 +2332,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       game.reportPlayerGunshot();
       waveStats.shotsFired++;
       runStats.shotsFired++;
+      sharedChampionRunLifecycle.recordShotFired();
 
       // Enemy hit detection: re-raycast against enemy AABBs to see if the bullet
       // hit one. This must reuse the bullet's own ray (spread and bloom applied)
@@ -2296,6 +2347,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           const { damage, isHeadshot } = resolveEnemyHitDamage(enemyHit.hitY, enemyHit.feetY);
           waveStats.shotsHit++;
           runStats.shotsHit++;
+          sharedChampionRunLifecycle.recordShotHit();
           pushPublicFeedback({ type: "enemy-hit" });
           game.applyDamageToEnemy(enemyHit.enemyId, damage, isHeadshot);
           enqueueCombatFeedback({ type: "hit", isHeadshot });
@@ -2335,16 +2387,19 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   bulletHoles = new BulletHoleManager(game.scene, runtimeParams.seed ?? 1);
 
   // ── Buff system ─────────────────────────────────────────────────────────────
-  const buffManager = new BuffManager(game.scene);
+  const buffManager = new BuffManager(game.scene, {
+    seed: runtimeParams.seed ?? 1,
+    tuning: gameplayTuning.buffs,
+  });
   const buffHud = new BuffHud(runtimeRoot);
-  const buffTextHud = new BuffTextHud(runtimeRoot);
+  const buffTextHud = new BuffTextHud(runtimeRoot, gameplayTuning);
   const buffVignette = new BuffVignette(runtimeRoot);
 
   const resetAllBuffModifiers = (): void => {
     game.setPlayerSpeedMultiplier(1.0);
     game.setWeaponFireInterval(0.1);
     game.setWeaponReloadSpeed(1.0);
-    game.setWeaponUnlimitedAmmo(false);
+    game.setWeaponFreeReloads(false);
     game.setOvershield(0);
     buffVignette.clear();
   };
@@ -2356,23 +2411,29 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     buffTextHud.clear();
   };
 
-  buffManager.setOnBuffActivated((type) => {
+  buffManager.setOnBuffActivated((type, context) => {
     switch (type) {
       case "speed_boost":
-        game.setPlayerSpeedMultiplier(1.35);
+        game.setPlayerSpeedMultiplier(gameplayTuning.buffs.speedMultiplier);
         break;
       case "rapid_fire":
-        game.setWeaponFireInterval(0.067);
-        game.setWeaponReloadSpeed(2.0);
+        game.setWeaponFireInterval(gameplayTuning.buffs.rapidFireIntervalS);
+        game.setWeaponReloadSpeed(gameplayTuning.buffs.rapidReloadSpeedMultiplier);
         break;
       case "unlimited_ammo":
-        game.setWeaponUnlimitedAmmo(true);
+        game.setWeaponFreeReloads(gameplayTuning.buffs.freeReloads);
         break;
       case "health_boost":
-        game.setOvershield(100);
+        // Wave-start reapplication restores setter-based modifiers after the
+        // weapon reset, but must not refill a shield depleted during combat.
+        if (context !== "reapplied") {
+          game.setOvershield(gameplayTuning.buffs.shieldHealth);
+        }
         break;
     }
-    buffVignette.activate(type);
+    if (context !== "reapplied") {
+      buffVignette.activate(type);
+    }
   });
 
   buffManager.setOnBuffExpired((type) => {
@@ -2385,7 +2446,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         game.setWeaponReloadSpeed(1.0);
         break;
       case "unlimited_ammo":
-        game.setWeaponUnlimitedAmmo(false);
+        game.setWeaponFreeReloads(false);
         break;
       case "health_boost":
         game.setOvershield(0);
@@ -2422,10 +2483,15 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     onDryFire: () => weaponAudio.playDryFire(),
   });
 
-  // Pause menu: resume by re-requesting pointer lock (desktop) or just unfreezing (mobile)
+  let pointerLock: PointerLockController | null = null;
+  const shouldRequestPointerLock = !(isLocalHostRuntime && isAutomatedRuntime);
+
+  // Pause menu: resume by re-requesting pointer lock (desktop) or just unfreezing (mobile).
+  // Local automation has no valid browser root for pointer lock and drives the
+  // deterministic simulation directly, so it intentionally skips this call.
   pauseMenu.onResume = () => {
-    if (runtimeParams.controlMode === "human" && !mobile) {
-      void renderer.canvas.requestPointerLock();
+    if (runtimeParams.controlMode === "human" && !mobile && shouldRequestPointerLock) {
+      pointerLock?.requestLock();
     }
   };
   if (mobile) {
@@ -2445,16 +2511,22 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // Wire kill feed
   // Wire kill events → feed + ding + score counter
   const TOTAL_ENEMIES = ENEMIES_PER_WAVE;
+  let pendingKillHeal = 0;
+  let pendingKillReserveAmmo = 0;
   scoreHud.setTotal(TOTAL_ENEMIES);
-  game.setEnemyKillCallback((name, isHeadshot, deathPos, enemyIndex) => {
+  game.setEnemyKillCallback((name, isHeadshot, deathPos, enemyIndex, isWaveClosingKill) => {
     enqueueCombatFeedback({
       type: "kill",
       enemyName: name,
       isHeadshot,
     });
     pushPublicFeedback({ type: "kill" });
+    pendingKillHeal += gameplayTuning.player.economy.killHeal;
+    pendingKillReserveAmmo += gameplayTuning.player.economy.killReserveAmmo;
     buffManager.recordKill(isHeadshot);
-    buffManager.onEnemyDeath(enemyIndex, deathPos);
+    buffManager.onEnemyDeath(enemyIndex, deathPos, {
+      waveClosing: isWaveClosingKill && gameplayTuning.buffs.waveCarry.bankWaveClosingDrop,
+    });
   });
 
   // New wave → keep run score, but reset per-wave breakdowns and timing.
@@ -2462,6 +2534,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     scoreHud.setTotal(TOTAL_ENEMIES);
     roundEndScreen.hide();
     roundEndShowing = false;
+    roundEndElapsedS = 0;
     waveElapsedS = 0;
     timerHud.reset();
     timerHud.start();
@@ -2472,14 +2545,21 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     waveStats.shotsHit = 0;
     waveStats.headshots = 0;
 
-    // Buff system: check Rallying Cry, clear orbs.
-    // Game's new-wave wrapper resets health, overshield and the weapon before
-    // this runs, which silently cancels every buff-owned modifier. Clear the
-    // buff state to match, or the HUD keeps counting down buffs whose effects
-    // were already wiped (a Bloodlust that no longer fires faster, an Iron
-    // Skin whose shield is gone).
+    // Carry behavior is part of the immutable tuning identity, so future
+    // profile revisions do not need mode-specific branches here.
     buffManager.onNewWave();
-    clearAllBuffRuntimeState();
+    const waveCarry = gameplayTuning.buffs.waveCarry;
+    if (waveCarry.activeBuffs) {
+      buffManager.reapplyActiveBuffEffects();
+    } else {
+      clearAllBuffRuntimeState();
+    }
+    if (!waveCarry.droppedOrbs) {
+      buffManager.clearOrbs();
+    }
+    if (waveCarry.bankWaveClosingDrop) {
+      buffManager.activateBankedWaveClosingBuff();
+    }
     if (buffManager.checkRallyingCry()) {
       // Previous wave was 10/10 headshots — defer activation so player
       // sees the round-end screen disappear before buffs kick in
@@ -2491,20 +2571,35 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // Death screen restart handler — fires on both click and auto-countdown.
   // Fade to black → reset the run → fade back in for a smooth transition.
   deathScreen.onRespawn = () => {
+    // Restart is a real user gesture; profiles that release pointer lock on
+    // death reacquire it before entering asynchronous fade callbacks, where
+    // browsers no longer consider the request gesture-authorized.
+    if (
+      gameplayTuning.flow.deathRestart.releasePointerLock
+      && runtimeParams.controlMode === "human"
+      && !mobile
+      && shouldRequestPointerLock
+    ) {
+      pointerLock?.requestLock();
+    }
     respawnInProgress = true;
     fadeOverlay.fadeOut(0.18, () => {
       // Reset happens while the screen is black so the restart feels atomic.
       pendingAgentActions.length = 0;
       combatFeedbackQueue.length = 0;
+      pendingKillHeal = 0;
+      pendingKillReserveAmmo = 0;
       lastCombatFeedbackMs = 0;
       lastKillFeedbackMs = 0;
       game.restartRun();
+      viewModel?.reset?.();
       clearAllBuffRuntimeState();
       // Per-wave headshot progress is run-scoped: without this a 10/10 wave in
       // the previous run grants a free Rallying Cry on the next run's wave 2.
       buffManager.resetWaveProgress();
       roundEndScreen.hide();
       roundEndShowing = false;
+      roundEndElapsedS = 0;
       pendingRallyingCry = false;
       rallyingCryDelayS = 0;
       killFeed.clear();
@@ -2528,7 +2623,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       runStats.shotsHit = 0;
       runStats.headshots = 0;
       runHeadshotsPerWave = [];
-      runStartedAtMs = performance.now();
+      runActiveTimeS = 0;
       lastDamageCause = null;
       previousHealth = game.getPlayerHealth();
       footstepTimerS = 0;
@@ -2540,9 +2635,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       pauseMenu.hide();
       howToPlayOverlay.hide();
       controlsOverlay.hide();
-      if (runtimeParams.controlMode === "human" && !mobile) {
-        void renderer.canvas.requestPointerLock();
-      }
       respawnInProgress = false;
       // Brief hold at black, then fade back in
       setTimeout(() => {
@@ -2630,6 +2722,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   timerHud.setVisible(!overviewCameraAtBoot);
 
   if (viewModel) {
+    viewModel.setEnvironment?.(game.scene.environment);
     viewModel.updateFromMainCamera(game.camera, 0);
     const weaponDebug = viewModel.getAlignmentSnapshot();
     game.setWeaponDebugSnapshot(weaponDebug.loaded, weaponDebug.dot, weaponDebug.angleDeg);
@@ -2760,16 +2853,24 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   bootTelemetry.revealPhase = "ready";
   console.info(`[runtime:boot] runtime marked ready at ${bootTelemetry.readyAtMs?.toFixed(1) ?? "n/a"}ms`);
 
-  let pointerLock: PointerLockController | null = null;
   let touchInput: TouchInputManager | null = null;
   let mobileTouchHud: MobileTouchHud | null = null;
   let mobileOrientationGuard: MobileOrientationGuard | null = null;
   let mobileFlashUpdate: ((dt: number, health: number, mag: number) => void) | null = null;
 
-  if (mobile && !inputFrozen && runtimeParams.controlMode === "human") {
+  if (
+    mobile
+    && gameplayTuning.touch.enabled
+    && !inputFrozen
+    && runtimeParams.controlMode === "human"
+  ) {
     // ── Mobile: touch controls instead of pointer lock ──────────────
     game.setMobileActive(true);
-    touchInput = new TouchInputManager(runtimeRoot);
+    touchInput = new TouchInputManager(runtimeRoot, {
+      joystickRadiusPx: gameplayTuning.touch.joystickRadiusPx,
+      moveDeadzone: gameplayTuning.touch.moveDeadzone,
+      aimAssistEnabled: gameplayTuning.touch.aimAssist.enabled,
+    });
     mobileTouchHud = new MobileTouchHud(runtimeRoot, touchInput);
     mobileOrientationGuard = new MobileOrientationGuard(runtimeRoot);
     void mobileOrientationGuard.requestLandscape();
@@ -2965,8 +3066,27 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // Round / wave timing
   let waveElapsedS = 0;         // time elapsed since current wave started
   let roundEndShowing = false;  // true while round-end overlay is displayed
+  let roundEndElapsedS = 0;     // active, unpaused time spent in intermission
   let pendingRallyingCry = false;  // true when rallying cry should fire after delay
   let rallyingCryDelayS = 0;       // countdown before rallying cry activates
+  const isGameplayOverlaySuspended = (): boolean => Boolean(
+    pauseMenu.isVisible()
+    || howToPlayOverlay.isVisible()
+    || controlsOverlay.isVisible()
+    || mobileOrientationGuard?.isBlocking()
+  );
+  roundEndScreen.onContinue = () => {
+    const skipAfterS = gameplayTuning.flow.skipAvailableAfterS;
+    if (
+      isGameplayOverlaySuspended()
+      || !roundEndShowing
+      || skipAfterS === null
+      || roundEndElapsedS < skipAfterS
+    ) return;
+    if (game.skipWaveCountdown()) {
+      game.updateWaveTransition(0);
+    }
+  };
 
   // Per-wave stats counters (reset each new wave)
   const waveStats: RoundStats = {
@@ -3016,10 +3136,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     topMeshes: [],
   };
   const camFwdScratch = new Vector3();
-  const scoreStorageKey = makeScoreStorageKey(runtimeParams.mapId);
+  const scoreStorageKey = makeScoreStorageKey(
+    runtimeParams.mapId,
+    deriveSharedChampionBoardKey(gameplayProfileIdentity),
+  );
   let bestScore = readBestScore(scoreStorageKey);
   scoreHud.setBestScore(bestScore);
-  let sharedChampionSnapshot: SharedChampionSnapshot = getSharedChampionSnapshot();
+  let sharedChampionSnapshot: SharedChampionSnapshot = getSharedChampionSnapshot(gameplayProfileIdentity);
   let sharedChampionFinalizedForCurrentRun = false;
   const applySharedChampionSnapshot = (snapshot: SharedChampionSnapshot): void => {
     const nextChampion = shouldReplaceSharedChampion(sharedChampionSnapshot.champion, snapshot.champion)
@@ -3033,52 +3156,40 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     deathScreen.setSharedChampion(sharedChampionSnapshot);
   };
   applySharedChampionSnapshot(sharedChampionSnapshot);
-  void loadSharedChampion().then((snapshot) => {
+  void loadSharedChampion({ profileIdentity: gameplayProfileIdentity }).then((snapshot) => {
     if (disposed) return;
     applySharedChampionSnapshot(snapshot);
   });
-  let activeSharedChampionRun: SharedChampionRunSession | null = null;
-  let sharedChampionRunRequestSerial = 0;
+  const sharedChampionRunLifecycle = new SharedChampionRunLifecycle<SharedChampionRunSession>();
   const beginSharedChampionRun = (): void => {
-    const requestSerial = ++sharedChampionRunRequestSerial;
-    activeSharedChampionRun = null;
-    void startSharedChampionRunSession({
-      playerName: runtimeParams.playerName,
-      controlMode: runtimeParams.controlMode,
-      mapId: runtimeParams.mapId,
-    }).then((session) => {
-      if (disposed || requestSerial !== sharedChampionRunRequestSerial) return;
-      activeSharedChampionRun = session;
-    });
+    sharedChampionRunLifecycle.begin(() => sharedChampionRunSubmissionEnabled
+      ? startSharedChampionRunSession({
+          playerName: runtimeParams.playerName,
+          controlMode: runtimeParams.controlMode,
+          mapId: runtimeParams.mapId,
+          ...gameplayProfileIdentity,
+        })
+      : Promise.resolve(null));
   };
   const finalizeSharedChampionForDeath = async (input: {
-    lastRunScore: number;
     sharedChampionRunSummary: SharedChampionRunSummary;
-    runSession: SharedChampionRunSession | null;
+    runCompletion: SharedChampionRunCompletion<SharedChampionRunSession> | null;
   }): Promise<void> => {
-    const refreshed = await loadSharedChampionWithMeta({ force: true });
-    if (!disposed) {
-      applySharedChampionSnapshot(refreshed.snapshot);
-    }
-
-    const candidateScore = normalizeScore(input.lastRunScore);
-    const shouldSubmitSharedChampion = !refreshed.loadedFromNetwork
-      || refreshed.snapshot.status === "idle"
-      || refreshed.snapshot.status === "loading"
-      || refreshed.snapshot.status === "unavailable"
-      || isBetterSharedChampionCandidate(refreshed.snapshot.champion, candidateScore);
-
-    if (!shouldSubmitSharedChampion || !input.runSession) {
+    // Every validated completion belongs in the private run history. The
+    // server independently decides whether it also replaces the public
+    // champion for this immutable profile/revision board.
+    const runSession = await (input.runCompletion?.sessionPromise ?? Promise.resolve(null));
+    if (disposed || !runSession) {
       return;
     }
 
-    const { snapshot } = await submitSharedChampionRunSession(input.runSession, input.sharedChampionRunSummary);
+    const { snapshot } = await submitSharedChampionRunSession(runSession, input.sharedChampionRunSummary);
     if (disposed) return;
     applySharedChampionSnapshot(snapshot);
   };
   let lastRunScore: number | null = null;
   let lastRunSummary: PublicAgentRunSummary | null = null;
-  let runStartedAtMs = performance.now();
+  let runActiveTimeS = 0;
   let lastDamageCause: PublicAgentRunSummary["deathCause"] | null = null;
   let wasAlive = !game.getIsDead();
   let feedbackEpisodeId = 1;
@@ -3177,6 +3288,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           scoreHud.recordKill({ isHeadshot: event.isHeadshot });
           waveStats.kills++;
           runStats.kills++;
+          sharedChampionRunLifecycle.recordKill(event.isHeadshot);
           if (event.isHeadshot) {
             waveStats.headshots++;
             runStats.headshots++;
@@ -3248,6 +3360,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     return {
       apiVersion: RUNTIME_TEXT_API_VERSION,
       mode: "runtime",
+      profile: gameplayProfileIdentity,
       map: {
         loaded: mapLoaded,
         mapId: runtimeParams.mapId,
@@ -3432,6 +3545,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       apiVersion: PUBLIC_AGENT_API_VERSION,
       contract: PUBLIC_AGENT_CONTRACT,
       mode: "runtime",
+      profile: gameplayProfileIdentity,
       runtimeReady: runtimeActive && mapLoaded,
       gameplay: {
         alive,
@@ -3455,6 +3569,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         episodeId: feedbackEpisodeId,
         recentEvents: recentPublicFeedbackEvents.map((event) => ({ ...event })),
       },
+      perception: runtimeActive && mapLoaded ? game.getPublicPerception() : { visibleTargets: [], movementBlocked: false },
     };
   };
 
@@ -3496,20 +3611,21 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     const clampedMs = Math.min(Math.max(deltaMs, 0), 100);
     const dt = clampedMs / 1000;
     const renderFrame = options.renderFrame ?? true;
+    let waveTransitionedThisFrame = false;
     applyQueuedAgentActions();
 
     // An overlay owning the screen suspends the simulation and hands touch
     // input back to that overlay's own buttons.
-    const simulationSuspended = Boolean(
-      pauseMenu.isVisible()
-      || howToPlayOverlay.isVisible()
-      || controlsOverlay.isVisible()
-      || mobileOrientationGuard?.isBlocking(),
-    );
+    const overlaySuspended = isGameplayOverlaySuspended();
+    const intermissionSuspended = roundEndShowing
+      && gameplayTuning.flow.freezeSimulationDuringIntermission;
+    const simulationSuspended = overlaySuspended || intermissionSuspended || game.getIsDead();
 
     // Feed mobile touch input before game update
     if (touchInput) {
       touchInput.setCaptureEnabled(!simulationSuspended && !game.getIsDead());
+      swayMouseDeltaX += touchInput.lookDeltaX;
+      swayMouseDeltaY += touchInput.lookDeltaY;
       game.feedMobileInput({
         moveX: touchInput.moveX,
         moveZ: touchInput.moveZ,
@@ -3542,15 +3658,46 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // has to advance that clock by zero or the player is shot dead while the
     // pause menu is up. UI/overlay animation keeps the real dt below.
     const simDt = simulationSuspended ? 0 : dt;
+    if (simDt > 0 && !game.getIsDead() && !roundEndShowing) {
+      runActiveTimeS += simDt;
+      sharedChampionRunLifecycle.beginActiveFrame(simDt);
+    } else {
+      sharedChampionRunLifecycle.endActiveFrame();
+    }
     game.update(simDt);
+    // Enemy shots and the player's killing shot can resolve in the same frame.
+    // Apply earned sustain after incoming damage so healing is not silently
+    // lost against the pre-damage health cap; lethal damage still ends the run.
+    if (pendingKillHeal > 0) {
+      game.restorePlayerHealth(pendingKillHeal);
+      pendingKillHeal = 0;
+    }
+    if (pendingKillReserveAmmo > 0) {
+      game.grantWeaponReserveAmmo(pendingKillReserveAmmo);
+      pendingKillReserveAmmo = 0;
+    }
+    if (intermissionSuspended && !overlaySuspended && !game.getIsDead()) {
+      roundEndElapsedS += dt;
+      waveTransitionedThisFrame = game.updateWaveTransition(dt);
+    } else if (roundEndShowing && !overlaySuspended && !game.getIsDead()) {
+      // A future profile may explicitly opt into a live intermission.
+      // EnemyManager's normal update owns the countdown in that mode, so only
+      // track elapsed time here and avoid advancing the transition twice.
+      roundEndElapsedS += dt;
+    }
     drainCombatFeedback();
+    sharedChampionRunLifecycle.endActiveFrame();
 
     const aliveNow = !game.getIsDead();
     if (!aliveNow && wasAlive) {
       lastRunScore = normalizeScoreValue(scoreHud.getScore());
       const nextBestScore = Math.max(bestScore, lastRunScore);
       const deathCause = lastDamageCause ?? "unknown";
-      const accuracy = runStats.shotsFired > 0
+      const publicRunActiveTimeS = Math.round(Math.max(0, runActiveTimeS) * 10) / 10;
+      const sharedChampionRunCompletion = sharedChampionFinalizedForCurrentRun
+        ? null
+        : sharedChampionRunLifecycle.complete();
+      const publicAccuracy = runStats.shotsFired > 0
         ? Math.round(((runStats.shotsHit / runStats.shotsFired) * 100) * 10) / 10
         : 0;
       // Pad headshotsPerWave to expected length (waves with 0 headshots)
@@ -3558,25 +3705,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       while (runHeadshotsPerWave.length < expectedWaves) {
         runHeadshotsPerWave.push(0);
       }
-      const sharedChampionRunSummary: SharedChampionRunSummary = {
-        survivalTimeS: Math.round((Math.max(0, performance.now() - runStartedAtMs) / 1000) * 10) / 10,
+      const sharedChampionRunSummary = createSharedChampionRunSummary(
+        sharedChampionRunCompletion,
+        deathCause,
+      );
+      lastRunSummary = {
+        survivalTimeS: publicRunActiveTimeS,
         kills: runStats.kills,
         headshots: runStats.headshots,
-        headshotsPerWave: [...runHeadshotsPerWave],
         shotsFired: runStats.shotsFired,
         shotsHit: runStats.shotsHit,
-        accuracy,
+        accuracy: publicAccuracy,
         finalScore: lastRunScore,
-        deathCause,
-      };
-      lastRunSummary = {
-        survivalTimeS: sharedChampionRunSummary.survivalTimeS,
-        kills: sharedChampionRunSummary.kills,
-        headshots: sharedChampionRunSummary.headshots,
-        shotsFired: sharedChampionRunSummary.shotsFired,
-        shotsHit: sharedChampionRunSummary.shotsHit,
-        accuracy: sharedChampionRunSummary.accuracy,
-        finalScore: sharedChampionRunSummary.finalScore,
         bestScore: normalizeScoreValue(nextBestScore),
         deathCause,
       };
@@ -3587,12 +3727,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       }
       if (!sharedChampionFinalizedForCurrentRun) {
         sharedChampionFinalizedForCurrentRun = true;
-        const runSession = activeSharedChampionRun;
-        activeSharedChampionRun = null;
         void finalizeSharedChampionForDeath({
-          lastRunScore,
           sharedChampionRunSummary,
-          runSession,
+          runCompletion: sharedChampionRunCompletion,
         });
       }
     }
@@ -3615,39 +3752,65 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // ── Footstep audio ───────────────────────────────────────────────────────
     const grounded = game.getGrounded();
     const speedMps = game.getSpeedMps();
-    if (grounded && speedMps > 0.5) {
-      footstepTimerS -= dt;
-      if (footstepTimerS <= 0) {
-        footstepTimerS = speedMps > 4.5 ? 0.45 : 0.65;
-        weaponAudio.playFootstep(Math.min(1, speedMps / 6.0));
-        game.reportPlayerFootstep(speedMps);
+    const playerCrouched = game.isPlayerCrouched();
+    if (simDt > 0) {
+      if (grounded && speedMps > 0.5) {
+        footstepTimerS -= simDt;
+        if (footstepTimerS <= 0) {
+          footstepTimerS = speedMps > 4.5 ? 0.45 : 0.65;
+          const footstepVolumeMultiplier = playerCrouched
+            ? gameplayTuning.enemy.perception.hearing.crouchRangeMultiplier
+            : 1;
+          weaponAudio.playFootstep(Math.min(1, speedMps / 6.0) * footstepVolumeMultiplier);
+          game.reportPlayerFootstep(speedMps, playerCrouched);
+        }
+      } else {
+        footstepTimerS = 0; // reset so first step fires immediately on landing
       }
-    } else {
-      footstepTimerS = 0; // reset so first step fires immediately on landing
     }
 
     // ── Wave timing & round-end screen ───────────────────────────────────────
-    if (!game.getIsDead() && !roundEndShowing) {
-      waveElapsedS += dt;
+    if (simDt > 0 && !game.getIsDead() && !roundEndShowing && !waveTransitionedThisFrame) {
+      waveElapsedS += simDt;
     }
     const allDead = game.getAllEnemiesDead();
     if (allDead && !roundEndShowing && !game.getIsDead()) {
       // First frame all enemies are dead — show the round-end screen with stats
       roundEndShowing = true;
+      roundEndElapsedS = 0;
       pushPublicFeedback({ type: "wave-complete" });
-      roundEndScreen.show(waveElapsedS, game.getWaveNumber(), { ...waveStats });
+      if (gameplayTuning.flow.showRoundSummary) {
+        roundEndScreen.show(waveElapsedS, game.getWaveNumber(), { ...waveStats });
+      }
     }
-    if (roundEndShowing) {
+    if (roundEndShowing && gameplayTuning.flow.showRoundSummary) {
       const countdown = game.getWaveCountdownS() ?? 0;
-      roundEndScreen.update(dt, countdown);
+      const skipAfterS = gameplayTuning.flow.skipAvailableAfterS;
+      roundEndScreen.update(
+        dt,
+        countdown,
+        skipAfterS !== null && roundEndElapsedS >= skipAfterS,
+      );
     }
 
     // ── Death detection ──────────────────────────────────────────────────────
     if (game.getIsDead() && !deathScreen.isVisible() && !respawnInProgress) {
+      if (
+        gameplayTuning.flow.deathRestart.releasePointerLock
+        && document.pointerLockElement
+      ) {
+        document.exitPointerLock();
+      }
       deathScreen.show({
         playerName: runtimeParams.playerName,
         finalScore: scoreHud.getScore(),
         bestScore,
+        waveReached: game.getWaveNumber(),
+        wavesCleared: Math.max(0, game.getWaveNumber() - 1),
+        kills: lastRunSummary?.kills ?? runStats.kills,
+        headshots: lastRunSummary?.headshots ?? runStats.headshots,
+        accuracy: lastRunSummary?.accuracy ?? 0,
+        activeTimeS: lastRunSummary?.survivalTimeS ?? runActiveTimeS,
       });
     }
 
@@ -3661,7 +3824,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       const ammoSnap = game.getAmmoSnapshot();
       ammoHud.update(ammoSnap);
       const overshield = game.getOvershield();
-      healthHud.update({ health: currentHealth + overshield, maxHealth: overshield > 0 ? 200 : 100 }, dt);
+      const baseHealthCapacity = gameplayTuning.player.economy.maxHealth;
+      healthHud.update({
+        health: currentHealth + overshield,
+        maxHealth: overshield > 0
+          ? baseHealthCapacity + gameplayTuning.buffs.shieldHealth
+          : baseHealthCapacity,
+      }, dt);
       mobileFlashUpdate?.(dt, currentHealth, ammoSnap.mag);
     }
 
@@ -3715,9 +3884,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
     if (renderFrame && viewModel) {
       viewModel.setFrameInput(speedMps, grounded, swayMouseDeltaX, swayMouseDeltaY);
+      viewModel.setAmmoState?.(game.getAmmoSnapshot());
       swayMouseDeltaX = 0;
       swayMouseDeltaY = 0;
-      viewModel.updateFromMainCamera(game.camera, dt);
+      viewModel.updateFromMainCamera(game.camera, simDt);
       const weaponDebug = viewModel.getAlignmentSnapshot();
       game.setWeaponDebugSnapshot(weaponDebug.loaded, weaponDebug.dot, weaponDebug.angleDeg);
     } else {
@@ -3996,6 +4166,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     qaAssetPlanHash: qaAssetPlan?.hash ?? null,
   });
   window.__debug_scene_perf = () => collectScenePerfSnapshot(game.scene, viewModel?.viewModelScene ?? null);
+  window.__qa_gameplay_authority_state = () => game.getGameplayAuthoritySnapshot();
   window.__debug_render_perf = () => ({
     ...renderer.getPerfInfo(),
     bootReadyMs: bootTelemetry.readyAtMs,
@@ -4023,6 +4194,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   };
   window.advanceTime = async (ms: number) => {
+    // Compatibility hook: this adds simulation time while the normal loop keeps
+    // running. Real-time SDK control must not call it.
     if (!runtimeActive) return;
     advanceSimulation(ms, {
       renderFrame: !deterministicQa && (runtimeParams.controlMode !== "agent" || document.visibilityState === "visible"),
@@ -4153,9 +4326,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       }
       return readState();
     };
-    window.__debug_set_player_pose = (payload: { x: number; y: number; z: number; yawDeg?: number }) => {
+    window.__debug_set_player_pose = (payload: { x: number; y: number; z: number; yawDeg?: number; pitchDeg?: number }) => {
       const yawRad = typeof payload.yawDeg === "number" ? (payload.yawDeg * Math.PI) / 180 : undefined;
-      game.debugSetPlayerPose({ x: payload.x, y: payload.y, z: payload.z }, yawRad);
+      const pitchRad = typeof payload.pitchDeg === "number" ? (payload.pitchDeg * Math.PI) / 180 : undefined;
+      game.debugSetPlayerPose({ x: payload.x, y: payload.y, z: payload.z }, yawRad, pitchRad);
     };
     window.__debug_pick_scene = (payload: { xPx: number; yPx: number }) => {
       const viewportWidth = Math.max(1, window.innerWidth);
@@ -4257,8 +4431,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const teardown = (): void => {
     if (disposed) return;
     disposed = true;
-    sharedChampionRunRequestSerial += 1;
-    activeSharedChampionRun = null;
+    sharedChampionRunLifecycle.cancelCurrent();
 
     window.cancelAnimationFrame(rafId);
     stopHiddenAgentLoop();
@@ -4271,6 +4444,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.render_game_to_text;
     delete window.__runtime_ready_state;
     delete window.__debug_scene_perf;
+    delete window.__qa_gameplay_authority_state;
     delete window.__debug_render_perf;
     delete window.__qa_performance_state;
     delete window.advanceTime;

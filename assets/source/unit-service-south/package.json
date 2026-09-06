@@ -1,0 +1,13 @@
+{
+  "models": [
+    {
+      "id": "service_south_east_face",
+      "file": "service-south-east.glb",
+      "source": "repo://assets/source/unit-service-south/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "frontages": {
+    "FRONTAGE_SERVICE_SOUTH_EAST": "service_south_east_face"
+  }
+}

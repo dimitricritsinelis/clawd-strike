@@ -1,0 +1,53 @@
+{
+  "sourceFrame": "+X across, +Y rear, +Z up; rear plane Y=0",
+  "unit": "metre",
+  "models": {
+    "b18-dye-counter": {
+      "triangles": 9720,
+      "materials": 1,
+      "sourceBounds": [
+        [
+          -0.7400000095367432,
+          0.7400000691413879
+        ],
+        [
+          -0.3400000035762787,
+          0.0
+        ],
+        [
+          0.0,
+          2.109999895095825
+        ]
+      ],
+      "glbMd5": "d9e6465fe76bf6984157131c96d4c29e"
+    },
+    "b18-packing-finish": {
+      "triangles": 6052,
+      "materials": 1,
+      "sourceBounds": [
+        [
+          -0.7400000095367432,
+          0.7400000691413879
+        ],
+        [
+          -0.3400000035762787,
+          0.0
+        ],
+        [
+          0.0,
+          1.5350000858306885
+        ]
+      ],
+      "glbMd5": "e21f6a633106031b5b542e7648304a5b"
+    }
+  },
+  "license": "Project-Original",
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/wooden_table_02",
+      "license": "CC0-1.0",
+      "md5": "07075a87918208594260c86c727e4396"
+    }
+  ]
+}

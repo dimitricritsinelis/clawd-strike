@@ -1,3 +1,4 @@
+import { Euler } from "three";
 import type { BoundarySegment } from "./buildBlockout";
 import { designToWorldVec3, designYawDegToWorldYawRad } from "./coordinateTransforms";
 import type { RuntimeBlockoutZone, RuntimeTraversalSurface } from "./types";
@@ -6,6 +7,44 @@ import type { WallDetailInstance, WallDetailMeshId } from "./wallDetailKit";
 
 type FacadeFace = "north" | "south" | "east" | "west";
 type MaterialSlot = "wall" | "trim" | "roof" | "timber" | "metal" | "accent";
+
+const CENTRAL_SCREEN_BAYS = new Set([
+  "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_03",
+  "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_04",
+  "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_S",
+  "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_N",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_02",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_STORY_1_WINDOW_01",
+]);
+
+const AUTHORED_SHUTTER_BAYS = new Set([
+  "ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_01",
+  ...[1, 2, 3, 4, 5].map((i) => `ARCH_FRONTAGE_SPICE_STREET_WEST_STORY_1_WINDOW_0${i}`),
+  ...[1, 2].map((i) => `ARCH_FRONTAGE_TEA_TERRACE_EAST_STORY_1_WINDOW_0${i}`),
+]);
+const AUTHORED_SHOP_DISPLAY_BAYS = new Set([
+  "ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_01",
+  ...[1, 3, 4].map((i) => `ARCH_FRONTAGE_SPICE_STREET_WEST_GROUND_0${i}`),
+]);
+const AUTHORED_ARCADE_DISPLAY_BAYS = new Set([
+  "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_01", "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_03",
+  "ARCH_FRONTAGE_COVERED_SOUK_WEST_GROUND_01",
+  ...["WEST", "EAST"].flatMap((side) => [1, 3, 4].map((bay) => `ARCH_FRONTAGE_TEXTILE_ARCADE_${side}_GROUND_0${bay}`)),
+]);
+
+const DORMANT_FACADE_BAYS = new Set([
+  "ARCH_FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID_STORY_1_WINDOW_01",
+  "ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_STORY_2_WINDOW_01",
+  "ARCH_FRONTAGE_SPAWN_A_NORTH_WEST_GROUND_01",
+  "ARCH_FRONTAGE_SPAWN_A_NORTH_EAST_GROUND_01",
+]);
+function isDormantFacadeModule(module: V3ArchitectureModulePlacement): boolean {
+  return (module.frontageId === "FRONTAGE_SERVICE_NORTH_EAST_SPINE_S" && module.moduleKind === "vent")
+    || DORMANT_FACADE_BAYS.has(module.id);
+}
 
 export type V3ArchitectureMaterialSlots = Record<MaterialSlot, string>;
 
@@ -49,6 +88,12 @@ export type V3ArchitectureMassingPlacement = {
     upperStorySetbackM: number;
     elevationM: number;
   };
+  /**
+   * Registered facade GLB that owns this frontage's street face. The kit still
+   * renders the wall mass, roof edge and roof and keeps collision; it drops its
+   * face modules and face accessories so the authored asset is the facade.
+   */
+  facadeModelId?: string;
 };
 
 export type V3ArchitectureModulePlacement = {
@@ -64,7 +109,7 @@ export type V3ArchitectureModulePlacement = {
   openingType: "none" | "recess" | "door_void" | "window_void" | "arch_void";
   datumId: string;
   columnId: string;
-  layoutSource: "generated";
+  layoutSource: "generated" | "authored";
   center: { x: number; y: number; z: number };
   sizeM: { width: number; depth: number; height: number };
   yawDeg: number;
@@ -102,11 +147,30 @@ export type BuildV3ArchitectureOptions = {
    * reads as two competing shops stacked in one opening.
    */
   stallSeatedPlacementIds?: ReadonlySet<string>;
+  /**
+   * Zone faces (`${zoneId}:${face}`) owned by an authored section GLB. Their kit
+   * face modules, face accessories and code-owned boundary grammar are skipped;
+   * wall mass, roofs, collision and every other face's kit details stay.
+   */
+  sectionOwnedFaces?: ReadonlySet<string>;
+};
+
+export type FacadeModelPlacement = {
+  placementId: string;
+  frontageId: string;
+  modelId: string;
+  /** World-space bottom-center of the street-facing wall plane. */
+  base: { x: number; y: number; z: number };
+  /** Unit vector from the wall plane toward the street. */
+  inward: { x: number; z: number };
+  widthM: number;
+  heightM: number;
 };
 
 export type V3ArchitectureBuildResult = {
   instances: WallDetailInstance[];
   doorModelPlacements: DoorModelPlacement[];
+  facadeModelPlacements: FacadeModelPlacement[];
   segmentHeights: number[];
   stats: {
     enabled: boolean;
@@ -144,6 +208,16 @@ const PARAPET_COPING_HEIGHT_M = 0.18;
 const PARAPET_COPING_OVERHANG_M = 0.07;
 const FRAME_WIDTH_M = 0.13;
 const FRAME_DEPTH_M = 0.11;
+// Merchant window and door surrounds share one pale timber tint so the
+// openings of a shop read as one joinery set (see pushWindow for its history).
+const MERCHANT_FRAME_TINT_HEX = 0xb2916a;
+// Blind-niche plaster tints, absolute instance colours on the wall material:
+// the recess back sits in full shade, the reveals in half shade, the arris
+// catches sun. Wall tints sit around 0xd8d3ca, so these are ~0.72 / 0.87 / 1.02.
+// The back also receives the head's cast shadow, so 0.62 read as a black void.
+const NICHE_BACK_TINT_HEX = 0x9c9385;
+const NICHE_REVEAL_TINT_HEX = 0xbcb4a6;
+const NICHE_ARRIS_TINT_HEX = 0xddd5c5;
 const PANEL_DEPTH_M = 0.055;
 const SHOP_RECESS_MIN_DEPTH_M = 1;
 const SHOP_RECESS_MAX_DEPTH_M = 2;
@@ -399,6 +473,22 @@ function pushInstance(
     rollRad?: number;
   },
 ): void {
+  if (/^ARCH_FRONTAGE_(RUG_GATE_WEST_GROUND_02|TEA_TERRACE_EAST_GROUND_02|SPICE_STREET_WEST_GROUND_0[25]):(awning|closed-shop)/.test(placement.placementId)) return;
+  if (placement.placementId.startsWith("ARCH_FRONTAGE_SPICE_STREET_WEST_MASSING:")
+    && /wall-top-coping$|skyline-coping$/.test(placement.placementId)) return;
+  if (AUTHORED_SHOP_DISPLAY_BAYS.has(placement.placementId.split(":")[0]!)
+    && /:(counter|interior-hanging|interior-shelf|interior-stock|street-stock|display-|shop-shutter)/.test(placement.placementId)) return;
+  if (/^ARCH_FRONTAGE_(COVERED_SOUK_WEST_NORTH|FOUNTAIN_COURT_EAST_NORTH)_GROUND_01:threshold-apron/.test(placement.placementId)) {
+    placement.position.y -= placement.scale.y - .002;
+  }
+  if (placement.pitchRad && /^ARCH_FRONTAGE_(SPICE_STREET|TEXTILE_ARCADE|RUG_GATE|TEA_TERRACE|COVERED_SOUK)_[A-Z_]+_GROUND_[0-9]+:awning/.test(placement.placementId)) {
+    // Pitch the outer awnings in their wall frame, then encode the existing
+    // renderer's XYZ angles. The approved center booth is an independent GLB.
+    const rotation = new Euler(placement.pitchRad, placement.yawRad, 0, "YXZ").reorder("XYZ");
+    placement.pitchRad = rotation.x;
+    placement.yawRad = rotation.y;
+    placement.rollRad = rotation.z;
+  }
   requirePositiveDimensions(placement.placementId, {
     width: placement.scale.x,
     depth: placement.scale.z,
@@ -467,6 +557,7 @@ const FACADE_DIVIDER_DEPTH_M = 0.48;
 const SHARED_MASSING_OVERLAP_RATIO = 0.85;
 
 function createsVisualFacadeCutout(module: V3ArchitectureModulePlacement): boolean {
+  if (isDormantFacadeModule(module) || module.moduleId === "inspection_panel") return false;
   return module.moduleKind !== "column";
 }
 
@@ -652,6 +743,16 @@ function collectFacadeApertures(
         bottomY: moduleCenter.y - module.sizeM.height * 0.5,
         topY: moduleCenter.y + module.sizeM.height * 0.5,
       };
+      if (CENTRAL_SCREEN_BAYS.has(module.id) || AUTHORED_SHUTTER_BAYS.has(module.id)) {
+        // The structural bay remains the stable binding. Its complete SC-C
+        // frame seats on a masonry rebate around the smaller inner opening.
+        const sill = moduleCenter.y - module.sizeM.height * .5;
+        const halfInnerWidth = AUTHORED_SHUTTER_BAYS.has(module.id) ? module.sizeM.width * .5 - .12 : .38;
+        aperture.leftM = alongM - halfInnerWidth;
+        aperture.rightM = alongM + halfInnerWidth;
+        aperture.bottomY = sill + .12;
+        aperture.topY = sill + module.sizeM.height - .12;
+      }
       if (
         aperture.leftM < facadeLeftM - FACADE_FIT_EPSILON_M
         || aperture.rightM > facadeRightM + FACADE_FIT_EPSILON_M
@@ -757,7 +858,14 @@ function pushMassingVisualShell(
       semanticClass: "closed_massing",
       meshId: "facade_wall_shell",
       position: shellCenter,
-      scale: { x: placement.sizeM.width, y: placement.sizeM.height, z: placement.sizeM.depth },
+      // Keep the same return clearance as segmented backing when a GLB
+      // replaces its apertures, avoiding coplanar neighboring side walls.
+      scale: {
+        x: placement.sizeM.width - (placement.facadeModelId ? SEGMENTED_SHELL_RETURN_CLEARANCE_M * 2 : 0),
+        y: placement.sizeM.height,
+        z: placement.sizeM.depth,
+      },
+      visualQaDimensions: { x: placement.sizeM.width, y: placement.sizeM.height, z: placement.sizeM.depth },
       yawRad,
       wallMaterialId: placement.materialSlots.wall,
       trimMaterialId: null,
@@ -868,8 +976,12 @@ function pushMassingVisualShell(
     // depth. This removes the 62 cm cavity card and its separate 24 cm return.
     // Edge-tight authored bays retain their exact (never clamped) clear strip
     // only below a full-depth upper volume, where it cannot become skyline.
-    const infillDepthM = isFullDepthBoundaryMassing
-      ? placement.sizeM.depth
+    // Paired public faces need solid window rebates all the way to their
+    // shared core, without invading the opposite face's recesses.
+    const infillDepthM = sharedBacking || !ownsSharedShell
+      ? backingRecessM
+      : isFullDepthBoundaryMassing
+        ? placement.sizeM.depth
       : isNarrowEdgeFallback
         ? backingRecessM
       : isMasonryDivider
@@ -897,7 +1009,7 @@ function pushMassingVisualShell(
           ? `${placement.profileId}_masonry_divider`
           : `${placement.profileId}_segmented_facade`,
       semanticClass: isMasonryDivider ? "facade_masonry_divider" : "facade_wall_infill",
-      meshId: isBoundaryMasonry
+      meshId: sharedBacking || !ownsSharedShell || isBoundaryMasonry
         ? "facade_wall_shell"
         : isMasonryDivider
           ? "facade_wall_shell"
@@ -1111,10 +1223,10 @@ function pushMerchantUpperScreen(
 /**
  * Carries the generated facade datums onto otherwise uninterrupted wall
  * planes. The transition course is derived from the shared ground head and,
- * when present, the first upper sill. Quiet residential facades without an
- * authored upper opening receive shallow blind screens on the SAME generated
- * column centerlines as their ground bays. This is render-only relief: the
- * backing shell and every gameplay envelope remain untouched.
+ * when present, the first upper sill. It never adds an upper opening: upper
+ * bays come only from compiled STORY_ placements, so a frontage without them
+ * keeps a blank upper wall. This is render-only relief: the backing shell and
+ * every gameplay envelope remain untouched.
  */
 /**
  * Merchant elevation order: base course, bay piers, opening head beams, and
@@ -1746,159 +1858,6 @@ function pushFacadeStoryDatumGrammar(
     detailTintHex: courseTint,
     uvProjection: "world",
   });
-
-  // Active and service facades use the same opening-derived story datum as a
-  // building identity seam. Adjacent buildings keep their own trim material
-  // and deterministic tint rather than visually merging into one long shell.
-
-  if (profile.family !== "quiet_residential" || upperModules.length > 0) return;
-  const blindSillY = courseY + courseHeightM * 0.5 + 0.24;
-  const blindHeadLimitY = facadeTopY - 0.42;
-  const maximumBlindHeightM = blindHeadLimitY - blindSillY;
-  if (maximumBlindHeightM < 0.62) return;
-
-  for (const [index, ground] of groundModules.entries()) {
-    const variation = stableUnitInterval(`${placement.id}:${ground.module.columnId}:blind-screen`);
-    const blindWidthM = Math.min(1.02, Math.max(0.76, ground.module.sizeM.width * (0.8 + variation * 0.1)));
-    const blindHeightM = Math.min(maximumBlindHeightM, 0.9 + variation * 0.22);
-    const blindCenterY = blindSillY + blindHeightM * 0.5;
-    const frameWidthM = 0.085;
-    const reliefDepthM = 0.055;
-    const timberTint = scaleHexColor(0x8c6244, 0.82 + variation * 0.3);
-    const id = `${placement.id}:blind-upper:${ground.module.columnId}`;
-
-    pushInstance(instances, {
-      placementId: `${id}:recess`,
-      moduleId: "quiet_residential_served_blind_screen",
-      semanticClass: "quiet_residential_upper_blind_recess",
-      meshId: "window_recess_timber",
-      position: offsetPosition(
-        { ...center, y: blindCenterY },
-        placement.face,
-        ground.alongM,
-        placement.sizeM.depth * 0.5 + reliefDepthM * 0.25,
-      ),
-      scale: { x: blindWidthM, y: blindHeightM, z: reliefDepthM },
-      backingPlacementId,
-      structurallyBacked: true,
-      yawRad,
-      detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: scaleHexColor(timberTint, 0.66),
-      uvProjection: "world",
-    });
-
-    for (const side of [-1, 1] as const) {
-      pushInstance(instances, {
-        placementId: `${id}:jamb:${side}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_upper_blind_frame",
-        meshId: "door_jamb",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + side * (blindWidthM * 0.5 + frameWidthM * 0.5),
-          placement.sizeM.depth * 0.5 + reliefDepthM,
-        ),
-        scale: { x: frameWidthM, y: blindHeightM + frameWidthM * 2, z: 0.085 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        trimMaterialId: placement.materialSlots.trim,
-        uvProjection: "world",
-      });
-    }
-    for (const [edge, y] of [
-      ["sill", blindSillY - frameWidthM * 0.5],
-      ["head", blindSillY + blindHeightM + frameWidthM * 0.5],
-    ] as const) {
-      pushInstance(instances, {
-        placementId: `${id}:${edge}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_upper_blind_frame",
-        meshId: "door_lintel",
-        position: offsetPosition(
-          { ...center, y },
-          placement.face,
-          ground.alongM,
-          placement.sizeM.depth * 0.5 + reliefDepthM,
-        ),
-        scale: { x: blindWidthM + frameWidthM * 2, y: frameWidthM, z: 0.085 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        trimMaterialId: placement.materialSlots.trim,
-        uvProjection: "world",
-      });
-    }
-
-    const screenBarCount = 2 + Math.floor(variation * 3);
-    for (let barIndex = 0; barIndex < screenBarCount; barIndex += 1) {
-      const normalized = screenBarCount === 1 ? 0 : barIndex / (screenBarCount - 1) - 0.5;
-      pushInstance(instances, {
-        placementId: `${id}:screen-bar:${barIndex + 1}`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_varied_upper_closure",
-        meshId: "window_screen_bar",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + normalized * blindWidthM * 0.62,
-          placement.sizeM.depth * 0.5 + reliefDepthM + 0.012,
-        ),
-        scale: { x: 0.045, y: blindHeightM - 0.12, z: 0.052 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad,
-        detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: timberTint,
-        uvProjection: "world",
-      });
-    }
-    pushInstance(instances, {
-      placementId: `${id}:screen-rail`,
-      moduleId: "quiet_residential_served_blind_screen",
-      semanticClass: "quiet_residential_varied_upper_closure",
-      meshId: "window_screen_bar",
-      position: offsetPosition(
-        { ...center, y: blindCenterY + (variation - 0.5) * blindHeightM * 0.28 },
-        placement.face,
-        ground.alongM,
-        placement.sizeM.depth * 0.5 + reliefDepthM + 0.012,
-      ),
-      scale: { x: blindWidthM - 0.12, y: 0.045, z: 0.052 },
-      backingPlacementId,
-      structurallyBacked: true,
-      yawRad,
-      detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: timberTint,
-      uvProjection: "world",
-    });
-
-    // Break the five-bay copy read with seeded shuttered closures while all
-    // frames remain aligned on their shared story sill/head datums.
-    if ((index + Math.floor(variation * 5)) % 3 === 0) {
-      const shutterSide: -1 | 1 = variation < 0.5 ? -1 : 1;
-      pushInstance(instances, {
-        placementId: `${id}:shutter`,
-        moduleId: "quiet_residential_served_blind_screen",
-        semanticClass: "quiet_residential_varied_upper_closure",
-        meshId: "window_shutter",
-        position: offsetPosition(
-          { ...center, y: blindCenterY },
-          placement.face,
-          ground.alongM + shutterSide * blindWidthM * 0.23,
-          placement.sizeM.depth * 0.5 + reliefDepthM + 0.022,
-        ),
-        scale: { x: blindWidthM * 0.46, y: blindHeightM - 0.1, z: 0.055 },
-        backingPlacementId,
-        structurallyBacked: true,
-        yawRad: yawRad + shutterSide * (0.05 + variation * 0.12),
-        detailMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: scaleHexColor(timberTint, 0.88),
-        uvProjection: "world",
-      });
-    }
-  }
 }
 
 function pushServiceStorageBackGrammar(
@@ -2344,13 +2303,15 @@ function pushCoveredArcadeReturnGrammar(
   };
 
   for (const side of [-1, 1] as const) {
+    const facesMidLink = (placement.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_MASSING" && side === 1)
+      || (placement.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_MASSING" && side === -1);
     pushInstance(instances, {
       placementId: `${placement.id}:return:${side}:contact-course`,
       moduleId: "covered_arcade_return_contact_course",
       semanticClass: "covered_arcade_return_grounding",
       meshId: "plinth_strip",
       position: localToWorld(
-        side * (placement.sizeM.width * 0.5 + 0.06),
+        side * (placement.sizeM.width * 0.5 + (facesMidLink ? -.065 : .06)),
         0,
         bottomY + 0.18,
       ),
@@ -2363,6 +2324,7 @@ function pushCoveredArcadeReturnGrammar(
       uvProjection: "world",
     });
 
+    if (facesMidLink) continue;
     for (let bayIndex = 0; bayIndex < bayCount; bayIndex += 1) {
       const bayCenterM = -usableDepthM * 0.5 + bayPitchM * (bayIndex + 0.5);
       pushReturnFrame(side, bayIndex, bayCenterM, lowerSillM, lowerHeightM, "ground");
@@ -2753,6 +2715,8 @@ function pushMassing(
   ownsSharedShell: boolean,
   sharedBacking: SharedBackingVolume | null,
   backingPlacementId: string,
+  higherRoofOwner: V3ArchitectureMassingPlacement | null = null,
+  faceOwnedByModel = Boolean(placement.facadeModelId),
 ): void {
   requirePositiveDimensions(placement.id, placement.sizeM);
   const center = designToWorldVec3(placement.center);
@@ -2764,6 +2728,8 @@ function pushMassing(
     z: center.z - inward.z * 0.02,
   };
   const identity = resolveBuildingMaterialIdentity(placement, profile.family);
+  // An authored facade or section GLB owns the face: keep the shell, roof edge
+  // and roof, skip the kit's base band, apron, repair patches and corner piers.
   if (experimentalVisualCutoutMassing) {
     pushMassingVisualShell(
       placement,
@@ -2807,7 +2773,7 @@ function pushMassing(
   const baseBandDepthM = profile.family === "service_storage" ? 0.16 : 0.12;
   const hasFacadeCutouts = experimentalVisualCutoutMassing
     && frontageModules.some(createsVisualFacadeCutout);
-  if (!hasFacadeCutouts) {
+  if (!hasFacadeCutouts && !faceOwnedByModel) {
     pushInstance(instances, {
       placementId: `${placement.id}:wall-base`,
       moduleId: `${profile.family}_wall_base`,
@@ -2829,7 +2795,7 @@ function pushMassing(
   const facadeSurfaceOffsetM = placement.sizeM.depth * 0.5 + 0.035;
   const structureStyle = resolveFacadeStructureStyle(profile.family);
   const isSpawnBSouthTower = placement.id.startsWith("ARCH_FRONTAGE_SPAWN_B_SOUTH_");
-  if (profile.family === "active_merchant" && !hasFacadeCutouts) {
+  if (profile.family === "active_merchant" && !hasFacadeCutouts && !faceOwnedByModel) {
     pushInstance(instances, {
       placementId: `${placement.id}:merchant-base-apron`,
       moduleId: "active_merchant_base_apron",
@@ -2846,7 +2812,7 @@ function pushMassing(
       trimMaterialId: placement.materialSlots.trim,
       detailTintHex: identity.trimTintHex,
     });
-  } else if (profile.family === "quiet_residential" && !hasFacadeCutouts) {
+  } else if (profile.family === "quiet_residential" && !hasFacadeCutouts && !faceOwnedByModel) {
     const repairPatches = [
       { alongM: -placement.sizeM.width * 0.04, yM: 0.68, widthM: 1.05, heightM: 0.42, rollRad: 0.025 },
       { alongM: placement.sizeM.width * 0.36, yM: 1.62, widthM: 0.72, heightM: 0.56, rollRad: -0.035 },
@@ -2928,7 +2894,7 @@ function pushMassing(
   // Only true frontage corners receive vertical masonry. Authored openings
   // provide the internal rhythm; repeating full-height bay strips made the
   // bazaar read like an institutional concrete frame.
-  if (structureStyle) {
+  if (structureStyle && !faceOwnedByModel) {
     const structureBottomY = bottomY + baseBandHeightM * 0.52;
     const structureTopY = center.y + placement.sizeM.height * 0.5 - (
       hasFacadeCutouts ? FACADE_SKYLINE_BEVEL_HEIGHT_M : corniceHeightM
@@ -3135,8 +3101,9 @@ function pushMassing(
     });
   }
 
+  if (placement.id === "ARCH_FRONTAGE_SPICE_STREET_WEST_MASSING") return;
   const roofInsetM = placement.roof.setbackM;
-  const roofWidth = placement.sizeM.width - roofInsetM * 2;
+  let roofWidth = placement.sizeM.width - roofInsetM * 2;
   const roofDepth = placement.sizeM.depth - roofInsetM * 2;
   if (roofWidth < 0.5 || roofDepth < 0.5) {
     fail(`massing '${placement.id}' roof setback consumes the roof footprint`);
@@ -3146,6 +3113,12 @@ function pushMassing(
     y: placement.roof.elevationM + ROOF_THICKNESS_M * 0.5,
     z: shellCenter.z,
   };
+  const sharedRoofStart = higherRoofOwner ? higherRoofOwner.center.y - higherRoofOwner.sizeM.width * .5 : null;
+  if (sharedRoofStart !== null) {
+    const south = roofCenter.z - roofWidth * .5;
+    roofWidth = sharedRoofStart - south;
+    roofCenter.z = (south + sharedRoofStart) * .5;
+  }
   const roofLocalToWorld = (
     localX: number,
     localZ: number,
@@ -3167,7 +3140,7 @@ function pushMassing(
     detailTintHex: identity.roofTintHex,
   });
 
-  if (placement.roof.style === "setback_flat" && placement.roof.upperStorySetbackM >= 0.5) {
+  if (!higherRoofOwner && placement.roof.style === "setback_flat" && placement.roof.upperStorySetbackM >= 0.5) {
     const bulkheadWidthM = profile.family === "active_merchant"
       ? Math.min(4.2, roofWidth * 0.42)
       : profile.family === "hero_courtyard"
@@ -3238,6 +3211,11 @@ function pushMassing(
   // zone-level landmark seam therefore owns this silhouette as one system.
   const landmarkOwnsRoofSilhouette = placement.zoneId === RUG_GATE_ZONE_ID;
   const emitsSeededRoofSilhouette = !landmarkOwnsRoofSilhouette
+    && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_MASSING"
+    && placement.id !== "ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_MASSING"
+    && placement.id !== "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_MASSING"
+    && placement.id !== "ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_MASSING"
+    && placement.id !== "ARCH_FRONTAGE_SPICE_STREET_EAST_MASSING"
     && profile.family !== "hero_courtyard";
   if (emitsSeededRoofSilhouette) {
     pushInstance(instances, {
@@ -3589,6 +3567,31 @@ function pushMassing(
       uvProjection: "world",
     });
   }
+  if (higherRoofOwner && sharedRoofStart !== null) {
+    for (const item of instances) {
+      if (!item.placementId?.startsWith(placement.id + ":") || !/wall-top-coping$|skyline-coping$/.test(item.placementId)) continue;
+      const south = item.position.z - item.scale.x * .5;
+      item.scale.x = sharedRoofStart - south;
+      item.position.z = (south + sharedRoofStart) * .5;
+    }
+    const east = placement.center.x + placement.sizeM.depth * .5;
+    const west = higherRoofOwner.center.x + higherRoofOwner.sizeM.depth * .5;
+    const north = Math.min(placement.center.y + placement.sizeM.width * .5, higherRoofOwner.center.y + higherRoofOwner.sizeM.width * .5);
+    const rise = higherRoofOwner.roof.elevationM - placement.roof.elevationM;
+    if (east > west && north > sharedRoofStart && rise > 0) {
+      pushInstance(instances, { placementId: `${placement.id}:shared-roof-riser`, moduleId: "textile_shared_roof_junction",
+        semanticClass: "shared_roof_wall_junction", meshId: "facade_wall_shell",
+        position: { x: (east + west) * .5, y: placement.roof.elevationM + rise * .5, z: (north + sharedRoofStart) * .5 },
+        scale: { x: north - sharedRoofStart, y: rise, z: east - west }, yawRad,
+        wallMaterialId: placement.materialSlots.wall, backingPlacementId, structurallyBacked: true, uvProjection: "world" });
+      pushInstance(instances, { placementId: `${placement.id}:shared-roof-edge-cap`, moduleId: "textile_shared_roof_junction",
+        semanticClass: "shared_roof_edge_junction", meshId: "roof_slab",
+        position: { x: (east + west + .12) * .5, y: higherRoofOwner.roof.elevationM + .13, z: (north + sharedRoofStart) * .5 },
+        scale: { x: north - sharedRoofStart, y: .26, z: east - west + .12 }, yawRad,
+        detailMaterialId: placement.materialSlots.roof, backingPlacementId, structurallyBacked: true });
+    }
+  }
+
 }
 
 function resolveSlotMaterial(
@@ -3637,6 +3640,10 @@ function pushFrame(
     depthM?: number;
     inwardM?: number;
     tintHex?: number;
+    // Mesh for all three members. The frame meshes are dressed trim and take
+    // no wall finish; a plaster arris in the wall's own material needs the
+    // wall finish, which the kit keys off the mesh id.
+    meshId?: WallDetailMeshId;
   } = {},
 ): void {
   const frameWidthM = options.widthM ?? FRAME_WIDTH_M;
@@ -3649,7 +3656,7 @@ function pushFrame(
       placementId: `${placement.id}:jamb:${side}`,
       moduleId: placement.moduleId,
       semanticClass,
-      meshId: "door_jamb",
+      meshId: options.meshId ?? "door_jamb",
       position: offsetPosition(center, placement.face, side * (halfW + frameWidthM * 0.5), inwardM),
       scale: { x: frameWidthM, y: placement.sizeM.height + frameWidthM, z: frameDepthM },
       yawRad,
@@ -3661,7 +3668,7 @@ function pushFrame(
     placementId: `${placement.id}:lintel`,
     moduleId: placement.moduleId,
     semanticClass,
-    meshId: "door_lintel",
+    meshId: options.meshId ?? "door_lintel",
     position: offsetPosition(center, placement.face, 0, inwardM, halfH + frameWidthM * 0.5),
     scale: { x: placement.sizeM.width + frameWidthM * 2, y: frameWidthM, z: frameDepthM },
     yawRad,
@@ -4000,6 +4007,13 @@ function pushDoor(
       : family === "service_storage"
         ? { widthM: 0.19, depthM: 0.17, inwardM: 0.075 }
         : { widthM: 0.145, depthM: 0.14, inwardM: 0.065 };
+  // Every non-merchant door sits in a dressed stone surround, so its frame
+  // keeps the untinted stone trim like the window and niche surrounds beside
+  // it; the dark reveal behind it still carries the mouth. Tinted with the
+  // reveal colour, the stone jambs rendered as dark grey channels and read as
+  // a steel stall frame. Merchant doors take the pale timber tint their
+  // windows use.
+  const stoneSurround = family !== "active_merchant";
   pushFrame(
     placement,
     instances,
@@ -4007,13 +4021,19 @@ function pushDoor(
     yawRad,
     frameMaterialId,
     fortified ? "fortified_gate" : `${family}_door_frame`,
-    { ...frameDimensions, tintHex: doorRevealTintHex },
+    stoneSurround ? frameDimensions : { ...frameDimensions, tintHex: MERCHANT_FRAME_TINT_HEX },
   );
 
   // A lighter inset frame sits proud of the alternating plank leaf. These
   // connected rails read as joinery at gameplay distance, unlike isolated
-  // decorative bars, and reuse the existing timber frame batches.
+  // decorative bars, and reuse the existing timber frame batches. On the stone
+  // service profile the trim slot is stone, so the rails take the door timber
+  // instead of rendering as pale stone bars across the leaf.
   const quietDoor = family === "quiet_residential";
+  const joineryMaterialId = stoneSurround ? "ph_rough_pine_door" : frameMaterialId;
+  const joineryTint = family === "service_storage"
+    ? { detailTintHex: 0x4a3626, uvProjection: "world" as const }
+    : {};
   const joineryInwardM = experimentalVisualCutouts
     ? doorPlaneInwardM + (quietDoor ? 0.075 : 0.085)
     : quietDoor ? 0.125 : 0.145;
@@ -4035,7 +4055,8 @@ function pushDoor(
         z: quietDoor ? 0.05 : 0.065,
       },
       yawRad,
-      trimMaterialId: frameMaterialId,
+      trimMaterialId: joineryMaterialId,
+      ...joineryTint,
     });
   }
   const joineryRails = quietDoor
@@ -4062,7 +4083,8 @@ function pushDoor(
         z: quietDoor ? 0.05 : 0.065,
       },
       yawRad,
-      trimMaterialId: frameMaterialId,
+      trimMaterialId: joineryMaterialId,
+      ...joineryTint,
     });
   }
 
@@ -4358,74 +4380,10 @@ function pushDoor(
       yawRad,
       MERCHANT_TIMBER_MATERIAL_ID,
     );
-  } else if (!fortified && family === "service_storage" && lowerId.includes("storage")) {
-    // Court-edge storage doors become shallow loading/display bays. All mass
-    // stays within the closed opening width and is derived from its threshold,
-    // so the clear court center and gameplay envelope remain untouched.
-    const bottomY = center.y - placement.sizeM.height * 0.5;
-    const storageUnit = stableUnitInterval(`${placement.id}:storage-apron`);
-    const apronWidthM = placement.sizeM.width * (0.7 + storageUnit * 0.12);
-    const apronHeightM = 0.16 + storageUnit * 0.05;
-    const timberTintHex = storageUnit < 0.34
-      ? 0x8f684c
-      : storageUnit < 0.67
-        ? 0x65877c
-        : 0x9b8059;
-    pushInstance(instances, {
-      placementId: `${placement.id}:storage-loading-apron`,
-      moduleId: "service_storage_served_loading_bay",
-      semanticClass: "service_storage_generic_loading_apron",
-      meshId: "shop_counter",
-      position: offsetPosition(
-        { ...center, y: bottomY + apronHeightM * 0.5 },
-        placement.face,
-        0,
-        0.17,
-      ),
-      scale: { x: apronWidthM, y: apronHeightM, z: 0.46 },
-      yawRad,
-      trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-      detailTintHex: timberTintHex,
-      uvProjection: "world",
-    });
-    const storageSizes = storageUnit < 0.5
-      ? [
-        { along: -0.23, x: 0.46, y: 0.42, z: 0.4 },
-        { along: 0.22, x: 0.38, y: 0.58, z: 0.36 },
-      ]
-      : [
-        { along: -0.2, x: 0.38, y: 0.54, z: 0.36 },
-        { along: 0.25, x: 0.5, y: 0.38, z: 0.42 },
-      ];
-    for (const [index, storage] of storageSizes.entries()) {
-      pushInstance(instances, {
-        placementId: `${placement.id}:storage-load:${index + 1}`,
-        moduleId: "service_storage_served_loading_bay",
-        semanticClass: "service_storage_generic_loading_stock",
-        meshId: index === 0 ? "merchant_goods_basket" : "shop_counter",
-        position: offsetPosition(
-          { ...center, y: bottomY + apronHeightM + 0.025 + storage.y * 0.5 },
-          placement.face,
-          storage.along * apronWidthM,
-          0.13,
-        ),
-        scale: { x: storage.x, y: storage.y, z: storage.z },
-        yawRad: yawRad + (index === 0 ? -0.045 : 0.035) * (0.8 + storageUnit * 0.4),
-        trimMaterialId: MERCHANT_TIMBER_MATERIAL_ID,
-        detailTintHex: index === 0
-          ? scaleHexColor(timberTintHex, 1.04)
-          : scaleHexColor(timberTintHex, 0.84),
-        uvProjection: "world",
-      });
-    }
-    pushSupportedAwning(
-      placement,
-      instances,
-      center,
-      yawRad,
-      MERCHANT_TIMBER_MATERIAL_ID,
-    );
   }
+  // Storage doors carry no loading bay, stock, or awning: a heavy door in a
+  // dressed stone surround is the whole assembly. The former apron, goods and
+  // corrugated awning read as a shanty stall and cut the string course.
   if (fortified) {
     pushInstance(instances, {
       placementId: `${placement.id}:center-strap`,
@@ -4452,6 +4410,7 @@ function pushWindow(
   profile: V3FacadeProfile,
   experimentalVisualCutouts: boolean,
 ): void {
+  if (CENTRAL_SCREEN_BAYS.has(placement.id) || AUTHORED_SHUTTER_BAYS.has(placement.id)) return;
   const frameMaterialId = profile.family === "active_merchant"
     ? MERCHANT_TIMBER_MATERIAL_ID
     : profile.materialSlots.trim;
@@ -4524,7 +4483,9 @@ function pushWindow(
   // Openings terminate in a shaded, physically lit recess. The former
   // merchant-only timber slabs carried pale/cyan authored tints and read as
   // self-lit cards behind the grille in daylight.
-  const recessBackInwardM = experimentalVisualCutouts ? -recessDepthM + 0.03 : recessDepthM * 0.48;
+  // Closed boundary relief ends behind its frame. Placing the full recess
+  // volume forward hid the jambs, glazing and screen bars.
+  const recessBackInwardM = experimentalVisualCutouts ? -recessDepthM + 0.03 : -recessDepthM * 0.5 + 0.03;
   pushInstance(instances, {
     placementId: placement.id,
     moduleId: placement.moduleId,
@@ -4608,7 +4569,6 @@ function pushWindow(
   // reflection; with that film removed the frames were the brightest, most
   // saturated element on the shaded west elevation and read as copper pipe
   // against the shutters they surround.
-  const MERCHANT_FRAME_TINT_HEX = 0xb2916a;
   const usesMerchantFrameTint = profile.family === "active_merchant";
   pushFrame(
     placement,
@@ -5027,9 +4987,9 @@ function pushSimpleModule(
           center,
           placement.face,
           0,
-          experimentalVisualCutouts ? -revealDepthM * 0.48 : 0.09,
+          experimentalVisualCutouts ? -revealDepthM * 0.48 : -revealDepthM * 0.5 + 0.03,
         ),
-        scale: { x: placement.sizeM.width * 0.92, y: placement.sizeM.height * 0.86, z: revealDepthM },
+        scale: { x: placement.sizeM.width * 0.96, y: placement.sizeM.height * 0.94, z: revealDepthM },
         yawRad,
         detailMaterialId: "tm_service_interior",
       });
@@ -5043,6 +5003,41 @@ function pushSimpleModule(
         materialId,
         experimentalVisualCutouts ? -revealDepthM + 0.055 : undefined,
       );
+      // A vent is a framed opening, not a dark square floating in the wall: a
+      // dressed stone surround of the same 0.19 m section as the storage door
+      // frame, sized to the visible recess so its head lands on the door's
+      // frame head under the string course, on a projecting sill that gives
+      // it a base line.
+      const ventSurroundWidthM = 0.19;
+      const ventOpening = {
+        ...placement,
+        sizeM: { ...placement.sizeM, width: placement.sizeM.width * 0.96, height: placement.sizeM.height * 0.94 },
+      };
+      pushFrame(
+        ventOpening,
+        instances,
+        center,
+        yawRad,
+        trimMaterialId,
+        "service_vent_surround",
+        { widthM: ventSurroundWidthM, depthM: 0.14, inwardM: 0.02 },
+      );
+      pushInstance(instances, {
+        placementId: `${placement.id}:vent-sill`,
+        moduleId: placement.moduleId,
+        semanticClass: "service_vent_sill",
+        meshId: "door_lintel",
+        position: offsetPosition(
+          center,
+          placement.face,
+          0,
+          0.03,
+          -ventOpening.sizeM.height * 0.5 - ventSurroundWidthM - 0.04,
+        ),
+        scale: { x: ventOpening.sizeM.width + ventSurroundWidthM * 2 + 0.12, y: 0.08, z: 0.2 },
+        yawRad,
+        trimMaterialId,
+      });
       return;
     }
     case "column":
@@ -5161,11 +5156,35 @@ function pushSimpleModule(
       }
       return;
     case "blind_niche": {
+      if (placement.moduleId === "inspection_panel") {
+        pushInstance(instances, { placementId: placement.id, moduleId: placement.moduleId,
+          semanticClass: "sealed_inspection_panel", meshId: "recessed_panel_back",
+          position: offsetPosition(center, placement.face, 0, .005),
+          scale: { x: placement.sizeM.width, y: placement.sizeM.height, z: .035 }, yawRad,
+          detailMaterialId: wallMaterialId, detailTintHex: 0xada18d, uvProjection: "world" });
+        for (const side of [-1, 1] as const) {
+          pushInstance(instances, { placementId: `${placement.id}:edge-v:${side}`, moduleId: placement.moduleId,
+            semanticClass: "sealed_inspection_panel_edge", meshId: "door_jamb",
+            position: offsetPosition(center, placement.face, side * (placement.sizeM.width * .5 - .01), .014),
+            scale: { x: .02, y: placement.sizeM.height, z: .02 }, yawRad, detailMaterialId: wallMaterialId,
+            detailTintHex: 0x807563, uvProjection: "world" });
+          pushInstance(instances, { placementId: `${placement.id}:edge-h:${side}`, moduleId: placement.moduleId,
+            semanticClass: "sealed_inspection_panel_edge", meshId: "door_lintel",
+            position: offsetPosition(center, placement.face, 0, .014, side * (placement.sizeM.height * .5 - .01)),
+            scale: { x: placement.sizeM.width, y: .02, z: .02 }, yawRad, detailMaterialId: wallMaterialId,
+            detailTintHex: 0x807563, uvProjection: "world" });
+        }
+        return;
+      }
       const revealDepthM = experimentalVisualCutouts
         ? resolveExperimentalRevealDepthM(placement, "quiet_residential")
         : 0;
       const bottomY = center.y - placement.sizeM.height * 0.5;
       const readsAsDoor = bottomY <= 0.28 && placement.sizeM.height >= 1.5;
+      // A blind niche is a recess in the same plaster as the wall, not a board
+      // in a frame. The template nicheRecess material is a dark ochre that read
+      // as timber on every wall using the module. The back and reveals carry the
+      // wall material with a shade tint, since GI cannot supply the occlusion.
       pushInstance(instances, {
         placementId: placement.id,
         moduleId: placement.moduleId,
@@ -5185,7 +5204,11 @@ function pushSimpleModule(
             detailTintHex: 0x72523d,
             uvProjection: "world" as const,
           }
-          : {}),
+          : {
+            detailMaterialId: wallMaterialId,
+            detailTintHex: NICHE_BACK_TINT_HEX,
+            uvProjection: "world" as const,
+          }),
       });
       if (experimentalVisualCutouts) {
         for (const side of [-1, 1] as const) {
@@ -5203,6 +5226,7 @@ function pushSimpleModule(
             scale: { x: 0.07, y: placement.sizeM.height, z: revealDepthM },
             yawRad,
             wallMaterialId,
+            ...(readsAsDoor ? {} : { detailTintHex: NICHE_REVEAL_TINT_HEX, uvProjection: "world" as const }),
           });
         }
         pushInstance(instances, {
@@ -5220,18 +5244,35 @@ function pushSimpleModule(
           scale: { x: placement.sizeM.width, y: 0.07, z: revealDepthM },
           yawRad,
           wallMaterialId,
+          ...(readsAsDoor ? {} : { detailTintHex: NICHE_REVEAL_TINT_HEX, uvProjection: "world" as const }),
         });
       }
+      // The closed-door variant keeps its dressed stone surround. The plaster
+      // niche gets an 8 cm plaster arris, 5 cm proud, so the shadow line comes
+      // from the recess itself rather than from a stone card. It runs on the
+      // recessed-panel mesh so it takes the wall finish like the shell around
+      // it; on the frame meshes it rendered raw albedo and read as a bright
+      // painted strip against the finished wall.
+      const arris = {
+        widthM: 0.08,
+        depthM: 0.08,
+        tintHex: NICHE_ARRIS_TINT_HEX,
+        meshId: "recessed_panel_back" as const,
+      };
       pushFrame(
         placement,
         instances,
         center,
         yawRad,
-        trimMaterialId,
+        readsAsDoor ? trimMaterialId : wallMaterialId,
         readsAsDoor ? "closed_door_frame" : "blind_niche",
         experimentalVisualCutouts
-          ? { widthM: 0.14, depthM: 0.15, inwardM: 0.02 }
-          : {},
+          ? readsAsDoor
+            ? { widthM: 0.14, depthM: 0.15, inwardM: 0.02 }
+            : { ...arris, inwardM: 0.01 }
+          : readsAsDoor
+            ? {}
+            : arris,
       );
       if (readsAsDoor) {
         const leafInwardM = experimentalVisualCutouts ? -revealDepthM + 0.065 : 0.025;
@@ -5445,7 +5486,10 @@ function pushSimpleModule(
           uvProjection: "world",
         });
 
-        if (!isHeroArch) {
+        const hasBlenderCounter = AUTHORED_ARCADE_DISPLAY_BAYS.has(placement.id);
+        // B18 retains its three masonry assemblies and the approved center booth.
+        // Its measured packing and dye cabinets replace only their own furniture.
+        if (!isHeroArch && !hasBlenderCounter && placement.id !== "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02") {
           const marketVariant = stableUnitInterval(`${placement.id}:arcade-kiosk`);
           const counterHeightM = 0.52 + marketVariant * 0.14;
           const counterWidthM = placement.sizeM.width * (0.62 + marketVariant * 0.14);
@@ -5664,6 +5708,9 @@ function pushSimpleModule(
             });
           }
         }
+        if (hasBlenderCounter) {
+          pushSupportedAwning(placement, instances, center, yawRad, MERCHANT_TIMBER_MATERIAL_ID);
+        }
         if (isHeroArch) {
           pushInstance(instances, {
             placementId: `${placement.id}:hero-keystone-accent`,
@@ -5701,7 +5748,7 @@ function pushFacadeModule(
   // Connector collision is owned by the compiled traversal/collision layer.
   // Its façade aperture is already removed by pushMassingVisualShell; emitting
   // any visual module here would falsely advertise a closed route.
-  if (placement.collisionOpening) return;
+  if (placement.collisionOpening || isDormantFacadeModule(placement)) return;
   requirePositiveDimensions(placement.id, placement.sizeM);
   const { profile, materialId } = resolveSlotMaterial(placement, profiles);
   if (!profile.moduleIds.includes(placement.moduleId)) {
@@ -6370,11 +6417,13 @@ function pushFacadeModule(
         doorModelPlacements,
         center,
         yawRad,
+        // The door surround is the same material as the window surrounds of
+        // its family: merchant joinery timber, otherwise the dressed stone
+        // trim. A residential door in the timber slot rendered a dark timber
+        // channel between pale stone window frames.
         profile.family === "active_merchant"
           ? MERCHANT_TIMBER_MATERIAL_ID
-          : profile.family === "quiet_residential"
-            ? profile.materialSlots.timber
-            : profile.materialSlots.trim,
+          : profile.materialSlots.trim,
         profile.family,
         fortifiedDoorModelAvailable,
         experimentalVisualCutouts,
@@ -6655,7 +6704,8 @@ function pushRugGateCrownBackdrop(
     },
     scale: { x: nestedArchWidthM * 0.78, y: RUG_GATE_BACKDROP_ARCH_HEIGHT_M * 0.7, z: 0.19 },
     yawRad: 0,
-    detailMaterialId: "tm_shop_interior_shadow",
+    detailMaterialId: "ph_rough_pine_door",
+    uvProjection: "world",
   });
   pushInstance(instances, {
     placementId: "ARCH_RUG_GATE_CROWN_BACKDROP:arcade-frame",
@@ -7161,6 +7211,7 @@ function pushCoreBoundaryFacadeGrammar(
   facadeProfiles: ReadonlyMap<string, V3FacadeProfile>,
   massingProfiles: ReadonlyMap<string, V3MassingProfile>,
   instances: WallDetailInstance[],
+  skipFaces: ReadonlySet<string> = new Set(),
 ): void {
   const targets: readonly {
     id: string;
@@ -7198,6 +7249,8 @@ function pushCoreBoundaryFacadeGrammar(
     const zone = zones.find((candidate) => candidate.id === target.zoneId);
     const profile = zone?.facadeProfileId ? facadeProfiles.get(zone.facadeProfileId) : null;
     if (!zone || !profile) continue;
+    // An authored section GLB owns this face; its code-owned grammar would double up.
+    if (skipFaces.has(`${target.zoneId}:${target.edge}`)) continue;
     const storyHeightM = massingProfiles.get(profile.massingProfileId)?.heightM ?? 7;
     const face: FacadeFace = target.edge;
     const yawRad = target.edge === "north"
@@ -7632,6 +7685,38 @@ function pushCoreBoundaryFacadeGrammar(
         }
       };
 
+      // The two Dogleg owners have finite household/workshop compositions.
+      // Reuse complete module builders on the existing sealed boundary plane.
+      if (target.zoneId === "DYERS_DOGLEG") {
+        const place = (moduleId: string, axis: number, sill: number, label: string): void => {
+          const source = placements.find((candidate): candidate is V3ArchitectureModulePlacement =>
+            candidate.kind === "facade_module" && candidate.moduleId === moduleId);
+          if (!source) fail(`Dogleg requires installed module '${moduleId}'`);
+          const localAlong = zoneStart + zone.rect.h * axis - centerAlong;
+          const at = offsetPosition({ ...center, y: sill + source.sizeM.height * .5 }, face, localAlong, .04);
+          const module = { ...source, id: `${prefix}:${label}`, zoneId: zone.id, face,
+            center: { x: at.x, y: at.z, z: at.y }, collisionOpening: false };
+          if (source.moduleKind === "door") {
+            pushDoor(module, instances, [], at, yawRad, profile.materialSlots.trim, "quiet_residential", false, false);
+          } else if (source.moduleKind === "window") {
+            pushWindow(module, instances, at, yawRad, profile, false);
+          } else {
+            pushSimpleModule(module, instances, at, yawRad, profile.materialSlots.trim,
+              wallMaterialId, profile.materialSlots.trim, false);
+          }
+        };
+        if (target.id === "DYERS_DOGLEG_EAST") {
+          place("door_residential_timber", .5, 0, "house-door");
+          for (const axis of [.3, .7]) place("window_dark_recess", axis, 1, `house-ground-${axis}`);
+          for (const axis of [.3, .5, .7]) place("window_dark_recess", axis, 4.15, `house-upper-${axis}`);
+        } else {
+          const last = bayCount - 1;
+          pushBoundaryBay(last, -usableLengthM * .5 + bayPitchM * (last + .5), lowerSillM, lowerHeightM, "ground");
+          for (const axis of [.3, .5]) place("vent_service", axis, 4.15, `works-vent-${axis}`);
+        }
+        continue;
+      }
+
       for (let bayIndex = 0; bayIndex < bayCount; bayIndex += 1) {
         const alongM = -usableLengthM * 0.5 + bayPitchM * (bayIndex + 0.5);
         pushBoundaryBay(bayIndex, alongM, lowerSillM, lowerHeightM, "ground");
@@ -7674,9 +7759,16 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   }
   const instances: WallDetailInstance[] = [];
   const doorModelPlacements: DoorModelPlacement[] = [];
+  const facadeModelPlacements: FacadeModelPlacement[] = [];
+  // A frontage whose face is owned by an authored GLB contributes no kit
+  // modules: no openings, no visual cutouts, no shared-shell apertures.
+  const sectionOwnedFaces = options.sectionOwnedFaces ?? new Set<string>();
+  const ownedBySection = (placement: { zoneId: string; face: FacadeFace }) => sectionOwnedFaces.has(`${placement.zoneId}:${placement.face}`);
+  const facadeOwnedFrontageIds = new Set(options.placements.flatMap((placement) =>
+    placement.kind === "massing" && (placement.facadeModelId || ownedBySection(placement)) ? [placement.frontageId] : []));
   const modulesByFrontage = new Map<string, V3ArchitectureModulePlacement[]>();
   for (const placement of options.placements) {
-    if (placement.kind !== "facade_module") continue;
+    if (placement.kind !== "facade_module" || facadeOwnedFrontageIds.has(placement.frontageId)) continue;
     const frontageModules = modulesByFrontage.get(placement.frontageId);
     if (frontageModules) {
       frontageModules.push(placement);
@@ -7703,6 +7795,7 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
     facadeProfiles,
     massingProfiles,
     instances,
+    sectionOwnedFaces,
   );
   for (const placement of [...options.placements].sort((left, right) => left.id.localeCompare(right.id))) {
     if (ids.has(placement.id)) fail(`duplicate placement id '${placement.id}'`);
@@ -7725,8 +7818,30 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         !experimentalVisualCutoutMassing || !hasVisualCutouts || shellOwnership.owners.has(placement.id),
         shellOwnership.sharedBackingByOwner.get(placement.id) ?? null,
         shellOwnership.backingOwnerByMassing.get(placement.id) ?? placement.id,
+        placement.id === "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_MASSING"
+          ? options.placements.find((p): p is V3ArchitectureMassingPlacement => p.kind === "massing" && p.id === "ARCH_FRONTAGE_TEA_TERRACE_EAST_MASSING") ?? null
+          : null,
+        Boolean(placement.facadeModelId) || ownedBySection(placement),
       );
+      if (placement.facadeModelId) {
+        const center = designToWorldVec3(placement.center);
+        const inward = faceInward(placement.face);
+        facadeModelPlacements.push({
+          placementId: placement.id,
+          frontageId: placement.frontageId,
+          modelId: placement.facadeModelId,
+          base: {
+            x: center.x + inward.x * placement.sizeM.depth * 0.5,
+            y: center.y - placement.sizeM.height * 0.5,
+            z: center.z + inward.z * placement.sizeM.depth * 0.5,
+          },
+          inward,
+          widthM: placement.sizeM.width,
+          heightM: placement.sizeM.height,
+        });
+      }
     } else {
+      if (facadeOwnedFrontageIds.has(placement.frontageId)) continue;
       pushFacadeModule(
         placement,
         facadeProfiles,
@@ -7749,6 +7864,7 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   return {
     instances,
     doorModelPlacements,
+    facadeModelPlacements,
     segmentHeights,
     stats: {
       enabled: true,

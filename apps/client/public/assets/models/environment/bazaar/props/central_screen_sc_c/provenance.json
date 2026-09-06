@@ -1,0 +1,87 @@
+{
+  "asset": "central-screen-sc-c",
+  "variant": "SC-C",
+  "license": "Project-Original",
+  "unit": "metre",
+  "sourceFrame": "+X across, +Z up, front -Y; rear mounting plane Y=0; base Z=0",
+  "sourceBounds": [
+    [
+      -0.5,
+      0.5
+    ],
+    [
+      -0.24000000953674316,
+      -1.862645149230957e-09
+    ],
+    [
+      0.0,
+      1.4000000953674316
+    ]
+  ],
+  "gltfFrame": "+X across, +Y up, front +Z",
+  "gltfWorldBounds": [
+    [
+      -0.5,
+      0.5
+    ],
+    [
+      0,
+      1.4000000953674316
+    ],
+    [
+      1.862645149230957e-09,
+      0.24000000953674316
+    ]
+  ],
+  "loaderBoundsCenter": [
+    0,
+    0.7,
+    0.12
+  ],
+  "loaderRecenteredRearPlane": "local Z=-0.12",
+  "triangles": 2140,
+  "materials": 2,
+  "textureResolution": [
+    1024,
+    1024
+  ],
+  "closedOpaqueBacking": true,
+  "checks": [
+    "complete source envelope",
+    "actual GLB mounting bounds and untransformed axes",
+    "finite UVs",
+    "nondegenerate faces and unit normals",
+    "actual GLB triangle count",
+    "opaque materials",
+    "one exported mesh"
+  ],
+  "glbMd5": "e60860c188d6acdbe365a51a7310f792",
+  "dependencies": [
+    {
+      "file": "assets/source/b18-counters/exports/b18-counter-albedo.png",
+      "license": "Project-Original",
+      "md5": "126085959bf52533268338ff228bfd77",
+      "source": "repo://assets/source/b18-counters/build.py"
+    },
+    {
+      "file": "assets/source/b18-counters/exports/b18-counter-roughness.png",
+      "license": "Project-Original",
+      "md5": "ca89ad65a1cd9de5b95e8979143e41b6",
+      "source": "repo://assets/source/b18-counters/build.py"
+    },
+    {
+      "file": "assets/source/b18-counters/exports/b18-counter-normal.png",
+      "license": "Project-Original",
+      "md5": "16d50948f5bb729c7ae85811ff387224",
+      "source": "repo://assets/source/b18-counters/build.py"
+    }
+  ],
+  "upstreamProvenance": [
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/wooden_table_02",
+      "license": "CC0-1.0",
+      "md5": "07075a87918208594260c86c727e4396"
+    }
+  ]
+}

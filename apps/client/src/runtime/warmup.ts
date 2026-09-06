@@ -2,7 +2,7 @@ import { FloorMaterialLibrary } from "./render/materials/FloorMaterialLibrary";
 import { preloadEnemyVisualAssets } from "./enemies/EnemyVisual";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
-import { Ak47ViewModel } from "./weapons/Ak47ViewModel";
+import { createAk47ViewModel, type WeaponViewModel } from "./weapons/Ak47AnimatedViewModel";
 import { resolveQaAssetProfile } from "./qa/assetReadiness";
 
 const FLOOR_MANIFEST_URL =
@@ -20,7 +20,7 @@ const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
 export type RuntimeWarmupAssets = {
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
-  viewModel: Ak47ViewModel | null;
+  viewModel: WeaponViewModel | null;
   enemyVisualsReady: boolean;
   timedOut: boolean;
 };
@@ -45,7 +45,7 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   }
   let floorMaterials: FloorMaterialLibrary | null = null;
   let wallMaterials: WallMaterialLibrary | null = null;
-  let viewModel: Ak47ViewModel | null = null;
+  let viewModel: WeaponViewModel | null = null;
   let enemyVisualsReady = false;
   const warmupTasks: Promise<void>[] = [];
 
@@ -80,10 +80,11 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
 
   if (parsed.vm) {
     warmupTasks.push((async () => {
-      let warmedViewModel: Ak47ViewModel | null = null;
+      let warmedViewModel: WeaponViewModel | null = null;
       try {
-        warmedViewModel = new Ak47ViewModel({
+        warmedViewModel = createAk47ViewModel({
           vmDebug: parsed.vmDebug && parsed.debug,
+          search,
         });
         await warmedViewModel.load();
         viewModel = warmedViewModel;

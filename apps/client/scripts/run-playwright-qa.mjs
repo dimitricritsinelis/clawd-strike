@@ -44,6 +44,9 @@ export async function runPlaywrightQa(args, options = {}) {
     child = spawnImpl("pnpm", ["exec", "playwright", ...args], {
       cwd: process.cwd(),
       stdio: "inherit",
+      // Windows resolves pnpm through a .cmd shim that plain spawn cannot
+      // launch; shell mode delegates that resolution to cmd.exe.
+      shell: process.platform === "win32",
       env: {
         ...parentEnv,
         PW_BASE_URL: server.baseUrl,

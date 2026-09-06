@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="1188" viewBox="0 0 1680 1188">
+<title>Spatial sequence / one elevation trial / one conditional return</title>
+<rect x="0" y="0" width="1680" height="1188" fill="#faf8f1" stroke="none" stroke-width="1" stroke-dasharray=""/>
+<text x="55" y="46" font-family="Arial" font-size="19" fill="#397c78" font-weight="bold">CLAWDSTRIKE / BAZAAR</text>
+<text x="1310" y="46" font-family="Arial" font-size="18" fill="#263f44" font-weight="normal">REVISION 3 / PROPOSED</text>
+<line x1="55" y1="66" x2="1625" y2="66" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<text x="55" y="110" font-family="Arial" font-size="30" fill="#263f44" font-weight="bold">Spatial sequence / one elevation trial / one conditional return</text>
+<text x="55" y="146" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Read with S1/S2/E1/G1 in buildings.md. Footprints are observed; proposals are not live geometry.</text>
+<text x="55" y="194" font-family="Arial" font-size="19" fill="#397c78" font-weight="bold">01 / NORTH-UP ROUTE COMPOSITION</text>
+<rect x="207.8" y="873.2" width="184.8" height="117.60000000000001" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="211.8" y="936.0" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P01</text>
+<rect x="241.4" y="722.0" width="100.80000000000001" height="151.20000000000002" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="245.4" y="801.6" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P02</text>
+<rect x="233.0" y="587.6" width="134.4" height="134.4" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="237.0" y="658.8" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P03</text>
+<rect x="266.6" y="453.20000000000005" width="92.4" height="134.4" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="270.6" y="524.4000000000001" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P04</text>
+<rect x="241.4" y="335.6" width="109.2" height="117.60000000000001" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="245.4" y="398.4" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P05</text>
+<rect x="207.8" y="218.0" width="184.8" height="117.60000000000001" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="211.8" y="280.8" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P06</text>
+<rect x="90.2" y="738.8000000000001" width="58.800000000000004" height="168.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="94.2" y="826.8000000000001" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P07</text>
+<rect x="90.2" y="587.6" width="100.80000000000001" height="151.20000000000002" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="94.2" y="667.2" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P08</text>
+<rect x="90.2" y="318.8" width="58.800000000000004" height="268.8" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="94.2" y="457.20000000000005" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P09</text>
+<rect x="157.4" y="520.4000000000001" width="67.2" height="67.2" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="161.4" y="558.0" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P10</text>
+<rect x="157.4" y="436.4" width="67.2" height="84.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="161.4" y="482.40000000000003" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P11</text>
+<rect x="157.4" y="386.0" width="67.2" height="50.400000000000006" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="161.4" y="415.20000000000005" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P12</text>
+<rect x="157.4" y="348.20000000000005" width="67.2" height="37.800000000000004" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="161.4" y="371.1" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P13</text>
+<rect x="451.40000000000003" y="722.0" width="58.800000000000004" height="184.8" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="455.40000000000003" y="818.4" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P14</text>
+<rect x="409.40000000000003" y="587.6" width="100.80000000000001" height="134.4" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="413.40000000000003" y="658.8" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P15</text>
+<rect x="451.40000000000003" y="470.0" width="58.800000000000004" height="117.60000000000001" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="455.40000000000003" y="532.8" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P16</text>
+<rect x="409.40000000000003" y="318.8" width="100.80000000000001" height="151.20000000000002" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="413.40000000000003" y="398.4" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P17</text>
+<rect x="191.0" y="646.4000000000001" width="42.0" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="195.0" y="671.4000000000001" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P18</text>
+<rect x="367.40000000000003" y="621.2" width="42.0" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="371.40000000000003" y="646.2" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P19</text>
+<rect x="224.6" y="348.20000000000005" width="16.8" height="37.800000000000004" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="228.6" y="371.1" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P20</text>
+<rect x="350.6" y="386.0" width="58.800000000000004" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="354.6" y="411.0" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P21</text>
+<rect x="149.0" y="881.6" width="58.800000000000004" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="153.0" y="906.6" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P22</text>
+<rect x="392.6" y="881.6" width="58.800000000000004" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="396.6" y="906.6" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P23</text>
+<rect x="149.0" y="310.4" width="58.800000000000004" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="153.0" y="335.4" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P24</text>
+<rect x="392.6" y="310.4" width="58.800000000000004" height="42.0" fill="#dce7d9" stroke="#879b8b" stroke-width="1" stroke-dasharray=""/>
+<text x="396.6" y="335.4" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">P25</text>
+<rect x="201.08" y="734.0960000000001" width="40.32" height="127.008" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="176.08" y="728.0960000000001" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold">S1</text>
+<rect x="342.2" y="734.0960000000001" width="35.28" height="127.008" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="317.2" y="728.0960000000001" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold"></text>
+<rect x="226.28" y="463.952" width="40.32" height="112.896" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="201.28" y="457.952" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold">S2</text>
+<rect x="510.20000000000005" y="598.3520000000001" width="35.28" height="112.896" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="485.20000000000005" y="592.3520000000001" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold">B18</text>
+<rect x="149.0" y="478.40000000000003" width="8.4" height="25.200000000000003" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="124.0" y="472.40000000000003" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold">E1</text>
+<rect x="266.6" y="579.2" width="33.6" height="8.4" fill="#ddb797" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<text x="241.60000000000002" y="573.2" font-family="Arial" font-size="16" fill="#b15d37" font-weight="bold">G1</text>
+<text x="70" y="1033" font-family="Arial" font-size="22" fill="#397c78" font-weight="bold">22 → 12 → 16 → 11 → 13 → 22 m</text>
+<text x="70" y="1065" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Main sequence: court / street / court / cloth</text><text x="70" y="1088" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">arcade / gate / receiving court. Footprint</text><text x="70" y="1111" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">widths, not clearances.</text>
+<text x="605" y="194" font-family="Arial" font-size="19" fill="#b15d37" font-weight="bold">02 / E1 TEA PLAN: VIEW WITHOUT A NEW FLOOR</text>
+<rect x="605" y="235.0" width="119" height="484.5" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="609" y="477.25" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">Ground bypass</text>
+<rect x="741" y="583.5" width="136" height="136" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="745" y="651.5" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">Ramp 0 to1.4</text>
+<rect x="741" y="413.5" width="136" height="170" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="745" y="498.5" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">Tea +1.4</text>
+<rect x="741" y="311.5" width="136" height="102" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="745" y="362.5" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">Stairs to0</text>
+<rect x="741" y="235.0" width="136" height="76.5" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="745" y="273.25" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">Landing0</text>
+<rect x="724" y="244.04400000000018" width="16.32" height="474.912" fill="#e4dac6" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="728" y="481.5" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal"></text>
+<rect x="877" y="427.09999999999997" width="81.6" height="142.8" fill="#e4dac6" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<text x="881" y="498.5" font-family="Arial" font-size="13" fill="#263f44" font-weight="normal">B12</text>
+<rect x="724" y="498.5" width="17" height="51" fill="#edb28b" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<line x1="656" y1="524.0" x2="752.9" y2="524.0" stroke="#b15d37" stroke-width="3" stroke-dasharray="5 3"/>
+<text x="980" y="430" font-family="Arial" font-size="18" fill="#b15d37" font-weight="bold">Slot y58..61</text>
+<text x="980" y="458" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">3.00 m long</text>
+<text x="980" y="486" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Cap +2.50</text>
+<text x="980" y="514" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">1.10 above Tea</text>
+<line x1="751.2" y1="474.70000000000005" x2="866.8" y2="474.70000000000005" stroke="#397c78" stroke-width="4" stroke-dasharray=""/>
+<text x="980" y="554" font-family="Arial" font-size="15" fill="#397c78" font-weight="normal">Shade y62.4 retained</text>
+<text x="980" y="592" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Both end approaches remain.</text><text x="980" y="615" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">No new stairs, bridge, one-</text><text x="980" y="638" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">way drop or player-only</text><text x="980" y="661" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">guard.</text>
+<text x="1200" y="194" font-family="Arial" font-size="19" fill="#b15d37" font-weight="bold">03 / G1 CONDITIONAL</text>
+<rect x="1226" y="252" width="286" height="182" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="1200" y="434" width="338" height="104" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="1226" y="408" width="104" height="26" fill="#dfb18b" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<line x1="1304" y1="538" x2="1304" y2="434" stroke="#b15d37" stroke-width="3" stroke-dasharray=""/>
+<line x1="1369.0" y1="538" x2="1369.0" y2="252" stroke="#397c78" stroke-width="2" stroke-dasharray="5 3"/>
+<text x="1210" y="562" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">x24..28 / y48..49</text>
+<text x="1210" y="590" font-family="Arial" font-size="17" fill="#263f44" font-weight="normal">Height2.40 / opening7.00</text>
+<text x="1200" y="628" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Partial west-ray break. East rays</text><text x="1200" y="651" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">remain open. Test only if baseline</text><text x="1200" y="674" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">shows long retreat firing or poor</text><text x="1200" y="697" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">reload escape.</text>
+<text x="605" y="802" font-family="Arial" font-size="19" fill="#b15d37" font-weight="bold">04 / E1 CROSS SECTION AT y59.5 / ABSOLUTE z</text>
+<rect x="615" y="1070" width="350" height="9" fill="#dce7d9" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="1015" y="1000.0" width="400" height="70.0" fill="#e4dac6" stroke="#263f44" stroke-width="1" stroke-dasharray=""/>
+<rect x="965" y="945.0" width="50" height="125.0" fill="#dca777" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<rect x="965" y="845.0" width="48.0" height="100" fill="none" stroke="#9aa69b" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="977" y="833.0" font-family="Arial" font-size="14" fill="#9aa69b" font-weight="normal">Old screen continues to7.00 + roof</text>
+<line x1="765" y1="985.0" x2="1050.0" y2="915.0" stroke="#b15d37" stroke-width="2" stroke-dasharray=""/>
+<line x1="765" y1="985.0" x2="1050.0" y2="935.0" stroke="#397c78" stroke-width="2" stroke-dasharray="5 4"/>
+<text x="750" y="975.0" font-family="Arial" font-size="15" fill="#263f44" font-weight="normal">Bot1.70</text>
+<text x="1035.0" y="905.0" font-family="Arial" font-size="15" fill="#263f44" font-weight="normal">Standing3.10</text>
+<text x="1150" y="990.0" font-family="Arial" font-size="15" fill="#263f44" font-weight="normal">Tea floor1.40</text>
+<text x="1300" y="867" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">Standing ray clears the cap;</text><text x="1300" y="890" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">crouched ray intersects it in</text><text x="1300" y="913" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">this idealized section. Actual</text><text x="1300" y="936" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">weapon rays and nearby objects</text><text x="1300" y="959" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">need M05/M06. Check jumping and</text><text x="1300" y="982" font-family="Arial" font-size="16" fill="#263f44" font-weight="normal">both approaches.</text>
+<line x1="55" y1="1144" x2="1625" y2="1144" stroke="#263f44" stroke-width="2" stroke-dasharray=""/>
+<text x="55" y="1172" font-family="Arial" font-size="15" fill="#263f44" font-weight="normal">METRES / green: retained route / stone: retained solid / rust: proposal / dashed: baseline or implied volume</text>
+</svg>

@@ -14,12 +14,16 @@ import {
   SpriteMaterial,
   SRGBColorSpace,
   Vector3,
+  type AnimationClip,
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { disposeObjectRoot } from "../utils/disposeObjectRoot";
+import type { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
+import { RaiderAnimation } from "./RaiderAnimation";
 
 const MODEL_URL = "/assets/models/characters/enemy_raider/model.glb";
+const CANDIDATE_MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
 const MODEL_TARGET_HEIGHT_M = 1.8;
 // Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
 // this leaves the whole wave near half the map's remaining tri headroom.
@@ -58,9 +62,16 @@ type EnemyModelTemplate = {
   minY: number;
   sizeY: number;
   muzzleLocal: Vector3;
+  animations?: AnimationClip[];
 };
 
-let enemyModelTemplatePromise: Promise<EnemyModelTemplate> | null = null;
+const enemyModelTemplates = new Map<string, Promise<EnemyModelTemplate>>();
+
+function selectedModelUrl(): string {
+  // Keep the shipping asset and original rendering path in the garage until approval.
+  return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("raider") === "legacy"
+    ? MODEL_URL : CANDIDATE_MODEL_URL;
+}
 
 export async function preloadEnemyVisualAssets(): Promise<void> {
   const warmupLoader = new GLTFLoader();
@@ -72,11 +83,44 @@ export function setEnemyVisualModelStreamingEnabled(enabled: boolean): void {
 }
 
 function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyModelTemplate> {
-  if (enemyModelTemplatePromise) return enemyModelTemplatePromise;
+  const url = selectedModelUrl();
+  const cached = enemyModelTemplates.get(url);
+  if (cached) return cached;
 
-  enemyModelTemplatePromise = sharedGltfLoader.loadAsync(MODEL_URL)
+  const promise = sharedGltfLoader.loadAsync(url)
     .then((gltf) => {
       gltf.scene.updateMatrixWorld(true);
+
+      if (url === CANDIDATE_MODEL_URL) {
+        if (!gltf.scene.getObjectByName("MuzzleSocket") || gltf.animations.length !== 9) {
+          throw new Error("Raider candidate is missing its rig, socket or animation set");
+        }
+        const triangleCount = (name: string): number => {
+          const mesh = gltf.scene.getObjectByName(name) as Mesh | undefined;
+          if (!mesh?.isMesh) throw new Error(`Raider candidate missing ${name}`);
+          return (mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position").count) / 3;
+        };
+        const rifleTris = triangleCount("Raider_Rifle");
+        for (const [name, budget] of [["Raider_Low", MODEL_MAX_TRIS_WARN], ["Raider_High", 28_000]] as const) {
+          const tris = triangleCount(name) + rifleTris;
+          if (tris > budget) throw new Error(`Raider ${name} exceeds ${budget} triangles`);
+        }
+        // Preserve garment and leather detail at oblique viewing angles.
+        // Three clamps this to the device's supported anisotropy at upload.
+        gltf.scene.traverse((child) => {
+          if (!(child instanceof Mesh)) return;
+          for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+            if (!(material instanceof MeshStandardMaterial)) continue;
+            for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
+              if (texture) texture.anisotropy = 4;
+            }
+          }
+        });
+        // Authored metre scale and foot origin; weapon length and animated bounds
+        // must never recenter or resize the character away from its hitbox.
+        return { template: gltf.scene, center: new Vector3(), minY: 0,
+          sizeY: MODEL_TARGET_HEIGHT_M, muzzleLocal: new Vector3(), animations: gltf.animations };
+      }
 
       const bounds = new Box3().setFromObject(gltf.scene);
       const size = new Vector3();
@@ -153,11 +197,12 @@ function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyMode
     })
     .catch((error) => {
       // Allow retry if the first load fails.
-      enemyModelTemplatePromise = null;
+      enemyModelTemplates.delete(url);
       throw error;
     });
 
-  return enemyModelTemplatePromise;
+  enemyModelTemplates.set(url, promise);
+  return promise;
 }
 
 function createNameTagTexture(name: string): CanvasTexture {
@@ -211,12 +256,21 @@ function createMuzzleFlashTexture(): CanvasTexture {
 }
 
 export class EnemyVisual {
+  ownsRenderedObject(object: Object3D): boolean {
+    for (let current: Object3D | null = object; current; current = current.parent) {
+      if (current === this.root) return true;
+    }
+    return false;
+  }
+
   private readonly root: Group;
   private readonly bodyMesh: Mesh;
   private readonly headMesh: Mesh;
   private readonly bodyMat: MeshStandardMaterial;
   private readonly headMat: MeshStandardMaterial;
   private modelRoot: Group | null = null;
+  private animation: RaiderAnimation | null = null;
+  private disposed = false;
   private readonly nameSprite: Sprite;
   private namesVisible = true;
   private renderVisible = true;
@@ -299,6 +353,7 @@ export class EnemyVisual {
     // This avoids repeated glTF parse/texture setup work per spawn.
     if (enemyVisualModelStreamingEnabled) {
       loadEnemyModelTemplate(sharedGltfLoader).then((templateData) => {
+        if (this.disposed) return;
         // Clone skeleton for independent transforms but share materials across
         // all enemy instances — the opaque death-confirm path never modifies
         // material opacity so per-instance clones are unnecessary.
@@ -314,21 +369,30 @@ export class EnemyVisual {
         );
         this.modelRoot.add(modelInstance);
         this.muzzleAnchor.position.copy(templateData.muzzleLocal).add(modelInstance.position);
-        this.modelRoot.add(this.muzzleAnchor);
+        if (templateData.animations) {
+          this.animation = new RaiderAnimation(modelInstance, templateData.animations);
+          this.muzzleFlashMat!.depthTest = true;
+          this.muzzleAnchor.position.set(0, 0, 0);
+          modelInstance.getObjectByName("MuzzleSocket")!.add(this.muzzleAnchor);
+        } else {
+          this.modelRoot.add(this.muzzleAnchor);
+        }
         this.root.add(this.modelRoot);
 
         this.bodyMesh.visible = false;
         this.headMesh.visible = false;
         this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, MODEL_TARGET_HEIGHT_M + 0.4);
-      }).catch(() => {
+      }).catch((error: unknown) => {
         // Model load failed — fallback body/head remain visible.
+        console.warn("[enemy-visual] model load failed", error);
       });
     }
 
     scene.add(this.root);
   }
 
-  update(x: number, y: number, z: number, yaw: number, isAlive: boolean): void {
+  update(x: number, y: number, z: number, yaw: number, isAlive: boolean,
+    dt = 0, grounded = true, surfaces?: TraversalSurfaceResolver, viewerDistanceM = 0): void {
     // When fading out, only update position so the corpse stays in place.
     // Visibility and yaw are controlled by the fade logic.
     if (this.fadingOut) {
@@ -340,9 +404,11 @@ export class EnemyVisual {
 
     this.root.position.set(x, y, z);
     this.root.rotation.y = yaw;
+    this.animation?.update(this.root.position, yaw, dt, grounded, surfaces, viewerDistanceM);
   }
 
   reset(): void {
+    this.animation?.reset();
     this.fadingOut = false;
     this.fadeTimerS = 0;
     this.root.visible = this.renderVisible;
@@ -397,6 +463,7 @@ export class EnemyVisual {
   }
 
   triggerShotFx(): void {
+    this.animation?.shoot();
     if (!this.muzzleFlash || !this.muzzleFlashMat) return;
 
     this.muzzleTimerS = MUZZLE_FLASH_DURATION_S;
@@ -423,6 +490,9 @@ export class EnemyVisual {
   }
 
   dispose(scene: Scene): void {
+    this.disposed = true;
+    this.animation?.dispose();
+    this.animation = null;
     scene.remove(this.root);
     if (this.modelRoot) {
       // The cloned model shares geometry/materials/textures with the module

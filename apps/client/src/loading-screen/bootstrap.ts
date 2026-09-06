@@ -13,6 +13,8 @@ import {
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
 import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
+import { resolveGameplayProfileIdentity } from "../../../shared/gameplayProfile";
+import { isMobileDevice } from "../runtime/input/MobileDetect";
 
 export type BootstrapLoadingScreenOptions = {
   handoff?: LoadingScreenHandoff;
@@ -41,12 +43,49 @@ const OVERLAY_FAILURE_BANNER = "Menu art unavailable";
 export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = {}): LoadingScreenHandle {
   const isVirtualTime = typeof window.__vt_pending !== "undefined";
   const isInternalDebugSurface = import.meta.env.DEV || isLocalhostHostname(window.location.hostname);
+  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
+    .test(window.location.search);
+  const mobileDevice = isMobileDevice();
+  const loadingProfileResolution = resolveGameplayProfileIdentity({
+    controlMode: runtimeUrlIsAgent ? "agent" : "human",
+    isMobile: mobileDevice,
+  });
+  let loadingProfileIdentity = loadingProfileResolution.supported
+    ? loadingProfileResolution.identity
+    : resolveGameplayProfileIdentity({ controlMode: "human", isMobile: true }).identity;
 
   const loadingAmbient = new LoadingAmbientAudio({ ...DEFAULT_AUDIO, ...(options.audio ?? {}) });
   let disposed = false;
   let selectedMode: LoadingScreenMode | null = null;
   let selectedPlayerName: string = "";
-  let sharedChampionSnapshot = getSharedChampionSnapshot();
+  let sharedChampionSnapshot = getSharedChampionSnapshot(loadingProfileIdentity);
+  let championLoadSerial = 0;
+
+  const resolveLoadingIdentity = (mode: LoadingScreenMode) => {
+    const resolution = resolveGameplayProfileIdentity({
+      controlMode: mode,
+      isMobile: mobileDevice,
+    });
+    return resolution.supported
+      ? resolution.identity
+      : resolveGameplayProfileIdentity({ controlMode: "human", isMobile: true }).identity;
+  };
+
+  const previewLoadingBoard = (mode: LoadingScreenMode, forceLoad = false): void => {
+    const nextIdentity = resolveLoadingIdentity(mode);
+    const identityChanged = nextIdentity !== loadingProfileIdentity;
+    if (!identityChanged && !forceLoad) return;
+
+    loadingProfileIdentity = nextIdentity;
+    sharedChampionSnapshot = getSharedChampionSnapshot(loadingProfileIdentity);
+    ui.setSharedChampion(sharedChampionSnapshot);
+    const requestSerial = ++championLoadSerial;
+    void loadSharedChampion({ profileIdentity: loadingProfileIdentity }).then((snapshot) => {
+      if (disposed || requestSerial !== championLoadSerial) return;
+      sharedChampionSnapshot = snapshot;
+      ui.setSharedChampion(snapshot);
+    });
+  };
 
   const ui = createLoadingScreenUI({
     onWarmupAudio: () => {
@@ -64,6 +103,10 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
       }
       ui.setMuteState(loadingAmbient.isMuted());
       ui.flashMuteToggle();
+    },
+    onPreviewMode: (mode) => {
+      if (disposed) return;
+      previewLoadingBoard(mode);
     },
     onSelectMode: (mode, playerName) => {
       if (disposed) return;
@@ -114,8 +157,6 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   // watching. ?audio=1 forces it on, ?audio=0 forces it off. Real players match
   // none of these, so production behaviour is unchanged.
   const audioForced = new URLSearchParams(window.location.search).get("audio");
-  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
-    .test(window.location.search);
   const ambientMuted = audioForced === "1"
     ? false
     : audioForced === "0" || isAutomatedClient() || runtimeUrlIsAgent;
@@ -168,11 +209,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     ui.warmLazyAssets();
   })();
 
-  void loadSharedChampion().then((snapshot) => {
-    if (disposed) return;
-    sharedChampionSnapshot = snapshot;
-    ui.setSharedChampion(snapshot);
-  });
+  previewLoadingBoard(runtimeUrlIsAgent ? "agent" : "human", true);
 
   void loadingAmbient.start();
 
@@ -190,6 +227,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     apiVersion: PUBLIC_AGENT_API_VERSION,
     contract: PUBLIC_AGENT_CONTRACT,
     mode: "loading-screen" as const,
+    profile: loadingProfileIdentity,
     runtimeReady: false,
     gameplay: {
       alive: false,
@@ -206,6 +244,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     sharedChampion: sharedChampionSnapshot.champion,
     lastRunSummary: null,
     feedback: null,
+    perception: { visibleTargets: [], movementBlocked: false },
   });
 
   window.agent_observe = () => JSON.stringify(publicObserveState());
@@ -219,6 +258,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     return JSON.stringify({
       apiVersion: 4,
       mode: "loading-screen",
+      profile: loadingProfileIdentity,
       ui: {
         visible: true,
         startVisible: uiState.startVisible,

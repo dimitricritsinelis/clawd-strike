@@ -2,11 +2,17 @@ import {
   HIGH_SCORE_MAP_ID_MAX_LENGTH,
   SHARED_CHAMPION_SCORE_RULESET,
   SHARED_CHAMPION_WAVE_ENEMY_COUNT,
+  deriveSharedChampionBoardKey,
   sanitizeSharedChampionMapId,
   type SharedChampionControlMode,
   type SharedChampionRunDeathCause,
   type SharedChampionRunSummary,
 } from "../apps/shared/highScore.js";
+import {
+  isGameplayProfileId,
+  type GameplayProfileIdentity,
+  type GameplayProfileId,
+} from "../apps/shared/gameplayProfile.js";
 import {
   normalizeValidatedPlayerName,
   parseStoredPlayerName,
@@ -22,6 +28,9 @@ export type SharedChampionStatsFilters = {
   controlMode: SharedChampionControlMode | null;
   mapId: string | null;
   playerName: string | null;
+  profileId: GameplayProfileId | null;
+  tuningRevision: string | null;
+  balanceSeason: string | null;
 };
 
 export type SharedChampionStatsRunFilters = SharedChampionStatsFilters & {
@@ -49,6 +58,10 @@ export type SharedChampionRunRecord = {
   controlMode: SharedChampionControlMode;
   mapId: string;
   ruleset: typeof SHARED_CHAMPION_SCORE_RULESET;
+  profileId: GameplayProfileId | null;
+  tuningRevision: string | null;
+  balanceSeason: string | null;
+  boardKey: string | null;
   startedAt: string;
   endedAt: string;
   elapsedMs: number;
@@ -141,6 +154,10 @@ export type DerivedSharedChampionRunFields = {
   playerNameKey: string;
   mapId: string;
   ruleset: typeof SHARED_CHAMPION_SCORE_RULESET;
+  profileId: GameplayProfileId | null;
+  tuningRevision: string | null;
+  balanceSeason: string | null;
+  boardKey: string | null;
   elapsedMs: number;
   score: number;
   accuracyPct: number;
@@ -183,17 +200,23 @@ export function deriveRunFields(input: {
   score: number;
   elapsedMs: number;
   buildId?: string | null;
+  profileIdentity?: GameplayProfileIdentity | null;
 }): DerivedSharedChampionRunFields {
   const normalizedPlayerName = parseStoredPlayerName(input.playerName);
   if (normalizedPlayerName === null) {
     throw new Error("Invalid stored player name.");
   }
   const waveProgress = deriveWaveProgress(input.summary.kills);
+  const identity = input.profileIdentity ?? null;
   return {
     playerName: normalizedPlayerName,
     playerNameKey: normalizePlayerNameKey(normalizedPlayerName),
     mapId: sanitizeSharedChampionMapId(input.mapId),
     ruleset: SHARED_CHAMPION_SCORE_RULESET,
+    profileId: identity?.profileId ?? null,
+    tuningRevision: identity?.tuningRevision ?? null,
+    balanceSeason: identity?.balanceSeason ?? null,
+    boardKey: identity ? deriveSharedChampionBoardKey(identity) : null,
     elapsedMs: Math.max(0, Math.round(input.elapsedMs)),
     score: Math.max(0, Math.round(input.score)),
     accuracyPct: Math.max(0, Math.round(input.summary.accuracy * 10) / 10),
@@ -252,6 +275,21 @@ function parseControlMode(value: string | null): SharedChampionControlMode | nul
   throw new Error("controlMode must be 'human' or 'agent'.");
 }
 
+function parseProfileId(value: string | null): GameplayProfileId | null {
+  if (!value) return null;
+  if (isGameplayProfileId(value)) return value;
+  throw new Error("profileId is invalid.");
+}
+
+function parseIdentityString(value: string | null, fieldName: string): string | null {
+  if (!value) return null;
+  const normalized = value.trim();
+  if (normalized.length === 0 || normalized.length > 128) {
+    throw new Error(`${fieldName} is invalid.`);
+  }
+  return normalized;
+}
+
 function parseBooleanParam(value: string | null): boolean | null {
   if (!value) return null;
   if (value === "true") return true;
@@ -291,6 +329,9 @@ export function parseStatsFilters(url: URL): ResolvedSharedChampionStatsFilters 
     mapId,
     playerName,
     playerNameKey: playerName ? normalizePlayerNameKey(playerName) : null,
+    profileId: parseProfileId(url.searchParams.get("profileId")),
+    tuningRevision: parseIdentityString(url.searchParams.get("tuningRevision"), "tuningRevision"),
+    balanceSeason: parseIdentityString(url.searchParams.get("balanceSeason"), "balanceSeason"),
   };
 }
 
@@ -325,6 +366,9 @@ export function toOverviewResponse(
       controlMode: filters.controlMode,
       mapId: filters.mapId,
       playerName: filters.playerName,
+      profileId: filters.profileId,
+      tuningRevision: filters.tuningRevision,
+      balanceSeason: filters.balanceSeason,
     },
   };
 }
@@ -344,6 +388,9 @@ export function toRunsResponse(input: {
       controlMode: input.filters.controlMode,
       mapId: input.filters.mapId,
       playerName: input.filters.playerName,
+      profileId: input.filters.profileId,
+      tuningRevision: input.filters.tuningRevision,
+      balanceSeason: input.filters.balanceSeason,
       championUpdated: input.filters.championUpdated,
       cursor: input.filters.cursor ? createRunCursor(input.filters.cursor) : null,
       limit: input.filters.limit,
@@ -368,6 +415,9 @@ export function toNamesResponse(input: {
       controlMode: input.filters.controlMode,
       mapId: input.filters.mapId,
       playerName: input.filters.playerName,
+      profileId: input.filters.profileId,
+      tuningRevision: input.filters.tuningRevision,
+      balanceSeason: input.filters.balanceSeason,
       cursor: input.cursor,
     },
   };
@@ -390,6 +440,9 @@ export function toDailyResponse(input: {
       controlMode: input.filters.controlMode,
       mapId: input.filters.mapId,
       playerName: input.filters.playerName,
+      profileId: input.filters.profileId,
+      tuningRevision: input.filters.tuningRevision,
+      balanceSeason: input.filters.balanceSeason,
       cursor: input.cursor,
     },
   };

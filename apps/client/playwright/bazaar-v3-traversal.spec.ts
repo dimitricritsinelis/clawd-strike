@@ -28,6 +28,7 @@ test.describe(`Bazaar v3 ${TRAVERSAL_PROFILE} traversal`, () => {
       test.setTimeout(90_000);
       const recorder = attachConsoleRecorder(page);
       const artifactDir = testInfo.outputPath("route-diagnostics");
+      let traversalSummary: Awaited<ReturnType<typeof runWaypointRoute>> | null = null;
       recorder.clear();
       try {
         await gotoAgentRuntime(page, {
@@ -56,12 +57,15 @@ test.describe(`Bazaar v3 ${TRAVERSAL_PROFILE} traversal`, () => {
           undefined,
           { operation: "eliminate-bots", routeId: route.id, artifactDir },
         );
-        const summary = await runWaypointRoute(page, route, { artifactDir });
-        expect(summary.reachedWaypoints).toHaveLength(route.waypoints.length - 1);
-        expect(summary.distanceM).toBeGreaterThanOrEqual(route.expectedMinDistanceM);
-        expect(summary.maxStationaryTicks).toBeLessThanOrEqual(route.maxStationaryTicks);
-        expect(summary.withinPlayableBounds).toBe(true);
-        expect(summary.endedAlive).toBe(true);
+        traversalSummary = await runWaypointRoute(page, route, { artifactDir });
+        expect(traversalSummary.reachedWaypoints).toHaveLength(route.waypoints.length - 1);
+        expect(traversalSummary.distanceM).toBeGreaterThanOrEqual(route.expectedMinDistanceM);
+        expect(
+          traversalSummary.maxStationaryTicks,
+          `stationary peak: ${JSON.stringify(traversalSummary.maxStationaryAt)}`,
+        ).toBeLessThanOrEqual(route.maxStationaryTicks);
+        expect(traversalSummary.withinPlayableBounds).toBe(true);
+        expect(traversalSummary.endedAlive).toBe(true);
         expect(recorder.counts().errorCount, `[${route.id}] console errors`).toBe(0);
       } catch (error) {
         const lastValidState = await readRouteRuntimeState(page, {
@@ -75,6 +79,7 @@ test.describe(`Bazaar v3 ${TRAVERSAL_PROFILE} traversal`, () => {
           failedAt: new Date().toISOString(),
           lastValidPlayerState: lastValidState?.player ?? null,
           currentUrl: page.url(),
+          traversalSummary,
           console: {
             events: recorder.snapshot(),
             counts: recorder.counts(),

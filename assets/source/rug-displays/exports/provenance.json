@@ -1,0 +1,66 @@
+{
+  "license": "Project-Original",
+  "source": "repo://assets/source/rug-displays/build.py",
+  "sourceFrame": "+X across, +Y back, +Z up; rear Y=0",
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_albedo.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "685e2a249c5a16593448853a5d4359c3",
+      "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_roughness.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "9f330817f918cc4e4dcd1a634f931639",
+      "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+    },
+    {
+      "file": "apps/client/public/assets/models/environment/bazaar/props/textile_booth/booth_normal.png",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "md5": "0d1449b29743e6d4ea5369f6ee6fed96",
+      "derivation": "Blender box-scale to 1024 x 512; source image untouched"
+    }
+  ],
+  "models": {
+    "rug-gallery": {
+      "triangles": 6436,
+      "boundsM": [
+        [
+          -0.7400000095367432,
+          0.7399999499320984
+        ],
+        [
+          -0.3199999928474426,
+          0.0
+        ],
+        [
+          0.0,
+          2.3018600940704346
+        ]
+      ],
+      "glbMd5": "fad306ef15a96082ad834aad05b65e3a"
+    },
+    "rug-roll-chest": {
+      "triangles": 5544,
+      "boundsM": [
+        [
+          -0.7400000095367432,
+          0.7399999499320984
+        ],
+        [
+          -0.3199999928474426,
+          0.0
+        ],
+        [
+          0.0,
+          2.299999952316284
+        ]
+      ],
+      "glbMd5": "183b062e36c8c33727d35e17abb84001"
+    }
+  }
+}

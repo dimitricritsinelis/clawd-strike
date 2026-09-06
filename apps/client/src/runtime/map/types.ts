@@ -25,6 +25,9 @@ export type RuntimeBlockoutZone = {
   floorMaterialId?: string;
   facadeProfileId?: string;
   clearWidthM?: number;
+  /** Authored section GLB that owns the zone's faces listed in sectionFaces (default all four). */
+  sectionModelId?: string;
+  sectionFaces?: RuntimeFacadeFace[];
 };
 
 export type RuntimeMacroLane = "west" | "main" | "east";
@@ -101,12 +104,15 @@ export type RuntimeFrontageBay = {
   baseElevationM: number;
   datumId?: string;
   columnId?: string;
-  layoutSource?: "generated";
+  layoutSource?: RuntimeFacadeLayoutSource;
 };
 
+/** Generated layouts come from the rhythm grammar; authored layouts are composed per frontage. */
+export type RuntimeFacadeLayoutSource = "generated" | "authored";
+
 export type RuntimeFrontageLayout = {
-  source: "generated";
-  rhythm: "merchant" | "residential" | "residential_dense" | "service" | "arcade" | "hero";
+  source: RuntimeFacadeLayoutSource;
+  rhythm: "merchant" | "residential" | "residential_dense" | "service" | "arcade" | "hero" | "authored";
   storyCount: number;
   edgeMarginM: number;
   groundHeadM: number;
@@ -171,6 +177,8 @@ export type RuntimeArchitectureMassingPlacement = {
     upperStorySetbackM: number;
     elevationM: number;
   };
+  /** Registered facade GLB that owns this frontage's street face. */
+  facadeModelId?: string;
 };
 
 export type RuntimeArchitectureModulePlacement = {
@@ -186,7 +194,7 @@ export type RuntimeArchitectureModulePlacement = {
   openingType: RuntimeFacadeOpeningType;
   datumId: string;
   columnId: string;
-  layoutSource: "generated";
+  layoutSource: RuntimeFacadeLayoutSource;
   center: RuntimeVec3;
   sizeM: { width: number; depth: number; height: number };
   yawDeg: number;
@@ -196,6 +204,18 @@ export type RuntimeArchitectureModulePlacement = {
 };
 
 export type RuntimeArchitecturePlacement = RuntimeArchitectureMassingPlacement | RuntimeArchitectureModulePlacement;
+
+/** Compiled zone section GLB: mounted at the zone rect's south-west corner on the zone floor. */
+export type RuntimeSectionModel = {
+  zoneId: string;
+  modelId: string;
+  origin: RuntimeVec3;
+  sizeM: { width: number; depth: number };
+  /** Zone faces the GLB owns; the kit keeps its face details elsewhere. */
+  faces: RuntimeFacadeFace[];
+  /** Wall-pack material ids the GLB names; preloaded alongside the kit's materials. */
+  materialIds: string[];
+};
 
 export type RuntimeDressingClassification = "gameplay_cover" | "soft_visual" | "overhead";
 
@@ -297,6 +317,7 @@ export type RuntimeBlockoutSpec = {
   facadeModules?: RuntimeFacadeModule[];
   facadeProfiles?: RuntimeFacadeProfile[];
   architecturePlacements?: RuntimeArchitecturePlacement[];
+  sectionModels?: RuntimeSectionModel[];
   assetRegistry?: RuntimeAssetRegistryEntry[];
   dressingClusters?: RuntimeDressingCluster[];
   dressingPlacements?: RuntimeDressingPlacement[];
@@ -1666,10 +1687,14 @@ function parseRuntimeArchitecturePlacements(
       const roof = asObject(entry.roof, `${path}.roof`);
       const style = asString(roof.style, `${path}.roof.style`);
       if (!RUNTIME_MASSING_ROOF_STYLES.has(style)) failParse(`${path}.roof.style`, "unsupported roof style");
+      const facadeModelId = typeof entry.facadeModelId === "undefined"
+        ? undefined
+        : asString(entry.facadeModelId, `${path}.facadeModelId`);
       return {
         ...shared,
         kind: "massing",
         massingProfileId,
+        ...(facadeModelId ? { facadeModelId } : {}),
         materialSlots: parseRuntimeMaterialSlots(entry.materialSlots, `${path}.materialSlots`),
         roof: {
           style: style as RuntimeArchitectureMassingPlacement["roof"]["style"],
@@ -1705,8 +1730,10 @@ function parseRuntimeArchitecturePlacements(
       columnId: asString(entry.columnId, `${path}.columnId`),
       layoutSource: (() => {
         const layoutSource = asString(entry.layoutSource, `${path}.layoutSource`);
-        if (layoutSource !== "generated") failParse(`${path}.layoutSource`, "expected generated");
-        return "generated" as const;
+        if (layoutSource !== "generated" && layoutSource !== "authored") {
+          failParse(`${path}.layoutSource`, "expected generated or authored");
+        }
+        return layoutSource as RuntimeFacadeLayoutSource;
       })(),
       materialSlot: materialSlot as RuntimeFacadeMaterialSlot,
       collisionOpening: false,
@@ -1823,6 +1850,12 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
       rect,
       label: typeof zone.label === "string" ? zone.label : "",
       notes: typeof zone.notes === "string" ? zone.notes : "",
+      ...(typeof zone.sectionModelId !== "undefined"
+        ? { sectionModelId: asString(zone.sectionModelId, `${source}.zones[${index}].sectionModelId`) }
+        : {}),
+      ...(typeof zone.sectionFaces !== "undefined"
+        ? { sectionFaces: (optionalArray(zone.sectionFaces, `${source}.zones[${index}].sectionFaces`) ?? []).map((face, i) => parseRuntimeFacadeFace(face, `${source}.zones[${index}].sectionFaces[${i}]`)) }
+        : {}),
       ...(typeof zone.surfaceId !== "undefined"
         ? { surfaceId: asString(zone.surfaceId, `${source}.zones[${index}].surfaceId`) }
         : {}),
@@ -2144,8 +2177,10 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
         ...(typeof bay.layoutSource !== "undefined" ? {
           layoutSource: (() => {
             const layoutSource = asString(bay.layoutSource, `${bayPath}.layoutSource`);
-            if (layoutSource !== "generated") failParse(`${bayPath}.layoutSource`, "expected generated");
-            return "generated" as const;
+            if (layoutSource !== "generated" && layoutSource !== "authored") {
+              failParse(`${bayPath}.layoutSource`, "expected generated or authored");
+            }
+            return layoutSource as RuntimeFacadeLayoutSource;
           })(),
         } : {}),
       };
@@ -2155,14 +2190,19 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
       const layoutPath = `${path}.layout`;
       const rawLayout = asObject(frontage.layout, layoutPath);
       const layoutSource = asString(rawLayout.source, `${layoutPath}.source`);
-      if (layoutSource !== "generated") failParse(`${layoutPath}.source`, "expected generated");
+      if (layoutSource !== "generated" && layoutSource !== "authored") {
+        failParse(`${layoutPath}.source`, "expected generated or authored");
+      }
       const rhythm = asString(rawLayout.rhythm, `${layoutPath}.rhythm`);
-      if (!["merchant", "residential", "residential_dense", "service", "arcade", "hero"].includes(rhythm)) {
+      if (!["merchant", "residential", "residential_dense", "service", "arcade", "hero", "authored"].includes(rhythm)) {
         failParse(`${layoutPath}.rhythm`, "unsupported facade rhythm");
+      }
+      if ((layoutSource === "authored") !== (rhythm === "authored")) {
+        failParse(`${layoutPath}.rhythm`, "authored layouts use rhythm 'authored' and generated layouts use a grammar rhythm");
       }
       const upperSillDatumsRaw = optionalArray(rawLayout.upperSillDatumsM, `${layoutPath}.upperSillDatumsM`) ?? [];
       layout = {
-        source: "generated",
+        source: layoutSource as RuntimeFacadeLayoutSource,
         rhythm: rhythm as RuntimeFrontageLayout["rhythm"],
         storyCount: asPositiveNumber(rawLayout.storyCount, `${layoutPath}.storyCount`),
         edgeMarginM: asPositiveNumber(rawLayout.edgeMarginM, `${layoutPath}.edgeMarginM`),
@@ -2417,8 +2457,10 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     if (isV3 && (!frontage.massingProfileId || !profile || !frontage.bays?.length || !frontage.layout)) {
       failParse(path, "format v3 frontages require massingProfileId, facadeProfileId, generated bays, and layout metadata");
     }
-    if (isV3 && frontage.bays?.some((bay) => !bay.datumId || !bay.columnId || bay.layoutSource !== "generated")) {
-      failParse(path, "format v3 frontage bays require generated datum and column metadata");
+    if (isV3 && frontage.bays?.some((bay) => (
+      !bay.datumId || !bay.columnId || (bay.layoutSource !== "generated" && bay.layoutSource !== "authored")
+    ))) {
+      failParse(path, "format v3 frontage bays require generated or authored datum and column metadata");
     }
   }
   const architecturePlacements = parseRuntimeArchitecturePlacements(
@@ -2443,6 +2485,24 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
   if (isV3 && (!architecturePlacements?.length || !dressingPlacements?.length)) {
     failParse(source, "format v3 requires compiled architecturePlacements and dressingPlacements");
   }
+  const sectionModels = optionalArray(obj.sectionModels, `${source}.sectionModels`)?.map((raw, index) => {
+    const path = `${source}.sectionModels[${index}]`;
+    const entry = asObject(raw, path);
+    const zoneId = asString(entry.zoneId, `${path}.zoneId`);
+    if (!zoneIds.has(zoneId)) failParse(`${path}.zoneId`, `unknown zone '${zoneId}'`);
+    const sizeM = asObject(entry.sizeM, `${path}.sizeM`);
+    return {
+      zoneId,
+      modelId: asString(entry.modelId, `${path}.modelId`),
+      origin: parseVec3(entry.origin, `${path}.origin`),
+      sizeM: {
+        width: asPositiveNumber(sizeM.width, `${path}.sizeM.width`),
+        depth: asPositiveNumber(sizeM.depth, `${path}.sizeM.depth`),
+      },
+      faces: (optionalArray(entry.faces, `${path}.faces`) ?? ["north", "south", "east", "west"]).map((face, i) => parseRuntimeFacadeFace(face, `${path}.faces[${i}]`)),
+      materialIds: (optionalArray(entry.materialIds, `${path}.materialIds`) ?? []).map((id, i) => asString(id, `${path}.materialIds[${i}]`)),
+    };
+  });
 
   let mapCenter: RuntimeBlockoutSpec["mapCenter"];
   if (typeof obj.mapCenter !== "undefined") {
@@ -2485,6 +2545,7 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     ...(facadeModules ? { facadeModules } : {}),
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
+    ...(sectionModels ? { sectionModels } : {}),
     ...(assetRegistry ? { assetRegistry } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),

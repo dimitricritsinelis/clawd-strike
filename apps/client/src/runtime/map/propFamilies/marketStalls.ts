@@ -1,4 +1,4 @@
-import { BufferGeometry, CylinderGeometry, PlaneGeometry, SphereGeometry, TorusGeometry } from "three";
+import { BoxGeometry, BufferGeometry, CylinderGeometry, Float32BufferAttribute, PlaneGeometry, SphereGeometry, TorusGeometry } from "three";
 import {
   angledBoxPart,
   applyGeometryTint,
@@ -21,13 +21,21 @@ const DEFAULT_STALL_PROFILE: MarketStallProfile = {
   braceDrop: 0.31,
 };
 
-// Instance tints and the real wood albedo still multiply these values. Keep the
-// brightest rail below the old near-white multiplier: under shade that lift
-// compressed the PBR grain into one tan value. This three-stop warm range
-// preserves grain while separating exposed, weathered, and recessed timber.
-const timberLight = [1.28, 1.04, 0.72] as const;
-const timberMid = [0.9, 0.68, 0.44] as const;
-const timberDark = [0.5, 0.34, 0.21] as const;
+// Frame datums in normalized stall units (y -0.5..0.5). The canopy geometry
+// reads the same values so its cloth lands on the rails.
+export const FRONT_POST_TOP = 0.4;
+export const REAR_POST_TOP = 0.5;
+export const FRONT_RAIL_Y = FRONT_POST_TOP - 0.03;
+export const REAR_RAIL_Y = REAR_POST_TOP - 0.03;
+
+// Instance tints and the real wood albedo still multiply these values. The
+// albedo is already a warm oak, so these stops are near-neutral luminance steps:
+// stacking a warm vertex tint on a warm instance tint on a warm texture is what
+// turned the old frame saturated red. Light is sun-bleached top surfaces, mid is
+// exposed carpentry, dark is recessed or ground-contact timber.
+const timberLight = [1.16, 1.12, 1.05] as const;
+const timberMid = [0.94, 0.9, 0.86] as const;
+const timberDark = [0.64, 0.61, 0.58] as const;
 const terracotta = [0.82, 0.34, 0.18] as const;
 const wovenOchre = [0.92, 0.58, 0.2] as const;
 
@@ -52,13 +60,6 @@ function settledSackPart(x: number, y: number, z: number): BufferGeometry[] {
   return [tintGeometry(sack, wovenOchre), tintGeometry(tie, timberDark)];
 }
 
-function frontPeg(x: number, y: number): BufferGeometry {
-  const peg = new CylinderGeometry(0.012, 0.012, 0.055, 8);
-  peg.rotateX(Math.PI * 0.5);
-  peg.translate(x, y, -0.421);
-  return tintGeometry(peg, timberDark);
-}
-
 /**
  * Canonical, normalized stall carpentry. The six authored variants scale and
  * tint this assembly at the instance level, so every silhouette retains the
@@ -68,82 +69,79 @@ export function createMarketStallGeometry(
   profile: MarketStallProfile = DEFAULT_STALL_PROFILE,
 ): BufferGeometry {
   const counterFrontZ = -profile.counterDepth * 0.5;
-  const openingHalfWidth = profile.underCounterOpening * 0.5;
   const parts: BufferGeometry[] = [];
 
-  // Four continuous posts seat the canopy frame directly onto the ground.
+  // Four posts seat the frame on the ground. The rear pair stands taller than
+  // the front pair so the cloth pitches toward the lane and sheds; the frame
+  // spans -0.47..0.5 so the ridge stays inside the placement height.
   for (const sideX of [-1, 1] as const) {
     for (const sideZ of [-1, 1] as const) {
+      const top = sideZ < 0 ? FRONT_POST_TOP : REAR_POST_TOP;
       parts.push(tintGeometry(
-        boxPart(0.068, 0.94, 0.068, sideX * 0.46, 0, sideZ * 0.38),
+        boxPart(0.08, top + 0.47, 0.08, sideX * 0.46, (top - 0.47) * 0.5, sideZ * 0.38),
         sideZ < 0 ? timberLight : timberMid,
       ));
       parts.push(tintGeometry(
-        boxPart(0.105, 0.035, 0.105, sideX * 0.46, -0.47, sideZ * 0.38),
+        boxPart(0.12, 0.035, 0.12, sideX * 0.46, -0.47, sideZ * 0.38),
         timberDark,
       ));
     }
   }
 
-  // A complete top ring supports the cloth; the lower side rails prevent the
-  // familiar four-floating-post silhouette of placeholder market stalls.
-  parts.push(tintGeometry(boxPart(0.98, 0.055, 0.075, 0, 0.45, 0.38), timberMid));
-  parts.push(tintGeometry(boxPart(0.98, 0.055, 0.075, 0, 0.45, -0.38), timberLight));
+  // Top ring: level front and rear rails at their post heights, raked side
+  // rails between them, lower side rails so the posts never read as floating.
+  parts.push(tintGeometry(boxPart(1, 0.06, 0.08, 0, FRONT_RAIL_Y, -0.38), timberLight));
+  parts.push(tintGeometry(boxPart(1, 0.06, 0.08, 0, REAR_RAIL_Y, 0.38), timberMid));
+  const rakeRad = Math.atan2(REAR_RAIL_Y - FRONT_RAIL_Y, 0.76);
   for (const sideX of [-1, 1] as const) {
-    parts.push(tintGeometry(boxPart(0.075, 0.055, 0.82, sideX * 0.46, 0.45, 0), timberMid));
-    parts.push(tintGeometry(boxPart(0.058, 0.055, 0.72, sideX * 0.46, -0.38, 0), timberDark));
+    const rail = new BoxGeometry(0.08, 0.06, 0.76 / Math.cos(rakeRad) + 0.04);
+    rail.rotateX(-rakeRad);
+    rail.translate(sideX * 0.46, (FRONT_RAIL_Y + REAR_RAIL_Y) * 0.5, 0);
+    parts.push(tintGeometry(rail, timberMid));
+    parts.push(tintGeometry(boxPart(0.06, 0.055, 0.72, sideX * 0.46, -0.38, 0), timberDark));
   }
 
-  // Counter slab, front nosing, rear curb, and visible shelf brackets read as
-  // one serviceable assembly even when the stocked models are culled by LOD.
+  // Counter: a thick slab with a front nosing and rear curb, carried on a
+  // boarded front apron that gives the stall a solid face to the lane. The
+  // sides stay open below the counter so stored goods read from oblique views.
   parts.push(tintGeometry(
-    boxPart(0.92, 0.055, profile.counterDepth, 0, profile.counterY, 0.04),
-    [1.34, 1.1, 0.76],
+    boxPart(0.94, 0.07, profile.counterDepth, 0, profile.counterY, 0.04),
+    [1.2, 1.16, 1.08],
   ));
   parts.push(tintGeometry(
-    boxPart(0.94, 0.075, 0.055, 0, profile.counterY - 0.025, counterFrontZ),
+    boxPart(0.96, 0.09, 0.06, 0, profile.counterY - 0.02, counterFrontZ),
     timberLight,
   ));
   parts.push(tintGeometry(
-    boxPart(0.9, 0.065, 0.045, 0, profile.counterY + 0.015, 0.39),
+    boxPart(0.9, 0.065, 0.045, 0, profile.counterY + 0.02, 0.39),
     timberMid,
   ));
-  for (const sideX of [-1, 1] as const) {
-    parts.push(tintGeometry(angledBoxPart(
-      0.042,
-      0.2,
-      0.06,
-      sideX * 0.34,
-      profile.counterY - 0.105,
-      counterFrontZ + 0.035,
-      sideX * 0.62,
-    ), timberLight));
-  }
-
-  // The back apron gives stock a calm dark field. The framed, open front bays
-  // keep the counter legible and leave the authored under-counter goods clear.
-  parts.push(tintGeometry(boxPart(0.92, 0.25, 0.055, 0, -0.29, 0.37), timberMid));
-  parts.push(tintGeometry(boxPart(0.82, 0.035, 0.62, 0, -0.4, 0.02), timberDark));
-  parts.push(tintGeometry(boxPart(0.84, 0.05, 0.055, 0, -0.435, counterFrontZ), timberDark));
-  for (const sideX of [-1, 1] as const) {
-    const stileX = sideX * (openingHalfWidth + (0.42 - openingHalfWidth) * 0.5);
+  const apronTop = profile.counterY - 0.065;
+  const apronBottom = -0.435;
+  const apronHeight = apronTop - apronBottom;
+  const boardCount = 6;
+  const boardWidth = 0.9 / boardCount;
+  for (let board = 0; board < boardCount; board += 1) {
+    const x = -0.45 + boardWidth * (board + 0.5);
     parts.push(tintGeometry(
-      boxPart(0.055, 0.25, 0.055, stileX, -0.3, counterFrontZ),
+      boxPart(boardWidth - 0.006, apronHeight, 0.03, x, (apronTop + apronBottom) * 0.5, counterFrontZ + 0.02 + (board % 2) * 0.008),
+      board % 3 === 0 ? timberLight : board % 3 === 1 ? timberMid : [1.04, 1, 0.95],
+    ));
+  }
+  parts.push(tintGeometry(boxPart(0.94, 0.05, 0.06, 0, apronBottom - 0.01, counterFrontZ), timberDark));
+  for (const sideX of [-1, 1] as const) {
+    parts.push(tintGeometry(
+      boxPart(0.05, apronHeight, 0.05, sideX * 0.455, (apronTop + apronBottom) * 0.5, counterFrontZ + 0.01),
       timberMid,
     ));
-    parts.push(tintGeometry(angledBoxPart(
-      0.036,
-      0.24,
-      0.04,
-      sideX * 0.37,
-      -0.31,
-      counterFrontZ - 0.01,
-      sideX * 0.42,
-    ), timberLight));
   }
 
-  // A shallow upper display ledge plus front knee braces completes the retail
-  // read while preserving the broad, player-readable opening below the roof.
+  // Rear apron and shelf board under the counter give stock a calm dark field.
+  parts.push(tintGeometry(boxPart(0.92, 0.25, 0.055, 0, -0.29, 0.37), timberMid));
+  parts.push(tintGeometry(boxPart(0.84, 0.035, 0.66, 0, -0.4, 0.02), timberDark));
+
+  // Upper display ledge behind the counter, and knee braces from the front
+  // posts to the front rail so the cloth load has a visible path to ground.
   parts.push(tintGeometry(boxPart(0.78, 0.045, 0.25, 0, 0.04, 0.29), timberMid));
   parts.push(tintGeometry(boxPart(0.82, 0.055, 0.07, 0, -0.18, 0.39), timberDark));
   for (const sideX of [-1, 1] as const) {
@@ -152,21 +150,16 @@ export function createMarketStallGeometry(
       profile.braceDrop,
       0.06,
       sideX * 0.37,
-      0.32,
+      FRONT_RAIL_Y - 0.14,
       -0.405,
       sideX * 0.72,
     ), timberLight));
-    parts.push(frontPeg(sideX * 0.46, 0.43));
-    parts.push(frontPeg(sideX * 0.46, profile.counterY - 0.02));
-    parts.push(frontPeg(sideX * 0.34, -0.43));
   }
 
   // A restrained canonical stock cluster survives model LOD/culling and makes
-  // both the counter and under-counter bay read as merchandising, not empty
-  // carpentry. It stays inside the existing unit envelope and leaves the front
-  // service opening clear.
-  parts.push(...potteryPart(-0.19, profile.counterY + 0.115, -0.02, 0.92));
-  parts.push(...potteryPart(0.02, profile.counterY + 0.1, 0, 0.72));
+  // the counter read as merchandising, not empty carpentry.
+  parts.push(...potteryPart(-0.19, profile.counterY + 0.125, -0.02, 0.92));
+  parts.push(...potteryPart(0.02, profile.counterY + 0.11, 0, 0.72));
   parts.push(...settledSackPart(0.27, -0.34, -0.04));
 
   return mergeProceduralGeometry(parts);
@@ -177,7 +170,7 @@ export function createMarketStallSlattedBackGeometry(): BufferGeometry {
   for (const [index, y] of [-0.4, -0.24, -0.08, 0.08, 0.24, 0.4].entries()) {
     parts.push(tintGeometry(
       boxPart(0.94, 0.125, 0.22, 0, y, index % 2 === 0 ? -0.015 : 0.015),
-      index % 2 === 0 ? timberMid : [1.05, 0.82, 0.53],
+      index % 2 === 0 ? timberMid : [1.02, 0.98, 0.93],
     ));
   }
   for (const x of [-0.42, 0.42]) {
@@ -189,36 +182,69 @@ export function createMarketStallSlattedBackGeometry(): BufferGeometry {
   return mergeProceduralGeometry(parts);
 }
 
+/**
+ * Pitched cloth cover in the same normalized units as the frame (instance it
+ * with sy = stall height, origin at the rear ridge). It slopes from the rear
+ * rail down onto the front rail, sags between the rails, droops past them,
+ * and carries a scalloped skirt on the front and both sides.
+ */
 export function createMarketStallCanopyGeometry(
-  ridgeSag = 0.055,
-  frontDrop = 0.13,
+  midSag = 0.03,
+  skirtDrop = 0.06,
 ): BufferGeometry {
-  const cloth = new PlaneGeometry(1, 1, 12, 10);
+  // Ridge sits 0.01 above the rear rail; the slope meets the front rail top.
+  const pitch = (REAR_RAIL_Y - FRONT_RAIL_Y) / 0.76;
+  const surfaceY = (x: number, z: number): number => {
+    const slope = -pitch * (0.5 - z);
+    const betweenRails = Math.max(0, 1 - (z / 0.38) ** 2);
+    const sag = -midSag * (1 - Math.min(1, Math.abs(x) * 2) ** 2) * betweenRails;
+    const droop = -0.02 * Math.max(0, (Math.abs(z) - 0.38) / 0.12) ** 1.5;
+    return slope + sag + droop;
+  };
+  const scallop = (along: number, count: number): number =>
+    0.014 * (0.5 - 0.5 * Math.cos((along + 0.5) * Math.PI * 2 * count));
+  const clothTint = [1.06, 1.02, 0.96] as const;
+  const hemTint = [0.66, 0.6, 0.56] as const;
+
+  const cloth = new PlaneGeometry(1, 1, 12, 8);
   cloth.rotateX(-Math.PI * 0.5);
-  const positions = cloth.getAttribute("position");
-  for (let index = 0; index < positions.count; index += 1) {
-    const x = positions.getX(index);
-    const z = positions.getZ(index);
-    const frontSlope = -frontDrop * (0.5 - z);
-    const centerSag = -ridgeSag * (1 - Math.min(1, Math.abs(x) * 2) ** 2);
-    const battenSag = -0.012 * Math.sin((x + 0.5) * Math.PI) ** 2;
-    const ripple = Math.sin((z + 0.5) * Math.PI * 5) * 0.009;
-    positions.setY(index, frontSlope + centerSag + battenSag + ripple);
+  const clothPositions = cloth.getAttribute("position");
+  for (let index = 0; index < clothPositions.count; index += 1) {
+    const x = clothPositions.getX(index);
+    const z = clothPositions.getZ(index);
+    clothPositions.setY(index, surfaceY(x, z) + Math.sin((x + 0.5) * Math.PI * 6) * 0.003);
   }
-  positions.needsUpdate = true;
+  clothPositions.needsUpdate = true;
   cloth.computeVertexNormals();
-  applyGeometryTint(cloth, [1.12, 1.02, 0.9]);
-  const frontHem = tintGeometry(boxPart(1, 0.035, 0.045, 0, -frontDrop - 0.01, -0.49), [1.2, 0.92, 0.62]);
-  const rearHem = tintGeometry(boxPart(1, 0.03, 0.04, 0, -0.006, 0.49), [0.88, 0.68, 0.46]);
-  const leftHem = tintGeometry(boxPart(0.035, 0.026, 0.96, -0.49, -frontDrop * 0.5, 0), [0.96, 0.72, 0.48]);
-  const rightHem = tintGeometry(boxPart(0.035, 0.026, 0.96, 0.49, -frontDrop * 0.5, 0), [1.18, 0.9, 0.6]);
-  const centerReinforcement = tintGeometry(boxPart(0.026, 0.018, 0.94, 0, -frontDrop * 0.5 - ridgeSag, 0), [0.82, 0.62, 0.42]);
-  return mergeProceduralGeometry([
-    cloth,
-    frontHem,
-    rearHem,
-    leftHem,
-    rightHem,
-    centerReinforcement,
-  ]);
+  applyGeometryTint(cloth, clothTint);
+
+  // Skirts hang from the cloth edge; the bottom row is a dyed hem band.
+  const skirt = (side: "front" | "left" | "right"): BufferGeometry => {
+    const panel = new PlaneGeometry(1, skirtDrop, side === "front" ? 16 : 10, 2);
+    const positions = panel.getAttribute("position");
+    const colors = new Float32Array(positions.count * 3);
+    for (let index = 0; index < positions.count; index += 1) {
+      const along = positions.getX(index);
+      const row = positions.getY(index);
+      const x = side === "front" ? along : side === "left" ? -0.5 : 0.5;
+      const z = side === "front" ? -0.5 : along;
+      const top = surfaceY(x, z);
+      const isHem = row < -skirtDrop * 0.4;
+      const y = isHem ? top - skirtDrop + scallop(along, side === "front" ? 7 : 5) : top + row + skirtDrop * 0.5;
+      positions.setX(index, x);
+      positions.setY(index, y);
+      positions.setZ(index, z);
+      const tint = isHem ? hemTint : clothTint;
+      colors[index * 3] = tint[0];
+      colors[index * 3 + 1] = tint[1];
+      colors[index * 3 + 2] = tint[2];
+    }
+    positions.needsUpdate = true;
+    panel.setAttribute("color", new Float32BufferAttribute(colors, 3));
+    panel.computeVertexNormals();
+    return panel;
+  };
+
+  const rearHem = tintGeometry(boxPart(1, 0.014, 0.02, 0, surfaceY(0, 0.5) - 0.006, 0.49), hemTint);
+  return mergeProceduralGeometry([cloth, skirt("front"), skirt("left"), skirt("right"), rearHem]);
 }

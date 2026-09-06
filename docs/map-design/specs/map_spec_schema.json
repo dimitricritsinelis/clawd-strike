@@ -12,55 +12,181 @@
   "$defs": {
     "rect": {
       "type": "object",
-      "required": ["x", "y", "w", "h"],
+      "required": [
+        "x",
+        "y",
+        "w",
+        "h"
+      ],
       "properties": {
-        "x": { "type": "number" },
-        "y": { "type": "number" },
-        "w": { "type": "number", "exclusiveMinimum": 0 },
-        "h": { "type": "number", "exclusiveMinimum": 0 }
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "w": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "h": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       },
       "additionalProperties": false
     },
     "macro_lane": {
       "type": "string",
-      "enum": ["west", "main", "east"]
+      "enum": [
+        "west",
+        "main",
+        "east"
+      ]
     },
     "dimensions_m": {
       "type": "object",
-      "required": ["width", "depth", "height"],
+      "required": [
+        "width",
+        "depth",
+        "height"
+      ],
       "properties": {
-        "width": { "type": "number", "exclusiveMinimum": 0 },
-        "depth": { "type": "number", "exclusiveMinimum": 0 },
-        "height": { "type": "number", "exclusiveMinimum": 0 }
+        "width": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "depth": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       },
       "additionalProperties": false
     },
     "scale": {
       "type": "object",
-      "required": ["x", "y", "z"],
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
       "properties": {
-        "x": { "type": "number", "minimum": 0.75, "maximum": 1.25 },
-        "y": { "type": "number", "minimum": 0.75, "maximum": 1.25 },
-        "z": { "type": "number", "minimum": 0.75, "maximum": 1.25 }
+        "x": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 1.25
+        },
+        "y": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 1.25
+        },
+        "z": {
+          "type": "number",
+          "minimum": 0.75,
+          "maximum": 1.25
+        }
       },
       "additionalProperties": false
     },
     "offset_m": {
       "type": "object",
-      "required": ["x", "y", "z"],
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
       "properties": {
-        "x": { "type": "number" },
-        "y": { "type": "number" },
-        "z": { "type": "number" }
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
       },
       "additionalProperties": false
+    },
+    "map_polish_camera_point": {
+      "type": "object",
+      "required": [
+        "x",
+        "y",
+        "z"
+      ],
+      "properties": {
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        },
+        "z": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "map_polish_survey_camera": {
+      "type": "object",
+      "required": [
+        "designPosition",
+        "designLookAt",
+        "playerPosition",
+        "yawDeg",
+        "fovDeg"
+      ],
+      "properties": {
+        "designPosition": {
+          "$ref": "#/$defs/map_polish_camera_point"
+        },
+        "designLookAt": {
+          "$ref": "#/$defs/map_polish_camera_point"
+        },
+        "playerPosition": {
+          "$ref": "#/$defs/map_polish_camera_point"
+        },
+        "yawDeg": {
+          "type": "number"
+        },
+        "fovDeg": {
+          "type": "number",
+          "exclusiveMinimum": 0,
+          "exclusiveMaximum": 180
+        },
+        "pitchDeg": {
+          "type": "number",
+          "exclusiveMinimum": -90,
+          "exclusiveMaximum": 90
+        }
+      },
+      "additionalProperties": false
+    },
+    "map_polish_survey_camera_views": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9:._-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/map_polish_survey_camera"
+      }
     }
   },
   "properties": {
     "metadata": {
       "type": "object",
       "properties": {
-        "version": { "type": "string", "minLength": 1 }
+        "version": {
+          "type": "string",
+          "minLength": 1
+        }
       }
     },
     "global_dimensions": {
@@ -74,13 +200,31 @@
       "properties": {
         "playable_boundary": {
           "type": "object",
-          "required": ["x", "y", "w", "h"],
+          "required": [
+            "x",
+            "y",
+            "w",
+            "h"
+          ],
           "properties": {
-            "shape": { "type": "string", "const": "rect" },
-            "x": { "type": "number" },
-            "y": { "type": "number" },
-            "w": { "type": "number", "exclusiveMinimum": 0 },
-            "h": { "type": "number", "exclusiveMinimum": 0 }
+            "shape": {
+              "type": "string",
+              "const": "rect"
+            },
+            "x": {
+              "type": "number"
+            },
+            "y": {
+              "type": "number"
+            },
+            "w": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "h": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
           },
           "additionalProperties": false
         },
@@ -189,29 +333,75 @@
                   "apronOffsetBelowSillM"
                 ],
                 "properties": {
-                  "id": { "type": "string" },
+                  "id": {
+                    "type": "string"
+                  },
                   "headShape": {
                     "type": "string",
-                    "enum": ["pointed_arch"]
+                    "enum": [
+                      "pointed_arch"
+                    ]
                   },
                   "glassStyle": {
                     "type": "string",
-                    "enum": ["stained_glass_bright", "stained_glass_dim"]
+                    "enum": [
+                      "stained_glass_bright",
+                      "stained_glass_dim"
+                    ]
                   },
-                  "apertureWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "apertureHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "frameWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "frameHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "frameDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "voidInsetM": { "type": "number" },
-                  "glassInsetM": { "type": "number" },
-                  "sillWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "sillHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "sillDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "apronWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "apronHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "apronDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "apronOffsetBelowSillM": { "type": "number" }
+                  "apertureWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "apertureHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "frameWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "frameHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "frameDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "voidInsetM": {
+                    "type": "number"
+                  },
+                  "glassInsetM": {
+                    "type": "number"
+                  },
+                  "sillWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "sillHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "sillDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "apronWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "apronHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "apronDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "apronOffsetBelowSillM": {
+                    "type": "number"
+                  }
                 }
               }
             },
@@ -235,22 +425,57 @@
                   "voidDepthM"
                 ],
                 "properties": {
-                  "id": { "type": "string" },
-                  "modelId": { "type": "string" },
+                  "id": {
+                    "type": "string"
+                  },
+                  "modelId": {
+                    "type": "string"
+                  },
                   "coverShape": {
                     "type": "string",
-                    "enum": ["arched", "rect"]
+                    "enum": [
+                      "arched",
+                      "rect"
+                    ]
                   },
-                  "doorWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "doorHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "coverWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "coverHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "coverCenterYOffsetM": { "type": "number" },
-                  "trimThicknessM": { "type": "number", "exclusiveMinimum": 0 },
-                  "revealWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "surroundDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "voidInsetM": { "type": "number" },
-                  "voidDepthM": { "type": "number", "exclusiveMinimum": 0 }
+                  "doorWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "doorHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "coverWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "coverHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "coverCenterYOffsetM": {
+                    "type": "number"
+                  },
+                  "trimThicknessM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "revealWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "surroundDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "voidInsetM": {
+                    "type": "number"
+                  },
+                  "voidDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  }
                 }
               }
             },
@@ -296,44 +521,139 @@
                   "pedimentBottomY"
                 ],
                 "properties": {
-                  "id": { "type": "string" },
+                  "id": {
+                    "type": "string"
+                  },
                   "glassStyle": {
                     "type": "string",
-                    "enum": ["stained_glass_bright", "stained_glass_dim"]
+                    "enum": [
+                      "stained_glass_bright",
+                      "stained_glass_dim"
+                    ]
                   },
-                  "openingWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "openingHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "openingSillY": { "type": "number" },
-                  "surroundWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "surroundHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "surroundBottomY": { "type": "number" },
-                  "frameDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "voidInsetM": { "type": "number" },
-                  "glassInsetM": { "type": "number" },
-                  "pilasterWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pilasterDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pilasterHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pilasterBottomY": { "type": "number" },
-                  "entablatureWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureThicknessM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureCenterY": { "type": "number" },
-                  "entablatureCapWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureCapDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureCapThicknessM": { "type": "number", "exclusiveMinimum": 0 },
-                  "entablatureCapCenterY": { "type": "number" },
-                  "corbelWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "corbelDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "corbelHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "corbelCenterY": { "type": "number" },
-                  "corbelCount": { "type": "integer", "minimum": 1 },
-                  "corbelSpreadM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pedimentBaseWidthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pedimentDepthM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pedimentLayerHeightM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pedimentLayerCount": { "type": "integer", "minimum": 1 },
-                  "pedimentWidthStepM": { "type": "number", "exclusiveMinimum": 0 },
-                  "pedimentBottomY": { "type": "number" }
+                  "openingWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "openingHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "openingSillY": {
+                    "type": "number"
+                  },
+                  "surroundWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "surroundHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "surroundBottomY": {
+                    "type": "number"
+                  },
+                  "frameDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "voidInsetM": {
+                    "type": "number"
+                  },
+                  "glassInsetM": {
+                    "type": "number"
+                  },
+                  "pilasterWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pilasterDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pilasterHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pilasterBottomY": {
+                    "type": "number"
+                  },
+                  "entablatureWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureThicknessM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureCenterY": {
+                    "type": "number"
+                  },
+                  "entablatureCapWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureCapDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureCapThicknessM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "entablatureCapCenterY": {
+                    "type": "number"
+                  },
+                  "corbelWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "corbelDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "corbelHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "corbelCenterY": {
+                    "type": "number"
+                  },
+                  "corbelCount": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "corbelSpreadM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pedimentBaseWidthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pedimentDepthM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pedimentLayerHeightM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pedimentLayerCount": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "pedimentWidthStepM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "pedimentBottomY": {
+                    "type": "number"
+                  }
                 }
               }
             }
@@ -354,10 +674,17 @@
               "upperWindowSillY"
             ],
             "properties": {
-              "zoneId": { "type": "string" },
+              "zoneId": {
+                "type": "string"
+              },
               "face": {
                 "type": "string",
-                "enum": ["north", "south", "east", "west"]
+                "enum": [
+                  "north",
+                  "south",
+                  "east",
+                  "west"
+                ]
               },
               "segmentOrdinal": {
                 "type": "integer",
@@ -365,13 +692,26 @@
               },
               "kind": {
                 "type": "string",
-                "enum": ["spawn_b_front_courtyard", "spawn_b_side_courtyard"]
+                "enum": [
+                  "spawn_b_front_courtyard",
+                  "spawn_b_side_courtyard"
+                ]
               },
-              "windowModuleId": { "type": "string" },
-              "doorModuleId": { "type": "string" },
-              "heroBayModuleId": { "type": "string" },
-              "lowerWindowSillY": { "type": "number" },
-              "upperWindowSillY": { "type": "number" }
+              "windowModuleId": {
+                "type": "string"
+              },
+              "doorModuleId": {
+                "type": "string"
+              },
+              "heroBayModuleId": {
+                "type": "string"
+              },
+              "lowerWindowSillY": {
+                "type": "number"
+              },
+              "upperWindowSillY": {
+                "type": "number"
+              }
             }
           }
         },
@@ -791,10 +1131,17 @@
     },
     "map_center": {
       "type": "object",
-      "required": ["x", "y"],
+      "required": [
+        "x",
+        "y"
+      ],
       "properties": {
-        "x": { "type": "number" },
-        "y": { "type": "number" }
+        "x": {
+          "type": "number"
+        },
+        "y": {
+          "type": "number"
+        }
       },
       "additionalProperties": false
     },
@@ -802,11 +1149,23 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "label"],
+        "required": [
+          "id",
+          "label"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "minLength": 1 },
-          "notes": { "type": "string", "minLength": 1 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "notes": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
@@ -817,13 +1176,31 @@
         "oneOf": [
           {
             "type": "object",
-            "required": ["id", "zoneId", "kind", "rect", "elevationM"],
+            "required": [
+              "id",
+              "zoneId",
+              "kind",
+              "rect",
+              "elevationM"
+            ],
             "properties": {
-              "id": { "type": "string", "minLength": 1 },
-              "zoneId": { "type": "string", "minLength": 1 },
-              "kind": { "const": "flat" },
-              "rect": { "$ref": "#/$defs/rect" },
-              "elevationM": { "type": "number" }
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "zoneId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "const": "flat"
+              },
+              "rect": {
+                "$ref": "#/$defs/rect"
+              },
+              "elevationM": {
+                "type": "number"
+              }
             },
             "additionalProperties": false
           },
@@ -839,18 +1216,50 @@
               "endElevationM"
             ],
             "properties": {
-              "id": { "type": "string", "minLength": 1 },
-              "zoneId": { "type": "string", "minLength": 1 },
-              "kind": { "const": "ramp" },
-              "rect": { "$ref": "#/$defs/rect" },
-              "axis": { "type": "string", "enum": ["x", "y"] },
-              "startElevationM": { "type": "number" },
-              "endElevationM": { "type": "number" },
-              "visual_style": { "type": "string", "enum": ["ramp", "stairs"] },
-              "step_count": { "type": "integer", "minimum": 1, "maximum": 64 }
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "zoneId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "kind": {
+                "const": "ramp"
+              },
+              "rect": {
+                "$ref": "#/$defs/rect"
+              },
+              "axis": {
+                "type": "string",
+                "enum": [
+                  "x",
+                  "y"
+                ]
+              },
+              "startElevationM": {
+                "type": "number"
+              },
+              "endElevationM": {
+                "type": "number"
+              },
+              "visual_style": {
+                "type": "string",
+                "enum": [
+                  "ramp",
+                  "stairs"
+                ]
+              },
+              "step_count": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 64
+              }
             },
             "dependentRequired": {
-              "step_count": ["visual_style"]
+              "step_count": [
+                "visual_style"
+              ]
             },
             "additionalProperties": false
           }
@@ -861,17 +1270,32 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "label", "zoneIds"],
+        "required": [
+          "id",
+          "label",
+          "zoneIds"
+        ],
         "properties": {
-          "id": { "$ref": "#/$defs/macro_lane" },
-          "label": { "type": "string", "minLength": 1 },
+          "id": {
+            "$ref": "#/$defs/macro_lane"
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
           "zoneIds": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
-          "cost": { "type": "number", "exclusiveMinimum": 0 }
+          "cost": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
         },
         "additionalProperties": false
       }
@@ -880,12 +1304,27 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["fromZoneId", "toZoneId"],
+        "required": [
+          "fromZoneId",
+          "toZoneId"
+        ],
         "properties": {
-          "fromZoneId": { "type": "string", "minLength": 1 },
-          "toZoneId": { "type": "string", "minLength": 1 },
-          "transitionSurfaceId": { "type": "string", "minLength": 1 },
-          "cost": { "type": "number", "exclusiveMinimum": 0 }
+          "fromZoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "toZoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "transitionSurfaceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "cost": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
         },
         "additionalProperties": false
       }
@@ -894,15 +1333,46 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "kind", "zoneId", "surfaceId", "x", "y", "yawDeg"],
+        "required": [
+          "id",
+          "kind",
+          "zoneId",
+          "surfaceId",
+          "x",
+          "y",
+          "yawDeg"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "kind": { "type": "string", "enum": ["player", "enemy"] },
-          "zoneId": { "type": "string", "minLength": 1 },
-          "surfaceId": { "type": "string", "minLength": 1 },
-          "x": { "type": "number" },
-          "y": { "type": "number" },
-          "yawDeg": { "type": "number", "minimum": 0, "exclusiveMaximum": 360 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "player",
+              "enemy"
+            ]
+          },
+          "zoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "surfaceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "yawDeg": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 360
+          }
         },
         "additionalProperties": false
       }
@@ -911,45 +1381,239 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "zoneId", "face", "facadeProfileId", "massingProfileId", "layoutIntent"],
+        "required": [
+          "id",
+          "zoneId",
+          "face",
+          "facadeProfileId",
+          "massingProfileId",
+          "layoutIntent"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "zoneId": { "type": "string", "minLength": 1 },
-          "face": { "type": "string", "enum": ["north", "south", "east", "west"] },
-          "start": { "type": "number", "minimum": 0, "exclusiveMaximum": 1 },
-          "end": { "type": "number", "exclusiveMinimum": 0, "maximum": 1 },
-          "districtId": { "type": "string", "minLength": 1 },
-          "facadeProfileId": { "type": "string", "minLength": 1 },
-          "massingProfileId": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "zoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "face": {
+            "type": "string",
+            "enum": [
+              "north",
+              "south",
+              "east",
+              "west"
+            ]
+          },
+          "start": {
+            "type": "number",
+            "minimum": 0,
+            "exclusiveMaximum": 1
+          },
+          "end": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "maximum": 1
+          },
+          "districtId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "facadeProfileId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "massingProfileId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "facadeModelId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered facade GLB (facades/models.json) that owns this frontage's street face. The kit keeps the wall mass, roof edge and collision and drops its face modules. Superseded by zones[].sectionModelId, which owns every face of a zone."
+          },
           "layoutIntent": {
-            "type": "object",
-            "required": ["mode", "rhythm"],
-            "properties": {
-              "mode": { "const": "generated" },
-              "rhythm": { "type": "string", "enum": ["merchant", "residential", "residential_dense", "service", "arcade", "hero"] },
-              "accentModuleId": { "type": "string", "minLength": 1 }
-            },
-            "additionalProperties": false
+            "oneOf": [
+              {
+                "type": "object",
+                "required": [
+                  "mode",
+                  "rhythm"
+                ],
+                "properties": {
+                  "mode": {
+                    "const": "generated"
+                  },
+                  "rhythm": {
+                    "type": "string",
+                    "enum": [
+                      "merchant",
+                      "residential",
+                      "residential_dense",
+                      "service",
+                      "arcade",
+                      "hero"
+                    ]
+                  },
+                  "accentModuleId": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "required": [
+                  "mode",
+                  "composition",
+                  "cornerTreatment",
+                  "columns",
+                  "bays"
+                ],
+                "properties": {
+                  "mode": {
+                    "const": "authored"
+                  },
+                  "composition": {
+                    "type": "string",
+                    "minLength": 8,
+                    "maxLength": 240
+                  },
+                  "axisAlong": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "exclusiveMaximum": 1
+                  },
+                  "cornerTreatment": {
+                    "type": "string",
+                    "enum": [
+                      "held",
+                      "pilaster",
+                      "open"
+                    ]
+                  },
+                  "groundHeadM": {
+                    "type": "number",
+                    "exclusiveMinimum": 0
+                  },
+                  "upperSillDatumsM": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    }
+                  },
+                  "columns": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "along"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_]*$"
+                        },
+                        "along": {
+                          "type": "number",
+                          "minimum": 0,
+                          "maximum": 1
+                        },
+                        "mirrorOf": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_]*$"
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "bays": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": {
+                      "type": "object",
+                      "required": [
+                        "id",
+                        "moduleId",
+                        "columnId"
+                      ],
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_]*$"
+                        },
+                        "moduleId": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "columnId": {
+                          "type": "string",
+                          "pattern": "^[A-Z][A-Z0-9_]*$"
+                        },
+                        "story": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                },
+                "additionalProperties": false
+              }
+            ]
           },
           "bays": {
             "type": "array",
             "minItems": 1,
             "items": {
               "type": "object",
-              "required": ["id", "moduleId", "along", "baseElevationM"],
+              "required": [
+                "id",
+                "moduleId",
+                "along",
+                "baseElevationM"
+              ],
               "properties": {
-                "id": { "type": "string", "minLength": 1 },
-                "moduleId": { "type": "string", "minLength": 1 },
-                "along": { "type": "number", "minimum": 0, "maximum": 1 },
-                "baseElevationM": { "type": "number", "minimum": 0 }
+                "id": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "moduleId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "along": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "baseElevationM": {
+                  "type": "number",
+                  "minimum": 0
+                }
               },
               "additionalProperties": false
             }
+          },
+          "buildingId": {
+            "type": "string",
+            "minLength": 1
           }
         },
         "dependentRequired": {
-          "start": ["end"],
-          "end": ["start"]
+          "start": [
+            "end"
+          ],
+          "end": [
+            "start"
+          ]
         },
         "additionalProperties": false
       }
@@ -958,10 +1622,26 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["zoneId", "face", "reason", "note"],
+        "required": [
+          "zoneId",
+          "face",
+          "reason",
+          "note"
+        ],
         "properties": {
-          "zoneId": { "type": "string", "minLength": 1 },
-          "face": { "type": "string", "enum": ["north", "south", "east", "west"] },
+          "zoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "face": {
+            "type": "string",
+            "enum": [
+              "north",
+              "south",
+              "east",
+              "west"
+            ]
+          },
           "reason": {
             "type": "string",
             "enum": [
@@ -973,7 +1653,10 @@
               "system_articulated_boundary"
             ]
           },
-          "note": { "type": "string", "minLength": 1 }
+          "note": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
@@ -981,9 +1664,7 @@
     "composition_rules": {
       "type": "object",
       "required": [
-        "clearances",
-        "wall_budgets",
-        "zone_density_budgets"
+        "clearances"
       ],
       "properties": {
         "clearances": {
@@ -997,37 +1678,32 @@
             "fixture_axis_tolerance_m"
           ],
           "properties": {
-            "door_service_m": { "type": "number", "exclusiveMinimum": 0 },
-            "opening_lateral_buffer_m": { "type": "number", "minimum": 0 },
-            "canopy_opening_buffer_m": { "type": "number", "minimum": 0 },
-            "placement_aabb_buffer_m": { "type": "number", "minimum": 0 },
-            "fixture_buffer_m": { "type": "number", "minimum": 0 },
-            "fixture_axis_tolerance_m": { "type": "number", "minimum": 0 }
+            "door_service_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "opening_lateral_buffer_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "canopy_opening_buffer_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "placement_aabb_buffer_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "fixture_buffer_m": {
+              "type": "number",
+              "minimum": 0
+            },
+            "fixture_axis_tolerance_m": {
+              "type": "number",
+              "minimum": 0
+            }
           },
           "additionalProperties": false
-        },
-        "wall_budgets": {
-          "type": "object",
-          "required": [
-            "fixture_spacing_m",
-            "symmetry_tolerance",
-            "small_wall_max_m",
-            "small_wall_max_fixtures"
-          ],
-          "properties": {
-            "fixture_spacing_m": { "type": "number", "exclusiveMinimum": 0 },
-            "symmetry_tolerance": { "type": "number", "minimum": 0, "maximum": 0.5 },
-            "small_wall_max_m": { "type": "number", "exclusiveMinimum": 0 },
-            "small_wall_max_fixtures": { "type": "integer", "minimum": 0 }
-          },
-          "additionalProperties": false
-        },
-        "zone_density_budgets": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "integer",
-            "minimum": 0
-          }
         }
       },
       "additionalProperties": false
@@ -1048,14 +1724,41 @@
           "upperStorySetbackM"
         ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "minLength": 1 },
-          "heightM": { "type": "number", "exclusiveMinimum": 0 },
-          "depthM": { "type": "number", "exclusiveMinimum": 0 },
-          "roofStyle": { "type": "string", "enum": ["flat_parapet", "setback_flat"] },
-          "roofSetbackM": { "type": "number", "minimum": 0 },
-          "parapetHeightM": { "type": "number", "exclusiveMinimum": 0 },
-          "upperStorySetbackM": { "type": "number", "minimum": 0 }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "heightM": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "depthM": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "roofStyle": {
+            "type": "string",
+            "enum": [
+              "flat_parapet",
+              "setback_flat"
+            ]
+          },
+          "roofSetbackM": {
+            "type": "number",
+            "minimum": 0
+          },
+          "parapetHeightM": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "upperStorySetbackM": {
+            "type": "number",
+            "minimum": 0
+          }
         },
         "additionalProperties": false
       }
@@ -1075,23 +1778,58 @@
           "collisionOpening"
         ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
           "kind": {
             "type": "string",
-            "enum": ["shop_recess", "door", "window", "vent", "arch", "column", "blind_niche"]
+            "enum": [
+              "shop_recess",
+              "door",
+              "window",
+              "vent",
+              "arch",
+              "column",
+              "blind_niche"
+            ]
           },
           "openingType": {
             "type": "string",
-            "enum": ["none", "recess", "door_void", "window_void", "arch_void"]
+            "enum": [
+              "none",
+              "recess",
+              "door_void",
+              "window_void",
+              "arch_void"
+            ]
           },
-          "dimensionsM": { "$ref": "#/$defs/dimensions_m" },
+          "dimensionsM": {
+            "$ref": "#/$defs/dimensions_m"
+          },
           "materialSlot": {
             "type": "string",
-            "enum": ["wall", "trim", "roof", "timber", "metal", "accent"]
+            "enum": [
+              "wall",
+              "trim",
+              "roof",
+              "timber",
+              "metal",
+              "accent"
+            ]
           },
-          "collisionOpening": { "type": "boolean", "const": false },
-          "assetId": { "type": "string", "minLength": 1 }
+          "collisionOpening": {
+            "type": "boolean",
+            "const": false
+          },
+          "assetId": {
+            "type": "string",
+            "minLength": 1
+          }
         },
         "additionalProperties": false
       }
@@ -1101,25 +1839,72 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "label", "family", "massingProfileId", "materialSlots", "moduleIds"],
+        "required": [
+          "id",
+          "label",
+          "family",
+          "massingProfileId",
+          "materialSlots",
+          "moduleIds"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
           "family": {
             "type": "string",
-            "enum": ["active_merchant", "quiet_residential", "service_storage", "covered_arcade", "hero_courtyard"]
+            "enum": [
+              "active_merchant",
+              "quiet_residential",
+              "service_storage",
+              "covered_arcade",
+              "hero_courtyard"
+            ]
           },
-          "massingProfileId": { "type": "string", "minLength": 1 },
+          "massingProfileId": {
+            "type": "string",
+            "minLength": 1
+          },
           "materialSlots": {
             "type": "object",
-            "required": ["wall", "trim", "roof", "timber", "metal", "accent"],
+            "required": [
+              "wall",
+              "trim",
+              "roof",
+              "timber",
+              "metal",
+              "accent"
+            ],
             "properties": {
-              "wall": { "type": "string", "minLength": 1 },
-              "trim": { "type": "string", "minLength": 1 },
-              "roof": { "type": "string", "minLength": 1 },
-              "timber": { "type": "string", "minLength": 1 },
-              "metal": { "type": "string", "minLength": 1 },
-              "accent": { "type": "string", "minLength": 1 }
+              "wall": {
+                "type": "string",
+                "minLength": 1
+              },
+              "trim": {
+                "type": "string",
+                "minLength": 1
+              },
+              "roof": {
+                "type": "string",
+                "minLength": 1
+              },
+              "timber": {
+                "type": "string",
+                "minLength": 1
+              },
+              "metal": {
+                "type": "string",
+                "minLength": 1
+              },
+              "accent": {
+                "type": "string",
+                "minLength": 1
+              }
             },
             "additionalProperties": false
           },
@@ -1127,7 +1912,10 @@
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         },
         "additionalProperties": false
@@ -1151,28 +1939,65 @@
           "transform"
         ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "label": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
           "source": {
             "type": "object",
-            "required": ["kind", "uri"],
+            "required": [
+              "kind",
+              "uri"
+            ],
             "properties": {
-              "kind": { "type": "string", "enum": ["project_original", "external_cc0"] },
-              "uri": { "type": "string", "minLength": 1 }
+              "kind": {
+                "type": "string",
+                "enum": [
+                  "project_original",
+                  "external_cc0"
+                ]
+              },
+              "uri": {
+                "type": "string",
+                "minLength": 1
+              }
             },
             "additionalProperties": false
           },
-          "license": { "type": "string", "enum": ["Project-Original", "CC0-1.0"] },
-          "dimensionsM": { "$ref": "#/$defs/dimensions_m" },
+          "license": {
+            "type": "string",
+            "enum": [
+              "Project-Original",
+              "CC0-1.0"
+            ]
+          },
+          "dimensionsM": {
+            "$ref": "#/$defs/dimensions_m"
+          },
           "collisionClass": {
             "type": "string",
-            "enum": ["none", "soft", "hard", "overhead"]
+            "enum": [
+              "none",
+              "soft",
+              "hard",
+              "overhead"
+            ]
           },
           "shadowPolicy": {
             "type": "string",
-            "enum": ["cast_receive", "receive_only", "none"]
+            "enum": [
+              "cast_receive",
+              "receive_only",
+              "none"
+            ]
           },
-          "lodEligible": { "type": "boolean" },
+          "lodEligible": {
+            "type": "boolean"
+          },
           "semanticClass": {
             "type": "string",
             "enum": [
@@ -1190,22 +2015,67 @@
           },
           "runtime": {
             "type": "object",
-            "required": ["mode", "id"],
+            "required": [
+              "mode",
+              "id"
+            ],
             "properties": {
-              "mode": { "type": "string", "enum": ["model", "procedural"] },
-              "id": { "type": "string", "minLength": 1 },
-              "uri": { "type": "string", "minLength": 1 }
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "model",
+                  "procedural"
+                ]
+              },
+              "id": {
+                "type": "string",
+                "minLength": 1
+              },
+              "uri": {
+                "type": "string",
+                "minLength": 1
+              }
             },
             "additionalProperties": false
           },
           "transform": {
             "type": "object",
-            "required": ["pivot", "upAxis", "forwardAxis", "authoredScale"],
+            "required": [
+              "pivot",
+              "upAxis",
+              "forwardAxis",
+              "authoredScale"
+            ],
             "properties": {
-              "pivot": { "type": "string", "const": "base_center" },
-              "upAxis": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] },
-              "forwardAxis": { "type": "string", "enum": ["+x", "-x", "+y", "-y", "+z", "-z"] },
-              "authoredScale": { "$ref": "#/$defs/scale" }
+              "pivot": {
+                "type": "string",
+                "const": "base_center"
+              },
+              "upAxis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ]
+              },
+              "forwardAxis": {
+                "type": "string",
+                "enum": [
+                  "+x",
+                  "-x",
+                  "+y",
+                  "-y",
+                  "+z",
+                  "-z"
+                ]
+              },
+              "authoredScale": {
+                "$ref": "#/$defs/scale"
+              }
             },
             "additionalProperties": false
           }
@@ -1217,26 +2087,52 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "zoneId", "classification"],
+        "required": [
+          "id",
+          "zoneId",
+          "classification"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "zoneId": { "type": "string", "minLength": 1 },
-          "surfaceId": { "type": "string", "minLength": 1 },
-          "districtId": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "zoneId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "surfaceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "districtId": {
+            "type": "string",
+            "minLength": 1
+          },
           "classification": {
             "type": "string",
-            "enum": ["gameplay_cover", "soft_visual", "overhead"]
+            "enum": [
+              "gameplay_cover",
+              "soft_visual",
+              "overhead"
+            ]
           },
           "anchors": {
             "type": "array",
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
           "assetIds": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           }
         },
         "additionalProperties": false
@@ -1247,47 +2143,117 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "clusterId", "assetId", "anchorIds", "offsetM", "scale", "yawOffsetDeg"],
+        "required": [
+          "id",
+          "clusterId",
+          "assetId",
+          "anchorIds",
+          "offsetM",
+          "scale",
+          "yawOffsetDeg"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "clusterId": { "type": "string", "minLength": 1 },
-          "assetId": { "type": "string", "minLength": 1 },
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clusterId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "assetId": {
+            "type": "string",
+            "minLength": 1
+          },
           "anchorIds": {
             "type": "array",
             "minItems": 1,
             "uniqueItems": true,
-            "items": { "type": "string", "minLength": 1 }
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
           },
-          "offsetM": { "$ref": "#/$defs/offset_m" },
-          "scale": { "$ref": "#/$defs/scale" },
-          "yawOffsetDeg": { "type": "number" }
+          "offsetM": {
+            "$ref": "#/$defs/offset_m"
+          },
+          "scale": {
+            "$ref": "#/$defs/scale"
+          },
+          "yawOffsetDeg": {
+            "type": "number"
+          }
         },
         "additionalProperties": false
+      }
+    },
+    "map_polish_survey_camera_overrides": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/map_polish_survey_camera_views"
       }
     },
     "exterior_wall_patches": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["orientation", "coord", "start", "end", "outward"],
+        "required": [
+          "orientation",
+          "coord",
+          "start",
+          "end",
+          "outward"
+        ],
         "properties": {
-          "orientation": { "type": "string", "enum": ["vertical", "horizontal"] },
-          "coord": { "type": "number" },
-          "start": { "type": "number" },
-          "end": { "type": "number" },
-          "outward": { "type": "integer", "enum": [-1, 1] },
-          "_note": { "type": "string" }
+          "orientation": {
+            "type": "string",
+            "enum": [
+              "vertical",
+              "horizontal"
+            ]
+          },
+          "coord": {
+            "type": "number"
+          },
+          "start": {
+            "type": "number"
+          },
+          "end": {
+            "type": "number"
+          },
+          "outward": {
+            "type": "integer",
+            "enum": [
+              -1,
+              1
+            ]
+          },
+          "_note": {
+            "type": "string"
+          }
         },
         "additionalProperties": false
       }
     },
     "constraints": {
       "type": "object",
-      "required": ["min_path_width_main_lane", "min_path_width_side_halls"],
+      "required": [
+        "min_path_width_main_lane",
+        "min_path_width_side_halls"
+      ],
       "properties": {
-        "no_block_zone": { "type": "string" },
-        "min_path_width_main_lane": { "type": "number", "exclusiveMinimum": 0 },
-        "min_path_width_side_halls": { "type": "number", "exclusiveMinimum": 0 }
+        "no_block_zone": {
+          "type": "string"
+        },
+        "min_path_width_main_lane": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "min_path_width_side_halls": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
       }
     },
     "zones": {
@@ -1312,13 +2278,44 @@
           "notes": {
             "type": "string"
           },
-          "rect": { "$ref": "#/$defs/rect" },
-          "surfaceId": { "type": "string", "minLength": 1 },
-          "districtId": { "type": "string", "minLength": 1 },
-          "macroLane": { "$ref": "#/$defs/macro_lane" },
-          "floorMaterialId": { "type": "string", "minLength": 1 },
-          "facadeProfileId": { "type": "string", "minLength": 1 },
-          "clearWidthM": { "type": "number", "exclusiveMinimum": 0 }
+          "rect": {
+            "$ref": "#/$defs/rect"
+          },
+          "surfaceId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "districtId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "macroLane": {
+            "$ref": "#/$defs/macro_lane"
+          },
+          "floorMaterialId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "facadeProfileId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "clearWidthM": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "sectionModelId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Registered section GLB (facades/models.json) that owns every visible face of this zone. Mounted at the rect's south-west corner on the zone floor; the kit keeps wall mass, roofs and collision and drops its face modules for the zone."
+          },
+          "sectionFaces": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": { "type": "string", "enum": ["north", "south", "east", "west"] },
+            "description": "Zone faces the section GLB owns (default all four). The kit keeps its face details on the other faces, so a builder can rework one wall without stripping the rest."
+          }
         }
       }
     },
@@ -1326,35 +2323,327 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "type", "zone"],
+        "required": [
+          "id",
+          "type",
+          "zone"
+        ],
         "properties": {
-          "id": { "type": "string", "minLength": 1 },
-          "type": { "type": "string", "minLength": 1 },
-          "zone": { "type": "string", "minLength": 1 },
-          "x": { "type": "number" },
-          "y": { "type": "number" },
-          "z": { "type": "number" },
-          "frontageId": { "type": "string", "minLength": 1 },
-          "servedBayId": { "type": "string", "minLength": 1 },
-          "along": { "type": "number", "minimum": 0, "maximum": 1 },
-          "vertical_offset_m": { "type": "number" },
-          "inset_m": { "type": "number", "minimum": 0 },
-          "yaw_deg": { "type": "number" },
-          "end_x": { "type": ["number", "string"] },
-          "end_y": { "type": ["number", "string"] },
-          "end_z": { "type": ["number", "string"] },
-          "end_frontage_id": { "type": "string", "minLength": 1 },
-          "end_along": { "type": "number", "minimum": 0, "maximum": 1 },
-          "end_vertical_offset_m": { "type": "number" },
-          "end_inset_m": { "type": "number", "minimum": 0 },
-          "width_m": { "type": ["number", "string"] },
-          "height_m": { "type": ["number", "string"] },
-          "notes": { "type": "string" }
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "zone": {
+            "type": "string",
+            "minLength": 1
+          },
+          "x": {
+            "type": "number"
+          },
+          "y": {
+            "type": "number"
+          },
+          "z": {
+            "type": "number"
+          },
+          "frontageId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "servedBayId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "along": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "vertical_offset_m": {
+            "type": "number"
+          },
+          "inset_m": {
+            "type": "number",
+            "minimum": 0
+          },
+          "yaw_deg": {
+            "type": "number"
+          },
+          "end_x": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "end_y": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "end_z": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "end_frontage_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "end_along": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "end_vertical_offset_m": {
+            "type": "number"
+          },
+          "end_inset_m": {
+            "type": "number",
+            "minimum": 0
+          },
+          "width_m": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "height_m": {
+            "type": [
+              "number",
+              "string"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
         },
         "oneOf": [
-          { "required": ["x", "y", "z"] },
-          { "required": ["frontageId", "along"] }
+          {
+            "required": [
+              "x",
+              "y",
+              "z"
+            ]
+          },
+          {
+            "required": [
+              "frontageId",
+              "along"
+            ]
+          }
         ]
+      }
+    },
+    "buildings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "type",
+          "label",
+          "storeys",
+          "brief",
+          "faces",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls",
+          "walls"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^BLD_[A-Z0-9_]+$"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "shop",
+              "shop row",
+              "house",
+              "tea house",
+              "workshop",
+              "store row",
+              "landmark",
+              "arcade",
+              "service back",
+              "compound wall"
+            ]
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1
+          },
+          "storeys": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 3
+          },
+          "brief": {
+            "type": "string",
+            "minLength": 20,
+            "maxLength": 400
+          },
+          "faces": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "zoneId",
+                "face"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "zoneId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "face": {
+                  "type": "string",
+                  "enum": [
+                    "north",
+                    "south",
+                    "east",
+                    "west"
+                  ]
+                }
+              }
+            }
+          },
+          "walls": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": [
+                "corners",
+                "groundHeadM",
+                "bays",
+                "dressing",
+                "needs",
+                "note"
+              ],
+              "additionalProperties": false,
+              "properties": {
+                "frontageId": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "face": {
+                  "type": "string",
+                  "enum": [
+                    "north",
+                    "south",
+                    "east",
+                    "west"
+                  ]
+                },
+                "lengthM": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "corners": {
+                  "type": "string",
+                  "enum": [
+                    "held",
+                    "pilaster",
+                    "open"
+                  ]
+                },
+                "groundHeadM": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "bays": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "id",
+                      "module",
+                      "alongM",
+                      "story"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "module": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "alongM": {
+                        "type": "number",
+                        "minimum": 0
+                      },
+                      "along": {
+                        "type": [
+                          "number",
+                          "null"
+                        ],
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "story": {
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 2
+                      }
+                    }
+                  }
+                },
+                "dressing": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "assetId",
+                      "where"
+                    ],
+                    "additionalProperties": false,
+                    "properties": {
+                      "assetId": {
+                        "type": "string",
+                        "minLength": 1
+                      },
+                      "where": {
+                        "type": "string",
+                        "minLength": 1
+                      }
+                    }
+                  }
+                },
+                "needs": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "note": {
+                  "type": "string",
+                  "minLength": 1
+                }
+              }
+            }
+          }
+        }
       }
     }
   }

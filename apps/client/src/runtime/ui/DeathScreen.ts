@@ -4,7 +4,6 @@ import {
   type SharedChampionSnapshot,
 } from "../../../../shared/highScore";
 
-const AUTO_RESPAWN_S = 3.0;
 const FADE_IN_S = 0.5;
 
 function normalizeScore(value: number): number {
@@ -16,6 +15,18 @@ export type DeathScreenSummary = {
   playerName: string;
   finalScore: number;
   bestScore: number;
+  waveReached?: number;
+  wavesCleared?: number;
+  kills?: number;
+  headshots?: number;
+  accuracy?: number;
+  activeTimeS?: number;
+};
+
+export type DeathScreenOptions = {
+  /** Null keeps the review open until the player explicitly restarts. */
+  autoRespawnS?: number | null;
+  restartOnBackdropClick?: boolean;
 };
 
 export class DeathScreen {
@@ -29,6 +40,9 @@ export class DeathScreen {
   private readonly sharedChampionModeEl: HTMLDivElement;
   private readonly playAgainBtn: HTMLButtonElement;
   private readonly countdownEl: HTMLDivElement;
+  private readonly runStatsEl: HTMLDivElement;
+  private readonly autoRespawnS: number | null;
+  private readonly restartOnBackdropClick: boolean;
 
   private visible = false;
   private fadeTimerS = 0;
@@ -41,7 +55,13 @@ export class DeathScreen {
   /** Called by bootstrap when the screen should restart the run. */
   onRespawn: (() => void) | null = null;
 
-  constructor(mountEl: HTMLElement) {
+  constructor(mountEl: HTMLElement, options: DeathScreenOptions = {}) {
+    this.autoRespawnS = options.autoRespawnS === undefined
+      ? 3
+      : options.autoRespawnS === null
+        ? null
+        : Math.max(0, options.autoRespawnS);
+    this.restartOnBackdropClick = options.restartOnBackdropClick ?? true;
     this.root = document.createElement("div");
     this.root.dataset.testid = "game-over";
     this.root.style.position = "fixed";
@@ -95,6 +115,21 @@ export class DeathScreen {
     this.sessionBestEl.style.letterSpacing = "0.06em";
     this.sessionBestEl.style.textTransform = "uppercase";
     this.sessionBestEl.textContent = "Session Best 0";
+
+    this.runStatsEl = document.createElement("div");
+    Object.assign(this.runStatsEl.style, {
+      marginTop: "14px",
+      maxWidth: "560px",
+      textAlign: "center",
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "14px",
+      fontWeight: "600",
+      lineHeight: "1.6",
+      letterSpacing: "0.05em",
+      textTransform: "uppercase",
+      color: "rgba(205, 220, 240, 0.78)",
+    });
+    this.runStatsEl.textContent = "";
 
     const championBlock = document.createElement("div");
     Object.assign(championBlock.style, {
@@ -200,13 +235,17 @@ export class DeathScreen {
     this.countdownEl.style.marginTop = "20px";
     this.countdownEl.style.letterSpacing = "0.04em";
     this.countdownEl.style.textShadow = "0 0 24px rgba(255,255,255,0.25)";
-    this.countdownEl.textContent = String(Math.ceil(AUTO_RESPAWN_S));
+    this.countdownEl.textContent = this.autoRespawnS === null
+      ? ""
+      : String(Math.ceil(this.autoRespawnS));
+    this.countdownEl.style.display = this.autoRespawnS === null ? "none" : "block";
 
     this.root.append(
       this.youDiedEl,
       this.subtitleEl,
       this.finalScoreEl,
       this.sessionBestEl,
+      this.runStatsEl,
       championBlock,
       this.playAgainBtn,
       this.countdownEl,
@@ -215,7 +254,7 @@ export class DeathScreen {
 
     this.root.style.pointerEvents = "none";
     this.root.addEventListener("click", () => {
-      if (!this.visible) return;
+      if (!this.visible || !this.restartOnBackdropClick) return;
       this.triggerRespawn();
     });
 
@@ -231,11 +270,13 @@ export class DeathScreen {
     if (this.visible) return;
     this.visible = true;
     this.fadeTimerS = 0;
-    this.respawnTimerS = AUTO_RESPAWN_S;
+    this.respawnTimerS = this.autoRespawnS ?? 0;
     this.root.style.display = "flex";
     this.root.style.opacity = "0";
     this.root.style.pointerEvents = "auto";
-    this.countdownEl.textContent = String(Math.ceil(AUTO_RESPAWN_S));
+    this.countdownEl.textContent = this.autoRespawnS === null
+      ? ""
+      : String(Math.ceil(this.autoRespawnS));
     this.subtitleEl.textContent = summary?.playerName
       ? `${summary.playerName.toUpperCase()} ELIMINATED`
       : "Run ended";
@@ -243,6 +284,15 @@ export class DeathScreen {
     const bestScore = normalizeScore(summary?.bestScore ?? 0);
     this.finalScoreEl.textContent = `Final Score ${this.formatScore(finalScore)}`;
     this.sessionBestEl.textContent = `Session Best ${this.formatScore(bestScore)}`;
+    const statParts: string[] = [];
+    if (typeof summary?.waveReached === "number") statParts.push(`Wave ${Math.max(1, Math.floor(summary.waveReached))}`);
+    if (typeof summary?.wavesCleared === "number") statParts.push(`${Math.max(0, Math.floor(summary.wavesCleared))} cleared`);
+    if (typeof summary?.kills === "number") statParts.push(`${Math.max(0, Math.floor(summary.kills))} kills`);
+    if (typeof summary?.headshots === "number") statParts.push(`${Math.max(0, Math.floor(summary.headshots))} headshots`);
+    if (typeof summary?.accuracy === "number") statParts.push(`${Math.max(0, summary.accuracy).toFixed(1)}% accuracy`);
+    if (typeof summary?.activeTimeS === "number") statParts.push(this.formatActiveTime(summary.activeTimeS));
+    this.runStatsEl.textContent = statParts.join("  •  ");
+    this.runStatsEl.style.display = statParts.length > 0 ? "block" : "none";
     this.renderSharedChampion();
   }
 
@@ -258,6 +308,8 @@ export class DeathScreen {
 
     this.fadeTimerS = Math.min(FADE_IN_S, this.fadeTimerS + deltaSeconds);
     this.root.style.opacity = (this.fadeTimerS / FADE_IN_S).toFixed(3);
+
+    if (this.autoRespawnS === null) return;
 
     this.respawnTimerS -= deltaSeconds;
     const displaySecs = Math.max(0, Math.ceil(this.respawnTimerS));
@@ -314,5 +366,12 @@ export class DeathScreen {
 
   private formatScore(value: number): string {
     return value.toLocaleString("en-US");
+  }
+
+  private formatActiveTime(value: number): string {
+    const totalSeconds = Math.max(0, Math.floor(value));
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")} active`;
   }
 }

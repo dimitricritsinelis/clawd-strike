@@ -22,6 +22,7 @@ export type InstanceSpec = {
   sz: number;
   yawRad: number;
   pitchRad?: number;
+  rollRad?: number;
   tintHex?: number;
   visualQa?: {
     placementId: string;

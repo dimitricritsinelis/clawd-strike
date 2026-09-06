@@ -4,6 +4,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  generateAuthoredFacadeLayout,
   generateFacadeLayout,
   validateFrontageCoverage,
   validateFixtureCenterlines,
@@ -38,6 +39,7 @@ const KNOWN_ANCHOR_TYPES = new Set([
   "open_node",
   "service_door_anchor",
   "shopfront_anchor",
+  "window_anchor",
   "signage_anchor",
   "spawn_cover",
 ]);
@@ -125,6 +127,9 @@ const APPROVED_CC0_HOSTS = new Set([
 const MAX_AUTHORED_GRADE_DEG = 30;
 const RECT_EPSILON = 1e-6;
 const SCALE_EPSILON = 1e-9;
+const MAP_POLISH_PLAYER_EYE_HEIGHT_M = 1.7;
+const MAP_POLISH_CAMERA_POSITION_TOLERANCE_M = 0.02;
+const MAP_POLISH_CAMERA_YAW_TOLERANCE_DEG = 0.35;
 
 const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
@@ -440,6 +445,9 @@ function collectJsonSchemaErrors(value, schema, rootSchema, valuePath) {
 
   if (value && typeof value === "object" && !Array.isArray(value)) {
     const properties = schema.properties && typeof schema.properties === "object" ? schema.properties : {};
+    if (typeof schema.minProperties === "number" && Object.keys(value).length < schema.minProperties) {
+      errors.push(`${valuePath}: expected at least ${schema.minProperties} properties`);
+    }
     if (Array.isArray(schema.required)) {
       for (const key of schema.required) {
         if (!Object.hasOwn(value, key)) {
@@ -452,11 +460,21 @@ function collectJsonSchemaErrors(value, schema, rootSchema, valuePath) {
         errors.push(...collectJsonSchemaErrors(value[key], childSchema, rootSchema, `${valuePath}.${key}`));
       }
     }
-    if (schema.additionalProperties === false) {
-      for (const key of Object.keys(value)) {
-        if (!Object.hasOwn(properties, key)) {
-          errors.push(`${valuePath}.${key}: additional property is not allowed`);
-        }
+    for (const key of Object.keys(value)) {
+      if (Object.hasOwn(properties, key)) continue;
+      if (schema.additionalProperties === false) {
+        errors.push(`${valuePath}.${key}: additional property is not allowed`);
+      } else if (
+        schema.additionalProperties
+        && typeof schema.additionalProperties === "object"
+        && !Array.isArray(schema.additionalProperties)
+      ) {
+        errors.push(...collectJsonSchemaErrors(
+          value[key],
+          schema.additionalProperties,
+          rootSchema,
+          `${valuePath}.${key}`,
+        ));
       }
     }
     if (schema.dependentRequired && typeof schema.dependentRequired === "object") {
@@ -517,6 +535,20 @@ function deriveZones(spec) {
     }
     const floorMaterialId = optionalString(zone.floorMaterialId, `zones[${index}].floorMaterialId`);
     const facadeProfileId = optionalString(zone.facadeProfileId, `zones[${index}].facadeProfileId`);
+    // An authored section GLB owns every visible face of this zone; the kit keeps
+    // wall mass, roofs and collision. Mounted at the rect's south-west corner.
+    const sectionModelId = optionalString(zone.sectionModelId, `zones[${index}].sectionModelId`);
+    if (sectionModelId && !getRuntimeModelCatalog().has(sectionModelId)) {
+      fail(`Zone '${id}' sectionModelId '${sectionModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
+    const sectionFaces = Array.isArray(zone.sectionFaces)
+      ? zone.sectionFaces.map((face, faceIndex) => {
+        const value = ensureString(face, `zones[${index}].sectionFaces[${faceIndex}]`);
+        if (!["north", "south", "east", "west"].includes(value)) fail(`zones[${index}].sectionFaces[${faceIndex}] must be north/south/east/west`);
+        return value;
+      })
+      : undefined;
+    if (sectionFaces && !sectionModelId) fail(`zones[${index}].sectionFaces requires sectionModelId`);
     const clearWidthM = optionalNumber(zone.clearWidthM, `zones[${index}].clearWidthM`);
     if (typeof clearWidthM !== "undefined") {
       ensurePositive(clearWidthM, `zones[${index}].clearWidthM`);
@@ -538,6 +570,8 @@ function deriveZones(spec) {
       ...(macroLane ? { macroLane } : {}),
       ...(floorMaterialId ? { floorMaterialId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
+      ...(sectionModelId ? { sectionModelId } : {}),
+      ...(sectionFaces ? { sectionFaces } : {}),
       ...(typeof clearWidthM !== "undefined" ? { clearWidthM } : {}),
     };
   });
@@ -546,6 +580,121 @@ function deriveZones(spec) {
     zoneIds: seenIds,
     zones: sortedById(derived),
   };
+}
+
+function validateExactObjectKeys(value, allowedKeys, label) {
+  for (const key of Object.keys(value)) {
+    if (!allowedKeys.has(key)) {
+      fail(`${label}.${key} is not an allowed property`);
+    }
+  }
+}
+
+function validateSurveyCameraPoint(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(`${label} must be an object`);
+  }
+  validateExactObjectKeys(value, new Set(["x", "y", "z"]), label);
+  asNumber(value.x, `${label}.x`);
+  asNumber(value.y, `${label}.y`);
+  asNumber(value.z, `${label}.z`);
+}
+
+function validateSurveyCamera(value, label) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    fail(`${label} must be an object`);
+  }
+  validateExactObjectKeys(
+    value,
+    new Set(["designPosition", "designLookAt", "playerPosition", "yawDeg", "pitchDeg", "fovDeg"]),
+    label,
+  );
+  validateSurveyCameraPoint(value.designPosition, `${label}.designPosition`);
+  validateSurveyCameraPoint(value.designLookAt, `${label}.designLookAt`);
+  validateSurveyCameraPoint(value.playerPosition, `${label}.playerPosition`);
+  const yawDeg = asNumber(value.yawDeg, `${label}.yawDeg`);
+  if (typeof value.pitchDeg !== "undefined") {
+    const pitchDeg = asNumber(value.pitchDeg, `${label}.pitchDeg`);
+    if (pitchDeg <= -90 || pitchDeg >= 90) {
+      fail(`${label}.pitchDeg must be > -90 and < 90`);
+    }
+  }
+  const fovDeg = asNumber(value.fovDeg, `${label}.fovDeg`);
+  if (fovDeg <= 0 || fovDeg >= 180) {
+    fail(`${label}.fovDeg must be > 0 and < 180`);
+  }
+  const playerEyePosition = {
+    x: value.playerPosition.x,
+    y: value.playerPosition.z,
+    z: value.playerPosition.y + MAP_POLISH_PLAYER_EYE_HEIGHT_M,
+  };
+  if (Math.hypot(
+    playerEyePosition.x - value.designPosition.x,
+    playerEyePosition.y - value.designPosition.y,
+    playerEyePosition.z - value.designPosition.z,
+  ) > MAP_POLISH_CAMERA_POSITION_TOLERANCE_M) {
+    fail(`${label}.designPosition must be the 1.7m player-eye position for playerPosition`);
+  }
+  const lookDx = value.designLookAt.x - value.designPosition.x;
+  const lookDy = value.designLookAt.y - value.designPosition.y;
+  const horizontalLookDistance = Math.hypot(
+    lookDx,
+    lookDy,
+  );
+  if (horizontalLookDistance <= RECT_EPSILON) {
+    fail(`${label}.designLookAt must differ from designPosition in the horizontal plane`);
+  }
+  const expectedYawDeg = Math.atan2(-lookDx, -lookDy) * (180 / Math.PI);
+  let yawDeltaDeg = Math.abs(yawDeg - expectedYawDeg) % 360;
+  if (yawDeltaDeg > 180) yawDeltaDeg = 360 - yawDeltaDeg;
+  if (yawDeltaDeg > MAP_POLISH_CAMERA_YAW_TOLERANCE_DEG) {
+    fail(`${label}.yawDeg must align with designPosition and designLookAt`);
+  }
+}
+
+function validateMapPolishSurveyCameraOverrides(spec, zoneIds) {
+  const overrides = spec?.map_polish_survey_camera_overrides;
+  if (typeof overrides === "undefined") return;
+  if (!overrides || typeof overrides !== "object" || Array.isArray(overrides)) {
+    fail("map_polish_survey_camera_overrides must be an object when provided");
+  }
+  const entries = Object.entries(overrides);
+  if (entries.length === 0) {
+    fail("map_polish_survey_camera_overrides must contain at least one zone override");
+  }
+
+  const seenZoneIds = new Set();
+  for (const [rawZoneId, views] of entries) {
+    const zoneId = ensureString(rawZoneId, "map_polish_survey_camera_overrides zone id");
+    if (seenZoneIds.has(zoneId)) {
+      fail(`Duplicate map polish survey camera override for zone '${zoneId}'`);
+    }
+    seenZoneIds.add(zoneId);
+    if (rawZoneId !== zoneId) {
+      fail(`map_polish_survey_camera_overrides zone id '${rawZoneId}' must not contain surrounding whitespace`);
+    }
+    if (!zoneIds.has(zoneId)) {
+      fail(`Unknown map polish survey camera override zone '${zoneId}'`);
+    }
+    if (!views || typeof views !== "object" || Array.isArray(views)) {
+      fail(`map_polish_survey_camera_overrides.${zoneId} must be an object`);
+    }
+    const viewEntries = Object.entries(views);
+    if (viewEntries.length === 0) {
+      fail(`map_polish_survey_camera_overrides.${zoneId} must define at least one view override`);
+    }
+    // Survey views are an ordered derived list (primary, context, elev:*,
+    // cross-a/b, upper); overrides may target any deterministic view id.
+    for (const [viewName, camera] of viewEntries) {
+      if (!/^[A-Za-z0-9][A-Za-z0-9:._-]*$/.test(viewName)) {
+        fail(`map_polish_survey_camera_overrides.${zoneId} view id '${viewName}' is invalid`);
+      }
+      validateSurveyCamera(
+        camera,
+        `map_polish_survey_camera_overrides.${zoneId}.${viewName}`,
+      );
+    }
+  }
 }
 
 function sampleSurfaceElevation(surface, x, y) {
@@ -1037,6 +1186,10 @@ function getRuntimeModelCatalog() {
       filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/doors/models.json"),
       publicBase: "/assets/models/environment/bazaar/doors",
     },
+    {
+      filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/facades/models.json"),
+      publicBase: "/assets/models/environment/bazaar/facades",
+    },
   ];
   const catalog = new Map();
   for (const manifest of manifestEntries) {
@@ -1052,11 +1205,14 @@ function getRuntimeModelCatalog() {
       const relativeUri = ensureString(model.url, `${manifest.filePath}.models[].url`);
       if (catalog.has(id)) fail(`Duplicate runtime model id '${id}' across bazaar model manifests`);
       catalog.set(id, path.posix.join(manifest.publicBase, relativeUri));
+      // Authored GLBs name their pack materials; the runtime preloads exactly these.
+      runtimeModelMaterialIds.set(id, Array.isArray(model.materialIds) ? model.materialIds.map(String) : []);
     }
   }
   runtimeModelCatalogCache = catalog;
   return catalog;
 }
+const runtimeModelMaterialIds = new Map();
 
 function deriveMassingProfiles(spec, formatVersion) {
   const source = requireV3Array(spec, "massing_profiles", formatVersion);
@@ -1238,6 +1394,12 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
     if (massingProfileId && !massingById?.has(massingProfileId)) {
       fail(`Frontage '${id}' references unknown massing profile '${massingProfileId}'`);
     }
+    // An authored facade GLB owns this frontage's street face; the runtime keeps
+    // the massing and drops the kit's face modules. It must be a registered model.
+    const facadeModelId = optionalString(entry.facadeModelId, `frontages[${index}].facadeModelId`);
+    if (facadeModelId && !getRuntimeModelCatalog().has(facadeModelId)) {
+      fail(`Frontage '${id}' facadeModelId '${facadeModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
     let bays;
     let layout;
     const layoutIntent = entry.layoutIntent;
@@ -1246,35 +1408,53 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
         fail(`V3 frontage '${id}' requires layoutIntent`);
       }
       const mode = ensureString(layoutIntent.mode, `frontages[${index}].layoutIntent.mode`);
-      if (mode !== "generated") fail(`Frontage '${id}' layoutIntent.mode must be 'generated'`);
-      const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
-      if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
-      if (typeof entry.bays !== "undefined") {
-        fail(`Generated frontage '${id}' cannot retain hand-authored bays`);
+      if (mode !== "generated" && mode !== "authored") {
+        fail(`Frontage '${id}' layoutIntent.mode must be 'generated' or 'authored'`);
       }
-      const accentModuleId = optionalString(
-        layoutIntent.accentModuleId,
-        `frontages[${index}].layoutIntent.accentModuleId`,
-      );
-      if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
-        fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
+      if (typeof entry.bays !== "undefined") {
+        fail(`V3 frontage '${id}' cannot carry top-level bays; authored bays belong inside layoutIntent`);
       }
       const zone = zoneById.get(zoneId);
       const massing = massingById.get(massingProfileId);
       const frontageLengthM = (face === "west" || face === "east" ? zone.rect.h : zone.rect.w)
         * ((end ?? 1) - (start ?? 0));
-      const generated = generateFacadeLayout({
-        frontageId: id,
-        lengthM: frontageLengthM,
-        heightM: massing.heightM,
-        family: profile.family,
-        rhythm,
-        profileModuleIds: profile.moduleIds,
-        moduleById,
-        accentModuleId,
-      });
-      bays = generated.bays;
-      layout = generated.layout;
+      if (mode === "authored") {
+        // Composition is a design decision: named columns, declared mirrors and
+        // corner treatment, one ordering sentence. Same physical validator as generated.
+        const authored = generateAuthoredFacadeLayout({
+          frontageId: id,
+          lengthM: frontageLengthM,
+          heightM: massing.heightM,
+          family: profile.family,
+          profileModuleIds: profile.moduleIds,
+          moduleById,
+          intent: layoutIntent,
+        });
+        bays = authored.bays;
+        layout = authored.layout;
+      } else {
+        const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
+        if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
+        const accentModuleId = optionalString(
+          layoutIntent.accentModuleId,
+          `frontages[${index}].layoutIntent.accentModuleId`,
+        );
+        if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
+          fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
+        }
+        const generated = generateFacadeLayout({
+          frontageId: id,
+          lengthM: frontageLengthM,
+          heightM: massing.heightM,
+          family: profile.family,
+          rhythm,
+          profileModuleIds: profile.moduleIds,
+          moduleById,
+          accentModuleId,
+        });
+        bays = generated.bays;
+        layout = generated.layout;
+      }
     } else if (typeof entry.bays !== "undefined") {
       if (!Array.isArray(entry.bays) || entry.bays.length === 0) fail(`Frontage '${id}' bays must be a non-empty array`);
       const seenBayIds = new Set();
@@ -1296,7 +1476,9 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
         return { id: bayId, moduleId, along, baseElevationM };
       }).sort((a, b) => a.along - b.along || a.id.localeCompare(b.id));
     }
-    if (isV3FormatVersion(formatVersion) && (!bays || bays.length === 0)) fail(`V3 frontage '${id}' requires generated bays`);
+    if (isV3FormatVersion(formatVersion) && (!bays || bays.length === 0)) {
+      fail(`V3 frontage '${id}' requires generated or authored bays`);
+    }
     return {
       id,
       zoneId,
@@ -1305,6 +1487,7 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
       ...(districtId ? { districtId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
       ...(massingProfileId ? { massingProfileId } : {}),
+      ...(facadeModelId ? { facadeModelId } : {}),
       ...(bays ? { bays } : {}),
       ...(layout ? { layout } : {}),
     };
@@ -1626,6 +1809,7 @@ function deriveArchitecturePlacements(frontages, zoneById, surfaceById, massingB
       face: frontage.face,
       profileId: profile.id,
       massingProfileId: massing.id,
+      ...(frontage.facadeModelId ? { facadeModelId: frontage.facadeModelId } : {}),
       center: { x: center2d.x, y: center2d.y, z: baseElevationM + massing.heightM * 0.5 },
       sizeM: { width: frontageLengthM, depth: massing.depthM, height: massing.heightM },
       yawDeg,
@@ -2884,6 +3068,7 @@ export function compileMapSpec(
       ? undefined
       : ensureString(mapSpec.metadata.version, "metadata.version");
   const { zoneIds, zones } = deriveZones(mapSpec);
+  validateMapPolishSurveyCameraOverrides(mapSpec, zoneIds);
   const zoneById = new Map(zones.map((zone) => [zone.id, zone]));
   const districts = deriveDistricts(mapSpec);
   const districtIds = new Set((districts ?? []).map((district) => district.id));
@@ -2957,7 +3142,6 @@ export function compileMapSpec(
   if (isV3FormatVersion(formatVersion)) {
     const compositionRules = normalizeCompositionRules(
       mapSpec.composition_rules,
-      zones,
       compositionWaivers,
     );
     validateCompositionRules({
@@ -2966,7 +3150,6 @@ export function compileMapSpec(
       anchors,
       architecturePlacements,
       dressingPlacements,
-      moduleById,
       rules: compositionRules,
     });
   }
@@ -2980,6 +3163,20 @@ export function compileMapSpec(
     if (unusedAssets.length > 0) fail(`V3 asset registry contains unrendered assets: ${unusedAssets.join(", ")}`);
   }
 
+  // Zone section models: origin at the rect's south-west corner on the zone's floor.
+  const sectionModels = zones.filter((zone) => zone.sectionModelId).map((zone) => {
+    const surface = zone.surfaceId ? surfaceById.get(zone.surfaceId) : undefined;
+    const elevationM = resolveSurfaceElevationAt(surface, zone.rect.x + zone.rect.w * 0.5, zone.rect.y + zone.rect.h * 0.5);
+    getRuntimeModelCatalog();
+    return {
+      zoneId: zone.id,
+      modelId: zone.sectionModelId,
+      origin: { x: zone.rect.x, y: zone.rect.y, z: elevationM },
+      sizeM: { width: zone.rect.w, depth: zone.rect.h },
+      faces: zone.sectionFaces ?? ["north", "south", "east", "west"],
+      materialIds: runtimeModelMaterialIds.get(zone.sectionModelId) ?? [],
+    };
+  });
   const blockoutSpec = deriveBlockoutSpec(mapSpec, zones);
   const mapCenter = deriveMapCenter(mapSpec, blockoutSpec.playable_boundary);
   validateSealedPerimeter(formatVersion, blockoutSpec.playable_boundary, blockoutSpec.exterior_wall_patches);
@@ -3000,6 +3197,7 @@ export function compileMapSpec(
     ...(facadeModules ? { facadeModules } : {}),
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
+    ...(sectionModels.length ? { sectionModels } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),
     anchors,

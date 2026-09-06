@@ -177,6 +177,18 @@ test("capture readiness rejects a failed or mismatched asset plan", async () => 
   );
 });
 
+test("runtime readiness stops on a logged launch failure instead of waiting 90 seconds", async () => {
+  const page = new EventEmitter();
+  attachConsoleRecorder(page);
+  page.evaluate = () => assert.fail("must not poll readiness after a fatal launch error");
+  page.emit("console", {
+    type: () => "error",
+    text: () => "[runtime] launch failed ReferenceError: missingBinding is not defined",
+    location: () => ({}),
+  });
+  await assert.rejects(waitForRuntimeReady(page), /missingBinding is not defined/);
+});
+
 test("runtime readiness surfaces an early asset failure before the runtime-ready binding exists", async () => {
   let waited = 0;
   const page = {

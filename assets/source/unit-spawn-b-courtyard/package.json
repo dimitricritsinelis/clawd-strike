@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "spawn_b_west_stone_face",
+      "file": "spawn-b-west.glb",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "spawn_b_east_stone_face",
+      "file": "spawn-b-east.glb",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "frontages": {
+    "FRONTAGE_SPAWN_B_SOUTH_WEST": "spawn_b_west_stone_face",
+    "FRONTAGE_SPAWN_B_SOUTH_EAST": "spawn_b_east_stone_face"
+  }
+}

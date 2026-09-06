@@ -1,16 +1,25 @@
 import path from "node:path";
+import { tsImport } from "tsx/esm/api";
 import {
   DEFAULT_BASE_URL,
+  DEFAULT_RUNTIME_READY_TIMEOUT_MS,
   attachConsoleRecorder,
   buildRuntimeUrl,
   ensureDir,
   launchBrowser,
   parseBaseUrl,
   parseBooleanEnv,
-  waitForRuntimeReady,
   advanceRuntime,
   writeJson,
 } from "./lib/runtimePlaywright.mjs";
+
+const { getGameplayTuning } = await tsImport(
+  "../src/runtime/tuning/gameplayTuning.ts",
+  import.meta.url,
+);
+const PROFILE_ID = "desktop-agent";
+const GAMEPLAY_TUNING = getGameplayTuning(PROFILE_ID);
+const PLAYER_ECONOMY = GAMEPLAY_TUNING.player.economy;
 
 function timestampId() {
   return new Date().toISOString().replace(/[:.]/g, "-");
@@ -30,6 +39,17 @@ async function stepFrames(page, count, stepMs) {
   for (let index = 0; index < count; index += 1) {
     await advanceRuntime(page, stepMs);
   }
+}
+
+async function waitForRuntimeState(page) {
+  await page.waitForFunction(() => {
+    try {
+      const ready = window.__runtime_ready_state?.();
+      return ready?.mapLoaded === true && ready?.revealPhase === "active";
+    } catch {
+      return false;
+    }
+  }, undefined, { timeout: DEFAULT_RUNTIME_READY_TIMEOUT_MS });
 }
 
 async function waitFor(page, predicate, message, options = {}) {
@@ -115,19 +135,25 @@ async function takeDamageBeforeWaveReset(page, initialState) {
     }, pose);
     await stepFrames(page, 2, FRAME_STEP_MS);
 
+    let damagedState;
     try {
-      const damagedState = await waitFor(
+      damagedState = await waitFor(
         page,
-        (state) => (state.health ?? 100) < 100 || state.gameplay?.alive === false,
+        (state) => (state.health ?? PLAYER_ECONOMY.waveStartHealth) < PLAYER_ECONOMY.waveStartHealth
+          || state.gameplay?.alive === false,
         "Timed out waiting for the player to take damage",
         { timeoutMs: 2_500, stepMs: 100 },
       );
-      assert(damagedState.gameplay?.alive !== false, "Damage probe killed the player before wave reset");
-      if ((damagedState.health ?? 100) < 100) {
-        return damagedState;
-      }
     } catch {
       // Try the next probe pose.
+      continue;
+    }
+
+    // All profiles now use explicit restart. Do not swallow a lethal probe and
+    // keep advancing a permanently dead run while trying the remaining poses.
+    assert(damagedState.gameplay?.alive !== false, "Damage probe killed the player before wave reset");
+    if ((damagedState.health ?? PLAYER_ECONOMY.waveStartHealth) < PLAYER_ECONOMY.waveStartHealth) {
+      return damagedState;
     }
   }
 
@@ -167,25 +193,39 @@ try {
     }),
     { waitUntil: "domcontentloaded" },
   );
-  await waitForRuntimeReady(page);
+  await waitForRuntimeState(page);
   const initialState = await readAmmoWaveState(page);
   await page.screenshot({ path: path.join(OUTPUT_DIR, "runtime-start.png") });
 
   const initialAmmo = initialState.ammo;
   const initialWaveNumber = initialState.bots?.waveNumber ?? 0;
-  assert(initialAmmo?.mag === 30, `Expected initial magazine to be 30, got ${initialAmmo?.mag ?? "n/a"}`);
-  assert(initialAmmo?.reserve === 90, `Expected initial reserve to be 90, got ${initialAmmo?.reserve ?? "n/a"}`);
+  assert(
+    initialState.profile?.profileId === PROFILE_ID,
+    `Expected ${PROFILE_ID} runtime, got ${initialState.profile?.profileId ?? "n/a"}`,
+  );
+  assert(
+    initialAmmo?.mag === PLAYER_ECONOMY.magazineCapacity,
+    `Expected initial magazine to be ${PLAYER_ECONOMY.magazineCapacity}, got ${initialAmmo?.mag ?? "n/a"}`,
+  );
+  assert(
+    initialAmmo?.reserve === PLAYER_ECONOMY.waveStartReserve,
+    `Expected initial reserve to be ${PLAYER_ECONOMY.waveStartReserve}, got ${initialAmmo?.reserve ?? "n/a"}`,
+  );
 
   await applyAction(page, { fire: true });
   const spentAmmoState = await waitFor(
     page,
-    (state) => (state.ammo?.mag ?? 30) <= 24,
+    (state) => (state.ammo?.mag ?? PLAYER_ECONOMY.magazineCapacity)
+      <= PLAYER_ECONOMY.magazineCapacity - 6,
     "Timed out waiting for ammo to drop below the initial magazine",
   );
   await applyAction(page, { fire: false });
   await stepFrames(page, 2, FRAME_STEP_MS);
 
-  assert((spentAmmoState.ammo?.mag ?? 30) < 30, `Expected spent mag < 30, got ${spentAmmoState.ammo?.mag ?? "n/a"}`);
+  assert(
+    (spentAmmoState.ammo?.mag ?? PLAYER_ECONOMY.magazineCapacity) < PLAYER_ECONOMY.magazineCapacity,
+    `Expected spent mag < ${PLAYER_ECONOMY.magazineCapacity}, got ${spentAmmoState.ammo?.mag ?? "n/a"}`,
+  );
 
   await applyAction(page, { reload: true, fire: false });
   const reloadStartedState = await waitFor(
@@ -197,8 +237,9 @@ try {
   const reloadCompletedState = await readAmmoWaveState(page);
   assert(
     reloadCompletedState.ammo?.reloading === false &&
-      (reloadCompletedState.ammo?.reserve ?? 90) < 90 &&
-      reloadCompletedState.ammo?.mag === 30,
+      (reloadCompletedState.ammo?.reserve ?? PLAYER_ECONOMY.waveStartReserve)
+        < PLAYER_ECONOMY.waveStartReserve &&
+      reloadCompletedState.ammo?.mag === PLAYER_ECONOMY.magazineCapacity,
     `Expected reload to finish within ${FAST_RELOAD_ASSERTION_WINDOW_S}s, got ` +
       `${reloadCompletedState.ammo?.mag ?? "n/a"}/${reloadCompletedState.ammo?.reserve ?? "n/a"} ` +
       `reloading=${reloadCompletedState.ammo?.reloading ?? "n/a"}`,
@@ -207,7 +248,8 @@ try {
   await applyAction(page, { fire: true });
   const secondSpendState = await waitFor(
     page,
-    (state) => (state.ammo?.mag ?? 30) <= 27,
+    (state) => (state.ammo?.mag ?? PLAYER_ECONOMY.magazineCapacity)
+      <= PLAYER_ECONOMY.magazineCapacity - 3,
     "Timed out waiting for second ammo spend",
   );
   await applyAction(page, { fire: false });
@@ -224,7 +266,10 @@ try {
   assert(duringReloadState.ammo?.reloading === true, "Expected reload to still be active before the wave reset");
 
   const damagedState = await takeDamageBeforeWaveReset(page, initialState);
-  assert((damagedState.health ?? 100) < 100, `Expected player health to drop below 100, got ${damagedState.health ?? "n/a"}`);
+  assert(
+    (damagedState.health ?? PLAYER_ECONOMY.waveStartHealth) < PLAYER_ECONOMY.waveStartHealth,
+    `Expected player health to drop below ${PLAYER_ECONOMY.waveStartHealth}, got ${damagedState.health ?? "n/a"}`,
+  );
 
   const eliminatedBots = await page.evaluate(() => window.__debug_eliminate_all_bots?.() ?? 0);
   assert(eliminatedBots > 0, `Expected debug bot clear to eliminate enemies, got ${eliminatedBots}`);
@@ -233,14 +278,26 @@ try {
     page,
     (state) => (state.bots?.waveNumber ?? 0) > initialWaveNumber,
     "Timed out waiting for the next wave to spawn",
-    { timeoutMs: 12_000, stepMs: 100 },
+    {
+      timeoutMs: Math.max(12_000, (GAMEPLAY_TUNING.flow.intermissionDurationS + 7) * 1_000),
+      stepMs: 100,
+    },
   );
   await page.screenshot({ path: path.join(OUTPUT_DIR, "next-wave-ammo-reset.png") });
 
-  assert(nextWaveState.ammo?.mag === 30, `Expected new-wave mag to reset to 30, got ${nextWaveState.ammo?.mag ?? "n/a"}`);
-  assert(nextWaveState.ammo?.reserve === 90, `Expected new-wave reserve to reset to 90, got ${nextWaveState.ammo?.reserve ?? "n/a"}`);
+  assert(
+    nextWaveState.ammo?.mag === PLAYER_ECONOMY.magazineCapacity,
+    `Expected new-wave mag to reset to ${PLAYER_ECONOMY.magazineCapacity}, got ${nextWaveState.ammo?.mag ?? "n/a"}`,
+  );
+  assert(
+    nextWaveState.ammo?.reserve === PLAYER_ECONOMY.waveStartReserve,
+    `Expected new-wave reserve to reset to ${PLAYER_ECONOMY.waveStartReserve}, got ${nextWaveState.ammo?.reserve ?? "n/a"}`,
+  );
   assert(nextWaveState.ammo?.reloading === false, "Expected new-wave ammo to cancel any active reload");
-  assert(nextWaveState.health === 100, `Expected new-wave health to reset to 100, got ${nextWaveState.health ?? "n/a"}`);
+  assert(
+    nextWaveState.health === PLAYER_ECONOMY.waveStartHealth,
+    `Expected new-wave health to reset to ${PLAYER_ECONOMY.waveStartHealth}, got ${nextWaveState.health ?? "n/a"}`,
+  );
 
   if (consoleRecorder.counts().errorCount > 0) {
     throw new Error(`Console/page errors observed: ${consoleRecorder.counts().errorCount}`);

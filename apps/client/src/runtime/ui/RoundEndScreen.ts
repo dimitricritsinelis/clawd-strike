@@ -60,12 +60,20 @@ export class RoundEndScreen {
   private readonly statsContainer: HTMLDivElement;
   private readonly countdownLabelEl: HTMLDivElement;
   private readonly countdownEl: HTMLDivElement;
+  private readonly continueBtn: HTMLButtonElement;
 
   private visible = false;
   private fadeTimerS = 0;
+  private readonly onKeyDown = (event: KeyboardEvent): void => {
+    if (!this.visible || this.continueBtn.style.display === "none") return;
+    if (event.code !== "Enter" && event.code !== "NumpadEnter") return;
+    event.preventDefault();
+    this.onContinue?.();
+  };
 
   /** Updated externally each frame with the next-wave countdown (seconds remaining). */
   onUpdate: ((countdownS: number, waveNumber: number) => void) | null = null;
+  onContinue: (() => void) | null = null;
 
   constructor(mountEl: HTMLElement) {
     this.root = document.createElement("div");
@@ -165,6 +173,32 @@ export class RoundEndScreen {
     });
     this.countdownEl.textContent = "5";
 
+    this.continueBtn = document.createElement("button");
+    this.continueBtn.type = "button";
+    this.continueBtn.textContent = "Continue · Enter";
+    this.continueBtn.dataset.testid = "continue-next-wave";
+    Object.assign(this.continueBtn.style, {
+      display: "none",
+      marginTop: "14px",
+      padding: "9px 20px",
+      borderRadius: "999px",
+      border: "1px solid rgba(255,255,255,0.28)",
+      background: "rgba(18, 28, 44, 0.78)",
+      color: "rgba(238, 245, 255, 0.96)",
+      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontSize: "12px",
+      fontWeight: "700",
+      letterSpacing: "0.12em",
+      textTransform: "uppercase",
+      cursor: "pointer",
+      pointerEvents: "auto",
+    });
+    this.continueBtn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (!this.visible || this.continueBtn.style.display === "none") return;
+      this.onContinue?.();
+    });
+
     this.root.append(
       this.titleEl,
       this.timeEl,
@@ -173,8 +207,10 @@ export class RoundEndScreen {
       divider,
       this.countdownLabelEl,
       this.countdownEl,
+      this.continueBtn,
     );
     mountEl.append(this.root);
+    window.addEventListener("keydown", this.onKeyDown);
   }
 
   /**
@@ -195,6 +231,7 @@ export class RoundEndScreen {
     this.timeEl.textContent = `Cleared in ${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
     this.waveEl.textContent = `Wave ${waveNumber} cleared`;
     this.countdownEl.textContent = "5";
+    this.continueBtn.style.display = "none";
 
     // Rebuild stats panel
     this.statsContainer.innerHTML = "";
@@ -225,7 +262,7 @@ export class RoundEndScreen {
   }
 
   /** Called every frame from bootstrap step(). Drives fade-in and countdown display. */
-  update(deltaSeconds: number, countdownS: number): void {
+  update(deltaSeconds: number, countdownS: number, canContinue = false): void {
     if (!this.visible) return;
 
     // Fade in
@@ -235,6 +272,7 @@ export class RoundEndScreen {
     // Update countdown
     const displaySecs = Math.max(0, Math.ceil(countdownS));
     this.countdownEl.textContent = String(displaySecs);
+    this.continueBtn.style.display = canContinue ? "block" : "none";
   }
 
   isVisible(): boolean {
@@ -242,6 +280,7 @@ export class RoundEndScreen {
   }
 
   dispose(): void {
+    window.removeEventListener("keydown", this.onKeyDown);
     this.root.remove();
   }
 }

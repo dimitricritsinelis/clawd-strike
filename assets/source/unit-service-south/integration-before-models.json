@@ -1,0 +1,964 @@
+{
+  "models": [
+    {
+      "id": "spawn_a_west_stone_face",
+      "url": "/assets/models/environment/bazaar/facades/spawn-a-west.glb",
+      "source": "assets/source/unit-spawn-a-courtyard/build.py",
+      "license": "CC0-1.0",
+      "md5": "7d7905e428e310d10d318c7f6346df2e",
+      "sourceMd5": "07808ff952e1218b3e857ec1cd23385d",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        }
+      ]
+    },
+    {
+      "id": "spawn_a_east_stone_face",
+      "url": "/assets/models/environment/bazaar/facades/spawn-a-east.glb",
+      "source": "assets/source/unit-spawn-a-courtyard/build.py",
+      "license": "CC0-1.0",
+      "md5": "f3ebd7496e513605f7d28889fb760712",
+      "sourceMd5": "07808ff952e1218b3e857ec1cd23385d",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        }
+      ]
+    },
+    {
+      "id": "spice_west_merchant_face",
+      "url": "/assets/models/environment/bazaar/facades/spice-west.glb",
+      "source": "assets/source/unit-spice-street/build.py",
+      "license": "CC0-1.0",
+      "md5": "a9278989d5e7bb44cee24e8c75e0c7f0",
+      "sourceMd5": "d7fcf401b5e8922a9ecc56c97019f116",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "bd2f6015b85864d8f6359ec6d26cbec5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "67237dad18f795a43fb8a82d1b3aa227"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "9bc4777b2f38e2ef06e394f1fca2f749"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "350348a669fdceae40bf35cf704364f2"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "d796ac77f351cd9de096c64370700c1b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "db5c953bc1ca96ea6861a0a354624a85"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "a1e746c80203a76940eb8aa7fec8d4cf"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "35256026fcf2734d558ee2aa8f939c10"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "1600b3fed674702eaa350cd627278a0f"
+        }
+      ]
+    },
+    {
+      "id": "spice_east_merchant_face",
+      "url": "/assets/models/environment/bazaar/facades/spice-east.glb",
+      "source": "assets/source/unit-spice-street/build.py",
+      "license": "CC0-1.0",
+      "md5": "d967c19c77d6564035664f99420b6af0",
+      "sourceMd5": "d7fcf401b5e8922a9ecc56c97019f116",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "bd2f6015b85864d8f6359ec6d26cbec5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "67237dad18f795a43fb8a82d1b3aa227"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/beige_wall_002",
+          "license": "CC0-1.0",
+          "md5": "9bc4777b2f38e2ef06e394f1fca2f749"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "350348a669fdceae40bf35cf704364f2"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "d796ac77f351cd9de096c64370700c1b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/brick_4_desert",
+          "license": "CC0-1.0",
+          "md5": "db5c953bc1ca96ea6861a0a354624a85"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "a1e746c80203a76940eb8aa7fec8d4cf"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "35256026fcf2734d558ee2aa8f939c10"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "1600b3fed674702eaa350cd627278a0f"
+        }
+      ]
+    },
+    {
+      "id": "fountain_west_face",
+      "url": "/assets/models/environment/bazaar/facades/fountain-west.glb",
+      "source": "assets/source/unit-fountain-court/build.py",
+      "license": "CC0-1.0",
+      "md5": "ebded0b207fd760b5286bb6be4768698",
+      "sourceMd5": "bd459985d0aa53e0f079ffc4f6d9acf0",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "16deb112a37a5e9e966609d23f86ef0e"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        }
+      ]
+    },
+    {
+      "id": "fountain_west_south_face",
+      "url": "/assets/models/environment/bazaar/facades/fountain-west-south.glb",
+      "source": "assets/source/unit-fountain-court/build.py",
+      "license": "CC0-1.0",
+      "md5": "040649aba3ce72de39e66ead139b6d29",
+      "sourceMd5": "bd459985d0aa53e0f079ffc4f6d9acf0",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "16deb112a37a5e9e966609d23f86ef0e"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        }
+      ]
+    },
+    {
+      "id": "fountain_east_face",
+      "url": "/assets/models/environment/bazaar/facades/fountain-east.glb",
+      "source": "assets/source/unit-fountain-court/build.py",
+      "license": "CC0-1.0",
+      "md5": "5cc2c73437d5aebef16f00d13aee6d79",
+      "sourceMd5": "bd459985d0aa53e0f079ffc4f6d9acf0",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        }
+      ]
+    },
+    {
+      "id": "fountain_east_north_face",
+      "url": "/assets/models/environment/bazaar/facades/fountain-east-north.glb",
+      "source": "assets/source/unit-fountain-court/build.py",
+      "license": "CC0-1.0",
+      "md5": "7dec67a8b3343b5093f036c8053e1602",
+      "sourceMd5": "bd459985d0aa53e0f079ffc4f6d9acf0",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        }
+      ]
+    },
+    {
+      "id": "textile_west_arcade_face",
+      "url": "/assets/models/environment/bazaar/facades/textile-west.glb",
+      "source": "assets/source/unit-textile-arcade/build.py",
+      "license": "CC0-1.0",
+      "md5": "8282092c60cc414694ddc55bd22d6fad",
+      "sourceMd5": "c25e4562319b391f8bf4d52fe36469a6",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "16deb112a37a5e9e966609d23f86ef0e"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "35256026fcf2734d558ee2aa8f939c10"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "1600b3fed674702eaa350cd627278a0f"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "a1e746c80203a76940eb8aa7fec8d4cf"
+        }
+      ]
+    },
+    {
+      "id": "textile_east_arcade_face",
+      "url": "/assets/models/environment/bazaar/facades/textile-east.glb",
+      "source": "assets/source/unit-textile-arcade/build.py",
+      "license": "CC0-1.0",
+      "md5": "7f7efd6e9ec011dbad18cf7df9a465fd",
+      "sourceMd5": "c25e4562319b391f8bf4d52fe36469a6",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+          "license": "CC0-1.0",
+          "md5": "16deb112a37a5e9e966609d23f86ef0e"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "35256026fcf2734d558ee2aa8f939c10"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "1600b3fed674702eaa350cd627278a0f"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/fabric_leather_02",
+          "license": "CC0-1.0",
+          "md5": "a1e746c80203a76940eb8aa7fec8d4cf"
+        }
+      ]
+    },
+    {
+      "id": "rug_west_face",
+      "url": "/assets/models/environment/bazaar/facades/rug-west.glb",
+      "source": "assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original",
+      "md5": "8204884b1279f97ed2bfde2e44fbef09",
+      "sourceMd5": "a45ef95cea93d4688612ba763b8d66df",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        }
+      ]
+    },
+    {
+      "id": "rug_east_face",
+      "url": "/assets/models/environment/bazaar/facades/rug-east.glb",
+      "source": "assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original",
+      "md5": "c9fcc31ba34e40ff4f4598464283663e",
+      "sourceMd5": "a45ef95cea93d4688612ba763b8d66df",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        }
+      ]
+    },
+    {
+      "id": "rug_east_south_face",
+      "url": "/assets/models/environment/bazaar/facades/rug-east-south.glb",
+      "source": "assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original",
+      "md5": "1b76f9b1a1570a087e8d7e5f02c34859",
+      "sourceMd5": "a45ef95cea93d4688612ba763b8d66df",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "e571a608f92ac2209389a35f2a378150"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "0e41998ee988c493ade5c774a5c29057"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/worn_plaster_wall",
+          "license": "CC0-1.0",
+          "md5": "15c83496e11bf088f375b21a313836c6"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "8c1036e566fe8e925e98123458aae385"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/rough_pine_door",
+          "license": "CC0-1.0",
+          "md5": "f542d70fa482014e9533a896e917c161"
+        }
+      ]
+    },
+    {
+      "id": "spawn_b_west_stone_face",
+      "url": "/assets/models/environment/bazaar/facades/spawn-b-west.glb",
+      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "CC0-1.0",
+      "md5": "c6bcc427d5b13a752b12c9b3f65157ba",
+      "sourceMd5": "42b5da60ad5ab5b243d76e5912eb0902",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "887ad0057682f01bf2705d4d1134c866"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "486e2b51beffc6c050d1e2b25fa47cbd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d4d54c89dce5e682e12e38f71db3820d"
+        }
+      ]
+    },
+    {
+      "id": "spawn_b_east_stone_face",
+      "url": "/assets/models/environment/bazaar/facades/spawn-b-east.glb",
+      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "CC0-1.0",
+      "md5": "6439746f28654418b18bc77ef49e8391",
+      "sourceMd5": "42b5da60ad5ab5b243d76e5912eb0902",
+      "dependencies": [
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d6eff1ed1206fac358da4a4d2a5e407d"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "887ad0057682f01bf2705d4d1134c866"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "2c3651fdf1071d7b60d82f0e86953968"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "486e2b51beffc6c050d1e2b25fa47cbd"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "cb9d5f4e66155a34236d6e2420ce276b"
+        },
+        {
+          "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_2k.jpg",
+          "source": "https://polyhaven.com/a/sandstone_blocks_05",
+          "license": "CC0-1.0",
+          "md5": "d4d54c89dce5e682e12e38f71db3820d"
+        }
+      ]
+    }
+  ]
+}

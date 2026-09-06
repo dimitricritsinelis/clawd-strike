@@ -6,6 +6,7 @@ import {
   CylinderGeometry,
   DataTexture,
   DoubleSide,
+  Euler,
   ExtrudeGeometry,
   Float32BufferAttribute,
   Group,
@@ -117,6 +118,8 @@ import {
   createMarketStallCanopyGeometry,
   createMarketStallGeometry,
   createMarketStallSlattedBackGeometry,
+  FRONT_RAIL_Y,
+  REAR_RAIL_Y,
 } from "./propFamilies/marketStalls";
 import {
   BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
@@ -139,6 +142,7 @@ import {
   createCanopyFixtureGeometry,
   createCanopyScallopedValanceGeometry,
   createCanopyTrestleGeometry,
+  createDyersCanopyWestCarrierGeometry,
   createClothGeometry,
   createSignFrameGeometry,
   createSignRigGeometry,
@@ -1791,10 +1795,6 @@ function buildCompiledDressing(
       castShadow: false,
       roughness: 0.93,
     }),
-    canopyCrossRopes: createBatch("v3-canopy-cross-ropes", 0x96734d, "canopy", () => createUnitRopeGeometry("x"), {
-      castShadow: false,
-      roughness: 0.93,
-    }),
     canopyHangRopes: createBatch("v3-canopy-hang-ropes", 0x96734d, "canopy", () => createUnitRopeGeometry("y"), {
       castShadow: false,
       roughness: 0.93,
@@ -1863,21 +1863,14 @@ function buildCompiledDressing(
       normalScale: 0.38,
       albedoBoost: 1.35,
     }),
+    // Near-neutral woven cloth so the per-stall dye tint reads as the dye
+    // (ochre, indigo, madder); the warm stripe texture cannot be tinted indigo.
     stallCanopy: createBatch("v3-market-stall-cloth-canopy", 0xffffff, "canopy", createMarketStallCanopyGeometry, {
       castShadow: true,
       receiveShadow: true,
       doubleSided: true,
-      textureUrl: BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
-      textureRepeat: [0.75, 1],
-      roughness: 0.97,
-      vertexColors: true,
-    }),
-    stallValance: createBatch("v3-market-stall-scalloped-valance", 0xffffff, "canopy", createCanopyScallopedValanceGeometry, {
-      castShadow: true,
-      receiveShadow: true,
-      doubleSided: true,
-      textureUrl: BAZAAR_STRIPED_CLOTH_TEXTURE_URL,
-      textureRepeat: [0.75, 0.32],
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [1.4, 1],
       roughness: 0.97,
       vertexColors: true,
     }),
@@ -2206,7 +2199,7 @@ function buildCompiledDressing(
       roughness: 0.97,
       vertexColors: true,
     }),
-    heroPillar: createBatch("v3-rug-gate-pillars", 0xffffff, "heroPillar", createHeroGatePillarGeometry, {
+    heroPillar: createBatch("v3-rug-gate-pillars", 0xdfc69a, "heroPillar", createHeroGatePillarGeometry, {
       castShadow: true,
       receiveShadow: true,
       textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
@@ -2219,7 +2212,7 @@ function buildCompiledDressing(
       vertexColors: true,
       doubleSided: true,
     }),
-    heroCrown: createBatch("v3-rug-gate-crown", 0xffffff, "heroLintel", createHeroGateCrownGeometry, {
+    heroCrown: createBatch("v3-rug-gate-crown", 0xd7b784, "heroLintel", createHeroGateCrownGeometry, {
       castShadow: true,
       receiveShadow: true,
       textureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
@@ -2246,7 +2239,7 @@ function buildCompiledDressing(
       receiveShadow: true,
       doubleSided: true,
       textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-      textureRepeat: [2.2, 2.4],
+      textureRepeat: [1, 1],
       roughness: 0.86,
       albedoBoost: 1.38,
       vertexColors: true,
@@ -2273,7 +2266,7 @@ function buildCompiledDressing(
       receiveShadow: true,
       doubleSided: true,
       textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-      textureRepeat: [2.45, 2.15],
+      textureRepeat: [1, 1],
       roughness: 0.84,
       albedoBoost: 1.42,
       vertexColors: true,
@@ -2466,12 +2459,10 @@ function buildCompiledDressing(
       albedoBoost: 1.14,
       vertexColors: true,
     }),
-    // Untextured, because any timber or stone diffuse multiplies the dye tints
-    // down into the same brown. Untextured alone is not enough though: a white
-    // base at full albedo under this sun returns pastel bunting whatever the
-    // tint, so the boost is pulled well below 1 to put the cloth back at the
-    // value dyed fabric actually sits at outdoors.
+    // Woven cloth texture preserves fabric grain while vertex colors carry the dye.
     spawnAEastWorksCloth: createBatch("v3-spawn-a-east-works-cloth", 0xffffff, "heroLintel", createSpawnAEastDyeWorksClothGeometry, {
+      textureUrl: "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      textureRepeat: [1, 1],
       castShadow: true,
       receiveShadow: true,
       roughness: 0.97,
@@ -2573,7 +2564,13 @@ function buildCompiledDressing(
     spawnCover: createBatch("v3-spawn-cover", 0x765034, "spawnCover", createCrateGeometry, { castShadow: true, roughness: 0.78 }),
   };
 
-  const compiledBatches = Object.values(batches);
+  const dyersWestCarrier: InstanceBatch = {
+    ...batches.canopyTrestles,
+    id: "v3-dyers-west-canopy-carrier",
+    createGeometry: createDyersCanopyWestCarrierGeometry,
+    instances: [],
+  };
+  const compiledBatches = [...Object.values(batches), dyersWestCarrier];
   const bbox = new Box3();
 
   const record = (
@@ -2720,7 +2717,7 @@ function buildCompiledDressing(
     // stacks a broad rectangular wash beneath the whole cluster and exposes a
     // hard grey apron beyond the rug edge in close review.
     const isGroundRug = placement.runtime.id === "bazaar_ground_rug";
-    if (!centeredAtAnchor && placement.classification !== "overhead" && !isGroundRug) {
+    if (!centeredAtAnchor && anchorType !== "window_anchor" && placement.classification !== "overhead" && !isGroundRug) {
       const footprintM = Math.max(width, depth);
       if (footprintM >= 0.34) {
         batches.groundContact.instances.push({
@@ -2906,8 +2903,11 @@ function buildCompiledDressing(
       continue;
     }
 
+    const isB18Canopy = placement.anchorId === "CANOPY_DYERS_01";
+    // This east/west span's local +Z points west. Match the authored low east
+    // seat without changing the other overhead owners' measured baseline.
     const spanPitchRad = placement.spanSeats
-      ? -Math.atan2(
+      ? (isB18Canopy ? 1 : -1) * Math.atan2(
           placement.spanSeats.end.z - placement.spanSeats.start.z,
           Math.max(0.001, depth),
         )
@@ -2927,10 +2927,13 @@ function buildCompiledDressing(
       case "bazaar_market_stall": {
         const variant = (stallOrdinalById.get(placement.id) ?? 0) % 6;
         const isDyersWorkshop = placement.id.includes("L3R0_NORTH");
-        const canopyTints = [0xd88455, 0x67a294, 0xb97454, 0xd3a24f, 0x7f8f67, 0xa9666e] as const;
+        // Dye palette: ochre, indigo, madder, saffron, deep indigo, madder-brown.
+        const canopyTints = [0xd39b3e, 0x3a4c78, 0xa9443a, 0xdcb35a, 0x2e3f66, 0x9a4d3c] as const;
         const textileTints = [0xf0b064, 0x7bc3bc, 0xc47b63, 0xe3bd70, 0xa9b37b, 0xc98991] as const;
-        const timberTints = [0xb98761, 0x8f765f, 0xa66f50, 0x927f68, 0xaa805b, 0x8e6d59] as const;
-        const canopyTintHex = isDyersWorkshop ? 0x3f7880 : canopyTints[variant]!;
+        // Near-neutral: the oak albedo and the geometry's vertex stops carry the
+        // wood hue; a warm instance tint on top stacked into saturated red.
+        const timberTints = [0xc6b9a9, 0xbcb0a2, 0xc2b4a0, 0xb8afa3, 0xcabdaa, 0xb3a696] as const;
+        const canopyTintHex = isDyersWorkshop ? 0x3a4c78 : canopyTints[variant]!;
         const textileTintHex = isDyersWorkshop ? 0xd59a35 : textileTints[variant]!;
         const timberTintHex = timberTints[variant]!;
         const structureWidthFactors = [0.94, 1, 0.9, 0.97, 0.92, 1.02] as const;
@@ -3021,8 +3024,8 @@ function buildCompiledDressing(
           yawRad,
           {
             x: 0,
-            y: height * (0.79 + (variant % 2) * 0.025),
-            z: forwardM - depth * 0.405,
+            y: height * (0.855 + (variant % 2) * 0.012),
+            z: forwardM + depth * 0.36,
             tintHex: timberTintHex,
           },
           {
@@ -3031,35 +3034,22 @@ function buildCompiledDressing(
             z: 0.09,
           },
         );
+        // The cloth is authored in frame units with its origin at the rear
+        // ridge, so it is instanced at the stall height and pitches down onto
+        // the front rail; its skirts hang from the edges.
         pushLocalInstance(
           batches.stallCanopy,
           world,
           yawRad,
-          { x: 0, y: height - 0.06, z: forwardM, tintHex: canopyTintHex },
-          { x: width * canopyWidthFactors[variant]!, y: 0.62, z: depth * canopyDepthFactors[variant]! },
+          { x: 0, y: height * (0.5 + REAR_RAIL_Y + 0.04), z: forwardM, tintHex: canopyTintHex },
+          { x: width * canopyWidthFactors[variant]!, y: height, z: depth * canopyDepthFactors[variant]! },
         );
-        pushLocalInstance(
-          batches.stallValance,
-          world,
-          yawRad,
-          { x: 0, y: height - 0.24, z: forwardM - depth * 0.49, tintHex: canopyTintHex },
-          { x: width * (canopyWidthFactors[variant]! - 0.02), y: [1, 0.78, 1.18, 0.9, 1.08, 0.84][variant]!, z: 0.045 },
-        );
-        for (const seamFraction of [-0.3, 0, 0.3]) {
-          pushLocalInstance(
-            batches.canopyCrossRopes,
-            world,
-            yawRad,
-            { x: 0, y: height - 0.105, z: forwardM + depth * seamFraction },
-            { x: width * 1.04, y: 0.016, z: 0.016 },
-          );
-        }
         for (const side of [-1, 1] as const) {
           pushLocalInstance(
             batches.stallTieRing,
             world,
             yawRad,
-            { x: side * width * 0.5, y: height - 0.16, z: forwardM - depth * 0.48 },
+            { x: side * width * 0.5, y: height * (0.5 + FRONT_RAIL_Y), z: forwardM - depth * 0.43 },
             { x: 0.13, y: 0.13, z: 0.055 },
           );
         }
@@ -3081,7 +3071,7 @@ function buildCompiledDressing(
         const hangingBottomM = height * 0.61;
         const hangingBasketHeightM = 0.28;
         const cordBottomM = hangingBottomM + hangingBasketHeightM;
-        const cordTopM = height - 0.14;
+        const cordTopM = height * (0.5 + FRONT_RAIL_Y - 0.03);
         for (const side of [-1, 1] as const) {
           pushLocalInstance(
             batches.stallHangerCord,
@@ -3487,6 +3477,7 @@ function buildCompiledDressing(
       }
       case "bazaar_cloth_canopy":
         {
+        const firstEdgeRope = batches.canopyEdgeRopes.instances.length;
         const canopySeed = [...placement.id].reduce((sum, character) => sum + character.charCodeAt(0), 0);
         // The reference street hangs undyed cream and tan sailcloth: value
         // varies, hue barely does. The pale cyan-green member (0xbfd8cc) put a
@@ -3511,6 +3502,10 @@ function buildCompiledDressing(
         const canopyValanceBatch = canopyIsPlain
           ? canopyPlainAlt ? batches.canopyPlainAltValance : batches.canopyPlainValance
           : batches.canopyValance;
+        if (isB18Canopy) {
+          const rotation = new Euler(transform.pitchRad ?? 0, transform.yawRad, 0, "YXZ").reorder("XYZ");
+          Object.assign(transform, { pitchRad: rotation.x, yawRad: rotation.y, rollRad: rotation.z });
+        }
         canopyClothBatch.instances.push({
           ...transform,
           tintHex: canopyTintHex,
@@ -3550,9 +3545,13 @@ function buildCompiledDressing(
         // cordage is no longer duplicated here.
 
         for (const wallSide of [-1, 1] as const) {
-          const fixtureZ = wallSide * (depth * 0.5 - 0.025);
-          const suspensionRiseM = Math.max(0.34, Math.min(0.58, height * 0.46));
-          pushLocalInstance(
+          const fixtureZ = wallSide * (depth * 0.5 + (isB18Canopy ? 0.025 : -0.025));
+          const suspensionRiseM = isB18Canopy ? 0.20 : Math.max(0.34, Math.min(0.58, height * 0.46));
+          const usesWestCarrier = isB18Canopy && wallSide === 1;
+          if (usesWestCarrier) {
+            const seat = designToWorldVec3(placement.spanSeats!.start);
+            dyersWestCarrier.instances.push({ ...seat, sx: 1, sy: 1, sz: 1, yawRad: 0 });
+          } else pushLocalInstance(
             batches.canopyTrestles,
             world,
             yawRad,
@@ -3601,7 +3600,7 @@ function buildCompiledDressing(
               {
                 x: edgeSide * width * 0.46,
                 y: suspensionRiseM,
-                z: wallSide * (depth * 0.5 - 0.025),
+                z: fixtureZ,
                 yaw: wallSide === -1 ? -Math.PI * 0.5 : Math.PI * 0.5,
                 visualQa: {
                   placementId: `${placement.id}:wall-ring:${wallSide === -1 ? "near" : "far"}:${edgeSide === -1 ? "left" : "right"}`,
@@ -3648,13 +3647,19 @@ function buildCompiledDressing(
               yawRad,
               {
                 x: width * alongFraction,
-                y: suspensionRiseM - 0.09,
+                y: usesWestCarrier ? .76 : suspensionRiseM - 0.09,
                 z: fixtureZ,
               },
-              { x: 0.034, y: 0.2, z: 0.034 },
+              { x: 0.034, y: usesWestCarrier ? 1.52 : 0.2, z: 0.034 },
               spanPitchRad,
               0,
             );
+          }
+        }
+        if (isB18Canopy) {
+          for (const rope of batches.canopyEdgeRopes.instances.slice(firstEdgeRope)) {
+            const rotation = new Euler(rope.pitchRad ?? 0, rope.yawRad, 0, "YXZ").reorder("XYZ");
+            Object.assign(rope, { pitchRad: rotation.x, yawRad: rotation.y, rollRad: rotation.z });
           }
         }
         break;
@@ -4175,7 +4180,7 @@ function buildCompiledDressing(
     for (let index = 0; index < batch.instances.length; index += 1) {
       const instance = batch.instances[index]!;
       dummy.position.set(instance.x, instance.y, instance.z);
-      dummy.rotation.set(instance.pitchRad ?? 0, instance.yawRad, 0);
+      dummy.rotation.set(instance.pitchRad ?? 0, instance.yawRad, instance.rollRad ?? 0);
       dummy.scale.set(instance.sx, instance.sy, instance.sz);
       dummy.updateMatrix();
       mesh.setMatrixAt(index, dummy.matrix);
@@ -4538,6 +4543,33 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
     }
 
     if (type === "shopfront_anchor") {
+      // User-approved B18 correction: the old 3.2 m stall box outlived its
+      // visuals. The finished cabinet sits wholly on the retained threshold.
+      // Its source anchor owns the solid height; the compiled model owns fit.
+      if (anchor.id === "DYE_E_SHOP_2" || anchor.id === "DYE_W_SHOP_1") {
+        const visualAnchor = anchor.id === "DYE_E_SHOP_2" ? "B18_SAMPLE_DISPLAY" : "CENTRAL_DYE_DISPLAY";
+        const display = options.blockout.dressingPlacements?.find((entry) => entry.anchorId === visualAnchor);
+        if (display) {
+          const origin = designToWorldVec3(display.position);
+          if (anchor.heightM === undefined) throw new Error("B18 north cabinet requires its authored solid height");
+          const cabinetHeight = anchor.heightM;
+          placeCollidingBox(anchor.id, "shop", batches.shopfront,
+            { ...origin, y: origin.y + cabinetHeight * 0.5 },
+            { x: display.dimensionsM.width, y: cabinetHeight, z: display.dimensionsM.depth },
+            designYawDegToWorldYawRad(display.yawDeg));
+          continue;
+        }
+      }
+      if (anchor.id === "DYE_W_SHOP_2") {
+        const door = options.blockout.architecturePlacements?.find((entry) => entry.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01");
+        if (!door || door.kind !== "facade_module" || anchor.widthM === undefined || anchor.heightM === undefined) {
+          throw new Error("Central service-door collider requires its authored door and envelope");
+        }
+        placeCollidingBox(anchor.id, "shop", batches.shopfront,
+          { ...base, y: base.y + anchor.heightM * .5 },
+          { x: anchor.widthM, y: anchor.heightM, z: door.sizeM.depth + .04 }, baseYaw);
+        continue;
+      }
       if (!shopfrontVisibility.has(anchor.id)) {
         continue;
       }

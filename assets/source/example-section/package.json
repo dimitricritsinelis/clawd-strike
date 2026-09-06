@@ -1,0 +1,2 @@
+{ "models": [ { "id": "section_example_link_ne", "file": "link-north-east.glb", "source": "repo://assets/source/example-section/build.py", "license": "Project-Original" } ],
+  "section": { "zoneId": "LINK_NORTH_EAST", "modelId": "section_example_link_ne", "faces": ["north"] } }

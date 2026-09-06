@@ -6,8 +6,11 @@ import {
   SHARED_CHAMPION_SCORE_RULESET,
   SITEWIDE_CHAMPION_BOARD_KEY,
   createSharedChampion,
+  deriveSharedChampionBoardKey,
+  isGameplayProfileCompatibleWithControlMode,
   normalizeScore,
   normalizeSharedChampionRunSummary,
+  parseStoredGameplayProfileIdentity,
   sanitizeSharedChampionMapId,
   sanitizeSharedChampionName,
   validateSharedChampionRunSummary,
@@ -16,6 +19,10 @@ import {
   type SharedChampionPostRequest,
   type SharedChampionRunSummary,
 } from "../apps/shared/highScore.js";
+import type {
+  GameplayProfileIdentity,
+  GameplayProfileId,
+} from "../apps/shared/gameplayProfile.js";
 import {
   parseStoredPlayerName,
 } from "../apps/shared/playerName.js";
@@ -38,8 +45,25 @@ const CREATE_HIGH_SCORE_TABLE_SQL = `
     score INTEGER NOT NULL CHECK (score >= 0),
     holder_name VARCHAR(15) NOT NULL,
     holder_mode TEXT NOT NULL CHECK (holder_mode IN ('human', 'agent')),
+    ruleset TEXT,
+    balance_season TEXT,
+    profile_id TEXT,
+    tuning_revision TEXT,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
   );
+`;
+
+const ALTER_HIGH_SCORE_PROFILE_TABLE_SQL = `
+  ALTER TABLE shared_champion_scores
+    ADD COLUMN IF NOT EXISTS ruleset TEXT,
+    ADD COLUMN IF NOT EXISTS balance_season TEXT,
+    ADD COLUMN IF NOT EXISTS profile_id TEXT,
+    ADD COLUMN IF NOT EXISTS tuning_revision TEXT;
+`;
+
+const CREATE_HIGH_SCORE_PROFILE_INDEX_SQL = `
+  CREATE INDEX IF NOT EXISTS idx_shared_champion_scores_profile_identity
+    ON shared_champion_scores (ruleset, balance_season, profile_id, tuning_revision);
 `;
 
 const CREATE_SUBMISSIONS_LOG_TABLE_SQL = `
@@ -87,6 +111,11 @@ const CREATE_RUN_TOKEN_TABLE_SQL = `
     player_name VARCHAR(15) NOT NULL,
     control_mode TEXT NOT NULL CHECK (control_mode IN ('human', 'agent')),
     map_id VARCHAR(${HIGH_SCORE_MAP_ID_MAX_LENGTH}) NOT NULL,
+    ruleset TEXT,
+    balance_season TEXT,
+    profile_id TEXT,
+    tuning_revision TEXT,
+    board_key TEXT,
     issued_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     expires_at TIMESTAMPTZ NOT NULL,
     claimed_at TIMESTAMPTZ,
@@ -102,7 +131,12 @@ const ALTER_RUN_TOKEN_TABLE_SQL = `
     ADD COLUMN IF NOT EXISTS created_ip_fingerprint TEXT,
     ADD COLUMN IF NOT EXISTS created_user_agent_fingerprint TEXT,
     ADD COLUMN IF NOT EXISTS claim_ip_fingerprint TEXT,
-    ADD COLUMN IF NOT EXISTS claim_user_agent_fingerprint TEXT;
+    ADD COLUMN IF NOT EXISTS claim_user_agent_fingerprint TEXT,
+    ADD COLUMN IF NOT EXISTS ruleset TEXT,
+    ADD COLUMN IF NOT EXISTS balance_season TEXT,
+    ADD COLUMN IF NOT EXISTS profile_id TEXT,
+    ADD COLUMN IF NOT EXISTS tuning_revision TEXT,
+    ADD COLUMN IF NOT EXISTS board_key TEXT;
 `;
 
 const DROP_LEGACY_RUN_TOKEN_COLUMNS_SQL = `
@@ -115,6 +149,8 @@ const DROP_LEGACY_RUN_TOKEN_COLUMNS_SQL = `
 const CREATE_RUN_TOKEN_INDEX_SQL = `
   CREATE INDEX IF NOT EXISTS idx_shared_champion_run_tokens_expires_at
     ON shared_champion_run_tokens (expires_at);
+  CREATE INDEX IF NOT EXISTS idx_shared_champion_run_tokens_profile_board
+    ON shared_champion_run_tokens (board_key, issued_at DESC);
 `;
 
 const RUN_TOKEN_CLEANUP_SQL = `
@@ -180,6 +216,10 @@ const CREATE_RUNS_TABLE_SQL = `
     control_mode TEXT NOT NULL CHECK (control_mode IN ('human', 'agent')),
     map_id VARCHAR(${HIGH_SCORE_MAP_ID_MAX_LENGTH}) NOT NULL,
     ruleset TEXT NOT NULL,
+    balance_season TEXT,
+    profile_id TEXT,
+    tuning_revision TEXT,
+    board_key TEXT,
     started_at TIMESTAMPTZ NOT NULL,
     ended_at TIMESTAMPTZ NOT NULL,
     elapsed_ms INTEGER NOT NULL CHECK (elapsed_ms >= 0),
@@ -200,6 +240,14 @@ const CREATE_RUNS_TABLE_SQL = `
   );
 `;
 
+const ALTER_RUNS_PROFILE_TABLE_SQL = `
+  ALTER TABLE shared_champion_runs
+    ADD COLUMN IF NOT EXISTS balance_season TEXT,
+    ADD COLUMN IF NOT EXISTS profile_id TEXT,
+    ADD COLUMN IF NOT EXISTS tuning_revision TEXT,
+    ADD COLUMN IF NOT EXISTS board_key TEXT;
+`;
+
 const CREATE_RUNS_INDEX_SQL = `
   CREATE INDEX IF NOT EXISTS idx_shared_champion_runs_created_at
     ON shared_champion_runs (created_at DESC, run_id DESC);
@@ -209,6 +257,8 @@ const CREATE_RUNS_INDEX_SQL = `
     ON shared_champion_runs (map_id, created_at DESC);
   CREATE INDEX IF NOT EXISTS idx_shared_champion_runs_champion_updated
     ON shared_champion_runs (champion_updated, created_at DESC);
+  CREATE INDEX IF NOT EXISTS idx_shared_champion_runs_profile_board
+    ON shared_champion_runs (board_key, created_at DESC, run_id DESC);
 `;
 
 const PLAYER_NAME_SQL_PATTERN = "^[A-Za-z0-9 ._''-]{1,15}$";
@@ -257,7 +307,7 @@ const DROP_ROLLUPS_VIEWS_SQL = `
 `;
 
 const SELECT_CHAMPION_SQL = `
-  SELECT score, holder_name, holder_mode, updated_at
+  SELECT board_key, score, holder_name, holder_mode, ruleset, balance_season, profile_id, tuning_revision, updated_at
   FROM shared_champion_scores
   WHERE board_key = $1
   LIMIT 1;
@@ -267,24 +317,32 @@ const UPSERT_CHAMPION_SQL = `
   WITH attempted AS (
     INSERT INTO shared_champion_scores AS scores (
       board_key,
+      ruleset,
+      balance_season,
+      profile_id,
+      tuning_revision,
       score,
       holder_name,
       holder_mode
     )
-    VALUES ($1, $2, $3, $4)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
     ON CONFLICT (board_key) DO UPDATE
     SET
       score = EXCLUDED.score,
       holder_name = EXCLUDED.holder_name,
       holder_mode = EXCLUDED.holder_mode,
+      ruleset = EXCLUDED.ruleset,
+      balance_season = EXCLUDED.balance_season,
+      profile_id = EXCLUDED.profile_id,
+      tuning_revision = EXCLUDED.tuning_revision,
       updated_at = NOW()
     WHERE EXCLUDED.score > scores.score
-    RETURNING score, holder_name, holder_mode, updated_at, TRUE AS updated
+    RETURNING board_key, score, holder_name, holder_mode, ruleset, balance_season, profile_id, tuning_revision, updated_at, TRUE AS updated
   )
-  SELECT score, holder_name, holder_mode, updated_at, updated
+  SELECT board_key, score, holder_name, holder_mode, ruleset, balance_season, profile_id, tuning_revision, updated_at, updated
   FROM attempted
   UNION ALL
-  SELECT score, holder_name, holder_mode, updated_at, FALSE AS updated
+  SELECT board_key, score, holder_name, holder_mode, ruleset, balance_season, profile_id, tuning_revision, updated_at, FALSE AS updated
   FROM shared_champion_scores
   WHERE board_key = $1
     AND NOT EXISTS (SELECT 1 FROM attempted)
@@ -298,12 +356,17 @@ const INSERT_RUN_TOKEN_SQL = `
     player_name,
     control_mode,
     map_id,
+    ruleset,
+    balance_season,
+    profile_id,
+    tuning_revision,
+    board_key,
     expires_at,
     created_ip_fingerprint,
     created_user_agent_fingerprint
   )
-  VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-  RETURNING run_id, player_name, control_mode, map_id, issued_at, expires_at, claimed_at;
+  VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
+  RETURNING run_id, player_name, control_mode, map_id, ruleset, balance_season, profile_id, tuning_revision, board_key, issued_at, expires_at, claimed_at;
 `;
 
 const CLAIM_RUN_TOKEN_SQL = `
@@ -315,11 +378,11 @@ const CLAIM_RUN_TOKEN_SQL = `
   WHERE token_hash = $1
     AND claimed_at IS NULL
     AND expires_at > NOW()
-  RETURNING run_id, player_name, control_mode, map_id, issued_at, expires_at, claimed_at;
+  RETURNING run_id, player_name, control_mode, map_id, ruleset, balance_season, profile_id, tuning_revision, board_key, issued_at, expires_at, claimed_at;
 `;
 
 const SELECT_RUN_TOKEN_SQL = `
-  SELECT run_id, player_name, control_mode, map_id, issued_at, expires_at, claimed_at
+  SELECT run_id, player_name, control_mode, map_id, ruleset, balance_season, profile_id, tuning_revision, board_key, issued_at, expires_at, claimed_at
   FROM shared_champion_run_tokens
   WHERE token_hash = $1
   LIMIT 1;
@@ -346,6 +409,10 @@ const INSERT_RUN_SQL = `
     control_mode,
     map_id,
     ruleset,
+    balance_season,
+    profile_id,
+    tuning_revision,
+    board_key,
     started_at,
     ended_at,
     elapsed_ms,
@@ -365,7 +432,7 @@ const INSERT_RUN_SQL = `
     created_at
   )
   VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27
   )
   RETURNING
     run_id,
@@ -374,6 +441,10 @@ const INSERT_RUN_SQL = `
     control_mode,
     map_id,
     ruleset,
+    balance_season,
+    profile_id,
+    tuning_revision,
+    board_key,
     started_at,
     ended_at,
     elapsed_ms,
@@ -401,6 +472,10 @@ const INSERT_RUN_IF_MISSING_SQL = `
     control_mode,
     map_id,
     ruleset,
+    balance_season,
+    profile_id,
+    tuning_revision,
+    board_key,
     started_at,
     ended_at,
     elapsed_ms,
@@ -420,7 +495,7 @@ const INSERT_RUN_IF_MISSING_SQL = `
     created_at
   )
   VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23
+    $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27
   )
   ON CONFLICT (run_id) DO NOTHING
   RETURNING
@@ -430,6 +505,10 @@ const INSERT_RUN_IF_MISSING_SQL = `
     control_mode,
     map_id,
     ruleset,
+    balance_season,
+    profile_id,
+    tuning_revision,
+    board_key,
     started_at,
     ended_at,
     elapsed_ms,
@@ -452,9 +531,14 @@ const INSERT_RUN_IF_MISSING_SQL = `
 type PoolKind = "read" | "write";
 
 type ChampionRow = {
+  board_key: string;
   score: number;
   holder_name: string;
   holder_mode: SharedChampionControlMode;
+  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET | null;
+  balance_season: string | null;
+  profile_id: GameplayProfileId | null;
+  tuning_revision: string | null;
   updated_at: Date;
 };
 
@@ -467,6 +551,11 @@ type RunTokenRow = {
   player_name: string;
   control_mode: SharedChampionControlMode;
   map_id: string;
+  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET | null;
+  balance_season: string | null;
+  profile_id: GameplayProfileId | null;
+  tuning_revision: string | null;
+  board_key: string | null;
   issued_at: Date;
   expires_at: Date;
   claimed_at: Date | null;
@@ -479,6 +568,10 @@ type RunRow = {
   control_mode: SharedChampionControlMode;
   map_id: string;
   ruleset: typeof SHARED_CHAMPION_SCORE_RULESET;
+  balance_season: string | null;
+  profile_id: GameplayProfileId | null;
+  tuning_revision: string | null;
+  board_key: string | null;
   started_at: Date;
   ended_at: Date;
   elapsed_ms: number;
@@ -541,6 +634,11 @@ export type SharedChampionRunTokenRecord = {
   playerName: string;
   controlMode: SharedChampionControlMode;
   mapId: string;
+  ruleset: typeof SHARED_CHAMPION_SCORE_RULESET | null;
+  balanceSeason: string | null;
+  profileId: GameplayProfileId | null;
+  tuningRevision: string | null;
+  boardKey: string | null;
   issuedAt: string;
   expiresAt: string;
   claimedAt: string | null;
@@ -557,8 +655,8 @@ export type SharedChampionAuditEvent = {
 };
 
 export type SharedChampionStore = {
-  getChampion: () => Promise<SharedChampion | null>;
-  submitCandidate: (input: SharedChampionPostRequest) => Promise<{
+  getChampion: (identity?: GameplayProfileIdentity | null) => Promise<SharedChampion | null>;
+  submitCandidate: (input: SharedChampionPostRequest, identity: GameplayProfileIdentity) => Promise<{
     updated: boolean;
     champion: SharedChampion | null;
   }>;
@@ -570,6 +668,7 @@ export type SharedChampionStore = {
     playerName: string;
     controlMode: SharedChampionControlMode;
     mapId: string;
+    profileIdentity: GameplayProfileIdentity;
     expiresAt: Date;
     clientIpFingerprint: string | null;
     userAgentFingerprint: string | null;
@@ -698,7 +797,7 @@ type BestRunSnapshotRow = {
 
 type BackfillAcceptedFinishPayload = {
   summary: SharedChampionRunSummary;
-  elapsedMs: number;
+  wallElapsedMs: number;
   championUpdated: boolean;
 };
 
@@ -830,20 +929,51 @@ function mapRowToChampion(row: ChampionRow, context: string): SharedChampion | n
     return null;
   }
 
+  const hasProfileMetadata = row.board_key !== SITEWIDE_CHAMPION_BOARD_KEY
+    || row.ruleset !== null
+    || row.balance_season !== null
+    || row.profile_id !== null
+    || row.tuning_revision !== null;
+  const identity = hasProfileMetadata
+    ? parseStoredGameplayProfileIdentity({
+        profileId: row.profile_id,
+        tuningRevision: row.tuning_revision,
+        balanceSeason: row.balance_season,
+      })
+    : null;
+  if (hasProfileMetadata && (
+    identity === null
+    || row.ruleset !== SHARED_CHAMPION_SCORE_RULESET
+    || row.board_key !== deriveSharedChampionBoardKey(identity)
+  )) {
+    return null;
+  }
+
   return createSharedChampion({
     holderName,
     score: row.score,
     controlMode: row.holder_mode,
     updatedAt: row.updated_at,
+    identity,
   });
 }
 
 function mapRunTokenRow(row: RunTokenRow): SharedChampionRunTokenRecord {
+  const identity = parseStoredGameplayProfileIdentity({
+    profileId: row.profile_id,
+    tuningRevision: row.tuning_revision,
+    balanceSeason: row.balance_season,
+  });
   return {
     runId: row.run_id,
     playerName: row.player_name,
     controlMode: row.control_mode,
     mapId: row.map_id,
+    ruleset: row.ruleset === SHARED_CHAMPION_SCORE_RULESET ? row.ruleset : null,
+    balanceSeason: identity?.balanceSeason ?? null,
+    profileId: identity?.profileId ?? null,
+    tuningRevision: identity?.tuningRevision ?? null,
+    boardKey: row.board_key,
     issuedAt: row.issued_at.toISOString(),
     expiresAt: row.expires_at.toISOString(),
     claimedAt: row.claimed_at ? row.claimed_at.toISOString() : null,
@@ -858,6 +988,10 @@ function mapRunRow(row: RunRow): SharedChampionRunRecord {
     controlMode: row.control_mode,
     mapId: row.map_id,
     ruleset: row.ruleset,
+    balanceSeason: row.balance_season,
+    profileId: row.profile_id,
+    tuningRevision: row.tuning_revision,
+    boardKey: row.board_key,
     startedAt: row.started_at.toISOString(),
     endedAt: row.ended_at.toISOString(),
     elapsedMs: row.elapsed_ms,
@@ -912,20 +1046,40 @@ function normalizeRunTokenInput(input: {
   playerName: string;
   controlMode: SharedChampionControlMode;
   mapId: string;
+  profileIdentity: GameplayProfileIdentity;
   expiresAt: Date;
   clientIpFingerprint: string | null;
   userAgentFingerprint: string | null;
 }) {
+  if (!isGameplayProfileCompatibleWithControlMode(input.profileIdentity, input.controlMode)) {
+    throw new Error("Gameplay profile identity is incompatible with the run control mode.");
+  }
+  const boardKey = deriveSharedChampionBoardKey(input.profileIdentity);
   return {
     runId: input.runId,
     tokenHash: input.tokenHash.trim(),
     playerName: requireSharedChampionName(input.playerName, input.controlMode),
     controlMode: input.controlMode,
     mapId: sanitizeSharedChampionMapId(input.mapId),
+    ruleset: SHARED_CHAMPION_SCORE_RULESET as typeof SHARED_CHAMPION_SCORE_RULESET,
+    balanceSeason: input.profileIdentity.balanceSeason,
+    profileId: input.profileIdentity.profileId,
+    tuningRevision: input.profileIdentity.tuningRevision,
+    boardKey,
     expiresAt: input.expiresAt,
     clientIpFingerprint: input.clientIpFingerprint?.trim() || null,
     userAgentFingerprint: input.userAgentFingerprint?.trim() || null,
   };
+}
+
+export function getSharedChampionRunTokenProfileIdentity(
+  record: SharedChampionRunTokenRecord,
+): GameplayProfileIdentity | null {
+  const identity = parseStoredGameplayProfileIdentity(record);
+  if (!identity) return null;
+  if (record.ruleset !== SHARED_CHAMPION_SCORE_RULESET) return null;
+  if (record.boardKey !== deriveSharedChampionBoardKey(identity)) return null;
+  return identity;
 }
 
 function normalizeRunRecord(input: {
@@ -939,6 +1093,15 @@ function normalizeRunRecord(input: {
   buildId?: string | null;
   createdAt?: Date;
 }): SharedChampionRunRecord {
+  const profileIdentity = getSharedChampionRunTokenProfileIdentity(input.tokenRecord);
+  const hasAnyProfileMetadata = input.tokenRecord.profileId !== null
+    || input.tokenRecord.tuningRevision !== null
+    || input.tokenRecord.balanceSeason !== null
+    || input.tokenRecord.boardKey !== null
+    || input.tokenRecord.ruleset !== null;
+  if (hasAnyProfileMetadata && profileIdentity === null) {
+    throw new Error("Invalid shared champion run token profile identity.");
+  }
   const derived = deriveRunFields({
     playerName: input.tokenRecord.playerName,
     mapId: input.tokenRecord.mapId,
@@ -946,6 +1109,7 @@ function normalizeRunRecord(input: {
     score: input.score,
     elapsedMs: input.elapsedMs,
     buildId: input.buildId ?? resolveBuildId(),
+    profileIdentity,
   });
   const endedAt = input.tokenRecord.claimedAt
     ? new Date(input.tokenRecord.claimedAt)
@@ -958,6 +1122,10 @@ function normalizeRunRecord(input: {
     controlMode: input.tokenRecord.controlMode,
     mapId: derived.mapId,
     ruleset: derived.ruleset,
+    balanceSeason: derived.balanceSeason,
+    profileId: derived.profileId,
+    tuningRevision: derived.tuningRevision,
+    boardKey: derived.boardKey,
     startedAt: new Date(input.tokenRecord.issuedAt).toISOString(),
     endedAt: endedAt.toISOString(),
     elapsedMs: derived.elapsedMs,
@@ -986,6 +1154,10 @@ function getRunInsertValues(run: SharedChampionRunRecord): unknown[] {
     run.controlMode,
     run.mapId,
     run.ruleset,
+    run.balanceSeason,
+    run.profileId,
+    run.tuningRevision,
+    run.boardKey,
     run.startedAt,
     run.endedAt,
     run.elapsedMs,
@@ -1020,11 +1192,21 @@ async function insertRunRecord(
 }
 
 function mapBackfillTokenRow(row: BackfillRunTokenRow): SharedChampionRunTokenRecord {
+  const identity = parseStoredGameplayProfileIdentity({
+    profileId: row.profile_id,
+    tuningRevision: row.tuning_revision,
+    balanceSeason: row.balance_season,
+  });
   return {
     runId: row.run_id,
     playerName: row.player_name,
     controlMode: row.control_mode,
     mapId: row.map_id,
+    ruleset: row.ruleset === SHARED_CHAMPION_SCORE_RULESET ? row.ruleset : null,
+    balanceSeason: identity?.balanceSeason ?? null,
+    profileId: identity?.profileId ?? null,
+    tuningRevision: identity?.tuningRevision ?? null,
+    boardKey: row.board_key,
     issuedAt: row.issued_at.toISOString(),
     expiresAt: row.expires_at.toISOString(),
     claimedAt: row.claimed_at ? row.claimed_at.toISOString() : null,
@@ -1042,22 +1224,23 @@ function parseAcceptedFinishAuditPayload(
     return null;
   }
 
-  const rawElapsedMs = typeof record.elapsedMs === "number"
-    ? record.elapsedMs
-    : Number(record.elapsedMs);
-  const elapsedMs = Number.isFinite(rawElapsedMs) && rawElapsedMs >= 0
-    ? Math.round(rawElapsedMs)
+  const rawWallElapsedValue = record.wallElapsedMs ?? record.elapsedMs;
+  const rawWallElapsedMs = typeof rawWallElapsedValue === "number"
+    ? rawWallElapsedValue
+    : Number(rawWallElapsedValue);
+  const wallElapsedMs = Number.isFinite(rawWallElapsedMs) && rawWallElapsedMs >= 0
+    ? Math.round(rawWallElapsedMs)
     : tokenRow.claimed_at
       ? Math.max(0, tokenRow.claimed_at.getTime() - tokenRow.issued_at.getTime())
       : null;
 
-  if (elapsedMs === null) {
+  if (wallElapsedMs === null) {
     return null;
   }
 
   return {
     summary,
-    elapsedMs,
+    wallElapsedMs,
     championUpdated: record.updated === true,
   };
 }
@@ -1071,7 +1254,10 @@ function createBackfilledRunRecord(
     return null;
   }
 
-  const validation = validateSharedChampionRunSummary(parsedPayload.summary, parsedPayload.elapsedMs);
+  const validation = validateSharedChampionRunSummary(
+    parsedPayload.summary,
+    parsedPayload.wallElapsedMs,
+  );
   if (validation.ok === false) {
     return null;
   }
@@ -1174,6 +1360,9 @@ function applyInMemoryFilters<T extends SharedChampionRunRecord>(
     if (filters.controlMode && run.controlMode !== filters.controlMode) return false;
     if (filters.mapId && run.mapId !== filters.mapId) return false;
     if (filters.playerNameKey && run.playerNameKey !== filters.playerNameKey) return false;
+    if (filters.profileId && run.profileId !== filters.profileId) return false;
+    if (filters.tuningRevision && run.tuningRevision !== filters.tuningRevision) return false;
+    if (filters.balanceSeason && run.balanceSeason !== filters.balanceSeason) return false;
     return true;
   });
 }
@@ -1305,29 +1494,38 @@ function computeDailyRollups(
 }
 
 export function createInMemorySharedChampionStore(): SharedChampionStore {
-  let champion: SharedChampion | null = null;
+  const champions = new Map<string, SharedChampion>();
   const runTokens = new Map<string, InMemoryRunTokenRecord>();
   const auditEvents: SharedChampionAuditEvent[] = [];
   const runs: SharedChampionRunRecord[] = [];
 
   return {
-    async getChampion() {
-      return champion;
+    async getChampion(identity = null) {
+      const boardKey = identity
+        ? deriveSharedChampionBoardKey(identity)
+        : SITEWIDE_CHAMPION_BOARD_KEY;
+      return champions.get(boardKey) ?? null;
     },
-    async submitCandidate(input) {
+    async submitCandidate(input, identity) {
       const normalized = normalizeSubmission(input);
+      if (!isGameplayProfileCompatibleWithControlMode(identity, normalized.controlMode)) {
+        throw new Error("Gameplay profile identity is incompatible with the candidate control mode.");
+      }
+      const boardKey = deriveSharedChampionBoardKey(identity);
+      const champion = champions.get(boardKey) ?? null;
       const nextChampion = createSharedChampion({
         holderName: normalized.playerName,
         score: normalized.score,
         controlMode: normalized.controlMode,
         updatedAt: new Date(),
+        identity,
       });
 
       if (!champion || normalized.score > champion.score) {
-        champion = nextChampion;
+        champions.set(boardKey, nextChampion);
         return {
           updated: true,
-          champion,
+          champion: nextChampion,
         };
       }
 
@@ -1351,6 +1549,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
         playerName: normalized.playerName,
         controlMode: normalized.controlMode,
         mapId: normalized.mapId,
+        ruleset: normalized.ruleset,
+        balanceSeason: normalized.balanceSeason,
+        profileId: normalized.profileId,
+        tuningRevision: normalized.tuningRevision,
+        boardKey: normalized.boardKey,
         issuedAt: issuedAt.toISOString(),
         expiresAt: normalized.expiresAt.toISOString(),
         claimedAt: null,
@@ -1361,6 +1564,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
         playerName: record.playerName,
         controlMode: record.controlMode,
         mapId: record.mapId,
+        ruleset: record.ruleset,
+        balanceSeason: record.balanceSeason,
+        profileId: record.profileId,
+        tuningRevision: record.tuningRevision,
+        boardKey: record.boardKey,
         issuedAt: record.issuedAt,
         expiresAt: record.expiresAt,
         claimedAt: record.claimedAt,
@@ -1384,6 +1592,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
             playerName: record.playerName,
             controlMode: record.controlMode,
             mapId: record.mapId,
+            ruleset: record.ruleset,
+            balanceSeason: record.balanceSeason,
+            profileId: record.profileId,
+            tuningRevision: record.tuningRevision,
+            boardKey: record.boardKey,
             issuedAt: record.issuedAt,
             expiresAt: record.expiresAt,
             claimedAt: record.claimedAt,
@@ -1399,6 +1612,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
             playerName: record.playerName,
             controlMode: record.controlMode,
             mapId: record.mapId,
+            ruleset: record.ruleset,
+            balanceSeason: record.balanceSeason,
+            profileId: record.profileId,
+            tuningRevision: record.tuningRevision,
+            boardKey: record.boardKey,
             issuedAt: record.issuedAt,
             expiresAt: record.expiresAt,
             claimedAt: record.claimedAt,
@@ -1414,6 +1632,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
           playerName: record.playerName,
           controlMode: record.controlMode,
           mapId: record.mapId,
+          ruleset: record.ruleset,
+          balanceSeason: record.balanceSeason,
+          profileId: record.profileId,
+          tuningRevision: record.tuningRevision,
+          boardKey: record.boardKey,
           issuedAt: record.issuedAt,
           expiresAt: record.expiresAt,
           claimedAt: record.claimedAt,
@@ -1421,6 +1644,12 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
       };
     },
     async finalizeValidatedRun(input) {
+      const identity = getSharedChampionRunTokenProfileIdentity(input.tokenRecord);
+      if (!identity) {
+        throw new Error("Competitive runs require a token-bound gameplay profile identity.");
+      }
+      const boardKey = deriveSharedChampionBoardKey(identity);
+      const champion = champions.get(boardKey) ?? null;
       const normalizedSummary = normalizeRunRecord({
         ...input,
         championUpdated: false,
@@ -1430,10 +1659,11 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
         score: normalizedSummary.score,
         controlMode: normalizedSummary.controlMode,
         updatedAt: new Date(normalizedSummary.createdAt),
+        identity,
       });
       const updated = champion === null || normalizedSummary.score > champion.score;
       if (updated) {
-        champion = nextChampion;
+        champions.set(boardKey, nextChampion);
       }
       const run = {
         ...normalizedSummary,
@@ -1442,7 +1672,7 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
       runs.push(run);
       return {
         updated,
-        champion,
+        champion: updated ? nextChampion : champion,
         run,
       };
     },
@@ -1701,6 +1931,8 @@ async function migrateLegacyHalfPointScoreColumn(
 
 export async function runSharedChampionSchemaMaintenance(client: QueryableClient): Promise<void> {
   await client.query(CREATE_HIGH_SCORE_TABLE_SQL);
+  await client.query(ALTER_HIGH_SCORE_PROFILE_TABLE_SQL);
+  await client.query(CREATE_HIGH_SCORE_PROFILE_INDEX_SQL);
   await migrateLegacyHalfPointScoreColumn(client, "shared_champion_scores");
   await ensureTableConstraint(
     client,
@@ -1735,6 +1967,7 @@ export async function runSharedChampionSchemaMaintenance(client: QueryableClient
 
   await client.query(CREATE_RUNS_TABLE_SQL);
   await client.query(DROP_ROLLUPS_VIEWS_SQL);
+  await client.query(ALTER_RUNS_PROFILE_TABLE_SQL);
   await migrateLegacyHalfPointScoreColumn(client, "shared_champion_runs");
   await client.query(CREATE_RUNS_INDEX_SQL);
   await ensureTableConstraint(
@@ -1771,6 +2004,11 @@ async function backfillAcceptedFinishRuns(
       player_name,
       control_mode,
       map_id,
+      ruleset,
+      balance_season,
+      profile_id,
+      tuning_revision,
+      board_key,
       issued_at,
       expires_at,
       claimed_at,
@@ -1883,6 +2121,7 @@ async function computeChampionDrift(client: QueryableClient): Promise<SharedCham
   const bestRunResult = await client.query<BestRunSnapshotRow>(`
     SELECT run_id, score, player_name, control_mode, created_at
     FROM shared_champion_runs
+    WHERE board_key IS NULL OR board_key = 'default'
     ORDER BY score DESC, created_at DESC, run_id ASC
     LIMIT 1;
   `);
@@ -2081,6 +2320,15 @@ function applyRunFiltersSql(
   if (filters.playerNameKey) {
     clauses.push(`${alias}.player_name_key = ${push(filters.playerNameKey)}`);
   }
+  if (filters.profileId) {
+    clauses.push(`${alias}.profile_id = ${push(filters.profileId)}`);
+  }
+  if (filters.tuningRevision) {
+    clauses.push(`${alias}.tuning_revision = ${push(filters.tuningRevision)}`);
+  }
+  if (filters.balanceSeason) {
+    clauses.push(`${alias}.balance_season = ${push(filters.balanceSeason)}`);
+  }
 
   return clauses.length > 0 ? `WHERE ${clauses.join(" AND ")}` : "";
 }
@@ -2139,17 +2387,28 @@ export function hasConfiguredSharedChampionDatabase(kind: PoolKind = "write"): b
 
 export function createPostgresSharedChampionStore(): SharedChampionStore {
   return {
-    async getChampion() {
+    async getChampion(identity = null) {
       await ensureSchemaReady();
-      const result = await getPool("write").query<ChampionRow>(SELECT_CHAMPION_SQL, [SITEWIDE_CHAMPION_BOARD_KEY]);
+      const boardKey = identity
+        ? deriveSharedChampionBoardKey(identity)
+        : SITEWIDE_CHAMPION_BOARD_KEY;
+      const result = await getPool("write").query<ChampionRow>(SELECT_CHAMPION_SQL, [boardKey]);
       const row = result.rows[0];
-      return row ? mapRowToChampion(row, "shared_champion_scores") : null;
+      return row ? mapRowToChampion(row, `shared_champion_scores:${boardKey}`) : null;
     },
-    async submitCandidate(input) {
+    async submitCandidate(input, identity) {
       await ensureSchemaReady();
       const normalized = normalizeSubmission(input);
+      if (!isGameplayProfileCompatibleWithControlMode(identity, normalized.controlMode)) {
+        throw new Error("Gameplay profile identity is incompatible with the candidate control mode.");
+      }
+      const boardKey = deriveSharedChampionBoardKey(identity);
       const result = await getPool("write").query<ChampionMutationRow>(UPSERT_CHAMPION_SQL, [
-        SITEWIDE_CHAMPION_BOARD_KEY,
+        boardKey,
+        SHARED_CHAMPION_SCORE_RULESET,
+        identity.balanceSeason,
+        identity.profileId,
+        identity.tuningRevision,
         normalized.score,
         normalized.playerName,
         normalized.controlMode,
@@ -2157,7 +2416,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
       const row = result.rows[0] ?? null;
       return {
         updated: row?.updated === true,
-        champion: row ? mapRowToChampion(row, "shared_champion_scores") : null,
+        champion: row ? mapRowToChampion(row, `shared_champion_scores:${boardKey}`) : null,
       };
     },
     async isRateLimited(clientIpFingerprint) {
@@ -2179,6 +2438,11 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
         normalized.playerName,
         normalized.controlMode,
         normalized.mapId,
+        normalized.ruleset,
+        normalized.balanceSeason,
+        normalized.profileId,
+        normalized.tuningRevision,
+        normalized.boardKey,
         normalized.expiresAt,
         normalized.clientIpFingerprint,
         normalized.userAgentFingerprint,
@@ -2236,9 +2500,18 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
     },
     async finalizeValidatedRun(input) {
       await ensureSchemaReady();
+      const identity = getSharedChampionRunTokenProfileIdentity(input.tokenRecord);
+      if (!identity) {
+        throw new Error("Competitive runs require a token-bound gameplay profile identity.");
+      }
+      const boardKey = deriveSharedChampionBoardKey(identity);
       return withTransaction(async (client) => {
         const championResult = await client.query<ChampionMutationRow>(UPSERT_CHAMPION_SQL, [
-          SITEWIDE_CHAMPION_BOARD_KEY,
+          boardKey,
+          SHARED_CHAMPION_SCORE_RULESET,
+          identity.balanceSeason,
+          identity.profileId,
+          identity.tuningRevision,
           normalizeScore(input.score),
           requireSharedChampionName(input.tokenRecord.playerName, input.tokenRecord.controlMode),
           input.tokenRecord.controlMode,
@@ -2257,7 +2530,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
         }
         return {
           updated,
-          champion: championRow ? mapRowToChampion(championRow, "shared_champion_scores") : null,
+          champion: championRow ? mapRowToChampion(championRow, `shared_champion_scores:${boardKey}`) : null,
           run,
         };
       });
@@ -2327,6 +2600,10 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
           control_mode,
           map_id,
           ruleset,
+          balance_season,
+          profile_id,
+          tuning_revision,
+          board_key,
           started_at,
           ended_at,
           elapsed_ms,

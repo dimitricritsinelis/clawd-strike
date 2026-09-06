@@ -315,11 +315,19 @@ export class BuffOrb {
   readonly sizeJitter: number;
   private readonly buffType: BuffType;
   private readonly aabb: SlabAabb;
+  private readonly lifetimeS: number;
   private age = 0;
 
-  constructor(position: { x: number; y: number; z: number }, definition: BuffDefinition) {
+  constructor(
+    position: { x: number; y: number; z: number },
+    definition: BuffDefinition,
+    lifetimeS = ORB_LIFETIME_S,
+  ) {
     this.definition = definition;
     this.buffType = definition.type;
+    this.lifetimeS = Number.isFinite(lifetimeS) && lifetimeS > 0
+      ? lifetimeS
+      : ORB_LIFETIME_S;
     this.spawnX = position.x;
     this.spawnY = position.y + ORB_SPAWN_HEIGHT_OFFSET_M;
     this.spawnZ = position.z;
@@ -341,7 +349,7 @@ export class BuffOrb {
 
   update(deltaSeconds: number): boolean {
     this.age += deltaSeconds;
-    return this.age < ORB_LIFETIME_S;
+    return this.age < this.lifetimeS;
   }
 
   getAabb(): SlabAabb {

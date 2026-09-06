@@ -17,6 +17,7 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL,
+    channel: "chrome",
     viewport: { width: 1440, height: 900 },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",

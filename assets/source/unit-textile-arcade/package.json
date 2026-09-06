@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "textile_west_arcade_face",
+      "file": "textile-west.glb",
+      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "textile_east_arcade_face",
+      "file": "textile-east.glb",
+      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "frontages": {
+    "FRONTAGE_TEXTILE_ARCADE_WEST": "textile_west_arcade_face",
+    "FRONTAGE_TEXTILE_ARCADE_EAST": "textile_east_arcade_face"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "models": [
+    {
+      "id": "fountain_west_face",
+      "file": "fountain-west.glb",
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "fountain_west_south_face",
+      "file": "fountain-west-south.glb",
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "fountain_east_face",
+      "file": "fountain-east.glb",
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "fountain_east_north_face",
+      "file": "fountain-east-north.glb",
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "frontages": {
+    "FRONTAGE_FOUNTAIN_COURT_WEST": "fountain_west_face",
+    "FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH": "fountain_west_south_face",
+    "FRONTAGE_FOUNTAIN_COURT_EAST": "fountain_east_face",
+    "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH": "fountain_east_north_face"
+  }
+}

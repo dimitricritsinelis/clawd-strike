@@ -74,11 +74,11 @@ const HERO_GATE_DRESSING_SPECS: Readonly<Record<HeroGateDressingVariant, GateDre
     // The card's 6.0 m route plus 0.15 m visual buffer ends at 3.15 m.
     // A further 0.06 m prevents fringe/AA from visually grazing that datum.
     innerEdgeM: 3.18,
-    gapsM: [0.18, 0.23],
+    gapsM: [0.15, 0.15],
     masses: [
-      { kind: "threshold-textile", centerZ: -0.05, width: 0.45, height: 0.035, depth: 0.65 },
-      { kind: "rug-cradle", centerZ: -0.02, width: 0.62, height: 0.5, depth: 0.66 },
-      { kind: "textile-rack", centerZ: 0.12, width: 1.1, height: 2.2, depth: 0.44 },
+      { kind: "threshold-textile", centerZ: -0.05, width: 0.2, height: 0.035, depth: 0.65 },
+      { kind: "rug-cradle", centerZ: -0.02, width: 0.28, height: 0.5, depth: 0.66 },
+      { kind: "textile-rack", centerZ: 0.12, width: 1.8, height: 3.15, depth: 0.44 },
     ],
     textile: {
       field: [0.27, 0.5, 0.52],
@@ -100,11 +100,11 @@ const HERO_GATE_DRESSING_SPECS: Readonly<Record<HeroGateDressingVariant, GateDre
   "warm-low": {
     side: 1,
     innerEdgeM: 3.16,
-    gapsM: [0.16, 0.24],
+    gapsM: [0.16, 0.15],
     masses: [
-      { kind: "threshold-textile", centerZ: -0.04, width: 0.5, height: 0.03, depth: 0.68 },
-      { kind: "rug-cradle", centerZ: -0.02, width: 0.6, height: 0.56, depth: 0.66 },
-      { kind: "textile-rack", centerZ: 0.12, width: 1.1, height: 1.45, depth: 0.44 },
+      { kind: "threshold-textile", centerZ: -0.04, width: 0.2, height: 0.03, depth: 0.68 },
+      { kind: "rug-cradle", centerZ: -0.02, width: 0.28, height: 0.56, depth: 0.66 },
+      { kind: "textile-rack", centerZ: 0.12, width: 1.8, height: 2.85, depth: 0.44 },
     ],
     textile: {
       field: [0.72, 0.27, 0.16],
@@ -177,8 +177,8 @@ function createSaggedRackPanel(
   tint: GateDressingTone,
   variant: HeroGateDressingVariant,
 ): BufferGeometry {
-  const width = mass.width * (variant === "cool-tall" ? 0.72 : 0.66);
-  const height = mass.height * (variant === "cool-tall" ? 0.5 : 0.46);
+  const width = mass.width * (variant === "cool-tall" ? 0.92 : 0.90);
+  const height = mass.height * (variant === "cool-tall" ? 0.76 : 0.74);
   const bottomY = variant === "cool-tall" ? 0.62 : 0.42;
   const panel = new PlaneGeometry(width, height, 5, 6);
   const positions = panel.getAttribute("position");
@@ -186,7 +186,7 @@ function createSaggedRackPanel(
     const across = positions.getX(index) / (width * 0.5);
     const vertical = positions.getY(index) / (height * 0.5);
     const centerSag = (1 - across * across) * (1 - (vertical + 1) * 0.18) * 0.055;
-    const fold = Math.sin((across + 1) * Math.PI * 3) * 0.012;
+    const fold = Math.sin((across + 1) * Math.PI * 3) * 0.032;
     positions.setZ(index, mass.centerZ - mass.depth * 0.28 - centerSag - fold);
   }
   positions.needsUpdate = true;
@@ -259,8 +259,8 @@ function createTextileGeometry(variant: HeroGateDressingVariant): BufferGeometry
   // Mass 3: one supported hero hanging. Border, motif, hem, and ties all stay
   // inside the rack AABB and differ by side; the two flanks are not clones.
   parts.push(createSaggedRackPanel(rack, spec.textile.field, variant));
-  const panelWidth = rack.width * (variant === "cool-tall" ? 0.72 : 0.66);
-  const panelHeight = rack.height * (variant === "cool-tall" ? 0.5 : 0.46);
+  const panelWidth = rack.width * (variant === "cool-tall" ? 0.92 : 0.90);
+  const panelHeight = rack.height * (variant === "cool-tall" ? 0.76 : 0.74);
   const panelBottomY = variant === "cool-tall" ? 0.62 : 0.42;
   const panelCenterY = panelHeight * 0.5 + panelBottomY;
   const panelZ = rack.centerZ - rack.depth * 0.3 - 0.01;
@@ -294,6 +294,14 @@ function createTextileGeometry(variant: HeroGateDressingVariant): BufferGeometry
       panelZ - 0.005,
     );
     parts.push(tintGeometry(motif, spec.textile.motif));
+  }
+  for (const across of [-0.4, 0, 0.4]) {
+    const top = panelBottomY + panelHeight;
+    const tieHeight = rack.height - 0.04 - top;
+    parts.push(tintGeometry(
+      boxPart(0.025, tieHeight + 0.06, 0.025, rack.centerX + across * panelWidth, top + tieHeight * 0.5, panelZ),
+      spec.textile.thread,
+    ));
   }
   const fringeCount = variant === "cool-tall" ? 7 : 9;
   for (let index = 0; index < fringeCount; index += 1) {

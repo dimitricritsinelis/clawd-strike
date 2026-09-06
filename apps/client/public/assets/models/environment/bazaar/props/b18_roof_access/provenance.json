@@ -1,0 +1,166 @@
+{
+  "owner": "B18 / BLD_DYERS_ARCADE_E",
+  "asset": "b18-roof-access.glb",
+  "source": "repo://assets/source/b18-roof-access/build.py",
+  "license": "Project-Original",
+  "sourceObjectCount": 73,
+  "triangles": 3548,
+  "materials": 2,
+  "sourceBoundsM": [
+    [
+      0.0,
+      1.8
+    ],
+    [
+      0.0,
+      3.8
+    ],
+    [
+      0.0,
+      2.59
+    ]
+  ],
+  "exportBoundsM": [
+    [
+      0,
+      1.8
+    ],
+    [
+      0,
+      2.59
+    ],
+    [
+      0,
+      3.8
+    ]
+  ],
+  "sourceOriginDesignM": [
+    54.6,
+    40.9,
+    4.76
+  ],
+  "frame": {
+    "source": [
+      "east",
+      "north",
+      "up"
+    ],
+    "glb": [
+      "east",
+      "up",
+      "north"
+    ],
+    "exportOnlyConversion": "Y negation with face winding correction, then standard glTF +Y-up",
+    "runtimeScale": [
+      1,
+      1,
+      1
+    ]
+  },
+  "mounting": {
+    "recenterXZDesignM": [
+      55.5,
+      42.8
+    ],
+    "baseElevationM": 4.76,
+    "westDoorCenterDesignM": [
+      54.6,
+      42.2,
+      5.81
+    ],
+    "rearVentCenterDesignM": [
+      56.4,
+      42.8,
+      6.44
+    ]
+  },
+  "atlasDerivation": {
+    "white_sandstone_blocks_02": "Tile native 64x64 stone-only crop x350..414, top-down y315..379; excludes mortar.",
+    "rough_pine_door": "Tile native grain-only crop x40..104, top-down y30..470; excludes photographed crossrails.",
+    "maps": "Installed albedo, OpenGL normal and ARM channels use identical crop and fixed 2:1 box reduction."
+  },
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "3cd079adad9d00dade84be1d700608c7"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "d273ddf6a8d75c7f0e7e09cbe3de8d79"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "113ddb47b677fc92710dda3b5d0f2bf9"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "md5": "f542d70fa482014e9533a896e917c161"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "md5": "8c1036e566fe8e925e98123458aae385"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "md5": "16deb112a37a5e9e966609d23f86ef0e"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "md5": "5a31e6268c764ffccc358420e3aa3fb5"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "md5": "0de5ad6426e1415bc36d5d31c3a0f179"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "15c83496e11bf088f375b21a313836c6"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "e571a608f92ac2209389a35f2a378150"
+    },
+    {
+      "file": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "md5": "0e41998ee988c493ade5c774a5c29057"
+    }
+  ],
+  "md5": {
+    "b18-roof-access.glb": "8c380ebd3b03067b85063993373955c3",
+    "b18 joinery_albedo.png": "b30ef19200d36c81656c91bb5e0b1c28",
+    "b18 joinery_arm.png": "f2e147736aa1e4b6d6a4f57118acab41",
+    "b18 joinery_normal.png": "ecdfeb0bb0cf91949c2005a911507cdf",
+    "b18 masonry_albedo.png": "c866823679a042c54d8ba4ed8a69174c",
+    "b18 masonry_arm.png": "fa1251a461cdaeff1eb820683250572d",
+    "b18 masonry_normal.png": "04e5a755f4cf0f72dce14527b9f31c25"
+  },
+  "clay": false
+}

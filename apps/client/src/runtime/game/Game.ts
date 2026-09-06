@@ -2,7 +2,12 @@ import { AmbientLight, Color, DirectionalLight, DoubleSide, Fog, HemisphereLight
 import { installDesertSky, type DesertSkyHandle } from "../render/DesertSky";
 import { AnchorsDebug, type AnchorsDebugState } from "../debug/AnchorsDebug";
 import { Hud } from "../debug/Hud";
-import { EnemyManager, type EnemyHitResult, type EnemyManagerDebugSnapshot } from "../enemies/EnemyManager";
+import {
+  EnemyManager,
+  type EnemyHitResult,
+  type EnemyKillCallback,
+  type EnemyManagerDebugSnapshot,
+} from "../enemies/EnemyManager";
 import type { WeaponAudio } from "../audio/WeaponAudio";
 import { buildBlockout } from "../map/buildBlockout";
 import {
@@ -38,10 +43,11 @@ import type {
 import type { Ak47ShotEvent } from "../weapons/Ak47FireController";
 import { Ak47Weapon, type Ak47AmmoSnapshot } from "../weapons/Ak47Weapon";
 import { resetTickIntent, type AgentAction, type TickIntent } from "../input/AgentAction";
+import type { GameplayTuning } from "../tuning/gameplayTuning";
+import { stepHealthRegeneration } from "./HealthRegeneration";
 
 const DEFAULT_FOV = 75;
 const LOOK_SENSITIVITY = 0.002;
-const MOBILE_LOOK_SENSITIVITY = 0.15; // degrees per pixel of touch drag
 const MIN_PITCH = -(Math.PI / 2) + 0.001;
 const MAX_PITCH = (Math.PI / 2) - 0.001;
 const EYE_HEIGHT_LERP_RATE = 17.1;
@@ -251,6 +257,7 @@ export type CameraPose = {
 export type WeaponShotPayload = Ak47ShotEvent;
 
 type GameOptions = {
+  gameplayTuning: GameplayTuning;
   controlMode: RuntimeControlMode;
   mapId: string;
   seedOverride: number | null;
@@ -272,6 +279,7 @@ type GameOptions = {
   propVisuals: RuntimePropVisualMode;
   propModels: PropModelLibrary | null;
   doorModels: PropModelLibrary | null;
+  facadeModels?: PropModelLibrary | null;
   onTogglePerfHud?: () => void;
   mountEl?: HTMLElement;
   anchorsDebug?: {
@@ -365,6 +373,7 @@ export class Game {
   private propVisuals: RuntimePropVisualMode = "blockout";
   private propModels: PropModelLibrary | null = null;
   private doorModels: PropModelLibrary | null = null;
+  private facadeModels: PropModelLibrary | null = null;
   private propChaos: RuntimePropChaosOptions = {
     profile: "subtle",
     jitter: null,
@@ -405,7 +414,9 @@ export class Game {
     instanceCount: 0,
   };
   private enemyManager: EnemyManager | null = null;
+  private readonly gameplayTuning: GameplayTuning;
   private playerHealth = 100;
+  private secondsSincePlayerDamage = 0;
   private overshield = 0;
   private isDead = false;
   private spawnPoseCache: SpawnPose | null = null;
@@ -506,6 +517,7 @@ export class Game {
 
   constructor(options: GameOptions) {
     this.scene = new Scene();
+    this.gameplayTuning = options.gameplayTuning;
 
     this.camera = new PerspectiveCamera(DEFAULT_FOV, 1, 0.1, 1500);
     this.camera.rotation.order = "YXZ";
@@ -528,6 +540,7 @@ export class Game {
     this.propVisuals = options.propVisuals;
     this.propModels = options.propModels;
     this.doorModels = options.doorModels;
+    this.facadeModels = options.facadeModels ?? null;
     this.propChaos = options.propChaos;
     this.freezeInput = options.freezeInput ?? false;
     this.spawn = options.spawn ?? "A";
@@ -539,10 +552,16 @@ export class Game {
 
     this.setupLighting();
     this.setupInitialView();
-    this.enemyManager = new EnemyManager(this.scene);
+    this.enemyManager = new EnemyManager(this.scene, this.gameplayTuning);
 
     const weaponSeed = resolveRuntimeSeed(this.mapId, this.seedOverride);
-    this.weapon = new Ak47Weapon({ seed: weaponSeed });
+    this.weapon = new Ak47Weapon({
+      seed: weaponSeed,
+      magazineCapacity: this.gameplayTuning.player.economy.magazineCapacity,
+      reserveStart: this.gameplayTuning.player.economy.waveStartReserve,
+      reserveCapacity: this.gameplayTuning.player.economy.reserveCapacity,
+    });
+    this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
 
     const mountEl = options.mountEl ?? document.querySelector<HTMLElement>("#runtime-root") ?? document.querySelector<HTMLElement>("#app");
     const anchorsDebugOptions = options.anchorsDebug ?? {
@@ -666,6 +685,13 @@ export class Game {
     return this.runtimeColliders.length;
   }
 
+  getPublicPerception() {
+    return {
+      visibleTargets: this.getIsDead() ? [] : this.enemyManager?.getVisibleTargets(this.camera) ?? [],
+      movementBlocked: !this.getIsDead() && this.playerController.getMovementBlocked(),
+    };
+  }
+
   getPropsBuildStats(): PropsBuildStats {
     return this.propStats;
   }
@@ -694,6 +720,13 @@ export class Game {
   }
 
   update(deltaSeconds: number): void {
+    // A zero simulation delta is a hard pause contract. Do not let input,
+    // stance, tactical planning, attack tokens, overlap resolution, weapon
+    // state, regeneration, or callbacks mutate while an overlay owns time.
+    if (!Number.isFinite(deltaSeconds) || deltaSeconds <= 0) {
+      this.weaponShotsFiredLastFrame = 0;
+      return;
+    }
     if (this.worldColliders) {
       this.buildTickIntent();
       this.applyLookIntent();
@@ -760,7 +793,7 @@ export class Game {
         );
         const delta = this.enemyManager.getPlayerHealthDelta();
         if (this.unlimitedHealth) {
-          this.playerHealth = 100;
+          this.playerHealth = this.gameplayTuning.player.economy.maxHealth;
         } else {
           let remaining = delta;
           if (this.overshield > 0 && remaining > 0) {
@@ -770,9 +803,20 @@ export class Game {
           }
           this.playerHealth = Math.max(0, this.playerHealth - remaining);
         }
+        const regeneration = stepHealthRegeneration(
+          this.gameplayTuning.player.economy.regeneration,
+          this.playerHealth,
+          this.secondsSincePlayerDamage,
+          deltaSeconds,
+          delta,
+        );
+        this.secondsSincePlayerDamage = regeneration.secondsSinceDamage;
+        if (!this.unlimitedHealth && regeneration.healthRestored > 0) {
+          this.playerHealth += regeneration.healthRestored;
+        }
         // ── Damage shake: proportional to damage taken ──────────────────────
         if (delta > 0) {
-          const damageNorm = Math.min(1, delta / 25); // 25 = one shot
+          const damageNorm = Math.min(1, delta / this.gameplayTuning.enemy.combat.damagePerHit);
           const impulse = SHAKE_DAMAGE_BASE * damageNorm;
           this.shakeXVel += (Math.random() * 2 - 1) * impulse;
           this.shakeYVel -= Math.abs(impulse) * 0.6; // bias upward jolt on damage
@@ -887,6 +931,26 @@ export class Game {
     return this.playerController.getLastCollisionState();
   }
 
+  getGameplayAuthoritySnapshot(): {
+    colliders: Array<{
+      id: string;
+      kind: string;
+      min: { x: number; y: number; z: number };
+      max: { x: number; y: number; z: number };
+    }>;
+  } {
+    return {
+      colliders: this.runtimeColliders
+        .map((collider) => ({
+          id: collider.id,
+          kind: collider.kind,
+          min: { x: collider.min.x, y: collider.min.y, z: collider.min.z },
+          max: { x: collider.max.x, y: collider.max.y, z: collider.max.z },
+        }))
+        .sort((left, right) => left.id.localeCompare(right.id) || left.kind.localeCompare(right.kind)),
+    };
+  }
+
   isPlayerWithinPlayableBounds(): boolean {
     return this.playerController.isWithinPlayableBounds();
   }
@@ -942,6 +1006,20 @@ export class Game {
     return this.overshield;
   }
 
+  restorePlayerHealth(amount: number): number {
+    if (!Number.isFinite(amount) || amount <= 0 || this.isDead) return 0;
+    const before = this.playerHealth;
+    this.playerHealth = Math.min(
+      this.gameplayTuning.player.economy.maxHealth,
+      this.playerHealth + amount,
+    );
+    return this.playerHealth - before;
+  }
+
+  grantWeaponReserveAmmo(amount: number): number {
+    return this.weapon.grantReserveAmmo(amount);
+  }
+
   setOvershield(amount: number): void {
     this.overshield = Math.max(0, amount);
   }
@@ -958,8 +1036,8 @@ export class Game {
     this.weapon.setReloadSpeedMultiplier(multiplier);
   }
 
-  setWeaponUnlimitedAmmo(unlimited: boolean): void {
-    this.weapon.setUnlimitedAmmo(unlimited);
+  setWeaponFreeReloads(enabled: boolean): void {
+    this.weapon.setFreeReloads(enabled);
   }
 
   checkEnemyRaycastHit(origin: Vector3, dir: Vector3, maxDist: number): EnemyHitResult {
@@ -974,14 +1052,14 @@ export class Game {
     return this.enemyManager?.eliminateAllForDebug() ?? 0;
   }
 
-  debugSetPlayerPose(position: { x: number; y: number; z: number }, yawRad?: number): void {
+  debugSetPlayerPose(position: { x: number; y: number; z: number }, yawRad?: number, pitchRad?: number): void {
     this.playerController.setSpawn(position.x, position.y, position.z);
     if (typeof yawRad === "number") {
-      this.setLookAngles(yawRad, 0);
-    } else {
-      this.updateCameraFromPlayer();
+      this.setLookAngles(yawRad, pitchRad ?? 0);
     }
-    this.playerHealth = 100;
+    this.updateCameraFromPlayer();
+    this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
+    this.secondsSincePlayerDamage = 0;
     this.isDead = false;
   }
 
@@ -997,26 +1075,49 @@ export class Game {
     this.enemyManager?.setAudio(audio);
   }
 
-  setEnemyKillCallback(cb: (name: string, isHeadshot: boolean, deathPos: { x: number; y: number; z: number }, enemyIndex: number) => void): void {
+  setEnemyKillCallback(cb: EnemyKillCallback): void {
     this.enemyManager?.setKillCallback(cb);
   }
 
   setEnemyNewWaveCallback(cb: (wave: number) => void): void {
     this.enemyManager?.setNewWaveCallback((wave) => {
-      this.playerHealth = 100;
-      this.overshield = 0;
-      this.weapon.reset();
+      if (this.gameplayTuning.player.economy.resetHealthEachWave) {
+        this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
+        this.secondsSincePlayerDamage = 0;
+      }
+      if (this.gameplayTuning.player.economy.resetOvershieldEachWave) {
+        this.overshield = 0;
+      }
+      if (this.gameplayTuning.player.economy.resetAmmoEachWave) {
+        this.weapon.reset();
+      }
       cb(wave);
     });
+  }
+
+  updateWaveTransition(deltaSeconds: number): boolean {
+    return this.enemyManager?.updateWaveTransition(deltaSeconds) ?? false;
+  }
+
+  skipWaveCountdown(): boolean {
+    return this.enemyManager?.skipWaveCountdown() ?? false;
   }
 
   reportPlayerGunshot(): void {
     this.enemyManager?.reportPlayerGunshot(this.playerController.getPosition());
   }
 
-  reportPlayerFootstep(speedMps: number): void {
+  reportPlayerFootstep(speedMps: number, isCrouched = false): void {
     if (speedMps <= 0.4) return;
-    this.enemyManager?.reportPlayerFootstep(this.playerController.getPosition(), speedMps);
+    this.enemyManager?.reportPlayerFootstep(
+      this.playerController.getPosition(),
+      speedMps,
+      isCrouched,
+    );
+  }
+
+  isPlayerCrouched(): boolean {
+    return this.playerController.isCrouched();
   }
 
   getBotDebugSnapshot(): EnemyManagerDebugSnapshot | null {
@@ -1112,7 +1213,8 @@ export class Game {
   }
 
   restartRun(): void {
-    this.playerHealth = 100;
+    this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
+    this.secondsSincePlayerDamage = 0;
     this.overshield = 0;
     this.isDead = false;
     this.wasGrounded = true;
@@ -1505,8 +1607,10 @@ export class Game {
     this.tickIntent.jump = this.mobileJumpQueued;
     this.tickIntent.fire = this.mobileFireHeld;
     this.tickIntent.reload = this.mobileReloadQueued;
-    this.tickIntent.lookYawDelta = this.mobileLookDeltaX * MOBILE_LOOK_SENSITIVITY;
-    this.tickIntent.lookPitchDelta = -this.mobileLookDeltaY * MOBILE_LOOK_SENSITIVITY;
+    this.tickIntent.lookYawDelta = this.mobileLookDeltaX
+      * this.gameplayTuning.touch.lookSensitivityDegPerPixel;
+    this.tickIntent.lookPitchDelta = -this.mobileLookDeltaY
+      * this.gameplayTuning.touch.lookSensitivityDegPerPixel;
 
     this.mobileJumpQueued = false;
     this.mobileReloadQueued = false;
@@ -1699,6 +1803,7 @@ export class Game {
         densityScale: this.wallDetailDensity,
       },
       doorModels: this.doorModels,
+      facadeModels: this.facadeModels,
     });
     this.wallDetailStats = builtBlockout.wallDetailStats;
     this.blockoutRoot = builtBlockout.root;

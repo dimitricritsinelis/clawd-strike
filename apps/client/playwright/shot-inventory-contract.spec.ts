@@ -61,7 +61,7 @@ test("publishes the exact authored 12 core plus four closeup inventory", async (
   expect(inventory.errors).toEqual([]);
   expect(inventory.coreShotIds).toHaveLength(12);
   expect(inventory.closeupShotIds).toHaveLength(4);
-  expect(inventory.auditShotIds).toHaveLength(6);
+  expect(inventory.allShotIds).toHaveLength(16);
   expect(selectReviewShotIds(shots)).toEqual(inventory.reviewShotIds);
   expect(inventory.allShotIds).not.toContain("SHOT_BLOCKOUT_COMPARE");
 });

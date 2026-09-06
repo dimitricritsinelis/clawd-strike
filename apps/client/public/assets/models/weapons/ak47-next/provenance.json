@@ -1,0 +1,218 @@
+{
+  "name": "AK47 Urban Breacher left-hand idle viewmodel",
+  "source": "repo://assets/source/ak47/build.py",
+  "sourceMd5": "da0c48cd57ebbe1ebae5cfc0dc471d3f",
+  "blendSource": "repo://assets/source/ak47/ak47.blend",
+  "blendMd5": "b731238885ab96bc324924960331620f",
+  "maxEmbeddedTextureSize": 2048,
+  "license": "Existing AK: CC-BY-NC-4.0; hand topology: CC0; new rig and finish: project-original",
+  "dependencies": [
+    {
+      "file": "apps/client/public/assets/models/weapons/ak47/ak47.glb",
+      "source": "https://sketchfab.com/3d-models/ak-47-384565b1779c450b90397232163e4e6d",
+      "author": "lokeig",
+      "license": "CC-BY-NC-4.0",
+      "md5": "1d2c7eb624f44300e02cc55190b26963",
+      "usage": "Existing repository weapon geometry and textures retained"
+    },
+    {
+      "file": "assets/source/ak47/hand-base-cc0.blend",
+      "source": "https://www.blender.org/download/demo-files/",
+      "author": "Dan Ulrich / Blender Studio",
+      "license": "CC0",
+      "md5": "27f807361ab2faf4f785fb803a3d48ae",
+      "usage": "Anatomical topology, mirrored and rigged as a left hand"
+    }
+  ],
+  "generatedTexture": {
+    "usage": "Previous color atlas retained as the source of the idle contact-occlusion bake; live materials use the close-view finish below",
+    "source": "OpenAI built-in image_gen; user-selected B Urban Breacher design",
+    "license": "Project-original (AI-generated)",
+    "prompt": "assets/source/ak47/imagegen-prompt.txt",
+    "promptMd5": "2f663862860b05be4c20c74edf355c78",
+    "files": [
+      {
+        "file": "assets/source/ak47/textures/urban-b-albedo.png",
+        "md5": "bf33f8299f8f89f60e6403489bbda103"
+      },
+      {
+        "file": "assets/source/ak47/textures/urban-b-normal.png",
+        "md5": "ea2199c699ff4a21054584b02809991a"
+      },
+      {
+        "file": "assets/source/ak47/textures/urban-b-occlusion.png",
+        "md5": "573e1e153189f34fa9a4749c597f83c4"
+      }
+    ],
+    "derivatives": "Tangent normals and idle contact occlusion baked in Blender from the generated atlas and source geometry"
+  },
+  "closeViewFinish": {
+    "source": "repo://assets/source/ak47/refine.py",
+    "sourceMd5": "9b25542c4fe40a97fdb9bf359d6eea3a",
+    "license": "CC0 scan derivatives and project-original geometry/ripstop",
+    "materialSources": [
+      {
+        "file": "assets/source/ak47/textures/leather_red_02_coll1_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_red_02/leather_red_02_coll1_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_red_02",
+        "license": "CC0-1.0",
+        "md5": "28fc463fabbc4c3206e9888cbca03000"
+      },
+      {
+        "file": "assets/source/ak47/textures/leather_red_02_nor_gl_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_red_02/leather_red_02_nor_gl_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_red_02",
+        "license": "CC0-1.0",
+        "md5": "5f7d73c9f102087c0ffb51e8ca6b799d"
+      },
+      {
+        "file": "assets/source/ak47/textures/leather_red_02_arm_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_red_02/leather_red_02_arm_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_red_02",
+        "license": "CC0-1.0",
+        "md5": "2944406b21b88f4e976a91613b229d20"
+      },
+      {
+        "file": "assets/source/ak47/textures/dark_wood_diff_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/dark_wood/dark_wood_diff_4k.jpg",
+        "asset": "https://polyhaven.com/a/dark_wood",
+        "license": "CC0-1.0",
+        "md5": "fb929d07e3ce3ddcf0c571a52a9b305b"
+      },
+      {
+        "file": "assets/source/ak47/textures/dark_wood_nor_gl_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/dark_wood/dark_wood_nor_gl_4k.jpg",
+        "asset": "https://polyhaven.com/a/dark_wood",
+        "license": "CC0-1.0",
+        "md5": "d87ecd21259d921ca3a28dd73d1b7a51"
+      },
+      {
+        "file": "assets/source/ak47/textures/dark_wood_arm_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/dark_wood/dark_wood_arm_4k.jpg",
+        "asset": "https://polyhaven.com/a/dark_wood",
+        "license": "CC0-1.0",
+        "md5": "774d32c3bc79e194657b72b351e34a99"
+      },
+      {
+        "file": "assets/source/ak47/textures/leather_white_diff_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_white/leather_white_diff_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_white",
+        "license": "CC0-1.0",
+        "md5": "26a2ffa8618206fbf99b63ab3bcbfd92"
+      },
+      {
+        "file": "assets/source/ak47/textures/leather_white_nor_gl_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_white/leather_white_nor_gl_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_white",
+        "license": "CC0-1.0",
+        "md5": "045e3dd252719ba8641dd5107428fcc0"
+      },
+      {
+        "file": "assets/source/ak47/textures/leather_white_arm_4k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/4k/leather_white/leather_white_arm_4k.jpg",
+        "asset": "https://polyhaven.com/a/leather_white",
+        "license": "CC0-1.0",
+        "md5": "5a54f45b5a2cd0d2605f13e3d14fddc9"
+      }
+    ],
+    "textures": [
+      {
+        "file": "assets/source/ak47/textures/close-leather-roughness.png",
+        "md5": "e5ad1448750b833f31771d40b7fd25f4"
+      },
+      {
+        "file": "assets/source/ak47/textures/close-ripstop-normal.png",
+        "md5": "0f13c4f628ec3311fb91f6e27f59a080"
+      },
+      {
+        "file": "assets/source/ak47/textures/close-ripstop-roughness.png",
+        "md5": "78949ea2c00d18d7ca668e761e4e7d23"
+      },
+      {
+        "file": "assets/source/ak47/textures/close-walnut-roughness.png",
+        "md5": "17d3c56912d6b5f465997cba60d2af4e"
+      },
+      {
+        "file": "assets/source/ak47/textures/khaki-ripstop-sleeve-color.png",
+        "md5": "8f97fd5c0e22b3a337edb6565a39bd86"
+      },
+      {
+        "file": "assets/source/ak47/textures/navy-rolled-binding-color.png",
+        "md5": "82dc1addc88ef58fc4d3bba6c7523226"
+      },
+      {
+        "file": "assets/source/ak47/textures/saddle-leather-closure-color.png",
+        "md5": "b28313215258358fc0805fe4afecfc6d"
+      },
+      {
+        "file": "assets/source/ak47/textures/tailored-graphite-suede-reinforcement-color.png",
+        "md5": "1235856bbd0f2616f67a002e6eb602f7"
+      },
+      {
+        "file": "assets/source/ak47/textures/tailored-graphite-suede-reinforcement-roughness.png",
+        "md5": "8c209390e0a602d7c8edaba9ebb3e686"
+      },
+      {
+        "file": "assets/source/ak47/textures/tailored-urban-breacher-glove-color.png",
+        "md5": "36444b57ba964ee5509fe2bf769b8132"
+      },
+      {
+        "file": "assets/source/ak47/textures/tailored-urban-breacher-glove-roughness.png",
+        "md5": "29af808d066b58ee9c3983728556d981"
+      },
+      {
+        "file": "assets/source/ak47/textures/urban-b-occlusion.png",
+        "md5": "573e1e153189f34fa9a4749c597f83c4"
+      }
+    ],
+    "construction": "Subdivided anatomical glove, fine matte suede, continuous palm/thumb/fingertip reinforcement with double stitching, sewn leather closure and pull tab, rolled cuff binding, tailored ripstop sleeve, machined rifle edge radii",
+    "runtimeLighting": "4096px animated self-shadows, 16x anisotropic filtering, reduced environment fill"
+  },
+  "coordinates": "Metres; Blender +X forward, +Z up, -Y right; glTF +X forward, +Y up, +Z right",
+  "runtimePose": {
+    "position": [
+      0.151,
+      -0.143,
+      -0.3
+    ],
+    "roll": -0.065,
+    "modelYaw": 1.5707963267948966,
+    "verticalFov": 54,
+    "aspect": 1.7777777777777777
+  },
+  "attachments": [
+    "MuzzleSocket",
+    "EjectionSocket",
+    "SupportGripAnchor",
+    "RightGripAnchor (marker only)",
+    "MagazineSeatedAnchor",
+    "MagazineGripAnchor",
+    "ThumbPadContact",
+    "ThumbPadContact1",
+    "ThumbPadContact2"
+  ],
+  "animations": [
+    "Idle",
+    "Fire",
+    "Reload"
+  ],
+  "reload": {
+    "source": "repo://assets/source/ak47/reload.py",
+    "sourceMd5": "bbccd5caf1fe29eb66b76180c3a3928a",
+    "durationSeconds": 1.225,
+    "contactFrames": [
+      33,
+      119
+    ],
+    "magazineMotion": "Existing magazine path and keyframes preserved",
+    "handMotion": "Release fore-end, reach, opposed thumb/finger grip, follow magazine, release and return to approved idle",
+    "thumbMotion": "Shallow forward curl with three measured skin points against the broad left magazine face; pad normal faces into the metal; relaxed opening without thumb flare; idle fore-end contact preserved",
+    "contactShading": "Idle occlusion fades during hand travel; live self-shadows follow the reload"
+  },
+  "files": [
+    {
+      "file": "ak47.glb",
+      "md5": "f019dfc535b76bc8ec43db58e9a17e3d"
+    }
+  ]
+}

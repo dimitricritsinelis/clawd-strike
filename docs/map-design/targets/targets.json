@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "purpose": "One target image per review unit. The builder matches it; the critic judges against it. Until <unit>.png exists here, pnpm map:shoot falls back to the founding image.",
+  "howToGenerate": "Generated just in time by the map-polish loop, one unit at a time, right after that unit's r-before shoot, with Codex's built-in image generation tool and no approval step: references are docs/map-design/refs/bazaar_main_hall_reference.png (style) plus artifacts/map-shoot/<unit>/r-before/plan.png and primary.png (composition and camera); prompt = scene + styleSuffix; save 1440x900 to docs/map-design/targets/<unit>.png. Regenerate only when the critic returns a target-invalid blocker.",
+  "styleSuffix": "Photoreal first-person game render at 1.7 m eye height with a 75 degree field of view. Late-afternoon warm desert sun with deep, readable shade. Sandstone and lime plaster with wear, staining and repairs. Layered stepped roofs and upper rooms implying a larger city beyond. Supported cloth awnings and rope lines. No people, no readable text. Finish level of Counter-Strike 2 Anubis and Mirage, in the palette and light of the founding image used as the style reference.",
+  "units": [
+    {
+      "unit": "unit-spawn-a-courtyard",
+      "scene": "Spawn A courtyard: a civic entry court behind a stone gate, sandstone walls with coping, crates and a cart at the edges, three exits, open sky, morning sun raking across the paving."
+    },
+    {
+      "unit": "unit-spice-street",
+      "scene": "Spice Street: a busy souk street of grain and dry-spice shops with timber counters and shutters, sacks and baskets at the thresholds, overlapping supported cloth awnings, warm plaster and sandstone, homes above with shuttered windows, a distant arch closing the view."
+    },
+    {
+      "unit": "unit-fountain-court",
+      "scene": "Fountain Court: an open civic court framed by a pale cut-stone madrasa wall and a merchant loggia, an off-axis tiled fountain, quiet lower walls, market activity only at the south-west edge."
+    },
+    {
+      "unit": "unit-textile-arcade",
+      "scene": "Textile Arcade: a covered arcade with deep shop recesses, bolts of cloth hanging inside arches on one rhythm, rope lines overhead, a six-metre clear route in cloth-filtered light."
+    },
+    {
+      "unit": "unit-rug-gate",
+      "scene": "Rug Gate: a grand arched gate with rugs hung on both flanks, coping and string courses, a threshold into the northern receiving court."
+    },
+    {
+      "unit": "unit-spawn-b-courtyard",
+      "scene": "Spawn B courtyard: a quiet receiving court between two wings with closed doors, stepped parapets, sparse domestic evidence and a central gate."
+    },
+    {
+      "unit": "unit-service-south",
+      "scene": "Service South: a service spine of blank plaster and stone backs, high vents, one hatch, drainage staining at the base, stepped rooflines."
+    },
+    {
+      "unit": "unit-service-north",
+      "scene": "Service North: a retaining spine below the tea terrace, sealed inspection panels, tall screens, drainage staining, stepped rooflines above."
+    },
+    {
+      "unit": "unit-caravan-court",
+      "scene": "Caravan Yard: caravanserai bays with repeated storage doors under one continuous head, handcart entries, yard walls with coping, a loading court with sacks and crates at the edges."
+    },
+    {
+      "unit": "unit-tea-ramp",
+      "scene": "Tea Ramp: a smooth stone approach ramp rising to a raised terrace, service character, retaining wall with staining."
+    },
+    {
+      "unit": "unit-tea-terrace",
+      "scene": "Tea Terrace: a raised public terrace with wide openings, a screened gallery above, lanterns, cloth shade and seating against the wall."
+    },
+    {
+      "unit": "unit-tea-stairs",
+      "scene": "Tea Stairs: ten stone treads descending from the terrace between plaster walls, deep shade with a bright opening at the bottom."
+    },
+    {
+      "unit": "unit-tea-landing",
+      "scene": "Tea Landing: a T-head landing with three blind niches at even centres on the north wall, coping, deep shade."
+    },
+    {
+      "unit": "unit-covered-souk",
+      "scene": "Covered Souk: three fabric bays under repaired stone arches, a cloth booth, a packing cabinet and a dye-sample seller, a shared canopy, wide blank piers."
+    },
+    {
+      "unit": "unit-dyers-alley",
+      "scene": "Dyers Alley: a narrow wet-work alley with dye vats and racks against the wall, drying lines of indigo and madder cloth, stained plaster, high workshop vents, a quiet house opposite."
+    },
+    {
+      "unit": "unit-dyers-dogleg",
+      "scene": "Dyers Dogleg: a turning cobbled passage with a wall rack, vats and a workstation at the edges, a repaired gate, a closed working compound wall."
+    },
+    {
+      "unit": "unit-north-court",
+      "scene": "North Court: a hammam wall with high hall light and sealed doors, a domestic edge with human-scale openings, a drying yard, open release to the sky."
+    },
+    {
+      "unit": "unit-link-east-mid",
+      "scene": "A narrow connector passage between two districts: blank plaster with one blind niche on the axis, coping, a drainage stain at the base, deep shade with a bright opening at the end."
+    },
+    {
+      "unit": "unit-link-east-upper",
+      "scene": "A narrow connector passage between two districts: blank plaster with one blind niche on the axis, coping, a drainage stain at the base, deep shade with a bright opening at the end."
+    },
+    {
+      "unit": "unit-link-north-east",
+      "scene": "A short compound-wall link with one blind niche on the axis, coping, drainage staining, open turns north and south."
+    },
+    {
+      "unit": "unit-link-north-west",
+      "scene": "A short compound-wall link with one blind niche on the axis, coping, drainage staining, open turns north and south."
+    },
+    {
+      "unit": "unit-link-south-east",
+      "scene": "A narrow connector passage between two districts: blank plaster with one blind niche on the axis, coping, a drainage stain at the base, deep shade with a bright opening at the end."
+    },
+    {
+      "unit": "unit-link-south-west",
+      "scene": "A narrow connector passage between two districts: blank plaster with one blind niche on the axis, coping, a drainage stain at the base, deep shade with a bright opening at the end."
+    },
+    {
+      "unit": "unit-link-west-mid",
+      "scene": "A narrow connector passage between two districts: blank plaster with one blind niche on the axis, coping, a drainage stain at the base, deep shade with a bright opening at the end."
+    },
+    {
+      "unit": "unit-link-west-upper",
+      "scene": "A short upper link beside the tea terrace: plaster wall, coping, terrace parapet above, deep shade."
+    }
+  ]
+}

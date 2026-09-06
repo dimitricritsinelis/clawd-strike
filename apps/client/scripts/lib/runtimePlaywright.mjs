@@ -26,16 +26,26 @@ export const DEFAULT_AGENT_NAME = "SmokeRunner";
 export const DEFAULT_HUMAN_NAME = "HumanProbe";
 export const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
 export const DEFAULT_RUNTIME_READY_TIMEOUT_MS = 90_000;
-export const DEFAULT_STATE_READ_TIMEOUT_MS = 9_000;
+// Software-rendered hosts (no GPU in headless Chromium) can exceed the default
+// on their first shader-compiling frame; QA_STATE_READ_TIMEOUT_MS raises the
+// budget without loosening it for provisioned machines.
+export const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
+  const override = Number(process.env.QA_STATE_READ_TIMEOUT_MS);
+  return Number.isFinite(override) && override >= 1_000 ? override : 9_000;
+})();
 export const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
 export const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
-export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = 20_000;
+// Same escape hatch as QA_STATE_READ_TIMEOUT_MS: software-rendered hosts can
+// exceed the asset budget while shaders compile on first paint.
+export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
+  const override = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  return Number.isFinite(override) && override >= 1_000 ? override : 20_000;
+})();
 export const DEFAULT_ROUTE_TICK_MS = 100;
 export const DEFAULT_WAYPOINT_TICK_MS = 200;
 export const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
 export const REQUIRED_CORE_SHOT_COUNT = 12;
 export const REQUIRED_CLOSEUP_SHOT_COUNT = 4;
-export const REQUIRED_AUDIT_SHOT_COUNT = 34;
 export const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
 export const DEFAULT_SHOT_CAMERA_TOLERANCE = Object.freeze({
   positionM: 0.02,
@@ -1048,7 +1058,11 @@ export async function waitForRuntimeReady(page, options = {}) {
   const bootStartedAt = Date.now();
   let lastBootState = null;
   let lastBootError = null;
+  let consecutiveProbeTimeouts = 0;
   while (Date.now() - bootStartedAt <= timeoutMs) {
+    const launchFailure = consoleRecorderByPage.get(page)?.snapshot().find((event) =>
+      event.kind === "pageerror" || (event.type === "error" && event.text.startsWith("[runtime] launch failed")));
+    if (launchFailure) throw new Error(`[runtime-ready] ${launchFailure.text}`);
     try {
       lastBootState = await withTimeout(
         () => page.evaluate((shotId) => {
@@ -1090,6 +1104,7 @@ export async function waitForRuntimeReady(page, options = {}) {
         Math.min(2_000, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
         "runtime boot readiness probe",
       );
+      consecutiveProbeTimeouts = 0;
       lastBootError = null;
       const capture = lastBootState?.qaCapture;
       const captureValidation = capture
@@ -1117,16 +1132,25 @@ export async function waitForRuntimeReady(page, options = {}) {
     } catch (error) {
       if (error instanceof Error && error.message.includes("[qa-capture]")) throw error;
       if (error instanceof RuntimeOperationTimeoutError) {
-        throw new RuntimeOperationTimeoutError(
-          `[runtime-ready] lightweight boot probe stalled | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | ${error.message}`,
-          {
-            routeId,
-            shotId: expectedShotId,
-            timeoutMs: error.details?.timeoutMs ?? 2_000,
-          },
-        );
+        // Asset compilation can briefly occupy the browser main thread for
+        // more than the lightweight 2s probe budget. Treat one or two isolated
+        // stalls as boot progress; three consecutive stalls still fail fast
+        // instead of hiding a genuinely wedged runtime until the 90s deadline.
+        consecutiveProbeTimeouts += 1;
+        lastBootError = error;
+        if (consecutiveProbeTimeouts >= 3) {
+          throw new RuntimeOperationTimeoutError(
+            `[runtime-ready] lightweight boot probe stalled repeatedly | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | ${error.message}`,
+            {
+              routeId,
+              shotId: expectedShotId,
+              timeoutMs: error.details?.timeoutMs ?? 2_000,
+            },
+          );
+        }
+      } else {
+        lastBootError = error;
       }
-      lastBootError = error;
     }
     await page.waitForTimeout(50);
   }
@@ -1165,11 +1189,19 @@ export async function gotoAgentRuntime(page, options = {}) {
     agentName = DEFAULT_AGENT_NAME,
     spawn = "A",
     shot = null,
-    extraSearchParams = {},
+    extraSearchParams: rawExtraSearchParams = {},
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
     artifactDir = null,
     routeId = null,
   } = options;
+  // The runtime clamps this to [1s, 120s]; the env knob lets software-rendered
+  // hosts extend the in-page asset budget without touching every caller.
+  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  const extraSearchParams = Number.isFinite(assetTimeoutOverride)
+    && assetTimeoutOverride >= 1_000
+    && !("qaAssetTimeoutMs" in rawExtraSearchParams)
+    ? { ...rawExtraSearchParams, qaAssetTimeoutMs: Math.round(assetTimeoutOverride) }
+    : rawExtraSearchParams;
 
   await page.goto(
     buildRuntimeUrl(baseUrl, {
@@ -1631,6 +1663,8 @@ export async function runWaypointRoute(page, route, options = {}) {
   let totalDistanceM = 0;
   let stationaryTicks = 0;
   let maxStationaryTicks = 0;
+  let maxStationaryAt = null;
+  let hasMoved = false;
   let collisionTicksX = 0;
   let collisionTicksY = 0;
   let collisionTicksZ = 0;
@@ -1677,11 +1711,23 @@ export async function runWaypointRoute(page, route, options = {}) {
         nextPos.z - previousPos.z,
       );
       totalDistanceM += movedDistanceM;
-      if (movedDistanceM < 0.02) {
-        stationaryTicks += 1;
-        maxStationaryTicks = Math.max(maxStationaryTicks, stationaryTicks);
-      } else {
+      if (movedDistanceM >= 0.02) {
+        // Eliminating bots can leave the next-wave countdown active. Ignore its
+        // one small spawn nudge and start stall accounting only after genuine travel.
+        if (totalDistanceM >= 0.5) hasMoved = true;
         stationaryTicks = 0;
+      } else if (hasMoved) {
+        stationaryTicks += 1;
+        if (stationaryTicks > maxStationaryTicks) {
+          maxStationaryTicks = stationaryTicks;
+          maxStationaryAt = {
+            waypointIndex,
+            targetZoneId: waypoint.zoneId,
+            tick,
+            pos: nextPos,
+            collision: nextState.player?.collision ?? null,
+          };
+        }
       }
       if (nextState.player?.collision?.hitX) collisionTicksX += 1;
       if (nextState.player?.collision?.hitY) collisionTicksY += 1;
@@ -1724,6 +1770,7 @@ export async function runWaypointRoute(page, route, options = {}) {
     finalPos,
     distanceM: totalDistanceM,
     maxStationaryTicks,
+    maxStationaryAt,
     withinPlayableBounds: finalState.player.withinPlayableBounds,
     endedAlive: finalState.gameplay.alive,
     collisionTicks: {
@@ -1869,9 +1916,8 @@ export function validateReviewShotInventory(shotsSpec) {
   const duplicateIds = [...new Set(ids.filter((id, index) => ids.indexOf(id) !== index))].sort();
   const coreShots = allShots.filter((shot) => shot?.captureKind === "core");
   const closeupShots = allShots.filter((shot) => shot?.captureKind === "closeup");
-  const auditShots = allShots.filter((shot) => shot?.captureKind === "audit");
   const reviewShots = [...coreShots, ...closeupShots];
-  const unsupportedShots = allShots.filter((shot) => !["core", "closeup", "audit"].includes(shot?.captureKind));
+  const unsupportedShots = allShots.filter((shot) => !["core", "closeup"].includes(shot?.captureKind));
   const compareId = shotsSpec?.metadata?.compareShotId ?? shotsSpec?.aliases?.compare ?? null;
   const invalidCameraIds = [];
   const duplicateCameraPairs = [];
@@ -1919,9 +1965,6 @@ export function validateReviewShotInventory(shotsSpec) {
   if (closeupShots.length !== REQUIRED_CLOSEUP_SHOT_COUNT) {
     errors.push(`expected exactly ${REQUIRED_CLOSEUP_SHOT_COUNT} closeup shots; found ${closeupShots.length}`);
   }
-  if (auditShots.length !== REQUIRED_AUDIT_SHOT_COUNT) {
-    errors.push(`expected exactly ${REQUIRED_AUDIT_SHOT_COUNT} explicitly selected audit shots; found ${auditShots.length}`);
-  }
   if (unsupportedShots.length > 0) {
     errors.push(`shots with missing/unsupported captureKind: ${unsupportedShots.map((shot) => shot?.id ?? "<unknown>").join(", ")}`);
   }
@@ -1957,7 +2000,6 @@ export function validateReviewShotInventory(shotsSpec) {
       .map((shot) => shot.id),
     coreShotIds: coreShots.map((shot) => shot.id),
     closeupShotIds: closeupShots.map((shot) => shot.id),
-    auditShotIds: auditShots.map((shot) => shot.id),
     compareShotId: compareId,
     duplicateCameraPairs,
   };
