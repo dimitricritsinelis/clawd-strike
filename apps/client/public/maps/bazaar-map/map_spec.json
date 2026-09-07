@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "515c02d4b34a440f04df15940edaba9cff005524f0d175129c5e3527a56cdd5e",
+    "sha256": "18004fd981c7dd769553a467793d3fe7b1f251c22cde8fc9485053001953c9e7",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -639,6 +639,11 @@
       "macroLane": "main",
       "floorMaterialId": "spice_laid_stone_01",
       "facadeProfileId": "active_merchant",
+      "sectionModelId": "section_unit_spice_street",
+      "sectionFaces": [
+        "east",
+        "west"
+      ],
       "clearWidthM": 6
     },
     {
@@ -11143,6 +11148,38 @@
       "yawDeg": 90,
       "materialSlot": "timber",
       "collisionOpening": false
+    }
+  ],
+  "sectionModels": [
+    {
+      "zoneId": "SPICE_STREET",
+      "modelId": "section_unit_spice_street",
+      "origin": {
+        "x": 21,
+        "y": 14,
+        "z": 0
+      },
+      "sizeM": {
+        "width": 12,
+        "depth": 18
+      },
+      "faces": [
+        "east",
+        "west"
+      ],
+      "materialIds": [
+        "ph_dark_wood",
+        "ph_hessian_230",
+        "ph_painted_plaster_warm",
+        "ph_rough_pine_door",
+        "ph_rusty_metal_02",
+        "ph_sandstone_blocks_05",
+        "ph_stone_trim_sandstone",
+        "ph_trim_sanded_01",
+        "ph_weathered_brown_planks",
+        "ph_worn_planks",
+        "ph_worn_plaster_ochre"
+      ]
     }
   ],
   "dressingClusters": [

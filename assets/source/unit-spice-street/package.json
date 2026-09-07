@@ -1,20 +1,15 @@
 {
   "models": [
     {
-      "id": "spice_west_merchant_face",
-      "file": "spice-west.glb",
-      "source": "repo://assets/source/unit-spice-street/build.py",
-      "license": "Project-Original"
-    },
-    {
-      "id": "spice_east_merchant_face",
-      "file": "spice-east.glb",
+      "id": "section_unit_spice_street",
+      "file": "unit-spice-street.glb",
       "source": "repo://assets/source/unit-spice-street/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_SPICE_STREET_WEST": "spice_west_merchant_face",
-    "FRONTAGE_SPICE_STREET_EAST": "spice_east_merchant_face"
+  "section": {
+    "zoneId": "SPICE_STREET",
+    "modelId": "section_unit_spice_street",
+    "faces": ["east", "west"]
   }
 }

@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The quiet receiving court: two low enclosure wings either side of the gate, benches and pots at the west wall, shade over the two sealed north doors, three upper rooms and a palm on the skyline behind the sealed walls. It stays comparatively quiet, with a warm aged base and contact wear.
 
+**Character schedule (build with the numbered tasks):**
+
+- Two enclosure wings already differ in cut stone west versus rubble east. Keep the bench, pottery, shade, upper rooms and palm: these are signs of settled daily life around an open receiving court.
+- Use SD-21 smaller dressed edges on the west wing and broader hand-cut edges on the east. Localize dust to wall feet and retained object contacts; keep the bench approach swept. Do not match both wings with a new plaster wash or add a shop row.
+
 ## 2. Site
 
 ### Site · `SPAWN_B_COURTYARD` (Spawn B Courtyard)
@@ -34,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_SPAWN_B_SOUTH_WEST  ·  BLD_SPAWN_B_WALL_W (compound wall, 1 storey)
 
-- **Role:** compound wall. Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.
+- **Role:** compound wall. A small enclosure wing framing the north arrival.
 - **Wall line:** south edge of `SPAWN_B_COURTYARD`; y = 78, x = 17.66 .. 20.3 (a runs west to east); length **2.64 m**; street side +Y (street lies north); kit `Wall(F, (17.66, 78), (20.3, 78), faces='N')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -57,7 +62,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.32, 1.05, 1.3, 1.8)
 
 ### FRONTAGE_SPAWN_B_SOUTH_EAST  ·  BLD_SPAWN_B_WALL_E (compound wall, 1 storey)
 
-- **Role:** compound wall. Spawn edge wall: coping only, no openings, no string course; the buildings behind it carry the skyline.
+- **Role:** compound wall. The longer enclosure wing east of the gate.
 - **Wall line:** south edge of `SPAWN_B_COURTYARD`; y = 78, x = 34.6 .. 38.34 (a runs west to east); length **3.74 m**; street side +Y (street lies north); kit `Wall(F, (34.6, 78), (38.34, 78), faces='N')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -80,7 +85,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.87, 1.05, 1.3, 1.8)
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -131,13 +136,14 @@ KEEP the three placed upper rooms (z 9.85..10.0) and the skyline palm at (17.1, 
 
 - [ ] Both wing niches at sill 1.30; copings at 4.9 continuous into the gate abutments.
 - [ ] No market rows, no overhead.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

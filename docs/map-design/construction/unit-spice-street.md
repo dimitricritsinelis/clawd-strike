@@ -6,7 +6,14 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 ## 1. Design intent
 
-The market street: busy west, quiet east. Three spice counters under three awnings on the west with houses above; a low stone wholesale row on the east with a household room set back at the north end (S1). Two canopies and three laundry lines cross the 12 m street from west wall ledgers to roof ties on the east, leaving sky between them. The fountain is glimpsed through the north end under the cloth. Palette: warm aged cream/tan plaster west, sun-aged coursed stone east, weathered brown timber, teal louvres, cream and rust cloth; traffic and spice use show at the trade edge, not as a brown wash.
+The market street: busy west, quiet east. Three spice counters under three awnings on the west with houses above; a low stone wholesale row on the east with a household room set back at the north end (S1). Two canopies and three laundry lines cross the 12 m street from west wall ledgers to roof ties on the east, leaving sky between them. The fountain is glimpsed through the north end under the cloth. Palette: warm cream and sandy-tan shop plaster with a faded earth-red north household on the west, sun-aged coursed stone east, weathered brown timber, teal louvres, cream and rust cloth; traffic and spice use show at the trade edge, not as a brown wash.
+
+**Character schedule (build with the numbered tasks):**
+
+- Three plaster tenancies on the west are scheduled in wall task 1; the lower east remains coursed sandstone. Warm cream, sandy tan and faded earth-red must be distinguishable under the same neutral daylight. Keep all five shutter colors and the existing stepped parcel roofs.
+- West plaster repairs: replace only the receiving skin inside a=3.48..3.84, z=0.38..1.05 with `ph_worn_plaster_sun`; a=5.52..5.91, z=0.46..1.22 with `ph_plastered_wall`; and a=14.05..14.56, z=0.34..0.78 with `ph_beige_wall_002`. These are trowelled repairs at shop edges and the household door, not identical stain cards. SD-21 tapers their irregular edges into the existing skin; no extra slab on top.
+- CREATE two fitted woven back-wall panels (SD-22) inside west recesses, fixed above the retained counters: GROUND_01 a=0.84..2.70, z=1.88..2.43, receiving timber back out=-1.35; GROUND_04 a=9.61..11.30, z=1.93..2.39 on the same back plane. Use the existing Project-Original `levantine_rug_albedo_v1.jpg` via SD-22, retaining its rust/indigo/cream woven pattern, 0.008 m thickness and 0.012 m shallow drape toward the street; rear cloth at peg seats touches out=-1.35 and both thickness and drape stay toward the street inside the recess; hem stays within those bounds. Four timber pegs, diameter 0.025 and depth 0.05, at 0.08 from each top/bottom corner, enter the back wall. No textile crosses a counter or opening head. GROUND_03 retains its exposed timber back, making grain handling distinct from the other shops.
+- Retained sacks, baskets, stock, laundry and the cover rug carry street activity at their existing anchors. Add no paving stock. The grain shop gets pale swept dust, spice drawers rusty spice residue, and the apothecary a wiped edge; do not repeat the same stain at all three.
 
 ## 2. Site
 
@@ -27,13 +34,13 @@ The market street: busy west, quiet east. Three spice counters under three awnin
 
 Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
 
-**Existing source.** `assets/source/unit-spice-street/` holds a hand-modelled `build.py`, `spice-west.glb`, `spice-east.glb` and a `package.json` that was never applied (the facade manifest is empty). Treat it as reference for material setup only; rebuild both faces with `facade_kit` to this sheet.
+**Existing source.** `assets/source/unit-spice-street/` contains the applied trial `build.py`, `package.json` and `unit-spice-street.glb`, which predate this character revision. The progress index records its open door, niche and unsupported-wear defects and missing context evidence. Revise that existing section source to this sheet during the next authorized implementation; do not treat the older face exports or the trial previews as the revised result.
 
 ## 3. Walls
 
 ### FRONTAGE_SPICE_STREET_WEST  ·  BLD_SPICE_ROW_W (shop row, 2 storeys)
 
-- **Role:** shop row. Three distinct spice trades and two closed access doors beneath five complete upper shutters and three broad stepped parcel roofs.
+- **Role:** shop row. Three spice tenancies each have a counter recess with a lockable timber back and a stair to the room above (upper shutters over every axis); the two plain doors are the households' street doors, one per end so each family has its own entrance. Awnings shade the counters facing the morning sun; the doors need none.
 - **Wall line:** west edge of `SPICE_STREET`; x = 21, y = 15.44 .. 30.56 (a runs south to north); length **15.12 m**; street side +X (street lies east of the wall); kit `Wall(F, (21, 15.44), (21, 30.56), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -61,21 +68,21 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SHUTTER_LOUVERED` 
 
 **Construction tasks (ordered; each has an observable completion):**
 
-1. CREATE the section finish (`facade_kit`): skin `ph_painted_plaster_warm` 0..7.0, plinth `ph_sandstone_blocks_05` 0..0.28 × 0.14 proud, sill course `ph_stone_trim_sandstone` 3.50..3.62 × 0.10 proud, coping 6.84..7.0 × 0.18 proud, parcel joints as 0.02 m plaster steps at a=6.12 and a=11.88 (between bays, never through a frame). Corners are `open`: the return kits own both ends, so no end pilasters. Completion: one plaster field with three legible parcels.
-2. CREATE three shop recesses `GROUND_01/03/04` 2.4 wide × 2.7 high × 1.35 deep at a=1.80/7.56/10.44: stone jambs 0.22 wide with 0.29 m street projection, 2.70 m high in eight equal 0.3375 m courses; each jamb extends from 1.35 m behind the wall to 0.29 m in front. Stone lintel 2.90 wide at z 2.70..2.95, front 0.29 proud; timber head at z 2.53..2.70. Dark timber back at depth 1.35. Timber deck top z 0.08, spanning from depth 1.35 behind the wall to 0.28 proud so the retained counter feet are supported. Leave the recess empty: the counters `ASSET_SPICE_DRAWERS` (a=1.80), `ASSET_GRAIN_BALANCE` (a=7.56) and `ASSET_APOTHECARY` (a=10.44) are placed assets 1.72 × 0.50 × 1.70 at their fixed Section 4 transforms; do not move them to the recess back. Completion: each counter sits inside its recess with 0.34 m of reveal either side and its top shelf under the head beam.
-3. CREATE two closed household doors `GROUND_02/05` 1.15 × 2.7 at a=4.68 and a=13.32 per SD-05: eight vertical planks `ph_rough_pine_door`, two iron straps, ring pull at 1.05 m, stone jambs 0.14, SD-05 threshold. Completion: both read as house doors, not shop doors; nothing stands within 0.8 m in front.
+1. CREATE the section finish (`facade_kit`): three apertured plaster fields 0..7.0: a=0..6.12 `ph_painted_plaster_warm` (warm cream, face out=0.02), a=6.12..11.88 `ph_beige_wall_002` (sandy tan, out=0.04), a=11.88..15.12 `ph_red_plaster_weathered` (faded earth-red household plaster, out=0.02); plinth `ph_sandstone_blocks_05` 0..0.28 × 0.14 proud, sill course `ph_stone_trim_sandstone` 3.50..3.62 × 0.10 proud, coping 6.84..7.0 × 0.18 proud, parcel joints as 0.02 m plaster steps at a=6.12 and a=11.88 (between bays, never through a frame). Corners are `open`: the return kits own both ends, so no end pilasters. Completion: three legible tenancies with different plaster grain and tone, continuous construction datums, and no full-height decorative seams through openings.
+2. CREATE three shop recesses `GROUND_01/03/04` 2.4 wide × 2.7 high × 1.35 deep at a=1.80/7.56/10.44: stone jambs 0.22 wide with 0.29 m street projection, 2.70 m high with course heights bottom to top per shop: GROUND_01 [0.30, 0.34, 0.36, 0.31, 0.37, 0.33, 0.35, 0.34], GROUND_03 [0.38, 0.40, 0.36, 0.41, 0.39, 0.37, 0.39], GROUND_04 [0.28, 0.32, 0.29, 0.31, 0.30, 0.27, 0.33, 0.29, 0.31]. Reverse each sequence for the opposite jamb, retaining the 2.70 m head and SD-21 edge finish; each jamb extends from 1.35 m behind the wall to 0.29 m in front. Stone lintel 2.90 wide at z 2.70..2.95, front 0.29 proud; timber head at z 2.53..2.70. Dark timber back at depth 1.35. Timber deck top z 0.08, spanning from depth 1.35 behind the wall to 0.28 proud so the retained counter feet are supported. Leave the counter envelopes empty; only the two back-wall textiles in the character schedule are added behind them. The counters `ASSET_SPICE_DRAWERS` (a=1.80), `ASSET_GRAIN_BALANCE` (a=7.56) and `ASSET_APOTHECARY` (a=10.44) are placed assets 1.72 × 0.50 × 1.70 at their fixed Section 4 transforms; do not move them to the recess back. Completion: each counter sits inside its recess with 0.34 m of reveal either side and its top shelf under the head beam.
+3. CREATE two closed household doors `GROUND_02/05` 1.15 × 2.7 at a=4.68 and a=13.32 per SD-05: eight vertical planks `ph_rough_pine_door` with grain along the plank, tight 0.002..0.003 m seams and SD-05 separated backing, two iron straps, ring pull at 1.05 m, stone jambs 0.14, SD-05 threshold. Completion: both read as house doors, not shop doors; nothing stands within 0.8 m in front.
 4. CREATE five upper window rebates `STORY_1_WINDOW_01..05` 1.6 × 1.65 at sill 3.68 / head 5.33 on the five axes: stone frame 0.10 all round, sill slab 0.06 high × 0.08 proud sitting on the sill course, reveal 0.135 deep, dark plaster back. Do NOT model shutters: the placed `ASSET_SHUTTER_*` assets (SH-L / SH-P / SH-L / SH-W / SH-P at z 3.68) fill the rebates. Completion: every shutter sits inside its frame with the sill under it, none floats in front of plaster.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01`; same over `GROUND_03` (a=6.31..8.81) and `GROUND_04` (a=9.19..11.69). No awning over the doors. Completion: three awnings, hems at 2.48 m, brackets bear on the jamb stones, cloth clears the sign boards.
+5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01`; same over `GROUND_03` (a=6.31..8.81) and `GROUND_04` (a=9.19..11.69). No awning over the doors. Override sag by bay: GROUND_01=0.07, GROUND_03=0.10, GROUND_04=0.12 m; keep drop 0.25, all ledger endpoints and projection unchanged. Completion: three different cloth curves, evaluated lowest surfaces at least 2.45 m, brackets bear on the jamb stones, cloth clears the sign boards.
 6. CREATE sign brackets (SD-09) behind the two placed boards `SPICE_W_SIGN_1` (a=1.80, centre z 3.20, span 3.05..3.35) and `SPICE_W_SIGN_3` (a=7.56, same span): two 0.06 × 0.06 timber stubs 0.18 proud at ±0.9 m of the axis, z 3.35. CREATE the lantern bracket at a=0.76: it starts at (21.0, 16.2, 4.065), reaches 0.45 m into the street to the placed lantern handle at (21.45, 16.2, 4.065), and carries `LANTERN_SPICE_01` centred at (21.45, 16.2, 3.80). No sign on `GROUND_04` (goods identify it). Completion: both boards and the lantern visibly hang from their brackets.
 7. KEEP goods: `PLACE_SPICE_COVER_*` cluster at (23.0, 27.6) is gameplay cover; `BPL16_SPICE_W_STOCK_GROUND_02` and `B4_SPICE_W_CRATES_GROUND_04` anchors stay dormant (no new floor stock). Completion: nothing on the paving in front of this wall except the cover cluster.
-8. APPLY wear (SD-12): dirt band 0..1.5 m; hand polish on the door jambs 0.9..1.4 m; spice dust staining 0..0.4 m under the three recesses only; sun bleach on the upper field (this face looks east, morning sun): light. Completion: wear differs between the three shops and the two doors.
-9. KEEP the S1 parcel roofs already placed (`ASSET_SPICE_ROOF_SOUTH/MIDDLE/NORTH` at x 18.60, z 7.0: caps 8.79 / 9.59 / 8.19) and the three `ASSET_ROOF_TIE_*` supports on the east side. Completion: the GLB coping meets the roof-asset bases without a gap or a double slab.
+8. APPLY SD-12 only on solid receiving faces: broken dust 0..0.35, local hand polish on door jambs 0.9..1.4, and spice marks 0..0.4 on the GROUND_01 deck/jambs. GROUND_03 carries pale flour dust on its deck; GROUND_04 has a clean wiped deck and one small spice mark at its south jamb. Keep the named repair patches in the character schedule separate from dirt. Light morning bleach is allowed only above the west shutters, z 5.43..6.84. Completion: distinct daily use at each trade; dust never bridges a recess or a door.
+9. KEEP the S1 parcel roofs already placed (`ASSET_SPICE_ROOF_SOUTH/MIDDLE/NORTH` at x 18.60, z 7.0: caps 8.79 / 9.59 / 8.19) and the five `ASSET_ROOF_TIE_*` supports on the east side. Completion: the GLB coping meets the roof-asset bases without a gap or a double slab.
 
 **Why it exists (reality check):** Three spice tenancies each have a counter recess with a lockable timber back and a stair to the room above (upper shutters over every axis); the two plain doors are the households' street doors, one per end so each family has its own entrance. Awnings shade the counters facing the morning sun; the doors need none.
 
 ### FRONTAGE_SPICE_STREET_EAST  ·  BLD_SPICE_ROW_E (shop row, 1 storey)
 
-- **Role:** shop row. Low wholesale frontage retained beneath the northern setback room, two closed upper windows and roof-supported shade ties.
+- **Role:** shop row. Wholesale sack stores: three plain doors, no windows at street level (stock, not living), stock waiting outside for the cart. A household lives in the setback room at the north end and reaches it by the stair behind `GROUND_04`.
 - **Wall line:** east edge of `SPICE_STREET`; x = 33, y = 15.44 .. 30.56 (a runs south to north); length **15.12 m**; street side -X (street lies west of the wall); kit `Wall(F, (33, 15.44), (33, 30.56), faces='W')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -99,18 +106,18 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_MARKET_CART` at ex
 
 1. CREATE the section finish: skin `ph_sandstone_blocks_05` 0..4.5 (coursed stone, quiet side), plinth 0..0.28, string course 2.84..2.96 × 0.10, coping 4.34..4.50 × 0.18; corners `held`: two end piers 0.45 × 0.16 full height at a=0.225 and a=14.895. Completion: reads as a low stone wholesale row, one material family, no plaster.
 2. CREATE two closed sack-store doors `GROUND_01/03` as the runtime `door_residential_timber` envelope, 1.05 × 2.25 at a=1.125/7.56: double leaves `ph_weathered_brown_planks`, three iron straps, a 0.35 m bumper rail and flush threshold. `GROUND_03` adds a 0.35 × 0.35 iron-grille wicket at z=1.50. CREATE `GROUND_04` as the same 1.05 × 2.25 envelope at a=10.777 with one `ph_rough_pine_door` leaf, two straps and a ring pull. Completion: two locked sack-store doors and one household door, all closed, with the existing runtime envelopes unchanged.
-3. CREATE two blind niches `GROUND_02/05` 1.05 × 1.8, sill 0.45, at a=4.343/13.995 (SD-18). Completion: read as bricked-up openings.
+3. CREATE two blind niches `GROUND_02/05` 1.05 × 1.8, sill 0.45, at a=4.343/13.995 (SD-18). Backing must be `ph_worn_plaster_ochre` at out=-0.14 per SD-18, with sealed masonry behind it; do not substitute exposed sandstone. Completion: plastered infill in a former opening.
 4. KEEP the wall-base stock at the four `SPICE_E_WALLBASE_STOCK_*` anchors (crates, sacks, baskets, pots at x≈32.1..32.3) and the handcart at its corrected fixed anchor (31.60, 16.565), 1.40 m inset on `GROUND_01`, yaw 277°. Its nearest edge stays 0.937 m from the wall, leaving a 0.137 m gap beyond the protected 0.8 m door floor while the six-metre lane x=24..30 remains clear. Add nothing. Completion: stock remains within 0.9 m of the wall, the door floor stays empty and the cart keeps this transform.
 5. No awnings, no signs on this face (quiet side). Completion: none exist.
-6. KEEP the five roof-tie supports `ASSET_ROOF_TIE_*` at x 34.88 (z 5.48..5.59) that receive the canopies and lines; the GLB coping must pass under their feet. Completion: every tie foot bears on coping or parapet, none floats.
-7. APPLY wear: dirt band; cart scuffs at `GROUND_01`; drip streak from the two tie feet nearest the doors; strong sun bleach on the upper stone (this face looks west, afternoon sun). Completion: as listed.
+6. KEEP the five roof-tie supports `ASSET_ROOF_TIE_*` at x 34.88 (z 5.48..5.59) that receive the canopies and lines; their seats are the retained roof/parapet geometry behind the facade, not the section cornice at x=33, z=4.5. Completion: inspect all five retained contacts in assembled context; do not extend the section to reach them.
+7. APPLY wear: broken base dust 0..0.35 and cart scuffs 0..0.6 on GROUND_01 jambs at out=0.125; light afternoon bleach on the solid stone field z 2.96..4.34, out=0.025. No drain or tie-foot streak is scheduled here: the retained parapet is set back from the x=33 facade, and a roof tie is not a drain. Completion: every mark has a receiving surface below the 4.5 m wall top; no floating marks above the cornice.
 8. KEEP the S1 setback room `ASSET_SPICE_UPPER_ROOM` at (35.70, 27.28, 4.76) (roof 7.0, cap 7.71, two closed windows at y 25.8 / 28.1, sill 5.40). Completion: the room's base sits on the 4.76 slab with no gap.
 
 **Why it exists (reality check):** Wholesale sack stores: three plain doors, no windows at street level (stock, not living), stock waiting outside for the cart. A household lives in the setback room at the north end and reaches it by the stair behind `GROUND_04`.
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -180,16 +187,18 @@ The west ends at (21, 20.58 / 26.48, 5.8) bear on 1.2 m timber wall ledgers, 0.1
 
 ## 6. Ground, wear and drainage
 
-KEEP `spice_laid_stone_01`. Finish: flush seams at y 14 (Spice Gate threshold) and y 32; a 0.6 m worn band along the west counters (foot traffic); spice-dust tint 0..0.4 m out from the three west recesses; two 0.05 m wide wheel scuffs in colour and roughness only from the east cart at (31.60, 16.565) toward the gate, with no displacement; contact wear under the cover cluster and the wall-base stock.
+KEEP `spice_laid_stone_01`. Finish: flush seams at y 14 (Spice Gate threshold) and y 32; separate swept contact patches along the west counters, not a continuous band; rust spice residue at the drawers, pale dust at the grain shop and a small stain by the apothecary south jamb, bounded by the exact floor polygons below; two 0.05 m wide wheel scuffs in colour and roughness only from the east cart at (31.60, 16.565) toward the gate, with no displacement; contact wear under the cover cluster and the wall-base stock.
 
 **`SPICE_STREET` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
 
 ```python
 wear_patch(F, [(26.7, 14.3, 0.014), (27.3, 14.3, 0.014), (27.3, 31.7, 0.014), (26.7, 31.7, 0.014)], 'polish')
-wear_patch(F, [(21.02, 15.2, 0.014), (21.6, 15.2, 0.014), (21.6, 30.8, 0.014), (21.02, 30.8, 0.014)], 'dust')
+wear_patch(F, [(21.04, 15.7, 0.014), (21.38, 15.85, 0.014), (21.46, 16.35, 0.014), (21.03, 16.25, 0.014)], 'dust')
+wear_patch(F, [(21.03, 21.5, 0.014), (21.53, 21.68, 0.014), (21.42, 22.15, 0.014), (21.02, 22.28, 0.014)], 'dust')
+wear_patch(F, [(21.04, 27.34, 0.014), (21.3, 27.43, 0.014), (21.34, 27.81, 0.014), (21.02, 27.97, 0.014)], 'dust')
 wear_patch(F, [(21.02, 16.44, 0.014), (21.4, 16.44, 0.014), (21.4, 18.04, 0.014), (21.02, 18.04, 0.014)], 'spice')
-wear_patch(F, [(21.02, 22.2, 0.014), (21.4, 22.2, 0.014), (21.4, 23.8, 0.014), (21.02, 23.8, 0.014)], 'spice')
-wear_patch(F, [(21.02, 25.08, 0.014), (21.4, 25.08, 0.014), (21.4, 26.68, 0.014), (21.02, 26.68, 0.014)], 'spice')
+wear_patch(F, [(21.03, 22.47, 0.014), (21.34, 22.66, 0.014), (21.26, 23.38, 0.014), (21.02, 23.56, 0.014)], 'dust')
+wear_patch(F, [(21.03, 24.86, 0.014), (21.24, 24.92, 0.014), (21.2, 25.17, 0.014), (21.02, 25.23, 0.014)], 'spice')
 wear_patch(F, [(31.2, 15.1, 0.014), (31.25, 15.1, 0.014), (31.25, 16.565, 0.014), (31.2, 16.565, 0.014)], 'rut')
 wear_patch(F, [(31.77, 15.1, 0.014), (31.82, 15.1, 0.014), (31.82, 16.565, 0.014), (31.77, 16.565, 0.014)], 'rut')
 wear_patch(F, [(31.980579, 15.807976, 0.014), (32.152415, 17.207466, 0.014), (31.219421, 17.322024, 0.014), (31.047585, 15.922534, 0.014)], 'dust')
@@ -218,13 +227,14 @@ S1 adopted: west parcels y 15.44..21.56 / 21.56..27.32 / 27.32..30.56 with roof 
 - [ ] Three counters seated in their recesses with 0.34 m reveal either side; shutters seated in all five upper rebates.
 - [ ] Canopy and line ends bear on ledgers or roof ties; hems ≥ 4.9 m; sky visible between spans from both street ends.
 - [ ] East stock stays within 0.9 m of the wall; the handcart at (31.60, 16.565), yaw 277°, leaves the `GROUND_01` 0.8 m door floor clear and stays beyond the six-metre lane.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

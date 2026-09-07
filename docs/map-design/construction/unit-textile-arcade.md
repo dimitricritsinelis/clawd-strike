@@ -8,6 +8,12 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The compressed cloth street: two facing arcades on one arch rhythm (three arches and one column each), rug galleries and roll chests in the west arches, packing and light fabric in the east; a canopy and two lines overhead; the ochre two-storey west against the warm aged-lime single-storey east; Rug Gate visible at the north end above the cloth. Cloth edges and busy arch bases carry the localized use.
 
+**Character schedule (build with the numbered tasks):**
+
+- West stays `ph_aged_plaster_ochre`, east `ph_painted_plaster_warm`; their different heights and the intervening columns remain. Cloth identity comes from the retained hanging galleries, roll chest, packing displays and overhead lines. Show hanging versus rolled versus folded stock; never duplicate the approved Souk booth or cover every arch with the same rug.
+- On the west, replace skin a=5.72..6.31, z=0.42..1.31 with `ph_worn_plaster_sun`; on the east replace a=9.84..10.01, z=0.35..0.91 with `ph_beige_wall_002` (SD-21). These unequal repairs sit beyond the arch rings and columns. Finished arch stones keep their axes but receive hand-cut edges, not perfectly identical cube bevels.
+- The six new awnings retain their scheduled spans, ledgers and drops. Use sag west GROUND_01/03/04 = 0.12/0.08/0.10 m and east = 0.07/0.11/0.09 m. Cloth folds remain supported and inside the original maximum drop; no loose rugs or additional stock on paving.
+
 ## 2. Site
 
 ### Site · `TEXTILE_ARCADE` (Textile Arcade)
@@ -33,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_TEXTILE_ARCADE_WEST  ·  BLD_RUG_ARCADE_W (arcade, 2 storeys)
 
-- **Role:** arcade. Three rug trade arches with a retained pier, complete gallery/roll displays and three slatted upper closures; no window over the pier.
+- **Role:** arcade. Three rug dealers under one arcade share a common back store reached from behind; each shows stock in its arch and lives above behind a slatted screen. The column marks where two older buildings were joined.
 - **Wall line:** west edge of `TEXTILE_ARCADE`; x = 24, y = 49.28 .. 62.72 (a runs south to north); length **13.44 m**; street side +X (street lies east of the wall); kit `Wall(F, (24, 49.28), (24, 62.72), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -62,7 +68,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_RUG_GALLERY` at MO
 2. CREATE three sealed display arches `GROUND_01/03/04` 2.6 × 3.55 pointed at a=1.90/8.327/11.54 (kit `arch`, spring 1.93, ring 0.18 stone, depth 0.42): stone jambs, dark timber back at 0.42, floor deck at 0.14 (the placed displays mount at z 0.14). Leave the arch interiors empty: `ASSET_RUG_GALLERY` (a=1.90), `ASSET_RUG_ROLL_CHEST` (a=8.327) and `ASSET_B18_PACKING_FINISH` (a=11.54) are placed. Completion: each display sits inside its arch, 0.55 m reveal either side.
 3. CREATE `GROUND_02` grounded column 0.42 × 0.42 × 3.55 at a=5.113 with a 0.10 capital and 0.08 base (the irregular intervening column; keep it). Completion: touches ground and impost band.
 4. CREATE three screen rebates `STORY_1_WINDOW_01/03/04` 1.0 × 1.4 at sill 4.15 / head 5.55 over the three arches (a=1.90/8.327/11.54): frame 0.10, reveal 0.135; placed `ASSET_TEXTILE_SCREEN_SC_V` fill them. No window over the column. Completion: three screens seated, none over `GROUND_02`.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` (ledger spans pier to pier in front of the arch, brackets on the piers at z 2.55); same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, hems 2.63 m, the upper third of each arch visible above the cloth.
+5. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` (ledger spans pier to pier in front of the arch, brackets on the piers at z 2.55); same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, evaluated hems at least 2.60 m, the upper third of each arch visible above the cloth.
 6. CREATE sign brackets for `TEXTILE_W_SIGN_1` only (a=1.90, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. CREATE the lantern bracket at a=5.92: it starts at (24.0, 55.2, 4.415), reaches 0.45 m into the street to the placed lantern handle at (24.45, 55.2, 4.415), and carries `LANTERN_TEXTILE_01` centred at (24.45, 55.2, 4.15). `TEXTILE_W_SIGN_2` stays dormant. Completion: one sign and one lantern, both supported and clear of the screen sill.
 7. KEEP dormant anchors `B4_TEXTILE_W_RUG_GROUND_01`, `BPL16_TEXTILE_W_STALL_GROUND_04` (no floor stock, no loose rugs). Completion: paving in front of the arcade empty.
 8. APPLY wear: dust band; polish on the arch jambs 0.9..1.4; textile dye drips 0..0.3 under `GROUND_01`; sun bleach light (faces east). Completion: as listed.
@@ -72,7 +78,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_RUG_GALLERY` at MO
 
 ### FRONTAGE_TEXTILE_ARCADE_EAST  ·  BLD_RUG_ARCADE_E (arcade, 1 storey)
 
-- **Role:** arcade. Low textile arcade with fitted light-fabric packing cabinets and a complete rug gallery, retaining its arch rhythm and northern cart.
+- **Role:** arcade. The cheaper side of the street: single storey, light fabrics and packing, stock arrives by the cart parked at the north bay.
 - **Wall line:** east edge of `TEXTILE_ARCADE`; x = 35, y = 49.28 .. 62.72 (a runs south to north); length **13.44 m**; street side -X (street lies west of the wall); kit `Wall(F, (35, 49.28), (35, 62.72), faces='W')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -96,7 +102,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_B18_PACKING_FINISH
 1. CREATE the section finish: skin `ph_painted_plaster_warm` 0..4.5, plinth sandstone, impost band between arches, coping 4.34..4.5; end piers 0.60 × 0.16. Completion: the low lime arcade opposite the tall ochre one.
 2. CREATE three arches `GROUND_01/03/04` 2.6 × 3.55 at a=1.90/8.327/11.54 as on the west face; column `GROUND_02` at a=5.113. Interiors empty for the placed assets: `ASSET_B18_PACKING_FINISH` at a=1.90 (light-fabric packing; no second textile booth on this map: the approved booth stays unique to the Souk), `ASSET_RUG_GALLERY` at a=8.327, `ASSET_B18_PACKING_FINISH` at a=11.54. Completion: three arches, two trades read differently from the west face.
 3. No upper windows (single storey). No balcony. Completion: none.
-4. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01`, the same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, hems 2.63 m.
+4. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01`, the same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, evaluated hems at least 2.60 m.
 5. CREATE sign brackets for `TEXTILE_E_SIGN_1` (a=1.90, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. `TEXTILE_E_SIGN_2` stays dormant; `GROUND_03/04` are identified by their goods. Completion: one sign.
 6. KEEP the cart `PLACE_B4_TEXTILE_CART_*` at (33.95, 60.82) and the cover cluster at (32.6, 58.2). Completion: nothing else on the paving.
 7. KEEP the two roof ties `ASSET_ROOF_TIE_610/490` at x 36.88 (z 5.59 / 4.83); coping passes under them. APPLY wear: dust band, polish on jambs, strong sun bleach (faces west). Completion: as listed.
@@ -105,7 +111,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_B18_PACKING_FINISH
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -168,13 +174,14 @@ S2 adopted: west south parcel 7.0 / 8.19; the shared Tea/Textile north wing (y 5
 - [ ] Six arches on the same axes across the lane; both columns grounded.
 - [ ] Three screens seated on the west; no window over either column; no upper windows on the east.
 - [ ] Both signs at z 3.67, 0.30 high; canopy ledger clears the sign boards.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

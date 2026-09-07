@@ -123,13 +123,14 @@ PLACEMENTS = {
 
 # ---------------------------------------------------------------- common completion checks
 COMMON_CHECKS = [
-    'Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.',
+    'Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.',
     'Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).',
     'No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.',
     'Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.',
+    'Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.',
     'Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.',
     'Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.',
-    'Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.',
+    'The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.',
 ]
 
 # Ground wear patches are design-space rectangles with absolute z. The generator
@@ -142,10 +143,12 @@ FLOOR_WEAR = {
     ],
     'SPICE_STREET': [
         {'kind': 'polish', 'corners': [(26.7, 14.3, 0), (27.3, 14.3, 0), (27.3, 31.7, 0), (26.7, 31.7, 0)]},
-        {'kind': 'dust', 'corners': [(21.02, 15.2, 0), (21.60, 15.2, 0), (21.60, 30.8, 0), (21.02, 30.8, 0)]},
+        {'kind': 'dust', 'corners': [(21.04, 15.70, 0), (21.38, 15.85, 0), (21.46, 16.35, 0), (21.03, 16.25, 0)]},
+        {'kind': 'dust', 'corners': [(21.03, 21.50, 0), (21.53, 21.68, 0), (21.42, 22.15, 0), (21.02, 22.28, 0)]},
+        {'kind': 'dust', 'corners': [(21.04, 27.34, 0), (21.30, 27.43, 0), (21.34, 27.81, 0), (21.02, 27.97, 0)]},
         {'kind': 'spice', 'corners': [(21.02, 16.44, 0), (21.40, 16.44, 0), (21.40, 18.04, 0), (21.02, 18.04, 0)]},
-        {'kind': 'spice', 'corners': [(21.02, 22.20, 0), (21.40, 22.20, 0), (21.40, 23.80, 0), (21.02, 23.80, 0)]},
-        {'kind': 'spice', 'corners': [(21.02, 25.08, 0), (21.40, 25.08, 0), (21.40, 26.68, 0), (21.02, 26.68, 0)]},
+        {'kind': 'dust', 'corners': [(21.03, 22.47, 0), (21.34, 22.66, 0), (21.26, 23.38, 0), (21.02, 23.56, 0)]},
+        {'kind': 'spice', 'corners': [(21.03, 24.86, 0), (21.24, 24.92, 0), (21.20, 25.17, 0), (21.02, 25.23, 0)]},
         {'kind': 'rut', 'corners': [(31.20, 15.10, 0), (31.25, 15.10, 0), (31.25, 16.565, 0), (31.20, 16.565, 0)]},
         {'kind': 'rut', 'corners': [(31.77, 15.10, 0), (31.82, 15.10, 0), (31.82, 16.565, 0), (31.77, 16.565, 0)]},
     ],
@@ -258,35 +261,35 @@ def default_tasks(b, f, wall, gh):
         elif m == 'vent_service':
             tasks.append(f"CREATE `{bay['id']}` vent 0.58 × 0.48 at a={bay['alongM']:.2f} m, sill per table, timber grille 0.03 bars, deep dark back; completion: grille reads, no light bleed.")
         elif m.startswith('window'):
-            tasks.append(f"CREATE `{bay['id']}` window at a={bay['alongM']:.2f} m per SD-06 (frame 0.10, sill 0.06 proud, closed shutters or dark closure per variant); completion: full frame and sill, closure visibly shut.")
+            tasks.append(f"CREATE `{bay['id']}` window at a={bay['alongM']:.2f} m per SD-06 (frame 0.10, sill 0.06 high with top at the listed sill datum and front 0.08 proud, closed shutters or dark closure per variant); completion: full frame and sill, closure visibly shut.")
         elif m.startswith('pilaster'):
             tasks.append(f"CREATE `{bay['id']}` grounded pilaster 0.42 wide × 0.24 proud, full scheduled height at a={bay['alongM']:.2f} m; completion: touches the ground and the head.")
         elif m == 'inspection_panel':
             tasks.append(f"CREATE `{bay['id']}` flush sealed panel 1.35 × 0.85 at a={bay['alongM']:.2f} m, sill 0.25: 0.035 m timber board in a 0.06 stone frame, no depth behind; completion: reads as a sealed hatch, not an entry.")
     if t in ('compound wall', 'service back'):
         tasks.append("CREATE one drain spout (SD-13) at the a-position given in the wall note or, if none, at 0.6 m from the a=L end, with the SD-12 streak below; completion: one spout, one stain, nothing else on the field.")
-    tasks.append("APPLY wear per SD-12 for this type; completion: base band continuous, no wear above 1.5 m except sun bleach.")
+    tasks.append("APPLY wear per SD-12 for this type; completion: broken base accumulation within the SD-12 envelope, clean swept intervals, localized spout streaks and scheduled sun bleach; no continuous dirt stripe.")
     return tasks
 
 def default_ground(zids):
     return ("KEEP the authored floor material and grade (protected). Finish: flush material seams at the zone boundaries listed in section 2 (no sills, curbs or steps); contact wear 0.25 m wide along every wall base and around every placed prop footprint; traffic polish along the route centreline; no sand mounds, grates or trenches. Dressing footprints stay inside the 0.35 m wall band except the scheduled cover clusters.")
 
 # ---------------------------------------------------------------- per-wall design layer
-AWN = "SD-08 awning: timber ledger 0.08 × 0.08 at z {z:.2f} spanning a={a0:.2f}..{a1:.2f}, projection {p:.2f} m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `{cloth}`"
+AWN = "SD-08 awning: timber ledger 0.08 × 0.08 at z {z:.2f} spanning a={a0:.2f}..{a1:.2f}, projection {p:.2f} m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `{cloth}`"
 
 WALLS = {
 'FRONTAGE_SPICE_STREET_WEST': {
     'datums': "plinth 0..0.28 m sandstone (SD-01); awning ledger datum 2.85 m; continuous sill course 3.50..3.62 m under the five shutters (SD-02 variant); wall top 7.0 with coping 6.84..7.0; S1 parcel roofs above (section 7).",
     'tasks': [
-        "CREATE the section finish (`facade_kit`): skin `ph_painted_plaster_warm` 0..7.0, plinth `ph_sandstone_blocks_05` 0..0.28 × 0.14 proud, sill course `ph_stone_trim_sandstone` 3.50..3.62 × 0.10 proud, coping 6.84..7.0 × 0.18 proud, parcel joints as 0.02 m plaster steps at a=6.12 and a=11.88 (between bays, never through a frame). Corners are `open`: the return kits own both ends, so no end pilasters. Completion: one plaster field with three legible parcels.",
-        "CREATE three shop recesses `GROUND_01/03/04` 2.4 wide × 2.7 high × 1.35 deep at a=1.80/7.56/10.44: stone jambs 0.22 wide with 0.29 m street projection, 2.70 m high in eight equal 0.3375 m courses; each jamb extends from 1.35 m behind the wall to 0.29 m in front. Stone lintel 2.90 wide at z 2.70..2.95, front 0.29 proud; timber head at z 2.53..2.70. Dark timber back at depth 1.35. Timber deck top z 0.08, spanning from depth 1.35 behind the wall to 0.28 proud so the retained counter feet are supported. Leave the recess empty: the counters `ASSET_SPICE_DRAWERS` (a=1.80), `ASSET_GRAIN_BALANCE` (a=7.56) and `ASSET_APOTHECARY` (a=10.44) are placed assets 1.72 × 0.50 × 1.70 at their fixed Section 4 transforms; do not move them to the recess back. Completion: each counter sits inside its recess with 0.34 m of reveal either side and its top shelf under the head beam.",
-        "CREATE two closed household doors `GROUND_02/05` 1.15 × 2.7 at a=4.68 and a=13.32 per SD-05: eight vertical planks `ph_rough_pine_door`, two iron straps, ring pull at 1.05 m, stone jambs 0.14, SD-05 threshold. Completion: both read as house doors, not shop doors; nothing stands within 0.8 m in front.",
+        "CREATE the section finish (`facade_kit`): three apertured plaster fields 0..7.0: a=0..6.12 `ph_painted_plaster_warm` (warm cream, face out=0.02), a=6.12..11.88 `ph_beige_wall_002` (sandy tan, out=0.04), a=11.88..15.12 `ph_red_plaster_weathered` (faded earth-red household plaster, out=0.02); plinth `ph_sandstone_blocks_05` 0..0.28 × 0.14 proud, sill course `ph_stone_trim_sandstone` 3.50..3.62 × 0.10 proud, coping 6.84..7.0 × 0.18 proud, parcel joints as 0.02 m plaster steps at a=6.12 and a=11.88 (between bays, never through a frame). Corners are `open`: the return kits own both ends, so no end pilasters. Completion: three legible tenancies with different plaster grain and tone, continuous construction datums, and no full-height decorative seams through openings.",
+        "CREATE three shop recesses `GROUND_01/03/04` 2.4 wide × 2.7 high × 1.35 deep at a=1.80/7.56/10.44: stone jambs 0.22 wide with 0.29 m street projection, 2.70 m high with course heights bottom to top per shop: GROUND_01 [0.30, 0.34, 0.36, 0.31, 0.37, 0.33, 0.35, 0.34], GROUND_03 [0.38, 0.40, 0.36, 0.41, 0.39, 0.37, 0.39], GROUND_04 [0.28, 0.32, 0.29, 0.31, 0.30, 0.27, 0.33, 0.29, 0.31]. Reverse each sequence for the opposite jamb, retaining the 2.70 m head and SD-21 edge finish; each jamb extends from 1.35 m behind the wall to 0.29 m in front. Stone lintel 2.90 wide at z 2.70..2.95, front 0.29 proud; timber head at z 2.53..2.70. Dark timber back at depth 1.35. Timber deck top z 0.08, spanning from depth 1.35 behind the wall to 0.28 proud so the retained counter feet are supported. Leave the counter envelopes empty; only the two back-wall textiles in the character schedule are added behind them. The counters `ASSET_SPICE_DRAWERS` (a=1.80), `ASSET_GRAIN_BALANCE` (a=7.56) and `ASSET_APOTHECARY` (a=10.44) are placed assets 1.72 × 0.50 × 1.70 at their fixed Section 4 transforms; do not move them to the recess back. Completion: each counter sits inside its recess with 0.34 m of reveal either side and its top shelf under the head beam.",
+        "CREATE two closed household doors `GROUND_02/05` 1.15 × 2.7 at a=4.68 and a=13.32 per SD-05: eight vertical planks `ph_rough_pine_door` with grain along the plank, tight 0.002..0.003 m seams and SD-05 separated backing, two iron straps, ring pull at 1.05 m, stone jambs 0.14, SD-05 threshold. Completion: both read as house doors, not shop doors; nothing stands within 0.8 m in front.",
         "CREATE five upper window rebates `STORY_1_WINDOW_01..05` 1.6 × 1.65 at sill 3.68 / head 5.33 on the five axes: stone frame 0.10 all round, sill slab 0.06 high × 0.08 proud sitting on the sill course, reveal 0.135 deep, dark plaster back. Do NOT model shutters: the placed `ASSET_SHUTTER_*` assets (SH-L / SH-P / SH-L / SH-W / SH-P at z 3.68) fill the rebates. Completion: every shutter sits inside its frame with the sill under it, none floats in front of plaster.",
-        AWN.format(z=2.85, a0=0.55, a1=3.05, p=1.10, cloth='ph_hessian_230') + " over `GROUND_01`; same over `GROUND_03` (a=6.31..8.81) and `GROUND_04` (a=9.19..11.69). No awning over the doors. Completion: three awnings, hems at 2.48 m, brackets bear on the jamb stones, cloth clears the sign boards.",
+        AWN.format(z=2.85, a0=0.55, a1=3.05, p=1.10, cloth='ph_hessian_230') + " over `GROUND_01`; same over `GROUND_03` (a=6.31..8.81) and `GROUND_04` (a=9.19..11.69). No awning over the doors. Override sag by bay: GROUND_01=0.07, GROUND_03=0.10, GROUND_04=0.12 m; keep drop 0.25, all ledger endpoints and projection unchanged. Completion: three different cloth curves, evaluated lowest surfaces at least 2.45 m, brackets bear on the jamb stones, cloth clears the sign boards.",
         "CREATE sign brackets (SD-09) behind the two placed boards `SPICE_W_SIGN_1` (a=1.80, centre z 3.20, span 3.05..3.35) and `SPICE_W_SIGN_3` (a=7.56, same span): two 0.06 × 0.06 timber stubs 0.18 proud at ±0.9 m of the axis, z 3.35. CREATE the lantern bracket at a=0.76: it starts at (21.0, 16.2, 4.065), reaches 0.45 m into the street to the placed lantern handle at (21.45, 16.2, 4.065), and carries `LANTERN_SPICE_01` centred at (21.45, 16.2, 3.80). No sign on `GROUND_04` (goods identify it). Completion: both boards and the lantern visibly hang from their brackets.",
         "KEEP goods: `PLACE_SPICE_COVER_*` cluster at (23.0, 27.6) is gameplay cover; `BPL16_SPICE_W_STOCK_GROUND_02` and `B4_SPICE_W_CRATES_GROUND_04` anchors stay dormant (no new floor stock). Completion: nothing on the paving in front of this wall except the cover cluster.",
-        "APPLY wear (SD-12): dirt band 0..1.5 m; hand polish on the door jambs 0.9..1.4 m; spice dust staining 0..0.4 m under the three recesses only; sun bleach on the upper field (this face looks east, morning sun): light. Completion: wear differs between the three shops and the two doors.",
-        "KEEP the S1 parcel roofs already placed (`ASSET_SPICE_ROOF_SOUTH/MIDDLE/NORTH` at x 18.60, z 7.0: caps 8.79 / 9.59 / 8.19) and the three `ASSET_ROOF_TIE_*` supports on the east side. Completion: the GLB coping meets the roof-asset bases without a gap or a double slab.",
+        "APPLY SD-12 only on solid receiving faces: broken dust 0..0.35, local hand polish on door jambs 0.9..1.4, and spice marks 0..0.4 on the GROUND_01 deck/jambs. GROUND_03 carries pale flour dust on its deck; GROUND_04 has a clean wiped deck and one small spice mark at its south jamb. Keep the named repair patches in the character schedule separate from dirt. Light morning bleach is allowed only above the west shutters, z 5.43..6.84. Completion: distinct daily use at each trade; dust never bridges a recess or a door.",
+        "KEEP the S1 parcel roofs already placed (`ASSET_SPICE_ROOF_SOUTH/MIDDLE/NORTH` at x 18.60, z 7.0: caps 8.79 / 9.59 / 8.19) and the five `ASSET_ROOF_TIE_*` supports on the east side. Completion: the GLB coping meets the roof-asset bases without a gap or a double slab.",
     ],
     'reality': "Three spice tenancies each have a counter recess with a lockable timber back and a stair to the room above (upper shutters over every axis); the two plain doors are the households' street doors, one per end so each family has its own entrance. Awnings shade the counters facing the morning sun; the doors need none.",
 },
@@ -295,11 +298,11 @@ WALLS = {
     'tasks': [
         "CREATE the section finish: skin `ph_sandstone_blocks_05` 0..4.5 (coursed stone, quiet side), plinth 0..0.28, string course 2.84..2.96 × 0.10, coping 4.34..4.50 × 0.18; corners `held`: two end piers 0.45 × 0.16 full height at a=0.225 and a=14.895. Completion: reads as a low stone wholesale row, one material family, no plaster.",
         "CREATE two closed sack-store doors `GROUND_01/03` as the runtime `door_residential_timber` envelope, 1.05 × 2.25 at a=1.125/7.56: double leaves `ph_weathered_brown_planks`, three iron straps, a 0.35 m bumper rail and flush threshold. `GROUND_03` adds a 0.35 × 0.35 iron-grille wicket at z=1.50. CREATE `GROUND_04` as the same 1.05 × 2.25 envelope at a=10.777 with one `ph_rough_pine_door` leaf, two straps and a ring pull. Completion: two locked sack-store doors and one household door, all closed, with the existing runtime envelopes unchanged.",
-        "CREATE two blind niches `GROUND_02/05` 1.05 × 1.8, sill 0.45, at a=4.343/13.995 (SD-18). Completion: read as bricked-up openings.",
+        "CREATE two blind niches `GROUND_02/05` 1.05 × 1.8, sill 0.45, at a=4.343/13.995 (SD-18). Backing must be `ph_worn_plaster_ochre` at out=-0.14 per SD-18, with sealed masonry behind it; do not substitute exposed sandstone. Completion: plastered infill in a former opening.",
         "KEEP the wall-base stock at the four `SPICE_E_WALLBASE_STOCK_*` anchors (crates, sacks, baskets, pots at x≈32.1..32.3) and the handcart at its corrected fixed anchor (31.60, 16.565), 1.40 m inset on `GROUND_01`, yaw 277°. Its nearest edge stays 0.937 m from the wall, leaving a 0.137 m gap beyond the protected 0.8 m door floor while the six-metre lane x=24..30 remains clear. Add nothing. Completion: stock remains within 0.9 m of the wall, the door floor stays empty and the cart keeps this transform.",
         "No awnings, no signs on this face (quiet side). Completion: none exist.",
-        "KEEP the five roof-tie supports `ASSET_ROOF_TIE_*` at x 34.88 (z 5.48..5.59) that receive the canopies and lines; the GLB coping must pass under their feet. Completion: every tie foot bears on coping or parapet, none floats.",
-        "APPLY wear: dirt band; cart scuffs at `GROUND_01`; drip streak from the two tie feet nearest the doors; strong sun bleach on the upper stone (this face looks west, afternoon sun). Completion: as listed.",
+        "KEEP the five roof-tie supports `ASSET_ROOF_TIE_*` at x 34.88 (z 5.48..5.59) that receive the canopies and lines; their seats are the retained roof/parapet geometry behind the facade, not the section cornice at x=33, z=4.5. Completion: inspect all five retained contacts in assembled context; do not extend the section to reach them.",
+        "APPLY wear: broken base dust 0..0.35 and cart scuffs 0..0.6 on GROUND_01 jambs at out=0.125; light afternoon bleach on the solid stone field z 2.96..4.34, out=0.025. No drain or tie-foot streak is scheduled here: the retained parapet is set back from the x=33 facade, and a roof tie is not a drain. Completion: every mark has a receiving surface below the 4.5 m wall top; no floating marks above the cornice.",
         "KEEP the S1 setback room `ASSET_SPICE_UPPER_ROOM` at (35.70, 27.28, 4.76) (roof 7.0, cap 7.71, two closed windows at y 25.8 / 28.1, sill 5.40). Completion: the room's base sits on the 4.76 slab with no gap.",
     ],
     'reality': "Wholesale sack stores: three plain doors, no windows at street level (stock, not living), stock waiting outside for the cart. A household lives in the setback room at the north end and reaches it by the stair behind `GROUND_04`.",
@@ -353,7 +356,7 @@ WALLS = {
         "CREATE three sealed display arches `GROUND_01/03/04` 2.6 × 3.55 pointed at a=1.90/8.327/11.54 (kit `arch`, spring 1.93, ring 0.18 stone, depth 0.42): stone jambs, dark timber back at 0.42, floor deck at 0.14 (the placed displays mount at z 0.14). Leave the arch interiors empty: `ASSET_RUG_GALLERY` (a=1.90), `ASSET_RUG_ROLL_CHEST` (a=8.327) and `ASSET_B18_PACKING_FINISH` (a=11.54) are placed. Completion: each display sits inside its arch, 0.55 m reveal either side.",
         "CREATE `GROUND_02` grounded column 0.42 × 0.42 × 3.55 at a=5.113 with a 0.10 capital and 0.08 base (the irregular intervening column; keep it). Completion: touches ground and impost band.",
         "CREATE three screen rebates `STORY_1_WINDOW_01/03/04` 1.0 × 1.4 at sill 4.15 / head 5.55 over the three arches (a=1.90/8.327/11.54): frame 0.10, reveal 0.135; placed `ASSET_TEXTILE_SCREEN_SC_V` fill them. No window over the column. Completion: three screens seated, none over `GROUND_02`.",
-        AWN.format(z=3.00, a0=0.45, a1=3.35, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01` (ledger spans pier to pier in front of the arch, brackets on the piers at z 2.55); same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, hems 2.63 m, the upper third of each arch visible above the cloth.",
+        AWN.format(z=3.00, a0=0.45, a1=3.35, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01` (ledger spans pier to pier in front of the arch, brackets on the piers at z 2.55); same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, evaluated hems at least 2.60 m, the upper third of each arch visible above the cloth.",
         "CREATE sign brackets for `TEXTILE_W_SIGN_1` only (a=1.90, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. CREATE the lantern bracket at a=5.92: it starts at (24.0, 55.2, 4.415), reaches 0.45 m into the street to the placed lantern handle at (24.45, 55.2, 4.415), and carries `LANTERN_TEXTILE_01` centred at (24.45, 55.2, 4.15). `TEXTILE_W_SIGN_2` stays dormant. Completion: one sign and one lantern, both supported and clear of the screen sill.",
         "KEEP dormant anchors `B4_TEXTILE_W_RUG_GROUND_01`, `BPL16_TEXTILE_W_STALL_GROUND_04` (no floor stock, no loose rugs). Completion: paving in front of the arcade empty.",
         "APPLY wear: dust band; polish on the arch jambs 0.9..1.4; textile dye drips 0..0.3 under `GROUND_01`; sun bleach light (faces east). Completion: as listed.",
@@ -367,7 +370,7 @@ WALLS = {
         "CREATE the section finish: skin `ph_painted_plaster_warm` 0..4.5, plinth sandstone, impost band between arches, coping 4.34..4.5; end piers 0.60 × 0.16. Completion: the low lime arcade opposite the tall ochre one.",
         "CREATE three arches `GROUND_01/03/04` 2.6 × 3.55 at a=1.90/8.327/11.54 as on the west face; column `GROUND_02` at a=5.113. Interiors empty for the placed assets: `ASSET_B18_PACKING_FINISH` at a=1.90 (light-fabric packing; no second textile booth on this map: the approved booth stays unique to the Souk), `ASSET_RUG_GALLERY` at a=8.327, `ASSET_B18_PACKING_FINISH` at a=11.54. Completion: three arches, two trades read differently from the west face.",
         "No upper windows (single storey). No balcony. Completion: none.",
-        AWN.format(z=3.00, a0=0.45, a1=3.35, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01`, the same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, hems 2.63 m.",
+        AWN.format(z=3.00, a0=0.45, a1=3.35, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01`, the same over `GROUND_03` (a=6.88..9.78) and `GROUND_04` (a=10.09..12.99). Completion: three awnings, evaluated hems at least 2.60 m.",
         "CREATE sign brackets for `TEXTILE_E_SIGN_1` (a=1.90, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. `TEXTILE_E_SIGN_2` stays dormant; `GROUND_03/04` are identified by their goods. Completion: one sign.",
         "KEEP the cart `PLACE_B4_TEXTILE_CART_*` at (33.95, 60.82) and the cover cluster at (32.6, 58.2). Completion: nothing else on the paving.",
         "KEEP the two roof ties `ASSET_ROOF_TIE_610/490` at x 36.88 (z 5.59 / 4.83); coping passes under them. APPLY wear: dust band, polish on jambs, strong sun bleach (faces west). Completion: as listed.",
@@ -440,7 +443,7 @@ WALLS = {
         "CREATE the section finish: skin `ph_aged_plaster_ochre`, plinth sandstone, impost band, coping; end piers 0.45 × 0.16 (`held`). Completion: the trade side of the central merchant block.",
         "CREATE `GROUND_01` sealed arch 2.6 × 3.55 at a=2.86, floor deck 0.14, interior empty for the placed `ASSET_B18_DYE_COUNTER` (`CENTRAL_DYE_DISPLAY` at (40.83, 36.14, 0.14)). Completion: counter inside the arch.",
         "CREATE two screen rebates `STORY_1_WINDOW_01/02` 1.0 × 1.4 at sill 4.15 / head 5.55, a=1.10 and a=4.62 (a pair about the arch axis) for the placed `ASSET_SCREEN_SC_C` (`CENTRAL_SCREEN_SOUTH_1/2` at (40.98, 34.38 / 37.90, 4.15)). Completion: screens seated.",
-        AWN.format(z=3.00, a0=1.41, a1=4.31, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01` (brackets on the piers at 2.55). Completion: one awning, hem 2.63, under the shared canopy above.",
+        AWN.format(z=3.00, a0=1.41, a1=4.31, p=1.20, cloth='ph_hessian_230') + " over `GROUND_01` (brackets on the piers at 2.55). Completion: one awning, evaluated hem at least 2.60, under the shared canopy above.",
         "CREATE sign brackets for `DYE_W_SIGN_1` (a=2.86, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. Completion: one sign.",
         "KEEP the cart at (43.10, 36.14) and the dormant rug anchor. APPLY wear: dust band, indigo drips 0..0.35 under the arch, polish on the jambs. Completion: as listed.",
     ],
@@ -477,7 +480,7 @@ WALLS = {
         "CREATE `BAY_CART_DOOR` 1.35 × 2.5 at a=4.495 (double leaves, straps, bumper rail 0.35, SD-05 threshold, dye stains on the leaves 0..0.9). Completion: closed work door.",
         "CREATE `BAY_NICHE_S/N` 1.05 × 1.8 at sill 0.70, a=1.91/7.08; `BAY_VENT_S/AXIS/N` 0.58 × 0.48 at sill 3.68 / head 4.16, a=1.91/4.495/7.08 with timber grilles. Completion: a niche under each outer vent, the door under the middle vent.",
         "KEEP the two `ASSET_DYERS_WORKSTATION` at (52.38, 17.0 / 21.0) on the EAST wall (they belong to the alley, not to this face). Nothing at this door's 0.8 m floor. No awning, sign or goods. Completion: as stated.",
-        "CREATE one drain spout at a=0.5 (SD-13); APPLY wear: dirt band 0..1.5 heavy, indigo and madder splashes 0..0.9 around the door, cart scuffs, drip streak under each vent 0.3 long. Completion: the dirtiest wall on the map, but only below 1.5 m and under the vents.",
+        "CREATE one drain spout at a=0.5 (SD-13); APPLY wear: dirt band 0..1.5 heavy, indigo and madder splashes 0..0.9 around the door, cart scuffs, drip streak under each vent 0.3 long. Completion: the strongest evidence of wet trade on the map, localized at the cart door and vents; maintained masonry and swept paving remain visible.",
     ],
     'reality': "A dye works: one cart door for the wet work, vents high up to let the steam out, no windows to look through, staining where the vats are wheeled in and out.",
 },
@@ -649,7 +652,7 @@ WALLS = {
 'FRONTAGE_CARAVAN_COURT_EAST_NORTH': {
     'datums': "plinth 0..0.44; string course 2.90; coping 4.74..4.9.",
     'tasks': [
-        "CREATE the section finish: skin `ph_whitewashed_brick_warm` with three 0.6 × 0.6 plaster repair patches (a=1.2 / 3.9 / 5.2, z 1.0..2.2) in `ph_plastered_wall`, plinth, course, coping 4.74..4.9 (closes `coping`); end piers 0.45. CREATE `BAY_01` niche at sill 1.30, a=2.97. The loading shade `CARAVAN_LOAD_SHADE_01` and pack line end at (13.8, 46.6, 4.32) / (14.65, 47.8, 4.35) on this wall's north pier: CREATE two iron eyes there. One spout at a=5.5. Completion: repaired plaster field, one niche, canopy ends bearing on eyes.",
+        "CREATE the section finish: skin `ph_whitewashed_brick_warm` with three replacement-skin repairs in `ph_plastered_wall`: a=0.90..1.50, z=0.48..1.08; a=3.73..4.27, z=0.70..1.30; a=4.90..5.40, z=0.44..0.91 (SD-21; varying low cart-contact repairs, no overlay slabs), plinth, course, coping 4.74..4.9 (closes `coping`); end piers 0.45. CREATE `BAY_01` niche at sill 1.30, a=2.97. The loading shade `CARAVAN_LOAD_SHADE_01` and pack line end at (13.8, 46.6, 4.32) / (14.65, 47.8, 4.35) on this wall's north pier: CREATE two iron eyes there. One spout at a=5.5. Completion: repaired plaster field, one niche, canopy ends bearing on eyes.",
     ],
     'reality': "The north garden wall, patched where carts have hit it.",
 },
@@ -674,10 +677,16 @@ ZONES = {}
 
 UNITS = {
 'unit-spice-street': {
-    'intent': "The market street: busy west, quiet east. Three spice counters under three awnings on the west with houses above; a low stone wholesale row on the east with a household room set back at the north end (S1). Two canopies and three laundry lines cross the 12 m street from west wall ledgers to roof ties on the east, leaving sky between them. The fountain is glimpsed through the north end under the cloth. Palette: warm aged cream/tan plaster west, sun-aged coursed stone east, weathered brown timber, teal louvres, cream and rust cloth; traffic and spice use show at the trade edge, not as a brown wash.",
-    'existing': "`assets/source/unit-spice-street/` holds a hand-modelled `build.py`, `spice-west.glb`, `spice-east.glb` and a `package.json` that was never applied (the facade manifest is empty). Treat it as reference for material setup only; rebuild both faces with `facade_kit` to this sheet.",
+    'character': [
+        'Three plaster tenancies on the west are scheduled in wall task 1; the lower east remains coursed sandstone. Warm cream, sandy tan and faded earth-red must be distinguishable under the same neutral daylight. Keep all five shutter colors and the existing stepped parcel roofs.',
+        'West plaster repairs: replace only the receiving skin inside a=3.48..3.84, z=0.38..1.05 with `ph_worn_plaster_sun`; a=5.52..5.91, z=0.46..1.22 with `ph_plastered_wall`; and a=14.05..14.56, z=0.34..0.78 with `ph_beige_wall_002`. These are trowelled repairs at shop edges and the household door, not identical stain cards. SD-21 tapers their irregular edges into the existing skin; no extra slab on top.',
+        'CREATE two fitted woven back-wall panels (SD-22) inside west recesses, fixed above the retained counters: GROUND_01 a=0.84..2.70, z=1.88..2.43, receiving timber back out=-1.35; GROUND_04 a=9.61..11.30, z=1.93..2.39 on the same back plane. Use the existing Project-Original `levantine_rug_albedo_v1.jpg` via SD-22, retaining its rust/indigo/cream woven pattern, 0.008 m thickness and 0.012 m shallow drape toward the street; rear cloth at peg seats touches out=-1.35 and both thickness and drape stay toward the street inside the recess; hem stays within those bounds. Four timber pegs, diameter 0.025 and depth 0.05, at 0.08 from each top/bottom corner, enter the back wall. No textile crosses a counter or opening head. GROUND_03 retains its exposed timber back, making grain handling distinct from the other shops.',
+        'Retained sacks, baskets, stock, laundry and the cover rug carry street activity at their existing anchors. Add no paving stock. The grain shop gets pale swept dust, spice drawers rusty spice residue, and the apothecary a wiped edge; do not repeat the same stain at all three.',
+    ],
+    'intent': "The market street: busy west, quiet east. Three spice counters under three awnings on the west with houses above; a low stone wholesale row on the east with a household room set back at the north end (S1). Two canopies and three laundry lines cross the 12 m street from west wall ledgers to roof ties on the east, leaving sky between them. The fountain is glimpsed through the north end under the cloth. Palette: warm cream and sandy-tan shop plaster with a faded earth-red north household on the west, sun-aged coursed stone east, weathered brown timber, teal louvres, cream and rust cloth; traffic and spice use show at the trade edge, not as a brown wash.",
+    'existing': "`assets/source/unit-spice-street/` contains the applied trial `build.py`, `package.json` and `unit-spice-street.glb`, which predate this character revision. The progress index records its open door, niche and unsupported-wear defects and missing context evidence. Revise that existing section source to this sheet during the next authorized implementation; do not treat the older face exports or the trial previews as the revised result.",
     'overheads': "The west ends at (21, 20.58 / 26.48, 5.8) bear on 1.2 m timber wall ledgers, 0.10 × 0.10, with two iron eyes each; they attach to the 7 m Spice-west wall, not a parapet. The east ends bear on the placed `ASSET_ROOF_TIE_*` at x 34.88. Cloth `ph_hessian_230` for the canopies (cream), rust and indigo garments on the lines. Sag 0.35 max at mid-span; hem ≥ 4.9 m over the street. Nothing hangs from the canopies.",
-    'ground': "KEEP `spice_laid_stone_01`. Finish: flush seams at y 14 (Spice Gate threshold) and y 32; a 0.6 m worn band along the west counters (foot traffic); spice-dust tint 0..0.4 m out from the three west recesses; two 0.05 m wide wheel scuffs in colour and roughness only from the east cart at (31.60, 16.565) toward the gate, with no displacement; contact wear under the cover cluster and the wall-base stock.",
+    'ground': "KEEP `spice_laid_stone_01`. Finish: flush seams at y 14 (Spice Gate threshold) and y 32; separate swept contact patches along the west counters, not a continuous band; rust spice residue at the drawers, pale dust at the grain shop and a small stain by the apothecary south jamb, bounded by the exact floor polygons below; two 0.05 m wide wheel scuffs in colour and roughness only from the east cart at (31.60, 16.565) toward the gate, with no displacement; contact wear under the cover cluster and the wall-base stock.",
     'skyline': "S1 adopted: west parcels y 15.44..21.56 / 21.56..27.32 / 27.32..30.56 with roof bases 7.6 / 8.4 / 7.0 and caps 8.79 / 9.59 / 8.19 (placed `ASSET_SPICE_ROOF_SOUTH/MIDDLE/NORTH`, KEEP); east stays 4.5 / 5.59 with the setback room (placed `ASSET_SPICE_UPPER_ROOM`, cap 7.71, KEEP). Nothing else on the roofs. From (27, 16) looking north and (27, 30) looking south the three west caps must step; from the fountain the setback room must read behind the east parapet.",
     'checks': [
         "Three west awnings, zero east awnings; two signs on the west (bays 01 and 03), none elsewhere.",
@@ -687,6 +696,10 @@ UNITS = {
     ],
 },
 'unit-fountain-court': {
+    'character': [
+        'Preserve the stone madrasa and sandy plaster merchant house, their unequal heights, threshold rugs, palm, planters and tea spill. The court reads prosperous and maintained: crisp carved detail with softened stone arrises; no matching shop fronts around the fountain.',
+        'Keep the tall formal fields free of new repair patches; their stone/plaster contrast and carved detail distinguish the civic court from the visibly patched trade streets. Use SD-21 fine dressed edges on the madrasa and trowelled plaster on the merchant house. Only the existing fountain wet-contact patches are damp; traffic polish stays transparent enough to show stone joints.',
+    ],
     'intent': "The civic release: a tall aged-cream madrasa with one sealed arch and a stained window on the west, a warm plastered merchant house with a loggia on the east, the off-axis fountain and palm, quiet mid-link passages north and south. Value contrast across the court is the composition: stone versus plaster, tall versus mid; the civic field stays quieter than the trade streets while remaining part of the aged market.",
     'existing': "`assets/source/unit-fountain-court/` holds hand-modelled GLBs for all four faces and an unapplied package; reference only, rebuild to this sheet.",
     'ground': "KEEP `patterned_cobblestone`. Finish: the pattern continues around the fountain with a 0.4 m wet-wear ring at its base; flush seams at y 32 and y 48 and at both mid-link mouths; polish along x 26..32 (the rotation lane); contact wear under the planters, spill cluster and tea table.",
@@ -698,6 +711,11 @@ UNITS = {
     ],
 },
 'unit-textile-arcade': {
+    'character': [
+        'West stays `ph_aged_plaster_ochre`, east `ph_painted_plaster_warm`; their different heights and the intervening columns remain. Cloth identity comes from the retained hanging galleries, roll chest, packing displays and overhead lines. Show hanging versus rolled versus folded stock; never duplicate the approved Souk booth or cover every arch with the same rug.',
+        'On the west, replace skin a=5.72..6.31, z=0.42..1.31 with `ph_worn_plaster_sun`; on the east replace a=9.84..10.01, z=0.35..0.91 with `ph_beige_wall_002` (SD-21). These unequal repairs sit beyond the arch rings and columns. Finished arch stones keep their axes but receive hand-cut edges, not perfectly identical cube bevels.',
+        'The six new awnings retain their scheduled spans, ledgers and drops. Use sag west GROUND_01/03/04 = 0.12/0.08/0.10 m and east = 0.07/0.11/0.09 m. Cloth folds remain supported and inside the original maximum drop; no loose rugs or additional stock on paving.',
+    ],
     'intent': "The compressed cloth street: two facing arcades on one arch rhythm (three arches and one column each), rug galleries and roll chests in the west arches, packing and light fabric in the east; a canopy and two lines overhead; the ochre two-storey west against the warm aged-lime single-storey east; Rug Gate visible at the north end above the cloth. Cloth edges and busy arch bases carry the localized use.",
     'existing': "`assets/source/unit-textile-arcade/` holds hand-modelled GLBs and an unapplied package; reference only.",
     'overheads': "West ends of `CANOPY_TEXTILE_01` (z 4.2) and the two lines bear on 1.2 m ledgers at those heights on the west face (between the screen heads 5.55 and the sill course for the lines; the canopy ledger at 4.2 sits above the signboard span and below the screen sills, spanning a pier); east ends on the placed roof ties. Cloth `ph_hessian_230`; garments indigo and rust.",
@@ -710,6 +728,10 @@ UNITS = {
     ],
 },
 'unit-rug-gate': {
+    'character': [
+        'The merchant plaster, retained rug rolls and warm timber face the gatekeeper rubble, planted sill and lantern. Keep the gate blue accent as the distant focal point; the house is an occupied home, not a second rug shop.',
+        'On FRONTAGE_RUG_GATE_WEST replace skin a=3.48..3.98, z=0.35..1.05 with `ph_worn_plaster_sun` (SD-21). The shop jambs get touch polish; the service door gets localized foot dust. Keep the unlike upper closures and use SD-21 softened plaster returns. No tilted portal or rug across its floor.',
+    ],
     'intent': "The northern threshold: the repaired gate arch with its blue accent spans the lane; one rug merchant on the west, the gatekeeper's quiet house on the east, the receiving backdrop beyond. Restraint: the gate is the landmark, nothing competes; repairs remain integrated into its warm aged surface.",
     'existing': "`assets/source/unit-rug-gate/` holds hand-modelled GLBs and an unapplied package; reference only.",
     'ground': "KEEP `patterned_cobblestone`; flush seam only at existing transitions; polish under the gate; contact wear under the cover cluster.",
@@ -721,6 +743,10 @@ UNITS = {
     ],
 },
 'unit-spawn-a-courtyard': {
+    'character': [
+        'Keep the existing return kits, stock, spawn cover, gate and unequal background heights as the arrival composition. This sheet owns support skins and floor finish only; hidden support skins do not authorize repainting the retained kits.',
+        'Heavy foot traffic appears in the scheduled worn centre and contact dust around edge stock. Break up wear within its printed footprint per SD-12, leaving joints and swept intervals visible. No new rugs or props in the exits; the active Spice frontage supplies the view beyond.',
+    ],
     'intent': "The civic arrival: Bab al-Suq closes the south, three house backs and the dye-works back close the sides, the two Spice corner kits frame the exit north. Everything is a retained kit; this unit's work is support skins, coping, ground and wear, with a quiet warm aged base and accumulated contact at the entry.",
     'existing': "`assets/source/unit-spawn-a-courtyard/` holds two small support-skin GLBs and an unapplied package.",
     'ground': "KEEP `large_sandstone_blocks_01`; a worn centre; flush seams at the three exits; contact wear under the spawn cover and edge props.",
@@ -728,6 +754,10 @@ UNITS = {
     'checks': ["Both support skins invisible behind the kits; coping continuous where exposed.", "No new props; the three exits and both inside turns empty."],
 },
 'unit-spawn-b-courtyard': {
+    'character': [
+        'Two enclosure wings already differ in cut stone west versus rubble east. Keep the bench, pottery, shade, upper rooms and palm: these are signs of settled daily life around an open receiving court.',
+        'Use SD-21 smaller dressed edges on the west wing and broader hand-cut edges on the east. Localize dust to wall feet and retained object contacts; keep the bench approach swept. Do not match both wings with a new plaster wash or add a shop row.',
+    ],
     'intent': "The quiet receiving court: two low enclosure wings either side of the gate, benches and pots at the west wall, shade over the two sealed north doors, three upper rooms and a palm on the skyline behind the sealed walls. It stays comparatively quiet, with a warm aged base and contact wear.",
     'existing': "`assets/source/unit-spawn-b-courtyard/` holds the two wing GLBs (unapplied) plus bench, shade and upper-room GLBs that ARE placed today through the registry (`ASSET_SPAWN_B_*`). Keep those; rebuild only the two wing faces.",
     'ground': "KEEP `large_sandstone_blocks_01`; flush seams; contact wear under the bench, pots and spawn cover.",
@@ -735,12 +765,20 @@ UNITS = {
     'checks': ["Both wing niches at sill 1.30; copings at 4.9 continuous into the gate abutments.", "No market rows, no overhead."],
 },
 'unit-service-south': {
+    'character': [
+        'Keep three high blind niches, no vents and no hatch. The service wall is maintained sandy lime over older masonry; basket, pottery and drainage tell its use without filling the route.',
+        'Replace FRONTAGE_SERVICE_SOUTH_EAST skin fields a=0.65..2.15, z=0.44..1.28 and a=8.95..10.05, z=0.44..0.94 with `ph_beige_wall_002` (SD-21). Retain `ph_whitewashed_brick_warm` elsewhere. These earth-toned, coarse repairs differ in size and height; no uniform brown base band. Damp is confined to the scheduled drain end.',
+    ],
     'intent': "A quiet 7 m service lane: warm aged limewashed yard wall with three high panels on the east, sealed perimeter west and south. Wear tells the story: one spout, one stain, a basket and a pot at the wall; use stays localized to service contact and drainage.",
     'existing': "`assets/source/unit-service-south/` holds one GLB and an unapplied package; reference only.",
     'ground': "KEEP `large_sandstone_blocks_01`; polish along the centre; damp patch under the spout at (10, 27.5) 0.6 m across; flush seams at both link mouths.",
     'checks': ["Three panels at sill 1.6; one spout; nothing else on the wall.", "Basket and pot within 0.5 m of the east wall."],
 },
 'unit-caravan-court': {
+    'character': [
+        'Rubble stores, coarse lime garden walls, red paving and retained cart/crates distinguish a busy receiving yard. Door envelopes and hardware counts match, but grain, edge wear and handling marks differ; the south receiving door has the stronger polish and bumper scuffs.',
+        'The three north-east repair fields are explicitly bounded in wall task 1 and use SD-21 irregular trowel edges; leave the south garden wall quieter. Wheel scuffs remain discontinuous color/roughness marks in their printed polygons, never grooves, muddy ruts or rubble piles.',
+    ],
     'intent': "The loading yard: two store doors under one storage head on the west, garden walls with one niche each on the east, the crate stack and cart at the north end under the loading shade and pack line. Warm sun-aged surfaces and red sandstone paving carry wheel scuffs toward the receiving door.",
     'existing': "`assets/source/unit-caravan-court/` holds three GLBs and previews but no `package.json`; reference only.",
     'ground': "KEEP `red_sandstone_pavement`; two 0.05 m wide wheel scuffs in colour and roughness only run from the cart at (14.1, 45.05) toward `BAY_DOOR_S` at (3, 36.26), with no displacement; flush ramp transition at y 48; contact wear under the crates and cover.",
@@ -748,6 +786,11 @@ UNITS = {
     'checks': ["Two identical store doors, the south one more worn; three niches at sill 0.7.", "Loading shade and pack line ends bear on eyes on the walls; nothing in the turning pocket at (9.2, 39.2)."],
 },
 'unit-tea-terrace': {
+    'character': [
+        'Warm sandy plaster, unlike retained upper shutters, brass, porcelain, linen and seating identify a flourishing tea house. Retain its table service and all route grades. The house wall is warmer and smoother than the retaining screens; keep their material boundary legible.',
+        'On FRONTAGE_TEA_TERRACE_EAST replace skin a=3.36..4.36, local z=0.32..1.18 with `ph_painted_plaster_warm` (SD-21), a maintained seat-back repair below the lantern. Tea drips stay below the counter; do not stain the whole terrace.',
+        'The 12 scheduled shelf items are fixed: lower shelf z=0.85 has three brass pots at a=1.15/1.77/2.38 (diameters 0.22/0.18/0.25; heights 0.28/0.24/0.31); middle z=1.40 has six porcelain cups at a=0.98/1.24/1.53/1.88/2.19/2.48 (diameter 0.09, height 0.12); upper z=1.95 has three folded linen bundles at a=1.12/1.80/2.43 (widths 0.32/0.38/0.28, depth 0.22, heights 0.05/0.08/0.06). All centres out=-0.85, bases on shelf tops; pottery uses the existing CC0 `apps/client/public/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf`, cups use ivory PBR (sRGB #e7dcc2, roughness 0.30, metallic 0), linen `ph_hessian_230`. Keep stock within the recess and supported; these quantities replace discretionary scatter.',
+    ],
     'intent': "The raised route: ramp up from Caravan Court, the tea house on the terrace at +1.4 with its serving recess, table and stools under a shade sail, stairs down to the landing and the west-upper link. The retaining screens on the west stay tall and quiet. Warm aged plaster, threshold polish and tea service marks make it lived-in without clutter. All tea-house heights are relative to the 1.4 floor.",
     'existing': "No unit folder yet.",
     'overheads': "`TEA_TERRACE_SHADE_01` runs from the retaining screen (11.6, 62.4, 5.75) to the tea house (18.4, 62.4, 5.65): iron eye on the screen, 1.2 m ledger on the house at local z 4.25. Cloth `ph_fabric_leather_02` (plain cream). Hem ≥ 4.2 over the terrace floor.",
@@ -756,12 +799,20 @@ UNITS = {
     'checks': ["Serving recess with stocked shelves and a 0.90 counter; closed entry door; two shutters seated at absolute z 5.08.", "Lantern and sign on brackets; shade sail ends bear on an eye and a ledger.", "Ramp and stairs untouched; nothing on the treads or the inside corners."],
 },
 'unit-service-north': {
+    'character': [
+        'Preserve rubble south/north screens and the warm lime middle screen. Their continuous height is structural; different grain, repair histories and drainage distinguish them. No stalls or rugs in this service run.',
+        'On FRONTAGE_SERVICE_NORTH_EAST_SPINE_MID replace skin a=0.70..2.05, z=0.44..1.14 with `ph_beige_wall_002`, and a=6.95..8.15, z=0.44..0.91 with `ph_plastered_wall` (SD-21). Keep a=2.05..6.95 comparatively intact. Damp gathers at the scheduled spouts; the whole 32 m lane must not become a continuous black strip.',
+    ],
     'intent': "A long quiet service run under the tea terrace: three retaining screens on the east (inspection panels, two niches, two niches), sealed perimeter west. Warm aged lime and localized damp base staining at the spouts; no props.",
     'existing': "No unit folder.",
     'ground': "KEEP `large_sandstone_blocks_01`; damp band along the east base; polish along the centre; flush seams at y 48 and at the north-link turn.",
     'checks': ["Two sealed panels replace the 2.5 m doors; no vents remain visible on the south screen.", "Two niches on each of the other screens at thirds; copings continuous at 7.0."],
 },
 'unit-dyers-alley': {
+    'character': [
+        'The rubble works, sandy lime family house and drying wall remain distinct. Existing racks, vats, workstations and cloth provide saturated indigo/madder accents. Dye belongs to the work edge; the house and route centre stay maintained.',
+        'On FRONTAGE_DYERS_ALLEY_WEST_N replace skin a=2.61..3.21, z=0.31..0.75 with `ph_plastered_wall` (SD-21), a small repair below and beside the south screen. Keep the screen seats and timber closures unchanged. Wet-work wear stops within the scheduled station footprints; no general slime or garbage.',
+    ],
     'intent': "The wet-work edge: the dye works' cart door and vents on the south-west, the dyer's plastered house north of it, the long drying wall east with four niches, racks and two workstations. Warm aged plaster holds the district together; dirt and dye stay only where the work is.",
     'existing': "`assets/source/dyers-house/` holds the Blender sources of the placed screens, loft vent and hatch (keep). No wall GLBs yet.",
     'ground': "KEEP `patterned_cobblestone`; dye splashes and damp under the two workstations and four racks only; polish along the centre 4.5 m; flush seam at y 32 and the south-east link.",
@@ -769,6 +820,10 @@ UNITS = {
     'checks': ["Works: one cart door, two niches, three vents; house: one door, two seated screens, one seated loft vent; east: four equal niches.", "Every rack hangs from hooks; cloth within 0.35 m of the wall; the middle 4.5 m empty."],
 },
 'unit-covered-souk': {
+    'character': [
+        'Retain three distinct east trades and the single approved booth. The ochre west trade face, aged pale north wing and cream east arcade carry different repairs; hanging cloth, packing folds and dye samples provide the colors. Do not make three copies of a tidy display cabinet.',
+        'On FRONTAGE_COVERED_SOUK_EAST replace skin a=3.45..4.05, z=0.34..1.13 with `ph_worn_plaster_sun` (SD-21), clear of the first arch ring and booth. Keep the booth seat at z 3.26 untouched. East awning sag GROUND_01=0.08 and GROUND_03=0.12 m; west remains 0.12. All supports, signs and canopy endpoints stay fixed.',
+    ],
     'intent': "Three fabric trades under repaired arches on the east (packing, the approved booth, dye samples), the merchant block's trade arch and north-wing door on the west, one shared canopy overhead, the 5 m structural end wall at the north. The B18 pilot roof room sits on the east roof. Warm aged plaster and stone frame concentrated fabric-trade wear at the arches and cloth edges.",
     'existing': "`assets/source/b18-counters/`, `central-screen-sc-c/`, `textile-booth/`, `b18-roof-access/` are the sources of the placed assets (keep). No wall GLBs yet.",
     'overheads': "`CANOPY_DYERS_01` runs level at z 5.90 from the west north wing (41.3, 45.36) to the east parapet at a=0.899 (53, 45.36), the same construction as Spice Street: CREATE a 1.2 m ledger at z 5.90 on the west north wing; the east end bears on the placed roof tie `ASSET_ROOF_TIE_590` (`PLACE_SUPPORT_CANOPY_DYERS_01`, on the parapet cap 5.59 behind the arcade face). Cloth `ph_hessian_230`, sag ≤ 0.35, hem ≥ 5.4 over the sheltered floor.",
@@ -777,6 +832,10 @@ UNITS = {
     'checks': ["Three east arches with three different trades; the booth untouched; two awnings (bays 01 and 03) and two signs on the east (z 3.80 over the booth, 3.67 over the dye counter).", "West: one arch with the dye counter, two seated screens, the north-wing door quiet; canopy ends on the west ledger and the east roof tie.", "Lantern on a bracket; the west-mid link turn empty."],
 },
 'unit-dyers-dogleg': {
+    'character': [
+        'Keep the runtime house and old sealed works gate as different occupations. Cloth and wet work remain concentrated at the north-west corner; the house door and paired windows do not acquire trade clutter.',
+        'This sheet owns hooks and finish, not replacement boundary architecture. Use broken dust and local hand polish on verified receiving planes; dye stops within the workstation patch. Do not overlay unsupported plaster panels on the runtime wall or hide its windows. The retained drying line supplies the soft irregular silhouette.',
+    ],
     'intent': "The residential turn: the dye works' sealed gate and vents on the west, one dwelling's door and windows on the east, the drying line across, vats and a rack in the north-west corner. Both faces are runtime-owned boundary planes; only hooks and finish are authored here, with a warm aged base and localized wet-work contact.",
     'existing': "No unit folder.",
     'ground': "KEEP `cobblestone_color`; dye splashes under the workstation corner only; polish along the route; flush seams north and south.",
@@ -784,6 +843,10 @@ UNITS = {
     'checks': ["West: gate untouched, two vent grilles at sill 4.15, rack on hooks; east: door + two + three windows reading as one house.", "The inside north turn and both passages empty."],
 },
 'unit-north-court': {
+    'character': [
+        'The plaster hammam, stone service wing, rubble house and cut-stone drying wall remain distinct. The retained station rug, drying cloth, planter and palm show work and domestic care around a swept open court.',
+        'Keep the hammam entry surround intact and eased per SD-21, with concentrated hand polish rather than a new plaster patch. Keep high walls quiet; bath steam stays by the low vent and dye stays at the drying station. Do not spread the wet-trade finish onto the home or the two garden walls.',
+    ],
     'intent': "The drying court and release: the hammam's heavy door and service wing on the west, a small house and the dyers' yard wall with the drying station on the east, garden walls north and south, the drying line and palm overhead. Open centre, warm aged surfaces, and activity limited to the drying station and service threshold.",
     'existing': "No unit folder.",
     'ground': "KEEP `court_limestone_flags_01`; polish across the open centre; indigo drips under the drying station; contact wear under the cover, planter and workstation; flush seams into the three links.",
@@ -791,6 +854,10 @@ UNITS = {
     'checks': ["Hammam door heavy and closed, high window over it; wing door and window on one axis.", "House: door centred, windows mirrored; yard wall: two niches, rack on hooks; north and south walls: niches at sill 1.3, no gate."],
 },
 'links': {
+    'character': [
+        'Keep the eight passages clear and quieter than adjoining trades. Their short exposed returns carry the material and softened edges of their named owner; do not introduce a repeated decorative niche, rug or sign in every connector.',
+        'North-west and north-east garden walls retain their matching geometry and warm lime. Their scheduled drains are already at opposite ends; use that actual difference to locate wear, with SD-21 edge finish and broken base dust. The other six passages receive only their scheduled ground/return finish.',
+    ],
     'intent': "Eight quiet passages. They carry no shops, signs, awnings, props or overheads. Only two of them own a wall (the north-west and north-east garden walls); the rest are open faces, cut edges and short returns finished to match their neighbours' warm aged surfaces. Their job is to read as passages and keep their clear widths.",
     'existing': "`assets/source/example-section/` is the kit demonstration on the north-east link wall and is the template for every section GLB.",
     'ground': "KEEP each floor material; flush seams at both mouths; polish along the centre; no curbs, grates or trenches.",

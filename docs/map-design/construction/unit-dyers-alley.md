@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The wet-work edge: the dye works' cart door and vents on the south-west, the dyer's plastered house north of it, the long drying wall east with four niches, racks and two workstations. Warm aged plaster holds the district together; dirt and dye stay only where the work is.
 
+**Character schedule (build with the numbered tasks):**
+
+- The rubble works, sandy lime family house and drying wall remain distinct. Existing racks, vats, workstations and cloth provide saturated indigo/madder accents. Dye belongs to the work edge; the house and route centre stay maintained.
+- On FRONTAGE_DYERS_ALLEY_WEST_N replace skin a=2.61..3.21, z=0.31..0.75 with `ph_plastered_wall` (SD-21), a small repair below and beside the south screen. Keep the screen seats and timber closures unchanged. Wet-work wear stops within the scheduled station footprints; no general slime or garbage.
+
 ## 2. Site
 
 ### Site · `DYERS_ALLEY` (Dyers Alley)
@@ -34,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_DYERS_ALLEY_WEST_S  ·  BLD_DYE_WORKS (workshop, 2 storeys)
 
-- **Role:** workshop. One cart door on the axis between two blind niches at equal gaps; vents above light the dye floor; the base is stained by the trade; vats and the rack stand at the door.
+- **Role:** workshop. A dye works: one cart door for the wet work, vents high up to let the steam out, no windows to look through, staining where the vats are wheeled in and out.
 - **Wall line:** west edge of `DYERS_ALLEY`; x = 46, y = 13 .. 21.99 (a runs south to north); length **8.99 m**; street side +X (street lies east of the wall); kit `Wall(F, (46, 13), (46, 21.99), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -62,13 +67,13 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_DYERS_SEALED_VAT` 
 2. CREATE `BAY_CART_DOOR` 1.35 × 2.5 at a=4.495 (double leaves, straps, bumper rail 0.35, SD-05 threshold, dye stains on the leaves 0..0.9). Completion: closed work door.
 3. CREATE `BAY_NICHE_S/N` 1.05 × 1.8 at sill 0.70, a=1.91/7.08; `BAY_VENT_S/AXIS/N` 0.58 × 0.48 at sill 3.68 / head 4.16, a=1.91/4.495/7.08 with timber grilles. Completion: a niche under each outer vent, the door under the middle vent.
 4. KEEP the two `ASSET_DYERS_WORKSTATION` at (52.38, 17.0 / 21.0) on the EAST wall (they belong to the alley, not to this face). Nothing at this door's 0.8 m floor. No awning, sign or goods. Completion: as stated.
-5. CREATE one drain spout at a=0.5 (SD-13); APPLY wear: dirt band 0..1.5 heavy, indigo and madder splashes 0..0.9 around the door, cart scuffs, drip streak under each vent 0.3 long. Completion: the dirtiest wall on the map, but only below 1.5 m and under the vents.
+5. CREATE one drain spout at a=0.5 (SD-13); APPLY wear: dirt band 0..1.5 heavy, indigo and madder splashes 0..0.9 around the door, cart scuffs, drip streak under each vent 0.3 long. Completion: the strongest evidence of wet trade on the map, localized at the cart door and vents; maintained masonry and swept paving remain visible.
 
 **Why it exists (reality check):** A dye works: one cart door for the wet work, vents high up to let the steam out, no windows to look through, staining where the vats are wheeled in and out.
 
 ### FRONTAGE_DYERS_ALLEY_WEST_N  ·  BLD_DYERS_HOUSE (house, 1 storey)
 
-- **Role:** house. Single-storey lime-plastered dyer household: centered closed door, paired SC-D timber screens, ventilated loft and a closed roof hatch. Existing stone base, walls and routes remain.
+- **Role:** house. The dyer's family house: one door in the middle, two lattice windows at eye height so the street can't see in, a loft above with a vent and a roof hatch to dry cloth up there.
 - **Wall line:** west edge of `DYERS_ALLEY`; x = 46, y = 21.99 .. 30.24 (a runs south to north); length **8.25 m**; street side +X (street lies east of the wall); kit `Wall(F, (46, 21.99), (46, 30.24), faces='E')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -99,7 +104,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_DYERS_SCREEN_SC_D`
 
 ### FRONTAGE_DYERS_ALLEY_EAST  ·  BLD_ALLEY_BACKS (service back, 1 storey)
 
-- **Role:** service back. Service enclosure with four complete high blind niches behind retained edge-mounted drying stations; no doors or windows.
+- **Role:** service back. The backs of the houses east of the alley, rented to the dyers as a drying wall: hooks, racks, vats, splashes, but no way in.
 - **Wall line:** east edge of `DYERS_ALLEY`; x = 53, y = 11.76 .. 30.24 (a runs south to north); length **18.48 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 11.76), (53, 30.24), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -128,7 +133,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.125, 1.05, 1.6, 1.8
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
 |---|---|---|---|---|---:|---|
@@ -179,13 +184,14 @@ Works 7.0 / 8.19; house 4.5 / 5.59 with the placed hatch at 4.76; east wall 4.9 
 
 - [ ] Works: one cart door, two niches, three vents; house: one door, two seated screens, one seated loft vent; east: four equal niches.
 - [ ] Every rack hangs from hooks; cloth within 0.35 m of the wall; the middle 4.5 m empty.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

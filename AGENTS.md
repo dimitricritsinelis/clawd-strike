@@ -2,7 +2,7 @@
 
 ## Remaining work
 
-Finish the Bazaar map one named area at a time via TRANSFORM in [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md). [docs/map-design/construction/README.md](docs/map-design/construction/README.md) is the canonical handoff: each sheet decides every wall, bay, datum, awning, sign, placement and wear item with numbers. TRANSFORM builds the sheet and marks it `built`. A request for one named area stops there; continue only through an explicit user-provided area queue. Gameplay and aesthetic validation are a later user-authorized task. Each area should leave as a professional piece of environment design; rebuild whatever the sheet needs.
+Finish the Bazaar map one named area at a time via TRANSFORM in [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md). [docs/map-design/construction/README.md](docs/map-design/construction/README.md) is the canonical handoff: each sheet fixes the layout, assemblies and character schedule, with bounded craft discretion in SD-21/22. TRANSFORM builds the sheet, performs its bounded assembly/interface inspection, and marks it `built` only with that construction evidence. A request for one named area stops there; continue only through an explicit user-provided area queue. Gameplay and aesthetic validation are a later user-authorized task. Each area should leave as a professional piece of environment design; rebuild whatever the sheet needs.
 
 ## Agent configuration
 
@@ -10,12 +10,13 @@ Preferred implementing model: GPT-6 Astra. One implementing owner per area. Ask 
 
 ## Art direction
 
-A believable Middle Eastern desert bazaar with the crafted realism and readability of a polished FPS environment.
+An active, flourishing Middle Eastern desert bazaar with the crafted realism and readability of a polished FPS environment. Heavy foot traffic, maintained businesses and occupied homes; worn and cared for, never sterile or filthy.
 
-- Palette: warm sandstone, sandy ivory and cream-to-tan aged lime plaster, weathered brown timber, cream shade cloth, controlled rust-red / teal-green / indigo-blue textile accents. The base reads sun-aged and occupied, never newly whitewashed.
-- Preserve layered street depth, occupied upper volumes, distinct trades, quiet service faces, clear routes.
-- Build complete openings, joinery, displays, cloth supports and ground contacts. Keep junctions clean; surface aging is separate: base accumulation, use-polish at hands and feet, and localized drips or cloth-edge grime. Civic faces stay quieter than trades and services. Do not weather above human height except at drains or sun bleach.
-- Avoid flat procedural decoration, uniformly beige or cold-white surfaces, uniform brown washes, sepia post-process, random clutter, and cinematic effects that disguise weak assets.
+- Palette: warm sandstone, sandy ivory and cream-to-tan aged lime plaster with occasional scheduled faded earth-red fields, weathered brown timber, cream shade cloth, controlled rust-red / teal-green / indigo-blue textile accents. The base reads sun-aged and occupied, never newly whitewashed.
+- Preserve layered street depth, occupied upper volumes, distinct trades, quiet service faces and clear routes. Measured layout does not imply identical buildings: use the scheduled differences in plaster grain and color, stonework, repairs, rugs, joinery and cloth sag to give each tenancy its own history.
+- Build complete openings, joinery, displays, cloth supports and ground contacts. Keep junctions sound and support planes exact; hand-cut edges and trowelled plaster can soften visible right angles within the scheduled envelope. Surface aging follows use: base accumulation, use-polish at hands and feet, and localized drips or cloth-edge grime. Civic faces stay quieter than trades and services. Do not weather above human height except at drains or sun bleach.
+- Retained rugs, hanging and rolled textiles, stocked counters, pottery, benches, planted sills and laundry supply life. Add only the character details scheduled in the sheets. Earth-toned coarse plaster is a wall material, not a full-height dirt overlay; dirt collects in joints and sheltered feet, while busy paths are swept and polished.
+- Avoid flat procedural decoration, identical repair masks, uniformly beige or cold-white surfaces, uniform brown washes, sepia post-process, random clutter and cinematic effects that disguise weak assets. Never randomize the protected plan or move retained assets to achieve irregularity.
 
 Finish criteria: [docs/map-design/quality-bar.md](docs/map-design/quality-bar.md).
 
@@ -28,7 +29,7 @@ Open the actual images at the start of every map session; a path is not visual i
 3. [docs/map-design/refs/](docs/map-design/refs/) `cs2_daylight_ref_1..5.png`: finish and gameplay readability.
 4. [docs/map-design/development-plan/design-atlas.pdf](docs/map-design/development-plan/design-atlas.pdf) and [drawings/](docs/map-design/development-plan/drawings/): review elevations and massing proposals per building.
 
-The [tracked engineering proof](docs/map-design/refs/spice-bay-engineering-proof.png) demonstrates one built Spice bay; its limits are recorded in the construction README. It is supporting evidence, not a replacement for the founding reference or the full area sheet.
+The [tracked engineering proof](docs/map-design/refs/spice-bay-engineering-proof.png) demonstrates one built Spice bay; its limits and the later trial defects are recorded in the construction README and progress index. It does not establish the revised finish quality. It is supporting evidence, not a replacement for the founding reference or the full area sheet.
 
 Images communicate appearance, never dimensions or gameplay. Dimensions come from the construction sheets and `map_spec.json`.
 

@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 A quiet 7 m service lane: warm aged limewashed yard wall with three high panels on the east, sealed perimeter west and south. Wear tells the story: one spout, one stain, a basket and a pot at the wall; use stays localized to service contact and drainage.
 
+**Character schedule (build with the numbered tasks):**
+
+- Keep three high blind niches, no vents and no hatch. The service wall is maintained sandy lime over older masonry; basket, pottery and drainage tell its use without filling the route.
+- Replace FRONTAGE_SERVICE_SOUTH_EAST skin fields a=0.65..2.15, z=0.44..1.28 and a=8.95..10.05, z=0.44..0.94 with `ph_beige_wall_002` (SD-21). Retain `ph_whitewashed_brick_warm` elsewhere. These earth-toned, coarse repairs differ in size and height; no uniform brown base band. Damp is confined to the scheduled drain end.
+
 ## 2. Site
 
 ### Site · `SERVICE_SOUTH` (Service South)
@@ -33,7 +38,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_SERVICE_SOUTH_EAST  ·  BLD_SPICE_BACKS (service back, 2 storeys)
 
-- **Role:** service back. Blank, two high vents, one hatch, drain staining at the base, one string course.
+- **Role:** service back. A service-yard wall: nothing opens onto the lane; the roof behind drains through one spout.
 - **Wall line:** east edge of `SERVICE_SOUTH`; x = 10, y = 13.6 .. 29.4 (a runs south to north); length **15.8 m**; street side -X (street lies west of the wall); kit `Wall(F, (10, 13.6), (10, 29.4), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -60,7 +65,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(3.95, 1.05, 1.6, 1.8)
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
 |---|---|---|---|---|---:|---|
@@ -94,13 +99,14 @@ Baseline roofs per the massing table above (roof base = wall top, parapet per pr
 
 - [ ] Three panels at sill 1.6; one spout; nothing else on the wall.
 - [ ] Basket and pot within 0.5 m of the east wall.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

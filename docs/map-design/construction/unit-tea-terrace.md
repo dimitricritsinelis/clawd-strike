@@ -8,6 +8,12 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The raised route: ramp up from Caravan Court, the tea house on the terrace at +1.4 with its serving recess, table and stools under a shade sail, stairs down to the landing and the west-upper link. The retaining screens on the west stay tall and quiet. Warm aged plaster, threshold polish and tea service marks make it lived-in without clutter. All tea-house heights are relative to the 1.4 floor.
 
+**Character schedule (build with the numbered tasks):**
+
+- Warm sandy plaster, unlike retained upper shutters, brass, porcelain, linen and seating identify a flourishing tea house. Retain its table service and all route grades. The house wall is warmer and smoother than the retaining screens; keep their material boundary legible.
+- On FRONTAGE_TEA_TERRACE_EAST replace skin a=3.36..4.36, local z=0.32..1.18 with `ph_painted_plaster_warm` (SD-21), a maintained seat-back repair below the lantern. Tea drips stay below the counter; do not stain the whole terrace.
+- The 12 scheduled shelf items are fixed: lower shelf z=0.85 has three brass pots at a=1.15/1.77/2.38 (diameters 0.22/0.18/0.25; heights 0.28/0.24/0.31); middle z=1.40 has six porcelain cups at a=0.98/1.24/1.53/1.88/2.19/2.48 (diameter 0.09, height 0.12); upper z=1.95 has three folded linen bundles at a=1.12/1.80/2.43 (widths 0.32/0.38/0.28, depth 0.22, heights 0.05/0.08/0.06). All centres out=-0.85, bases on shelf tops; pottery uses the existing CC0 `apps/client/public/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf`, cups use ivory PBR (sRGB #e7dcc2, roughness 0.30, metallic 0), linen `ph_hessian_230`. Keep stock within the recess and supported; these quantities replace discretionary scatter.
+
 ## 2. Site
 
 ### Site · `TEA_RAMP` (Tea Terrace Ramp)
@@ -63,7 +69,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_TEA_TERRACE_EAST  ·  BLD_TEA_HOUSE (tea house, 2 storeys)
 
-- **Role:** tea house. Tea serving recess and closed entry beneath louvered and woven upper closures; the existing raised terrace, tea furniture and high shade remain.
+- **Role:** tea house. A tea house serves the raised terrace from a counter recess and has its own street door; the owners live above behind louvres (ventilation for the kitchen room) and woven reed (the bedroom).
 - **Wall line:** east edge of `TEA_TERRACE`; x = 19, y = 56.8 .. 65.2 (a runs south to north); length **8.4 m**; street side -X (street lies west of the wall); kit `Wall(F, (19, 56.8), (19, 65.2), faces='W')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 8.4 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -89,7 +95,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SHUTTER_LOUVERED` 
 2. CREATE `GROUND_01` serving recess 2.4 × 2.7 × 1.35 at a=1.80: stone jambs, timber head, three timber shelves at 0.85 / 1.4 / 1.95 carrying brass pots, porcelain and folded linen (model 12 small items from the CC0 brass pot and simple lathe cups, all inside the recess), counter top at 0.90 × 0.34 deep, closed panel front. This recess is modelled in the GLB (no placed counter here). Completion: a tea counter with visible stock, nothing beyond the wall plane except the counter top's 0.10.
 3. CREATE `GROUND_02` closed entry door 1.15 × 2.7 at a=6.6 (SD-05). Completion: closed.
 4. CREATE two rebates `STORY_1_WINDOW_01/02` 1.6 × 1.65 at sill 3.68 / head 5.33 over a=1.80 and a=6.6 for the placed `ASSET_SHUTTER_LOUVERED` and `ASSET_SHUTTER_WOVEN` (absolute z 5.08). Completion: shutters seated.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_fabric_leather_02` over `GROUND_01` only (the tea house uses plain cream cloth, no stripes). Completion: one awning.
+5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_fabric_leather_02` over `GROUND_01` only (the tea house uses plain cream cloth, no stripes). Completion: one awning.
 6. CREATE sign brackets for `TEA_E_SIGN_1` (a=1.80, centre absolute z 4.45, span 4.26..4.64) at local z 3.24 (absolute 4.64). `TEA_E_SIGN_2` dormant. Completion: one sign.
 7. CREATE the lantern bracket at a=3.7: it starts at (19.0, 60.5, 4.915), reaches 0.50 m into the street to the placed lantern handle at (18.5, 60.5, 4.915), and carries `LANTERN_TEA_01` centred at (18.5, 60.5, 4.65). Completion: lantern hangs from the bracket.
 8. KEEP the tea service, table, three stools and stall at their placed transforms (they sit on the terrace against this wall, outside the 4 m clear width). Completion: nothing new on the terrace.
@@ -100,7 +106,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SHUTTER_LOUVERED` 
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 #### `TEA_RAMP`
 
@@ -187,13 +193,14 @@ Tea house roof base 8.4, cap 9.59: the shared Textile north-wing roof remains ru
 - [ ] Serving recess with stocked shelves and a 0.90 counter; closed entry door; two shutters seated at absolute z 5.08.
 - [ ] Lantern and sign on brackets; shade sail ends bear on an eye and a ledger.
 - [ ] Ramp and stairs untouched; nothing on the treads or the inside corners.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

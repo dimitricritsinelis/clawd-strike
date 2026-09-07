@@ -1,173 +1,201 @@
-"""Spice Street merchant faces. Metres, Z up, street -Y; scanned CC0 PBR."""
+"""Build the complete Spice Street section from its construction sheet.
+
+Run with headless Blender. KEEP dressing and runtime roofs are not exported here.
+"""
 import math
+import sys
 from pathlib import Path
+
 import bpy
+from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[3]
 OUT = Path(__file__).resolve().parent
-TEX = ROOT / 'apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5'
+sys.path.insert(0, str(ROOT / 'assets/source'))
+from facade_kit import Frame, Wall, export_section, wear_patch
+from facade_materials import assign
 
-def material(asset):
-    mat = bpy.data.materials.new(asset)
-    mat.use_nodes = True
-    nodes, links = mat.node_tree.nodes, mat.node_tree.links
-    shader = nodes.get('Principled BSDF')
-    for suffix, kind in [('diff', 'color'), ('nor_gl', 'normal'), ('arm', 'arm')]:
-        tex = nodes.new('ShaderNodeTexImage')
-        tex.image = bpy.data.images.load(str(TEX / asset / f'{asset}_{suffix}_1k.jpg'))
-        tex.image.pack()
-        if kind == 'color':
-            links.new(tex.outputs['Color'], shader.inputs['Base Color'])
-        else:
-            tex.image.colorspace_settings.name = 'Non-Color'
-            if kind == 'normal':
-                normal = nodes.new('ShaderNodeNormalMap')
-                normal.inputs['Strength'].default_value = 0.65
-                links.new(tex.outputs['Color'], normal.inputs['Color'])
-                links.new(normal.outputs['Normal'], shader.inputs['Normal'])
-            else:
-                split = nodes.new('ShaderNodeSeparateColor')
-                links.new(tex.outputs['Color'], split.inputs['Color'])
-                links.new(split.outputs['Green'], shader.inputs['Roughness'])
-                links.new(split.outputs['Blue'], shader.inputs['Metallic'])
-                group = bpy.data.node_groups.new('glTF Material Output', 'ShaderNodeTree')
-                group.interface.new_socket(name='Occlusion', in_out='INPUT', socket_type='NodeSocketFloat')
-                ao = nodes.new('ShaderNodeGroup')
-                ao.node_tree = group
-                links.new(split.outputs['Red'], ao.inputs['Occlusion'])
-    return mat
+bpy.ops.object.select_all(action='SELECT')
+bpy.ops.object.delete(use_global=False)
+F = Frame({'x': 21, 'y': 14, 'w': 12, 'h': 18})
+W = Wall(F, (21, 15.44), (21, 30.56), faces='E')
+E = Wall(F, (33, 15.44), (33, 30.56), faces='W')
+PLASTER = 'ph_painted_plaster_warm'
+STONE = 'ph_sandstone_blocks_05'
+TRIM = 'ph_stone_trim_sandstone'
+E_TRIM = 'ph_trim_sanded_01'
+TIMBER = 'ph_worn_planks'
+IRON = 'ph_rusty_metal_02'
+AXES = (1.8, 4.68, 7.56, 10.44, 13.32)
+SHOPS = (1.8, 7.56, 10.44)
+W.openings = tuple(opening for a in AXES for opening in (
+    (a, 2.4 if a in SHOPS else 1.15, 0, 2.7), (a, 1.6, 3.68, 1.65)))
+# The two parcel boundaries are 0.02 m changes in the plaster face, not added piers.
+for lo, hi, depth in ((0, 6.12, .02), (6.12, 11.88, .04), (11.88, 15.12, .02)):
+    parcel = Wall(F, W.at(lo), W.at(hi), faces='E')
+    openings = [(a-lo, width, sill, height) for a, width, sill, height in W.openings if lo < a < hi]
+    parcel.skin(7, PLASTER, depth=depth, openings=openings)
+W.plinth(.28, STONE)
+W.course(3.56, TRIM)
+W.coping(7, TRIM)
 
-def block(name, pos, size, mat, bevel=0.012):
-    bpy.ops.mesh.primitive_cube_add(size=1, location=pos)
+
+def ring(wall, a, z, out, radius=.05, tube=.01, name='ring-pull'):
+    bpy.ops.mesh.primitive_torus_add(major_segments=16, minor_segments=6,
+        location=F.p(*wall.at(a, out), z), major_radius=radius, minor_radius=tube)
     ob = bpy.context.object
     ob.name = name
-    ob.dimensions = size
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    ob.data.materials.append(mat)
-    # World-size planar UVs keep each scan's masonry at a consistent two-metre scale.
-    uv = ob.data.uv_layers.active
-    for poly in ob.data.polygons:
-        axis = max(range(3), key=lambda a: abs(poly.normal[a]))
-        axes = ((1,2), (0,2), (0,1))[axis]
-        for li in poly.loop_indices:
-            co = ob.data.vertices[ob.data.loops[li].vertex_index].co + ob.location
-            uv.data[li].uv = (co[axes[0]] / 2, co[axes[1]] / 2)
-    if bevel:
-        mod = ob.modifiers.new('Worn stone edges', 'BEVEL')
-        mod.width, mod.segments = bevel, 1
-        bpy.ops.object.modifier_apply(modifier=mod.name)
-    return ob
+    normal = Vector((wall.n.x, -wall.n.y, 0))
+    ob.rotation_mode = 'QUATERNION'
+    ob.rotation_quaternion = Vector((0, 0, 1)).rotation_difference(normal)
+    bpy.ops.object.transform_apply(rotation=True)
+    assign(ob, IRON)
 
 
-def jar(x,y,z,h,r,mat):
-    # Closed merchant storage jars: lathed shoulders, neck and thick lid.
-    profile=[(0,r*0.72),(h*0.12,r),(h*0.65,r),(h*0.82,r*0.60),(h*0.94,r*0.53),(h,r*0.62)]
-    verts=[]
-    for zz,rr in profile:
-        for n in range(12):
-            a=math.tau*n/12
-            verts.append((x+rr*math.cos(a),y+rr*math.sin(a),z+zz))
-    faces=[]
-    for row in range(len(profile)-1):
-        for n in range(12):
-            a=row*12+n;b=row*12+(n+1)%12
-            faces.append((a,b,b+12,a+12))
-    faces.extend([tuple(reversed(range(12))),tuple(range(60,72))])
-    mesh=bpy.data.meshes.new('Storage jar');mesh.from_pydata(verts,[],faces);mesh.update()
-    ob=bpy.data.objects.new('Lidded stock jar',mesh);bpy.context.collection.objects.link(ob)
-    ob.data.materials.append(mat)
-    uv=mesh.uv_layers.new()
-    for poly in mesh.polygons:
-        for li in poly.loop_indices:
-            co=mesh.vertices[mesh.loops[li].vertex_index].co
-            uv.data[li].uv=(co.x*2,co.z*2)
+def closed_door(wall, a, width, height, frame, store=False, wicket=False):
+    timber = 'ph_weathered_brown_planks' if store else 'ph_rough_pine_door'
+    wall.recess_back(a, width, height, 0, timber, out=-.055)
+    # Eight planks make two four-plank store leaves or one household leaf.
+    for i in range(8):
+        lo = a-width/2 + width*i/8
+        wall.slab(lo+.003, lo+width/8-.003, .01, height-.01, .04, timber, out=-.09, name='door-plank')
+    for side in (-1, 1):
+        edge = a+side*width/2
+        wall.slab(min(edge, edge+side*.14), max(edge, edge+side*.14), 0, height, .12, frame, name='door-jamb')
+        # Full-depth reveal connects the recessed leaf to its stone frame.
+        wall.slab(min(edge, edge+side*.14), max(edge, edge+side*.14), 0, height, .09, frame, out=-.09, name='door-reveal')
+        wall.wear(edge+side*.07, .9, .14, .5, 'polish', out=.125)
+    wall.slab(a-width/2-.14, a+width/2+.14, height, .14, .12, frame, name='door-head')
+    wall.slab(a-width/2-.14, a+width/2+.14, -.03, .04, .26, frame, out=-.14, name='threshold')
+    for z in ((.55, 1.15, height-.35) if store else (.5, height-.4)):
+        for lo, hi in ((a-width/2, a-.006), (a+.006, a+width/2)) if store else ((a-width/2, a+width/2),):
+            wall.slab(lo+.025, hi-.025, z, .06, .02, IRON, out=-.045, name='iron-strap')
+    if store:
+        wall.slab(a-width/2, a+width/2, .35, .06, .06, timber, out=-.045, name='bumper')
+        wall.slab(a-.09, a+.09, 1.02, .06, .03, IRON, out=-.025, name='closed-latch')
+    else:
+        wall.slab(a+.18, a+.24, 1.05, .1, .02, IRON, out=-.045, name='pull-plate')
+        ring(wall, a+.21, 1.05, -.015)
+    if wicket:
+        wall.recess_back(a, .35, .35, 1.5, 'ph_dark_wood', out=-.044)
+        for i in range(6):
+            x = a-.16+i*.064
+            wall.slab(x-.015, x+.015, 1.5, .35, .03, IRON, out=-.035, name='wicket-bar')
+        for z in (1.5, 1.82):
+            wall.slab(a-.175, a+.175, z, .03, .03, IRON, out=-.035, name='wicket-frame')
 
-for side, height in [('west', 7.0), ('east', 4.5)]:
-    bpy.ops.object.select_all(action='SELECT')
-    bpy.ops.object.delete(use_global=False)
-    stone=material('sandstone_blocks_05')
-    plaster=material('beige_wall_002')
-    timber=material('rough_pine_door')
-    clay=material('brick_4_desert')
-    cloth=material('fabric_leather_02')
-    width=15.12
-    block('Weathered plaster backing',(0,-0.025,height/2),(width,0.05,height),plaster)
-    block('Stone plinth',(0,-0.12,0.14),(width,0.24,0.28),stone)
-    # Five complete shallow shop/door assemblies retain authored axes.
-    for i,x in enumerate([-5.76,-2.88,0,2.88,5.76]):
-        shop = (side=='west' and i in (0,2,3)) or (side=='east' and i in (1,3))
-        bw=2.06 if shop else 1.25
-        block('Timber recess back',(x,-0.065,1.4),(bw,0.06,2.5),timber)
-        for dx in (-bw/2-0.12,bw/2+0.12):
-            for row in range(8):
-                block('Jointed stone jamb',(x+dx,-0.145,0.22+row*0.32),(0.22,0.29,0.31),stone)
-        block('Lintel',(x,-0.145,2.8),(bw+0.5,0.29,0.25),stone)
-        block('Timber head',(x,-0.195,2.57),(bw,0.14,0.17),timber)
-        if shop:
-            for z in (0.85,1.4,1.95):
-                block('Merchandise shelf',(x,-0.205,z),(bw,0.25,0.065),timber)
-                for j in range(7):
-                    jar(x-0.81+j*0.27,-0.21,z+0.035,0.29+0.03*((j+i)%3),0.105,clay)
-            for dx in (-bw/2+0.04,bw/2-0.04):
-                block('Shelf upright',(x+dx,-0.20,1.3),(0.08,0.26,2.38),timber)
-            block('Counter front',(x,-0.245,0.49),(bw,0.09,0.68),timber)
-            block('Counter top',(x,-0.17,0.86),(bw+0.1,0.34,0.095),timber)
-            for dx in (-0.7,0,0.7):
-                block('Counter panel stile',(x+dx,-0.30,0.5),(0.06,0.06,0.64),timber)
-        else:
-            for j in range(8):
-                block('Closed door plank',(x-bw/2+bw/8*(j+0.5),-0.115,1.36),(bw/8-0.009,0.09,2.35),timber)
-            for z in (0.5,2.17):
-                block('Door cross rail',(x,-0.18,z),(bw,0.07,0.09),timber)
-        # Fabric shade is seated on a wall ledger and an outer supported rail.
-        depth=1.65 if shop else 1.25
-        verts=[]
-        for row in range(7):
-            t=row/6
-            for col in range(13):
-                u=col/12
-                verts.append((x+(u-0.5)*2.65,-0.06-depth*t,3.40-0.40*t-0.12*math.sin(math.pi*u)*math.sin(math.pi*t)))
-        faces=[]
-        for row in range(6):
-            for col in range(12):
-                n=row*13+col;faces.append((n,n+13,n+14,n+1))
-        mesh=bpy.data.meshes.new('Tailored shade');mesh.from_pydata(verts,[],faces);mesh.update()
-        ob=bpy.data.objects.new('Supported fabric awning',mesh);bpy.context.collection.objects.link(ob);mesh.materials.append(cloth)
-        uv=mesh.uv_layers.new()
-        for poly in mesh.polygons:
-            for li in poly.loop_indices:
-                co=mesh.vertices[mesh.loops[li].vertex_index].co;uv.data[li].uv=(co.x/0.8,co.y/0.8)
-        bpy.context.view_layer.objects.active=ob
-        mod=ob.modifiers.new('Hem thickness','SOLIDIFY');mod.thickness=0.025;bpy.ops.object.modifier_apply(modifier=mod.name)
-        block('Awning wall ledger',(x,-0.11,3.4),(2.7,0.22,0.12),timber)
-        block('Awning outer rail',(x,-depth,2.97),(2.7,0.10,0.12),timber)
-        block('Fabric hanging hem',(x,-depth-0.03,2.88),(2.65,0.035,0.18),cloth,0.005)
-        for dx in (-1.12,1.12):
-            # A diagonal timber runs from the wall corbel to the outer rail.
-            rise=0.39
-            brace=block('Shade diagonal bracket',(x+dx,-depth/2,2.775),(0.085,math.hypot(depth,rise),0.085),timber)
-            brace.rotation_euler.x=-math.atan2(rise,depth)
-        if side=='west':
-            z=4.64
-            block('Upper stone sill',(x,-0.17,z-0.84),(1.65,0.34,0.15),stone)
-            block('Upper shutter back',(x,-0.07,z),(1.35,0.09,1.5),timber)
-            for dx in (-0.69,0,0.69):
-                block('Window stile',(x+dx,-0.15,z),(0.085,0.17,1.57),timber)
-            for dz in (-0.76,0.76):
-                block('Window rail',(x,-0.15,z+dz),(1.46,0.17,0.09),timber)
-            for j in range(12):
-                slat=block('Shutter louver',(x,-0.15,z-0.65+j*0.118),(1.29,0.10,0.065),timber,0.005)
-                slat.rotation_euler.x=0.25
-    for x in (-6.95,-4.2,-1.5,1.5,4.2,6.9):
-        jar(x,-0.19,0.28,0.52,0.145,clay)
-    for x in (-7.38,-4.32,1.44,7.38):
-        block('Parcel stone seam',(x,-0.085,height/2),(0.28,0.17,height),stone)
-    for z in (3.48,height-0.12):
-        block('Continuous dressed string course',(0,-0.135,z),(width,0.27,0.16),stone)
-    bpy.ops.object.select_all(action='SELECT')
-    bpy.context.view_layer.objects.active=next(o for o in bpy.context.scene.objects if o.type=='MESH')
-    bpy.ops.object.join()
-    bpy.context.scene.cursor.location=(0,0,0)
-    bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-    print(side, 'triangles',sum(len(p.vertices)-2 for p in bpy.context.object.data.polygons))
-    bpy.ops.export_scene.gltf(filepath=str(OUT/f'spice-{side}.glb'),export_format='GLB',export_yup=True,use_selection=True)
+
+for a in SHOPS:
+    for side in (-1, 1):
+        lo = a-1.42 if side == -1 else a+1.2
+        for row in range(8):
+            W.slab(lo, lo+.22, row*.3375, .3375, 1.64, STONE, out=-1.35, name='shop-jamb-course')
+    W.slab(a-1.45, a+1.45, 2.7, .25, 1.64, STONE, out=-1.35, name='shop-lintel')
+    W.slab(a-1.2, a+1.2, 2.53, .17, 1.35, TIMBER, out=-1.35, name='shop-timber-head')
+    W.recess_back(a, 2.4, 2.7, 0, 'ph_dark_wood', out=-1.355)
+    W.slab(a-1.2, a+1.2, 0, .08, 1.63, TIMBER, out=-1.35, name='shop-deck')
+    W.awning(a-1.25, a+1.25, 2.85, 1.10, timber=TIMBER)
+    # Spice accumulates on the supported deck, not across the open recess.
+    W.wear(a, .01, 2.4, .065, 'spice', out=.285)
+    for edge in (a-1.31, a+1.31):
+        W.wear(edge, 0, .22, .4, 'spice', out=.295)
+for a in (4.68, 13.32):
+    closed_door(W, a, 1.15, 2.7, TRIM)
+
+for a in AXES:
+    W.recess_back(a, 1.6, 1.65, 3.68, 'ph_worn_plaster_ochre', out=-.14)
+    for lo, hi in ((a-.9, a-.8), (a+.8, a+.9)):
+        W.slab(lo, hi, 3.68, 1.65, .235, TRIM, out=-.135, name='window-jamb-reveal')
+    W.slab(a-.9, a+.9, 5.33, .1, .235, TRIM, out=-.135, name='window-head')
+    # Sill top 3.68, underside 3.62 meets the continuous 3.50..3.62 course.
+    W.slab(a-.9, a+.9, 3.62, .06, .215, TRIM, out=-.135, name='window-sill')
+for a in (1.8, 7.56):
+    for x in (a-.9, a+.9):
+        W.slab(x-.03, x+.03, 3.29, .06, .18, TIMBER, name='sign-bracket')
+W.slab(.71, .81, 3.965, .20, .02, IRON, name='lantern-wall-plate')
+W.slab(.74, .78, 4.045, .04, .45, IRON, name='lantern-bracket')
+
+# SD-17 west ends; the five existing east roof ties remain placed assets.
+for y, z in ((20.581, 5.8), (26.478, 5.8), (18.162, 6), (23.756, 6.05), (28.746, 6.2)):
+    a = y-15.44
+    W.slab(a-.6, a+.6, z-.05, .1, .1, TIMBER, name='overhead-ledger')
+    for x in (a-.45, a+.45):
+        ring(W, x, z, .11, radius=.03, tube=.008, name='overhead-iron-eye')
+
+E.skin(4.5, STONE, openings=((1.125, 1.05, 0, 2.25), (4.3425, 1.05, .45, 1.8),
+    (7.56, 1.05, 0, 2.25), (10.7775, 1.05, 0, 2.25), (13.995, 1.05, .45, 1.8)))
+E.plinth(.28, E_TRIM)
+E.course(2.9, E_TRIM)
+E.coping(4.5, E_TRIM)
+for a in (.225, 14.895):
+    E.pilaster(a, 4.5, STONE, width=.45, depth=.16)
+for a in (1.125, 7.56):
+    closed_door(E, a, 1.05, 2.25, E_TRIM, store=True, wicket=a == 7.56)
+closed_door(E, 10.7775, 1.05, 2.25, E_TRIM)
+for a in (4.3425, 13.995):
+    E.niche(a, 1.05, 1.8, .45, E_TRIM, back=STONE)
+    # Close the reveal and base around the bricked-up backing.
+    for lo, hi in ((a-.685, a-.525), (a+.525, a+.685)):
+        E.slab(lo, hi, .45, 1.8, .14, E_TRIM, out=-.14, name='niche-reveal')
+    E.slab(a-.525, a+.525, .45, .04, .28, E_TRIM, out=-.14, name='niche-base')
+
+# Clip base accumulation to solid wall fields; never lay translucent cards across openings.
+for wall in (W, E):
+    for lo, hi, bottom, top in wall._solid_rectangles(0, 15.12, .28, 1.22):
+        depth = .04 if wall == W and 6.12 <= (lo+hi)/2 <= 11.88 else .02
+        wall.wear((lo+hi)/2, bottom, hi-lo, top-bottom, 'dust', out=depth+.005)
+    for lo, hi, bottom, top in wall._solid_rectangles(0, 15.12, 0, .28):
+        wall.wear((lo+hi)/2, bottom, hi-lo, top-bottom, 'dust', out=.145)
+# Light morning bleach above the west shutters; afternoon bleach spans the east upper field.
+W.wear(3.06, 5.43, 6.12, 1.41, 'bleach')
+W.wear(9, 5.43, 5.76, 1.41, 'bleach', out=.045)
+W.wear(13.5, 5.43, 3.24, 1.41, 'bleach')
+E.wear(7.56, 2.96, 14.22, 1.38, 'bleach')
+for a in (1.125-.595, 1.125+.595):
+    E.wear(a, 0, .14, .6, 'rut', out=.125)
+# The two tie feet nearest a door: laundry 02 (0.756 m) and canopy 02 (0.2605 m).
+# Their bases are fixed in Section 4; stains descend on the retained parapet.
+for y, foot_z in ((23.756, 5.59), (26.478, 5.48)):
+    E.wear(y-15.44, foot_z-.45, .25, .45, 'damp')
+
+# Exact floor finish polygons from Section 6; no floor or collision mesh is replaced.
+wear_patch(F, [(26.7, 14.3, 0.014), (27.3, 14.3, 0.014), (27.3, 31.7, 0.014), (26.7, 31.7, 0.014)], 'polish')
+wear_patch(F, [(21.02, 15.2, 0.014), (21.6, 15.2, 0.014), (21.6, 30.8, 0.014), (21.02, 30.8, 0.014)], 'dust')
+wear_patch(F, [(21.02, 16.44, 0.014), (21.4, 16.44, 0.014), (21.4, 18.04, 0.014), (21.02, 18.04, 0.014)], 'spice')
+wear_patch(F, [(21.02, 22.2, 0.014), (21.4, 22.2, 0.014), (21.4, 23.8, 0.014), (21.02, 23.8, 0.014)], 'spice')
+wear_patch(F, [(21.02, 25.08, 0.014), (21.4, 25.08, 0.014), (21.4, 26.68, 0.014), (21.02, 26.68, 0.014)], 'spice')
+wear_patch(F, [(31.2, 15.1, 0.014), (31.25, 15.1, 0.014), (31.25, 16.565, 0.014), (31.2, 16.565, 0.014)], 'rut')
+wear_patch(F, [(31.77, 15.1, 0.014), (31.82, 15.1, 0.014), (31.82, 16.565, 0.014), (31.77, 16.565, 0.014)], 'rut')
+wear_patch(F, [(31.980579, 15.807976, 0.014), (32.152415, 17.207466, 0.014), (31.219421, 17.322024, 0.014), (31.047585, 15.922534, 0.014)], 'dust')
+wear_patch(F, [(21.425503, 27.299699, 0.014), (22.243024, 27.170216, 0.014), (22.374497, 28.000301, 0.014), (21.556976, 28.129784, 0.014)], 'dust')
+wear_patch(F, [(23.443821, 27.909431, 0.014), (23.920509, 27.666546, 0.014), (24.116179, 28.050569, 0.014), (23.639491, 28.293454, 0.014)], 'dust')
+wear_patch(F, [(22.080519, 27.375324, 0.014), (23.683956, 26.945684, 0.014), (23.919481, 27.824676, 0.014), (22.316044, 28.254316, 0.014)], 'dust')
+wear_patch(F, [(32.140632, 21.865095, 0.014), (32.066174, 22.394889, 0.014), (31.639368, 22.334905, 0.014), (31.713826, 21.805111, 0.014)], 'dust')
+wear_patch(F, [(32.137347, 27.652583, 0.014), (32.289982, 28.184882, 0.014), (31.862653, 28.307417, 0.014), (31.710018, 27.775118, 0.014)], 'dust')
+wear_patch(F, [(32.665, 20.47, 0.014), (32.665, 22.13, 0.014), (31.755, 22.13, 0.014), (31.755, 20.47, 0.014)], 'dust')
+wear_patch(F, [(32.110846, 28.189027, 0.014), (32.110846, 28.650973, 0.014), (31.649154, 28.650973, 0.014), (31.649154, 28.189027, 0.014)], 'dust')
+wear_patch(F, [(32.490458, 17.244444, 0.014), (32.57633, 18.225968, 0.014), (32.009542, 18.275556, 0.014), (31.92367, 17.294032, 0.014)], 'dust')
+wear_patch(F, [(32.569624, 23.673138, 0.014), (32.47181, 24.603769, 0.014), (31.930376, 24.546862, 0.014), (32.02819, 23.616231, 0.014)], 'dust')
+wear_patch(F, [(32.588595, 26.989735, 0.014), (32.418939, 27.787903, 0.014), (31.771405, 27.650265, 0.014), (31.941061, 26.852097, 0.014)], 'dust')
+wear_patch(F, [(32.314254, 18.192992, 0.014), (32.503727, 18.952928, 0.014), (31.885746, 19.107008, 0.014), (31.696273, 18.347072, 0.014)], 'dust')
+wear_patch(F, [(32.400956, 24.530825, 0.014), (32.499175, 25.150956, 0.014), (31.879044, 25.249175, 0.014), (31.780825, 24.629044, 0.014)], 'dust')
+wear_patch(F, [(23.356591, 27.037388, 0.014), (24.018057, 26.860148, 0.014), (24.163409, 27.402612, 0.014), (23.501943, 27.579852, 0.014)], 'dust')
+
+# Construction assertions operate on evaluated geometry, including bevels and cloth thickness.
+scene_meshes = [o for o in bpy.context.scene.objects if o.type == 'MESH']
+assert sum(o.name.split('.')[0] == 'awning' for o in scene_meshes) == 3
+assert sum(o.name.split('.')[0] == 'shop-deck' for o in scene_meshes) == 3
+assert sum(o.name.split('.')[0] == 'window-sill' for o in scene_meshes) == 5
+assert sum(o.name.split('.')[0] == 'threshold' for o in scene_meshes) == 5
+graph = bpy.context.evaluated_depsgraph_get()
+for ob in scene_meshes:
+    evaluated = ob.evaluated_get(graph)
+    points = [evaluated.matrix_world @ v.co for v in evaluated.data.vertices]
+    if ob.name.split('.')[0] == 'awning':
+        assert min(p.z for p in points) >= 2.45, ob.name
+    if not ob.name.startswith('wear-'):
+        for point in points:
+            if .1 < point.z < 2.2:
+                assert point.x <= .35001 or point.x >= 11.64999, (ob.name, tuple(point))
+print('construction: 3 awnings >= 2.45 m; 3 decks; 5 shutter sills; 5 closed-door thresholds; low relief <= 0.35 m')
+export_section(F, OUT / 'unit-spice-street.glb')

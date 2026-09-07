@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 Eight quiet passages. They carry no shops, signs, awnings, props or overheads. Only two of them own a wall (the north-west and north-east garden walls); the rest are open faces, cut edges and short returns finished to match their neighbours' warm aged surfaces. Their job is to read as passages and keep their clear widths.
 
+**Character schedule (build with the numbered tasks):**
+
+- Keep the eight passages clear and quieter than adjoining trades. Their short exposed returns carry the material and softened edges of their named owner; do not introduce a repeated decorative niche, rug or sign in every connector.
+- North-west and north-east garden walls retain their matching geometry and warm lime. Their scheduled drains are already at opposite ends; use that actual difference to locate wear, with SD-21 edge finish and broken base dust. The other six passages receive only their scheduled ground/return finish.
+
 ## 2. Site
 
 ### Site · `LINK_SOUTH_WEST` (South West Link)
@@ -103,7 +108,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_LINK_NORTH_WEST_NORTH  ·  BLD_LINK_WALL_NW (compound wall, 1 storey)
 
-- **Role:** compound wall. Coping, one string course, a single blind niche on the axis of the approach from Tea Landing.
+- **Role:** compound wall. A garden wall closing the north-west passage; the house behind it is off-map.
 - **Wall line:** north edge of `LINK_NORTH_WEST`; y = 81, x = 10.56 .. 16.44 (a runs west to east); length **5.88 m**; street side -Y (street lies south); kit `Wall(F, (10.56, 81), (16.44, 81), faces='S')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -126,7 +131,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.94, 1.05, 1.3, 1.8)
 
 ### FRONTAGE_LINK_NORTH_EAST_NORTH  ·  BLD_LINK_WALL_NE (compound wall, 1 storey)
 
-- **Role:** compound wall. Mirror of the north-west wall.
+- **Role:** compound wall. Matching garden wall on the north-east passage.
 - **Wall line:** north edge of `LINK_NORTH_EAST`; y = 81, x = 39.56 .. 45.44 (a runs west to east); length **5.88 m**; street side -Y (street lies south); kit `Wall(F, (39.56, 81), (45.44, 81), faces='S')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -149,7 +154,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.94, 1.05, 1.3, 1.8)
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 #### `LINK_SOUTH_WEST`
 
@@ -233,13 +238,14 @@ Nothing on the link roofs.
 
 - [ ] Each link keeps its clear width (3.5 m; 4.5 m at the west-upper link); no geometry inside the swept turn.
 - [ ] Short returns and cut edges carry only plinth, field, coping matching the adjoining owner.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

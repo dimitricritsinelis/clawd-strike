@@ -1,3 +1,28 @@
 {
-  "models": []
+  "models": [
+    {
+      "id": "section_unit_spice_street",
+      "url": "unit-spice-street/unit-spice-street.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spice-street/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spice-street/unit-spice-street.glb": "5966d2062dcf8183a6104f8b2dda889c"
+      },
+      "materialIds": [
+        "ph_dark_wood",
+        "ph_hessian_230",
+        "ph_painted_plaster_warm",
+        "ph_rough_pine_door",
+        "ph_rusty_metal_02",
+        "ph_sandstone_blocks_05",
+        "ph_stone_trim_sandstone",
+        "ph_trim_sanded_01",
+        "ph_weathered_brown_planks",
+        "ph_worn_planks",
+        "ph_worn_plaster_ochre"
+      ]
+    }
+  ]
 }

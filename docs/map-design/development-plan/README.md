@@ -1,11 +1,11 @@
 # Bazaar construction progress
 
-Progress index for [TRANSFORM](../../../.claude/skills/map-polish/SKILL.md). [../construction/README.md](../construction/README.md) and its sheets are the canonical handoff. Status values: `not-started`, `building`, `built`, `complete`, `blocked`. `built` means the scheduled construction package is applied and awaits later validation; only that later task may set `complete`. Resolve a named area with the Also-called column. A single-area request stops at that row; continue only through an explicit user-provided queue.
+Progress index for [TRANSFORM](../../../.claude/skills/map-polish/SKILL.md). [../construction/README.md](../construction/README.md) and its sheets are the canonical handoff. Status values: `not-started`, `building`, `built`, `complete`, `blocked`. `building` includes applied work with known construction defects or a revised sheet still to build. `built` means the current sheet is applied with the bounded assembly/interface inspection recorded and awaits later validation; only that later task may set `complete`. Resolve a named area with the Also-called column. A single-area request stops at that row; continue only through an explicit user-provided queue.
 
 | Area | Also called | Status | Construction sheet | Remaining blocker |
 |---|---|---|---|---|
 | unit-spawn-a-courtyard | spawn A, A spawn, south spawn | not-started | [sheet](../construction/unit-spawn-a-courtyard.md) | |
-| unit-spice-street | Spice Street, spice row | not-started | [sheet](../construction/unit-spice-street.md) | |
+| unit-spice-street | Spice Street, spice row | building | [sheet](../construction/unit-spice-street.md) | Earlier trial package applied; revised character schedule not built. Audit found coplanar door faces, unsupported east tie-foot stains, wrong niche backing and missing assembled-context evidence. |
 | unit-fountain-court | Fountain Court, the fountain | not-started | [sheet](../construction/unit-fountain-court.md) | |
 | unit-textile-arcade | Textile Arcade, textiles | not-started | [sheet](../construction/unit-textile-arcade.md) | |
 | unit-rug-gate | Rug Gate, the gate | not-started | [sheet](../construction/unit-rug-gate.md) | |
@@ -31,6 +31,9 @@ Progress index for [TRANSFORM](../../../.claude/skills/map-polish/SKILL.md). [..
 
 ## Current implementation basis
 
+- **2026-09-07 document revision:** keep the measured plan; require distinct tenancy materials, hand finish, fitted textiles and localized wear under the sheets' character schedules and SD-21/22. The three earlier AI boards illustrate the old direction and are not approved finish references.
+- **Spice trial evidence:** the previous task recorded a successful export/application and one `map:check` pass with protected authority unchanged. Its later read-only audit found the defects listed above; the isolated previews omitted roofs, floors, overheads and other retained interfaces. That is why the row is `building`, not construction-accepted. This documentation revision changes no map assets and starts no rebuild. The next authorized Spice implementation must repair the known defects and build the revised schedule.
+
 - Live compiled geometry and placements are the construction source. Existing `frontages` outputs are legacy tooling; future named-area work uses section exports only.
 - The Revision 3 assemblies are placed: shutters, screens, counters, rug displays, dye counters, packing cabinets, the S1 Spice roofs and roof ties, the B18 roof room, the Dyers house pieces and the Spawn B rooms all render through `dressing_placements`. The sheets keep them and tell section outputs to leave the rebates they sit in.
 - Six of nine legacy composition waivers were resolved on 2026-09-07 by moving a sign, canopy, line, planter or the tea service in the spec; three remain by decision (cover cluster, palm, barrel). `buildings[].walls[]` now matches the sheets.
@@ -48,7 +51,7 @@ R00 is the founding reference and owns the map-wide warm aged cream/tan surface,
 
 | ID | Image / owning scope | Adopt | Do not infer |
 |---|---|---|---|
-| R00 | [Founding Bazaar street](../refs/bazaar_main_hall_reference.png) | Primary authority: warm aged cream/tan surfaces, traffic polish, trade patina, layered depth, occupied upper rooms and supported shade. | Ambiguous cable endpoints, blocked walking space, lettering or exact dimensions are not construction requirements. |
+| R00 | [Founding Bazaar street](../refs/bazaar_main_hall_reference.png) | Primary authority: warm varied cream/tan surfaces, irregular hand finish, traffic polish, trade patina, layered depth, occupied upper rooms and supported shade; flourishing and maintained. | Ambiguous cable endpoints, blocked walking space, lettering or exact dimensions are not construction requirements. |
 | R01 | [Spice Street](references/spice-street.png) | Three distinct trades, rich west / quiet east, and finished craft assemblies. | Cabinet depth, incidental background openings, cover cabinet silhouette and its cleaner surface finish are not approved geometry or material direction. |
 | R02 | [Fountain Court](references/fountain-court.png) | Civic masonry, readable shade, restrained blue waterline, contact and carving. | Fountain size/position and background opening counts remain the measured source values. |
 | R03 | [Textile Arcade](references/textile-arcade.png) | Hanging galleries versus roll chests, supported shade, quiet piers. | No extra arch bays, projected floor stock or changed walking width. |

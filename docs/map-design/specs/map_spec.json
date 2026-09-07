@@ -9854,6 +9854,8 @@
       "notes": "Spawn A Courtyard authored walkable footprint."
     },
     {
+      "sectionFaces": ["east","west"],
+      "sectionModelId": "section_unit_spice_street",
       "id": "SPICE_STREET",
       "type": "main_lane_segment",
       "label": "Spice Street",

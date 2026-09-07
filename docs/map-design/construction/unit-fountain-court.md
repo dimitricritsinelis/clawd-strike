@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The civic release: a tall aged-cream madrasa with one sealed arch and a stained window on the west, a warm plastered merchant house with a loggia on the east, the off-axis fountain and palm, quiet mid-link passages north and south. Value contrast across the court is the composition: stone versus plaster, tall versus mid; the civic field stays quieter than the trade streets while remaining part of the aged market.
 
+**Character schedule (build with the numbered tasks):**
+
+- Preserve the stone madrasa and sandy plaster merchant house, their unequal heights, threshold rugs, palm, planters and tea spill. The court reads prosperous and maintained: crisp carved detail with softened stone arrises; no matching shop fronts around the fountain.
+- Keep the tall formal fields free of new repair patches; their stone/plaster contrast and carved detail distinguish the civic court from the visibly patched trade streets. Use SD-21 fine dressed edges on the madrasa and trowelled plaster on the merchant house. Only the existing fountain wet-contact patches are damp; traffic polish stays transparent enough to show stone joints.
+
 ## 2. Site
 
 ### Site · `FOUNTAIN_COURT` (Fountain Court)
@@ -35,7 +40,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_FOUNTAIN_COURT_WEST  ·  BLD_MADRASA (landmark, 2 storeys)
 
-- **Role:** landmark. Repaired sealed hero arch and one stained opening remain the court focus. The south service wing has one closed entry and one high dark window; no invented third floor.
+- **Role:** landmark. A madrasa presents one grand sealed arch to the court and lights its hall from a high stained window; the students enter from the service wing, not the court.
 - **Wall line:** west edge of `FOUNTAIN_COURT`; x = 20, y = 41 .. 46.72 (a runs south to north); length **5.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (20, 41), (20, 46.72), faces='E')`.
 - **Retained massing `MASSING_TALL_HERO`:** wall top 9.5 local / 9.5 absolute, depth 5.4 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -65,7 +70,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at fl
 
 ### FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH  ·  BLD_MADRASA (landmark, 2 storeys)
 
-- **Role:** landmark. Repaired sealed hero arch and one stained opening remain the court focus. The south service wing has one closed entry and one high dark window; no invented third floor.
+- **Role:** landmark. The madrasa's back-of-house: one service door and one window to the stair. Nothing to sell.
 - **Wall line:** west edge of `FOUNTAIN_COURT`; x = 20, y = 33.28 .. 36 (a runs south to north); length **2.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (20, 33.28), (20, 36), faces='E')`.
 - **Retained massing `MASSING_TALL_HERO`:** wall top 9.5 local / 9.5 absolute, depth 5.4 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -93,7 +98,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.36, 1.05, 0, 2.25),
 
 ### FRONTAGE_FOUNTAIN_COURT_EAST  ·  BLD_MERCHANT_HOUSE (house, 2 storeys)
 
-- **Role:** house. Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.
+- **Role:** house. A merchant's house shows the court a formal loggia and two upper windows; the family's door is round the corner on the north wing, the trade is on the Souk side.
 - **Wall line:** east edge of `FOUNTAIN_COURT`; x = 36, y = 33.28 .. 39 (a runs south to north); length **5.72 m**; street side -X (street lies west of the wall); kit `Wall(F, (36, 33.28), (36, 39), faces='W')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -123,7 +128,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.05, 0.9, 5.15, 1.25
 
 ### FRONTAGE_FOUNTAIN_COURT_EAST_NORTH  ·  BLD_MERCHANT_HOUSE (house, 2 storeys)
 
-- **Role:** house. Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.
+- **Role:** house. The merchant family's own door, one screened window above for the women's room. The north wing is the only wing this door serves (the passage cuts the block).
 - **Wall line:** east edge of `FOUNTAIN_COURT`; x = 36, y = 44 .. 46.72 (a runs south to north); length **2.72 m**; street side -X (street lies west of the wall); kit `Wall(F, (36, 44), (36, 46.72), faces='W')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -152,7 +157,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at co
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -222,13 +227,14 @@ Madrasa roof base 9.5, cap 10.79, existing minaret vista kept; the Souk massing 
 - [ ] Both hero arches sealed with dark backs; the threshold rugs lie centred in front of them.
 - [ ] One stained window on the madrasa; a mirrored pair of dark windows on the merchant house; the screen seated in the north wing rebate.
 - [ ] Nothing new on the court floor; x 26..32 and both link cones clear.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

@@ -74,7 +74,7 @@ def wall_section(out, f, b):
     coord = f'x = {fmt(c)}, y = {fmt(a0)} .. {fmt(a1)} (a runs south to north)' if ax == 'x' else f'y = {fmt(c)}, x = {fmt(a0)} .. {fmt(a1)} (a runs west to east)'
     out.append(f"### {f['id']}  ·  {b['id']} ({b['type']}, {b['storeys']} storey{'s' if b['storeys']>1 else ''})")
     out.append('')
-    out.append(f"- **Role:** {b['type']}. {b['brief']}")
+    out.append(f"- **Role:** {b['type']}. {ov.get('reality') or b['brief']}")
     out.append(f"- **Wall line:** {f['face']} edge of `{f['zoneId']}`; {coord}; length **{fmt(L)} m**; street side {FACE_STREET[f['face']]}; kit `Wall(F, ({fmt(a0 if ax=='y' else c)}, {fmt(c if ax=='y' else a0)}), ({fmt(a1 if ax=='y' else c)}, {fmt(c if ax=='y' else a1)}), faces='{KIT_FACES[f['face']]}')`.")
     floor = surfaces[f['zoneId']].get('elevationM', 0)
     out.append(f"- **Retained massing `{mas['id']}`:** wall top {fmt(mas['heightM'])} local / {fmt(mas['heightM'] + floor)} absolute, depth {fmt(mas['depthM'])} m; roof and parapet stay runtime-owned per section 7.")
@@ -233,6 +233,10 @@ def sheet(unit, zids, title, also):
     intro = OV.UNITS.get(unit, {})
     if intro.get('intent'):
         out.append('## 1. Design intent'); out.append(''); out.append(intro['intent']); out.append('')
+    out.append('**Character schedule (build with the numbered tasks):**'); out.append('')
+    for detail in intro['character']:
+        out.append(f'- {detail}')
+    out.append('')
     out.append('## 2. Site'); out.append('')
     for zid in zids:
         zone_section(out, zid, unit)
@@ -260,7 +264,7 @@ def sheet(unit, zids, title, also):
             if any(fc['zoneId'] == zid for fc in b['faces']) and not any(f['buildingId'] == b['id'] for f in frontages.values()):
                 code_wall_section(out, b, zid)
     out.append('## 4. Free placements (dressing, cover, landmarks)'); out.append('')
-    out.append('Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.'); out.append('')
+    out.append('Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.'); out.append('')
     for zid in zids:
         if len(zids) > 1: out.append(f'#### `{zid}`'); out.append('')
         anchor_lines(out, zid)
@@ -284,7 +288,7 @@ def sheet(unit, zids, title, also):
     for c in (intro.get('checks') or []) + OV.COMMON_CHECKS:
         out.append(f'- [ ] {c}')
     out.append('')
-    out.append('Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.'); out.append('')
+    out.append('Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.'); out.append('')
     return '\n'.join(out) + '\n'
 
 def code_wall_section(out, b, zid):

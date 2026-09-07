@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 Three fabric trades under repaired arches on the east (packing, the approved booth, dye samples), the merchant block's trade arch and north-wing door on the west, one shared canopy overhead, the 5 m structural end wall at the north. The B18 pilot roof room sits on the east roof. Warm aged plaster and stone frame concentrated fabric-trade wear at the arches and cloth edges.
 
+**Character schedule (build with the numbered tasks):**
+
+- Retain three distinct east trades and the single approved booth. The ochre west trade face, aged pale north wing and cream east arcade carry different repairs; hanging cloth, packing folds and dye samples provide the colors. Do not make three copies of a tidy display cabinet.
+- On FRONTAGE_COVERED_SOUK_EAST replace skin a=3.45..4.05, z=0.34..1.13 with `ph_worn_plaster_sun` (SD-21), clear of the first arch ring and booth. Keep the booth seat at z 3.26 untouched. East awning sag GROUND_01=0.08 and GROUND_03=0.12 m; west remains 0.12. All supports, signs and canopy endpoints stay fixed.
+
 ## 2. Site
 
 ### Site · `COVERED_SOUK` (Covered Dyers Souk)
@@ -34,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_COVERED_SOUK_WEST  ·  BLD_DYERS_ARCADE_W (arcade, 2 storeys)
 
-- **Role:** arcade. Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.
+- **Role:** arcade. The merchant block's trade face onto the covered souk: a dye-sample seller in the arch, family rooms above behind fine lattice (the women's side looks onto the busy souk).
 - **Wall line:** west edge of `COVERED_SOUK`; x = 41, y = 33.28 .. 39 (a runs south to north); length **5.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 33.28), (41, 39), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -58,7 +63,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at as
 1. CREATE the section finish: skin `ph_aged_plaster_ochre`, plinth sandstone, impost band, coping; end piers 0.45 × 0.16 (`held`). Completion: the trade side of the central merchant block.
 2. CREATE `GROUND_01` sealed arch 2.6 × 3.55 at a=2.86, floor deck 0.14, interior empty for the placed `ASSET_B18_DYE_COUNTER` (`CENTRAL_DYE_DISPLAY` at (40.83, 36.14, 0.14)). Completion: counter inside the arch.
 3. CREATE two screen rebates `STORY_1_WINDOW_01/02` 1.0 × 1.4 at sill 4.15 / head 5.55, a=1.10 and a=4.62 (a pair about the arch axis) for the placed `ASSET_SCREEN_SC_C` (`CENTRAL_SCREEN_SOUTH_1/2` at (40.98, 34.38 / 37.90, 4.15)). Completion: screens seated.
-4. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=1.41..4.31, projection 1.20 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` (brackets on the piers at 2.55). Completion: one awning, hem 2.63, under the shared canopy above.
+4. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=1.41..4.31, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` (brackets on the piers at 2.55). Completion: one awning, evaluated hem at least 2.60, under the shared canopy above.
 5. CREATE sign brackets for `DYE_W_SIGN_1` (a=2.86, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. Completion: one sign.
 6. KEEP the cart at (43.10, 36.14) and the dormant rug anchor. APPLY wear: dust band, indigo drips 0..0.35 under the arch, polish on the jambs. Completion: as listed.
 
@@ -66,7 +71,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at as
 
 ### FRONTAGE_COVERED_SOUK_WEST_NORTH  ·  BLD_DYERS_ARCADE_W (arcade, 2 storeys)
 
-- **Role:** arcade. Two wings of one shared merchant block, with a clear mid-link, closed north entrances, a south loggia and dry dye display.
+- **Role:** arcade. The north wing's service door: goods in, nothing sold here. It serves only the north wing (the passage separates the wings).
 - **Wall line:** west edge of `COVERED_SOUK`; x = 41, y = 44 .. 46.72 (a runs south to north); length **2.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 44), (41, 46.72), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -96,7 +101,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at as
 
 ### FRONTAGE_COVERED_SOUK_EAST  ·  BLD_DYERS_ARCADE_E (arcade, 1 storey)
 
-- **Role:** arcade. Three repaired stone arches: packing south, the approved textile booth at center, dry dye samples north; one broad closed roof-access room.
+- **Role:** arcade. Three fabric businesses under repaired arches: a packer, the cloth booth and a dye-sample seller; their back store is off-map, the roof room is where the packer keeps bolts dry.
 - **Wall line:** east edge of `COVERED_SOUK`; x = 53, y = 33.28 .. 46.72 (a runs south to north); length **13.44 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 33.28), (53, 46.72), faces='W')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -118,7 +123,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_B18_PACKING_FINISH
 
 1. CREATE the section finish: skin `ph_painted_plaster_warm`, plinth sandstone, impost band between the three arches, coping 4.34..4.5; end piers 0.60 × 0.16. Completion: low lime arcade of three repaired arches.
 2. CREATE three sealed arches `GROUND_01/02/03` 2.6 × 3.55 at a=1.90/6.72/11.54 with floor deck 0.14. Interiors empty: `ASSET_B18_PACKING_FINISH` (a=1.90), the approved `ASSET_TEXTILE_BOOTH` (a=6.72, do not touch) and `ASSET_B18_DYE_COUNTER` (a=11.54) are placed. The booth's side braces seat on masonry at ±1.19 from its axis: give the `GROUND_02` piers a 0.05 flat seat at z 3.26. Completion: three different trades in three arches.
-3. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` and the same over `GROUND_03` (a=10.09..12.99). None over `GROUND_02` (the booth carries its own). Completion: exactly two awnings.
+3. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` and the same over `GROUND_03` (a=10.09..12.99). None over `GROUND_02` (the booth carries its own). Completion: exactly two awnings.
 4. CREATE sign brackets for `DYE_E_SIGN_1` (a=6.72, board centre z 3.80, span 3.65..3.95, brackets z 3.95) and `DYE_E_SIGN_2` (a=11.54, board centre z 3.67, span 3.52..3.82, brackets z 3.82). `GROUND_01` has no sign. Completion: two signs.
 5. CREATE the lantern bracket at a=7.22: it starts at (53.0, 40.5, 4.365), reaches 0.50 m into the street to the placed lantern handle at (52.5, 40.5, 4.365), and carries `LANTERN_DYERS_01` centred at (52.5, 40.5, 4.10). Completion: lantern on a bracket.
 6. KEEP `COVER_DYERS_01` (50.5, 43.6) and the process vessel at (51.98, 35.18). No floor stock. Completion: as stated.
@@ -128,7 +133,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_B18_PACKING_FINISH
 
 ### FRONTAGE_COVERED_SOUK_SOUTH  ·  BLD_SOUK_YARD_WALL (compound wall, 1 storey)
 
-- **Role:** compound wall. Coping and string course.
+- **Role:** compound wall. The yard wall of the house behind the Souk's south end; the route passes beside it.
 - **Wall line:** south edge of `COVERED_SOUK`; y = 32, x = 41.36 .. 45.56 (a runs west to east); length **4.2 m**; street side +Y (street lies north); kit `Wall(F, (41.36, 32), (45.56, 32), faces='N')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -151,7 +156,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.1, 1.05, 1.3, 1.8)]
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -222,13 +227,14 @@ East: slab 4.76, parapet 5.59, the placed roof room (cap 7.35) and the two vent 
 - [ ] Three east arches with three different trades; the booth untouched; two awnings (bays 01 and 03) and two signs on the east (z 3.80 over the booth, 3.67 over the dye counter).
 - [ ] West: one arch with the dye counter, two seated screens, the north-wing door quiet; canopy ends on the west ledger and the east roof tie.
 - [ ] Lantern on a bracket; the west-mid link turn empty.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

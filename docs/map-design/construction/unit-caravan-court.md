@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The loading yard: two store doors under one storage head on the west, garden walls with one niche each on the east, the crate stack and cart at the north end under the loading shade and pack line. Warm sun-aged surfaces and red sandstone paving carry wheel scuffs toward the receiving door.
 
+**Character schedule (build with the numbered tasks):**
+
+- Rubble stores, coarse lime garden walls, red paving and retained cart/crates distinguish a busy receiving yard. Door envelopes and hardware counts match, but grain, edge wear and handling marks differ; the south receiving door has the stronger polish and bumper scuffs.
+- The three north-east repair fields are explicitly bounded in wall task 1 and use SD-21 irregular trowel edges; leave the south garden wall quieter. Wheel scuffs remain discontinuous color/roughness marks in their printed polygons, never grooves, muddy ruts or rubble piles.
+
 ## 2. Site
 
 ### Site · `CARAVAN_COURT` (Caravan Court)
@@ -34,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_CARAVAN_COURT_WEST  ·  BLD_CARAVAN_STORES (store row, 1 storey)
 
-- **Role:** store row. Niche, door, niche, door, niche under one head at one gap; the two store doors mirror about the court axis.
+- **Role:** store row. Two locked caravanserai stores with handcart doors (1.35 m, not wagon gates) between blank bays; goods are handled in the yard, not stored against the wall.
 - **Wall line:** west edge of `CARAVAN_COURT`; x = 3, y = 31.44 .. 46.56 (a runs south to north); length **15.12 m**; street side +X (street lies east of the wall); kit `Wall(F, (3, 31.44), (3, 46.56), faces='E')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -66,7 +71,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_CARAVAN_LOAD_CRATE
 
 ### FRONTAGE_CARAVAN_COURT_EAST_SOUTH  ·  BLD_CARAVAN_YARD_WALL_S (compound wall, 1 storey)
 
-- **Role:** compound wall. Yard wall flanking the West Mid Link: coping and string course only.
+- **Role:** compound wall. A garden enclosure south of the west-mid link.
 - **Wall line:** east edge of `CARAVAN_COURT`; x = 15, y = 30.54 .. 35.4 (a runs south to north); length **4.86 m**; street side -X (street lies west of the wall); kit `Wall(F, (15, 30.54), (15, 35.4), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -89,7 +94,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.43, 1.05, 1.3, 1.8)
 
 ### FRONTAGE_CARAVAN_COURT_EAST_NORTH  ·  BLD_CARAVAN_YARD_WALL_N (compound wall, 1 storey)
 
-- **Role:** compound wall. Yard wall flanking the West Mid Link: coping and string course only.
+- **Role:** compound wall. The north garden wall, patched where carts have hit it.
 - **Wall line:** east edge of `CARAVAN_COURT`; x = 15, y = 41.52 .. 47.46 (a runs south to north); length **5.94 m**; street side -X (street lies west of the wall); kit `Wall(F, (15, 41.52), (15, 47.46), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -106,13 +111,13 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.97, 1.05, 1.3, 1.8)
 
 **Construction tasks (ordered; each has an observable completion):**
 
-1. CREATE the section finish: skin `ph_whitewashed_brick_warm` with three 0.6 × 0.6 plaster repair patches (a=1.2 / 3.9 / 5.2, z 1.0..2.2) in `ph_plastered_wall`, plinth, course, coping 4.74..4.9 (closes `coping`); end piers 0.45. CREATE `BAY_01` niche at sill 1.30, a=2.97. The loading shade `CARAVAN_LOAD_SHADE_01` and pack line end at (13.8, 46.6, 4.32) / (14.65, 47.8, 4.35) on this wall's north pier: CREATE two iron eyes there. One spout at a=5.5. Completion: repaired plaster field, one niche, canopy ends bearing on eyes.
+1. CREATE the section finish: skin `ph_whitewashed_brick_warm` with three replacement-skin repairs in `ph_plastered_wall`: a=0.90..1.50, z=0.48..1.08; a=3.73..4.27, z=0.70..1.30; a=4.90..5.40, z=0.44..0.91 (SD-21; varying low cart-contact repairs, no overlay slabs), plinth, course, coping 4.74..4.9 (closes `coping`); end piers 0.45. CREATE `BAY_01` niche at sill 1.30, a=2.97. The loading shade `CARAVAN_LOAD_SHADE_01` and pack line end at (13.8, 46.6, 4.32) / (14.65, 47.8, 4.35) on this wall's north pier: CREATE two iron eyes there. One spout at a=5.5. Completion: repaired plaster field, one niche, canopy ends bearing on eyes.
 
 **Why it exists (reality check):** The north garden wall, patched where carts have hit it.
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -163,13 +168,14 @@ Stores 4.5 / 5.59; yard walls 4.9 / 5.79. Nothing on the roofs.
 
 - [ ] Two identical store doors, the south one more worn; three niches at sill 0.7.
 - [ ] Loading shade and pack line ends bear on eyes on the walls; nothing in the turning pocket at (9.2, 39.2).
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

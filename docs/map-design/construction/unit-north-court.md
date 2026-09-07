@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The drying court and release: the hammam's heavy door and service wing on the west, a small house and the dyers' yard wall with the drying station on the east, garden walls north and south, the drying line and palm overhead. Open centre, warm aged surfaces, and activity limited to the drying station and service threshold.
 
+**Character schedule (build with the numbered tasks):**
+
+- The plaster hammam, stone service wing, rubble house and cut-stone drying wall remain distinct. The retained station rug, drying cloth, planter and palm show work and domestic care around a swept open court.
+- Keep the hammam entry surround intact and eased per SD-21, with concentrated hand polish rather than a new plaster patch. Keep high walls quiet; bath steam stays by the low vent and dye stays at the drying station. Do not spread the wet-trade finish onto the home or the two garden walls.
+
 ## 2. Site
 
 ### Site · `NORTH_COURT` (North Court)
@@ -35,7 +40,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_NORTH_COURT_WEST  ·  BLD_HAMMAM (landmark, 1 storey)
 
-- **Role:** landmark. One tall bath hall with a broad closed fortified entrance and high clerestory, beside its retained closed service wing; no new playable interior or roof mass.
+- **Role:** landmark. A hammam: one heavy door, high windows for light and steam, a low vent for the furnace room.
 - **Wall line:** west edge of `NORTH_COURT`; x = 41, y = 72 .. 76 (a runs south to north); length **4 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 72), (41, 76), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -64,7 +69,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at fl
 
 ### FRONTAGE_NORTH_COURT_WEST_SOUTH  ·  BLD_HAMMAM (landmark, 1 storey)
 
-- **Role:** landmark. One tall bath hall with a broad closed fortified entrance and high clerestory, beside its retained closed service wing; no new playable interior or roof mass.
+- **Role:** landmark. The bath's service wing across the link: the stoker's door.
 - **Wall line:** west edge of `NORTH_COURT`; x = 41, y = 63.44 .. 67 (a runs south to north); length **3.56 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 63.44), (41, 67), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -91,7 +96,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.78, 1.05, 0, 2.25),
 
 ### FRONTAGE_NORTH_COURT_NORTH  ·  BLD_NORTH_YARD_WALL_N (compound wall, 1 storey)
 
-- **Role:** compound wall. Coping and string course.
+- **Role:** compound wall. The north enclosure of the drying court.
 - **Wall line:** north edge of `NORTH_COURT`; y = 80, x = 46 .. 52.04 (a runs west to east); length **6.04 m**; street side -Y (street lies south); kit `Wall(F, (46, 80), (52.04, 80), faces='S')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -115,7 +120,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.013313, 1.05, 1.3, 
 
 ### FRONTAGE_NORTH_COURT_EAST_S  ·  BLD_NORTH_HOUSE_S (house, 1 storey)
 
-- **Role:** house. Limewashed single-storey house: door on its axis, one dark-recess window mirrored each side, 1.25 m piers at the corners. Its neighbour to the north is the dyers yard wall, not another house.
+- **Role:** house. A one-room house on the court: door in the middle, a window each side, roof drains to the corner.
 - **Wall line:** east edge of `NORTH_COURT`; x = 53, y = 63.44 .. 71 (a runs south to north); length **7.56 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 63.44), (53, 71), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -143,7 +148,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at ov
 
 ### FRONTAGE_NORTH_COURT_EAST_N  ·  BLD_NORTH_DYERS_YARD (workshop, 1 storey)
 
-- **Role:** workshop. The dyers works yard: a cut-stone working wall with two blind niches flanking the axis where the rack hangs, vats and stall at its base, no door because the cart gate is in the Dogleg.
+- **Role:** workshop. The dyers' drying yard wall: no door (access from the works behind), two blind bays, the rack where cloth dries in the sun.
 - **Wall line:** east edge of `NORTH_COURT`; x = 53, y = 71 .. 78.56 (a runs south to north); length **7.56 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 71), (53, 78.56), faces='W')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -171,7 +176,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_DYERS_HANGING_TEXT
 
 ### FRONTAGE_NORTH_COURT_SOUTH  ·  BLD_NORTH_YARD_WALL_S (compound wall, 1 storey)
 
-- **Role:** compound wall. Coping and string course.
+- **Role:** compound wall. Yard wall closing the court's south side beside the dogleg arrival.
 - **Wall line:** south edge of `NORTH_COURT`; y = 62, x = 41.36 .. 45.56 (a runs west to east); length **4.2 m**; street side +Y (street lies north); kit `Wall(F, (41.36, 62), (45.56, 62), faces='N')`.
 - **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -194,7 +199,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.1, 1.05, 1.3, 1.8)]
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -253,13 +258,14 @@ Hammam 7.0 / 8.19 (no dome); east houses and walls 4.9 / 5.79; palm at (50.6, 77
 
 - [ ] Hammam door heavy and closed, high window over it; wing door and window on one axis.
 - [ ] House: door centred, windows mirrored; yard wall: two niches, rack on hooks; north and south walls: niches at sill 1.3, no gate.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 

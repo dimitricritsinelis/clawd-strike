@@ -8,6 +8,11 @@ Construction sheet. Read [README.md](README.md) first: it holds the coordinate c
 
 The northern threshold: the repaired gate arch with its blue accent spans the lane; one rug merchant on the west, the gatekeeper's quiet house on the east, the receiving backdrop beyond. Restraint: the gate is the landmark, nothing competes; repairs remain integrated into its warm aged surface.
 
+**Character schedule (build with the numbered tasks):**
+
+- The merchant plaster, retained rug rolls and warm timber face the gatekeeper rubble, planted sill and lantern. Keep the gate blue accent as the distant focal point; the house is an occupied home, not a second rug shop.
+- On FRONTAGE_RUG_GATE_WEST replace skin a=3.48..3.98, z=0.35..1.05 with `ph_worn_plaster_sun` (SD-21). The shop jambs get touch polish; the service door gets localized foot dust. Keep the unlike upper closures and use SD-21 softened plaster returns. No tilted portal or rug across its floor.
+
 ## 2. Site
 
 ### Site · `RUG_GATE` (Rug Gate)
@@ -34,7 +39,7 @@ Each package uses `section: {zoneId, modelId, faces}` with exactly the listed fa
 
 ### FRONTAGE_RUG_GATE_WEST  ·  BLD_RUG_MERCHANT (shop, 2 storeys)
 
-- **Role:** shop. A complete rug display and a closed north service door, with a paneled upper closure above the display and one smaller dark window above the entry.
+- **Role:** shop. One rug merchant with his display, his locked service door and two upper rooms; the last shop before the city gate, so no second stall crowds the portal.
 - **Wall line:** west edge of `RUG_GATE`; x = 21, y = 65.12 .. 72 (a runs south to north); length **6.88 m**; street side +X (street lies east of the wall); kit `Wall(F, (21, 65.12), (21, 72), faces='E')`.
 - **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -60,7 +65,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_RUG_ROLL_CHEST` at
 2. CREATE `GROUND_01` shop recess 2.4 × 2.7 × 1.35 at a=1.80 (as Spice); interior empty for the placed `ASSET_RUG_ROLL_CHEST` at (20.84, 66.92, 0.08). Completion: chest inside the recess.
 3. REPLACE `GROUND_02` with a closed shop-service door 1.15 × 2.7 at a=5.08 per SD-05 (`ph_rough_pine_door`, straps). This bay has no shop dressing. Completion: door reads closed; the `RUG_W_SHOP_2` collision anchor is untouched.
 4. CREATE `STORY_1_WINDOW_01` rebate 1.6 × 1.65 at sill 3.68 / head 5.33 over a=1.80 for the placed `ASSET_SHUTTER_PANELED` (z 3.68); CREATE `STORY_1_WINDOW_02` dark recess 0.9 × 1.25 at sill 3.68 / head 4.93 over a=5.08 with a closed dark leaf. Completion: two different upper closures.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, sag 0.12, two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` only. Completion: one awning, hem 2.48.
+5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` only. Completion: one awning, hem 2.48.
 6. CREATE sign brackets for `RUG_W_SIGN_1` (a=1.80, board centre z 3.10, span 2.95..3.25) at z 3.25, ±0.9. `RUG_W_SIGN_2` stays dormant. Completion: the board clears the shutter sill by 0.10.
 7. KEEP `COVER_RUG_01` cluster at (23.0, 68.2). Nothing else on the paving; the door approach (0.8 m) and the gate abutment corner stay empty. Completion: as stated.
 8. APPLY wear: dust band, polish at both openings, light bleach. Completion: as listed.
@@ -69,7 +74,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_RUG_ROLL_CHEST` at
 
 ### FRONTAGE_RUG_GATE_EAST  ·  BLD_GATE_KEEPER (house, 1 storey)
 
-- **Role:** house. Small house beside the northern gate: one door, one window beside, one above. The 1.9 m return is its blank flank.
+- **Role:** house. The gatekeeper's one-room house: a door with a lantern for the night watch, one window, nothing to sell.
 - **Wall line:** east edge of `RUG_GATE`; x = 34, y = 72 .. 76.88 (a runs south to north); length **4.88 m**; street side -X (street lies west of the wall); kit `Wall(F, (34, 72), (34, 76.88), faces='W')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -97,7 +102,7 @@ Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at ov
 
 ### FRONTAGE_RUG_GATE_EAST_SOUTH  ·  BLD_GATE_KEEPER (house, 1 storey)
 
-- **Role:** house. Small house beside the northern gate: one door, one window beside, one above. The 1.9 m return is its blank flank.
+- **Role:** house. The blank flank of the same house on the other side of the link passage.
 - **Wall line:** east edge of `RUG_GATE`; x = 34, y = 65.12 .. 67 (a runs south to north); length **1.88 m**; street side -X (street lies west of the wall); kit `Wall(F, (34, 65.12), (34, 67), faces='W')`.
 - **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
 - **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
@@ -122,7 +127,7 @@ Skin aperture input for `Wall.skin(..., openings=...)`: `[]`. Values are `(along
 
 ## 4. Free placements (dressing, cover, landmarks)
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. Anything new goes in `placements[]` of the package with the coordinates given in the tasks.
+Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
 
 | Anchor | Type | Position | W × H | Yaw | Note |
 |---|---|---|---|---:|---|
@@ -165,13 +170,14 @@ Merchant house 7.0 / 8.19 (emitted max 8.87 kept); gatekeeper 4.5 / 5.59 low; th
 - [ ] One shop recess, one closed service door, two different upper closures on the west; one door, one window on the east.
 - [ ] Sign at z 3.10 clearing the shutter frame.
 - [ ] The lantern hangs from a bracket over the gatekeeper's door; the planter sits under the window.
-- [ ] Every scheduled finished-frontage opening exists at its `a`, sill and head; Dogleg door, windows and vents remain the matching runtime-owned modules.
+- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
 - [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
 - [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
 - [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
+- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
 - [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
 - [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] Wear follows cause: dirt band at the base, streak under every spout, hand-polish at door jambs 0.9–1.4 m, cart scuffs at store doors, sun bleach on south and west upper fields only.
+- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
 
-Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.
+Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 
