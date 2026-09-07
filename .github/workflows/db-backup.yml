@@ -1,0 +1,32 @@
+name: DB Backup
+
+# Weekly export of the shared-champion Postgres tables as a workbook artifact
+# (90-day retention). Requires the repository secret POSTGRES_URL_NON_POOLING
+# (Neon direct, non-pooler connection string).
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Export
+        env:
+          POSTGRES_URL_NON_POOLING: ${{ secrets.POSTGRES_URL_NON_POOLING }}
+        run: pnpm export:postgres-audit -- --out postgres-audit.xlsx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: postgres-audit-${{ github.run_id }}
+          path: postgres-audit.xlsx
+          retention-days: 90

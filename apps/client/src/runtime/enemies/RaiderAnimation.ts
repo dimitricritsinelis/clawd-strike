@@ -6,10 +6,11 @@ import type { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
 
 const UP = new Vector3(0, 1, 0);
 const FOOT_HEIGHT_M = .13;
-const WALK_STRIDE_M = 1.1;
-const RUN_STRIDE_M = 1.4;
-const STRAFE_WALK_STRIDE_M = .65;
-const STRAFE_RUN_STRIDE_M = .7;
+const WALK_STRIDE_M = 1.35;
+const BACKWARD_WALK_STRIDE_M = 1.1;
+const RUN_STRIDE_M = 2;
+const STRAFE_WALK_STRIDE_M = .6;
+const STRAFE_RUN_STRIDE_M = 1.2;
 
 /** Movement is measured after collision and overlap resolution, in metres. */
 export class RaiderMotion {
@@ -48,8 +49,9 @@ export class RaiderMotion {
     if (this.moving) {
       this.forward = -(Math.sin(yaw) * dx + Math.cos(yaw) * dz) / distance;
       this.right = (Math.cos(yaw) * dx - Math.sin(yaw) * dz) / distance;
-      this.runWeight = Math.max(0, Math.min(1, (distance / dt - 1.7) / 1.3));
-      const forwardStride = WALK_STRIDE_M + (RUN_STRIDE_M - WALK_STRIDE_M) * this.runWeight;
+      this.runWeight = Math.max(0, Math.min(1, (distance / dt - 1.1) / 1.9));
+      const walkStride = this.forward >= 0 ? WALK_STRIDE_M : BACKWARD_WALK_STRIDE_M;
+      const forwardStride = walkStride + (RUN_STRIDE_M - walkStride) * this.runWeight;
       const sideStride = STRAFE_WALK_STRIDE_M + (STRAFE_RUN_STRIDE_M - STRAFE_WALK_STRIDE_M) * this.runWeight;
       // Side steps have shorter travel. Weight by cycles/metre so diagonal
       // blends still match displacement on both axes without sliding.
@@ -66,7 +68,8 @@ export class RaiderMotion {
 
 type Leg = {
   thigh: Bone; shin: Bone; foot: Bone; anchor: Vector3; target: Vector3; normal: Vector3;
-  releaseOffset: Vector3; planted: boolean; shift: number;
+  releaseOffset: Vector3; planted: boolean; shift: number; solePoints: Vector3[]; contactHeight: number;
+  plantPivot: Vector3; plantPosition: Vector3; plantRotation: Quaternion; rollingPlant: boolean;
 };
 
 function contactShadow(): Mesh<PlaneGeometry, MeshBasicMaterial> {
@@ -146,11 +149,33 @@ export class RaiderAnimation {
     this.low = model.getObjectByName("Raider_Low")!;
     this.high.visible = true;
     this.low.visible = false;
-    this.legs = ["R", "L"].map((side, i) => ({
-      thigh: bone(`Thigh_${side}`), shin: bone(`Shin_${side}`), foot: bone(`Foot_${side}`),
-      anchor: new Vector3(), target: new Vector3(), normal: new Vector3(),
-      releaseOffset: new Vector3(), planted: false, shift: i * .5,
-    }));
+    this.legs = ["R", "L"].map((side, i) => {
+      const foot = bone(`Foot_${side}`);
+      const solePoints: Vector3[] = [];
+      for (const mesh of [this.high, this.low]) {
+        if (!(mesh instanceof SkinnedMesh)) continue;
+        const index = mesh.skeleton.bones.indexOf(foot);
+        const positions = mesh.geometry.getAttribute("position");
+        const indices = mesh.geometry.getAttribute("skinIndex");
+        const weights = mesh.geometry.getAttribute("skinWeight");
+        for (let vertex = 0; vertex < positions.count; vertex++) {
+          let weight = 0;
+          for (let component = 0; component < 4; component++) {
+            if (indices.getComponent(vertex, component) === index) weight += weights.getComponent(vertex, component);
+          }
+          if (weight > .999) solePoints.push(new Vector3().fromBufferAttribute(positions, vertex)
+            .applyMatrix4(mesh.bindMatrix).applyMatrix4(mesh.skeleton.boneInverses[index]!));
+        }
+      }
+      if (!solePoints.length) throw new Error(`Raider asset missing rigid boot vertices ${side}`);
+      return {
+        thigh: bone(`Thigh_${side}`), shin: bone(`Shin_${side}`), foot,
+        anchor: new Vector3(), target: new Vector3(), normal: new Vector3(),
+        releaseOffset: new Vector3(), planted: false, shift: i * .5,
+        solePoints, contactHeight: FOOT_HEIGHT_M,
+        plantPivot: new Vector3(), plantPosition: new Vector3(), plantRotation: new Quaternion(), rollingPlant: false,
+      };
+    });
     this.sampledRotations = [this.chest, ...this.legs.flatMap(({ thigh, shin, foot }) => [thigh, shin, foot])]
       .map((bone) => ({ bone, rotation: bone.quaternion.clone() }));
     // The bind-pose box cannot cull a posed limb or its shadow correctly.
@@ -167,7 +192,7 @@ export class RaiderAnimation {
   reset(): void {
     this.motion.reset();
     this.shotAge = 1;
-    for (const leg of this.legs) { leg.planted = false; leg.releaseOffset.set(0, 0, 0); }
+    for (const leg of this.legs) { leg.planted = leg.rollingPlant = false; leg.releaseOffset.set(0, 0, 0); }
     this.sampleClips();
   }
 
@@ -204,18 +229,53 @@ export class RaiderAnimation {
     this.shadow.quaternion.setFromUnitVectors(this.axis.set(0,0,1),this.normal);
     let pelvisDrop = 0;
     for (const leg of this.legs) {
-      if (!grounded) { leg.planted = false; leg.releaseOffset.set(0, 0, 0); continue; }
+      if (!grounded) { leg.planted = leg.rollingPlant = false; leg.releaseOffset.set(0, 0, 0); continue; }
       leg.foot.getWorldPosition(this.target);
+      let footHeight = FOOT_HEIGHT_M;
+      if (this.directionWeights.Forward > .001) {
+        // Forward heel/toe roll changes ankle clearance. Ground the rigid boot
+        // surface, rather than forcing the rolling ankle back to a fixed height.
+        leg.foot.getWorldQuaternion(this.footRotation).invert();
+        this.axis.copy(UP).applyQuaternion(this.footRotation);
+        footHeight = -Infinity;
+        for (const point of leg.solePoints) {
+          const height = -point.dot(this.axis);
+          if (height > footHeight) { footHeight = height; leg.plantPivot.copy(point); }
+        }
+      }
       const phase = (this.motion.phase + leg.shift) % 1;
       // A reversal must finish transferring weight before taking a new plant;
       // an anchor from the outgoing stride is soon beyond the new leg's reach.
       const directionWeight = this.directionWeights[this.motion.forward >= 0 ? "Forward" : "Backward"]
         + this.directionWeights[this.motion.right >= 0 ? "Right" : "Left"];
-      const stance = this.motion.moving && this.motion.moveWeight > .9 && directionWeight > .9 && phase <= .5;
+      // Match the authored contact intervals: fast steps spend less of each
+      // cycle planted, covering more ground without forcing a crouched split.
+      const sideBlend = this.directionWeights.Left + this.directionWeights.Right;
+      const stanceEnd = .5 + ((.32 * this.directionWeights.Forward + .35 * this.directionWeights.Backward + .27 * sideBlend) - .5) * this.runBlend;
+      const stance = this.motion.moving && this.motion.moveWeight > .9 && directionWeight > .9 && phase <= stanceEnd
+        && (this.directionWeights.Forward < .001 || this.target.y - position.y - footHeight < .003);
+      const rollingPlant = stance && this.directionWeights.Forward > .001;
       if (stance) {
-        if (!leg.planted || leg.anchor.distanceTo(this.target) > .6) leg.anchor.copy(this.target);
-        this.target.x = leg.anchor.x;
-        this.target.z = leg.anchor.z;
+        if (rollingPlant) {
+          // Keep the supporting surface point still, not the ankle. Switching
+          // from heel to forefoot rebases on the previous resolved pose, so the
+          // ankle can roll continuously without snapping to a new anchor.
+          if (leg.planted && leg.rollingPlant && leg.plantPosition.distanceTo(this.target) < .6) {
+            const ground = surfaces?.sample(this.target.x, this.target.z, position.y);
+            this.normal.set(ground?.normal.x ?? 0, ground?.normal.y ?? 1, ground?.normal.z ?? 0);
+            leg.foot.getWorldQuaternion(this.footRotation);
+            this.deltaRotation.setFromUnitVectors(UP, this.normal);
+            this.footRotation.premultiply(this.deltaRotation);
+            leg.anchor.copy(leg.plantPivot).applyQuaternion(leg.plantRotation).add(leg.plantPosition);
+            this.to.copy(leg.plantPivot).applyQuaternion(this.footRotation);
+            this.target.x = leg.anchor.x - this.to.x;
+            this.target.z = leg.anchor.z - this.to.z;
+          }
+        } else {
+          if (!leg.planted || leg.rollingPlant || leg.anchor.distanceTo(this.target) > .6) leg.anchor.copy(this.target);
+          this.target.x = leg.anchor.x;
+          this.target.z = leg.anchor.z;
+        }
         leg.foot.getWorldPosition(leg.releaseOffset);
         leg.releaseOffset.subVectors(this.target, leg.releaseOffset);
         leg.releaseOffset.y = 0;
@@ -226,10 +286,12 @@ export class RaiderAnimation {
         this.target.add(leg.releaseOffset);
       }
       leg.planted = stance;
+      leg.rollingPlant = rollingPlant;
       const ground = surfaces?.sample(this.target.x, this.target.z, position.y);
       const groundY = ground?.elevationM ?? position.y;
-      const lift = stance ? 0 : Math.max(0, this.target.y - position.y - FOOT_HEIGHT_M);
-      this.target.y = position.y + Math.max(-.35, Math.min(.35, groundY - position.y)) + FOOT_HEIGHT_M + lift;
+      const lift = stance ? 0 : Math.max(0, this.target.y - position.y - footHeight);
+      leg.contactHeight = footHeight / (this.directionWeights.Forward > .001 ? ground?.normal.y ?? 1 : 1);
+      this.target.y = position.y + Math.max(-.35, Math.min(.35, groundY - position.y)) + leg.contactHeight + lift;
       leg.target.copy(this.target);
       leg.normal.set(ground?.normal.x ?? 0, ground?.normal.y ?? 1, ground?.normal.z ?? 0);
       leg.thigh.getWorldPosition(this.hip);
@@ -251,6 +313,8 @@ export class RaiderAnimation {
         this.target.copy(leg.target);
         this.normal.copy(leg.normal);
         this.solveLeg(leg);
+        leg.foot.getWorldPosition(leg.plantPosition);
+        leg.foot.getWorldQuaternion(leg.plantRotation);
       }
     }
   }
@@ -301,7 +365,14 @@ export class RaiderAnimation {
     const distance = Math.max(Math.abs(upper - lower) + .0001, Math.min(this.axis.length(), upper + lower - .0001));
     this.axis.normalize();
     const along = (upper * upper - lower * lower + distance * distance) / (2 * distance);
-    this.bend.copy(this.forward).addScaledVector(this.axis, -this.forward.dot(this.axis)).normalize();
+    // Preserve the authored knee pole, including the strafe hip turn. Forcing
+    // every knee toward aim erases lower-body direction during foot correction.
+    this.bend.subVectors(this.knee, this.hip);
+    this.bend.addScaledVector(this.axis, -this.bend.dot(this.axis));
+    if (this.bend.lengthSq() < .000001) {
+      this.bend.copy(this.forward).addScaledVector(this.axis, -this.forward.dot(this.axis));
+    }
+    this.bend.normalize();
     this.desiredKnee.copy(this.hip).addScaledVector(this.axis, along)
       .addScaledVector(this.bend, Math.sqrt(Math.max(0, upper * upper - along * along)));
     this.rotateBone(leg.thigh, this.from.subVectors(this.knee, this.hip), this.to.subVectors(this.desiredKnee, this.hip));

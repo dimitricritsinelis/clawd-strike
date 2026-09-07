@@ -154,3 +154,28 @@ test("a normal run summary still normalizes unchanged", () => {
   assert.deepEqual(normalized.headshotsPerWave, [0]);
   assert.equal(normalized.kills, 1);
 });
+
+// Regression: the in-memory limiter is per lambda instance, so the run
+// endpoints also consult the database-backed limiter, keyed by namespace.
+test("run-finish honours the shared database rate limiter", async () => {
+  const recording = createRecordingStore();
+  const seenKeys: string[] = [];
+  (recording.store as { isRateLimited: SharedChampionStore["isRateLimited"] }).isRateLimited =
+    async (key) => {
+      seenKeys.push(key);
+      return true;
+    };
+
+  const response = await handleSharedChampionRunFinishRequest(
+    runFinishRequest(
+      { "content-type": "application/json", origin: "https://example.test" },
+      { runToken: "abc", summary: validSummary() },
+    ),
+    recording.store,
+  );
+
+  assert.equal(response.status, 429);
+  assert.equal(seenKeys.length, 1);
+  assert.match(seenKeys[0]!, /^run-finish:/);
+  assert.equal(recording.auditEvents.length, 0);
+});

@@ -26,7 +26,7 @@ import {
 
 const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 // The captured repository defaults to the adapter's own checkout, but the
-// orchestrator may target another repo with --repo-root; the QA server and the
+// caller may target another repo with --repo-root; the QA server and the
 // reference board must then come from that repo, never silently from this one.
 const TOOL_REPO_ROOT = path.resolve(SCRIPT_DIR, "../../..");
 let CLIENT_ROOT = path.resolve(SCRIPT_DIR, "..");
@@ -82,6 +82,7 @@ function usage() {
     "Usage:",
     "  node scripts/map-polish-capture.mjs capture --plan <json> --output <dir> [--synthetic <variant>] [--repo-root <dir>]",
     "  node scripts/map-polish-capture.mjs compare --before <png> --after <png>",
+    "  node scripts/map-polish-capture.mjs pair --pairs <json: [{ id, before, after, note? }]> --out <png>",
   ].join("\n");
 }
 
@@ -867,6 +868,43 @@ async function runCompare(options) {
   console.log(JSON.stringify(result));
 }
 
+const PAIR_VIEW_WIDTH = 640;
+const PAIR_VIEW_HEIGHT = 400; // captures are 1440x900
+const PAIR_GUTTER = 10;
+const PAIR_LABEL_HEIGHT = 34;
+
+/** One sheet of before/after rows so a round is judged frame to frame in a single image. */
+async function runPair(options) {
+  const pairsPath = path.resolve(requireOption(options, "pairs"));
+  const outPath = path.resolve(requireOption(options, "out"));
+  const unexpected = Object.keys(options).filter((key) => !["pairs", "out"].includes(key));
+  if (unexpected.length > 0) throw new Error(`Unknown pair option(s): ${unexpected.map((key) => `--${key}`).join(", ")}`);
+  const pairs = JSON.parse(await readFile(pairsPath, "utf8"));
+  const wellFormed = (pair) => pair && typeof pair.id === "string" && typeof pair.before === "string" && typeof pair.after === "string";
+  if (!Array.isArray(pairs) || pairs.length === 0 || !pairs.every(wellFormed)) {
+    throw new Error("pairs must be a non-empty array of { id, before, after, note? }");
+  }
+  const width = PAIR_GUTTER * 3 + PAIR_VIEW_WIDTH * 2;
+  const composites = [];
+  let top = 0;
+  for (const pair of pairs) {
+    composites.push({ input: labelSvg(width, PAIR_LABEL_HEIGHT, [pair.note ? `${pair.id}  ·  ${pair.note}` : pair.id]), left: 0, top });
+    const rowTop = top + PAIR_LABEL_HEIGHT;
+    for (const [index, [badge, file]] of [["BEFORE", pair.before], ["AFTER", pair.after]].entries()) {
+      const left = PAIR_GUTTER + index * (PAIR_VIEW_WIDTH + PAIR_GUTTER);
+      composites.push({ input: await thumbnailOrPlaceholder(file, badge, PAIR_VIEW_WIDTH, PAIR_VIEW_HEIGHT), left, top: rowTop });
+      composites.push({ input: labelSvg(88, 26, [badge]), left: left + 8, top: rowTop + 8 });
+    }
+    top = rowTop + PAIR_VIEW_HEIGHT + PAIR_GUTTER;
+  }
+  await ensureDir(path.dirname(outPath));
+  await sharp({ create: { width, height: top, channels: 3, background: "#0f172a" } })
+    .composite(composites)
+    .png()
+    .toFile(outPath);
+  console.log(JSON.stringify({ pairs: pairs.length, path: outPath }));
+}
+
 export async function main(argv = process.argv.slice(2)) {
   const { command, options } = parseOptions(argv);
   if (command === "help") {
@@ -875,6 +913,7 @@ export async function main(argv = process.argv.slice(2)) {
   }
   if (command === "capture") return runCapture(options);
   if (command === "compare") return runCompare(options);
+  if (command === "pair") return runPair(options);
   throw new Error(`Unknown command '${command}'\n${usage()}`);
 }
 

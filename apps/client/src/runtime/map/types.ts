@@ -217,6 +217,17 @@ export type RuntimeSectionModel = {
   materialIds: string[];
 };
 
+/** Free render-only GLB placed by an area package; design metres, base-centre origin. */
+export type RuntimeAuthoredPlacement = {
+  id: string;
+  unit: string;
+  modelId: string;
+  position: RuntimeVec3;
+  yawDeg: number;
+  role: "dressing" | "skyline";
+  materialIds: string[];
+};
+
 export type RuntimeDressingClassification = "gameplay_cover" | "soft_visual" | "overhead";
 
 export type RuntimeAssetRegistryEntry = {
@@ -318,6 +329,7 @@ export type RuntimeBlockoutSpec = {
   facadeProfiles?: RuntimeFacadeProfile[];
   architecturePlacements?: RuntimeArchitecturePlacement[];
   sectionModels?: RuntimeSectionModel[];
+  authoredPlacements?: RuntimeAuthoredPlacement[];
   assetRegistry?: RuntimeAssetRegistryEntry[];
   dressingClusters?: RuntimeDressingCluster[];
   dressingPlacements?: RuntimeDressingPlacement[];
@@ -2504,6 +2516,22 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     };
   });
 
+  const authoredPlacements = optionalArray(obj.authoredPlacements, `${source}.authoredPlacements`)?.map((raw, index): RuntimeAuthoredPlacement => {
+    const path = `${source}.authoredPlacements[${index}]`;
+    const entry = asObject(raw, path);
+    const role = asString(entry.role, `${path}.role`);
+    if (role !== "dressing" && role !== "skyline") failParse(`${path}.role`, "must be dressing or skyline");
+    return {
+      id: asString(entry.id, `${path}.id`),
+      unit: asString(entry.unit, `${path}.unit`),
+      modelId: asString(entry.modelId, `${path}.modelId`),
+      position: parseVec3(entry.position, `${path}.position`),
+      yawDeg: asNumber(entry.yawDeg, `${path}.yawDeg`),
+      role,
+      materialIds: (optionalArray(entry.materialIds, `${path}.materialIds`) ?? []).map((id, i) => asString(id, `${path}.materialIds[${i}]`)),
+    };
+  });
+
   let mapCenter: RuntimeBlockoutSpec["mapCenter"];
   if (typeof obj.mapCenter !== "undefined") {
     const center = asObject(obj.mapCenter, `${source}.mapCenter`);
@@ -2546,6 +2574,7 @@ export function parseBlockoutSpec(value: unknown, source = "map_spec.json"): Run
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
     ...(sectionModels ? { sectionModels } : {}),
+    ...(authoredPlacements ? { authoredPlacements } : {}),
     ...(assetRegistry ? { assetRegistry } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),

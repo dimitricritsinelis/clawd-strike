@@ -112,7 +112,7 @@ export async function handleSharedChampionRequest(
       }
 
       // ── Rate limiting ───────────────────────────────────────────────────
-      const rateLimited = await store.isRateLimited(clientIpFingerprint);
+      const rateLimited = await store.isRateLimited(clientIpFingerprint, { windowMs: 30_000, maxRequests: 1 });
       if (rateLimited) {
         console.log(`[champion-submit] ip=${clientIpLogTag} result=rate-limited`);
         return errorResponse(429, "Too many submissions. Try again later.");

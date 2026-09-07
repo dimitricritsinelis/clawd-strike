@@ -36,7 +36,7 @@ import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 import { buildDoorModels } from "./buildDoorModels";
-import { buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
+import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
 import { buildDecorativePalms } from "./buildDecorativePalms";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildV3Architecture, type V3ArchitectureBuildResult } from "./v3Architecture";
@@ -3235,6 +3235,9 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   }
   if (options.facadeModels && spec.sectionModels?.length) {
     root.add(buildSectionModels(spec.sectionModels, options.facadeModels, packBinding));
+  }
+  if (options.facadeModels && spec.authoredPlacements?.length) {
+    root.add(buildAuthoredPlacements(spec.authoredPlacements, options.facadeModels, packBinding));
   }
 
   const decorativePalms = buildDecorativePalms(options.anchors, options.seed, wallTextureQuality);

@@ -2138,6 +2138,23 @@
         "additionalProperties": false
       }
     },
+    "authored_placements": {
+      "type": "array",
+      "description": "Free render-only GLBs placed by area packages (scripts/apply-facade-package.mjs placements). Design metres, base-centre origin, yawDeg as anchors[].yawDeg.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "unit", "modelId", "position", "yawDeg", "role"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "unit": { "type": "string", "minLength": 1 },
+          "modelId": { "type": "string", "minLength": 1 },
+          "position": { "$ref": "#/$defs/offset_m" },
+          "yawDeg": { "type": "number" },
+          "role": { "type": "string", "enum": ["dressing", "skyline"] }
+        }
+      }
+    },
     "dressing_placements": {
       "type": "array",
       "minItems": 1,
@@ -2451,15 +2468,6 @@
           "storeys",
           "brief",
           "faces",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
-          "walls",
           "walls"
         ],
         "additionalProperties": false,

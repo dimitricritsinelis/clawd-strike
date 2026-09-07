@@ -92,7 +92,7 @@ const CREATE_SUBMISSIONS_LOG_INDEX_SQL = `
 const RATE_LIMIT_CHECK_SQL = `
   SELECT COUNT(*) AS recent
   FROM champion_submissions_log
-  WHERE client_ip_fingerprint = $1 AND submitted_at > NOW() - INTERVAL '30 seconds';
+  WHERE client_ip_fingerprint = $1 AND submitted_at > NOW() - ($2::int * INTERVAL '1 millisecond');
 `;
 
 const RATE_LIMIT_INSERT_SQL = `
@@ -660,8 +660,13 @@ export type SharedChampionStore = {
     updated: boolean;
     champion: SharedChampion | null;
   }>;
-  isRateLimited: (clientIpFingerprint: string) => Promise<boolean>;
-  logSubmission: (clientIpFingerprint: string) => Promise<void>;
+  /**
+   * Shared (database-backed) sliding-window limiter. `key` is a namespaced
+   * fingerprint such as `run-start:<ipFingerprint>`. Unlike the per-instance
+   * in-memory limiter in highScoreSecurity.ts, this holds across lambdas.
+   */
+  isRateLimited: (key: string, limit: RateLimit) => Promise<boolean>;
+  logSubmission: (key: string) => Promise<void>;
   issueRunToken: (input: {
     runId: string;
     tokenHash: string;
@@ -703,6 +708,8 @@ export type SharedChampionStore = {
   listNames: (filters: ResolvedSharedChampionStatsFilters, limit: number) => Promise<SharedChampionStatsNameRollup[]>;
   listDaily: (filters: ResolvedSharedChampionStatsFilters, limit: number) => Promise<SharedChampionStatsDailyRollup[]>;
 };
+
+export type RateLimit = { windowMs: number; maxRequests: number };
 
 type InMemoryRunTokenRecord = SharedChampionRunTokenRecord & {
   tokenHash: string;
@@ -2419,14 +2426,14 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
         champion: row ? mapRowToChampion(row, `shared_champion_scores:${boardKey}`) : null,
       };
     },
-    async isRateLimited(clientIpFingerprint) {
+    async isRateLimited(key, limit) {
       await ensureSchemaReady();
-      const result = await getPool("write").query<{ recent: string }>(RATE_LIMIT_CHECK_SQL, [clientIpFingerprint]);
-      return parseBigIntCount(result.rows[0]?.recent) > 0;
+      const result = await getPool("write").query<{ recent: string }>(RATE_LIMIT_CHECK_SQL, [key, limit.windowMs]);
+      return parseBigIntCount(result.rows[0]?.recent) >= limit.maxRequests;
     },
-    async logSubmission(clientIpFingerprint) {
+    async logSubmission(key) {
       await ensureSchemaReady();
-      await getPool("write").query(RATE_LIMIT_INSERT_SQL, [clientIpFingerprint]);
+      await getPool("write").query(RATE_LIMIT_INSERT_SQL, [key]);
       if (shouldRunRetentionSweep()) getPool("write").query(RATE_LIMIT_CLEANUP_SQL).catch(() => {});
     },
     async issueRunToken(input) {

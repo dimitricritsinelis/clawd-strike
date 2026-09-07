@@ -304,18 +304,18 @@ body.select_set(False)
 bpy.ops.object.mode_set(mode='EDIT')
 definition = {
     'Root': ((0,0,0), (0,0,.2), None),
-    'Pelvis': ((0,0,.94), (0,0,1.07), 'Root'),
+    'Pelvis': ((0,0,.965), (0,0,1.07), 'Root'),
     'Spine': ((0,0,1.07), (.02,0,1.27), 'Pelvis'),
     'Chest': ((.02,0,1.27), (.08,0,1.49), 'Spine'),
     'Head': ((.18,-.10,1.55), (.25,-.10,1.78), 'Chest'),
-    'Thigh_R': ((0,-.15,.94), (.17,-.155,.525), 'Pelvis'),
+    'Thigh_R': ((0,-.15,.965), (.17,-.155,.525), 'Pelvis'),
     'Shin_R': ((.17,-.155,.525), (0,-.16,.13), 'Thigh_R'),
     'Foot_R': ((0,-.16,.13), (.18,-.176,.13), 'Shin_R'),
-    'Thigh_L': ((0,.16,.94), (.17,.16,.525), 'Pelvis'),
+    'Thigh_L': ((0,.16,.965), (.17,.16,.525), 'Pelvis'),
     'Shin_L': ((.17,.16,.525), (0,.16,.13), 'Thigh_L'),
     'Foot_L': ((0,.16,.13), (.18,.176,.13), 'Shin_L'),
 }
-# Bind to neutral 45 cm thighs and 43 cm shins for the selected higher hip
+# Bind to neutral 47.5 cm thighs and 43 cm shins for the selected higher hip
 # pivot. Unpose the donor geometry into this frame to keep the knees aligned.
 for side in ['L','R']:
     hip = Vector(definition['Thigh_'+side][0])
@@ -323,7 +323,7 @@ for side in ['L','R']:
     axis = (ankle-hip).normalized()
     bend = Vector((1,0,0))
     bend = (bend-axis*bend.dot(axis)).normalized()
-    upper = .45
+    upper = .475
     distance = (ankle-hip).length
     along = (upper**2 - .43**2 + distance**2) / (2*distance)
     knee = hip + axis*along + bend*math.sqrt(upper**2-along**2)
@@ -374,10 +374,11 @@ for name, (head, tail, parent) in definition.items():
 bpy.ops.object.mode_set(mode='OBJECT')
 rig.show_in_front = True
 rig['heightM'] = 1.8
-rig['walkStrideM'] = 1.10
-rig['runStrideM'] = 1.40
-rig['strafeWalkStrideM'] = .65
-rig['strafeRunStrideM'] = .70
+rig['walkStrideM'] = 1.35
+rig['backwardWalkStrideM'] = 1.10
+rig['runStrideM'] = 2.0
+rig['strafeWalkStrideM'] = .60
+rig['strafeRunStrideM'] = 1.2
 rig['footHeightM'] = .13
 rig['forwardAxis'] = '+X'
 rig['reviewStatus'] = 'Candidate; legacy asset retained pending user approval'
@@ -391,7 +392,7 @@ for surface in [body, hero]:
     for v in surface.data.vertices:
         x, y, z = v.co
         weights = {}
-        if z < .97:
+        if z < 1.06:
             # The original stance is staggered. Split on the anatomical diagonal,
             # not world Y alone, which otherwise attaches inner boots to both legs.
             left = smooth(-.08, .08, y + .32 * (x-.08))
@@ -400,7 +401,9 @@ for surface in [body, hero]:
             # Keep the leather boot rigid. Blend into the shin only through
             # the trouser cuff, so ankle flexion cannot collapse the boot shaft.
             foot = 1-smooth(.25, .34, z)
-            weights['Pelvis'] = pelvis
+            spine = smooth(.94, 1.06, z)
+            weights['Pelvis'] = pelvis * (1-spine)
+            weights['Spine'] = pelvis * spine
             for side, side_weight in [('L', left), ('R', 1-left)]:
                 weights['Thigh_'+side] = (1-pelvis) * (1-shin) * side_weight
                 weights['Shin_'+side] = (1-pelvis) * shin * (1-foot) * side_weight
@@ -455,9 +458,19 @@ def set_bone(name, head, tail):
     pb.matrix = Matrix.LocRotScale(Vector(head), rotation, Vector((1,1,1)))
     bpy.context.view_layer.update()
 
-def leg(side, ankle, pelvis_offset):
-    hip = Vector(definition['Thigh_'+side][0]) + pelvis_offset
-    hip.x = pelvis_offset.x
+# Rigid boot vertices define the real heel/toe clearance during forward roll.
+boot_points = {}
+for side in ['R', 'L']:
+    boot_points[side] = [v.co-Vector(definition['Foot_'+side][0])
+        for surface in [body, hero] for v in surface.data.vertices
+        if any(g.group == surface.vertex_groups['Foot_'+side].index and g.weight > .999 for g in v.groups)]
+
+def foot_rotation(side, pitch):
+    forward = Vector((.18, -.016 if side == 'R' else .016, 0))
+    return forward.normalized().rotation_difference((Quaternion((0,1,0), pitch) @ forward).normalized())
+
+def leg(side, ankle, pelvis_offset, pelvis_rotation, pitch=0):
+    hip = Vector(definition['Pelvis'][0]) + pelvis_offset + pelvis_rotation @ (Vector(definition['Thigh_'+side][0])-Vector(definition['Pelvis'][0]))
     target = Vector(ankle)
     upper = (Vector(definition['Thigh_'+side][1])-Vector(definition['Thigh_'+side][0])).length
     lower = (Vector(definition['Shin_'+side][1])-Vector(definition['Shin_'+side][0])).length
@@ -465,53 +478,96 @@ def leg(side, ankle, pelvis_offset):
     distance = min(direction.length, upper+lower-.0005)
     direction.normalize()
     along = (upper*upper-lower*lower+distance*distance)/(2*distance)
-    bend = Vector((1,0,0))
+    bend = pelvis_rotation @ Vector((1,0,0))
     bend -= direction*bend.dot(direction)
     bend.normalize()
     knee = hip + direction*along + bend*math.sqrt(max(0,upper*upper-along*along))
     set_bone('Thigh_'+side, hip, knee)
     set_bone('Shin_'+side, knee, target)
-    set_bone('Foot_'+side, target, target+Vector((.18, -.016 if side=='R' else .016, 0)))
+    set_bone('Foot_'+side, target, target+foot_rotation(side, pitch) @ Vector((.18, -.016 if side=='R' else .016, 0)))
 
 def pose(phase=0, stride=0, direction=(1,0), run=False, idle_time=0):
     for pb in rig.pose.bones:
         pb.matrix_basis.identity()
     # Let the supporting leg extend as the feet pass beneath the hips.
     # The reach limit below lowers the pelvis only where the stride needs it.
-    offset = Vector((0, math.sin(phase*math.tau)*.012 if stride else 0, .075 if stride else .01))
+    cycle = math.sin(phase*math.tau) if stride else 0
+    forward_walk = bool(stride and direction[0] > 0)
+    offset = Vector((.035 if forward_walk else 0, -cycle*.025, (.065 if forward_walk else .075) if stride else .045))
+    # Rotate around anatomical world axes; bone-local axes include bind roll.
+    strafe_turn = direction[1]*.18 if stride else 0
+    pelvis_rotation = Quaternion((0,0,1), strafe_turn + cycle*.025) @ Quaternion((1,0,0), cycle*.012)
     if stride:
-        offset.z += math.cos(phase*math.tau*2) * (.008 if run else .005)
+        offset.z += (-math.cos((phase-.05)*math.tau*2)*.005 if forward_walk
+            else math.cos(phase*math.tau*2)*(.008 if run else .005))
+    stance = (.27 if direction[1] else (.32 if forward_walk else .35)) if run else .5
     targets = []
     for side, shift in [('R',0),('L',.5)]:
         p = (phase+shift)%1
-        if p <= .5:
-            travel = stride*(.25-p)
+        pitch = 0
+        if p <= stance:
+            if forward_walk:
+                pitch = -.4*(1-smooth(0, .22, p/stance)) + .28*smooth(.6, 1, p/stance)
+            travel = stride*(stance/2-p)
             lift = 0
         else:
-            t = (p-.5)*2
-            travel = stride*(-.25+.5*t)
-            lift = math.sin(t*math.pi)**1.4 * (.16 if run else .085)
-        # Side steps land on separate lateral lanes. A shorter strafe stride
-        # leaves room for the trailing boot to close without crossing the lead.
-        half_stance = (.32 if run else .295) if direction[1] else .16
-        ankle = (direction[0]*travel, (-half_stance if side=='R' else half_stance)+direction[1]*travel, .13+lift)
-        targets.append((side, ankle))
-        hip = Vector(definition['Thigh_'+side][0]) + offset
+            t = (p-stance)/(1-stance)
+            travel = stride*stance*(t-.5)
+            lift = math.sin(t*math.pi)**(.8 if forward_walk else 1.4) * (.16 if run else .085)
+            if forward_walk:
+                # Ease vertical lift to zero velocity at contact, retaining
+                # the accepted arc beyond the first/last 8% of swing.
+                edge = min(t, 1-t)
+                if edge < .08:
+                    u = edge/.08
+                    height = math.sin(.08*math.pi)**.8
+                    tangent = .08*.8*math.pi*math.cos(.08*math.pi)*math.sin(.08*math.pi)**(-.2)
+                    lift = ((-2*u**3+3*u*u)*height+(u**3-u*u)*tangent)*(.16 if run else .085)
+                # Match contact velocity at both ends of the swing, rather
+                # than reversing the foot instantly at lift-off and landing.
+                start, end = -stride*stance/2, stride*stance/2
+                tangent = -stride*(1-stance)
+                travel = (2*t**3-3*t*t+1)*start + (t**3-2*t*t+t)*tangent + (-2*t**3+3*t*t)*end + (t**3-t*t)*tangent
+                pitch = .28-.68*smooth(0, 1, t)
+        # Faster gaits cover more ground per cycle with a shorter plant, not
+        # a wider split. Separate lanes retain trailing-boot clearance.
+        half_stance = (.31 if run else .285) if direction[1] else .16
+        height = -min((foot_rotation(side, pitch) @ point).z for point in boot_points[side]) if forward_walk else .13
+        ankle = (direction[0]*travel, (-half_stance if side=='R' else half_stance)+direction[1]*travel, height+lift)
+        targets.append((side, ankle, pitch))
+        hip = Vector(definition['Pelvis'][0]) + offset + pelvis_rotation @ (Vector(definition['Thigh_'+side][0])-Vector(definition['Pelvis'][0]))
         horizontal_sq = (ankle[0]-hip.x)**2 + (ankle[1]-hip.y)**2
         # Keep both authored targets reachable with knee flexion. Clamping only
         # the knee solver while keying an unreachable ankle stretches the shin.
-        max_hip_z = ankle[2] + math.sqrt(max(0, (.45+.43-.005)**2-horizontal_sq))
+        max_hip_z = ankle[2] + math.sqrt(max(0, (.475+.43-.005)**2-horizontal_sq))
         offset.z = min(offset.z, max_hip_z-definition['Thigh_'+side][0][2])
     pelvis = rig.pose.bones['Pelvis']
     pelvis.location = armature.bones['Pelvis'].matrix_local.to_quaternion().inverted() @ offset
-    rig.pose.bones['Spine'].rotation_mode = 'QUATERNION'
-    # Raising the pelvis relaxes the knees while retaining the authored head
-    # and rifle height inside the existing gameplay envelope.
-    rig.pose.bones['Spine'].location = armature.bones['Spine'].matrix_local.to_quaternion().inverted() @ Vector((0,0,-max(0,offset.z)))
-    rig.pose.bones['Spine'].rotation_quaternion = Quaternion((0,0,1), .004*math.sin(idle_time*math.tau/3))
+    pelvis.rotation_mode = 'QUATERNION'
+    rest = armature.bones['Pelvis'].matrix_local.to_quaternion()
+    pelvis.rotation_quaternion = rest.inverted() @ pelvis_rotation @ rest
+    # Let the torso ride the pelvis instead of telescoping down at the waist.
+    # A small upright correction and counter-rotation retain the two-hand aim
+    # while giving the shoulders weight transfer through every step.
+    shoulder_cycle = math.sin((phase-.025)*math.tau) if forward_walk else cycle
+    for name, rotation in [
+        ('Spine', Quaternion((0,1,0), -.035) @ Quaternion((0,0,1), -strafe_turn - cycle*.015)),
+        ('Chest', Quaternion((1,0,0), -shoulder_cycle*.025) @ Quaternion((0,1,0),
+            math.cos(phase*math.tau*2)*.012 if stride else .004*math.sin(idle_time*math.tau/3))),
+    ]:
+        rest = armature.bones[name].matrix_local.to_quaternion()
+        pb = rig.pose.bones[name]
+        pb.rotation_mode = 'QUATERNION'
+        pb.rotation_quaternion = rest.inverted() @ rotation @ rest
+    if forward_walk:
+        # The head responds slightly later and counters part of the chest
+        # pitch, keeping the rifle-facing pose steady through the weight shift.
+        rest = armature.bones['Head'].matrix_local.to_quaternion()
+        rig.pose.bones['Head'].rotation_mode = 'QUATERNION'
+        rig.pose.bones['Head'].rotation_quaternion = rest.inverted() @ Quaternion((0,1,0), -.004*math.cos((phase-.04)*math.tau*2)) @ rest
     bpy.context.view_layer.update()
-    for side, ankle in targets:
-        leg(side, ankle, offset)
+    for side, ankle, pitch in targets:
+        leg(side, ankle, offset, pelvis_rotation, pitch)
 
 def animation(name, seconds, stride=0, direction=(1,0), run=False):
     frames = round(seconds*60)
@@ -533,8 +589,8 @@ def animation(name, seconds, stride=0, direction=(1,0), run=False):
 
 animation('Idle', 3)
 for label, direction in [('Forward',(1,0)),('Backward',(-1,0)),('Left',(0,1)),('Right',(0,-1))]:
-    animation('Walk'+label, 1, .65 if direction[1] else 1.10, direction)
-    animation('Run'+label, .6, .70 if direction[1] else 1.40, direction, True)
+    animation('Walk'+label, 1, .60 if direction[1] else (1.35 if direction[0] > 0 else 1.10), direction)
+    animation('Run'+label, .6, 1.2 if direction[1] else 2.0, direction, True)
 for track in rig.animation_data.nla_tracks:
     track.mute = True
 pose()

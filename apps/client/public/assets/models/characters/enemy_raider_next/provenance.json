@@ -2,7 +2,7 @@
   "name": "Skinned raider candidate",
   "status": "Awaiting user design approval",
   "source": "repo://assets/source/enemy-raider/build.py",
-  "sourceMd5": "72f32baf24f696fb329204f18ad69bf7",
+  "sourceMd5": "c8f9c2a2ef31c6a89a8b910c0ab9fb6d",
   "license": "Existing project Tripo character; rifle derivative CC-BY-NC-4.0; new rig and motion Project-Original",
   "dependencies": [
     {
@@ -65,7 +65,7 @@
     },
     {
       "file": "raider.glb",
-      "md5": "99178d728b655a10ef1f0ff20e4c7dbf"
+      "md5": "40cdbd1c563635848f4f85c2b1fddee7"
     }
   ]
 }

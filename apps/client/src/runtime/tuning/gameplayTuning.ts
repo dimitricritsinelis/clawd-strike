@@ -585,7 +585,7 @@ export const DESKTOP_AGENT_GAMEPLAY_TUNING = defineBaselineProfile({
  * Historical legacy values intentionally do not remain as live profile
  * defaults. A future profile divergence must start from the baseline above,
  * override only approved fields, bump that profile's revision, and document
- * the reason in docs/gameplay-balancing.md.
+ * the reason in a code comment beside the override.
  */
 
 /** Deeply frozen profiles share one immutable baseline; no mutable runtime inheritance occurs. */

@@ -2,6 +2,24 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { Ak47Motion } from "./Ak47Motion";
 
+test("steady walking keeps the approved 40 percent reduction in sway, bounce, and roll", () => {
+  for (const fps of [30, 60, 144]) {
+    const walking = new Ak47Motion(), idle = new Ak47Motion();
+    const peaks = { x: 0, y: 0, roll: 0 };
+    for (let frame = 0; frame < fps * 6; frame++) {
+      walking.update(1 / fps, 5, true, 0, 0);
+      idle.update(1 / fps, 0, true, 0, 0);
+      if (frame < fps * 2) continue;
+      for (const axis of ["x", "y", "roll"] as const) {
+        peaks[axis] = Math.max(peaks[axis], Math.abs(walking.pose[axis] - idle.pose[axis]));
+      }
+    }
+    for (const [axis, expected] of [["x", .0036], ["y", .0033], ["roll", .0054]] as const) {
+      assert.ok(Math.abs(peaks[axis] - expected) < expected * .01, `${axis} walking amplitude at ${fps} FPS: ${peaks[axis]}`);
+    }
+  }
+});
+
 test("one shot has a short shoulder kick, limited muzzle rise, and little rebound", () => {
   const motion = new Ak47Motion();
   motion.shot();

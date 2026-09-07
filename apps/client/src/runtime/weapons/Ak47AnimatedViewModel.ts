@@ -324,7 +324,9 @@ export class Ak47AnimatedViewModel implements WeaponViewModel {
     const smooth = (x: number): number => { x = Math.max(0, Math.min(1, x)); return x * x * (3 - 2 * x); };
     const reloadTilt = this.reloading ? smooth(this.reloadProgress / .16) * (1 - smooth((this.reloadProgress - .80) / .20)) : 0;
     this.weaponRoot.position.set(BASE_POSITION.x + pose.x - reloadTilt * .045, BASE_POSITION.y + pose.y + reloadTilt * .075, BASE_POSITION.z + pose.z - reloadTilt * .035);
-    this.weaponRoot.rotation.set(pose.pitch - reloadTilt * .08, pose.yaw + reloadTilt * .16, BASE_ROLL + pose.roll - reloadTilt * .65);
+    // Expose the trigger and contacting index instead of hiding them behind
+    // the near side of the grip during the magazine change.
+    this.weaponRoot.rotation.set(pose.pitch - reloadTilt * .08, pose.yaw + reloadTilt * .48, BASE_ROLL + pose.roll - reloadTilt * .65);
     // Keep the bolt's first visible pose even when a slow frame spans its entire cycle.
     this.mixer?.update(this.shotPending ? Math.min(dt, 1 / 60) : dt);
     if (!this.shotPending) this.flashAge += dt;

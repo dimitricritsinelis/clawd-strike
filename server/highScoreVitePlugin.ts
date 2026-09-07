@@ -12,7 +12,6 @@ import {
   handleSharedChampionRunStartRequest,
 } from "./highScoreRunApi";
 import { createInMemorySharedChampionStore } from "./highScoreStore";
-import { handleSessionRequest } from "./sessionToken";
 
 const devStore = createInMemorySharedChampionStore();
 
@@ -85,21 +84,6 @@ export function createSharedChampionDevPlugin(): Plugin {
         next: Connect.NextFunction,
       ) => {
         const pathname = request.url ? new URL(request.url, "http://127.0.0.1").pathname : "";
-
-        if (pathname === "/api/session") {
-          try {
-            const webRequest = await toWebRequest(request);
-            const webResponse = handleSessionRequest(webRequest);
-            await writeWebResponse(webResponse, response);
-          } catch (error) {
-            console.error("[session] dev middleware failed", error);
-            response.statusCode = 500;
-            response.setHeader("content-type", "application/json; charset=utf-8");
-            response.setHeader("cache-control", "no-store");
-            response.end(JSON.stringify({ error: "Session dev middleware failed." }));
-          }
-          return;
-        }
 
         const handler = routeHandlers.get(pathname);
         if (!handler) {

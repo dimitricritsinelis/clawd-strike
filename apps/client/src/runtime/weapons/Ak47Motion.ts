@@ -65,12 +65,12 @@ export class Ak47Motion {
     this.breathPhase += dt * Math.PI * 2 * .28;
     this.stepPhase += dt * Math.max(0, speed) * 2.65;
     const move = this.movement.value;
-    this.pose.x = Math.sin(this.stepPhase) * .006 * move + this.lookYaw.value * .19;
-    this.pose.y = Math.sin(this.breathPhase) * .0018 + Math.cos(this.stepPhase * 2) * .0055 * move + this.landing.value;
+    this.pose.x = Math.sin(this.stepPhase) * .0036 * move + this.lookYaw.value * .19;
+    this.pose.y = Math.sin(this.breathPhase) * .0018 + Math.cos(this.stepPhase * 2) * .0033 * move + this.landing.value;
     this.pose.z = this.back.value + Math.cos(this.breathPhase) * .0008 + move * .010;
     this.pose.pitch = this.pitch.value + this.lookPitch.value + Math.sin(this.breathPhase) * .002 + move * -.025;
     this.pose.yaw = this.yaw.value + this.lookYaw.value;
-    this.pose.roll = this.roll.value + this.lookYaw.value * .3 + Math.sin(this.stepPhase) * .009 * move;
+    this.pose.roll = this.roll.value + this.lookYaw.value * .3 + Math.sin(this.stepPhase) * .0054 * move;
   }
 
   reset(): void {

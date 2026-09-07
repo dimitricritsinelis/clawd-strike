@@ -1,147 +1,23 @@
-Audience: human
-Authority: context
-Read when: tooling, docs
-Owns: quick start, basic command entry points, high-level repo map
-Do not use for: workflow policy, current task status, durable decisions, public contract rules
-Last updated: 2026-09-04
-
 # Clawd Strike
 
-Web-based FPS focused on refining the Bazaar slice into a production-quality playable experience.
-
-## Setup
+Web-based FPS. Remaining work: Bazaar map visuals, one area at a time.
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-`pnpm dev` serves the client on port `5174` and generates runtime map files first.
-
-## Common Commands
-
-```bash
-pnpm stm -- show active
-pnpm stm -- show card <id>
-pnpm stm -- validate
-pnpm typecheck
-pnpm test:server
-pnpm smoke:game
-pnpm bot:smoke
-pnpm qa:completion
-pnpm qa:release
-pnpm smoke:no-context
-pnpm verify:skills-contract
-pnpm test:stm
-pnpm test:agent-sdk-export
-pnpm test:agent-export
-pnpm test:postgres-audit
-pnpm build
-pnpm export:agent-sdk -- --out ../clawd-strike-agent-sdk
-pnpm reconcile:shared-champion -- --help
-pnpm stats:admin -- --help
-```
-
-For local playtests, use the URL printed by the freshly started dev or QA server. Confirm the loaded map and source identity before comparing captures or performance. URLs and pass results in short-term memory or old reports describe their recorded run, not the current server.
-
-## Documentation map
-
-Read the owner of the task, not every Markdown file in the repository.
+`pnpm dev` generates the runtime map files, then serves the client on port 5174. Confirm the loaded map before comparing captures.
 
 | Work | Start here |
 |---|---|
-| Repository safeguards | [AGENTS.md](AGENTS.md) |
-| Bazaar design and Blender buildout | [Development plan](docs/map-design/development-plan/README.md), which routes to the quality bar, implementation skill, and selected cards |
-| Gameplay balance | [Gameplay balancing](docs/gameplay-balancing.md) |
-| Public browser-agent behavior | [Canonical public contract](apps/client/public/skills.md); runnable learning work belongs in the companion SDK named there |
-| Security and high-score submission | [Security reference](docs/security.md) and the owning server code |
-| Durable decisions | [Decision log](docs/decisions.md) |
-| Active coordination, when needed | `pnpm stm -- show active`; historical rollups do not define the build queue |
+| Agent instructions | [AGENTS.md](AGENTS.md) |
+| Map area PREPARE / BUILD | [map-polish skill](.claude/skills/map-polish/SKILL.md) |
+| Finish criteria | [quality-bar.md](docs/map-design/quality-bar.md) |
+| Progress and references | [development-plan/README.md](docs/map-design/development-plan/README.md) |
+| Public browser-agent contract | [skills.md](apps/client/public/skills.md) |
 
-`docs/map-design/archive/`, the pre-Revision-3 design review, `artifacts/`, and build outputs preserve history or generated evidence. They are not startup instructions. Root copies of the public contract and SDK learning guides, and the one-entry refactor log, are retired; the canonical contract, exporter templates, and Git history retain their respective roles.
-
-## Validation Ladder
-
-- Normal game work: `pnpm typecheck && pnpm test:server && pnpm smoke:game`
-- Bot work: add `pnpm bot:smoke`
-- Public-contract work: add `pnpm verify:skills-contract && pnpm smoke:no-context`
-- Map/visual work: follow the [development plan](docs/map-design/development-plan/README.md) and [map-polish checks](.claude/skills/map-polish/SKILL.md#safety-and-performance); `pnpm qa:completion` applies at district or release milestones.
-- Release candidate: `pnpm qa:release`
-- Full browser regression sweep: `pnpm test:playwright:full` for loading-screen, public-selector, public-payload, or shared-champion changes
-
-## Admin Stats
-
-Use the repo helper instead of hand-building `curl` commands:
-
-```bash
-export BASE_URL="http://127.0.0.1:5174"
-export STATS_ADMIN_TOKEN="your-token"
-
-pnpm stats:admin -- overview
-pnpm stats:admin -- runs limit=25
-pnpm stats:admin -- runs playerName=Dimitri championUpdated=true limit=10
-pnpm stats:admin -- daily from=2026-03-08T00:00:00.000Z limit=7
-```
-
-Supported endpoints:
-- `overview`
-- `runs`
-- `names`
-- `daily`
-
-Supported query keys:
-- `from`
-- `to`
-- `controlMode`
-- `mapId`
-- `playerName`
-- `limit`
-- `cursor` for `runs`
-- `championUpdated` for `runs`
-
-The helper lives at `apps/client/scripts/admin-stats.sh` and pretty-prints JSON with `jq` when available.
-
-In production, admin stats fail closed when `STATS_ADMIN_TOKEN` is missing.
-
-## Shared Champion Recovery
-
-Pull production envs locally, reconcile the schema/history against the unpooled Postgres URL, then use the admin stats helper for review:
-
-```bash
-vercel env pull .env.production.local --environment=production
-pnpm reconcile:shared-champion -- --env-file .env.production.local --json
-pnpm validate:shared-champion-constraints -- --env-file .env.production.local
-BASE_URL="https://clawd-strike.vercel.app" STATS_ADMIN_TOKEN="your-token" pnpm stats:admin -- overview
-```
-
-Recommended sequence:
-1. Run `pnpm reconcile:shared-champion -- --env-file .env.production.local --json`
-2. Confirm `invalidChampionRows`, `invalidRunTokenNames`, and `invalidRunRows` are all `0`
-3. Run `pnpm validate:shared-champion-constraints -- --env-file .env.production.local`
-4. Review the reported `sslmode before/after` values and stats overview
-
-## Agent SDK Export
-
-The public agent SDK lives in a separate git repository. Export the managed public-safe artifacts into a sibling checkout:
-
-```bash
-pnpm export:agent-sdk -- --out ../clawd-strike-agent-sdk
-```
-
-Optional guard when the remote exists:
-
-```bash
-pnpm export:agent-sdk -- --out ../clawd-strike-agent-sdk --expect-origin https://github.com/dimitricritsinelis/clawd-strike-agent-sdk
-```
-
-The exporter manages its public-safe SDK snapshot, including the mirrored `skills.md`, SDK code, learning runner, CI workflow, README, troubleshooting docs, and manifest. The bundled learning runtime is legacy and does not implement the full current public workflow; its [README](scripts/lib/agent-sdk-template/README.md#current-contract-gap) records that gap. A successful export or smoke check does not certify learning-contract conformance, and SDK migration is separate from map development.
-
-Compatibility alias: `pnpm export:agent-starter` still points at the same exporter for one release, but `agent-sdk` is the canonical name.
-
-## Directory Map
-- `apps/client/src/runtime/`: gameplay runtime, simulation, rendering, HUD, weapons, bots
-- `apps/client/src/loading-screen/`: boot flow and mode selection
-- `apps/client/scripts/`: map generation, QA, smoke, and contract validation scripts
-- `docs/decisions.md`: durable internal decisions
-- `docs/map-design/`: Bazaar map packet, source specs, and approved references
-- `apps/client/public/skills.md`: public browser-only contract served at `/skills.md`
+- `apps/client/src/runtime/`: gameplay runtime, rendering, HUD, weapons, bots
+- `apps/client/scripts/`: map generation, QA and smoke scripts
+- `assets/source/`: Blender sources (`facade_kit.py`, per-unit `build.py`)
+- `docs/map-design/`: spec, references, atlas, briefs

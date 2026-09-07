@@ -24,9 +24,27 @@ import {
 } from "./highScoreSecurity.js";
 import {
   getSharedChampionRunTokenProfileIdentity,
+  type RateLimit,
   type SharedChampionAuditEvent,
   type SharedChampionStore,
 } from "./highScoreStore.js";
+
+/**
+ * Per-IP ceiling enforced in Postgres so it holds across lambda instances;
+ * the in-memory limiter inside protectJsonWriteRequest is per-instance only.
+ */
+const RUN_RATE_LIMIT: RateLimit = { windowMs: 60_000, maxRequests: 30 };
+
+async function consumeSharedRateLimit(
+  store: SharedChampionStore,
+  namespace: "run-start" | "run-finish",
+  ipFingerprint: string,
+): Promise<boolean> {
+  const key = `${namespace}:${ipFingerprint}`;
+  if (await store.isRateLimited(key, RUN_RATE_LIMIT)) return false;
+  await store.logSubmission(key);
+  return true;
+}
 
 const JSON_HEADERS = {
   "cache-control": "no-store",
@@ -169,6 +187,11 @@ export async function handleSharedChampionRunStartRequest(
     return errorResponse(writeCheck.status, writeCheck.error);
   }
 
+  if (!(await consumeSharedRateLimit(store, "run-start", writeCheck.clientIpFingerprint))) {
+    logPreAuthRejection("run-start", 429, "shared-rate-limited", writeCheck.clientIpFingerprint);
+    return errorResponse(429, "Too many run starts. Try again later.");
+  }
+
   if (!isSharedChampionPublicRunSubmissionEnabled()) {
     await recordAuditEvent(store, {
       eventType: "run-start",
@@ -309,6 +332,11 @@ export async function handleSharedChampionRunFinishRequest(
   if (writeCheck.ok === false) {
     logPreAuthRejection("run-finish", writeCheck.status, writeCheck.error, writeCheck.clientIpFingerprint);
     return buildRejectedFinishResponse(store, writeCheck.status, writeCheck.error);
+  }
+
+  if (!(await consumeSharedRateLimit(store, "run-finish", writeCheck.clientIpFingerprint))) {
+    logPreAuthRejection("run-finish", 429, "shared-rate-limited", writeCheck.clientIpFingerprint);
+    return buildRejectedFinishResponse(store, 429, "shared-rate-limited");
   }
 
   if (!isSharedChampionPublicRunSubmissionEnabled()) {

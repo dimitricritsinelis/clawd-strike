@@ -785,14 +785,26 @@ export class EnemyController {
       const previousZ = this.position.z;
       const wasGrounded = this.grounded;
 
+      // Resolve X before clipping Z so wall sliding and body blocking use
+      // the same position. Keep attempted body velocity for stuck escape.
       this.solver.moveAndCollide(
         this.position,
-        vx * stepDt,
-        vz * stepDt,
+        this.clipRaiderMotion(vx * stepDt, "x", enemyAabbs),
+        0,
+        0,
+        worldColliders,
+        this.motionResult,
+      );
+      const hitX = this.motionResult.hitX;
+      this.solver.moveAndCollide(
+        this.position,
+        0,
+        this.clipRaiderMotion(vz * stepDt, "z", enemyAabbs),
         this.velocityY * stepDt,
         worldColliders,
         this.motionResult,
       );
+      this.motionResult.hitX = hitX;
 
       if (worldColliders.hasTraversalSurfaces) {
         const surface = worldColliders.traversalSurfaces.sample(this.position.x, this.position.z, previousY);
@@ -885,6 +897,9 @@ export class EnemyController {
       this.burstShotsRemaining = 0;
     }
 
+    // The manager shares these objects with later raiders in this frame.
+    this.getAabb();
+
     if (onFootstep && this.grounded) {
       const speed = desiredSpeedMps;
       if (speed > 0.3) {
@@ -900,6 +915,28 @@ export class EnemyController {
         this.footstepTimerS = 0;
       }
     }
+  }
+
+  private clipRaiderMotion(delta: number, axis: "x" | "z", bodies: readonly EnemyAabb[]): number {
+    const otherAxis = axis === "x" ? "z" : "x";
+    const separation = ENEMY_HALF_WIDTH_M * 2;
+    for (const body of bodies) {
+      if (body.id === this.id || body.id === "player") continue;
+      if (this.position.y >= body.maxY || this.position.y + ENEMY_HEIGHT_M <= body.minY) continue;
+      const centerX = (body.minX + body.maxX) * 0.5;
+      const centerZ = (body.minZ + body.maxZ) * 0.5;
+      const center = axis === "x" ? centerX : centerZ;
+      const side = this.position[otherAxis] - (axis === "x" ? centerZ : centerX);
+      if (Math.abs(side) >= separation) continue;
+      const clearance = Math.sqrt(separation * separation - side * side);
+      const offset = this.position[axis] - center;
+      if (delta > 0 && offset <= 0) {
+        delta = Math.min(delta, Math.max(0, -clearance - offset));
+      } else if (delta < 0 && offset >= 0) {
+        delta = Math.max(delta, Math.min(0, clearance - offset));
+      }
+    }
+    return delta;
   }
 
   getAabb(): EnemyAabb {

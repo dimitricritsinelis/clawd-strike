@@ -1,9 +1,9 @@
 {
-  "name": "AK47 Urban Breacher left-hand idle viewmodel",
+  "name": "AK47 Urban Breacher two-hand viewmodel",
   "source": "repo://assets/source/ak47/build.py",
-  "sourceMd5": "da0c48cd57ebbe1ebae5cfc0dc471d3f",
+  "sourceMd5": "d55196a03d8f09ae7fe99dc7f43e753f",
   "blendSource": "repo://assets/source/ak47/ak47.blend",
-  "blendMd5": "b731238885ab96bc324924960331620f",
+  "blendMd5": "f2feabdffa8b48aa0fe43d9f75247afa",
   "maxEmbeddedTextureSize": 2048,
   "license": "Existing AK: CC-BY-NC-4.0; hand topology: CC0; new rig and finish: project-original",
   "dependencies": [
@@ -184,13 +184,21 @@
     "MuzzleSocket",
     "EjectionSocket",
     "SupportGripAnchor",
-    "RightGripAnchor (marker only)",
+    "RightGripAnchor",
+    "GripHand",
     "MagazineSeatedAnchor",
     "MagazineGripAnchor",
     "ThumbPadContact",
     "ThumbPadContact1",
     "ThumbPadContact2"
   ],
+  "rightHand": {
+    "source": "repo://assets/source/ak47/right_hand.py",
+    "sourceMd5": "4a4eda9fec83512f6e689ab1534483c4",
+    "construction": "Accepted left glove and skeleton mirrored into a right hand with corrected face winding",
+    "grip": "Right/rear palm support, three curled fingers on the pistol grip, opposed thumb, index pad resting against the trigger",
+    "animation": "Rigid pistol-grip contact throughout idle, firing and reload"
+  },
   "animations": [
     "Idle",
     "Fire",
@@ -198,21 +206,22 @@
   ],
   "reload": {
     "source": "repo://assets/source/ak47/reload.py",
-    "sourceMd5": "bbccd5caf1fe29eb66b76180c3a3928a",
+    "sourceMd5": "5864e60687fb28d2ff948b4aa7604031",
     "durationSeconds": 1.225,
     "contactFrames": [
       33,
       119
     ],
     "magazineMotion": "Existing magazine path and keyframes preserved",
-    "handMotion": "Release fore-end, reach, opposed thumb/finger grip, follow magazine, release and return to approved idle",
-    "thumbMotion": "Shallow forward curl with three measured skin points against the broad left magazine face; pad normal faces into the metal; relaxed opening without thumb flare; idle fore-end contact preserved",
+    "handMotion": "Release fore-end, approach from below, wrap the magazine, follow its motion, release and return to approved idle",
+    "gripLayout": "Wrist below the magazine, palm cupping its lower broad face, four fingers rising around the curved front edge, thumb wrapping around the rear corner onto the far broad face",
+    "thumbMotion": "Thumb closes onto the far broad face with three measured outer padding points and full glove/padding clearance; pad normal follows the contacted surface; relaxed opening and idle fore-end contact preserved",
     "contactShading": "Idle occlusion fades during hand travel; live self-shadows follow the reload"
   },
   "files": [
     {
       "file": "ak47.glb",
-      "md5": "f019dfc535b76bc8ec43db58e9a17e3d"
+      "md5": "691fc17231d3eb97e16fd0a7a14d6e16"
     }
   ]
 }

@@ -106,3 +106,34 @@ test("undo recovers an interrupted apply with some files already restored", (t) 
   assert.equal(existsSync(path.join(f.root, f.model)), false);
   assert.deepEqual(f.read(f.spec), original);
 });
+
+test("placements: apply writes this unit's authored_placements, keeps other units', and revert restores", (t) => {
+  const f = fixture(t);
+  f.write(f.spec, f.read(f.spec).toString().replace('"zones"', '"authored_placements": [{"id": "other", "unit": "unit-other", "modelId": "m", "position": {"x": 1, "y": 2, "z": 0}, "yawDeg": 0, "role": "skyline"}],\n  "zones"'));
+  const original = f.read(f.spec);
+  f.pkg.placements = [{ id: "balcony-1", modelId: "model-test", position: { x: 10, y: 20.5, z: 3 }, yawDeg: 90 }];
+  f.write(f.packageFile, JSON.stringify(f.pkg));
+  f.run("apply");
+  const spec = JSON.parse(f.read(f.spec).toString());
+  assert.deepEqual(spec.authored_placements, [
+    { id: "other", unit: "unit-other", modelId: "m", position: { x: 1, y: 2, z: 0 }, yawDeg: 0, role: "skyline" },
+    { id: "balcony-1", unit: "unit-test", modelId: "model-test", position: { x: 10, y: 20.5, z: 3 }, yawDeg: 90, role: "dressing" },
+  ]);
+  assert.equal(spec.zones[0].label, "Keep this");
+  f.pkg.placements = [{ id: "other", modelId: "model-test", position: { x: 0, y: 0, z: 0 } }];
+  f.write(f.packageFile, JSON.stringify(f.pkg));
+  assert.match(f.run("apply", false).stderr, /already used by another unit/);
+  f.run("revert");
+  assert.deepEqual(f.read(f.spec), original);
+});
+
+test("placements: a package without placements drops the unit's earlier ones only", (t) => {
+  const f = fixture(t);
+  f.pkg.placements = [{ id: "p1", modelId: "model-test", position: { x: 0, y: 0, z: 0 } }];
+  f.write(f.packageFile, JSON.stringify(f.pkg));
+  f.run("apply");
+  delete f.pkg.placements;
+  f.write(f.packageFile, JSON.stringify(f.pkg));
+  f.run("apply");
+  assert.deepEqual(JSON.parse(f.read(f.spec).toString()).authored_placements, []);
+});

@@ -6,7 +6,7 @@
     n = Wall(F, (39.56, 81.0), (45.44, 81.0), faces='S')   # a wall whose street side faces south
     n.plinth(0.44, 'ph_sandstone_blocks_05'); n.coping(4.9, 'ph_stone_trim_sandstone')
     n.arch(along=2.94, width=1.1, height=2.4, mat='ph_sandstone_blocks_05', pointed=True)
-    n.awning(along0=1.0, along1=4.0, z=2.9, depth=1.3, cloth='ph_fabric_pattern_07')
+    n.awning(along0=1.0, along1=4.0, z=2.9, depth=1.3, cloth='ph_hessian_230')
     export_section(F, OUT / 'link-north-east.glb')
 
 Plan frame: coordinates are the plan's design metres (x east, y north), exactly what map:shoot prints.
@@ -182,7 +182,7 @@ class Wall:
         self.slab(along - width / 2 - 0.16, along + width / 2 + 0.16, z0 + height, 0.2, depth, mat, name='niche-head')
 
     # Attachments
-    def awning(self, along0, along1, z, depth, cloth='ph_fabric_pattern_07', timber='ph_worn_planks', sag=0.12, drop=0.25):
+    def awning(self, along0, along1, z, depth, cloth='ph_hessian_230', timber='ph_worn_planks', sag=0.12, drop=0.25):
         """Cloth on a ledger with two timber brackets; hem drops `drop` toward the street with a sine sag."""
         width = along1 - along0
         self.slab(along0, along1, z - 0.04, 0.08, 0.08, timber, name='ledger')

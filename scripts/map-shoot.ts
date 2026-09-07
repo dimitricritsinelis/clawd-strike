@@ -4,31 +4,30 @@
 //   pnpm map:shoot                      list units and their view ids
 //   pnpm map:shoot <unit|random> [--views a,b] [--tag before|after]
 //     a tag ending in "before" snapshots map_spec.json next to the images for a safe revert;
-//     a tag ending in "after" reuses the poses of the matching "...before" shoot and writes
-//     critic/brief.md: blind A/B copies of both shoots plus the unit's target image
+//     a tag ending in "after" reuses the poses of the matching "...before" shoot
 //   pnpm map:check                      regen maps + protected-gameplay diff vs the task baseline (or HEAD)
 //   pnpm map:check --baseline           record the current dirty state as the task baseline
 import { execFileSync } from "node:child_process";
-import { randomInt } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  authoredPlacementReasons,
   deriveReviewUnits,
   captureEvidenceErrors,
   detectProtectedChanges,
+  glbBounds,
   hashMapAuthority,
   hasFrameMeasurement,
   validateMapSpec,
 } from "./lib/mapShoot";
-import type { FramePerformance, ReviewUnitDefinition } from "./lib/mapShoot";
+import type { Bounds3, FramePerformance } from "./lib/mapShoot";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SPEC = "docs/map-design/specs/map_spec.json";
 const CLIENT = path.join(ROOT, "apps/client");
 const OUT = path.join(ROOT, "artifacts/map-shoot");
 const BASELINE = path.join(OUT, ".baseline");
-const TARGETS = path.join(ROOT, "docs/map-design/targets");
-const FOUNDING_IMAGE = path.join(ROOT, "docs/map-design/refs/bazaar_main_hall_reference.png");
+const FACADES = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/facades");
 const rel = (file: string) => path.relative(ROOT, file);
 function run(cmd: string, args: string[], cwd = ROOT): string {
   try {
@@ -57,52 +56,7 @@ function fileHash(file: string): string {
   const absolute = path.join(ROOT, file);
   return existsSync(absolute) ? hashMapAuthority(readFileSync(absolute)) : "missing";
 }
-/** The unit's target image; the founding image until a per-unit target exists. */
-function targetImage(unitId: string): { file: string; perUnit: boolean } {
-  const perUnit = path.join(TARGETS, `${unitId}.png`);
-  return existsSync(perUnit) ? { file: perUnit, perUnit: true } : { file: FOUNDING_IMAGE, perUnit: false };
-}
 type ShotViews = Record<string, { imagePath: string; valid: boolean; errors: string[]; performance?: FramePerformance }>;
-/**
- * Blind A/B for a fresh-context critic: both shoots copied under neutral labels,
- * the target beside them, and the label key kept apart so the judge cannot know
- * which render is newer until the verdict is written.
- */
-function writeCriticBrief(unit: ReviewUnitDefinition, dir: string, beforeDir: string, shot: ShotViews, target: string): string {
-  const criticDir = path.join(dir, "critic");
-  mkdirSync(criticDir, { recursive: true });
-  const afterIsA = randomInt(2) === 1;
-  const files = ["target.png", "plan.png"];
-  copyFileSync(target, path.join(criticDir, "target.png"));
-  copyFileSync(path.join(dir, "plan.png"), path.join(criticDir, "plan.png"));
-  for (const view of Object.values(shot)) {
-    const name = path.basename(view.imagePath, ".png");
-    const before = path.join(beforeDir, "units", unit.id, path.basename(view.imagePath));
-    if (!existsSync(before)) continue;
-    copyFileSync(afterIsA ? view.imagePath : before, path.join(criticDir, `A_${name}.png`));
-    copyFileSync(afterIsA ? before : view.imagePath, path.join(criticDir, `B_${name}.png`));
-    files.push(`A_${name}.png`, `B_${name}.png`);
-  }
-  writeFileSync(path.join(criticDir, "key.json"), JSON.stringify({ A: afterIsA ? "after" : "before", B: afterIsA ? "before" : "after" }));
-  writeFileSync(path.join(criticDir, "brief.md"), [
-    `# Blind critic brief: ${unit.label} (${unit.id})`,
-    "",
-    "You did not build these. A and B are the same cameras; you do not know which is newer.",
-    "Follow `.claude/skills/map-critic/SKILL.md`. Do not open `key.json` until `verdict.json` is written.",
-    "",
-    "Target: `target.png` (inspiration, not a spec). Plan crop (north up, east right): `plan.png`. Compare each `A_<view>.png` with its `B_<view>.png`; `*_primary` carries the most weight.",
-    "If `problems.md` exists beside this file, it names the problems this cycle set out to fix: say which improved.",
-    "",
-    "Write `verdict.json` next to this file:",
-    "```json",
-    '{ "winner": "A" | "B", "improved": ["problem that visibly improved"], "regressions": ["view or surface made worse"], "blockers": [], "biggestGap": "one concrete visible sentence" }',
-    "```",
-    "",
-    `Files: ${files.join(", ")}`,
-    "",
-  ].join("\n"));
-  return criticDir;
-}
 function shoot(argv: string[]): void {
   const { source, spec } = loadSpec();
   const units = deriveReviewUnits(spec);
@@ -118,7 +72,7 @@ function shoot(argv: string[]): void {
   const opt = (k: string) => { const i = argv.indexOf(k); return i >= 0 ? argv[i + 1] : undefined; };
   const tag = opt("--tag") ?? "before";
   if (!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(tag)) throw new Error("tag must contain only letters, numbers, underscores, and hyphens");
-  // Critic rounds reuse one before: "<name>-after", "<name>-after2", "<name>-after3" all pair with "<name>-before".
+  // Repeat rounds reuse one before: "<name>-after", "<name>-after2", "<name>-after3" all pair with "<name>-before".
   const isAfter = /after-?\d*$/.test(tag);
   if (target === "random" && isAfter) throw new Error("after capture requires the unit named by the before shoot, not random");
   // An "after" shoot reuses the exact "before" poses so every pair is frame-to-frame comparable,
@@ -151,7 +105,7 @@ function shoot(argv: string[]): void {
   writeFileSync(planPath, JSON.stringify({
     schemaVersion: 1,
     authorityHash: hashMapAuthority(source),
-    contactSheets: false,
+    contactSheets: true,
     units: [{ ...unit, views }],
     batches: [{ id: "batch-01", unitIds: [unit.id] }],
   }));
@@ -196,9 +150,8 @@ function shoot(argv: string[]): void {
       .map((r) => (r.fromZoneId === zone.id ? r.toZoneId : r.fromZoneId));
     console.log("connects " + [...new Set(links)].join(", "));
   }
-  const unitTarget = targetImage(unit.id);
-  console.log(`target ${rel(unitTarget.file)}${unitTarget.perUnit ? "" : "  (no per-unit target yet: founding image; prompts in docs/map-design/targets/targets.json)"}`);
   console.log(`plan   ${rel(planPng)}`);
+  const pairs: { id: string; before: string; after: string; note: string }[] = [];
   for (const [id, v] of Object.entries(shot)) {
     let delta = "";
     if (poses !== unit.views) {
@@ -206,10 +159,20 @@ function shoot(argv: string[]): void {
       if (existsSync(before)) {
         const c = JSON.parse(run(process.execPath, ["scripts/map-polish-capture.mjs", "compare", "--before", before, "--after", v.imagePath], CLIENT));
         delta = c.decoded?.pixelIdentical ? "  identical" : `  changed ${(c.changedPixelRatio * 100).toFixed(3)}% of pixels${c.effectivelyUnchanged ? " (below global threshold; inspect the target)" : ""}`;
+        pairs.push({ id, before, after: v.imagePath, note: delta.trim() });
       }
     }
     console.log(`${v.valid ? "view  " : "BAD   "} ${id.padEnd(40)} ${rel(v.imagePath)}${delta}${v.errors.length ? "  " + v.errors.join("; ") : ""}`);
   }
+  // One image per round with every view before (left) and after (right), so the round is judged frame to frame.
+  if (pairs.length) {
+    const pairsPath = path.join(dir, "pairs.json");
+    writeFileSync(pairsPath, JSON.stringify(pairs));
+    run(process.execPath, ["scripts/map-polish-capture.mjs", "pair", "--pairs", pairsPath, "--out", path.join(dir, "pairs.png")], CLIENT);
+    console.log(`pairs  ${rel(path.join(dir, "pairs.png"))}  (per view: before left, after right)`);
+  }
+  const sheet = result.batches?.[0]?.contactSheetPath as string | undefined;
+  if (sheet) console.log(`sheet  ${rel(sheet)}${result.referenceBoardPath ? `  refs ${rel(result.referenceBoardPath)}` : ""}`);
   // Performance is one number per section: the worst view against the budget.
   const perfs = Object.values(shot).map((v) => v.performance).filter(hasFrameMeasurement);
   if (perfs.length < Object.keys(shot).length) console.log("PERF UNVERIFIED: capture telemetry missing on some views");
@@ -222,14 +185,24 @@ function shoot(argv: string[]): void {
     const over = worst.draws > budget.maxDrawCalls || worst.tris > budget.maxTriangles || worst.ms > budget.maxDesktopFrameMs;
     console.log(`perf   worst view ${worst.draws} draws / ${worst.tris} tris / ${worst.ms.toFixed(1)} ms CPU  (budget ${budget.maxDrawCalls} / ${budget.maxTriangles} / ${budget.maxDesktopFrameMs} ms)${over ? "  OVER BUDGET: fix before moving on" : ""}`);
   }
-  if (baseline) {
-    const criticDir = writeCriticBrief(unit, dir, path.dirname(beforePlan), shot, unitTarget.file);
-    console.log(`critic ${rel(criticDir)}/brief.md  (hand to a fresh-context map-critic; read key.json only after verdict.json exists)`);
-  }
   const errors = captureEvidenceErrors(result, baseline);
   if (errors.length) throw new Error(`map:shoot FAIL: ${errors.join("; ")}`);
   if (baseline) console.log("runtime colliders unchanged; walk the routes for visual clearance before moving on");
   check();
+}
+
+/** Bounds of each placed model, read from the GLB the facades manifest points at. */
+function placementBounds(): (modelId: string) => Bounds3 | null {
+  const cache = new Map<string, Bounds3 | null>();
+  return (modelId) => {
+    if (!cache.has(modelId)) {
+      const manifest = JSON.parse(readFileSync(path.join(FACADES, "models.json"), "utf8")) as { models: { id: string; url: string }[] };
+      const model = manifest.models.find((m) => m.id === modelId);
+      if (!model) throw new Error(`placement model ${modelId} is not in ${rel(path.join(FACADES, "models.json"))}`);
+      cache.set(modelId, glbBounds(readFileSync(path.join(FACADES, model.url))));
+    }
+    return cache.get(modelId)!;
+  };
 }
 
 /**
@@ -246,6 +219,7 @@ function check(): void {
   const knownHashes: Record<string, string> = usingBaseline ? JSON.parse(readFileSync(baselineHashes, "utf8")) : {};
   const touched = touchedFiles().filter((file) => knownHashes[file] !== fileHash(file));
   const reasons = detectProtectedChanges(base, spec, touched);
+  reasons.push(...authoredPlacementReasons(spec, placementBounds()));
   const buildingIds = new Set(((spec.buildings as any[]) ?? []).map((b) => b.id));
   for (const f of spec.frontages as any[]) {
     if (!buildingIds.has(f.buildingId)) reasons.push(`frontage ${f.id} has no building (buildingId '${f.buildingId ?? ""}')`);

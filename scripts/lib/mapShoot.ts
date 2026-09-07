@@ -819,3 +819,216 @@ export function captureEvidenceErrors(current: CaptureEvidence, before?: Capture
   }
   return reasons;
 }
+
+// ---------------------------------------------------------------------------
+// Authored placement guard. Free render-only GLBs (`authored_placements`) have
+// no colliders, so any part the player could reach must hug a wall or sit
+// overhead, and a base near the ground must touch it. The rule text is in
+// .claude/skills/map-polish/SKILL.md step 4; map:check enforces it.
+// ---------------------------------------------------------------------------
+export const RELIEF_MAX_HEIGHT_M = 2.2;
+export const WALL_BAND_M = 0.35;
+const FLOAT_MAX_M = 0.5;
+const CONTACT_TOLERANCE_M = 0.05;
+const SINK_TOLERANCE_M = 0.1;
+const SAMPLE_STEP_M = 0.1;
+const EPSILON_M = 1e-6;
+
+export type Bounds3 = { min: [number, number, number]; max: [number, number, number] };
+export type AuthoredPlacement = {
+  id: string;
+  modelId: string;
+  position: { x: number; y: number; z: number };
+  yawDeg?: number;
+  role?: string;
+};
+export type WallSegment = { orientation: "vertical" | "horizontal"; coord: number; start: number; end: number };
+
+type Mat4 = number[]; // glTF column-major 4x4
+type Vec3 = [number, number, number];
+const IDENTITY: Mat4 = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+function multiply(a: Mat4, b: Mat4): Mat4 {
+  const out = new Array<number>(16).fill(0);
+  for (let col = 0; col < 4; col += 1) {
+    for (let row = 0; row < 4; row += 1) {
+      for (let k = 0; k < 4; k += 1) out[col * 4 + row]! += a[k * 4 + row]! * b[col * 4 + k]!;
+    }
+  }
+  return out;
+}
+function nodeMatrix(node: { matrix?: number[]; translation?: number[]; rotation?: number[]; scale?: number[] }): Mat4 {
+  if (Array.isArray(node.matrix) && node.matrix.length === 16) return node.matrix.map(Number);
+  const [tx = 0, ty = 0, tz = 0] = node.translation ?? [];
+  const [qx = 0, qy = 0, qz = 0, qw = 1] = node.rotation ?? [];
+  const [sx = 1, sy = 1, sz = 1] = node.scale ?? [];
+  const xx = qx * qx, yy = qy * qy, zz = qz * qz, xy = qx * qy, xz = qx * qz, yz = qy * qz, wx = qw * qx, wy = qw * qy, wz = qw * qz;
+  return [
+    (1 - 2 * (yy + zz)) * sx, 2 * (xy + wz) * sx, 2 * (xz - wy) * sx, 0,
+    2 * (xy - wz) * sy, (1 - 2 * (xx + zz)) * sy, 2 * (yz + wx) * sy, 0,
+    2 * (xz + wy) * sz, 2 * (yz - wx) * sz, (1 - 2 * (xx + yy)) * sz, 0,
+    tx, ty, tz, 1,
+  ];
+}
+function transformPoint(m: Mat4, p: Vec3): Vec3 {
+  return [
+    m[0]! * p[0] + m[4]! * p[1] + m[8]! * p[2] + m[12]!,
+    m[1]! * p[0] + m[5]! * p[1] + m[9]! * p[2] + m[13]!,
+    m[2]! * p[0] + m[6]! * p[1] + m[10]! * p[2] + m[14]!,
+  ];
+}
+function extend(bounds: Bounds3 | null, p: Vec3): Bounds3 {
+  if (!bounds) return { min: [p[0], p[1], p[2]], max: [p[0], p[1], p[2]] };
+  for (let i = 0; i < 3; i += 1) {
+    bounds.min[i] = Math.min(bounds.min[i]!, p[i]!);
+    bounds.max[i] = Math.max(bounds.max[i]!, p[i]!);
+  }
+  return bounds;
+}
+function corners(b: Bounds3): Vec3[] {
+  return [0, 1, 2, 3, 4, 5, 6, 7].map((i) => [i & 1 ? b.max[0] : b.min[0], i & 2 ? b.max[1] : b.min[1], i & 4 ? b.max[2] : b.min[2]]);
+}
+
+/** Bounds of every POSITION accessor in a GLB with node transforms applied, in the file's own Y-up metres. Null when the file has no geometry. */
+export function glbBounds(bytes: Buffer): Bounds3 | null {
+  if (bytes.length < 20 || bytes.readUInt32LE(0) !== 0x46546c67) throw new Error("not a GLB");
+  if (bytes.readUInt32LE(16) !== 0x4e4f534a) throw new Error("GLB has no JSON chunk");
+  const jsonLength = bytes.readUInt32LE(12);
+  const gltf = JSON.parse(bytes.subarray(20, 20 + jsonLength).toString("utf8")) as {
+    nodes?: { children?: number[]; mesh?: number; matrix?: number[]; translation?: number[]; rotation?: number[]; scale?: number[] }[];
+    scenes?: { nodes?: number[] }[];
+    scene?: number;
+    meshes?: { primitives?: { attributes?: { POSITION?: number } }[] }[];
+    accessors?: { min?: number[]; max?: number[] }[];
+  };
+  const nodes = gltf.nodes ?? [];
+  const children = new Set(nodes.flatMap((node) => node.children ?? []));
+  const roots = gltf.scenes?.[gltf.scene ?? 0]?.nodes ?? nodes.map((_, index) => index).filter((index) => !children.has(index));
+  let bounds: Bounds3 | null = null;
+  const visit = (index: number, parent: Mat4, depth: number): void => {
+    const node = nodes[index];
+    if (!node || depth > 64) return;
+    const world = multiply(parent, nodeMatrix(node));
+    const mesh = typeof node.mesh === "number" ? gltf.meshes?.[node.mesh] : undefined;
+    for (const primitive of mesh?.primitives ?? []) {
+      const position = primitive.attributes?.POSITION;
+      const accessor = typeof position === "number" ? gltf.accessors?.[position] : undefined;
+      if (!accessor?.min || !accessor?.max || accessor.min.length < 3 || accessor.max.length < 3) continue;
+      const local: Bounds3 = { min: [accessor.min[0]!, accessor.min[1]!, accessor.min[2]!], max: [accessor.max[0]!, accessor.max[1]!, accessor.max[2]!] };
+      for (const corner of corners(local)) bounds = extend(bounds, transformPoint(world, corner));
+    }
+    for (const child of node.children ?? []) visit(child, world, depth + 1);
+  };
+  for (const root of roots) visit(root, IDENTITY, 0);
+  return bounds;
+}
+
+/**
+ * Placement bounds in design metres (x east, y north, z up), mirroring
+ * buildAuthoredPlacements: world x = x, world y = z, world z = y, and the
+ * model turns about the up axis by (yawDeg + 180) degrees.
+ */
+export function placementDesignBounds(local: Bounds3, placement: AuthoredPlacement): Bounds3 {
+  const theta = ((placement.yawDeg ?? 0) + 180) * Math.PI / 180;
+  const cos = Math.cos(theta);
+  const sin = Math.sin(theta);
+  let bounds: Bounds3 | null = null;
+  for (const [gx, gy, gz] of corners(local)) {
+    const wx = gx * cos + gz * sin;
+    const wz = -gx * sin + gz * cos;
+    bounds = extend(bounds, [placement.position.x + wx, placement.position.y + wz, placement.position.z + gy]);
+  }
+  return bounds!;
+}
+
+/** Boundary of the union of walkable rects: where the blockout stands a wall. A shared edge between two rects is an opening, not a wall. */
+export function walkableBoundarySegments(rects: readonly Rect[]): WallSegment[] {
+  const xs = [...new Set(rects.flatMap((r) => [r.x, r.x + r.w]))].sort((a, b) => a - b);
+  const ys = [...new Set(rects.flatMap((r) => [r.y, r.y + r.h]))].sort((a, b) => a - b);
+  const inside = (i: number, j: number): boolean => {
+    if (i < 0 || j < 0 || i >= xs.length - 1 || j >= ys.length - 1) return false;
+    const cx = (xs[i]! + xs[i + 1]!) / 2;
+    const cy = (ys[j]! + ys[j + 1]!) / 2;
+    return rects.some((r) => cx > r.x && cx < r.x + r.w && cy > r.y && cy < r.y + r.h);
+  };
+  const segments: WallSegment[] = [];
+  for (let i = 0; i < xs.length; i += 1) {
+    for (let j = 0; j < ys.length - 1; j += 1) {
+      if (inside(i - 1, j) !== inside(i, j)) segments.push({ orientation: "vertical", coord: xs[i]!, start: ys[j]!, end: ys[j + 1]! });
+    }
+  }
+  for (let j = 0; j < ys.length; j += 1) {
+    for (let i = 0; i < xs.length - 1; i += 1) {
+      if (inside(i, j - 1) !== inside(i, j)) segments.push({ orientation: "horizontal", coord: ys[j]!, start: xs[i]!, end: xs[i + 1]! });
+    }
+  }
+  return segments;
+}
+function distanceToSegment(x: number, y: number, s: WallSegment): number {
+  const [along, across] = s.orientation === "vertical" ? [y, x] : [x, y];
+  return Math.hypot(across - s.coord, along - Math.min(Math.max(along, s.start), s.end));
+}
+function insideAny(rects: readonly Rect[], x: number, y: number): boolean {
+  return rects.some((r) => x >= r.x - EPSILON_M && x <= r.x + r.w + EPSILON_M && y >= r.y - EPSILON_M && y <= r.y + r.h + EPSILON_M);
+}
+function groundAt(surfaces: readonly TraversalSurface[], x: number, y: number): { surface: TraversalSurface; elevationM: number } | null {
+  const surface = surfaces.find((s) => insideAny([s.rect], x, y));
+  if (!surface) return null;
+  if (surface.kind === "ramp" && surface.axis) {
+    const t = surface.axis === "x" ? (x - surface.rect.x) / surface.rect.w : (y - surface.rect.y) / surface.rect.h;
+    const start = surface.startElevationM ?? 0;
+    const end = surface.endElevationM ?? start;
+    return { surface, elevationM: start + (end - start) * Math.min(1, Math.max(0, t)) };
+  }
+  return { surface, elevationM: surface.elevationM ?? 0 };
+}
+function samples(lo: number, hi: number): number[] {
+  const out = [lo];
+  for (let v = lo + SAMPLE_STEP_M; v < hi; v += SAMPLE_STEP_M) out.push(v);
+  if (hi > lo) out.push(hi);
+  return out;
+}
+
+/**
+ * Reasons an authored placement breaks the render-only envelope: geometry
+ * below RELIEF_MAX_HEIGHT_M must stay within WALL_BAND_M of a wall (the player
+ * walks through anything else), and a base near the ground must touch it.
+ */
+export function authoredPlacementReasons(
+  spec: MapSpec,
+  boundsOf: (modelId: string) => Bounds3 | null,
+  rects: readonly Rect[] = (spec.traversal_surfaces ?? []).map((s) => s.rect),
+  segments: readonly WallSegment[] = walkableBoundarySegments(rects),
+): string[] {
+  const reasons: string[] = [];
+  const surfaces = spec.traversal_surfaces ?? [];
+  for (const placement of (spec.authored_placements as AuthoredPlacement[] | undefined) ?? []) {
+    const local = boundsOf(placement.modelId);
+    if (!local) continue;
+    const box = placementDesignBounds(local, placement);
+    const label = `placement ${placement.id} (${placement.modelId})`;
+    const cx = (box.min[0] + box.max[0]) / 2;
+    const cy = (box.min[1] + box.max[1]) / 2;
+    const ground = groundAt(surfaces, cx, cy);
+    const groundM = ground?.elevationM ?? 0;
+    const lift = box.min[2] - groundM;
+    const where = `at x ${cx.toFixed(2)} y ${cy.toFixed(2)}`;
+    const on = ground ? `${ground.surface.id} at ${groundM.toFixed(2)} m` : "no traversal surface, ground taken as 0 m";
+    if (lift > CONTACT_TOLERANCE_M && lift <= FLOAT_MAX_M) {
+      reasons.push(`${label} floats ${lift.toFixed(2)} m above the ground ${where} (${on}); author the origin at the base and set position.z to the surface elevation`);
+    }
+    if (lift < -SINK_TOLERANCE_M) reasons.push(`${label} sinks ${(-lift).toFixed(2)} m into the ground ${where} (${on})`);
+    if (box.min[2] >= groundM + RELIEF_MAX_HEIGHT_M) continue;
+    let worst: { x: number; y: number; distance: number } | null = null;
+    for (const x of samples(box.min[0], box.max[0])) {
+      for (const y of samples(box.min[1], box.max[1])) {
+        if (!insideAny(rects, x, y)) continue;
+        const distance = segments.reduce((best, s) => Math.min(best, distanceToSegment(x, y, s)), Infinity);
+        if (distance > WALL_BAND_M && (!worst || distance > worst.distance)) worst = { x, y, distance };
+      }
+    }
+    if (worst) {
+      reasons.push(`${label} has geometry below ${RELIEF_MAX_HEIGHT_M} m standing ${worst.distance.toFixed(2)} m from the nearest wall at x ${worst.x.toFixed(2)} y ${worst.y.toFixed(2)}; render-only props stay within ${WALL_BAND_M} m of a wall or above ${RELIEF_MAX_HEIGHT_M} m, anything else needs a collider through the spec`);
+    }
+  }
+  return reasons;
+}

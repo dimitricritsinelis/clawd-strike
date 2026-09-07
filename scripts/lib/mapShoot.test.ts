@@ -95,3 +95,76 @@ test("invalid, empty, synthetic, and partial evidence cannot pass", () => {
     assert.ok(captureEvidenceErrors(evidence(), bad).length, String(change));
   }
 });
+
+// ---- authored placement guard ----
+import { authoredPlacementReasons, glbBounds, placementDesignBounds, walkableBoundarySegments } from "./mapShoot";
+import type { MapSpec } from "./mapShoot";
+
+function glb(gltf: object): Buffer {
+  const json = Buffer.from(JSON.stringify(gltf));
+  const padded = Buffer.alloc(Math.ceil(json.length / 4) * 4, 32);
+  json.copy(padded);
+  const header = Buffer.alloc(20);
+  [0x46546c67, 2, 20 + padded.length, padded.length, 0x4e4f534a].forEach((value, i) => header.writeUInt32LE(value, i * 4));
+  return Buffer.concat([header, padded]);
+}
+const near = (actual: readonly number[], expected: readonly number[]) => {
+  assert.equal(actual.length, expected.length);
+  actual.forEach((v, i) => assert.ok(Math.abs(v - expected[i]!) < 1e-6, `[${actual.join(", ")}] vs [${expected.join(", ")}]`));
+};
+const meshBox = (min: number[], max: number[]) => ({
+  meshes: [{ primitives: [{ attributes: { POSITION: 0 } }] }],
+  accessors: [{ min, max }],
+});
+
+test("glbBounds walks the node hierarchy with translation, rotation and scale", () => {
+  const scaled = glb({ scenes: [{ nodes: [0] }], nodes: [{ children: [1], translation: [1, 0, 0] }, { mesh: 0, scale: [2, 2, 2] }], ...meshBox([-0.5, 0, -0.5], [0.5, 1, 0.5]) });
+  assert.deepEqual(glbBounds(scaled), { min: [0, 0, -1], max: [2, 2, 1] });
+  const s = Math.SQRT1_2; // 90 degrees about +Y turns +X toward -Z
+  const turned = glb({ nodes: [{ mesh: 0, rotation: [0, s, 0, s] }], ...meshBox([0, 0, 0], [2, 1, 1]) });
+  const b = glbBounds(turned)!;
+  near(b.min, [0, 0, -2]);
+  near(b.max, [1, 1, 0]);
+  assert.equal(glbBounds(glb({ asset: { version: "2.0" } })), null);
+  assert.throws(() => glbBounds(Buffer.from("not a glb at all")), /not a GLB/);
+});
+
+test("placementDesignBounds mirrors the runtime: yaw 0 faces south, yaw 90 turns the footprint", () => {
+  const shelf = { min: [-1, 0, -0.15] as [number, number, number], max: [1, 0.6, 0.15] as [number, number, number] };
+  const flat = placementDesignBounds(shelf, { id: "p", modelId: "m", position: { x: 5, y: 0.15, z: 0 }, yawDeg: 0 });
+  near(flat.min, [4, 0, 0]);
+  near(flat.max, [6, 0.3, 0.6]);
+  const turned = placementDesignBounds(shelf, { id: "p", modelId: "m", position: { x: 5, y: 0.15, z: 0 }, yawDeg: 90 });
+  near(turned.min, [4.85, -0.85, 0]);
+  near(turned.max, [5.15, 1.15, 0.6]);
+});
+
+test("walkableBoundarySegments treats a shared edge as an opening, not a wall", () => {
+  const segments = walkableBoundarySegments([{ x: 0, y: 0, w: 10, h: 10 }, { x: 10, y: 0, w: 5, h: 10 }]);
+  assert.equal(segments.some((s) => s.orientation === "vertical" && s.coord === 10), false);
+  assert.deepEqual(segments.filter((s) => s.orientation === "vertical").map((s) => s.coord).sort((a, b) => a - b), [0, 15]);
+  assert.equal(segments.filter((s) => s.orientation === "horizontal").length, 4); // y=0 and y=10, split at x=10
+});
+
+test("authoredPlacementReasons rejects walk-through props, floating bases and sunk bases, and passes wall relief and overheads", () => {
+  const shelf = { min: [-1, 0, -0.15] as [number, number, number], max: [1, 0.6, 0.15] as [number, number, number] };
+  const court = { id: "S_COURT", zoneId: "COURT", kind: "flat" as const, rect: { x: 0, y: 0, w: 10, h: 10 }, elevationM: 0 };
+  const lane = { id: "S_LANE", zoneId: "LANE", kind: "flat" as const, rect: { x: 10, y: 0, w: 5, h: 10 }, elevationM: 0 };
+  const ramp = { id: "S_RAMP", zoneId: "RAMP", kind: "ramp" as const, rect: { x: 0, y: 10, w: 10, h: 8 }, axis: "y" as const, startElevationM: 0, endElevationM: 1.4 };
+  const reasonsFor = (placements: object[]) => authoredPlacementReasons(
+    { zones: [], traversal_surfaces: [court, lane, ramp], authored_placements: placements } as unknown as MapSpec,
+    (modelId) => (modelId === "empty" ? null : shelf),
+  );
+  const at = (id: string, x: number, y: number, z: number, yawDeg = 0, modelId = "shelf") => ({ id, modelId, position: { x, y, z }, yawDeg, role: "dressing" });
+  assert.match(reasonsFor([at("mid", 5, 5, 0)]).join("\n"), /placement mid \(shelf\) has geometry below 2.2 m standing 5\.\d\d m from the nearest wall/); // the ramp rect opens the court's north edge
+  assert.match(reasonsFor([at("opening", 10, 5, 0, 90)]).join("\n"), /placement opening .* from the nearest wall/);
+  assert.match(reasonsFor([at("turned", 5, 0.15, 0, 90)]).join("\n"), /placement turned .* standing 1\.\d\d m from the nearest wall/);
+  assert.deepEqual(reasonsFor([at("relief", 5, 0.15, 0)]), []);
+  assert.deepEqual(reasonsFor([at("sign", 5, 0.15, 1.8)]), []);
+  assert.deepEqual(reasonsFor([at("overhead", 5, 5, 2.5)]), []);
+  assert.deepEqual(reasonsFor([at("outside", 20, 5, 0)]), []);
+  assert.deepEqual(reasonsFor([at("none", 5, 5, 0, 0, "empty")]), []);
+  assert.match(reasonsFor([at("float", 5, 0.15, 0.3)]).join("\n"), /placement float \(shelf\) floats 0\.30 m above the ground .* \(S_COURT at 0\.00 m\)/);
+  assert.deepEqual(reasonsFor([at("ramp-ok", 0.15, 14, 0.7, 90)]), []);
+  assert.match(reasonsFor([at("ramp-sunk", 0.15, 14, 0, 90)]).join("\n"), /placement ramp-sunk \(shelf\) sinks 0\.70 m into the ground .* \(S_RAMP at 0\.70 m\)/);
+});

@@ -1,0 +1,16 @@
+name: Uptime
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Production page and champion API respond
+        run: |
+          set -e
+          curl -fsS -o /dev/null --max-time 20 https://clawd-strike.vercel.app/
+          curl -fsS --max-time 20 https://clawd-strike.vercel.app/api/high-score | grep -q '"champion"'

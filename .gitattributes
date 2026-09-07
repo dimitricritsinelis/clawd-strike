@@ -6,6 +6,3 @@ apps/client/public/maps/** linguist-generated=true
 docs/map-design/specs/*.json text eol=lf
 docs/map-design/shots.json text eol=lf
 apps/client/public/maps/** text eol=lf
-docs/map-design/layout-reference.md text eol=lf
-docs/map-design/layout-reference.svg text eol=lf
-docs/map-design/blockout/topdown_layout.svg text eol=lf

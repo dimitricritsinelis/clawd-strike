@@ -2312,11 +2312,13 @@ export class EnemyManager {
           const second = liveControllers[j]!;
           const firstPos = first.getPosition();
           const secondPos = second.getPosition();
+          if (firstPos.y >= secondPos.y + ENEMY_HEIGHT_M || secondPos.y >= firstPos.y + ENEMY_HEIGHT_M) continue;
           let dx = secondPos.x - firstPos.x;
           let dz = secondPos.z - firstPos.z;
           let distance = Math.hypot(dx, dz);
           if (distance >= LIVE_BOT_MIN_SEPARATION_M) continue;
 
+          const overlapM = LIVE_BOT_MIN_SEPARATION_M - distance;
           if (distance < 0.0001) {
             const stableSeed = (i + 1) * 97 + (j + 1) * 53;
             if (stableSeed % 2 === 0) {
@@ -2329,7 +2331,6 @@ export class EnemyManager {
             distance = 1;
           }
 
-          const overlapM = LIVE_BOT_MIN_SEPARATION_M - distance;
           if (overlapM <= 0) continue;
           const inverseDistance = 1 / distance;
           const pushX = dx * inverseDistance * overlapM * 0.5;

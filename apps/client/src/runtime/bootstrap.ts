@@ -61,6 +61,7 @@ import { HowToPlayOverlay } from "./ui/HowToPlayOverlay";
 import { ControlsOverlay } from "./ui/ControlsOverlay";
 import { FadeOverlay } from "./ui/FadeOverlay";
 import { HeadshotBanner } from "./ui/HeadshotBanner";
+import { CountdownHud } from "./ui/CountdownHud";
 import { parseRuntimeUrlParams, type RuntimeControlMode } from "./utils/UrlParams";
 import { normalizeAgentAction, type AgentAction } from "./input/AgentAction";
 import { isMobileDevice } from "./input/MobileDetect";
@@ -1847,6 +1848,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const roundEndScreen = new RoundEndScreen(runtimeRoot);
   const timerHud = new TimerHud(runtimeRoot);
   const headshotBanner = new HeadshotBanner(runtimeRoot);
+  const countdownHud = new CountdownHud(runtimeRoot);
   const damageNumbers = new DamageNumbers(runtimeRoot);
   const pauseMenu = new PauseMenu(runtimeRoot);
   const howToPlayOverlay = new HowToPlayOverlay(runtimeRoot, gameplayTuning);
@@ -2136,6 +2138,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     ...(mapAssets?.blockout.architecturePlacements ?? []).flatMap((placement) =>
       placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []),
     ...(mapAssets?.blockout.sectionModels ?? []).map((section) => section.modelId),
+    ...(mapAssets?.blockout.authoredPlacements ?? []).map((placement) => placement.modelId),
   ]);
   const qaFacadeRequestIds = qaAssetPlan?.facadeModelIds.map(qaFacadeModelRequestId) ?? [];
   if (facadeModelIds.size > 0) {
@@ -3067,6 +3070,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   let waveElapsedS = 0;         // time elapsed since current wave started
   let roundEndShowing = false;  // true while round-end overlay is displayed
   let roundEndElapsedS = 0;     // active, unpaused time spent in intermission
+  let startCountdownS = 0;      // pre-combat countdown after the loading screen; sim and wave timer wait on it
   let pendingRallyingCry = false;  // true when rallying cry should fire after delay
   let rallyingCryDelayS = 0;       // countdown before rallying cry activates
   const isGameplayOverlaySuspended = (): boolean => Boolean(
@@ -3619,7 +3623,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     const overlaySuspended = isGameplayOverlaySuspended();
     const intermissionSuspended = roundEndShowing
       && gameplayTuning.flow.freezeSimulationDuringIntermission;
-    const simulationSuspended = overlaySuspended || intermissionSuspended || game.getIsDead();
+    if (startCountdownS > 0 && !overlaySuspended) startCountdownS = Math.max(0, startCountdownS - dt);
+    countdownHud.update(startCountdownS);
+    const simulationSuspended = overlaySuspended || intermissionSuspended || game.getIsDead() || startCountdownS > 0;
 
     // Feed mobile touch input before game update
     if (touchInput) {
@@ -4144,6 +4150,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     previousFrameTime = performance.now();
     lastAgentRenderTime = 0;
     onVisibilityModeChange();
+    // Automated and agent runtimes drive the simulation directly and expect it live at activate.
+    if (runtimeParams.controlMode === "human" && !deterministicQa) startCountdownS = 5;
     timerHud.start();
     if (!runtimeLoopStarted && !deterministicQa) {
       runtimeLoopStarted = true;
@@ -4481,6 +4489,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     deathScreen.dispose();
     killFeed.dispose();
     headshotBanner.dispose();
+    countdownHud.dispose();
     hitMarker.dispose();
     scoreHud.dispose();
     roundEndScreen.dispose();

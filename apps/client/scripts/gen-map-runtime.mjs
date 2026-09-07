@@ -1214,6 +1214,40 @@ function getRuntimeModelCatalog() {
 }
 const runtimeModelMaterialIds = new Map();
 
+/** Free render-only GLBs placed by area packages (scripts/apply-facade-package.mjs `placements`). */
+function deriveAuthoredPlacements(spec) {
+  const source = requireArrayWhenPresent(spec, "authored_placements");
+  if (typeof source === "undefined" || source.length === 0) return undefined;
+  const seenIds = new Set();
+  return sortedById(source.map((entry, index) => {
+    const label = `authored_placements[${index}]`;
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) fail(`${label} must be an object`);
+    const id = ensureString(entry.id, `${label}.id`);
+    if (seenIds.has(id)) fail(`Duplicate authored placement id '${id}'`);
+    seenIds.add(id);
+    const modelId = ensureString(entry.modelId, `${label}.modelId`);
+    if (!getRuntimeModelCatalog().has(modelId)) {
+      fail(`Authored placement '${id}' modelId '${modelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
+    const role = entry.role ?? "dressing";
+    if (!["dressing", "skyline"].includes(role)) fail(`${label}.role must be dressing or skyline`);
+    const position = entry.position && typeof entry.position === "object" ? entry.position : {};
+    return {
+      id,
+      unit: ensureString(entry.unit, `${label}.unit`),
+      modelId,
+      position: {
+        x: asNumber(position.x, `${label}.position.x`),
+        y: asNumber(position.y, `${label}.position.y`),
+        z: asNumber(position.z, `${label}.position.z`),
+      },
+      yawDeg: asNumber(entry.yawDeg ?? 0, `${label}.yawDeg`),
+      role,
+      materialIds: runtimeModelMaterialIds.get(modelId) ?? [],
+    };
+  }));
+}
+
 function deriveMassingProfiles(spec, formatVersion) {
   const source = requireV3Array(spec, "massing_profiles", formatVersion);
   if (typeof source === "undefined") return undefined;
@@ -3177,6 +3211,7 @@ export function compileMapSpec(
       materialIds: runtimeModelMaterialIds.get(zone.sectionModelId) ?? [],
     };
   });
+  const authoredPlacements = deriveAuthoredPlacements(mapSpec);
   const blockoutSpec = deriveBlockoutSpec(mapSpec, zones);
   const mapCenter = deriveMapCenter(mapSpec, blockoutSpec.playable_boundary);
   validateSealedPerimeter(formatVersion, blockoutSpec.playable_boundary, blockoutSpec.exterior_wall_patches);
@@ -3198,6 +3233,7 @@ export function compileMapSpec(
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
     ...(sectionModels.length ? { sectionModels } : {}),
+    ...(authoredPlacements ? { authoredPlacements } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),
     anchors,

@@ -1,13 +1,16 @@
 #!/usr/bin/env node
-// Integrate or revert one builder's facade package. The orchestrator is the only
-// writer of map_spec.json and the facades manifest; builders hand over a package.
+// Integrate or revert one area's facade package. This script is the only writer
+// of map_spec.json and the facades manifest; area builds hand over a package.
 //
 //   node scripts/apply-facade-package.mjs apply  <unit>   reads assets/source/<unit>/package.json
 //   node scripts/apply-facade-package.mjs revert <unit>   restores the files from before its latest apply
 //
 // package.json: { "models": [ { id, file, source, license } ],
 //                 "section": { "zoneId": "<ZONE_ID>", "modelId": "<model id>", "faces": ["north"] },  // faces the GLB owns; omit for all four
-//                 "frontages": { "<FRONTAGE_ID>": "<model id>" } }                    // legacy per-face binding
+//                 "frontages": { "<FRONTAGE_ID>": "<model id>" },                     // legacy per-face binding
+//                 "placements": [ { id, modelId, position: {x,y,z}, yawDeg, role } ] }  // free render-only GLBs
+// placements: design metres (x east, y north, z up), model origin at its base centre, yawDeg as anchors[].yawDeg
+// (0 = north). role is "dressing" (default) or "skyline"; both are render-only and never collide.
 // url and md5 are derived here from the built GLB.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
@@ -98,6 +101,38 @@ function setZoneSection(zoneId, modelId, faces) {
   insertLineBeforeId(spec.indexOf(`"id": "${zoneId}"`, zonesStart), "sectionModelId", modelId === null ? null : JSON.stringify(modelId));
 }
 
+/** Top-level authored_placements array: keep other units' entries, replace this unit's. */
+function setAuthoredPlacements(entries) {
+  const key = '\n  "authored_placements": [';
+  let start = spec.indexOf(key);
+  if (start < 0) {
+    const zones = spec.indexOf('\n  "zones": [');
+    if (zones < 0) throw new Error("zones not found in map_spec.json");
+    spec = `${spec.slice(0, zones)}\n  "authored_placements": [],${spec.slice(zones)}`;
+    start = spec.indexOf(key);
+  }
+  const open = start + key.length - 1;
+  let depth = 0;
+  let inString = false;
+  let end = open;
+  for (; end < spec.length; end += 1) {
+    const ch = spec[end];
+    if (inString) {
+      if (ch === "\\") end += 1;
+      else if (ch === '"') inString = false;
+    } else if (ch === '"') inString = true;
+    else if (ch === "[") depth += 1;
+    else if (ch === "]" && (depth -= 1) === 0) break;
+  }
+  const kept = JSON.parse(spec.slice(open, end + 1)).filter((entry) => entry.unit !== unit);
+  for (const entry of entries) {
+    if (kept.some((other) => other.id === entry.id)) throw new Error(`placement id ${entry.id} is already used by another unit`);
+  }
+  const next = [...kept, ...entries];
+  const json = next.length ? JSON.stringify(next, null, 2).replace(/\n/g, "\n  ") : "[]";
+  spec = spec.slice(0, open) + json + spec.slice(end + 1);
+}
+
 const unitModelIds = new Set(pkg.models.map((m) => m.id));
 for (const model of pkg.models) {
   const source = path.resolve(path.dirname(packagePath), model.file);
@@ -130,6 +165,33 @@ if (pkg.section) {
   const faces = pkg.section.faces ?? null;
   if (faces && (!Array.isArray(faces) || !faces.every((f) => ["north", "south", "east", "west"].includes(f)))) throw new Error("section.faces must list north/south/east/west");
   setZoneSection(pkg.section.zoneId, pkg.section.modelId, faces);
+}
+if (pkg.placements) {
+  if (!Array.isArray(pkg.placements)) throw new Error("placements must be an array");
+  const ids = new Set();
+  const number = (value, label) => {
+    if (typeof value !== "number" || !Number.isFinite(value)) throw new Error(`${label} must be a finite number`);
+    return value;
+  };
+  setAuthoredPlacements(pkg.placements.map((entry, index) => {
+    const label = `placements[${index}]`;
+    if (typeof entry?.id !== "string" || !entry.id) throw new Error(`${label}.id is required`);
+    if (ids.has(entry.id)) throw new Error(`${label}: duplicate id ${entry.id}`);
+    ids.add(entry.id);
+    if (!unitModelIds.has(entry.modelId)) throw new Error(`${entry.id} references ${entry.modelId}, which is not in this package`);
+    const role = entry.role ?? "dressing";
+    if (!["dressing", "skyline"].includes(role)) throw new Error(`${entry.id}: role must be dressing or skyline`);
+    return {
+      id: entry.id,
+      unit,
+      modelId: entry.modelId,
+      position: { x: number(entry.position?.x, `${label}.position.x`), y: number(entry.position?.y, `${label}.position.y`), z: number(entry.position?.z, `${label}.position.z`) },
+      yawDeg: number(entry.yawDeg ?? 0, `${label}.yawDeg`),
+      role,
+    };
+  }));
+} else if (spec.includes('\n  "authored_placements": [')) {
+  setAuthoredPlacements([]); // A package without placements drops this unit's earlier ones.
 }
 JSON.parse(spec); // Validate all bindings and assets before saving or replacing any files.
 writes.set(MANIFEST, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`));

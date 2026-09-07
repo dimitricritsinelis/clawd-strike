@@ -289,6 +289,7 @@ export function createQaAssetPlan(
         )),
         // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
         ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
+        ...(mapAssets.blockout.authoredPlacements ?? []).flatMap((placement) => placement.materialIds),
       ]);
   const propModelIds = options.bazaarProps === false
     ? []

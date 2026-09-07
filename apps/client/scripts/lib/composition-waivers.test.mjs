@@ -110,20 +110,22 @@ test("normalizer and schema reject ignored or cross-shape fields", async () => {
     new URL("../../../../docs/map-design/specs/composition_waivers.schema.json", import.meta.url),
     "utf8",
   ));
-  const canopy = raw.waivers.find((waiver) => waiver.kind === "canopy-opening");
-  assert.ok(canopy);
+  // The canopy-opening waivers were resolved on 2026-09-07; use the retained hard-overlap
+  // waiver and give it a field that only the canopy shape knows.
+  const overlap = raw.waivers.find((waiver) => waiver.kind === "hard-overlap");
+  assert.ok(overlap);
 
   const crossShapeMatch = structuredClone(raw);
-  const crossShapeCanopy = crossShapeMatch.waivers.find((waiver) => waiver.id === canopy.id);
-  assert.ok(crossShapeCanopy);
-  crossShapeCanopy.match.placementId = "IGNORED_BUT_SCHEMA_KNOWN";
+  const crossShapeOverlap = crossShapeMatch.waivers.find((waiver) => waiver.id === overlap.id);
+  assert.ok(crossShapeOverlap);
+  crossShapeOverlap.match.anchorId = "IGNORED_BUT_SCHEMA_KNOWN";
   assert.throws(
     () => normalizeTestRegistry(crossShapeMatch),
-    /match has unsupported fields: placementId/,
+    /match has unsupported fields: anchorId/,
   );
   assert.throws(
     () => validateMapSpecAgainstSchema(crossShapeMatch, schema),
-    /expected exactly one schema variant|placementId: additional property is not allowed/,
+    /expected exactly one schema variant|anchorId: additional property is not allowed/,
   );
 
   const rootExtra = { ...raw, unexpected: true };

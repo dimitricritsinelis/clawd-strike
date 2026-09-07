@@ -1,73 +1,6 @@
 {
   "schemaVersion": 1,
   "waivers": [
-
-    {
-      "id": "CW-CCAEF9D05D21",
-      "kind": "canopy-opening",
-      "signature": "canopy-opening|anchorId=CANOPY_DYERS_01|openingIds=ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_STORY_1_WINDOW_01",
-      "match": {
-        "anchorId": "CANOPY_DYERS_01",
-        "openingIds": [
-          "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_STORY_1_WINDOW_01"
-        ]
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.5"
-      }
-    },
-
-    {
-      "id": "CW-1AD31D32494E",
-      "kind": "canopy-opening",
-      "signature": "canopy-opening|anchorId=L3R0_NORTH_DYERS_LINE_01|openingIds=ARCH_FRONTAGE_NORTH_COURT_WEST_STORY_1_WINDOW_01",
-      "match": {
-        "anchorId": "L3R0_NORTH_DYERS_LINE_01",
-        "openingIds": [
-          "ARCH_FRONTAGE_NORTH_COURT_WEST_STORY_1_WINDOW_01"
-        ]
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.7"
-      }
-    },
-    {
-      "id": "CW-D82E53BBDABD",
-      "kind": "decoration-opening",
-      "signature": "decoration-opening|placementId=PLACE_RUG_SIGNS_RUG_W_SIGN_1|openingId=ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_01",
-      "match": {
-        "placementId": "PLACE_RUG_SIGNS_RUG_W_SIGN_1",
-        "openingId": "ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_01"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.3"
-      }
-    },
-
-    {
-      "id": "CW-D8602E151B6B",
-      "kind": "decoration-opening",
-      "signature": "decoration-opening|placementId=PLACE_TEXTILE_SIGNS_TEXTILE_W_SIGN_1|openingId=ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_01",
-      "match": {
-        "placementId": "PLACE_TEXTILE_SIGNS_TEXTILE_W_SIGN_1",
-        "openingId": "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_STORY_1_WINDOW_01"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.2"
-      }
-    },
     {
       "id": "CW-7599CB836F04",
       "kind": "hard-overlap",
@@ -101,42 +34,12 @@
       }
     },
     {
-      "id": "CW-A0FABA3DAE26",
-      "kind": "opening-service",
-      "signature": "opening-service|placementId=PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_EAST|openingId=ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_GROUND_01",
-      "match": {
-        "placementId": "PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_EAST",
-        "openingId": "ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_GROUND_01"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.7"
-      }
-    },
-    {
       "id": "CW-216C7CBF937B",
       "kind": "opening-service",
       "signature": "opening-service|placementId=PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01|openingId=ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_STORY_1_WINDOW_01",
       "match": {
         "placementId": "PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01",
         "openingId": "ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_STORY_1_WINDOW_01"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.7"
-      }
-    },
-    {
-      "id": "CW-F70D65F7D790",
-      "kind": "opening-service",
-      "signature": "opening-service|placementId=PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01|openingId=ARCH_FRONTAGE_TEA_TERRACE_EAST_GROUND_02",
-      "match": {
-        "placementId": "PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01",
-        "openingId": "ARCH_FRONTAGE_TEA_TERRACE_EAST_GROUND_02"
       },
       "reasonCode": "legacy-composition-conflict",
       "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",

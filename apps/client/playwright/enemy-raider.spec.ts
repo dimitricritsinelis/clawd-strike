@@ -16,7 +16,7 @@ test("Blender raider plants feet, animates independent clones, and retains the g
     const loaderUrl = "/node_modules/three/examples/jsm/loaders/GLTFLoader.js";
     const surfaceUrl = "/src/runtime/sim/TraversalSurfaceResolver.ts";
     const { EnemyVisual, preloadEnemyVisualAssets } = await import(visualUrl);
-    const { Scene, Vector3 } = await import(threeUrl);
+    const { Scene, Vector3, Quaternion } = await import(threeUrl);
     const { GLTFLoader } = await import(loaderUrl);
     const { TraversalSurfaceResolver } = await import(surfaceUrl);
     const scene = new Scene();
@@ -100,12 +100,47 @@ test("Blender raider plants feet, animates independent clones, and retains the g
         strafeLegClearance=Math.min(strafeLegClearance,legRight-legLeft);
       }
     };
+    const feet = () => first.animation.legs.map((leg: any) => ({
+      contactHeight: leg.contactHeight as number,
+      planted: leg.planted as boolean,
+      rollingPlant: leg.rollingPlant as boolean,
+      plantPivot: leg.plantPivot.toArray() as number[],
+      position: leg.foot.getWorldPosition(new Vector3()).toArray() as number[],
+      rotation: leg.foot.getWorldQuaternion(new Quaternion()).toArray() as number[],
+    }));
+    let plantedSamples = 0, rollingPlantSamples = 0, plantedGroundError = 0, plantedFrameDrift = 0, transitionFrameTravel = 0;
+    const measurePlant = (previous: ReturnType<typeof feet>, current: ReturnType<typeof feet>, slopeX: number, slopeZ: number) => {
+      for (let leg = 0; leg < 2; leg++) {
+        const before = previous[leg]!, after = current[leg]!;
+        const p = after.position;
+        if (after.planted) {
+          plantedSamples++;
+          plantedGroundError = Math.max(plantedGroundError, Math.abs(p[1]! - slopeX * p[0]! - slopeZ * p[2]! - after.contactHeight));
+        }
+        if (before.planted && after.planted && before.rollingPlant === after.rollingPlant) {
+          // A rolling ankle moves around its heel/toe support. Compare the same
+          // sole point in both poses, rather than requiring a stationary ankle.
+          const previousSupport = new Vector3().fromArray(before.position);
+          const currentSupport = new Vector3().fromArray(after.position);
+          if (after.rollingPlant) {
+            rollingPlantSamples++;
+            previousSupport.add(new Vector3().fromArray(after.plantPivot).applyQuaternion(new Quaternion().fromArray(before.rotation)));
+            currentSupport.add(new Vector3().fromArray(after.plantPivot).applyQuaternion(new Quaternion().fromArray(after.rotation)));
+          }
+          plantedFrameDrift = Math.max(plantedFrameDrift, Math.hypot(currentSupport.x - previousSupport.x, currentSupport.z - previousSupport.z));
+        }
+      }
+    };
     second.update(3,0,0,0,true,1/60,true);
     const otherRest = point(otherRoot.getObjectByName("Foot_R"));
-    const frames: { left: number[]; right: number[] }[] = [];
+    const frames: { left: number[]; right: number[]; rightPlanted: boolean }[] = [];
+    let previousFeet = feet();
     for (let frame = 1; frame <= 90; frame++) {
       first.update(0,0,-frame*1.1/60,0,true,1/60,true);
-      frames.push({left:point(left),right:point(right)});
+      const currentFeet = feet();
+      if (frame > 30) measurePlant(previousFeet, currentFeet, 0, 0);
+      previousFeet = currentFeet;
+      frames.push({left:point(left),right:point(right),rightPlanted:first.animation.legs.find((leg:any)=>leg.foot===right).planted});
       if(frame%10===0)measureBoots();
     }
     const otherAfter = point(otherRoot.getObjectByName("Foot_R"));
@@ -144,9 +179,13 @@ test("Blender raider plants feet, animates independent clones, and retains the g
       if(frame>120)slopeRotations.push(right.getWorldQuaternion(chest.quaternion.clone()).toArray());
     }
     let runLegLengthError=0;
+    let legLengthWorst:unknown=null;
     let passingHipHeight=Infinity;
     let passingHipSamples=0;
+    const torsoMotion=[];
     for(const speed of [1.1,3]) for(const [dx,dz] of [[0,-1],[0,1],[-1,0],[1,0]]) {
+      const torsoHeights:number[]=[];
+      const torsoRotations:any[]=[];
       first.reset();
       first.update(0,0,0,0,true,1/60,true);
       for(let frame=1;frame<=90;frame++) {
@@ -156,36 +195,78 @@ test("Blender raider plants feet, animates independent clones, and retains the g
           const knee=root.getObjectByName("Shin_"+side).getWorldPosition(new Vector3());
           const ankle=root.getObjectByName("Foot_"+side).getWorldPosition(new Vector3());
           const phase=first.animation.motion.phase % .5;
-          if(frame>30 && phase>.22 && phase<.28) {
+          // Passing is halfway through contact. Running releases the foot
+          // earlier, so sampling walk phase .25 would measure push-off instead.
+          const passingPhase=.25+((dx ? .135 : dz! < 0 ? .16 : .175)-.25)*first.animation.runBlend;
+          if(frame>30 && Math.abs(phase-passingPhase)<.03) {
             passingHipHeight=Math.min(passingHipHeight,hip.y);
             passingHipSamples++;
           }
-          runLegLengthError=Math.max(runLegLengthError,Math.abs(hip.distanceTo(knee)-.45),Math.abs(knee.distanceTo(ankle)-.43));
+          const lengthError=Math.max(Math.abs(hip.distanceTo(knee)-.475),Math.abs(knee.distanceTo(ankle)-.43));
+          if(lengthError>runLegLengthError) {
+            runLegLengthError=lengthError;
+            legLengthWorst={speed,dx,dz,frame,side,upper:hip.distanceTo(knee),lower:knee.distanceTo(ankle)};
+          }
+        }
+        if(frame>30) {
+          torsoHeights.push(chest.getWorldPosition(new Vector3()).y);
+          torsoRotations.push(chest.getWorldQuaternion(chest.quaternion.clone()));
         }
         if(frame%15===0)measureBoots();
         if(dx && frame%3===0)measureStrafeClearance();
       }
+      torsoMotion.push({speed,dx,dz,rise:Math.max(...torsoHeights)-Math.min(...torsoHeights),
+        rotation:Math.max(...torsoRotations.map(q=>q.angleTo(torsoRotations[0])))});
     }
 
-    const animation = first.animation;
-    const feet = (): { planted: boolean; position: number[] }[] => animation.legs.map((leg: any) => ({
-      planted: leg.planted,
-      position: leg.foot.getWorldPosition(new Vector3()).toArray() as number[],
-    }));
-    let plantedSamples = 0, plantedGroundError = 0, plantedFrameDrift = 0, transitionFrameTravel = 0;
-    const measurePlant = (previous: ReturnType<typeof feet>, current: ReturnType<typeof feet>, slopeX: number, slopeZ: number) => {
-      for (let leg = 0; leg < 2; leg++) {
-        const before = previous[leg]!, after = current[leg]!;
-        const p = after.position;
-        if (after.planted) {
-          plantedSamples++;
-          plantedGroundError = Math.max(plantedGroundError, Math.abs(p[1]! - slopeX * p[0]! - slopeZ * p[2]! - .13));
+    // Measure rendered landing positions for each foot, not the phase formula:
+    // faster animation alone must not pass as a longer step.
+    const strides: { speed: number; dx: number; dz: number; legs: { count: number; mean: number }[] }[] = [];
+    const forwardGaits: {speed:number; minPelvis:number; maxPelvis:number; soleClearance:number; footRotation:number}[] = [];
+    for (const [dx, dz] of [[0,-1],[0,1],[-1,0],[1,0],
+      [-Math.SQRT1_2,-Math.SQRT1_2],[Math.SQRT1_2,-Math.SQRT1_2],
+      [-Math.SQRT1_2,Math.SQRT1_2],[Math.SQRT1_2,Math.SQRT1_2]]) {
+      for (const speed of [1.1, 1.9, 3]) {
+        first.reset();
+        first.update(0,0,0,0,true,1/60,true);
+        let previous = feet();
+        const lastPlants: (number[] | null)[] = [null, null];
+        const distances: number[][] = [[], []];
+        let minPelvis=Infinity,maxPelvis=-Infinity,soleClearance=Infinity,footRotation=0;
+        const footRotations:any[]=[];
+        for (let frame = 1; frame <= 420; frame++) {
+          first.update(dx!*frame*speed/60,0,dz!*frame*speed/60,0,true,1/60,true);
+          const current = feet();
+          if(dx===0 && dz===-1 && frame>60) {
+            root.updateMatrixWorld(true);
+            const pelvisHeight=root.getObjectByName("Pelvis").getWorldPosition(new Vector3()).y;
+            minPelvis=Math.min(minPelvis,pelvisHeight);
+            maxPelvis=Math.max(maxPelvis,pelvisHeight);
+            const rotation=right.getWorldQuaternion(chest.quaternion.clone());
+            if(footRotations.length)footRotation=Math.max(footRotation,rotation.angleTo(footRotations[0]));
+            else footRotations.push(rotation);
+            for(const name of ["Raider_High","Raider_Low"])root.getObjectByName(name).skeleton.update();
+            for(const sample of bootSamples) {
+              const position=sample.mesh.getVertexPosition(sample.index,new Vector3()).applyMatrix4(sample.mesh.matrixWorld);
+              soleClearance=Math.min(soleClearance,position.y);
+            }
+          }
+          for (let leg = 0; leg < 2; leg++) {
+            if (frame > 60 && current[leg]!.planted && !previous[leg]!.planted) {
+              const landing = current[leg]!.position;
+              const last = lastPlants[leg];
+              if (last) distances[leg]!.push(Math.hypot(landing[0]!-last[0]!,landing[2]!-last[2]!));
+              lastPlants[leg] = landing;
+            }
+          }
+          previous = current;
         }
-        if (before.planted && after.planted) {
-          plantedFrameDrift = Math.max(plantedFrameDrift, Math.hypot(...p.map((value, axis) => value - before.position[axis]!)));
-        }
+        if(dx===0 && dz===-1)forwardGaits.push({speed,minPelvis,maxPelvis,soleClearance,footRotation});
+        strides.push({speed,dx:dx!,dz:dz!,legs:distances.map(values=>({
+          count:values.length,mean:values.reduce((sum,value)=>sum+value,0)/values.length,
+        }))});
       }
-    };
+    }
     for (const axis of ["x", "y"] as const) for (const slope of [-.15, .15]) {
       const slopeX = axis === "x" ? slope : 0, slopeZ = axis === "y" ? slope : 0;
       const surface = new TraversalSurfaceResolver([{
@@ -242,24 +323,46 @@ test("Blender raider plants feet, animates independent clones, and retains the g
     const legacyHasRig=!!legacyRoot.getObjectByName("RaiderRig");
     const legacyHasModel=legacyRoot.children.some((child:any)=>child.isGroup && child.children.some((c:any)=>c.type==="Group"));
     legacy.dispose(scene);
-    return {plantedSamples,plantedGroundError,plantedFrameDrift,transitionFrameTravel,frames,legLengths,standingHipHeight,bootSampleCount:bootSamples.length,bootDeformation,bootWorst,runLegLengthError,passingHipHeight,passingHipSamples,strafeBootClearance,strafeLegClearance,otherRest,otherAfter,frozen,paused,beforeFire,afterFire,torsoStart,torsoSettled,slopeRotations,farLod,reset,rampSamples,survivor,attachedAfterDispose,legacyHasRig,legacyHasModel,remaining:scene.children.length};
+    return {forwardGaits,strides,legLengthWorst,torsoMotion,plantedSamples,rollingPlantSamples,plantedGroundError,plantedFrameDrift,transitionFrameTravel,frames,legLengths,standingHipHeight,bootSampleCount:bootSamples.length,bootDeformation,bootWorst,runLegLengthError,passingHipHeight,passingHipSamples,strafeBootClearance,strafeLegClearance,otherRest,otherAfter,frozen,paused,beforeFire,afterFire,torsoStart,torsoSettled,slopeRotations,farLod,reset,rampSamples,survivor,attachedAfterDispose,legacyHasRig,legacyHasModel,remaining:scene.children.length};
   });
+  for(const gait of result.forwardGaits) {
+    expect(gait.minPelvis,JSON.stringify(gait)).toBeGreaterThanOrEqual(.967);
+    expect(gait.maxPelvis,JSON.stringify(gait)).toBeGreaterThan(1.012);
+    expect(gait.soleClearance,JSON.stringify(gait)).toBeGreaterThanOrEqual(-.003);
+    expect(gait.footRotation,JSON.stringify(gait)).toBeGreaterThan(.1);
+  }
+  for(const leg of result.strides[0]!.legs)expect(leg.mean).toBeCloseTo(1.35,1);
+  for (let direction = 0; direction < result.strides.length; direction += 3) {
+    const gaits = result.strides.slice(direction, direction + 3);
+    for (let leg = 0; leg < 2; leg++) {
+      for (const gait of gaits) expect(gait.legs[leg]!.count, JSON.stringify(gait)).toBeGreaterThanOrEqual(3);
+      expect(gaits[1]!.legs[leg]!.mean, JSON.stringify(gaits)).toBeGreaterThan(gaits[0]!.legs[leg]!.mean * 1.2);
+      expect(gaits[2]!.legs[leg]!.mean, JSON.stringify(gaits)).toBeGreaterThan(gaits[1]!.legs[leg]!.mean * 1.2);
+    }
+  }
+  for(const gait of result.torsoMotion) {
+    expect(gait.rise,JSON.stringify(gait)).toBeGreaterThan(.008);
+    expect(gait.rotation,JSON.stringify(gait)).toBeGreaterThan(.025);
+    expect(gait.rise,JSON.stringify(gait)).toBeLessThan(.12);
+    expect(gait.rotation,JSON.stringify(gait)).toBeLessThan(.15);
+  }
   expect(result.plantedSamples).toBeGreaterThan(1000);
+  expect(result.rollingPlantSamples).toBeGreaterThan(100);
   expect(result.plantedGroundError).toBeLessThan(.003);
   expect(result.plantedFrameDrift).toBeLessThan(.003);
   // Catch the original 55 cm reversal teleport without confusing this bound
   // with an artistic quality assessment.
   expect(result.transitionFrameTravel).toBeLessThan(.14);
   expect(result.otherAfter).toEqual(result.otherRest);
-  expect(result.standingHipHeight).toBeGreaterThan(.945);
-  expect(result.standingHipHeight).toBeLessThan(.965);
+  expect(result.standingHipHeight).toBeGreaterThan(1.005);
+  expect(result.standingHipHeight).toBeLessThan(1.02);
   expect(result.bootSampleCount).toBeGreaterThan(100);
   expect(result.bootDeformation,JSON.stringify(result.bootWorst)).toBeLessThan(.001);
   // At passing, the supporting leg should extend under the hip instead of
   // carrying the low contact pose through the whole gait (the squat walk).
   expect(result.passingHipSamples).toBeGreaterThan(20);
   expect(result.passingHipHeight).toBeGreaterThan(.97);
-  expect(result.runLegLengthError).toBeLessThan(.001);
+  expect(result.runLegLengthError,JSON.stringify(result.legLengthWorst)).toBeLessThan(.001);
   expect(result.strafeBootClearance).toBeGreaterThan(.01);
   expect(result.strafeLegClearance).toBeGreaterThan(.01);
   expect(Math.abs(result.legLengths[0]![0]!-result.legLengths[1]![0]!)).toBeLessThan(.001);
@@ -271,9 +374,9 @@ test("Blender raider plants feet, animates independent clones, and retains the g
   expect(quaternionAngle(result.torsoStart,result.torsoSettled)).toBeLessThan(.04);
   expect(Math.max(...result.slopeRotations.map(q=>quaternionAngle(q,result.slopeRotations[0]!)))).toBeLessThan(.01);
   expect(result.farLod).toEqual({high:false,low:true});
-  // Mid stance in the second cycle: the boot remains fixed in world X/Z.
-  const planted=result.frames.slice(65,83).map((frame)=>frame.right);
-  expect(Math.max(...planted.map(p=>p[2]!))-Math.min(...planted.map(p=>p[2]!))).toBeLessThan(.008);
+  // Initial forward stance contributes to the shared support-point drift check.
+  const planted=result.frames.slice(31).filter((frame,index)=>frame.rightPlanted && result.frames[index+30]!.rightPlanted);
+  expect(planted.length).toBeGreaterThan(10);
   expect(Math.max(...result.frames.map(frame=>frame.left[1]!))).toBeGreaterThan(.19);
   expect(Math.min(...result.frames.map(frame=>frame.right[1]!))).toBeGreaterThan(.115);
   const rampClearances=result.rampSamples.flatMap((feet)=>feet.map(p=>p[1]!-(.4-p[2]!*.1)));
@@ -423,4 +526,46 @@ test("raider GLB embeds the reviewed material maps", async () => {
     // Imported packed images used to silently export the unedited donor bytes.
     expect(exported.equals(reviewed), filename).toBe(true);
   }
+});
+
+
+test("live raiders maintain body separation while hunting the player", async ({ page }, testInfo) => {
+  const errors: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  await page.goto(buildRuntimeUrl(testInfo.project.use.baseURL as string, {
+    autostart: "human", agentName: "RaiderCollisionReview",
+    extraSearchParams: { qa: 1, debug: 1, god: 1, vm: 0, seed: 412805685 },
+  }), { waitUntil: "domcontentloaded" });
+  await waitForRuntimeReady(page, { routeId: "raider-collision" });
+  const initial = await readRuntimeState(page);
+  const target = initial.bots.enemies.find((enemy: any) => enemy.health > 0);
+  expect(target).toBeTruthy();
+  await page.evaluate((enemy: any) => {
+    window.__debug_set_player_pose?.({ x: enemy.position.x, y: enemy.position.y, z: enemy.position.z - 4, yawDeg: 180 });
+  }, target);
+  const samples = await page.evaluate(async () => {
+    let minimumDistance = Infinity, closePairs = 0;
+    for (let frame = 0; frame < 600; frame++) {
+      await window.advanceTime?.(100);
+      const state = JSON.parse(window.render_game_to_text!());
+      const enemies = state.bots.enemies.filter((enemy: any) => enemy.health > 0);
+      for (let i = 0; i < enemies.length; i++) for (let j = i + 1; j < enemies.length; j++) {
+        const a = enemies[i].position, b = enemies[j].position;
+        if (Math.abs(a.y - b.y) >= 1.8) continue;
+        const distance = Math.hypot(a.x - b.x, a.z - b.z);
+        minimumDistance = Math.min(minimumDistance, distance);
+        if (distance < 0.8) closePairs++;
+      }
+    }
+    window.__qa_render_frame?.();
+    return { minimumDistance, closePairs };
+  });
+  const output = path.resolve("../../artifacts/raider-review");
+  await mkdir(output, { recursive: true });
+  await page.screenshot({ path: path.join(output, "in-game-collision.png") });
+  await writeFile(path.join(output, "in-game-collision.json"), JSON.stringify({ samples, errors, state: await readRuntimeState(page) }, null, 2));
+  // Match the existing world solver and overlap recovery contact tolerance.
+  expect(samples.minimumDistance).toBeGreaterThanOrEqual(0.6 - 0.0001);
+  expect(samples.closePairs).toBeGreaterThan(0);
+  expect(errors).toEqual([]);
 });

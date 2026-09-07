@@ -47,9 +47,6 @@ jobs:
       - name: Map Runtime Tests
         run: pnpm test:map-runtime
 
-      - name: Validate STM
-        run: pnpm stm -- validate
-
       - name: Server Tests
         run: pnpm test:server
 

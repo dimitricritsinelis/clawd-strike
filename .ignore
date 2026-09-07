@@ -1,6 +1,3 @@
-# Historical process records are available by explicit path, but should not
-# contaminate normal repository searches.
-docs/map-design/archive/
 
 # Generated map/runtime and design-reference outputs are evidence, not source.
 apps/client/public/maps/

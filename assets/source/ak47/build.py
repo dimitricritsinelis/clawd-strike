@@ -39,8 +39,8 @@ rig = bpy.data.objects['L_Armature']
 for name in ['MuzzleSocket', 'EjectionSocket', 'SupportGripAnchor', 'MagazineSeatedAnchor', 'MagazineGripAnchor', 'ThumbPadContact']:
     if name not in bpy.data.objects:
         raise RuntimeError('Missing authored anchor: ' + name)
-if bpy.data.objects.get('R_Armature'):
-    raise RuntimeError('The approved design uses only the left arm')
+if not bpy.data.objects.get('R_Armature') or not bpy.data.objects['R_Armature'].data.bones.get('GripHand'):
+    raise RuntimeError('The two-hand assembly requires the mirrored right pistol-grip hand')
 bpy.context.view_layer.update()
 bpy.ops.object.select_all(action='DESELECT')
 for ob in [root, *root.children_recursive]:
@@ -98,7 +98,7 @@ for ob in root.children_recursive:
                 if image_path.parent == SOURCE / 'textures' and image_path.suffix == '.png':
                     finish_images.add(image_path)
 manifest = {
-    'name': 'AK47 Urban Breacher left-hand idle viewmodel',
+    'name': 'AK47 Urban Breacher two-hand viewmodel',
     'source': 'repo://assets/source/ak47/build.py',
     'sourceMd5': md5(Path(__file__)),
     'blendSource': 'repo://assets/source/ak47/ak47.blend',
@@ -129,7 +129,14 @@ manifest = {
     },
     'coordinates': 'Metres; Blender +X forward, +Z up, -Y right; glTF +X forward, +Y up, +Z right',
     'runtimePose': {'position': [.151, -.143, -.30], 'roll': -.065, 'modelYaw': 1.5707963267948966, 'verticalFov': 54, 'aspect': 16 / 9},
-    'attachments': ['MuzzleSocket', 'EjectionSocket', 'SupportGripAnchor', 'RightGripAnchor (marker only)', 'MagazineSeatedAnchor', 'MagazineGripAnchor', 'ThumbPadContact', 'ThumbPadContact1', 'ThumbPadContact2'],
+    'attachments': ['MuzzleSocket', 'EjectionSocket', 'SupportGripAnchor', 'RightGripAnchor', 'GripHand', 'MagazineSeatedAnchor', 'MagazineGripAnchor', 'ThumbPadContact', 'ThumbPadContact1', 'ThumbPadContact2'],
+    'rightHand': {
+        'source': 'repo://assets/source/ak47/right_hand.py',
+        'sourceMd5': md5(SOURCE / 'right_hand.py'),
+        'construction': 'Accepted left glove and skeleton mirrored into a right hand with corrected face winding',
+        'grip': 'Right/rear palm support, three curled fingers on the pistol grip, opposed thumb, index pad resting against the trigger',
+        'animation': 'Rigid pistol-grip contact throughout idle, firing and reload',
+    },
     'animations': ['Idle', 'Fire', 'Reload'],
     'reload': {
         'source': 'repo://assets/source/ak47/reload.py',
@@ -137,8 +144,9 @@ manifest = {
         'durationSeconds': 1.225,
         'contactFrames': [33, 119],
         'magazineMotion': 'Existing magazine path and keyframes preserved',
-        'handMotion': 'Release fore-end, reach, opposed thumb/finger grip, follow magazine, release and return to approved idle',
-        'thumbMotion': 'Shallow forward curl with three measured skin points against the broad left magazine face; pad normal faces into the metal; relaxed opening without thumb flare; idle fore-end contact preserved',
+        'handMotion': 'Release fore-end, approach from below, wrap the magazine, follow its motion, release and return to approved idle',
+        'gripLayout': 'Wrist below the magazine, palm cupping its lower broad face, four fingers rising around the curved front edge, thumb wrapping around the rear corner onto the far broad face',
+        'thumbMotion': 'Thumb closes onto the far broad face with three measured outer padding points and full glove/padding clearance; pad normal follows the contacted surface; relaxed opening and idle fore-end contact preserved',
         'contactShading': 'Idle occlusion fades during hand travel; live self-shadows follow the reload',
     },
     'files': [{'file': export.name, 'md5': md5(export)}],

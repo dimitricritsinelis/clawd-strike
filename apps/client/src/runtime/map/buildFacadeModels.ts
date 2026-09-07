@@ -3,8 +3,8 @@ import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks
 import type { WallMaterialLibrary, WallTextureQuality } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { deriveSubSeed } from "../utils/Rng";
-import { designToWorldVec3 } from "./coordinateTransforms";
-import type { RuntimeSectionModel } from "./types";
+import { designToWorldVec3, designYawDegToWorldYawRad } from "./coordinateTransforms";
+import type { RuntimeAuthoredPlacement, RuntimeSectionModel } from "./types";
 import type { FacadeModelPlacement } from "./v3Architecture";
 import { resolveWallShaderProfile } from "./wallShaderProfiles";
 
@@ -83,6 +83,34 @@ export function buildSectionModels(models: readonly RuntimeSectionModel[], libra
     }
     const origin = designToWorldVec3(section.origin);
     model.position.set(origin.x, origin.y, origin.z);
+    rebindPackMaterials(model, binding, origin.y);
+    root.add(model);
+  }
+  return root;
+}
+
+/**
+ * Mounts free render-only GLBs from area packages: balconies, roof furniture,
+ * skyline massing, props. Design metres with the model's base centre at
+ * `position`; the GLB is authored Y-up with its front along +Z, as facades are.
+ */
+export function buildAuthoredPlacements(placements: readonly RuntimeAuthoredPlacement[], library: PropModelLibrary, binding: PackMaterialBinding): Group {
+  const root = new Group();
+  root.name = "map-authored-placements";
+  for (const placement of placements) {
+    if (!library.hasModel(placement.modelId)) {
+      console.warn(`[authored-placements] '${placement.modelId}' for ${placement.id} is not loaded`);
+      continue;
+    }
+    const model = library.instantiate(placement.modelId);
+    model.name = `${placement.role}:${placement.id}`;
+    _bbox.setFromObject(model);
+    if (Math.abs(_bbox.min.y) > 0.05) {
+      console.warn(`[authored-placements] '${placement.modelId}' base sits at y=${_bbox.min.y.toFixed(2)}; author the origin at the model's base.`);
+    }
+    const origin = designToWorldVec3(placement.position);
+    model.position.set(origin.x, origin.y, origin.z);
+    model.rotation.y = designYawDegToWorldYawRad(placement.yawDeg);
     rebindPackMaterials(model, binding, origin.y);
     root.add(model);
   }
