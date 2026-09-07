@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { BoxGeometry, Group, DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
+import { BoxGeometry, Color, Group, DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
 import { createArchSpandrelGeometry, createOpenBottomArchRecessGeometry, createOpenBottomPointedArchFrameGeometry } from "./wallDetailFamilies/arches";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
@@ -13,6 +13,7 @@ import {
   type V3MassingProfile,
 } from "./v3Architecture";
 import { buildDoorModels, CASTLE_DOOR_ID } from "./buildDoorModels";
+import { buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { parseBlockoutSpec, type RuntimeBlockoutZone } from "./types";
 
@@ -168,6 +169,7 @@ function build(
   fortifiedDoorModelAvailable = true,
   experimentalVisualCutoutMassing = false,
   profiles: V3FacadeProfile[] = facadeProfiles,
+  sectionOwnedFaces?: ReadonlySet<string>,
 ) {
   return buildV3Architecture({
     placements,
@@ -179,6 +181,7 @@ function build(
     wallHeightM: 9.5,
     fortifiedDoorModelAvailable,
     experimentalVisualCutoutMassing,
+    ...(sectionOwnedFaces ? { sectionOwnedFaces } : {}),
   });
 }
 
@@ -1241,6 +1244,93 @@ test("segmented infill is forced through the continuous world-projected PBR path
       /mat3\(batchingMatrix\) \* wallObjectNormal/,
       "world projection must not reapply a non-uniform batch transform to normals",
     );
+  } finally {
+    if (typeof previousWindow === "undefined") Reflect.deleteProperty(globalThis, "window");
+    else Reflect.set(globalThis, "window", previousWindow);
+    if (typeof previousDocument === "undefined") Reflect.deleteProperty(globalThis, "document");
+    else Reflect.set(globalThis, "document", previousDocument);
+  }
+});
+
+test("building wall and structural trim tints multiply their manifest palette", () => {
+  const previousWindow = Reflect.get(globalThis, "window");
+  const previousDocument = Reflect.get(globalThis, "document");
+  const image = {
+    addEventListener() {},
+    removeEventListener() {},
+    set src(_value: string) {},
+    crossOrigin: "",
+  };
+  Reflect.set(globalThis, "window", { location: { href: "http://localhost/" } });
+  Reflect.set(globalThis, "document", { createElementNS: () => image });
+  try {
+  const wallMaterialId = "ph_lime_plaster_sun";
+  const trimMaterialId = "ph_trim_sanded_01";
+  const manifestColors = new Map([
+    [wallMaterialId, 0xdcc49e],
+    [trimMaterialId, 0xdfd2b8],
+    ["ph_rough_pine_door", 0x9a7656],
+  ]);
+  const wallTintHex = 0xfff2dd;
+  const trimTintHex = 0xf9efdf;
+  const doorTintHex = 0x8b6242;
+  const wallMaterials = {
+    getMaterialIds: () => [...manifestColors.keys()],
+    createStandardMaterial: (id: string) => new MeshStandardMaterial({ color: manifestColors.get(id) ?? 0xffffff }),
+    getTileSizeM: () => 2,
+  } as unknown as WallMaterialLibrary;
+  const root = buildWallDetailMeshes([
+    {
+      meshId: "facade_wall_shell",
+      position: { x: 0, y: 2, z: 0 },
+      scale: { x: 4, y: 4, z: 0.2 },
+      yawRad: 0,
+      wallMaterialId,
+      trimMaterialId: null,
+      detailTintHex: wallTintHex,
+    },
+    {
+      meshId: "plinth_strip",
+      position: { x: 0, y: 0.2, z: 0.12 },
+      scale: { x: 4, y: 0.4, z: 0.2 },
+      yawRad: 0,
+      wallMaterialId,
+      trimMaterialId,
+      detailTintHex: trimTintHex,
+    },
+    {
+      meshId: "door_panel_timber",
+      position: { x: 0, y: 1.4, z: 0.24 },
+      scale: { x: 0.9, y: 2.8, z: 0.1 },
+      yawRad: 0,
+      wallMaterialId,
+      trimMaterialId: "ph_rough_pine_door",
+      detailTintHex: doorTintHex,
+    },
+  ], {
+    highVis: false,
+    wallMode: "pbr",
+    wallMaterials,
+    quality: "1k",
+    seed: 1,
+  });
+
+  const wallMesh = root.children.find((child) => child.name.includes(wallMaterialId)) as InstancedMesh;
+  const trimMesh = root.children.find((child) => child.name.includes(trimMaterialId)) as InstancedMesh;
+  const color = new Color();
+
+  assert.equal((wallMesh.material as MeshStandardMaterial).color.getHex(), manifestColors.get(wallMaterialId));
+  wallMesh.getColorAt(0, color);
+  assert.equal(color.getHex(), wallTintHex);
+  assert.equal((trimMesh.material as MeshStandardMaterial).color.getHex(), manifestColors.get(trimMaterialId));
+  trimMesh.getColorAt(0, color);
+  assert.equal(color.getHex(), trimTintHex);
+  const doorMesh = root.children.find((child) => child.name.includes("door_panel_timber")) as InstancedMesh;
+  doorMesh.getColorAt(0, color);
+  const leafColor = (doorMesh.material as MeshStandardMaterial).color.clone().multiply(color);
+  const luminance = (value: Color): number => value.r * 0.2126 + value.g * 0.7152 + value.b * 0.0722;
+  const leafLuminanceRatio = luminance(leafColor) / luminance(new Color(doorTintHex));
+  assert.ok(leafLuminanceRatio >= 0.82 && leafLuminanceRatio <= 1.18, `door leaf tint response changed (${leafLuminanceRatio.toFixed(3)})`);
   } finally {
     if (typeof previousWindow === "undefined") Reflect.deleteProperty(globalThis, "window");
     else Reflect.set(globalThis, "window", previousWindow);
@@ -2858,10 +2948,127 @@ test("a frontage with facadeModelId keeps its wall mass and roof edge but hands 
   assert.ok(!ids.some((id) => id.startsWith("ARCH_MODULE_001")), "kit face modules are skipped");
   assert.ok(!ids.some((id) => id.startsWith("ARCH_MASSING_001:facade-edge") || id === "ARCH_MASSING_001:wall-base" || id.includes(":merchant-base-apron")), "kit face accessories are skipped");
   assert.equal(result.doorModelPlacements.length, 0);
-  const cutoutShell = build([massing, module], true, true).instances.find((instance) => instance.placementId === massing.id)!;
+  const withCutouts = build([massing, module], true, true);
+  const cutoutShell = withCutouts.instances.find((instance) => instance.placementId === massing.id)!;
   assert.equal(cutoutShell.scale.x, massing.sizeM.width - 0.04, "model-owned shell retains side-wall clearance after aperture removal");
   assert.equal(cutoutShell.visualQaDimensions?.x, massing.sizeM.width, "authored width remains unchanged");
+  assert.equal(cutoutShell.semanticClass, "segmented_massing_backing_volume", "model-owned modules still form the shared backing volume");
+  assert.ok(withCutouts.instances.some((instance) => instance.semanticClass === "facade_wall_infill"), "model-owned modules preserve recess apertures in the shell");
+  assert.ok(!withCutouts.instances.some((instance) => instance.placementId === "ARCH_MASSING_001:facade-plinth"), "the authored facade owns its visible grounding detail");
+  assert.ok(!withCutouts.instances.some((instance) => instance.placementId === module.id), "the retained aperture input does not render a duplicate kit module");
   const plain = build([massingPlacement(), module]);
   assert.equal(plain.facadeModelPlacements.length, 0);
   assert.ok(plain.instances.some((instance) => instance.placementId?.startsWith("ARCH_MODULE_001")), "kit modules render when no facade model owns the face");
+});
+
+test("a section-owned face retains module apertures while suppressing duplicate kit detail", () => {
+  const massing = massingPlacement();
+  const module = modulePlacement("ARCH_MODULE_001", "shop_recess_market", "shop_recess", { x: 10, y: 14, z: 1.35 });
+  const result = build(
+    [massing, module],
+    true,
+    true,
+    facadeProfiles,
+    new Set(["ARBITRARY_ZONE_ID:west"]),
+  );
+  assert.equal(result.facadeModelPlacements.length, 0, "the section model mounts independently of frontage GLB placements");
+  assert.ok(result.instances.some((instance) => instance.semanticClass === "segmented_massing_backing_volume"), "section-owned recesses retain their shared backing");
+  assert.ok(result.instances.some((instance) => instance.semanticClass === "facade_wall_infill"), "section-owned recesses remain apertures instead of a solid shell");
+  assert.ok(!result.instances.some((instance) => instance.placementId === module.id), "section ownership suppresses the duplicate kit module");
+  assert.ok(!result.instances.some((instance) => instance.placementId === "ARCH_MASSING_001:facade-plinth"), "the section owns visible plinth detail");
+  assert.ok(result.instances.some((instance) => instance.semanticClass === "massing_skyline_edge_coping"), "runtime skyline coping remains structural shell ownership");
+});
+
+test("a bound Tea section retains its shared roof and parapet without legacy upper masses", () => {
+  const massing = {
+    ...(massingPlacement() as V3ArchitectureMassingPlacement),
+    id: "ARCH_FRONTAGE_TEA_TERRACE_EAST_MASSING",
+    zoneId: "TEA_TERRACE",
+    face: "east" as const,
+    yawDeg: 270,
+    roof: {
+      style: "setback_flat" as const,
+      setbackM: 0.75,
+      parapetHeightM: 0.75,
+      upperStorySetbackM: 0.75,
+      elevationM: 7,
+    },
+  };
+  const module = {
+    ...modulePlacement("ARCH_TEA_RECESS", "shop_recess_market", "shop_recess", { x: 10, y: 14, z: 1.35 }),
+    zoneId: "TEA_TERRACE",
+    face: "east" as const,
+    yawDeg: 270,
+  };
+  const result = build([massing, module], true, true, facadeProfiles, new Set(["TEA_TERRACE:east"]));
+  const ids = new Set(result.instances.map((instance) => instance.placementId));
+  assert.ok(ids.has(`${massing.id}:roof`), "runtime-owned shared roof slab remains");
+  assert.ok(ids.has(`${massing.id}:parapet-long:-1`), "runtime-owned shared parapet remains");
+  assert.ok(!ids.has(`${massing.id}:roof-bulkhead`), "bound Tea section removes the legacy bulkhead");
+  assert.ok(!ids.has(`${massing.id}:roof-silhouette-head`), "bound Tea section removes the legacy skyline head");
+  assert.ok(!ids.has(`${massing.id}:roof-silhouette-rear-tier`), "bound Tea section removes the legacy rear skyline tier");
+});
+
+test("facade relief warning ignores a high awning but catches low projected geometry", () => {
+  const facade = (awningY: number) => {
+    const source = new Group();
+    const material = new MeshStandardMaterial();
+    const wall = new Mesh(new BoxGeometry(6, 3, 0.1), material);
+    wall.position.set(0, 1.5, 0.05);
+    const awning = new Mesh(new BoxGeometry(2, 0.2, 0.8), material);
+    awning.position.set(0, awningY, 0.4);
+    source.add(wall, awning);
+    return source;
+  };
+  const high = facade(2.45);
+  const low = facade(1.5);
+  const models = {
+    hasModel: () => true,
+    instantiate: (modelId: string) => (modelId === "high-awning" ? high : low).clone(true),
+  } as unknown as PropModelLibrary;
+  const warnings: string[] = [];
+  const originalWarn = console.warn;
+  console.warn = (message: unknown) => warnings.push(String(message));
+  try {
+    buildFacadeModels([
+      { placementId: "HIGH", frontageId: "HIGH", modelId: "high-awning", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 4 },
+      { placementId: "LOW", frontageId: "LOW", modelId: "low-relief", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 4 },
+    ], models, { wallMaterials: null, quality: "1k", seed: 1 });
+  } finally {
+    console.warn = originalWarn;
+  }
+  assert.ok(!warnings.some((warning) => warning.includes("high-awning") && warning.includes("protrudes")), "a high awning is clear of the walk-through relief warning");
+  assert.ok(warnings.some((warning) => warning.includes("low-relief") && warning.includes("protrudes")), "low projected relief remains guarded");
+});
+
+test("authored plaster faces use the wall wear profile in facade and section GLBs", () => {
+  const facadeSource = new Group();
+  const facadeWall = new Mesh(new BoxGeometry(6, 3, 0.1), new MeshStandardMaterial({ name: "ph_lime_plaster_sun" }));
+  facadeWall.position.y = 1.5;
+  facadeSource.add(facadeWall);
+  const sectionSource = new Group();
+  const sectionWall = facadeWall.clone();
+  sectionWall.position.set(3, 1.5, 1.5);
+  sectionSource.add(sectionWall);
+  const models = {
+    hasModel: () => true,
+    instantiate: (modelId: string) => (modelId === "plaster-section" ? sectionSource : facadeSource).clone(true),
+  } as unknown as PropModelLibrary;
+  const wallMaterials = {
+    getMaterialIds: () => ["ph_lime_plaster_sun"],
+    createStandardMaterial: () => new MeshStandardMaterial({ color: 0xeadfc9 }),
+    getTileSizeM: () => 2,
+  } as unknown as WallMaterialLibrary;
+
+  const facadeRoot = buildFacadeModels([
+    { placementId: "PLASTER", frontageId: "PLASTER", modelId: "plaster", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 3 },
+  ], models, { wallMaterials, quality: "1k", seed: 1 });
+  const sectionRoot = buildSectionModels([
+    { zoneId: "PLASTER", modelId: "plaster-section", origin: { x: 0, y: 0, z: 0 }, sizeM: { width: 6, depth: 3 }, faces: ["north"], materialIds: ["ph_lime_plaster_sun"] },
+  ], models, { wallMaterials, quality: "1k", seed: 1 });
+
+  for (const root of [facadeRoot, sectionRoot]) {
+    const material = (root.children[0]!.children[0] as Mesh).material as MeshStandardMaterial;
+    assert.match(material.customProgramCacheKey(), /:wear:/, "the plaster face receives repairs, chips, and datum drips");
+  }
 });

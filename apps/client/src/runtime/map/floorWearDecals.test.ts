@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import type { RuntimeBlockoutSpec } from "./types";
-import { planFloorWearDecals } from "./floorWearDecals";
+import { buildFloorWearDecals, planFloorWearDecals } from "./floorWearDecals";
 
 const MAP_SPEC_URL = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
 
@@ -35,4 +35,18 @@ test("floor wear planning is deterministic and respects restrained per-zone dens
   assert.equal(countByZone.get("SERVICE_SOUTH"), 1);
   assert.equal(countByZone.get("SPICE_STREET"), 14);
   assert.ok([...countByZone.values()].every((count) => count === 1 || count === 14));
+});
+
+test("traffic wear sits on the raised terrace and does not span sloped surfaces", () => {
+  const spec = readSpec();
+  spec.zones = spec.zones.filter((zone) => zone.id === "TEA_TERRACE");
+  const mesh = buildFloorWearDecals(spec, 7331, 0);
+  assert.ok(mesh);
+  const vertices = mesh.geometry.getAttribute("position");
+  for (let i = 0; i < vertices.count; i += 1) {
+    assert.ok(Math.abs(vertices.getY(i) - 1.414) < 1e-6);
+  }
+  const terrace = spec.traversalSurfaces!.find((surface) => surface.zoneId === "TEA_TERRACE")!;
+  spec.traversalSurfaces = [{ ...terrace, kind: "ramp", axis: "y", startElevationM: 0, endElevationM: 1.4 }];
+  assert.equal(buildFloorWearDecals(spec, 7331, 0), null);
 });

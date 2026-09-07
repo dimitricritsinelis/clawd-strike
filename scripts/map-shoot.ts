@@ -136,7 +136,7 @@ function shoot(argv: string[]): void {
       console.log(b ? `  building ${b.id}  ${b.type}, ${b.storeys} storey(s): ${b.brief}` : "  building NONE: assign one in buildings[] before touching this wall");
       const massing = ((spec.massing_profiles as any[]) ?? []).find((m) => m.id === f.massingProfileId);
       const lengthM = (f.face === "west" || f.face === "east" ? zone.rect.h : zone.rect.w) * ((f.end ?? 1) - (f.start ?? 0));
-      if (massing) console.log(`  facade GLB  width ${lengthM.toFixed(2)} m x wall height ${massing.heightM} m (massing depth ${massing.depthM} m, parapet +${massing.parapetHeightM} m); origin bottom-center of the street face, +Z toward the street`);
+      if (massing) console.log(`  section wall  length ${lengthM.toFixed(2)} m x height ${massing.heightM} m (retained massing depth ${massing.depthM} m, parapet +${massing.parapetHeightM} m); use the zone plan frame and construction-sheet owned faces`);
       for (const wall of b?.walls ?? []) {
         if (wall.frontageId === f.id) console.log("  schedule " + JSON.stringify(wall));
       }

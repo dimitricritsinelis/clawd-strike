@@ -195,12 +195,17 @@ export function buildFloorWearDecals(
 
   const geometries: PlaneGeometry[] = [];
   for (const plan of plans) {
+    const surface = spec.traversalSurfaces?.find((candidate) => candidate.zoneId === plan.zoneId);
+    // Keep flat wear on its actual walking surface, including the raised tea terrace.
+    // A flat decal must not cut across a ramp or stair run.
+    if (surface && surface.kind !== "flat") continue;
     const geometry = new PlaneGeometry(plan.widthM, plan.lengthM, 1, 1);
     geometry.rotateX(-Math.PI * 0.5);
     geometry.rotateY(plan.yawRad);
-    geometry.translate(plan.x, floorTopY + DECAL_LIFT_M, plan.z);
+    geometry.translate(plan.x, floorTopY + (surface?.elevationM ?? 0) + DECAL_LIFT_M, plan.z);
     geometries.push(geometry);
   }
+  if (geometries.length === 0) return null;
   const geometry = mergeGeometries(geometries, false);
   for (const source of geometries) source.dispose();
   if (!geometry) throw new Error("[floor-wear-decals] failed to merge wear quads");

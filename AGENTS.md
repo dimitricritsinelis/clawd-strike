@@ -2,16 +2,20 @@
 
 ## Remaining work
 
-Finish the Bazaar map one named area at a time via TRANSFORM in [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md). Each area has a construction sheet in [docs/map-design/construction/](docs/map-design/construction/README.md) that decides every wall, bay, datum, awning, sign, placement and wear item with numbers; TRANSFORM builds the sheet and verifies it in the game. Each area should leave as a professional piece of environment design; rebuild whatever the sheet needs.
+Finish the Bazaar map one named area at a time via TRANSFORM in [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md). [docs/map-design/construction/README.md](docs/map-design/construction/README.md) is the canonical handoff: each sheet decides every wall, bay, datum, awning, sign, placement and wear item with numbers. TRANSFORM builds the sheet and marks it `built`. A request for one named area stops there; continue only through an explicit user-provided area queue. Gameplay and aesthetic validation are a later user-authorized task. Each area should leave as a professional piece of environment design; rebuild whatever the sheet needs.
+
+## Agent configuration
+
+Preferred implementing model: GPT-6 Astra. One implementing owner per area. Ask for approval before spawning subagents unless their configuration is already authorized in the current task; the user's preferred supporting configuration is Terra with high reasoning. This preference is not blanket permission to spawn. For a one-area implementation trial, use the main agent only unless the user requests otherwise.
 
 ## Art direction
 
 A believable Middle Eastern desert bazaar with the crafted realism and readability of a polished FPS environment.
 
-- Palette: warm sandstone, sandy ivory, aged lime plaster, weathered brown timber, cream shade cloth, controlled rust-red / teal-green / indigo-blue textile accents.
+- Palette: warm sandstone, sandy ivory and cream-to-tan aged lime plaster, weathered brown timber, cream shade cloth, controlled rust-red / teal-green / indigo-blue textile accents. The base reads sun-aged and occupied, never newly whitewashed.
 - Preserve layered street depth, occupied upper volumes, distinct trades, quiet service faces, clear routes.
-- Build complete openings, joinery, displays, cloth supports and ground contacts. Wear follows use and construction.
-- Avoid flat procedural decoration, uniformly beige or cold-white surfaces, random clutter, and cinematic effects that disguise weak assets.
+- Build complete openings, joinery, displays, cloth supports and ground contacts. Keep junctions clean; surface aging is separate: base accumulation, use-polish at hands and feet, and localized drips or cloth-edge grime. Civic faces stay quieter than trades and services. Do not weather above human height except at drains or sun bleach.
+- Avoid flat procedural decoration, uniformly beige or cold-white surfaces, uniform brown washes, sepia post-process, random clutter, and cinematic effects that disguise weak assets.
 
 Finish criteria: [docs/map-design/quality-bar.md](docs/map-design/quality-bar.md).
 
@@ -19,10 +23,12 @@ Finish criteria: [docs/map-design/quality-bar.md](docs/map-design/quality-bar.md
 
 Open the actual images at the start of every map session; a path is not visual inspection. Subagents do not inherit visual context: hand any delegated map task this art direction and the relevant images.
 
-1. [docs/map-design/refs/bazaar_main_hall_reference.png](docs/map-design/refs/bazaar_main_hall_reference.png): overall identity and street composition.
-2. [docs/map-design/development-plan/references/](docs/map-design/development-plan/references/): per-district character studies. Never a texture, blueprint or stall template.
+1. [docs/map-design/refs/bazaar_main_hall_reference.png](docs/map-design/refs/bazaar_main_hall_reference.png): founding reference and primary authority for warm aged cream/tan surfaces, trade patina, street depth and composition.
+2. [docs/map-design/development-plan/references/](docs/map-design/development-plan/references/): per-district geometry, craft and trade-role studies. Never a texture, blueprint or stall template.
 3. [docs/map-design/refs/](docs/map-design/refs/) `cs2_daylight_ref_1..5.png`: finish and gameplay readability.
 4. [docs/map-design/development-plan/design-atlas.pdf](docs/map-design/development-plan/design-atlas.pdf) and [drawings/](docs/map-design/development-plan/drawings/): review elevations and massing proposals per building.
+
+The [tracked engineering proof](docs/map-design/refs/spice-bay-engineering-proof.png) demonstrates one built Spice bay; its limits are recorded in the construction README. It is supporting evidence, not a replacement for the founding reference or the full area sheet.
 
 Images communicate appearance, never dimensions or gameplay. Dimensions come from the construction sheets and `map_spec.json`.
 
@@ -33,7 +39,7 @@ Two ways to drive Blender. Pick by need, not habit.
 - **Headless `bpy` (default for anything shipped).** `assets/source/<unit>/build.py` run with `/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python <script>`. Deterministic, reproducible, needs nothing running. Facades and section shells always ship this way.
 - **Blender MCP (live).** Talks to the addon inside the open Blender window on port 9876. Use it to inspect a scene, read real dimensions, take viewport screenshots, try geometry or materials, and preview Poly Haven assets. Prototype live, then port to `build.py` before shipping. One-off props and dressing may ship from a live-authored GLB when the `.blend` is committed next to it in the unit folder and `package.json` names that `.blend` as the model's `source`.
 
-Setup state on this machine (done 2026-09-07): Blender 5.2.1 LTS, addon `blender_mcp` 1.6 (protocol 5) installed and enabled, telemetry consent off, a startup script auto-starts the server whenever Blender opens with a window. Nothing to click. If the MCP tools report no connection, open Blender; the N-panel BlenderMCP tab has Connect to Claude as a fallback. Several agents may be connected at once; commands run one at a time on Blender's main thread and the UI freezes while one runs.
+Setup state on this machine (done 2026-09-07): Blender 5.2.1 LTS, addon `blender_mcp` 1.6 (protocol 5) installed and enabled, telemetry consent off, a startup script auto-starts the server whenever Blender opens with a window. This records the setup checked on that date, not a guarantee of a live connection in a new task. If a task uses MCP, first call addon-status or scene-info once; open Blender if it is unavailable. Headless construction needs no live MCP server and performs no new design survey. Several agents may be connected at once; commands run one at a time on Blender's main thread and the UI freezes while one runs.
 
 Clients: Claude Code uses `.mcp.json` (`uvx blender-mcp`, all tools). Codex uses `~/.codex/config.toml` `[mcp_servers.blender]`: the five core tools plus the three Poly Haven tools, `tool_timeout_sec = 180`, approvals `auto`. Hyper3D, Sketchfab, Hunyuan and Poly Pizza stay off everywhere; generated meshes fail the quality bar and the licence check.
 
@@ -51,6 +57,6 @@ Using it well:
 
 ## Locks
 
-- `pnpm map:check` guards gameplay, collision, traversal, spawns and anchors, and prints its reasons. On failure undo your change; never weaken the guard or rebaseline to hide it.
+- `pnpm map:check` guards gameplay, collision, traversal, spawns and anchors during the later validation task. Never weaken the guard or rebaseline to hide a failure.
 - Gameplay baseline stands. New connectors or playable elevation need a separate user-authorized task. Everything render-only is open: walls, floors, materials, balconies, overheads, dressing, skyline, lighting.
-- [docs/map-design/specs/map_spec.json](docs/map-design/specs/map_spec.json) owns implemented state; the construction sheets decide, the spec records. Area work enters it through `scripts/apply-facade-package.mjs`; the design layer (`buildings[]`, soft-visual and overhead anchors and placements, waivers) is edited directly when a sheet says so, and `map:check` decides whether the edit touched gameplay. [docs/map-design/shots.json](docs/map-design/shots.json) owns the signoff cameras.
+- [docs/map-design/specs/map_spec.json](docs/map-design/specs/map_spec.json) owns implemented state and protected measurements. The construction sheet decides the render-only work; use `scripts/apply-facade-package.mjs` to apply its package. Do not change the spec or design layer to fill a gap in a sheet. [docs/map-design/shots.json](docs/map-design/shots.json) owns later signoff cameras.

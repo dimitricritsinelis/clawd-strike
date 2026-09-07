@@ -25,8 +25,8 @@ Windows have jambs, heads, sills, reveals, closures and wall junctions. Stalls h
 
 ## Materials
 
-Correct world scale with variation at large, medium and fine scale. Renamed or tinted copies of one weak texture are not diversity. Close-range surfaces need readable texture, roughness, normal response, edge treatment, clean junctions and intentional wear. Wear follows water, sun, traffic, touch and repair.
+Correct world scale with variation at large, medium and fine scale. Renamed or tinted copies of one weak texture are not diversity. Close-range surfaces need readable texture, roughness, normal response, edge treatment, clean junctions and intentional wear. Set the map on a warm cream/tan, sun-aged base; add accumulated dust at bases, polish at hands and feet, and localized drain streaks or cloth-edge grime. Trades and services carry more use than quieter civic faces. Do not use a uniform brown wash, sepia post-process, or weathering above human height except drains and sun bleach. Wear follows water, sun, traffic, touch and repair.
 
 ## Completion
 
-An area is complete when every task in its brief meets its stated completion condition in the actual game, including supporting views and movement, with no regressions on neighbours. Floating or intersecting geometry, blocked openings, unsupported structures, exposed unfinished surfaces, placeholder materials, disconnected dressing, or anything in the walking envelope blocks completion.
+Release validation may set an area to `complete` only when every construction-sheet task meets its stated completion condition in the actual game, including supporting views and movement, with no regressions on neighbours. A construction pass sets an area to `built`, not `complete`. Floating or intersecting geometry, blocked openings, unsupported structures, exposed unfinished surfaces, placeholder materials, disconnected dressing, or anything in the walking envelope blocks release completion.

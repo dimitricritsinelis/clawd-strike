@@ -397,11 +397,11 @@ type BuildingMaterialIdentity = {
  * palette.
  */
 const BUILDING_WALL_TINTS: Readonly<Record<V3FacadeProfile["family"], readonly number[]>> = {
-  active_merchant: [0xe0d3b6, 0xc9b28f, 0xd7cdbe, 0xbcae96, 0xdccdaa, 0xcfc8bd],
-  quiet_residential: [0xe4ddd0, 0xcbb99b, 0xd8d3ca, 0xbfae94, 0xdcd4c2, 0xc6bfb4],
-  service_storage: [0xc7bda8, 0xb3a288, 0xaea79b, 0xd0c1a2, 0xb8b2a8, 0xd4ccbb],
-  covered_arcade: [0xcdbfa6, 0xb9ac97, 0xd6cdbd, 0xb0a793, 0xdbcfb4, 0xc0bab0],
-  hero_courtyard: [0xdccdb0, 0xc9b697, 0xe4ddd2, 0xbcae9a, 0xd6c8ac, 0xd0cac1],
+  active_merchant: [0xfff6e5, 0xffefd8, 0xfaecd8, 0xf6e5ce, 0xfff2dd, 0xf8ead5],
+  quiet_residential: [0xfff8ea, 0xfff1dc, 0xfaf0e2, 0xf4e5d1, 0xfff5e5, 0xf8eddf],
+  service_storage: [0xf9edd9, 0xf4e2c9, 0xf0e5d4, 0xffefd6, 0xf4e9da, 0xfff1df],
+  covered_arcade: [0xf8ecd8, 0xf3e4d1, 0xfdf0dd, 0xf0e0ca, 0xfff0d8, 0xf7ead8],
+  hero_courtyard: [0xfff2dc, 0xf8e7cc, 0xfff6e4, 0xf3e2cd, 0xfceed7, 0xf9eddd],
 };
 
 /**
@@ -421,11 +421,11 @@ function resolveBuildingMaterialIdentity(
   const brightness = 0.92 + stableUnitInterval(`${placement.id}:building-brightness`) * 0.16;
   const wallTintHex = scaleHexColor(palette[paletteIndex]!, brightness);
   const trimBase = family === "active_merchant" || family === "covered_arcade"
-    ? 0xc2b69f
-    : 0xc7bda9;
+    ? 0xfff5e3
+    : 0xf9efdf;
   const trimTintHex = scaleHexColor(
     trimBase,
-    0.9 + stableUnitInterval(`${placement.id}:building-trim`) * 0.18,
+    0.96 + stableUnitInterval(`${placement.id}:building-trim`) * 0.08,
   );
   const timberTintHex = scaleHexColor(
     0xa98563,
@@ -848,6 +848,7 @@ function pushMassingVisualShell(
   sharedBacking: SharedBackingVolume | null,
   backingPlacementId: string,
   identity: BuildingMaterialIdentity,
+  faceOwnedByModel: boolean,
 ): void {
   const apertures = collectFacadeApertures(placement, frontageModules);
   const backingRecessM = resolveFacadeBackingRecessM(frontageModules, placement.sizeM.depth);
@@ -917,25 +918,28 @@ function pushMassingVisualShell(
     });
   }
 
-  // Reusable render-only contact course: seats facade shells on paving while
-  // leaving collision, cover, and traversal geometry unchanged.
-  pushInstance(instances, {
-    placementId: `${placement.id}:facade-plinth`,
-    moduleId: `${placement.profileId}_grounding_plinth`,
-    semanticClass: "facade_grounding_plinth",
-    meshId: "plinth_strip",
-    position: offsetPosition(
-      { ...center, y: center.y - placement.sizeM.height * 0.5 + 0.12 },
-      placement.face,
-      0,
-      placement.sizeM.depth * 0.5 + 0.025,
-    ),
-    scale: { x: placement.sizeM.width + 0.04, y: 0.24, z: 0.16 },
-    yawRad,
-    trimMaterialId: "ph_stone_trim_sandstone",
-    detailTintHex: identity.trimTintHex,
-    uvProjection: "world",
-  });
+  // Reusable render-only contact course: seats kit facade shells on paving
+  // while leaving collision, cover, and traversal geometry unchanged. The
+  // authored GLB owns the visible face and its grounding detail.
+  if (!faceOwnedByModel) {
+    pushInstance(instances, {
+      placementId: `${placement.id}:facade-plinth`,
+      moduleId: `${placement.profileId}_grounding_plinth`,
+      semanticClass: "facade_grounding_plinth",
+      meshId: "plinth_strip",
+      position: offsetPosition(
+        { ...center, y: center.y - placement.sizeM.height * 0.5 + 0.12 },
+        placement.face,
+        0,
+        placement.sizeM.depth * 0.5 + 0.025,
+      ),
+      scale: { x: placement.sizeM.width + 0.04, y: 0.24, z: 0.16 },
+      yawRad,
+      trimMaterialId: "ph_stone_trim_sandstone",
+      detailTintHex: identity.trimTintHex,
+      uvProjection: "world",
+    });
+  }
 
   const infillRects = buildFacadeInfillRects(placement, apertures);
   const facadeLeftM = -placement.sizeM.width * 0.5;
@@ -2742,6 +2746,7 @@ function pushMassing(
       sharedBacking,
       backingPlacementId,
       identity,
+      faceOwnedByModel,
     );
   } else {
     pushInstance(instances, {
@@ -3140,7 +3145,11 @@ function pushMassing(
     detailTintHex: identity.roofTintHex,
   });
 
-  if (!higherRoofOwner && placement.roof.style === "setback_flat" && placement.roof.upperStorySetbackM >= 0.5) {
+  // Tea's bound east-face section replaces the former partial upper room.
+  // The runtime keeps its measured shared slab and parapet, but must not leave
+  // the legacy bulkhead and seeded heads above that 9.59 m cap.
+  const sectionOwnsTeaRoof = faceOwnedByModel && placement.zoneId === "TEA_TERRACE";
+  if (!sectionOwnsTeaRoof && !higherRoofOwner && placement.roof.style === "setback_flat" && placement.roof.upperStorySetbackM >= 0.5) {
     const bulkheadWidthM = profile.family === "active_merchant"
       ? Math.min(4.2, roofWidth * 0.42)
       : profile.family === "hero_courtyard"
@@ -3216,7 +3225,8 @@ function pushMassing(
     && placement.id !== "ARCH_FRONTAGE_TEXTILE_ARCADE_WEST_MASSING"
     && placement.id !== "ARCH_FRONTAGE_TEXTILE_ARCADE_EAST_MASSING"
     && placement.id !== "ARCH_FRONTAGE_SPICE_STREET_EAST_MASSING"
-    && profile.family !== "hero_courtyard";
+    && profile.family !== "hero_courtyard"
+    && !sectionOwnsTeaRoof;
   if (emitsSeededRoofSilhouette) {
     pushInstance(instances, {
       placementId: `${placement.id}:roof-silhouette-head`,
@@ -7760,15 +7770,15 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   const instances: WallDetailInstance[] = [];
   const doorModelPlacements: DoorModelPlacement[] = [];
   const facadeModelPlacements: FacadeModelPlacement[] = [];
-  // A frontage whose face is owned by an authored GLB contributes no kit
-  // modules: no openings, no visual cutouts, no shared-shell apertures.
+  // An authored GLB replaces visible kit modules, but the original modules
+  // still define apertures, recess depth, and shared-shell ownership.
   const sectionOwnedFaces = options.sectionOwnedFaces ?? new Set<string>();
   const ownedBySection = (placement: { zoneId: string; face: FacadeFace }) => sectionOwnedFaces.has(`${placement.zoneId}:${placement.face}`);
   const facadeOwnedFrontageIds = new Set(options.placements.flatMap((placement) =>
     placement.kind === "massing" && (placement.facadeModelId || ownedBySection(placement)) ? [placement.frontageId] : []));
   const modulesByFrontage = new Map<string, V3ArchitectureModulePlacement[]>();
   for (const placement of options.placements) {
-    if (placement.kind !== "facade_module" || facadeOwnedFrontageIds.has(placement.frontageId)) continue;
+    if (placement.kind !== "facade_module") continue;
     const frontageModules = modulesByFrontage.get(placement.frontageId);
     if (frontageModules) {
       frontageModules.push(placement);

@@ -1139,8 +1139,32 @@
       "facadeProfileId": "hero_courtyard",
       "massingProfileId": "MASSING_MID_MIXED",
       "layoutIntent": {
-        "mode": "generated",
-        "rhythm": "hero"
+        "mode": "authored",
+        "composition": "One household entry on the axis with the retained screened window aligned above it; the shared merchant block owns the backing and roof.",
+        "cornerTreatment": "open",
+        "groundHeadM": 2.25,
+        "upperSillDatumsM": [
+          5.05
+        ],
+        "columns": [
+          {
+            "id": "AXIS",
+            "along": 0.5
+          }
+        ],
+        "bays": [
+          {
+            "id": "GROUND_01",
+            "moduleId": "door_residential_timber",
+            "columnId": "AXIS"
+          },
+          {
+            "id": "STORY_1_WINDOW_01",
+            "moduleId": "window_screened",
+            "columnId": "AXIS",
+            "story": 1
+          }
+        ]
       }
     },
     {
@@ -3010,11 +3034,11 @@
           "frontageId": "FRONTAGE_SPICE_STREET_EAST",
           "lengthM": 15.12,
           "corners": "held",
-          "groundHeadM": 2.7,
+          "groundHeadM": 2.25,
           "bays": [
             {
               "id": "GROUND_01",
-              "module": "door_storage_heavy",
+              "module": "door_residential_timber",
               "alongM": 1.125,
               "along": 0.0744,
               "story": 0
@@ -3028,7 +3052,7 @@
             },
             {
               "id": "GROUND_03",
-              "module": "door_storage_heavy",
+              "module": "door_residential_timber",
               "alongM": 7.56,
               "along": 0.5,
               "story": 0
@@ -3059,7 +3083,7 @@
             }
           ],
           "needs": [],
-          "note": "Construction sheet 2026-09-07: two closed 1.35 m sack-store doors (01, 03 with wicket), one 1.05 m household door to the setback-room stair (04), two blind niches (02, 05). Quiet side: no awnings, no signs."
+          "note": "Three retained 1.05 x 2.25 m closed openings share one head. Bays 01 and 03 receive storage joinery; bay 04 is a household entry. Niches 02 and 05 remain at sill 0.45. No awnings or signs."
         }
       ]
     },
@@ -3111,10 +3135,7 @@
               "where": "one each side of the arch, 0.4 m off the wall"
             }
           ],
-          "needs": [
-            "raised_parapet: massing option lifting the parapet 1.2 m over the arch bay",
-            "inscription_band: carved band module between arch head and stained windows"
-          ],
+          "needs": [],
           "note": "The arch is the facade; corners are open by design. Stained glass above the arch, small dark recesses on the third storey."
         },
         {
@@ -3193,7 +3214,7 @@
           "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
           "lengthM": 2.72,
           "corners": "open",
-          "groundHeadM": 2.5,
+          "groundHeadM": 2.25,
           "bays": [
             {
               "id": "GROUND_01",
@@ -3217,7 +3238,7 @@
             }
           ],
           "needs": [],
-          "note": "Revision 3: actual stable bay axes retained. Both link-facing returns are quiet masonry with flush bases. Shared backing and roofs remain Souk-owned; no balcony or playable interior. SC-C model placements replace complete window visuals while retaining structural recess bindings."
+          "note": "Closed household entry with one SC-C screened opening at sill 5.05 and head 6.45. Runtime owns the common merchant-block roof and backing."
         }
       ]
     },
@@ -3620,9 +3641,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping: stone coping course on compound walls"
-          ],
+          "needs": [],
           "note": "Yard wall: string course and one blind niche on the axis, held corners. Replaces the timber closure that pretended to be a door."
         }
       ]
@@ -3655,9 +3674,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Mirror of the south yard wall in warm wash."
         }
       ]
@@ -3767,9 +3784,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "drain_stain: base staining decal under a drain spout"
-          ],
+          "needs": [],
           "note": "Back of the Spice Street shops: three high blind recesses (sill 1.6 m) at the quarter points, no door; access is from the street side."
         }
       ]
@@ -3889,9 +3904,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Yard wall on the spine: two niches at the third points with two above them, string course, nothing else (the grammar wants two bays on a 9.3 m span)."
         }
       ]
@@ -4074,9 +4087,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Yard wall: one niche on the axis."
         }
       ]
@@ -4157,9 +4168,7 @@
               "where": "under the south niche"
             }
           ],
-          "needs": [
-            "drain_stain"
-          ],
+          "needs": [],
           "note": "Authored. Cart door on axis, niches at equal gaps, vents over each bay."
         }
       ]
@@ -4205,7 +4214,7 @@
               "story": 0
             },
             {
-              "id": "LOFT_VENT_PROPOSED",
+              "id": "LOFT_VENT",
               "module": "vent_service",
               "alongM": 4.125,
               "along": 0.5,
@@ -4612,9 +4621,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Yard wall: two niches at the third points (a 6 m span needs two bays)."
         }
       ]
@@ -4647,9 +4654,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Yard wall: one niche on the axis."
         }
       ]
@@ -4682,9 +4687,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Authored. One niche on the axis."
         }
       ]
@@ -4717,9 +4720,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "GROUND_01 retained and raised to sill1.3/head3.1, matching the west link. The turning envelope and collision remain unchanged."
         }
       ]
@@ -4752,9 +4753,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Spawn edge wall, 2.6 m: one niche on the axis, corners open by size."
         }
       ]
@@ -4787,9 +4786,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Spawn edge wall: one niche on the axis."
         }
       ]
@@ -4822,9 +4819,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Spawn edge wall, 2.6 m, cut stone: one niche on the axis, corners open by size."
         }
       ]
@@ -4857,9 +4852,7 @@
             }
           ],
           "dressing": [],
-          "needs": [
-            "coping"
-          ],
+          "needs": [],
           "note": "Spawn edge wall: one niche on the axis."
         }
       ]
@@ -10321,8 +10314,8 @@
       "frontageId": "FRONTAGE_SPICE_STREET_EAST",
       "servedBayId": "GROUND_01",
       "along": 0.0744047619047619,
-      "inset_m": 1.12,
-      "notes": "Handcart centered on east door bay GROUND_01; no free placement."
+      "inset_m": 1.4,
+      "notes": "Handcart on the east door axis at x31.60/y16.565, yaw277. Its nearest rotated edge is 0.937 m from the wall, outside the 0.8 m service floor; the 6 m central lane remains clear."
     },
     {
       "id": "B4_SPICE_E_GOODS_GROUND_02",
@@ -10844,8 +10837,8 @@
       "servedBayId": "STORY_1_WINDOW_01",
       "along": 0.5,
       "inset_m": 0,
-      "vertical_offset_m": 5.15,
-      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+      "vertical_offset_m": 5.05,
+      "notes": "SC-C complete closure, 1.00 x 0.24 x 1.40 m unchanged asset, sill 5.05 and head 6.45; a 0.135 m masonry rebate seats it below the 7.00 m wall top."
     },
     {
       "id": "CENTRAL_DYE_DISPLAY",
@@ -11091,7 +11084,7 @@
       "z": 0,
       "width_m": 3,
       "height_m": 1.32,
-      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26\u201332 six-meter rotation lane clear."
+      "notes": "Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear."
     },
     {
       "id": "LMK_SPICE_DISTRICT",

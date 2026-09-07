@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "beee0639c3ad1eca6d663bd5be18e024662e5ee8704a01e0cdf9ede2d3bebfa8",
+    "sha256": "515c02d4b34a440f04df15940edaba9cff005524f0d175129c5e3527a56cdd5e",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -2001,27 +2001,30 @@
           "along": 0.5,
           "baseElevationM": 0,
           "datumId": "GROUND_HEAD_2.25",
-          "columnId": "COLUMN_01",
-          "layoutSource": "generated"
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         },
         {
           "id": "STORY_1_WINDOW_01",
-          "moduleId": "window_dark_recess",
+          "moduleId": "window_screened",
           "along": 0.5,
-          "baseElevationM": 5.15,
-          "datumId": "STORY_1_SILL_5.15",
-          "columnId": "UPPER_COLUMN_01",
-          "layoutSource": "generated"
+          "baseElevationM": 5.05,
+          "datumId": "STORY_1_SILL_5.05",
+          "columnId": "AXIS",
+          "layoutSource": "authored"
         }
       ],
       "layout": {
-        "source": "generated",
-        "rhythm": "hero",
+        "source": "authored",
+        "rhythm": "authored",
+        "composition": "One household entry on the axis with the retained screened window aligned above it; the shared merchant block owns the backing and roof.",
+        "axisAlong": 0.5,
+        "cornerTreatment": "open",
         "storyCount": 2,
         "edgeMarginM": 0.6,
         "groundHeadM": 2.25,
         "upperSillDatumsM": [
-          5.15
+          5.05
         ],
         "signBandBottomM": 2.37,
         "signBandTopM": 2.9699999999999998
@@ -8024,8 +8027,8 @@
       "moduleKind": "door",
       "openingType": "door_void",
       "datumId": "GROUND_HEAD_2.25",
-      "columnId": "COLUMN_01",
-      "layoutSource": "generated",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
         "x": 35.9,
         "y": 45.36,
@@ -8084,24 +8087,24 @@
       "districtId": "DISTRICT_FOUNTAIN",
       "face": "east",
       "profileId": "hero_courtyard",
-      "moduleId": "window_dark_recess",
+      "moduleId": "window_screened",
       "moduleKind": "window",
       "openingType": "window_void",
-      "datumId": "STORY_1_SILL_5.15",
-      "columnId": "UPPER_COLUMN_01",
-      "layoutSource": "generated",
+      "datumId": "STORY_1_SILL_5.05",
+      "columnId": "AXIS",
+      "layoutSource": "authored",
       "center": {
-        "x": 35.86,
+        "x": 35.88,
         "y": 45.36,
-        "z": 5.775
+        "z": 5.75
       },
       "sizeM": {
-        "width": 0.9,
-        "depth": 0.28,
-        "height": 1.25
+        "width": 1,
+        "depth": 0.24,
+        "height": 1.4
       },
       "yawDeg": 270,
-      "materialSlot": "metal",
+      "materialSlot": "timber",
       "collisionOpening": false
     },
     {
@@ -12343,7 +12346,7 @@
       "districtId": "DISTRICT_SPICE",
       "classification": "soft_visual",
       "position": {
-        "x": 31.88,
+        "x": 31.6,
         "y": 16.565,
         "z": 0
       },
@@ -13321,7 +13324,7 @@
       "position": {
         "x": 36.015,
         "y": 45.36,
-        "z": 5.15
+        "z": 5.05
       },
       "yawDeg": 450,
       "scale": {
@@ -18607,7 +18610,7 @@
       "type": "dressing_anchor",
       "zone": "SPICE_STREET",
       "pos": {
-        "x": 31.88,
+        "x": 31.6,
         "y": 16.565,
         "z": 0
       },
@@ -18615,7 +18618,7 @@
       "frontageId": "FRONTAGE_SPICE_STREET_EAST",
       "along": 0.0744047619047619,
       "servedBayId": "GROUND_01",
-      "notes": "Handcart centered on east door bay GROUND_01; no free placement."
+      "notes": "Handcart on the east door axis at x31.60/y16.565, yaw277. Its nearest rotated edge is 0.937 m from the wall, outside the 0.8 m service floor; the 6 m central lane remains clear."
     },
     {
       "id": "B4_SPICE_E_GOODS_GROUND_02",
@@ -19052,13 +19055,13 @@
       "pos": {
         "x": 36,
         "y": 45.36,
-        "z": 5.15
+        "z": 5.05
       },
       "yawDeg": 270,
       "frontageId": "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH",
       "along": 0.5,
       "servedBayId": "STORY_1_WINDOW_01",
-      "notes": "SC-C complete closure in a 0.135 m masonry rebate; source asset owns the 1.00 x 0.24 x 1.40 m external frame. The stable nominal structural recess binding is retained."
+      "notes": "SC-C complete closure, 1.00 x 0.24 x 1.40 m unchanged asset, sill 5.05 and head 6.45; a 0.135 m masonry rebate seats it below the 7.00 m wall top."
     },
     {
       "id": "CENTRAL_SCREEN_NORTH",

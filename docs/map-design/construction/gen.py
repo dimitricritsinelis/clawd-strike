@@ -1,5 +1,5 @@
-"""Generate docs/map-design/construction/<unit>.md from map_spec.json + the HEAD schedule + compiled placements + overlay.py."""
-import json, re, subprocess, sys, os
+"""Compile current map geometry and generate the construction sheets from it and overlay.py."""
+import json, math, subprocess, sys, os
 from collections import defaultdict, OrderedDict
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -8,20 +8,16 @@ sys.path.insert(0, HERE)
 import overlay as OV
 
 spec = json.load(open(f'{ROOT}/docs/map-design/specs/map_spec.json'))
-# schedule.json snapshots the former buildings.md schedule and the compiled placements (layout-reference.md at 3ec5d36);
-# regenerate the placements half with `pnpm --filter @clawd-strike/client gen:layout-reference` if the spec's dressing changes.
-SNAP = os.path.join(HERE, 'schedule.json')
-if os.path.exists(SNAP):
-    _snap = json.load(open(SNAP)); bmd = _snap['buildings_md']; lmd = _snap['layout_reference_md']
-else:
-    bmd = subprocess.run(['git', 'show', 'HEAD:docs/map-design/development-plan/buildings.md'], cwd=ROOT, capture_output=True, text=True).stdout
-    lmd = subprocess.run(['git', 'show', 'HEAD:docs/map-design/layout-reference.md'], cwd=ROOT, capture_output=True, text=True).stdout
-    json.dump({'buildings_md': bmd, 'layout_reference_md': lmd}, open(SNAP, 'w'))
-
+# The compiler resolves layoutIntent and dressing transforms before any sheet is written.
+# Historical Markdown snapshots never supply construction dimensions.
+if __name__ == '__main__':
+    subprocess.run(['node', 'apps/client/scripts/gen-map-runtime.mjs'], cwd=ROOT, check=True)
+runtime = json.load(open(f'{ROOT}/apps/client/public/maps/bazaar-map/map_spec.json'))
 zones = {z['id']: z for z in spec['zones']}
 surfaces = {s['zoneId']: s for s in spec['traversal_surfaces']}
 buildings = {b['id']: b for b in spec['buildings']}
 frontages = {f['id']: f for f in spec['frontages']}
+compiled_frontages = {f['id']: f for f in runtime['frontages']}
 profiles = {p['id']: p for p in spec['facade_profiles']}
 massings = {m['id']: m for m in spec['massing_profiles']}
 modules = {m['id']: m for m in spec['facade_modules']}
@@ -35,70 +31,13 @@ for c in spec['explicit_connectivity']:
     a, b = c.get('from') or c.get('fromZoneId') or c.get('a'), c.get('to') or c.get('toZoneId') or c.get('b')
     if a and b:
         links[a].add(b); links[b].add(a)
-
-# ---------- parse buildings.md schedule ----------
-sched = {}  # frontage id -> {'reserve': (a0,aL), 'rows': [(bay, assembly, a, S, H)], 'materials': str}
-composition = {}  # BLD id -> (composition, prose)
-cur_b = None; cur_f = None
-lines = bmd.split('\n')
-for i, ln in enumerate(lines):
-    m = re.match(r'^### B\d+ · (BLD_[A-Z0-9_]+)', ln)
-    if m:
-        cur_b = m.group(1); composition[cur_b] = {'composition': '', 'prose': [], 'fronts': []}
-        continue
-    if cur_b is None:
-        continue
-    m = re.match(r'^\*\*Composition:\*\* (.*)', ln)
-    if m:
-        composition[cur_b]['composition'] = m.group(1); continue
-    m = re.match(r'^\*\*(public front|secondary/service wing front|compound/service wall):\*\* `F/([A-Z0-9_]+)`', ln)
-    if m:
-        cur_f = 'FRONTAGE_' + m.group(2); sched[cur_f] = {'role': m.group(1), 'rows': [], 'reserve': None, 'materials': ''}
-        composition[cur_b]['fronts'].append(cur_f); continue
-    if ln.startswith('Observed code-boundary span'):
-        composition[cur_b]['prose'].append(ln); continue
-    m = re.match(r'^Reserved end fields to lower assemblies: \*\*([0-9.]+) m at a=0\*\*, \*\*([0-9.]+) m at a=L\*\*', ln)
-    if m and cur_f:
-        sched[cur_f]['reserve'] = (float(m.group(1)), float(m.group(2))); continue
-    m = re.match(r'^\| `([A-Z0-9_]+)` \| `?([A-Za-z_ ]+?)`?( sealed inspection panel)? \| ([0-9.]+) \| ([0-9.]+) / ([0-9.]+) \|', ln)
-    if m and cur_f:
-        sched[cur_f]['rows'].append((m.group(1), m.group(2).strip(), float(m.group(4)), float(m.group(5)), float(m.group(6)))); continue
-    if ln.startswith('Material assignment:') and cur_f:
-        sched[cur_f]['materials'] = ln; continue
-    if ln and not ln.startswith(('|', '[', '**', '<a', '#')) and cur_f is None and not ln.startswith('Numbers B'):
-        composition[cur_b]['prose'].append(ln)
-
-# roof survey
-roof = {}
-for ln in lines:
-    m = re.match(r'^\| B\d+ / `([A-Z0-9_]+)` \| ([0-9.]+) \| ([^|]+) \| ([^|]+) \|', ln)
-    if m:
-        roof['FRONTAGE_' + m.group(1)] = (float(m.group(2)), m.group(3).strip(), m.group(4).strip())
-
-# ---------- parse compiled placements ----------
-placements = []
-for ln in lmd.split('\n'):
-    m = re.match(r'^- `(PLACE_[A-Z0-9_]+)`: `(ASSET_[A-Z0-9_]+)` at `([A-Za-z0-9_]+)` \(([-0-9.]+), ([-0-9.]+), ([-0-9.]+)\), size ([0-9.]+)×([0-9.]+)×([0-9.]+)m, yaw ([-0-9.]+)deg', ln)
-    if m:
-        placements.append({'id': m.group(1), 'asset': m.group(2), 'anchor': m.group(3), 'x': float(m.group(4)), 'y': float(m.group(5)), 'z': float(m.group(6)),
-                           'w': float(m.group(7)), 'd': float(m.group(8)), 'h': float(m.group(9)), 'yaw': float(m.group(10)) % 360})
-
-def zone_of_point(x, y):
-    best = None
-    for z in spec['zones']:
-        r = z['rect']
-        if r['x'] - 1.6 <= x <= r['x'] + r['w'] + 1.6 and r['y'] - 1.6 <= y <= r['y'] + r['h'] + 1.6:
-            d = min(abs(x - r['x']), abs(x - r['x'] - r['w']), abs(y - r['y']), abs(y - r['y'] - r['h']))
-            if best is None or d < best[0]:
-                best = (d, z['id'])
-    return best[1] if best else None
-
+placements = [dict(id=p['id'], asset=p['assetId'], anchor=p['anchorId'],
+                   **p['position'], w=p['dimensionsM']['width'], d=p['dimensionsM']['depth'],
+                   h=p['dimensionsM']['height'], yaw=p['yawDeg'] % 360, zone=p['zoneId'], semantic=p['semanticClass'])
+              for p in runtime['dressingPlacements']]
 by_zone_pl = defaultdict(list)
 for p in placements:
-    a = anchors.get(p['anchor'])
-    zid = a['zone'] if a and a.get('zone') else zone_of_point(p['x'], p['y'])
-    p['zone'] = zid
-    by_zone_pl[zid].append(p)
+    by_zone_pl[p['zone']].append(p)
 
 # ---------- geometry helpers ----------
 def span(f):
@@ -119,7 +58,7 @@ FACE_STREET = {'west': '+X (street lies east of the wall)', 'east': '-X (street 
 KIT_FACES = {'west': 'E', 'east': 'W', 'south': 'N', 'north': 'S'}
 
 def fmt(v):
-    return f'{v:.2f}'.rstrip('0').rstrip('.') if isinstance(v, float) else str(v)
+    return f'{v:.3f}'.rstrip('0').rstrip('.') if isinstance(v, float) else str(v)
 
 def unit_id(zid):
     return 'unit-' + zid.lower().replace('_', '-')
@@ -129,53 +68,60 @@ def wall_section(out, f, b):
     ax, c, a0, a1, L = span(f)
     prof = profiles[f['facadeProfileId']]; mas = massings[f['massingProfileId']]
     wall = next((w for w in b['walls'] if w.get('frontageId') == f['id']), None)
-    sc = sched.get(f['id'], {'rows': [], 'reserve': None, 'materials': '', 'role': ''})
-    rows = {r[0]: r for r in sc['rows']}
+    compiled = compiled_frontages[f['id']]
+    rows = {r['id']: r for r in compiled['bays']}
     ov = OV.WALLS.get(f['id'], {})
     coord = f'x = {fmt(c)}, y = {fmt(a0)} .. {fmt(a1)} (a runs south to north)' if ax == 'x' else f'y = {fmt(c)}, x = {fmt(a0)} .. {fmt(a1)} (a runs west to east)'
     out.append(f"### {f['id']}  ·  {b['id']} ({b['type']}, {b['storeys']} storey{'s' if b['storeys']>1 else ''})")
     out.append('')
-    out.append(f"- **Role:** {sc.get('role') or 'face'}. {b['brief']}")
+    out.append(f"- **Role:** {b['type']}. {b['brief']}")
     out.append(f"- **Wall line:** {f['face']} edge of `{f['zoneId']}`; {coord}; length **{fmt(L)} m**; street side {FACE_STREET[f['face']]}; kit `Wall(F, ({fmt(a0 if ax=='y' else c)}, {fmt(c if ax=='y' else a0)}), ({fmt(a1 if ax=='y' else c)}, {fmt(c if ax=='y' else a1)}), faces='{KIT_FACES[f['face']]}')`.")
-    rb = roof.get(f['id'])
-    out.append(f"- **Massing `{mas['id']}`:** wall top {fmt(mas['heightM'])} m, depth {fmt(mas['depthM'])} m, roof `{mas['roofStyle']}`, roof setback {fmt(mas['roofSetbackM'])} m, parapet +{fmt(mas['parapetHeightM'])} m" + (f"; baseline survey: roof base {fmt(rb[0])}, parapet cap {rb[1]}, emitted max {rb[2]}" if rb else '') + '.')
-    out.append(f"- **Facade GLB frame:** width {fmt(L)} m × height {fmt(mas['heightM'])} m; origin bottom-centre of the street face, +Z toward the street, Y up after `export_yup`.")
-    out.append(f"- **Materials (profile `{prof['id']}`):** wall `{prof['materialSlots']['wall']}`, trim `{prof['materialSlots']['trim']}`, roof `{prof['materialSlots']['roof']}`, timber `{prof['materialSlots']['timber']}`, metal `{prof['materialSlots']['metal']}`, accent `{prof['materialSlots']['accent']}`." + (f" Override: {ov['materials']}" if ov.get('materials') else ''))
-    gh = wall['groundHeadM'] if wall else None
-    res = sc.get('reserve')
-    out.append(f"- **Corners:** `{wall['corners'] if wall else 'held'}`" + (f"; solid end piers reserved: {fmt(res[0])} m at a=0, {fmt(res[1])} m at a=L" if res else '') + f". Ground head datum {fmt(gh)} m." if gh else '.')
-    li = f.get('layoutIntent', {})
-    if li.get('upperSillDatumsM'):
-        out.append(f"- **Upper sill datums:** {', '.join(fmt(v) for v in li['upperSillDatumsM'])} m.")
+    floor = surfaces[f['zoneId']].get('elevationM', 0)
+    out.append(f"- **Retained massing `{mas['id']}`:** wall top {fmt(mas['heightM'])} local / {fmt(mas['heightM'] + floor)} absolute, depth {fmt(mas['depthM'])} m; roof and parapet stay runtime-owned per section 7.")
+    out.append(f"- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.")
+    slots = prof['materialSlots']
+    out.append(f"- **Blender materials:** wall `{slots['wall']}`, trim `{slots['trim']}`, timber `{slots['timber']}`; hardware `ph_rusty_metal_02`." + (f" Override: {ov['materials']}" if ov.get('materials') else ''))
+    gh = compiled['layout']['groundHeadM']
+    out.append(f"- **Corners:** `{wall['corners']}`. Ground head datum {fmt(gh)} m. Exact end piers and finish datums are in the tasks below.")
+    if compiled['layout']['upperSillDatumsM']:
+        out.append(f"- **Upper sill datums:** {', '.join(fmt(v) for v in compiled['layout']['upperSillDatumsM'])} m.")
     # datums
     out.append(f"- **Horizontal datums (SD-01..SD-03 unless overridden):** {ov.get('datums') or OV.default_datums(b, wall, mas, gh)}")
     out.append('')
-    out.append('| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey | Dressing bound here |')
-    out.append('|---|---|---|---:|---|---|---|---:|---|')
+    out.append('| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |')
+    out.append('|---|---|---|---:|---|---|---|---:|')
     bays = wall['bays'] if wall else []
     dress = wall['dressing'] if wall else []
+    skin_openings = []
     for bay in bays:
         r = rows.get(bay['id'])
-        if r is None:  # schedule used a different bay id (e.g. BAY_NICHE_AXIS vs BAY_01): match by assembly and nearest a
-            cands = [x for x in sc['rows'] if x[1] == bay['module']]
-            r = min(cands, key=lambda x: abs(x[2] - bay['alongM'])) if cands and min(abs(x[2] - bay['alongM']) for x in cands) < 0.05 else None
-        mod = (modules.get(r[1]) if r else None) or modules.get(bay['module'])
-        wx, wy = bay_world(f, bay['alongM'])
-        dims = f"{fmt(mod['dimensionsM']['width'])} × {fmt(mod['dimensionsM']['depth'])} × {fmt(mod['dimensionsM']['height'])}" if mod else '(retained code module)'
-        sh = f"{fmt(r[3])} / {fmt(r[4])}" if r else ('0 / ' + fmt(mod['dimensionsM']['height']) if mod and bay['story'] == 0 and mod['kind'] in ('door', 'arch', 'shop_recess') else '—')
         var = OV.VARIANTS.get((f['id'], bay['id']), '')
-        asm = r[1] if r and r[1] != bay['module'] else bay['module']
-        bound = '; '.join(d['assetId'] + ' (' + d['where'] + ')' for d in dress if bay['id'] in d['where'] or ('MOUNT' in d['where'] and bay['id'].endswith(d['where'][-1]) and 'WINDOW' in bay['id'] and 'WINDOW' in d['where']))
-        out.append(f"| `{bay['id']}` | `{bay['module']}`" + (f" → `{asm}`" if asm != bay['module'] else '') + f" | {var} | {fmt(bay['alongM'])} | ({fmt(wx)}, {fmt(wy)}) | {dims} | {sh} | {bay['story']} | {bound} |")
+        mod = modules.get(bay['module'])
+        if r:
+            if r['moduleId'] != bay['module']:
+                raise ValueError(f"{f['id']} {bay['id']}: building module {bay['module']} differs from compiled {r['moduleId']}")
+            along = r['along'] * L
+            if abs(along - bay['alongM']) > 0.01:
+                raise ValueError(f"{f['id']} {bay['id']}: building axis differs from compiled geometry")
+            sill = r['baseElevationM']
+        elif (f['id'], bay['id']) == ('FRONTAGE_DYERS_ALLEY_WEST_N', 'LOFT_VENT'):
+            along, sill = bay['alongM'], anchors['DYERS_HOUSE_LOFT_VENT']['z']
+            var = 'KEEP placed ASSET_DYERS_LOFT_VENT; skin rebate only'
+        elif var.startswith(('SUPPRESSED', 'Not built:')):
+            along, sill = bay['alongM'], None
+        else:
+            raise ValueError(f"{f['id']} {bay['id']}: no compiled bay or explicit retained asset")
+        wx, wy = bay_world(f, along)
+        dims = f"{fmt(mod['dimensionsM']['width'])} × {fmt(mod['dimensionsM']['depth'])} × {fmt(mod['dimensionsM']['height'])}" if mod else 'retained code'
+        sh = f"{fmt(sill)} / {fmt(sill + mod['dimensionsM']['height'])}" if sill is not None else 'SUPPRESSED'
+        out.append(f"| `{bay['id']}` | `{bay['module']}` | {var} | {fmt(along)} | ({fmt(wx)}, {fmt(wy)}) | {dims} | {sh} | {bay['story']} |")
+        if sill is not None and mod['kind'] != 'column':
+            skin_openings.append(tuple(round(n, 6) for n in (along, mod['dimensionsM']['width'], sill, mod['dimensionsM']['height'])))
+    out.append('')
+    out.append(f"Skin aperture input for `Wall.skin(..., openings=...)`: `{skin_openings}`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.")
     out.append('')
     if dress:
         out.append('Bound dressing from the schedule (`walls[].dressing`): ' + '; '.join(f"`{d['assetId']}` at {d['where']}" for d in dress) + '.')
-    if wall and wall.get('needs'):
-        out.append('Open `needs` in the spec (close them with this sheet): ' + ', '.join(f'`{n}`' for n in wall['needs']) + '.')
-    out.append('')
-    comp = composition.get(b['id'], {})
-    if comp.get('composition'):
-        out.append(f"**Composition.** {comp['composition']}")
     out.append('')
     tasks = ov.get('tasks') or OV.default_tasks(b, f, wall, gh)
     out.append('**Construction tasks (ordered; each has an observable completion):**')
@@ -222,7 +168,7 @@ def anchor_lines(out, zid):
         if a['type'] in ('cover_cluster', 'spawn_cover', 'open_node', 'landmark', 'hero_landmark', 'decorative_palm', 'lantern_anchor'):
             pos = f"({fmt(a['x'])}, {fmt(a['y'])}, {fmt(a.get('z', 0))})"
             dims = ' × '.join(fmt(a[k]) for k in ('width_m', 'height_m') if k in a)
-            rows.append(f"| `{a['id']}` | {a['type']} | {pos} | {dims} | {fmt(a.get('yaw_deg', 0))} | {a.get('notes','')[:140]} |")
+            rows.append(f"| `{a['id']}` | {a['type']} | {pos} | {dims} | {fmt(a.get('yaw_deg', 0))} | {a.get('notes','')} |")
     if rows:
         out.append('| Anchor | Type | Position | W × H | Yaw | Note |')
         out.append('|---|---|---|---|---:|---|')
@@ -240,17 +186,47 @@ def overheads(out, zid):
             z0, z1 = a['vertical_offset_m'], a['end_vertical_offset_m']
         else:
             p0 = (a['x'], a['y']); p1 = (a['end_x'], a['end_y']); z0, z1 = a['z'], a['end_z']
-        rows.append(f"| `{a['id']}` | ({fmt(p0[0])}, {fmt(p0[1])}, {fmt(z0)}) | ({fmt(p1[0])}, {fmt(p1[1])}, {fmt(z1)}) | {fmt(a.get('width_m', 0)) if a.get('width_m') else '—'} | {a.get('notes','')[:150]} |")
+        rows.append(f"| `{a['id']}` | ({fmt(p0[0])}, {fmt(p0[1])}, {fmt(z0)}) | ({fmt(p1[0])}, {fmt(p1[1])}, {fmt(z1)}) | {fmt(a.get('width_m', 0)) if a.get('width_m') else '—'} | {a.get('notes','')} |")
     if rows:
         out.append('| Span | End A (x, y, z) | End B (x, y, z) | Width | Note |')
         out.append('|---|---|---|---|---|')
         out.extend(rows); out.append('')
 
+def floor_wear(out, zid):
+    floor = surfaces[zid].get('elevationM')
+    patches = list(OV.FLOOR_WEAR[zid])
+    if floor is not None:
+        rect = zones[zid]['rect']
+        for p in by_zone_pl[zid]:
+            if p['semantic'] not in ('container', 'furniture', 'cover', 'foliage') or abs(p['z'] - floor) > 0.05:
+                continue
+            # Contact dust extends 8 cm beyond the existing grounded footprint.
+            angle = math.radians(p['yaw'])
+            co, si = math.cos(angle), math.sin(angle)
+            corners = []
+            for x, y in [(-1, -1), (1, -1), (1, 1), (-1, 1)]:
+                dx, dy = x * (p['w'] / 2 + 0.08), y * (p['d'] / 2 + 0.08)
+                px, py = p['x'] + dx * co + dy * si, p['y'] - dx * si + dy * co
+                corners.append((min(max(px, rect['x']), rect['x'] + rect['w']),
+                                min(max(py, rect['y']), rect['y'] + rect['h']), floor))
+            patches.append({'kind': 'dust', 'corners': corners})
+    out.append(f"**`{zid}` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):")
+    out.append('')
+    if not patches:
+        out.append('KEEP the existing grade and surface; no added wear mesh on this ramp or stair run.')
+    else:
+        out.append('```python')
+        for patch in patches:
+            corners = [tuple(round(v, 6) for v in (x, y, z - (floor or 0) + 0.014)) for x, y, z in patch['corners']]
+            out.append(f"wear_patch(F, {corners}, {patch['kind']!r})")
+        out.append('```')
+    out.append('')
+
 def sheet(unit, zids, title, also):
     out = []
     out.append(f'# {unit} · {title}')
     out.append('')
-    out.append(f"Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the completion checklist that every task below assumes. Numbers here are design metres from `map_spec.json`; `pnpm map:shoot {unit} --tag r1-before` prints the same walls and must agree. Also called: {also}.")
+    out.append(f"Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: {also}.")
     out.append('')
     out.append(f"**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.")
     out.append('')
@@ -260,6 +236,19 @@ def sheet(unit, zids, title, also):
     out.append('## 2. Site'); out.append('')
     for zid in zids:
         zone_section(out, zid, unit)
+    out.append('### Package outputs')
+    out.append('')
+    out.append('| Package directory | Section zone | Owned runtime faces | Section GLB |')
+    out.append('|---|---|---|---|')
+    for zid in zids:
+        owned = sorted({f['face'] for f in frontages.values() if f['zoneId'] == zid})
+        if zid in ('TEA_RAMP', 'TEA_STAIRS'):
+            out.append(f"| KEEP existing runtime; no package | `{zid}` | none | none |")
+        else:
+            out.append(f"| `assets/source/{unit_id(zid)}/` | `{zid}` | `{json.dumps(owned)}` | `{unit_id(zid)}.glb` |")
+    out.append('')
+    out.append('Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.')
+    out.append('')
     if intro.get('existing'):
         out.append(f"**Existing source.** {intro['existing']}"); out.append('')
     out.append('## 3. Walls'); out.append('')
@@ -287,14 +276,15 @@ def sheet(unit, zids, title, also):
         out.append(intro['overheads']); out.append('')
     out.append('## 6. Ground, wear and drainage'); out.append('')
     out.append(intro.get('ground') or OV.default_ground(zids)); out.append('')
+    for zid in zids:
+        floor_wear(out, zid)
     out.append('## 7. Roofs and skyline'); out.append('')
     out.append(intro.get('skyline') or 'Baseline roofs per the massing table above (roof base = wall top, parapet per profile, coping SD-03). No new rooftop props. Perimeter skyline placements, if any, are listed in [skyline.md](skyline.md).'); out.append('')
-    out.append('## 8. Completion checks'); out.append('')
+    out.append('## 8. Required result'); out.append('')
     for c in (intro.get('checks') or []) + OV.COMMON_CHECKS:
         out.append(f'- [ ] {c}')
     out.append('')
-    out.append('## 9. Verification record'); out.append('')
-    out.append('| Date | Check or view | Result | Evidence |'); out.append('|---|---|---|---|'); out.append('| | `pnpm map:check` | | |'); out.append('| | movement check standing and crouched | | |'); out.append('| | fresh-eyes verdict (massing / facade / materials) | | |'); out.append('')
+    out.append('Record `built` in the progress index after applying the package. Gameplay, visual and performance validation occur in the later validation task.'); out.append('')
     return '\n'.join(out) + '\n'
 
 def code_wall_section(out, b, zid):
@@ -317,9 +307,6 @@ def code_wall_section(out, b, zid):
     for d in b['walls'][0]['dressing']:
         out.append(f"- Bound dressing: `{d['assetId']}` at {d['where']}.")
     out.append('')
-    comp = composition.get(b['id'], {})
-    if comp.get('composition'):
-        out.append(f"**Composition.** {comp['composition']}"); out.append('')
     out.append('**Construction tasks:**'); out.append('')
     for i, t in enumerate(ov.get('tasks', []), 1):
         out.append(f'{i}. {t}')

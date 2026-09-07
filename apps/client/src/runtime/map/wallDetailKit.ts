@@ -695,6 +695,27 @@ function resolveWallShaderSurfaceKind(
   return FACADE_WALL_SURFACE_IDS.has(meshId) ? "wall" : "detail";
 }
 
+function applyInstanceTint(
+  result: Color,
+  tint: Color,
+  material: MeshStandardMaterial | MeshPhysicalMaterial,
+  meshId: WallDetailMeshId,
+): void {
+  if (inheritsWallSurface(meshId)) {
+    // Building wall and structural-trim identity is a modulation of its
+    // manifest finish. Dividing by the material color turned that modulation
+    // into an absolute swatch, so palette changes in the manifest could not
+    // reach these large surfaces.
+    result.copy(tint);
+    return;
+  }
+  result.setRGB(
+    material.color.r > 1e-5 ? tint.r / material.color.r : tint.r,
+    material.color.g > 1e-5 ? tint.g / material.color.g : tint.g,
+    material.color.b > 1e-5 ? tint.b / material.color.b : tint.b,
+  );
+}
+
 function resolveBucketGeometry(
   template: DetailTemplate,
   instance: WallDetailInstance,
@@ -941,7 +962,9 @@ function buildPbrDetailMeshes(
     material.userData.wallDetailPbrMaterialId = materialId;
     if (materialRole) {
       const role = DETAIL_MATERIAL_ROLES[materialRole];
-      material.color.setHex(role.tintHex);
+      if (materialRole !== "stone-trim" && materialRole !== "plaster-trim") {
+        material.color.setHex(role.tintHex);
+      }
       if (role.roughness !== undefined) material.roughness = role.roughness;
       if (role.metalness !== undefined) material.metalness = role.metalness;
       material.userData.detailMaterialRole = materialRole;
@@ -1174,11 +1197,7 @@ function buildPbrDetailMeshes(
           mesh.setMatrixAt(instanceId, dummy.matrix);
           if (typeof instance.detailTintHex === "number") {
             tintColor.setHex(instance.detailTintHex);
-            instanceColor.setRGB(
-              material.color.r > 1e-5 ? tintColor.r / material.color.r : tintColor.r,
-              material.color.g > 1e-5 ? tintColor.g / material.color.g : tintColor.g,
-              material.color.b > 1e-5 ? tintColor.b / material.color.b : tintColor.b,
-            );
+            applyInstanceTint(instanceColor, tintColor, material, entry.bucket.meshId);
           } else {
             instanceColor.setRGB(1, 1, 1);
           }
@@ -1273,11 +1292,7 @@ function buildPbrDetailMeshes(
       mesh.setMatrixAt(index, dummy.matrix);
       if (typeof instance.detailTintHex === "number") {
         tintColor.setHex(instance.detailTintHex);
-        instanceColor.setRGB(
-          material.color.r > 1e-5 ? tintColor.r / material.color.r : tintColor.r,
-          material.color.g > 1e-5 ? tintColor.g / material.color.g : tintColor.g,
-          material.color.b > 1e-5 ? tintColor.b / material.color.b : tintColor.b,
-        );
+        applyInstanceTint(instanceColor, tintColor, material, bucket.meshId);
       } else {
         instanceColor.setRGB(1, 1, 1);
       }

@@ -1432,7 +1432,7 @@
           "facadeModelId": {
             "type": "string",
             "minLength": 1,
-            "description": "Registered facade GLB (facades/models.json) that owns this frontage's street face. The kit keeps the wall mass, roof edge and collision and drops its face modules. Superseded by zones[].sectionModelId, which owns every face of a zone."
+            "description": "Registered facade GLB (facades/models.json) that owns this frontage's street face. The kit keeps the wall mass, roof edge and collision and drops its face modules. Legacy binding. New zonal sections use zones[].sectionModelId with explicit zones[].sectionFaces; unlisted faces remain runtime-owned."
           },
           "layoutIntent": {
             "oneOf": [

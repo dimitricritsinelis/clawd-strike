@@ -3,8 +3,8 @@
     {
       "id": "ph_sandstone_blocks_04",
       "tileSizeM": 2.5,
-      "tintHex": "#f0dbb5",
-      "albedoBoost": 1.08,
+      "tintHex": "#dec69e",
+      "albedoBoost": 1.0,
       "roughness": 0.94,
       "normalScale": 0.5,
       "aoIntensity": 0.45,
@@ -24,9 +24,9 @@
     {
       "id": "ph_sandstone_blocks_05",
       "tileSizeM": 2,
-      "tintHex": "#dfc69a",
-      "albedoBoost": 1.08,
-      "roughness": 0.88,
+      "tintHex": "#d4b386",
+      "albedoBoost": 1.0,
+      "roughness": 0.94,
       "normalScale": 0.78,
       "aoIntensity": 0.68,
       "textures": {
@@ -45,8 +45,8 @@
     {
       "id": "ph_exterior_wall_cladding",
       "tileSizeM": 2,
-      "tintHex": "#d8c098",
-      "albedoBoost": 1.05,
+      "tintHex": "#ccb08a",
+      "albedoBoost": 1.0,
       "roughness": 0.97,
       "normalScale": 0.55,
       "aoIntensity": 0.55,
@@ -66,8 +66,8 @@
     {
       "id": "ph_worn_brick_wall",
       "tileSizeM": 2,
-      "tintHex": "#cca878",
-      "albedoBoost": 1.05,
+      "tintHex": "#c29b6a",
+      "albedoBoost": 1.0,
       "roughness": 0.98,
       "normalScale": 0.6,
       "aoIntensity": 0.6,
@@ -87,8 +87,8 @@
     {
       "id": "ph_brick_4_desert",
       "tileSizeM": 0.5,
-      "tintHex": "#e0c39b",
-      "albedoBoost": 1.04,
+      "tintHex": "#d1af80",
+      "albedoBoost": 1.0,
       "roughness": 0.97,
       "normalScale": 0.72,
       "aoIntensity": 0.62,
@@ -108,9 +108,9 @@
     {
       "id": "ph_whitewashed_brick",
       "tileSizeM": 2,
-      "tintHex": "#f5f0e8",
-      "albedoBoost": 1.12,
-      "roughness": 0.88,
+      "tintHex": "#e3ceb0",
+      "albedoBoost": 1.0,
+      "roughness": 0.93,
       "normalScale": 0.55,
       "aoIntensity": 0.35,
       "textures": {
@@ -129,8 +129,8 @@
     {
       "id": "ph_beige_wall_001",
       "tileSizeM": 2,
-      "tintHex": "#f0e4d0",
-      "albedoBoost": 1.08,
+      "tintHex": "#dfc59e",
+      "albedoBoost": 1.0,
       "roughness": 0.9,
       "normalScale": 0.35,
       "aoIntensity": 0.35,
@@ -150,8 +150,8 @@
     {
       "id": "ph_beige_wall_002",
       "tileSizeM": 2,
-      "tintHex": "#dccca8",
-      "albedoBoost": 1.05,
+      "tintHex": "#d3b58c",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.4,
       "aoIntensity": 0.4,
@@ -171,9 +171,9 @@
     {
       "id": "ph_plastered_wall",
       "tileSizeM": 2,
-      "tintHex": "#f5ece0",
-      "albedoBoost": 1.1,
-      "roughness": 0.88,
+      "tintHex": "#dfc6a2",
+      "albedoBoost": 1.0,
+      "roughness": 0.93,
       "normalScale": 0.3,
       "aoIntensity": 0.3,
       "textures": {
@@ -192,8 +192,8 @@
     {
       "id": "ph_stone_trim_sandstone",
       "tileSizeM": 2,
-      "tintHex": "#e0cc9c",
-      "albedoBoost": 1.05,
+      "tintHex": "#d4b58a",
+      "albedoBoost": 1.0,
       "roughness": 0.96,
       "normalScale": 0.55,
       "aoIntensity": 0.55,
@@ -213,8 +213,8 @@
     {
       "id": "ph_stone_trim_white",
       "tileSizeM": 2,
-      "tintHex": "#f0e8d8",
-      "albedoBoost": 1.05,
+      "tintHex": "#e4cfad",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.55,
       "aoIntensity": 0.45,
@@ -234,8 +234,8 @@
     {
       "id": "ph_band_beige_001",
       "tileSizeM": 2,
-      "tintHex": "#ccb898",
-      "albedoBoost": 1.03,
+      "tintHex": "#c7ac85",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.35,
       "aoIntensity": 0.45,
@@ -255,8 +255,8 @@
     {
       "id": "ph_band_beige_002",
       "tileSizeM": 2,
-      "tintHex": "#b8a888",
-      "albedoBoost": 1,
+      "tintHex": "#bda17b",
+      "albedoBoost": 1.0,
       "roughness": 0.94,
       "normalScale": 0.4,
       "aoIntensity": 0.5,
@@ -276,8 +276,8 @@
     {
       "id": "ph_band_plastered",
       "tileSizeM": 2,
-      "tintHex": "#d8d0c0",
-      "albedoBoost": 1.05,
+      "tintHex": "#d2bb98",
+      "albedoBoost": 1.0,
       "roughness": 0.9,
       "normalScale": 0.3,
       "aoIntensity": 0.4,
@@ -297,9 +297,9 @@
     {
       "id": "ph_whitewashed_brick_cool",
       "tileSizeM": 2.5,
-      "tintHex": "#ece8e0",
-      "albedoBoost": 1.1,
-      "roughness": 0.9,
+      "tintHex": "#dac7ab",
+      "albedoBoost": 1.0,
+      "roughness": 0.93,
       "normalScale": 0.5,
       "aoIntensity": 0.38,
       "textures": {
@@ -318,9 +318,9 @@
     {
       "id": "ph_whitewashed_brick_warm",
       "tileSizeM": 2,
-      "tintHex": "#f5e4cc",
-      "albedoBoost": 1.12,
-      "roughness": 0.88,
+      "tintHex": "#e5cca7",
+      "albedoBoost": 1.0,
+      "roughness": 0.93,
       "normalScale": 0.55,
       "aoIntensity": 0.35,
       "textures": {
@@ -339,9 +339,9 @@
     {
       "id": "ph_whitewashed_brick_dusty",
       "tileSizeM": 2,
-      "tintHex": "#e8dccb",
-      "albedoBoost": 1.08,
-      "roughness": 0.9,
+      "tintHex": "#d9bf9b",
+      "albedoBoost": 1.0,
+      "roughness": 0.93,
       "normalScale": 0.5,
       "aoIntensity": 0.36,
       "textures": {
@@ -360,9 +360,9 @@
     {
       "id": "ph_sandstone_blocks_06",
       "tileSizeM": 1.8,
-      "tintHex": "#d1b48c",
-      "albedoBoost": 1.1,
-      "roughness": 0.88,
+      "tintHex": "#c5a57e",
+      "albedoBoost": 1.0,
+      "roughness": 0.94,
       "normalScale": 0.82,
       "aoIntensity": 0.72,
       "textures": {
@@ -381,8 +381,8 @@
     {
       "id": "ph_lime_plaster_sun",
       "tileSizeM": 2,
-      "tintHex": "#eadfc9",
-      "albedoBoost": 1.09,
+      "tintHex": "#dfc7a3",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.48,
       "aoIntensity": 0.42,
@@ -402,8 +402,8 @@
     {
       "id": "ph_aged_plaster_ochre",
       "tileSizeM": 1.3,
-      "tintHex": "#d8ba8c",
-      "albedoBoost": 1.12,
+      "tintHex": "#cdae7c",
+      "albedoBoost": 1.0,
       "roughness": 0.93,
       "normalScale": 0.52,
       "aoIntensity": 0.48,
@@ -423,8 +423,8 @@
     {
       "id": "ph_trim_sanded_01",
       "tileSizeM": 1.8,
-      "tintHex": "#dfd2b8",
-      "albedoBoost": 1.04,
+      "tintHex": "#d9c19b",
+      "albedoBoost": 1.0,
       "roughness": 0.95,
       "normalScale": 0.26,
       "aoIntensity": 0.28,
@@ -465,8 +465,8 @@
     {
       "id": "ph_painted_plaster_warm",
       "tileSizeM": 1.25,
-      "tintHex": "#d8ccba",
-      "albedoBoost": 1.05,
+      "tintHex": "#dcc49e",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.42,
       "aoIntensity": 0.4,
@@ -502,8 +502,8 @@
     {
       "id": "ph_worn_plaster_sun",
       "tileSizeM": 1.15,
-      "tintHex": "#d5c7b0",
-      "albedoBoost": 1.08,
+      "tintHex": "#cdb590",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.48,
       "aoIntensity": 0.5,
@@ -539,8 +539,8 @@
     {
       "id": "ph_worn_plaster_ochre",
       "tileSizeM": 1.15,
-      "tintHex": "#c9b69c",
-      "albedoBoost": 1.04,
+      "tintHex": "#c3a67c",
+      "albedoBoost": 1.0,
       "roughness": 0.92,
       "normalScale": 0.48,
       "aoIntensity": 0.5,
@@ -576,9 +576,9 @@
     {
       "id": "ph_worn_planks",
       "tileSizeM": 1.4,
-      "tintHex": "#ffffff",
-      "albedoBoost": 1.54,
-      "roughness": 0.84,
+      "tintHex": "#dfc9a9",
+      "albedoBoost": 1.18,
+      "roughness": 0.9,
       "normalScale": 0.58,
       "aoIntensity": 0.62,
       "source": {
@@ -608,9 +608,9 @@
     {
       "id": "ph_rough_pine_door",
       "tileSizeM": 2,
-      "tintHex": "#ffffff",
-      "albedoBoost": 1.16,
-      "roughness": 0.86,
+      "tintHex": "#e6cfaf",
+      "albedoBoost": 1.03,
+      "roughness": 0.9,
       "normalScale": 0.5,
       "aoIntensity": 0.45,
       "source": {
@@ -684,14 +684,16 @@
     {
       "id": "ph_fabric_leather_02",
       "tileSizeM": 0.5,
-      "tintHex": "#ffffff",
+      "tintHex": "#e5ceaa",
       "textures": {
         "1k": {
           "albedo": "./fabric_leather_02/fabric_leather_02_diff_1k.jpg",
           "normal": "./fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
           "arm": "./fabric_leather_02/fabric_leather_02_arm_1k.jpg"
         }
-      }
+      },
+      "albedoBoost": 1.0,
+      "roughness": 0.96
     },
     {
       "id": "ph_red_plaster_weathered",
@@ -828,14 +830,16 @@
     {
       "id": "ph_hessian_230",
       "tileSizeM": 0.27,
-      "tintHex": "#ffffff",
+      "tintHex": "#ead7b9",
       "textures": {
         "1k": {
           "albedo": "./hessian_230/hessian_230_diff_1k.jpg",
           "normal": "./hessian_230/hessian_230_nor_gl_1k.jpg",
           "arm": "./hessian_230/hessian_230_arm_1k.jpg"
         }
-      }
+      },
+      "albedoBoost": 1.0,
+      "roughness": 0.96
     },
     {
       "id": "ph_dirty_carpet",

@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { resolveWallShaderProfile } from "../../map/wallShaderProfiles";
+import { resolveAuthoredWallShaderProfile, resolveWallShaderProfile } from "../../map/wallShaderProfiles";
 import {
   parseFloorMaterialManifest,
   resolveFloorTextureSetForQuality,
@@ -270,6 +270,10 @@ test("plaster shader profiles author localized wear without contaminating timber
   );
   assert.equal(timber.localizedWearEnabled, undefined);
   assert.equal(trim.localizedWearEnabled, undefined);
+
+  assert.equal(resolveAuthoredWallShaderProfile("ph_lime_plaster_sun").localizedWearEnabled, true);
+  assert.equal(resolveAuthoredWallShaderProfile("ph_rough_pine_door").localizedWearEnabled, undefined);
+  assert.equal(resolveAuthoredWallShaderProfile("ph_band_lime_soft").localizedWearEnabled, undefined);
 });
 
 test("aged kit hardware uses a licensed, dimensioned 1k PBR material", () => {

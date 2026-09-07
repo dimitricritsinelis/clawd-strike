@@ -8,6 +8,14 @@ const TIMBER_IDS = new Set([
 
 const BRICK_MASONRY_IDS = new Set([
   "ph_brick_4_desert",
+  "ph_sandstone_blocks_04",
+  "ph_sandstone_blocks_05",
+  "ph_sandstone_blocks_06",
+  "ph_exterior_wall_cladding",
+  "ph_worn_brick_wall",
+  "ph_medieval_blocks_03",
+  "ph_rough_block_wall",
+  "ph_stone_brick_wall_001",
 ]);
 
 const SUN_WASHED_PLASTER_IDS = new Set([
@@ -37,6 +45,12 @@ const SOFT_TRIM_IDS = new Set([
   "ph_band_beige_002",
   "ph_band_plastered",
   "ph_stone_trim_white",
+]);
+
+const AUTHORED_WALL_SURFACE_IDS = new Set([
+  ...BRICK_MASONRY_IDS,
+  ...SUN_WASHED_PLASTER_IDS,
+  ...AGED_PLASTER_IDS,
 ]);
 
 export function resolveWallShaderProfile(
@@ -76,7 +90,7 @@ export function resolveWallShaderProfile(
       dustColor: "#c9ad82",
       dustColorAmount: surfaceKind === "balcony" ? 0.045 : 0.09,
       dirtEnabled: true,
-      dirtHeightM: surfaceKind === "balcony" ? 0.5 : 1.65,
+      dirtHeightM: surfaceKind === "balcony" ? 0.5 : 1.25,
       dirtDarken: surfaceKind === "balcony" ? 0.09 : 0.18,
       dirtRoughnessBoost: surfaceKind === "balcony" ? 0.1 : 0.17,
       ...(surfaceKind !== "wall"
@@ -102,7 +116,7 @@ export function resolveWallShaderProfile(
       dustColorAmount: surfaceKind === "balcony" ? 0.05 : 0.08,
       dirtEnabled: true,
       dirtHeightM: surfaceKind === "balcony" ? 0.55 : 1.45,
-      dirtDarken: surfaceKind === "balcony" ? 0.08 : 0.12,
+      dirtDarken: surfaceKind === "balcony" ? 0.08 : 0.17,
       dirtRoughnessBoost: surfaceKind === "balcony" ? 0.1 : 0.16,
       localizedWearEnabled: surfaceKind === "wall",
       wearStreakStrength: surfaceKind === "wall" ? 0.1 : 0,
@@ -131,10 +145,10 @@ export function resolveWallShaderProfile(
       topBleachHeightM: surfaceKind === "wall" ? 3.0 : 0.8,
       topBleachColor: "#efe1cb",
       dustColor: "#cfb18b",
-      dustColorAmount: surfaceKind === "balcony" ? 0.04 : 0.06,
+      dustColorAmount: surfaceKind === "balcony" ? 0.04 : 0.09,
       dirtEnabled: true,
       dirtHeightM: surfaceKind === "balcony" ? 0.5 : 1.25,
-      dirtDarken: surfaceKind === "balcony" ? 0.06 : 0.1,
+      dirtDarken: surfaceKind === "balcony" ? 0.06 : 0.18,
       dirtRoughnessBoost: surfaceKind === "balcony" ? 0.08 : 0.13,
       localizedWearEnabled: surfaceKind === "wall",
       wearStreakStrength: surfaceKind === "wall" ? 0.13 : 0,
@@ -175,4 +189,16 @@ export function resolveWallShaderProfile(
   }
 
   return {};
+}
+
+/**
+ * A shipped section or facade GLB can contain both its wall face and joinery.
+ * Give its registered masonry and plaster the same weathering as runtime walls;
+ * timber and trim remain finish details.
+ */
+export function resolveAuthoredWallShaderProfile(materialId: string): Partial<WallShaderTweakOptions> {
+  return resolveWallShaderProfile(
+    materialId,
+    AUTHORED_WALL_SURFACE_IDS.has(materialId) ? "wall" : "detail",
+  );
 }

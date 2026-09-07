@@ -14,7 +14,7 @@ import bpy
 from mathutils import Vector
 
 argv = sys.argv[sys.argv.index('--') + 1:]
-# --section W,H : zone rect size in metres (from the before shoot); camera stands at the zone centre.
+# --section W,H: zone rect size from the construction sheet; camera stands at the zone centre.
 section = None
 if '--section' in argv:
     i = argv.index('--section')
@@ -24,7 +24,7 @@ glb, out = argv[:2]
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.object.delete(use_global=False)
 bpy.ops.import_scene.gltf(filepath=glb)
-# GLBs export without images; rebind pack materials by name so the preview shows the real textures.
+# Wall-pack images are supplied at runtime; rebind those materials for this local preview.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from facade_materials import material as pack_material  # noqa: E402
 for mat in list(bpy.data.materials):

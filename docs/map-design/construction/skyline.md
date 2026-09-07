@@ -1,6 +1,6 @@
 # skyline · Perimeter roofs and skyline
 
-Construction sheet for everything above the parapets and beyond the playable boundary. Read [README.md](README.md) first. There is no shoot unit for the skyline: placements with role `skyline` travel in the package of the adjoining unit, and every unit's section 7 names its own roofs.
+Construction sheet for everything above the parapets and beyond the playable boundary. Read [README.md](README.md) first. There is no standalone skyline area: placements with role `skyline` travel in the package of the adjoining named area, and every unit's section 7 names its own roofs.
 
 **Scope lock.** Render-only. The 120 background shells (`resolveBackgroundShellPlacements`), the three minaret flags, the sealed perimeter walls and every roof slab are retained as built. No accessible roof, no new connector, no roof props.
 
@@ -18,9 +18,9 @@ The map reads as a district of a larger city: stepped flat roofs with parapets a
 | Spice east | 4.50 | 5.59 | baseline; setback room `ASSET_SPICE_UPPER_ROOM` (35.7, 27.28, 4.76), cap 7.71 |
 | Madrasa (both faces) | 9.50 | 10.79 | baseline; minaret vista retained |
 | Merchant house / Souk west wings | 7.00 | 8.19 | one roof owner (Souk massing); no second slab |
-| Textile west, south (y 49.28..56.8) | 7.00 | 8.19 | S2, built in the Textile west GLB |
-| Textile west north wing / Tea house (y 56.8..62.72) | 8.40 | 9.59 | S2, one stepped roof: Tea GLB owns x 19..24 |
-| Tea house beyond y 62.72 to 65.2 | 8.40 | 9.59 | Tea GLB |
+| Textile west, south (y 49.28..56.8) | 7.00 | 8.19 | Runtime S2 roof retained. |
+| Textile west north wing / Tea house (y 56.8..62.72) | 8.40 | 9.59 | Runtime S2 shared roof: slab top 8.66, parapet top 9.41, cap 9.59. Tea owns x 19..24; Tea-local values subtract 1.40 m. |
+| Tea house beyond y 62.72 to 65.2 | 8.40 | 9.59 | Runtime S2 roof retained; slab top 8.66, parapet top 9.41, cap 9.59 (Tea-local 7.26 / 8.01 / 8.19). |
 | Textile east | 4.50 | 5.59 | flat, two roof ties |
 | Rug merchant | 7.00 | 8.19 | baseline (emitted 8.87 kept) |
 | Gatekeeper | 4.50 | 5.59 | baseline |
@@ -37,14 +37,11 @@ The map reads as a district of a larger city: stepped flat roofs with parapets a
 
 ## 3. Tasks
 
-1. KEEP every placement in the table; the face GLBs stop at their copings and never add a second slab under a placed roof asset. Completion: no double slab or floating roof base anywhere in `pnpm map:shoot` roof views.
-2. CREATE the S2 stepped roofs in the Textile west and Tea GLBs as their sheets specify (one owner per x range). Completion: from Fountain Court looking north the west side steps 8.19 → 9.59; from the Tea terrace the house roof is continuous with the wing.
-3. KEEP the 120 background shells, their tanks and the three minarets. The conditional near-city upper closures (two backed windows per selected ring-0 shell) are deferred until the visible shell ids are recorded from a shoot; do not add them speculatively. Completion: no change in the background shell set.
-4. Sky gaps: no new canopy, line or roof volume closes the gap between the Spice canopies, between the Textile canopy and lines, or over any court. Completion: sky visible between spans from both ends of Spice and Textile.
+1. KEEP every placement in the table. Section output stops below the runtime roof architecture and never adds a second slab, parapet or roof coping under a placed roof asset.
+2. KEEP the runtime S2 roofs. When the Tea section is bound, the runtime clears its legacy heads and retains the 9.59 m cap. Do not create new roof meshes.
+3. KEEP the 120 background shells, their tanks and the three minarets. Do not change this set.
+4. Do not add a canopy, line or roof volume that closes a scheduled sky gap.
 
-## 4. Completion checks
+## 4. Construction handoff
 
-- [ ] Every roof base and cap in the table matches the emitted geometry within 0.05 m.
-- [ ] No roof props, antennas, water tanks or domes added near the routes.
-- [ ] Minaret vista from Fountain Court unchanged.
-- [ ] Worst view within the performance budget.
+This schedule is implemented by the adjoining named area. It has no independent package, progress row or validation pass. Gameplay, performance and aesthetic validation occur later with the rest of the map.
