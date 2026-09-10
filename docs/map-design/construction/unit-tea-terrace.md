@@ -1,206 +1,634 @@
-# unit-tea-terrace · Tea house, ramp, terrace, stairs and landing
+# BZ-04 / R7-facade-centered-upper-openings · Tea Elevation
 
-Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: tea house, Tea Terrace, tea ramp, tea stairs, tea landing (shoot units unit-tea-ramp, unit-tea-terrace, unit-tea-stairs, unit-tea-landing).
+Controlled issue status: **PROPOSED_WHOLE_MAP_DESIGN**. Readiness is recorded in [audits.md](audits.md). SVGs are measured drawings, not game renders.
 
-**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.
+Read [design basis](design-basis.md), [integration contract](integration.md), and [standard details](details.md) with this sheet. The target data is the sole source for parcel, opening, roof, activity, and material values below; coverage is a protected baseline only.
 
-## 1. Design intent
+## Design intent
 
-The raised route: ramp up from Caravan Court, the tea house on the terrace at +1.4 with its serving recess, table and stools under a shade sail, stairs down to the landing and the west-upper link. The retaining screens on the west stay tall and quiet. Warm aged plaster, threshold polish and tea service marks make it lived-in without clutter. All tea-house heights are relative to the 1.4 floor.
+### `TEA_RAMP`
 
-**Character schedule (build with the numbered tasks):**
+Continuous grade and a visible terrace destination. The textile building’s rear and retaining spine meet the actual ramp profile. No false level thresholds or decorations on the slope; floor and wall contact are the detail.
 
-- Warm sandy plaster, unlike retained upper shutters, brass, porcelain, linen and seating identify a flourishing tea house. Retain its table service and all route grades. The house wall is warmer and smoother than the retaining screens; keep their material boundary legible.
-- On FRONTAGE_TEA_TERRACE_EAST replace skin a=3.36..4.36, local z=0.32..1.18 with `ph_painted_plaster_warm` (SD-21), a maintained seat-back repair below the lantern. Tea drips stay below the counter; do not stain the whole terrace.
-- The 12 scheduled shelf items are fixed: lower shelf z=0.85 has three brass pots at a=1.15/1.77/2.38 (diameters 0.22/0.18/0.25; heights 0.28/0.24/0.31); middle z=1.40 has six porcelain cups at a=0.98/1.24/1.53/1.88/2.19/2.48 (diameter 0.09, height 0.12); upper z=1.95 has three folded linen bundles at a=1.12/1.80/2.43 (widths 0.32/0.38/0.28, depth 0.22, heights 0.05/0.08/0.06). All centres out=-0.85, bases on shelf tops; pottery uses the existing CC0 `apps/client/public/assets/models/environment/bazaar/props/brass_pot_01/brass_pot_01_1k.gltf`, cups use ivory PBR (sRGB #e7dcc2, roughness 0.30, metallic 0), linen `ph_hessian_230`. Keep stock within the recess and supported; these quantities replace discretionary scatter.
+Primary focus: Continuous grade and a visible terrace destination. The textile building’s rear and retaining spine meet the actual ramp profile..
 
-## 2. Site
+## Architecture and craftsmanship
 
-### Site · `TEA_RAMP` (Tea Terrace Ramp)
+**Primary:** Continuous grade and a visible terrace destination
 
-- Rect x 11..19, y 48..56 (8 × 8 m); ramp along y: z 0 → 1.4; floor `large_sandstone_blocks_01`; authored clear width **4 m** (protected).
-- Connects: CARAVAN_COURT, TEA_TERRACE.
-- `north` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m north edge; the full face remains an authored traversal opening.
-- `south` edge: exempt (`architectural_cut_edge`): The 4.00m supported run on the 8.00m south edge frames the ramp entry and is not a served facade plane.
-- `east` edge: exempt (`retaining_wall`): The 8.00m east wall follows and retains the complete authored ramp grade.
-- `west` edge: exempt (`retaining_wall`): The 8.00m west wall follows and retains the complete authored ramp grade.
+**Supporting:** The textile building’s rear and retaining spine meet the actual ramp profile.
 
-### Site · `TEA_TERRACE` (Tea Terrace)
+**Quiet fields and limits:** No false level thresholds or decorations on the slope; floor and wall contact are the detail.
 
-- Rect x 11..19, y 56..66 (8 × 10 m); floor z = 1.4; floor `patterned_cobblestone`; authored clear width **4 m** (protected).
-- Connects: TEA_RAMP, TEA_STAIRS.
-- `north` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m north edge; the full face remains an authored traversal opening.
-- `south` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m south edge; the full face remains an authored traversal opening.
-- `west` edge: exempt (`retaining_wall`): The complete 10.00m west wall retains the raised terrace and is not a served opening plane.
-- `east` edge: frontage `FRONTAGE_TEA_TERRACE_EAST` → `BLD_TEA_HOUSE`.
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
 
-### Site · `TEA_STAIRS` (Tea Terrace Stairs)
-
-- Rect x 11..19, y 66..72 (8 × 6 m); ramp along y: z 1.4 → 0; floor `large_sandstone_blocks_01`; authored clear width **4 m** (protected).
-- Connects: TEA_LANDING, TEA_TERRACE.
-- `north` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m north edge; the full face remains an authored traversal opening.
-- `south` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m south edge; the full face remains an authored traversal opening.
-- `east` edge: exempt (`retaining_wall`): The 6.00m east wall follows and retains the complete authored stair grade.
-- `west` edge: exempt (`retaining_wall`): The 6.00m west wall follows and retains the complete authored stair grade.
-
-### Site · `TEA_LANDING` (Tea Terrace Landing)
-
-- Rect x 11..19, y 72..76.5 (8 × 4.5 m); floor z = 0; floor `large_sandstone_blocks_01`; authored clear width **4.5 m** (protected).
-- Connects: LINK_WEST_UPPER, TEA_STAIRS.
-- `north` edge: exempt (`short_wall_return`): Only 2.00m of the 8.00m north edge is collision wall; no continuous return reaches the 2.50m frontage minimum.
-- `south` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 8.00m south edge; the full face remains an authored traversal opening.
-- `east` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 4.50m east edge; the full face remains an authored traversal opening.
-- `west` edge: exempt (`retaining_wall`): The 4.00m wall run on the 4.50m west edge retains the authored raised landing grade.
-
-### Package outputs
-
-| Package directory | Section zone | Owned runtime faces | Section GLB |
+| Parcel / owner | Role | Envelope finish | Architectural limit |
 |---|---|---|---|
-| KEEP existing runtime; no package | `TEA_RAMP` | none | none |
-| `assets/source/unit-tea-terrace/` | `TEA_TERRACE` | `["east"]` | `unit-tea-terrace.glb` |
-| KEEP existing runtime; no package | `TEA_STAIRS` | none | none |
-| `assets/source/unit-tea-landing/` | `TEA_LANDING` | `[]` | `unit-tea-landing.glb` |
+| `tr-e` / `BLD_TEXTILE_WEST` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Rear household facade with a balanced lower pair at50/54 and one centered upper light at52 within the48..56 field |
+| `tr-s` / `BLD_MADRASA` | building | `ph_bz04_sandstone_blocks_05`; civic-stepped; CF-ENVELOPE / CF-JOINT | Closed secondary face of Bazaar guildhall; its entrance and floor hierarchy are defined on the principal elevation |
+| `tr-w` / `ASM_TEA_WEST_GRADE` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Tea west grade retaining enclosure return |
 
-Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-**Existing source.** No unit folder yet.
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT` | `F_E_HOUSE`, `F_E_LOGGIA`, `F_W_HALL`, `F_W_SERVICE`, `cc-en`, `cc-es-part-2`, `cs-wn`, `cs-ws`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s`, `tr-s` | `F_E_HOUSE`, `F_E_LOGGIA`, `F_W_HALL`, `F_W_SERVICE`, `cc-en`, `cc-es-part-2`, `cs-wn`, `cs-ws`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s` |
+| `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tt-e` |
 
-## 3. Walls
+**Required craft recipes:** CF-ENVELOPE, CF-FLOOR, CF-JOINT, CF-OPEN
 
-### FRONTAGE_TEA_TERRACE_EAST  ·  BLD_TEA_HOUSE (tea house, 2 storeys)
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-- **Role:** tea house. A tea house serves the raised terrace from a counter recess and has its own street door; the owners live above behind louvres (ventilation for the kitchen room) and woven reed (the bedroom).
-- **Wall line:** east edge of `TEA_TERRACE`; x = 19, y = 56.8 .. 65.2 (a runs south to north); length **8.4 m**; street side -X (street lies west of the wall); kit `Wall(F, (19, 56.8), (19, 65.2), faces='W')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 8.4 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_beige_wall_002`, trim `ph_stone_trim_white`, timber `ph_worn_planks`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 2.7 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 3.68 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** ALL heights here are above the terrace floor z = 1.4 (add 1.4 for absolute): plinth 0..0.28; awning ledger 2.85; signboard centre 3.05, nominal span 2.86..3.24; sill course 3.50..3.62; coping 6.84..7.0 (absolute 8.4); S2 roof base 8.4, cap 9.59 absolute.
+### `TEA_TERRACE`
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `shop_recess_market` | tea serving recess (brass/porcelain/linen shelves) | 1.8 | (19, 58.6) | 2.4 × 1.35 × 2.7 | 0 / 2.7 | 0 |
-| `STORY_1_WINDOW_01` | `window_shuttered` | SH-L louvered teal (placed `ASSET_SHUTTER_LOUVERED`) | 1.8 | (19, 58.6) | 1.6 × 0.24 × 1.65 | 3.68 / 5.33 | 1 |
-| `GROUND_02` | `door_shop_timber` | closed tea-house entry | 6.6 | (19, 63.4) | 1.15 × 0.22 × 2.7 | 0 / 2.7 | 0 |
-| `STORY_1_WINDOW_02` | `window_shuttered` | SH-W woven infill (placed `ASSET_SHUTTER_WOVEN`) | 6.6 | (19, 63.4) | 1.6 × 0.24 × 1.65 | 3.68 / 5.33 | 1 |
+A horizontal timber sitting gallery above tea service and seat. Broad upper room window aligned with the gallery, with one separate side room.
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.8, 2.4, 0, 2.7), (1.8, 1.6, 3.68, 1.65), (6.6, 1.15, 0, 2.7), (6.6, 1.6, 3.68, 1.65)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+Primary focus: The raised tea serving bay and supported shade. The rear entrance at z=1.40 shares the textile building’s common upper floors. Linen, service ware and clear working depth carry the use..
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_SHUTTER_LOUVERED` at MOUNT_TEA_WINDOW_1; `ASSET_SHUTTER_WOVEN` at MOUNT_TEA_WINDOW_2.
+## Architecture and craftsmanship
 
-**Construction tasks (ordered; each has an observable completion):**
+**Primary:** A horizontal timber sitting gallery above tea service and seat
 
-1. CREATE the section finish with its origin on the terrace floor (z 1.4): skin `ph_beige_wall_002`, plinth sandstone 0..0.28, sill course 3.50..3.62, coping 6.84..7.0; corners `open`: the north end meets the stairs' retaining stone with a 0.16 quoin strip, the south end the ramp's. Completion: the tea house reads as a two-storey house on a raised street.
-2. CREATE `GROUND_01` serving recess 2.4 × 2.7 × 1.35 at a=1.80: stone jambs, timber head, three timber shelves at 0.85 / 1.4 / 1.95 carrying brass pots, porcelain and folded linen (model 12 small items from the CC0 brass pot and simple lathe cups, all inside the recess), counter top at 0.90 × 0.34 deep, closed panel front. This recess is modelled in the GLB (no placed counter here). Completion: a tea counter with visible stock, nothing beyond the wall plane except the counter top's 0.10.
-3. CREATE `GROUND_02` closed entry door 1.15 × 2.7 at a=6.6 (SD-05). Completion: closed.
-4. CREATE two rebates `STORY_1_WINDOW_01/02` 1.6 × 1.65 at sill 3.68 / head 5.33 over a=1.80 and a=6.6 for the placed `ASSET_SHUTTER_LOUVERED` and `ASSET_SHUTTER_WOVEN` (absolute z 5.08). Completion: shutters seated.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_fabric_leather_02` over `GROUND_01` only (the tea house uses plain cream cloth, no stripes). Completion: one awning.
-6. CREATE sign brackets for `TEA_E_SIGN_1` (a=1.80, centre absolute z 4.45, span 4.26..4.64) at local z 3.24 (absolute 4.64). `TEA_E_SIGN_2` dormant. Completion: one sign.
-7. CREATE the lantern bracket at a=3.7: it starts at (19.0, 60.5, 4.915), reaches 0.50 m into the street to the placed lantern handle at (18.5, 60.5, 4.915), and carries `LANTERN_TEA_01` centred at (18.5, 60.5, 4.65). Completion: lantern hangs from the bracket.
-8. KEEP the tea service, table, three stools and stall at their placed transforms (they sit on the terrace against this wall, outside the 4 m clear width). Completion: nothing new on the terrace.
-9. APPLY wear: dust band on the plinth, tea-stain drips 0..0.3 under the recess, polish at the door, seat polish on the wall at 0.4..0.9 m behind the stools. Completion: as listed.
-10. KEEP the existing runtime-owned shared S2 roof over x=19..24 and y=56.8..62.72: absolute base 8.4, cap 9.59. The Tea section finish stops at its 8.4 m absolute coping and adds no `upper_room`, slab, coping or parapet above it; the Textile west section finish likewise adds none over the shared strip. Completion: one continuous stepped roof with no double slab or cap above 9.59.
+**Supporting:** Broad upper room window aligned with the gallery, with one separate side room
 
-**Why it exists (reality check):** A tea house serves the raised terrace from a counter recess and has its own street door; the owners live above behind louvres (ventilation for the kitchen room) and woven reed (the bedroom).
+**Quiet fields and limits:** Preserve opening head z=4.10 and ceiling 4.28. No new lintel, shelf or hardware through that tight clearance.
 
-## 4. Free placements (dressing, cover, landmarks)
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
+| Parcel / owner | Role | Envelope finish | Architectural limit |
+|---|---|---|---|
+| `tt-e` / `BLD_TEXTILE_WEST` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Rear sitting hall with its3.8m gallery centered at60 and upper lights of2.3m/1.1m at58.545/62.055, with their combined outside bounds centered at60 within the56..64 field; ground service and seat remain unchanged |
+| `tt-rug-return` / `BLD_RUG_MERCHANT` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Closed rear return of the Rug merchant gallery at the measured y64 party wall |
+| `tt-w` / `ASM_TEA_WEST_GRADE` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Tea west grade retaining enclosure return |
 
-#### `TEA_RAMP`
+| Group | Actual trade | Parts / recipes | Acceptance |
+|---|---|---|---|
+| `G_tt-shop` | tea display | 19 / CF-CERAMIC, CF-CLOTH, CF-COUNTER, CF-METAL, CF-SHELF | Build the named parts as tea display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
+| `G_TT_RECESSED_SEAT` | shaded tea seating | 7 / CF-CLOTH, CF-FURNITURE, CF-TIMBER | One recessed fixed bench with a plain fitted linen cushion; no extra floor props. |
 
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_EAST` | `ASSET_SIGNBOARD` | `TEA_RAMP_SIGN_EAST` | (18.75, 54.3, 3.65) | 1.2 × 0.12 × 0.38 | 270 | KEEP (route sign) |
-| `PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_WEST` | `ASSET_SIGNBOARD` | `TEA_RAMP_SIGN_WEST` | (11.25, 51.2, 3.05) | 1.1 × 0.12 × 0.38 | 90 | KEEP (route sign) |
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-#### `TEA_TERRACE`
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_RUG_GATE` | `B_S_EAST`, `B_S_WEST`, `R_E_HOUSE`, `R_W_ABUTMENT`, `R_W_MERCHANT`, `leu-n`, `lne-w`, `lwu-s`, `ts-e`, `tt-rug-return` | `B_S_EAST`, `B_S_WEST`, `R_E_HOUSE`, `R_W_ABUTMENT`, `R_W_MERCHANT`, `leu-n`, `lne-w`, `lwu-s`, `ts-e` |
+| `ROOF_BUNDLE_UNIT_TEA_TERRACE` | `tl-w`, `ts-w`, `tt-w` | `tl-w`, `ts-w` |
+| `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e` |
 
-| Anchor | Type | Position | W × H | Yaw | Note |
-|---|---|---|---|---:|---|
-| `LMK_TEA_TERRACE_01` | landmark | (14.2, 61.3, 1.4) | 2.2 × 2.4 | 0 | Tea service landmark on the shared elevated route. |
-| `COVER_TEA_01` | cover_cluster | (12.2, 63.8, 1.4) | 1.5 × 1.1 | 90 | Low tea crates provide elevated cover. |
-| `LANTERN_TEA_01` | lantern_anchor | (18.5, 60.5, 4.65) | 0.42 × 0.72 | 270 | CC0 wooden lantern above the raised tea route. |
+**Required craft recipes:** CF-CERAMIC, CF-CLOTH, CF-COUNTER, CF-ENVELOPE, CF-FLOOR, CF-JOINT, CF-METAL, CF-OPEN, CF-SHADE, CF-SHELF
 
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_TEA_LANTERN_LANTERN_TEA_01` | `ASSET_CC0_LANTERN` | `LANTERN_TEA_01` | (18.5, 60.5, 4.65) | 0.221 × 0.235 × 0.53 | 270 | KEEP at this transform |
-| `PLACE_TEA_STOOL_EAST_LMK_TEA_TERRACE_01` | `ASSET_CC0_TEA_STOOL` | `LMK_TEA_TERRACE_01` | (17.88, 61.3, 1.4) | 0.385 × 0.406 × 0.579 | 270 | KEEP at this transform |
-| `PLACE_TEA_STOOL_WEST_NORTH_LMK_TEA_TERRACE_01` | `ASSET_CC0_TEA_STOOL` | `LMK_TEA_TERRACE_01` | (16.45, 61.75, 1.4) | 0.385 × 0.406 × 0.579 | 110 | KEEP at this transform |
-| `PLACE_TEA_STOOL_WEST_SOUTH_LMK_TEA_TERRACE_01` | `ASSET_CC0_TEA_STOOL` | `LMK_TEA_TERRACE_01` | (16.45, 60.85, 1.4) | 0.385 × 0.406 × 0.579 | 70 | KEEP at this transform |
-| `PLACE_TEA_TABLE_LMK_TEA_TERRACE_01` | `ASSET_CC0_TEA_TABLE` | `LMK_TEA_TERRACE_01` | (17.15, 61.3, 1.4) | 1.134 × 0.706 × 0.8 | 90 | KEEP at this transform |
-| `PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01` | `ASSET_CLOTH_CANOPY` | `TEA_TERRACE_SHADE_01` | (15, 62.4, 5.7) | 1.9 × 6.8 × 0.18 | 90 | KEEP at this transform |
-| `PLACE_TEA_COVER_COVER_TEA_01` | `ASSET_COVER_GOODS` | `COVER_TEA_01` | (12.2, 63.8, 1.4) | 1.5 × 0.75 × 1 | 90 | KEEP (gameplay cover; silhouette and collider protected) |
-| `PLACE_L34_TEA_STALL_L34_TEA_STALL_01` | `ASSET_MARKET_STALL` | `L34_TEA_STALL_01` | (16.9, 64.7, 1.4) | 1.98 × 1.215 × 1.98 | 270 | KEEP at this transform |
-| `PLACE_TEA_WINDOW_1_MOUNT_TEA_WINDOW_1` | `ASSET_SHUTTER_LOUVERED` | `MOUNT_TEA_WINDOW_1` | (19.015, 58.6, 5.08) | 1.6 × 0.24 × 1.65 | 90 | KEEP at this transform |
-| `PLACE_TEA_WINDOW_2_MOUNT_TEA_WINDOW_2` | `ASSET_SHUTTER_WOVEN` | `MOUNT_TEA_WINDOW_2` | (19.015, 63.4, 5.08) | 1.6 × 0.24 × 1.65 | 90 | KEEP at this transform |
-| `PLACE_TEA_SIGNS_TEA_E_SIGN_1` | `ASSET_SIGNBOARD` | `TEA_E_SIGN_1` | (18.88, 58.6, 4.45) | 2.2 × 0.12 × 0.38 | 270 | KEEP (centre absolute z 4.45, nominal board span 4.26..4.64; masonry stubs meet its top at z 4.64) |
-| `PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01` | `ASSET_TEA_SERVICE` | `LMK_TEA_TERRACE_01` | (18.55, 62, 1.4) | 1.2 × 0.55 × 0.9 | 90 | KEEP (shifted 2026-09-07 by 0.65 m south to y 62.0, out of the entry door service floor; waiver CW-F70D65F7D790 retired) |
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-#### `TEA_STAIRS`
+### `TEA_STAIRS`
 
-#### `TEA_LANDING`
+Legible stair run and turn. Stone base, coping, tread contact and the nearby merchant return share their measured interfaces. No added door, pot, rail or stock on protected treads.
 
-## 5. Overheads
+Primary focus: Legible stair run and turn. Stone base, coping, tread contact and the nearby merchant return share their measured interfaces..
 
-Canopies and lines are shared by both walls (owner OWN_OVERHEAD). Ends are fixed points on the receiving wall or roof tie; the cloth hangs between them per SD-17. Hem never below 4.2 m over a route floor.
+## Architecture and craftsmanship
 
-| Span | End A (x, y, z) | End B (x, y, z) | Width | Note |
+**Primary:** Legible stair run and turn
+
+**Supporting:** Stone base, coping, tread contact and the nearby merchant return share their measured interfaces.
+
+**Quiet fields and limits:** No added door, pot, rail or stock on protected treads.
+
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
+|---|---|---|---|
+| `ts-e` / `BLD_RUG_MERCHANT` | building | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | The two rear lights stack at 69, centered in the visibly bounded 66..72 return. They serve the existing stock and loft rooms at their rear wall; front openings need not share this rear axis. The ground face stays closed along the grade. |
+| `ts-w` / `ASM_TEA_WEST_GRADE` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Tea west grade retaining enclosure return |
+
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
+
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_RUG_GATE` | `B_S_EAST`, `B_S_WEST`, `R_E_HOUSE`, `R_W_ABUTMENT`, `R_W_MERCHANT`, `leu-n`, `lne-w`, `lwu-s`, `ts-e`, `tt-rug-return` | `B_S_EAST`, `B_S_WEST`, `R_E_HOUSE`, `R_W_ABUTMENT`, `R_W_MERCHANT`, `leu-n`, `lne-w`, `lwu-s`, `tt-rug-return` |
+| `ROOF_BUNDLE_UNIT_TEA_TERRACE` | `tl-w`, `ts-w`, `tt-w` | `tl-w`, `tt-w` |
+
+**Required craft recipes:** CF-ENVELOPE, CF-FLOOR, CF-JOINT, CF-OPEN
+
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
+
+### `TEA_LANDING`
+
+The exact open mouths and safe turning space. Returns inherit the same materials and roof edges as their owner buildings. Keep the landing empty; no invented frontage or new elevation.
+
+Primary focus: The exact open mouths and safe turning space. Returns inherit the same materials and roof edges as their owner buildings..
+
+## Architecture and craftsmanship
+
+**Primary:** The exact open mouths and safe turning space
+
+**Supporting:** Returns inherit the same materials and roof edges as their owner buildings.
+
+**Quiet fields and limits:** Keep the landing empty; no invented frontage or new elevation.
+
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
+|---|---|---|---|
+| `tl-n` / `ASM_TEA_LINK_RETURN` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Tea landing north return enclosure return |
+| `tl-w` / `ASM_TEA_WEST_GRADE` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Tea west grade retaining enclosure return |
+
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
+
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_TEA_TERRACE` | `tl-w`, `ts-w`, `tt-w` | `ts-w`, `tt-w` |
+
+**Required craft recipes:** CF-ENVELOPE, CF-FLOOR, CF-JOINT
+
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
+
+## Site, protected faces, and parcels
+
+### `TEA_RAMP` · `north`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **0 → 1.4 m at 9.926°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_TERRACE |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_RAMP` · `east`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **48..56 m**; floor grade: **0 → 1.4 m at 9.926°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 48..56 | collider-backed solid | COLLIDER_WALL_080, COLLIDER_WALL_081, COLLIDER_WALL_082, COLLIDER_WALL_083, COLLIDER_WALL_084, COLLIDER_WALL_085, COLLIDER_WALL_086, COLLIDER_WALL_087 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tr-e` | 48..56 | (19, 48, 19.6, 56) | Rear household facade with a balanced lower pair at50/54 and one centered upper light at52 within the48..56 field | 11.1 | 0.6 | `ph_bz04_painted_plaster_warm` | slab 11.1..11.28; parapet 11.73; cap 11.83; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `tr-e-L1-W1` | `tr-e` | window | 50 | 5.15 / 6.95 | 1.35 × 1.8 × 0.3 | 19 | `SD-07`; Closed 2-panel timber shutters | ventilated cloth sorting and stock; daylight on its measured room axis |
+| `tr-e-L1-W3` | `tr-e` | window | 54 | 5.15 / 6.95 | 1.35 × 1.8 × 0.3 | 19 | `SD-07`; Closed 2-panel timber shutters | ventilated cloth sorting and stock; daylight on its measured room axis |
+| `tr-e-L2-CENTER` | `tr-e` | window | 52 | 8.75 / 10.35 | 1.25 × 1.6 × 0.3 | 19 | `SD-07`; Closed 2-panel timber shutters | staff accommodation; daylight on its measured room axis |
+
+### `TEA_RAMP` · `south`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **11..19 m**; floor grade: **0 → 1.4 m at 9.926°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 15..19 | collider-backed solid | COLLIDER_WALL_021 |
+| 11..15 | **ZERO BUILD protected opening** | CARAVAN_COURT |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tr-s` | 15..19 | (15, 47.4, 19, 48) | Closed secondary face of Bazaar guildhall; its entrance and floor hierarchy are defined on the principal elevation | 11.4 | 0.6 | `ph_bz04_sandstone_blocks_05` | slab 11.4..11.58; parapet 12.03; cap 12.13; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `TEA_RAMP` · `west`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **48..56 m**; floor grade: **0 → 1.4 m at 9.926°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 48..56 | collider-backed solid | COLLIDER_WALL_054, COLLIDER_WALL_055, COLLIDER_WALL_056, COLLIDER_WALL_057, COLLIDER_WALL_058, COLLIDER_WALL_059, COLLIDER_WALL_060, COLLIDER_WALL_061 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tr-w` | 48..56 | (10.4, 48, 11, 56) | Tea west grade retaining enclosure return | 5.9 | 0.6 | `ph_bz04_sandstone_blocks_05` | slab 5.9..6.02; parapet 6.02; cap 6.02; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `TEA_TERRACE` · `north`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **z 1.4 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_STAIRS |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_TERRACE` · `east`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **56..66 m**; floor grade: **z 1.4 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 56..66 | collider-backed solid | COLLIDER_WALL_088 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tt-e` | 56..64 | (19, 56, 20.2, 64) | Rear sitting hall with its3.8m gallery centered at60 and upper lights of2.3m/1.1m at58.545/62.055, with their combined outside bounds centered at60 within the56..64 field; ground service and seat remain unchanged | 11.1 | 1.2 | `ph_bz04_painted_plaster_warm` | slab 11.1..11.28; parapet 11.73; cap 11.83; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `tt-rug-return` | 64..66 | (19, 64, 21, 66) | Closed rear return of the Rug merchant gallery at the measured y64 party wall | 9.9 | 2 | `ph_bz04_painted_plaster_warm` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `tt-shop` | `tt-e` | shop | 58.01 | 1.4 / 4.1 | 1.8 × 2.7 × 1.9 | 19 | `SD-08`; closed shop back and continuous fixed counter; side-door clear 0.8 m → `tt-e-STAFF-DOOR` | Tea serving counter in the shared Textile/Tea building |
+| `tt-e-STAFF-DOOR` | `tt-e` | door | 62.8 | 1.4 / 3.95 | 1.1 × 2.55 × 0.24 | 19 | `SD-05`; closed timber leaves with a fixed opaque transom | Rear staff entrance aligned with the front stair bay |
+| `TT-SITTING-GALLERY` | `tt-e` | window | 60 | 5 / 7.3 | 3.8 × 2.3 × 0.65 | 19 | `SD-07`; closed three-panel timber sitting gallery | Rear upper sitting gallery overlooking the tea terrace; three lights belonging to one room |
+| `tt-e-L2-W1` | `tt-e` | window | 58.545 | 8.75 / 10.35 | 2.3 × 1.6 × 0.34 | 19 | `SD-07`; Closed 2-panel timber shutters | staff accommodation; daylight on its measured room axis |
+| `tt-e-L2-W3` | `tt-e` | window | 62.055 | 8.75 / 10.35 | 1.1 × 1.6 × 0.34 | 19 | `SD-07`; Closed 2-panel timber shutters | staff accommodation; daylight on its measured room axis |
+| `TT-RECESSED-SEAT` | `tt-e` | niche | 60.57 | 1.4 / 3.65 | 1.8 × 2.25 × 0.7 | 19 | `SD-09-SEAT`; Opaque recessed plaster back with a separate fixed timber seat | Built-in shaded tea seat between serving counter and staff entrance |
+
+### `TEA_TERRACE` · `south`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **z 1.4 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_RAMP |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_TERRACE` · `west`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **56..66 m**; floor grade: **z 1.4 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 56..66 | collider-backed solid | COLLIDER_WALL_062 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tt-w` | 56..66 | (10.2, 56, 11, 66) | Tea west grade retaining enclosure return | 8.4 | 0.8 | `ph_bz04_sandstone_blocks_05` | slab 8.4..8.52; parapet 8.52; cap 8.52; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `TEA_STAIRS` · `north`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **1.4 → 0 m at 13.134°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_LANDING |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_STAIRS` · `east`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **66..72 m**; floor grade: **1.4 → 0 m at 13.134°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 66..72 | collider-backed solid | COLLIDER_WALL_089, COLLIDER_WALL_090, COLLIDER_WALL_091, COLLIDER_WALL_092, COLLIDER_WALL_093, COLLIDER_WALL_094, COLLIDER_WALL_095, COLLIDER_WALL_096, COLLIDER_WALL_097, COLLIDER_WALL_098 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `ts-e` | 66..72 | (19, 66, 19.6, 72) | The two rear lights stack at 69, centered in the visibly bounded 66..72 return. They serve the existing stock and loft rooms at their rear wall; front openings need not share this rear axis. The ground face stays closed along the grade. | 9.9 | 0.6 | `ph_bz04_painted_plaster_warm` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `ts-e-L1-W1` | `ts-e` | window | 69 | 4.6 / 5.6 | 0.55 × 1 × 0.3 | 19 | `SD-07`; closed timber louver | hand-carried stock gallery; daylight on its measured room axis |
+| `ts-e-L2-W1` | `ts-e` | window | 69 | 7.9 / 8.9 | 0.55 × 1 × 0.3 | 19 | `SD-07`; closed timber louver | ventilated dry rug loft; daylight on its measured room axis |
+
+### `TEA_STAIRS` · `south`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **1.4 → 0 m at 13.134°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_TERRACE |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_STAIRS` · `west`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **66..72 m**; floor grade: **1.4 → 0 m at 13.134°**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 66..72 | collider-backed solid | COLLIDER_WALL_063, COLLIDER_WALL_064, COLLIDER_WALL_065, COLLIDER_WALL_066, COLLIDER_WALL_067, COLLIDER_WALL_068, COLLIDER_WALL_069, COLLIDER_WALL_070, COLLIDER_WALL_071, COLLIDER_WALL_072 |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `ts-w` | 66..72 | (10.4, 66, 11, 72) | Tea west grade retaining enclosure return | 5.9 | 0.6 | `ph_bz04_sandstone_blocks_05` | slab 5.9..6.02; parapet 6.02; cap 6.02; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `TEA_LANDING` · `north`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **11..19 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 17..19 | collider-backed solid | COLLIDER_WALL_034 |
+| 11..17 | **ZERO BUILD protected opening** | LINK_NORTH_WEST |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tl-n` | 17..19 | (17, 76.5, 19, 77.1) | Tea landing north return enclosure return | 4.5 | 0.6 | `ph_bz04_sandstone_blocks_05` | slab 4.5..4.62; parapet 4.62; cap 4.62; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `TEA_LANDING` · `east`
+
+Quiet background: open y=72..76.5.
+
+Protected wall interval: **72..76.5 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 72..76.5 | **ZERO BUILD protected opening** | LINK_WEST_UPPER |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_LANDING` · `south`
+
+Quiet background: open x=11..19.
+
+Protected wall interval: **11..19 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 11..19 | **ZERO BUILD protected opening** | TEA_STAIRS |
+
+No target parcel is scheduled on this face. Preserve the baseline condition above.
+
+### `TEA_LANDING` · `west`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **72..76.5 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 72..76 | collider-backed solid | COLLIDER_WALL_073 |
+| 76..76.5 | **ZERO BUILD protected opening** | LINK_NORTH_WEST |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `tl-w` | 72..76 | (10.4, 72, 11, 76) | Tea west grade retaining enclosure return | 4.5 | 0.6 | `ph_bz04_sandstone_blocks_05` | slab 4.5..4.62; parapet 4.62; cap 4.62; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+## Surface and floor treatments
+
+| Area / parcel | Receiver | Exact polygon / region | Alpha | Purpose |
+|---|---|---|---:|---|
+| `TEA_RAMP` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'TEA_RAMP-CLEAR', 'x': 13.0, 'y': 48, 'w': 4, 'h': 8, 'heightM': 2.2, 'floorSource': 'TEA_RAMP'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+| `TEA_TERRACE` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'TEA_TERRACE-CLEAR', 'x': 13.0, 'y': 56, 'w': 4, 'h': 10, 'heightM': 2.2, 'floorSource': 'TEA_TERRACE'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+| `TEA_STAIRS` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'TEA_STAIRS-CLEAR', 'x': 11, 'y': 67.0, 'w': 8, 'h': 4, 'heightM': 2.2, 'floorSource': 'TEA_STAIRS'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+| `TEA_LANDING` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'TEA_LANDING-CLEAR', 'x': 11, 'y': 72.0, 'w': 8, 'h': 4.5, 'heightM': 2.2, 'floorSource': 'TEA_LANDING'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+## Activity groups and protected route regions
+
+| Area | Group / recipe | Receiver | Bounds min → max (x, y, z) | Contents | Supports |
+|---|---|---|---|---|---|
+| `TEA_RAMP` | `TEA_RAMP-CLEAR` | **CLEAR ROUTE** | (13, 48) → (17, 56) | Protected empty region | Do not place geometry |
+| `TEA_TERRACE` | `G_tt-shop` / `AG-TEA` | east/tt-e/tt-shop | (18.72, 57.15, 1.44) → (20.9, 58.87, 4) | Build the named parts as tea display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=1.44, closed back at wall plane minus recess depth; all counter feet grounded |
+| `TEA_TERRACE` | `G_TT_RECESSED_SEAT` / `AG-SEAT` | east/tt-e/TT-RECESSED-SEAT | (19, 59.77, 1.44) → (19.45, 61.37, 1.95) | One recessed fixed bench with a plain fitted linen cushion; no extra floor props. | Two grounded supports on the SD-09 niche deck; no unlisted floor props |
+| `TEA_TERRACE` | `TEA_TERRACE-CLEAR` | **CLEAR ROUTE** | (13, 56) → (17, 66) | Protected empty region | Do not place geometry |
+| `TEA_STAIRS` | `TEA_STAIRS-CLEAR` | **CLEAR ROUTE** | (11, 67) → (19, 71) | Protected empty region | Do not place geometry |
+| `TEA_LANDING` | `TEA_LANDING-CLEAR` | **CLEAR ROUTE** | (11, 72) → (19, 76.5) | Protected empty region | Do not place geometry |
+
+### Fixed composition `G_tt-shop`
+
+Along offsets from served opening centre (or group centre for a plant); out positive toward street; z above group bbox min, the finished deck. Build exactly these parts with their stated receivers.
+
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
 |---|---|---|---|---|
-| `TEA_TERRACE_SHADE_01` | (11.6, 62.4, 5.75) | (18.4, 62.4, 5.65) | 1.9 | Tea terrace shade sail slung across the elevated route between both wall faces. Seated 4.2 m above the terrace surface so the hem stays clear of the 4 m route and every stair and landing below it. Narrowed to 1.9 m and lifted: at 3 m across a 4 m terrace the sail read as a ceiling rather than an awning, filling the upper third of the route camera and burying the tea frontage it is meant to shade. |
+| `counter` | grounded-counter-carcass / `CF-COUNTER` | [-0.85, -0.55, 0] / [0.85, 0.15, 0.9] | `ph_bz04_worn_planks` | recess deck; base feet are flat and continuous under the carcass |
+| `tea-pot-1` | arabian-coffee-pot / `CF-METAL` | [-0.5800000000000001, -0.41000000000000003, 0.9] / [-0.32, -0.23, 1.22] | `bz04_brass_project_original` | countertop |
+| `tea-pot-2` | arabian-coffee-pot / `CF-METAL` | [-0.15, -0.43, 0.9] / [0.15, -0.21000000000000002, 1.28] | `bz04_brass_project_original` | countertop |
+| `tea-pot-3` | arabian-coffee-pot / `CF-METAL` | [0.33, -0.4, 0.9] / [0.5700000000000001, -0.24, 1.1800000000000002] | `bz04_brass_project_original` | countertop |
+| `cup-1-1` | open-ceramic-cup / `CF-CERAMIC` | [-0.39499999999999996, -0.015, 0.9] / [-0.305, 0.075, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `cup-1-2` | open-ceramic-cup / `CF-CERAMIC` | [-0.045, -0.015, 0.9] / [0.045, 0.075, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `cup-1-3` | open-ceramic-cup / `CF-CERAMIC` | [0.305, -0.015, 0.9] / [0.39499999999999996, 0.075, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `cup-2-1` | open-ceramic-cup / `CF-CERAMIC` | [-0.39499999999999996, -0.14500000000000002, 0.9] / [-0.305, -0.05500000000000001, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `cup-2-2` | open-ceramic-cup / `CF-CERAMIC` | [-0.045, -0.14500000000000002, 0.9] / [0.045, -0.05500000000000001, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `cup-2-3` | open-ceramic-cup / `CF-CERAMIC` | [0.305, -0.14500000000000002, 0.9] / [0.39499999999999996, -0.05500000000000001, 1.02] | `bz04_ceramic_project_original`; albedo #d6c9b2 | countertop |
+| `tea-linen` | folded-cloth / `CF-CLOTH` | [-0.82, -0.18, 0.9] / [-0.62, 0.08, 0.95] | `ph_bz04_fine_linen` | countertop |
+| `tea-shelf-1` | plank-shelf / `CF-SHELF` | [-0.8, -1.9, 1.14] / [0.8, -1.68, 1.35] | `ph_bz04_worn_planks` | two wall brackets at the recess back |
+| `tea-stock-1-1` | lidded-tea-canister / `CF-CERAMIC` | [-0.58, -1.87, 1.35] / [-0.42, -1.71, 1.57] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-1 |
+| `tea-stock-1-2` | lidded-tea-canister / `CF-CERAMIC` | [-0.08, -1.87, 1.35] / [0.08, -1.71, 1.57] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-1 |
+| `tea-stock-1-3` | lidded-tea-canister / `CF-CERAMIC` | [0.42, -1.87, 1.35] / [0.58, -1.71, 1.57] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-1 |
+| `tea-shelf-2` | plank-shelf / `CF-SHELF` | [-0.8, -1.9, 1.64] / [0.8, -1.68, 1.85] | `ph_bz04_worn_planks` | two wall brackets at the recess back |
+| `tea-stock-2-1` | lidded-tea-canister / `CF-CERAMIC` | [-0.58, -1.87, 1.85] / [-0.42, -1.71, 2.0700000000000003] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-2 |
+| `tea-stock-2-2` | lidded-tea-canister / `CF-CERAMIC` | [-0.08, -1.87, 1.85] / [0.08, -1.71, 2.0700000000000003] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-2 |
+| `tea-stock-2-3` | lidded-tea-canister / `CF-CERAMIC` | [0.42, -1.87, 1.85] / [0.58, -1.71, 2.0700000000000003] | `bz04_ceramic_project_original`; albedo #c1b69e | tea-shelf-2 |
 
-`TEA_TERRACE_SHADE_01` runs from the retaining screen (11.6, 62.4, 5.75) to the tea house (18.4, 62.4, 5.65): iron eye on the screen, 1.2 m ledger on the house at local z 4.25. Cloth `ph_fabric_leather_02` (plain cream). Hem ≥ 4.2 over the terrace floor.
+### Fixed composition `G_TT_RECESSED_SEAT`
 
-## 6. Ground, wear and drainage
+Along offsets from served opening centre (or group centre for a plant); out positive toward street; z above group bbox min, the finished deck. Build exactly these parts with their stated receivers.
 
-KEEP the ramp (z 0..1.4 over 8 m), the terrace `patterned_cobblestone`, the ten visual treads and the landing; material seams at the top of the ramp and the top of the stairs only; polish on the tread nosings; tea-stain patch under the service at (18.55, 62.65).
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `end-frame-1` | framed-timber-end / `CF-FURNITURE` | [-0.78, -0.42, 0] / [-0.7, -0.02999999999999997, 0.42] | `ph_bz04_worn_planks` | recess deck |
+| `end-frame-2` | framed-timber-end / `CF-FURNITURE` | [0.7, -0.42, 0] / [0.78, -0.02999999999999997, 0.42] | `ph_bz04_worn_planks` | recess deck |
+| `seat-board-1` | plank-board / `CF-TIMBER` | [-0.8, -0.44999999999999996, 0.42] / [0.8, -0.32, 0.46] | `ph_bz04_worn_planks` | two end frames |
+| `seat-board-2` | plank-board / `CF-TIMBER` | [-0.8, -0.29, 0.42] / [0.8, -0.15999999999999998, 0.46] | `ph_bz04_worn_planks` | two end frames |
+| `seat-board-3` | plank-board / `CF-TIMBER` | [-0.8, -0.12999999999999998, 0.42] / [0.8, 0.0, 0.46] | `ph_bz04_worn_planks` | two end frames |
+| `stretcher` | timber-member / `CF-TIMBER` | [-0.74, -0.325, 0.18] / [0.74, -0.27499999999999997, 0.23] | `ph_bz04_worn_planks` | two end frames |
+| `fitted-cushion` | fitted-cloth-cushion / `CF-CLOTH` | [-0.625, -0.4, 0.46] / [0.625, -0.04999999999999999, 0.51] | `ph_bz04_hessian_230`; albedo #c8b896 | seat boards |
 
-**`TEA_RAMP` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+## Fixtures, receivers, budgets, and critical views
 
-KEEP the existing grade and surface; no added wear mesh on this ramp or stair run.
+| Area | Fixture | Recipe | Receiver | Bounds min → max (x, y, z) | Purpose |
+|---|---|---|---|---|---|
+| `TEA_TERRACE` | `SHADE_tt-shop` | `SD-12` | east/tt-e/tt-shop | (17.975, 56.96, 3.89) → (19.08, 59.06, 4.495) | Supported working shade for existing tea recess |
+| | `SHADE_tt-shop` dimensions/supports | | | {'interval': [56.96, 59.06], 'ledgerZ': 4.43, 'armAxesM': [57.06, 58.96], 'projectionM': 1.0, 'dropM': 0.22, 'sagM': 0.08} | Exact instance values override the standard defaults. |
+| `TEA_TERRACE` | `R4-SHADE-TT-RECESSED-SEAT` | `SD-12` | east/tt-e/TT-RECESSED-SEAT | (18.275, 59.57, 3.86) → (19.08, 61.57, 4.465) | Supported cream shade makes the fixed sitting pocket usable; no ground posts. |
+| | `R4-SHADE-TT-RECESSED-SEAT` dimensions/supports | | | {'interval': [59.57, 61.57], 'ledgerZ': 4.4, 'armAxesM': [59.67, 61.47], 'projectionM': 0.7, 'dropM': 0.16, 'sagM': 0.08} | Exact instance values override the standard defaults. |
 
-**`TEA_TERRACE` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+**SHADE_tt-shop membrane-only bounds:** `{'min': [18.0, 56.96, 4.122], 'max': [19, 59.06, 4.43]}`. Whole-assembly bounds above include the following supports:
 
-```python
-wear_patch(F, [(14.5, 56.05, 0.014), (15.5, 56.05, 0.014), (15.5, 65.95, 0.014), (14.5, 65.95, 0.014)], 'polish')
-wear_patch(F, [(18.25, 62.4, 0.014), (18.85, 62.4, 0.014), (18.85, 62.9, 0.014), (18.25, 62.9, 0.014)], 'damp')
-wear_patch(F, [(17.5875, 63.63, 0.014), (17.5875, 65.77, 0.014), (16.2125, 65.77, 0.014), (16.2125, 63.63, 0.014)], 'dust')
-wear_patch(F, [(11.745, 64.63, 0.014), (11.745, 62.97, 0.014), (12.655, 62.97, 0.014), (12.655, 64.63, 0.014)], 'dust')
-wear_patch(F, [(18.195, 62.68, 0.014), (18.195, 61.32, 0.014), (18.905, 61.32, 0.014), (18.905, 62.68, 0.014)], 'dust')
-wear_patch(F, [(18.163037, 61.027581, 0.014), (18.163037, 61.572419, 0.014), (17.596963, 61.572419, 0.014), (17.596963, 61.027581, 0.014)], 'dust')
-wear_patch(F, [(16.277205, 62.102794, 0.014), (16.090859, 61.590815, 0.014), (16.622795, 61.397206, 0.014), (16.809141, 61.909185, 0.014)], 'dust')
-wear_patch(F, [(16.090859, 61.009185, 0.014), (16.277205, 60.497206, 0.014), (16.809141, 60.690815, 0.014), (16.622795, 61.202794, 0.014)], 'dust')
-wear_patch(F, [(16.716988, 61.947208, 0.014), (16.716988, 60.652792, 0.014), (17.583012, 60.652792, 0.014), (17.583012, 61.947208, 0.014)], 'dust')
-```
+| Component | World bounds |
+|---|---|
+| ledger | `{'min': [18.96, 56.96, 4.39], 'max': [19.08, 59.06, 4.47]}` |
+| arm-knee-1 | `{'min': [17.975, 57.025000000000006, 3.8899999999999997], 'max': [19.04, 57.095, 4.495]}` |
+| arm-knee-2 | `{'min': [17.975, 58.925000000000004, 3.8899999999999997], 'max': [19.04, 58.995, 4.495]}` |
+| cloth-and-hem | `{'min': [18.0, 56.96, 4.0969999999999995], 'max': [19, 59.06, 4.43]}` |
 
-**`TEA_STAIRS` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
 
-KEEP the existing grade and surface; no added wear mesh on this ramp or stair run.
+**R4-SHADE-TT-RECESSED-SEAT membrane-only bounds:** `{'min': [18.3, 59.57, 4.152], 'max': [19, 61.57, 4.4]}`. Whole-assembly bounds above include the following supports:
 
-**`TEA_LANDING` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+| Component | World bounds |
+|---|---|
+| ledger | `{'min': [18.96, 59.57, 4.36], 'max': [19.08, 61.57, 4.44]}` |
+| arm-knee-1 | `{'min': [18.275, 59.635000000000005, 3.8600000000000003], 'max': [19.04, 59.705, 4.465000000000001]}` |
+| arm-knee-2 | `{'min': [18.275, 61.435, 3.8600000000000003], 'max': [19.04, 61.504999999999995, 4.465000000000001]}` |
+| cloth-and-hem | `{'min': [18.3, 59.57, 4.127000000000001], 'max': [19, 61.57, 4.4]}` |
 
-```python
-wear_patch(F, [(14.5, 72.05, 0.014), (15.5, 72.05, 0.014), (15.5, 72.35, 0.014), (14.5, 72.35, 0.014)], 'polish')
-```
 
-## 7. Roofs and skyline
+| Area | Triangle budget | Material bindings | Rendered primitives | Shadow primitives |
+|---|---:|---:|---:|---:|
+| `TEA_RAMP` | 12000 | 6 | 6 | 5 |
+| `TEA_TERRACE` | 48000 | 12 | 15 | 8 |
+| `TEA_STAIRS` | 12000 | 6 | 6 | 5 |
+| `TEA_LANDING` | 12000 | 4 | 4 | 3 |
 
-Tea house roof base 8.4, cap 9.59: the shared Textile north-wing roof remains runtime-owned with no face-GLB roof geometry. Retaining screens stay 7.0 / 7.89. The overlook remains outside this render-only scope.
+Section origin (design coordinates): `{'x': 11, 'y': 48, 'z': 0.7, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-0.7999999999999989, -0.72, -0.8000000000000043], 'max': [8.8, 10.72, 8.200000000000003]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `ph_bz04_painted_plaster_warm`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`.
 
-## 8. Required result
 
-- [ ] Serving recess with stocked shelves and a 0.90 counter; closed entry door; two shutters seated at absolute z 5.08.
-- [ ] Lantern and sign on brackets; shade sail ends bear on an eye and a ledger.
-- [ ] Ramp and stairs untouched; nothing on the treads or the inside corners.
-- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
-- [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
-- [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
-- [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
-- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
-- [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
-- [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
+Section origin (design coordinates): `{'x': 11, 'y': 56, 'z': 1.4, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-1.0, -0.020000000000000018, -0.20000000000000284], 'max': [10.2, 9.719999999999999, 10.200000000000003]}`.
+Required bindings: `bz04_brass_project_original`, `bz04_ceramic_project_original`, `bz04_court_limestone_flags_01`, `ph_bz04_dark_wood`, `ph_bz04_fine_linen`, `ph_bz04_hessian_230`, `ph_bz04_painted_plaster_warm`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`, `ph_bz04_worn_planks`.
 
-Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
 
+Section origin (design coordinates): `{'x': 11, 'y': 66, 'z': 0.7, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-0.7999999999999989, -0.72, -0.20000000000000284], 'max': [8.8, 9.22, 6.200000000000003]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `ph_bz04_painted_plaster_warm`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`.
+
+
+Section origin (design coordinates): `{'x': 11, 'y': 72, 'z': 0, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-0.7999999999999989, -0.02, -0.20000000000000284], 'max': [8.2, 4.52, 5.299999999999997]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`.
+
+
+| Camera | Area | Position (x, y, z) | Yaw / pitch / FOV | Purpose |
+|---|---|---|---|---|
+| `TEA_RAMP-travel-reverse` | `TEA_RAMP` | (15, 55.35, 2.986) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `TEA_RAMP-travel-forward` | `TEA_RAMP` | (15, 48.65, 1.814) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `TEA_RAMP-east-tr-e-s1-base` | `TEA_RAMP` | (11.35, 52, 2.4) | 270° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_RAMP-east-tr-e-s1-upper` | `TEA_RAMP` | (11.35, 52, 2.4) | 270° / 49.256° / 75° | upper facade, parapet and roof-step coverage |
+| `TEA_RAMP-south-tr-s-s1-base` | `TEA_RAMP` | (17, 55.65, 3.039) | 0° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_RAMP-south-tr-s-s1-upper` | `TEA_RAMP` | (17, 55.65, 3.039) | 0° / 48.151° / 75° | upper facade, parapet and roof-step coverage |
+| `TEA_RAMP-west-tr-w-s1-base` | `TEA_RAMP` | (18.65, 52, 2.4) | 90° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_TERRACE-travel-reverse` | `TEA_TERRACE` | (15, 65.35, 3.1) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `TEA_TERRACE-travel-forward` | `TEA_TERRACE` | (15, 56.65, 3.1) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `TEA_TERRACE-east-tt-e_tt-rug-return-s1-base` | `TEA_TERRACE` | (11.35, 61, 3.1) | 270° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_TERRACE-east-tt-e_tt-rug-return-s1-upper` | `TEA_TERRACE` | (11.35, 61, 3.1) | 270° / 46.918° / 75° | upper facade, parapet and roof-step coverage |
+| `TEA_TERRACE-west-tt-w-s1-base` | `TEA_TERRACE` | (18.65, 61, 3.1) | 90° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_TERRACE-R3-craft-detail` | `TEA_TERRACE` | (15.5, 58.01, 3.1) | 270° / -1.637° / 75° | R3 receiver, joinery, support, material and trade-detail inspection: tt-shop |
+| `TEA_STAIRS-travel-reverse` | `TEA_STAIRS` | (15, 71.35, 1.852) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `TEA_STAIRS-travel-forward` | `TEA_STAIRS` | (15, 66.65, 2.948) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `TEA_STAIRS-east-ts-e-s1-base` | `TEA_STAIRS` | (11.35, 69, 2.4) | 270° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_STAIRS-east-ts-e-s1-upper` | `TEA_STAIRS` | (11.35, 69, 2.4) | 270° / 45.112° / 75° | upper facade, parapet and roof-step coverage |
+| `TEA_STAIRS-west-ts-w-s1-base` | `TEA_STAIRS` | (18.65, 69, 2.4) | 90° / 3.74° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_LANDING-travel-reverse` | `TEA_LANDING` | (15, 75.85, 1.7) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `TEA_LANDING-travel-forward` | `TEA_LANDING` | (15, 72.65, 1.7) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `TEA_LANDING-north-tl-n-s1-base` | `TEA_LANDING` | (18, 72.35, 1.7) | 180° / 3.315° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `TEA_LANDING-west-tl-w-s1-base` | `TEA_LANDING` | (18.65, 74, 1.7) | 90° / 1.8° / 75° | lower and mid facade coverage with adjacent approach/return context |
+
+## Landmarks and shared dependencies
+
+| Landmark / dependency | Owner | Bounds or dependency | Clear void / arch profile |
+|---|---|---|---|
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `TEA_RAMP` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `TEA_TERRACE` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `TEA_STAIRS` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `TEA_LANDING` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
+
+## Roof installation references
+
+Install or reuse the named roof bundles through [roof-bundles.md](roof-bundles.md). These are direct asset dependencies, not permission to build another area’s facades.
+
+- `TEA_RAMP` cells: `ROOF_CELL_058`, `ROOF_CELL_078`.
+- `TEA_RAMP` bundles: `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT`, `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE`.
+- `TEA_RAMP` interfaces: No cross-bundle interface.
+- `TEA_TERRACE` cells: `ROOF_CELL_026`, `ROOF_CELL_027`, `ROOF_CELL_028`, `ROOF_CELL_066`, `ROOF_CELL_078`.
+- `TEA_TERRACE` bundles: `ROOF_BUNDLE_UNIT_RUG_GATE`, `ROOF_BUNDLE_UNIT_TEA_TERRACE`, `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE`.
+- `TEA_TERRACE` interfaces: `ROOF_INTERFACE_ROOF_STEP_005`, `ROOF_INTERFACE_ROOF_STEP_007`, `ROOF_INTERFACE_ROOF_STEP_008`, `ROOF_INTERFACE_ROOF_STEP_009`, `ROOF_INTERFACE_ROOF_STEP_010`, `ROOF_INTERFACE_ROOF_STEP_011`, `ROOF_INTERFACE_ROOF_STEP_012`, `ROOF_INTERFACE_ROOF_STEP_013`, `ROOF_INTERFACE_ROOF_STEP_014`, `ROOF_INTERFACE_ROOF_STEP_016`, `ROOF_INTERFACE_ROOF_STEP_017`.
+- `TEA_STAIRS` cells: `ROOF_CELL_027`, `ROOF_CELL_066`.
+- `TEA_STAIRS` bundles: `ROOF_BUNDLE_UNIT_RUG_GATE`, `ROOF_BUNDLE_UNIT_TEA_TERRACE`.
+- `TEA_STAIRS` interfaces: No cross-bundle interface.
+- `TEA_LANDING` cells: `ROOF_CELL_028`.
+- `TEA_LANDING` bundles: `ROOF_BUNDLE_UNIT_TEA_TERRACE`.
+- `TEA_LANDING` interfaces: No cross-bundle interface.
+
+## Material key
+
+| Alias | Source material | Color | Tile / normal / roughness / albedo |
+|---|---|---|---|
+| `ph_bz04_painted_plaster_warm` | `ph_painted_plaster_warm` | <span style="color:#d8c4a0">■</span> `#d8c4a0` | 1.8 / 0.3 / 0.92 / 1 |
+| `ph_bz04_sandstone_blocks_05` | `ph_sandstone_blocks_05` | <span style="color:#bda985">■</span> `#bda985` | 2 / 0.45 / 0.94 / 1 |
+
+## Skyline and legacy producer dispositions
+
+| Legacy item | Zone | Existing producer | Required disposition | Replacement / notes |
+|---|---|---|---|---|
+| `PLACE_L34_TEA_STALL_L34_TEA_STALL_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_COVER_COVER_TEA_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | retain_gameplay | Retain exact geometry, transform and cover silhouette; common material calibration only. |
+| `PLACE_TEA_LANTERN_LANTERN_TEA_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_EAST` | `TEA_RAMP` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_RAMP_SIGNS_TEA_RAMP_SIGN_WEST` | `TEA_RAMP` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_SIGNS_TEA_E_SIGN_1` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_STOOL_EAST_LMK_TEA_TERRACE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_STOOL_WEST_NORTH_LMK_TEA_TERRACE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_STOOL_WEST_SOUTH_LMK_TEA_TERRACE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_TABLE_LMK_TEA_TERRACE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_TERRACE_SHADE_TEA_TERRACE_SHADE_01` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_WINDOW_1_MOUNT_TEA_WINDOW_1` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEA_WINDOW_2_MOUNT_TEA_WINDOW_2` | `TEA_TERRACE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `ARCH_FRONTAGE_TEA_TERRACE_EAST_GROUND_01` | `TEA_TERRACE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_TEA_TERRACE_EAST_GROUND_02` | `TEA_TERRACE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_TEA_TERRACE_EAST_MASSING` | `TEA_TERRACE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_TEA_TERRACE_EAST_STORY_1_WINDOW_01` | `TEA_TERRACE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_TEA_TERRACE_EAST_STORY_1_WINDOW_02` | `TEA_TERRACE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `BOUNDARY_TEA_LANDING_north` | `TEA_LANDING` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_LANDING_east` | `TEA_LANDING` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_LANDING_south` | `TEA_LANDING` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_LANDING_west` | `TEA_LANDING` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_RAMP_north` | `TEA_RAMP` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_RAMP_east` | `TEA_RAMP` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_RAMP_south` | `TEA_RAMP` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_RAMP_west` | `TEA_RAMP` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_STAIRS_north` | `TEA_STAIRS` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_STAIRS_east` | `TEA_STAIRS` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_STAIRS_south` | `TEA_STAIRS` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_STAIRS_west` | `TEA_STAIRS` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_TERRACE_north` | `TEA_TERRACE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_TERRACE_east` | `TEA_TERRACE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_TERRACE_south` | `TEA_TERRACE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_TEA_TERRACE_west` | `TEA_TERRACE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+
+
+## Drawings
+
+- [TEA_RAMP dimensioned plan](drawings/tea_ramp-plan.svg), [TEA_RAMP four elevations](drawings/tea_ramp-elevations.svg), and [TEA_RAMP roof axonometric](drawings/tea_ramp-axon.svg)
+- [TEA_TERRACE dimensioned plan](drawings/tea_terrace-plan.svg), [TEA_TERRACE four elevations](drawings/tea_terrace-elevations.svg), and [TEA_TERRACE roof axonometric](drawings/tea_terrace-axon.svg)
+- [TEA_STAIRS dimensioned plan](drawings/tea_stairs-plan.svg), [TEA_STAIRS four elevations](drawings/tea_stairs-elevations.svg), and [TEA_STAIRS roof axonometric](drawings/tea_stairs-axon.svg)
+- [TEA_LANDING dimensioned plan](drawings/tea_landing-plan.svg), [TEA_LANDING four elevations](drawings/tea_landing-elevations.svg), and [TEA_LANDING roof axonometric](drawings/tea_landing-axon.svg)
+- [Master plan](drawings/master-plan.svg)

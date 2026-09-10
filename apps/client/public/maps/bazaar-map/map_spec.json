@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "18004fd981c7dd769553a467793d3fe7b1f251c22cde8fc9485053001953c9e7",
+    "sha256": "730a2a602bfc5a64ff156522b98b90c20f1d5ba838276dea27fc81dae32d748a",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -619,8 +619,15 @@
       "surfaceId": "SURFACE_SPAWN_B_COURTYARD",
       "districtId": "DISTRICT_RUG",
       "macroLane": "main",
-      "floorMaterialId": "large_sandstone_blocks_01",
+      "floorMaterialId": "bz04_large_sandstone_blocks_01",
       "facadeProfileId": "hero_courtyard",
+      "sectionModelId": "section_unit_spawn_b_courtyard",
+      "sectionFaces": [
+        "north",
+        "east",
+        "south",
+        "west"
+      ],
       "clearWidthM": 6
     },
     {
@@ -3931,6 +3938,39 @@
       }
     },
     {
+      "id": "ASSET_BZ04_RUG_GATE",
+      "label": "BZ-04 Rug Gate portal",
+      "source": {
+        "kind": "project_original",
+        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
+      },
+      "license": "Project-Original",
+      "dimensionsM": {
+        "width": 15.6,
+        "depth": 0.8,
+        "height": 7.45
+      },
+      "collisionClass": "soft",
+      "shadowPolicy": "cast_receive",
+      "lodEligible": false,
+      "semanticClass": "landmark",
+      "runtime": {
+        "mode": "model",
+        "id": "bz04_rug_gate",
+        "uri": "/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb"
+      },
+      "transform": {
+        "pivot": "base_center",
+        "upAxis": "+y",
+        "forwardAxis": "+z",
+        "authoredScale": {
+          "x": 1,
+          "y": 1,
+          "z": 1
+        }
+      }
+    },
+    {
       "id": "ASSET_CARAVAN_LOAD_CRATE",
       "label": "Poly Haven caravan loading crate",
       "source": {
@@ -4716,38 +4756,6 @@
       }
     },
     {
-      "id": "ASSET_HERO_ARCH",
-      "label": "Rug Gate hero arch kit",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://procedural/bazaar/hero-arch"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 13,
-        "depth": 0.8,
-        "height": 6.8
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "landmark",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_rug_gate_arch"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
       "id": "ASSET_LAUNDRY_LINE",
       "label": "Cross-facade rope with varied hanging textiles",
       "source": {
@@ -5484,137 +5492,6 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_a_west_backs"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPAWN_B_BENCH",
-      "label": "Spawn B bench",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 1.8,
-        "depth": 0.42,
-        "height": 0.495
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-bench",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPAWN_B_SHADE",
-      "label": "Spawn B shade",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 2.18,
-        "depth": 1.19,
-        "height": 0.6
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-shade",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPAWN_B_SKYLINE_PALM",
-      "label": "Instanced decorative palm",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://generated/bazaar/palm-frond"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 3.8,
-        "depth": 3.8,
-        "height": 7.8
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "foliage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_date_palm"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_SPAWN_B_UPPER_ROOM",
-      "label": "Spawn B upper-room",
-      "source": {
-        "kind": "project_original",
-        "uri": "repo://assets/source/unit-spawn-b-courtyard/build.py"
-      },
-      "license": "Project-Original",
-      "dimensionsM": {
-        "width": 3.3,
-        "depth": 2.68,
-        "height": 2.95
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-upper-room",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
       },
       "transform": {
         "pivot": "base_center",
@@ -11152,6 +11029,40 @@
   ],
   "sectionModels": [
     {
+      "zoneId": "SPAWN_B_COURTYARD",
+      "modelId": "section_unit_spawn_b_courtyard",
+      "origin": {
+        "x": 17,
+        "y": 78,
+        "z": 0
+      },
+      "sizeM": {
+        "width": 22,
+        "depth": 14
+      },
+      "faces": [
+        "north",
+        "east",
+        "south",
+        "west"
+      ],
+      "materialIds": [
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_dark_wood",
+        "ph_bz04_fabric_leather_02",
+        "ph_bz04_hessian_230",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_red_plaster_weathered",
+        "ph_bz04_rusty_metal_02",
+        "ph_bz04_sandstone_blocks_05",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_weathered_brown_planks",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
       "zoneId": "SPICE_STREET",
       "modelId": "section_unit_spice_street",
       "origin": {
@@ -11179,6 +11090,81 @@
         "ph_weathered_brown_planks",
         "ph_worn_planks",
         "ph_worn_plaster_ochre"
+      ]
+    }
+  ],
+  "authoredPlacements": [
+    {
+      "id": "BZ03_B_GATE_CAP_EAST",
+      "unit": "unit-spawn-b-courtyard",
+      "modelId": "bz03_b_gate_cap_east",
+      "position": {
+        "x": 36.5,
+        "y": 77,
+        "z": 9.9
+      },
+      "yawDeg": 180,
+      "role": "dressing",
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "BZ03_B_GATE_CAP_WEST",
+      "unit": "unit-spawn-b-courtyard",
+      "modelId": "bz03_b_gate_cap_west",
+      "position": {
+        "x": 19,
+        "y": 77.25,
+        "z": 9.9
+      },
+      "yawDeg": 180,
+      "role": "dressing",
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD",
+      "unit": "unit-spawn-b-courtyard",
+      "modelId": "bz04_roof_bundle_unit_spawn_b_courtyard",
+      "position": {
+        "x": 28,
+        "y": 88.5,
+        "z": 7.1
+      },
+      "yawDeg": 180,
+      "role": "dressing",
+      "materialIds": [
+        "ph_bz04_aged_plaster_ochre",
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_red_plaster_weathered",
+        "ph_bz04_rusty_metal_02",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "BZ04_SHARED_ENVIRONMENT",
+      "unit": "unit-spawn-b-courtyard",
+      "modelId": "bz04_shared_environment",
+      "position": {
+        "x": 28,
+        "y": 48,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "role": "skyline",
+      "materialIds": [
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_dark_wood",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_weathered_brown_planks"
       ]
     }
   ],
@@ -11781,7 +11767,7 @@
       ],
       "assetIds": [
         "ASSET_SIGNBOARD",
-        "ASSET_HERO_ARCH"
+        "ASSET_BZ04_RUG_GATE"
       ]
     },
     {
@@ -11893,33 +11879,6 @@
       ],
       "assetIds": [
         "ASSET_SPAWN_COVER"
-      ]
-    },
-    {
-      "id": "CLUSTER_SPAWN_B_DOMESTIC",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "surfaceId": "SURFACE_SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "anchors": [
-        "MOUNT_SPAWN_B_WEST_BENCH",
-        "MOUNT_SPAWN_B_WEST_POT",
-        "MOUNT_SPAWN_B_NORTH_POT",
-        "MOUNT_SPAWN_B_NORTH_POT_SMALL",
-        "MOUNT_SPAWN_B_DOOR_SHADE_W",
-        "MOUNT_SPAWN_B_DOOR_SHADE_E",
-        "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
-        "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
-        "MOUNT_SPAWN_B_SKYLINE_PALM",
-        "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
-        "MOUNT_SPAWN_B_PASSAGE_SHADE"
-      ],
-      "assetIds": [
-        "ASSET_SPAWN_B_BENCH",
-        "ASSET_SPAWN_A_EDGE_POT",
-        "ASSET_SPAWN_B_SHADE",
-        "ASSET_SPAWN_B_UPPER_ROOM",
-        "ASSET_SPAWN_B_SKYLINE_PALM"
       ]
     },
     {
@@ -15106,14 +15065,14 @@
     {
       "id": "PLACE_RUG_ARCH_LMK_RUG_GATE_01",
       "clusterId": "CLUSTER_RUG_GATE",
-      "assetId": "ASSET_HERO_ARCH",
+      "assetId": "ASSET_BZ04_RUG_GATE",
       "anchorId": "LMK_RUG_GATE_01",
       "zoneId": "RUG_GATE",
       "districtId": "DISTRICT_RUG",
       "classification": "soft_visual",
       "position": {
         "x": 27.5,
-        "y": 76.3,
+        "y": 77.1,
         "z": 0
       },
       "yawDeg": 180,
@@ -15123,17 +15082,18 @@
         "z": 1
       },
       "dimensionsM": {
-        "width": 13,
+        "width": 15.6,
         "depth": 0.8,
-        "height": 6.8
+        "height": 7.45
       },
       "collisionClass": "soft",
       "shadowPolicy": "cast_receive",
       "lodEligible": false,
       "semanticClass": "landmark",
       "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_rug_gate_arch"
+        "mode": "model",
+        "id": "bz04_rug_gate",
+        "uri": "/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb"
       }
     },
     {
@@ -15805,379 +15765,6 @@
       "runtime": {
         "mode": "procedural",
         "id": "bazaar_spawn_cover"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_DOOR_SHADE_E_MOUNT_SPAWN_B_DOOR_SHADE_E",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_SHADE",
-      "anchorId": "MOUNT_SPAWN_B_DOOR_SHADE_E",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 32.4,
-        "y": 91.24,
-        "z": 3.25
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 2.18,
-        "depth": 1.19,
-        "height": 0.6
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-shade",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_DOOR_SHADE_W_MOUNT_SPAWN_B_DOOR_SHADE_W",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_SHADE",
-      "anchorId": "MOUNT_SPAWN_B_DOOR_SHADE_W",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 23.6,
-        "y": 91.24,
-        "z": 3.25
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 2.18,
-        "depth": 1.19,
-        "height": 0.6
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-shade",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_NORTH_POT_MOUNT_SPAWN_B_NORTH_POT",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_A_EDGE_POT",
-      "anchorId": "MOUNT_SPAWN_B_NORTH_POT",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 18.4,
-        "y": 91.5,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1.25,
-        "y": 1.25,
-        "z": 1.25
-      },
-      "dimensionsM": {
-        "width": 0.8200000000000001,
-        "depth": 0.6275,
-        "height": 0.46499999999999997
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_ceramic_pot",
-        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_NORTH_POT_SMALL_MOUNT_SPAWN_B_NORTH_POT_SMALL",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_A_EDGE_POT",
-      "anchorId": "MOUNT_SPAWN_B_NORTH_POT_SMALL",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 19.1,
-        "y": 91.6,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1.1,
-        "y": 1.1,
-        "z": 1.1
-      },
-      "dimensionsM": {
-        "width": 0.7216000000000001,
-        "depth": 0.5522,
-        "height": 0.4092
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_ceramic_pot",
-        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_NORTH_UPPER_ROOM_MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
-      "anchorId": "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 21.3,
-        "y": 93.25,
-        "z": 10
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 3.3,
-        "depth": 2.68,
-        "height": 2.95
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-upper-room",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_PASSAGE_SHADE_MOUNT_SPAWN_B_PASSAGE_SHADE",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_SHADE",
-      "anchorId": "MOUNT_SPAWN_B_PASSAGE_SHADE",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 17.78,
-        "y": 83.5,
-        "z": 3.5
-      },
-      "yawDeg": 270,
-      "scale": {
-        "x": 1.25,
-        "y": 1.25,
-        "z": 1.25
-      },
-      "dimensionsM": {
-        "width": 2.725,
-        "depth": 1.4874999999999998,
-        "height": 0.75
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-shade",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_SECOND_UPPER_ROOM_MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
-      "anchorId": "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 35.5,
-        "y": 93.25,
-        "z": 9.85
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 3.3,
-        "depth": 2.68,
-        "height": 2.95
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-upper-room",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_SKYLINE_PALM_MOUNT_SPAWN_B_SKYLINE_PALM",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_SKYLINE_PALM",
-      "anchorId": "MOUNT_SPAWN_B_SKYLINE_PALM",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 17.1,
-        "y": 89.6,
-        "z": 7.4
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 0.75,
-        "y": 0.75,
-        "z": 0.75
-      },
-      "dimensionsM": {
-        "width": 2.8499999999999996,
-        "depth": 2.8499999999999996,
-        "height": 5.85
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "foliage",
-      "runtime": {
-        "mode": "procedural",
-        "id": "bazaar_date_palm"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_WEST_BENCH_MOUNT_SPAWN_B_WEST_BENCH",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_BENCH",
-      "anchorId": "MOUNT_SPAWN_B_WEST_BENCH",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 17.43,
-        "y": 87.8,
-        "z": 0
-      },
-      "yawDeg": 90,
-      "scale": {
-        "x": 1,
-        "y": 1,
-        "z": 1
-      },
-      "dimensionsM": {
-        "width": 1.8,
-        "depth": 0.42,
-        "height": 0.495
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "furniture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-bench",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_WEST_POT_MOUNT_SPAWN_B_WEST_POT",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_A_EDGE_POT",
-      "anchorId": "MOUNT_SPAWN_B_WEST_POT",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 17.5,
-        "y": 89.4,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "scale": {
-        "x": 1.25,
-        "y": 1.25,
-        "z": 1.25
-      },
-      "dimensionsM": {
-        "width": 0.8200000000000001,
-        "depth": 0.6275,
-        "height": 0.46499999999999997
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "container",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_ceramic_pot",
-        "uri": "/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf"
-      }
-    },
-    {
-      "id": "PLACE_SPAWN_B_WEST_UPPER_ROOM_MOUNT_SPAWN_B_WEST_UPPER_ROOM",
-      "clusterId": "CLUSTER_SPAWN_B_DOMESTIC",
-      "assetId": "ASSET_SPAWN_B_UPPER_ROOM",
-      "anchorId": "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
-      "zoneId": "SPAWN_B_COURTYARD",
-      "districtId": "DISTRICT_RUG",
-      "classification": "soft_visual",
-      "position": {
-        "x": 15.750000000000002,
-        "y": 86.9,
-        "z": 9.85
-      },
-      "yawDeg": 270,
-      "scale": {
-        "x": 1.15,
-        "y": 1.15,
-        "z": 1.15
-      },
-      "dimensionsM": {
-        "width": 3.7949999999999995,
-        "depth": 3.082,
-        "height": 3.3925
-      },
-      "collisionClass": "none",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": false,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "spawn-b-upper-room",
-        "uri": "/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb"
       }
     },
     {
@@ -20035,140 +19622,6 @@
       "along": 0.2616279069767442,
       "servedBayId": "STORY_1_WINDOW_01",
       "notes": "Native-scale complete assembly, mounted on the existing inner floor/rebate; loader bounds recentering included in placement offset."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_DOOR_SHADE_E",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 32.4,
-        "y": 91.24,
-        "z": 3.25
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_DOOR_SHADE_W",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 23.6,
-        "y": 91.24,
-        "z": 3.25
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_NORTH_POT",
-      "type": "shopfront_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 18.4,
-        "y": 91.5,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_NORTH_POT_SMALL",
-      "type": "shopfront_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 19.1,
-        "y": 91.6,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_NORTH_UPPER_ROOM",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 21.3,
-        "y": 91.9,
-        "z": 10
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_PASSAGE_SHADE",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 17.78,
-        "y": 83.5,
-        "z": 3.5
-      },
-      "yawDeg": 270,
-      "notes": "Render-only roof or supported overhead shade at sealed west wall; no low relief in passage."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_SECOND_UPPER_ROOM",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 35.5,
-        "y": 91.9,
-        "z": 9.85
-      },
-      "yawDeg": 0,
-      "notes": "Render-only skyline behind sealed north wall."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_SKYLINE_PALM",
-      "type": "decorative_palm",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 17.1,
-        "y": 89.6,
-        "z": 7.4
-      },
-      "yawDeg": 0,
-      "widthM": 1,
-      "heightM": 6.2,
-      "notes": "Render-only skyline behind sealed north wall."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_WEST_BENCH",
-      "type": "shopfront_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 17.43,
-        "y": 87.8,
-        "z": 0
-      },
-      "yawDeg": 90,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_WEST_POT",
-      "type": "shopfront_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 17.5,
-        "y": 89.4,
-        "z": 0
-      },
-      "yawDeg": 0,
-      "notes": "Render-only receiving-court detail against sealed wall or above head height; leaves connectors and movement clear."
-    },
-    {
-      "id": "MOUNT_SPAWN_B_WEST_UPPER_ROOM",
-      "type": "window_anchor",
-      "zone": "SPAWN_B_COURTYARD",
-      "pos": {
-        "x": 17.1,
-        "y": 86.9,
-        "z": 9.85
-      },
-      "yawDeg": 270,
-      "notes": "Render-only roof or supported overhead shade at sealed west wall; no low relief in passage."
     },
     {
       "id": "MOUNT_SPICE_COUNTER_3",

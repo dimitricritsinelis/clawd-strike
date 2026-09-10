@@ -1,0 +1,57 @@
+{
+  "rest_index_mirror_max_mm": 0.0,
+  "right_axes": {
+    "R_thumb.02": {
+      "axis_local": [
+        -0.14923523290109067,
+        9.697864405669618e-09,
+        0.9888017219144377
+      ],
+      "pad_transverse_rest": [
+        -0.8526540557301993,
+        0.501412734771613,
+        -0.1468547944593373
+      ],
+      "length_mm": 25.01300349831581,
+      "left_length_mm": 25.012999773025513
+    },
+    "R_thumb.03": {
+      "axis_local": [
+        -0.02086076286826835,
+        -5.305172514838111e-08,
+        0.9997823906093521
+      ],
+      "pad_transverse_rest": [
+        -0.8590216614815833,
+        0.5115142858153434,
+        -0.020854747954342754
+      ],
+      "length_mm": 23.544011637568474,
+      "left_length_mm": 23.544015362858772
+    }
+  },
+  "poses": {
+    "0": {
+      "max_mm": 3.003425057343598e-05,
+      "mean_mm": 5.221531552249378e-06,
+      "p99_mm": 2.1801702511905927e-05,
+      "worst_vertex": 623
+    },
+    "35": {
+      "max_mm": 0.011228736870376448,
+      "mean_mm": 0.0005419554278981849,
+      "p99_mm": 0.009958891960973772,
+      "worst_vertex": 15464
+    },
+    "65": {
+      "max_mm": 0.013841405212832978,
+      "mean_mm": 0.0006881913227152445,
+      "p99_mm": 0.012498998953243084,
+      "worst_vertex": 15901
+    }
+  },
+  "scope": "Entire body meshes, fully neutral arm/palm controls; finish excluded; actual right body normals at corresponding source regions.",
+  "source_hash_unchanged": true,
+  "engineering_mirror_tolerance_mm": 0.01,
+  "pass": false
+}

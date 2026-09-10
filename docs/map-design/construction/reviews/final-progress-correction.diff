@@ -1,0 +1,34 @@
+--- reviewed-r2.2/README.md
++++ final/README.md
+@@ -9,7 +9,7 @@
+ | unit-fountain-court | Fountain Court, the fountain | not-started | [sheet](../construction/unit-fountain-court.md) | |
+ | unit-textile-arcade | Textile Arcade, textiles | not-started | [sheet](../construction/unit-textile-arcade.md) | |
+ | unit-rug-gate | Rug Gate, the gate | not-started | [sheet](../construction/unit-rug-gate.md) | |
+-| unit-spawn-b-courtyard | spawn B, B spawn, north spawn | built | [sheet](../construction/unit-spawn-b-courtyard.md) | 2026-09-07 end-to-end trial: section applied; both niches, drains, finish and retained interfaces inspected; 5,076 exported triangles clear tested walking volumes. Matched captures, production walkthrough of all three exits, map:check, build and desktop/mobile-emulation render budgets pass. Release completion remains withheld: five baseline runtime-test failures, two existing map-tooling failures and the global bot-smoke difficulty assertion; the latter has not been rerun against the baseline. Evidence: local artifacts/spawn-b-trial-20260907 and map-shoot trial-20260907-03-before/after3. |
++| unit-spawn-b-courtyard | spawn B, B spawn, north spawn | building | [sheet](../construction/unit-spawn-b-courtyard.md) | User rejected the previous trial visually; BZ-04 is not implemented. Historical 2026-09-07 end-to-end trial evidence: section applied; both niches, drains, finish and retained interfaces inspected; 5,076 exported triangles clear tested walking volumes. Matched captures, production walkthrough of all three exits, map:check, build and desktop/mobile-emulation render budgets pass. Release completion remains withheld: five baseline runtime-test failures, two existing map-tooling failures and the global bot-smoke difficulty assertion; the latter has not been rerun against the baseline. Evidence: local artifacts/spawn-b-trial-20260907 and map-shoot trial-20260907-03-before/after3. |
+ | unit-service-south | Service South, south service alley | not-started | [sheet](../construction/unit-service-south.md) | |
+ | unit-caravan-court | Caravan Court, caravan yard | not-started | [sheet](../construction/unit-caravan-court.md) | |
+ | unit-tea-ramp + unit-tea-terrace + unit-tea-stairs + unit-tea-landing | tea house, Tea Terrace, tea ramp, tea stairs, tea landing | not-started | [sheet](../construction/unit-tea-terrace.md) | One named area comprising all four zones. BZ-04 redesigns the ramp, terrace, stairs and landing faces; the prior retain-ramp/stairs scope is superseded. |
+@@ -27,11 +27,12 @@
+ | unit-link-north-west | north-west link | not-started | [sheet](../construction/links.md) | |
+ | unit-link-north-east | north-east link | not-started | [sheet](../construction/links.md) | |
+ 
+-`skyline.md` is a shared roof-ownership schedule, not a TRANSFORM row. Its scheduled render-only work travels with the adjoining named area that owns the roof or placement.
++`skyline.md` defines the shared background installation, not a separate TRANSFORM row. The first BZ-04 sample explicitly includes `BZ04-SHARED-ENVIRONMENT`; later areas reuse it. Roof work follows the exact direct dependencies in `roof-bundles.md`, without authorizing neighboring facades.
+ 
+ ## Current implementation basis
+ 
+ - **BZ-04 predesign:** the 25-zone, full-face target supersedes the Revision 3 atlas, historical `drawings/BLD_*` elevations and earlier AI boards for target appearance. Those materials remain historical studies and prior-trial context; they do not define target geometry, materials, activity or acceptance. BZ-04 changes no live map asset and does not mark any row implemented.
++- **B trial evidence:** the retained trial measurements and tooling passes describe the rejected earlier implementation. The row is `building` because BZ-04 remains to be implemented; no prior construction result establishes acceptance of the new design.
+ - **Spice trial evidence:** the previous task recorded a successful export/application and one `map:check` pass with protected authority unchanged. Its later read-only audit found the defects listed above; the isolated previews omitted roofs, floors, overheads and other retained interfaces. That is why the row is `building`, not construction-accepted. This documentation revision changes no map assets and starts no rebuild. The next authorized Spice implementation must repair the known defects and build the revised schedule.
+ 
+ - The compiled runtime records existing implementation and collision evidence. BZ-04 controls the new visuals; frontage registration does not limit the redesign.
+@@ -48,7 +49,7 @@
+ 
+ ### Reference images
+ 
+-R00 is the founding reference and owns the map-wide warm aged cream/tan surface, traffic polish and trade patina. R01--R08 are district studies for geometry, craft and trade role; they do not set the surface finish.
++The table below preserves the historical Revision 3 reference annotations. BZ-04 adopts only the elements explicitly recorded in its current design basis and schedules. Former retained-asset decisions, opening counts and BLD/B-number references below do not constrain the current target.
+ 
+ | ID | Image / owning scope | Adopt | Do not infer |
+ |---|---|---|---|

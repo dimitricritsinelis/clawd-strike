@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="805" viewBox="0 0 1900 805">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="805" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 service north facade-centered upper openings · SERVICE_NORTH · South elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">SOUTH elevation</text>
+<line class="axis" x1="108.00" y1="615.00" x2="523.00" y2="615.00"/>
+<rect x="108.00" y="602.00" width="415.00" height="13" fill="url(#zero-build)"/><text class="tiny" x="315.50" y="642.00" text-anchor="middle">ZERO BUILD</text>
+<text class="tiny" x="108" y="657">along 3..10 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 167.29 M 167.29 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="175.29" y="674">1 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+</svg>

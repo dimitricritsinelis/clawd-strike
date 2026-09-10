@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 textile east facade composition · BLD_TEXTILE_EAST · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="137.05" y="272.14" width="31.36" height="69.00" fill="#e6e0d1"/>
+<rect x="168.41" y="665.75" width="131.73" height="177.20" fill="#e6e0d1"/>
+<rect x="168.41" y="494.82" width="131.73" height="170.93" fill="#e6e0d1"/>
+<rect x="168.41" y="341.14" width="94.09" height="153.68" fill="#e6e0d1"/>
+<rect x="168.41" y="758.27" width="31.36" height="84.68" fill="#e6e0d1"/>
+<rect x="137.05" y="247.05" width="94.09" height="94.09" fill="#e6e0d1"/>
+<rect x="137.05" y="247.05" width="94.09" height="18.82" fill="#e6e0d1"/>
+<line x1="137.05" y1="341.14" x2="137.05" y2="272.14" stroke="#344548" stroke-width="2"/>
+<line x1="137.05" y1="341.14" x2="168.41" y2="341.14" stroke="#344548" stroke-width="2"/>
+<line x1="137.05" y1="272.14" x2="137.05" y2="265.86" stroke="#344548" stroke-width="2"/>
+<line x1="137.05" y1="265.86" x2="137.05" y2="247.05" stroke="#344548" stroke-width="2"/>
+<line x1="137.05" y1="247.05" x2="168.41" y2="247.05" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="842.95" x2="168.41" y2="758.27" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="842.95" x2="199.77" y2="842.95" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="758.27" x2="168.41" y2="665.75" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="665.75" x2="168.41" y2="494.82" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="494.82" x2="168.41" y2="341.14" stroke="#344548" stroke-width="2"/>
+<line x1="168.41" y1="247.05" x2="199.77" y2="247.05" stroke="#344548" stroke-width="2"/>
+<line x1="199.77" y1="842.95" x2="231.14" y2="842.95" stroke="#344548" stroke-width="2"/>
+<line x1="231.14" y1="341.14" x2="231.14" y2="272.14" stroke="#344548" stroke-width="2"/>
+<line x1="231.14" y1="272.14" x2="231.14" y2="265.86" stroke="#344548" stroke-width="2"/>
+<line x1="231.14" y1="265.86" x2="231.14" y2="247.05" stroke="#344548" stroke-width="2"/>
+<line x1="199.77" y1="247.05" x2="231.14" y2="247.05" stroke="#344548" stroke-width="2"/>
+<line x1="231.14" y1="842.95" x2="262.50" y2="842.95" stroke="#344548" stroke-width="2"/>
+<line x1="262.50" y1="494.82" x2="262.50" y2="341.14" stroke="#344548" stroke-width="2"/>
+<line x1="231.14" y1="341.14" x2="262.50" y2="341.14" stroke="#344548" stroke-width="2"/>
+<line x1="300.14" y1="842.95" x2="300.14" y2="758.27" stroke="#344548" stroke-width="2"/>
+<line x1="262.50" y1="842.95" x2="300.14" y2="842.95" stroke="#344548" stroke-width="2"/>
+<line x1="300.14" y1="758.27" x2="300.14" y2="665.75" stroke="#344548" stroke-width="2"/>
+<line x1="300.14" y1="665.75" x2="300.14" y2="494.82" stroke="#344548" stroke-width="2"/>
+<line x1="262.50" y1="494.82" x2="300.14" y2="494.82" stroke="#344548" stroke-width="2"/>
+<rect x="171.55" y="739.77" width="125.45" height="100.05" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="234.27" y="789.79" text-anchor="middle">R1</text>
+<rect x="171.55" y="668.89" width="125.45" height="64.61" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="234.27" y="701.19" text-anchor="middle">R2</text>
+<rect x="171.55" y="566.33" width="125.45" height="96.29" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="234.27" y="614.47" text-anchor="middle">R3</text>
+<rect x="171.55" y="497.95" width="125.45" height="62.10" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="234.27" y="529.00" text-anchor="middle">R4</text>
+<rect x="171.55" y="405.75" width="87.82" height="85.94" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="215.45" y="448.71" text-anchor="middle">R5</text>
+<rect x="171.55" y="344.27" width="87.82" height="55.20" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="215.45" y="371.87" text-anchor="middle">R6</text>
+<circle cx="168.41" cy="781.80" r="4" fill="#77715f"/>
+<polygon points="215.45,741.65 215.45,740.40 190.36,740.40 190.36,741.65" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="168.41,529.00 182.52,529.00 202.91,529.00 202.91,726.91 202.91,755.14" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="215.45" y="735.65">side-door → T_E_GALLERY-STAFF-DOOR</text>
+<circle cx="168.41" cy="614.47" r="4" fill="#77715f"/>
+<polygon points="215.45,574.33 215.45,573.07 190.36,573.07 190.36,574.33" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="168.41,529.00 182.52,529.00 202.91,529.00 202.91,559.58 202.91,587.81" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="215.45" y="568.33">side-door → T_E_GALLERY-STAFF-DOOR</text>
+<circle cx="168.41" cy="529.00" r="4" fill="#a14b3d"/>
+<text class="label" x="176.41" y="521.00">principal entrance</text>
+<circle cx="168.41" cy="448.71" r="4" fill="#77715f"/>
+<polygon points="215.45,409.51 215.45,408.25 190.36,408.25 190.36,409.51" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="168.41,378.77 182.52,378.77 202.91,378.77 202.91,394.77 202.91,423.00" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="215.45" y="403.51">side-door → T_E_CART-STAFF-DOOR</text>
+<circle cx="168.41" cy="378.77" r="4" fill="#77715f"/>
+<rect x="159.63" y="742.28" width="68.37" height="79.04" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<rect x="159.63" y="574.95" width="68.37" height="79.04" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<rect x="159.63" y="410.14" width="68.37" height="77.15" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 34..39.2 · y 48..67 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Textile production house</text>
+<text class="label" x="1100" y="244">R1: cloth receiving, display or weaving</text>
+<text class="label" x="1100" y="259">samples in the named bay</text>
+<text class="label" x="1100" y="288">R2: Internal staff passage and south workroom</text>
+<text class="label" x="1100" y="303">storage, served from the central stair</text>
+<text class="label" x="1100" y="332">R3: cloth receiving, display or weaving</text>
+<text class="label" x="1100" y="347">samples in the named bay</text>
+<text class="label" x="1100" y="376">R4: Shared stair and staff vestibule serving</text>
+<text class="label" x="1100" y="391">the continuous textile house</text>
+<text class="label" x="1100" y="420">R5: cloth receiving, display or weaving</text>
+<text class="label" x="1100" y="435">samples in the named bay</text>
+<text class="label" x="1100" y="464">R6: North cloth receiving and stock-handling</text>
+<text class="label" x="1100" y="479">vestibule</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Textile production house</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Center upper groups in their facade fields;</text>
+<text class="tiny" x="1100" y="714">opposite facades may have independently</text>
+<text class="tiny" x="1100" y="732">centered compositions serving the same</text>
+<text class="tiny" x="1100" y="750">canonical room. Ground access does not</text>
+<text class="tiny" x="1100" y="768">determine upper axes.</text>
+<text class="tiny" x="1100" y="786">Different front and reverse opening groups</text>
+<text class="tiny" x="1100" y="804">serve the shared room from separately centered</text>
+<text class="tiny" x="1100" y="822">facade fields; all ground access remains fixed.</text>
+</svg>

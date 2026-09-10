@@ -1,0 +1,21 @@
+{
+  "status": "PASS",
+  "errors": [],
+  "selectedFamilies": 16,
+  "assignmentCoverage": {
+    "ownerRows": 58,
+    "floorRows": 25,
+    "backgroundRows": 15,
+    "scope": "All current parcel fields resolved by original parcel ID; removed architecture openings are not recreated."
+  },
+  "sourceMapsUnchanged": true,
+  "idempotent": true,
+  "boundedRenders": [
+    "wall-ground-neutral.png",
+    "wall-ground-warm.png",
+    "close-details.png",
+    "macro-details.png"
+  ],
+  "renderExitCode": 0,
+  "gameApproval": false
+}

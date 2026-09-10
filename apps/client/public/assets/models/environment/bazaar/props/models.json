@@ -1544,6 +1544,136 @@
           "md5": "4ea81cbe11f012f8dd9490de124ed1fd"
         }
       ]
+    },
+    {
+      "id": "bz04_rug_gate",
+      "url": "bz04_rug_gate/bz04-rug-gate.glb",
+      "scale": 1,
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "bz04_rug_gate/bz04-rug-gate.glb": "2030bc7bfaf47fdd71add16e9bea812c"
+      }
+    }
+  ],
+  "auxiliaryAssets": [
+    {
+      "id": "b18-counters-auxiliary",
+      "source": "repo://assets/source/b18-counters/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained source texture exports and build provenance; published counter models use the separately listed b18-display textures.",
+      "files": [
+        "b18_counters/b18-counter-albedo.png",
+        "b18_counters/b18-counter-normal.png",
+        "b18_counters/b18-counter-roughness.png",
+        "b18_counters/provenance.json"
+      ],
+      "md5": {
+        "b18_counters/b18-counter-albedo.png": "126085959bf52533268338ff228bfd77",
+        "b18_counters/b18-counter-normal.png": "16d50948f5bb729c7ae85811ff387224",
+        "b18_counters/b18-counter-roughness.png": "ca89ad65a1cd9de5b95e8979143e41b6",
+        "b18_counters/provenance.json": "cddd28d587c4109c996368a7838e5744"
+      }
+    },
+    {
+      "id": "b18-roof-access-auxiliary",
+      "source": "repo://assets/source/b18-roof-access/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "b18_roof_access/provenance.json"
+      ],
+      "md5": {
+        "b18_roof_access/provenance.json": "af0c0db2bf2c84d53baead1908176549"
+      }
+    },
+    {
+      "id": "bazaar-roofs-auxiliary",
+      "source": "repo://assets/source/bazaar-roofs/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "bazaar_roofs/provenance.json"
+      ],
+      "md5": {
+        "bazaar_roofs/provenance.json": "8d876bd853ade357395d512fd14fd27d"
+      }
+    },
+    {
+      "id": "central-screen-sc-c-auxiliary",
+      "source": "repo://assets/source/central-screen-sc-c/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "central_screen_sc_c/provenance.json"
+      ],
+      "md5": {
+        "central_screen_sc_c/provenance.json": "bf81ae579677998156a264d7d87e00fd"
+      }
+    },
+    {
+      "id": "dyers-house-auxiliary",
+      "source": "repo://assets/source/dyers-house/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "dyers_house/provenance.json"
+      ],
+      "md5": {
+        "dyers_house/provenance.json": "48c13fc737d9a02ff673c616bd64cf2b"
+      }
+    },
+    {
+      "id": "market-fixtures-auxiliary",
+      "source": "repo://assets/source/market-fixtures/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "market_fixtures/provenance.json"
+      ],
+      "md5": {
+        "market_fixtures/provenance.json": "2758157db0d0d165553044b5ade2719d"
+      }
+    },
+    {
+      "id": "rug-displays-auxiliary",
+      "source": "repo://assets/source/rug-displays/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "rug_displays/provenance.json"
+      ],
+      "md5": {
+        "rug_displays/provenance.json": "8a5c51c66e14718392055cab7c9f8ff8"
+      }
+    },
+    {
+      "id": "textile-openings-auxiliary",
+      "source": "repo://assets/source/textile-openings/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained build provenance sidecar; not a runtime model.",
+      "files": [
+        "textile_openings/provenance.json"
+      ],
+      "md5": {
+        "textile_openings/provenance.json": "43b8280d4327f9c340d2ce2326ad1bda"
+      }
+    },
+    {
+      "id": "textile-booth-auxiliary",
+      "source": "repo://assets/source/textile-booth/build.py",
+      "license": "Project-Original",
+      "purpose": "Original generated texture sources retained for derivative props; the booth GLB embeds its textures.",
+      "files": [
+        "textile_booth/booth_albedo.png",
+        "textile_booth/booth_normal.png",
+        "textile_booth/booth_roughness.png"
+      ],
+      "md5": {
+        "textile_booth/booth_albedo.png": "685e2a249c5a16593448853a5d4359c3",
+        "textile_booth/booth_normal.png": "0d1449b29743e6d4ea5369f6ee6fed96",
+        "textile_booth/booth_roughness.png": "9f330817f918cc4e4dcd1a634f931639"
+      }
     }
   ]
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="805" viewBox="0 0 1900 805">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="805" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 link south east facade-centered upper openings · LINK_SOUTH_EAST · South elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">SOUTH elevation</text>
+<line class="axis" x1="108.00" y1="615.00" x2="373.78" y2="615.00"/>
+<line class="solid" x1="108.00" y1="615.00" x2="373.78" y2="615.00"/>
+<polygon points="108.00,615.00 108.00,227.72 229.50,227.72 229.50,615.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,615.00 229.50,615.00 229.50,227.72 108.00,227.72" fill="#ddd0b3" fill-opacity=".82"/>
+<rect x="108.00" y="200.00" width="121.50" height="27.72" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="220.88" x2="229.50" y2="220.88" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="203.80" x2="229.50" y2="203.80" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="200.00" x2="229.50" y2="200.00" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="168.75" y="190.00" text-anchor="middle">P1</text>
+<line x1="108.00" x2="229.50" y1="485.91" y2="485.91" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="111.00" y="481.91" font-size="10" fill="#234452">L1 +3.4 m</text>
+<line x1="108.00" x2="229.50" y1="356.81" y2="356.81" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="111.00" y="352.81" font-size="10" fill="#234452">L2 +6.8 m</text>
+<polygon points="229.50,615.00 229.50,444.14 373.78,444.14 373.78,615.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="229.50,615.00 373.78,615.00 373.78,592.22 229.50,592.22" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="229.50,592.22 373.78,592.22 373.78,463.12 229.50,463.12" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="229.50,463.12 373.78,463.12 373.78,444.14 229.50,444.14" fill="#d9c9ae" fill-opacity=".82"/>
+<polygon points="229.50,615.00 373.78,615.00 373.78,592.22 229.50,592.22" fill="#b6a185" fill-opacity=".52" stroke="#766345" stroke-width="1.2"/>
+<rect x="229.50" y="444.14" width="144.28" height="18.98" fill="#d9c7aa" fill-opacity=".62" stroke="#766345" stroke-width="1.2"/>
+<polygon points="234.82,615.00 234.82,444.14 246.97,444.14 246.97,615.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="367.71,615.00 367.71,444.14 373.78,444.14 373.78,615.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<rect x="229.50" y="439.58" width="144.28" height="4.56" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="229.50" y1="439.58" x2="373.78" y2="439.58" stroke="#d4c39e" stroke-width="2"/>
+<line x1="229.50" y1="439.58" x2="373.78" y2="439.58" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="229.50" y1="439.58" x2="373.78" y2="439.58" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="301.64" y="429.58" text-anchor="middle">P2</text>
+<text class="tiny" x="108" y="657">along 39..46 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<text class="tiny" x="1220" y="213.00">P1 lse-s</text>
+<text class="tiny" x="1220" y="227.00">slab 10.2..10.38</text>
+<text class="tiny" x="1220" y="241.00">parapet 10.83 · cap 10.93</text>
+<text class="tiny" x="1220" y="263.00">P2 lse-s-part-2</text>
+<text class="tiny" x="1220" y="277.00">slab 4.5..4.62</text>
+<text class="tiny" x="1220" y="291.00">parapet 4.62 · cap 4.62</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 145.97 M 145.97 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="153.97" y="674">1 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+</svg>

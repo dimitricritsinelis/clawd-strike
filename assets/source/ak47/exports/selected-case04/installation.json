@@ -1,0 +1,21 @@
+{
+  "sourceSHA256": "c9378cefec1e7e582a37f663dc388aa7dd5839748f893d67cb65cf94fd622b66",
+  "runtimeSHA256": "37e5be628a4b12ff92bea6f3711d3e621f2cc333c2d900443cf177f5de1311d7",
+  "runtimeBytes": 77375584,
+  "selectedCase": "case-04",
+  "sourcePromoted": true,
+  "runtimeMD5MatchesProvenance": true,
+  "blendMD5MatchesProvenance": true,
+  "installedRuntimeVerified": true,
+  "parityReport": "installed/parity.json",
+  "gameCapture": "installed/capture.json",
+  "legacyRegression": {
+    "passed": 1,
+    "failed": 2,
+    "unchangedTests": true,
+    "failures": [
+      "thumb/magazine clearance",
+      "thumb/magazine and thumb/palm surface intersections"
+    ]
+  }
+}

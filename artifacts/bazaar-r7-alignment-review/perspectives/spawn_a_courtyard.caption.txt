@@ -1,0 +1,2 @@
+SPAWN_A_COURTYARD | SPAWN_A_COURTYARD-south-A_S_WATCH_A_S_GATE_A_S_KEEPER-s1-base | design XYZ (28.000, 13.650, 1.700) m | yaw 0.00°, pitch 2.10°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

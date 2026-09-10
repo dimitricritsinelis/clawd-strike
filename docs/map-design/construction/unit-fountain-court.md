@@ -1,240 +1,280 @@
-# unit-fountain-court · Fountain Court
+# BZ-04 / R7 fountain court facade-centered upper openings · Fountain Court
 
-Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: Fountain Court, the fountain.
+Controlled issue status: **PROPOSED**. Readiness is recorded in [audits.md](audits.md). SVGs are measured drawings, not game renders.
 
-**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.
+Read [design basis](design-basis.md), [integration contract](integration.md), and [standard details](details.md) with this sheet. The target data is the sole source for parcel, opening, roof, activity, and material values below; coverage is a protected baseline only.
 
-## 1. Design intent
+## Design intent
 
-The civic release: a tall aged-cream madrasa with one sealed arch and a stained window on the west, a warm plastered merchant house with a loggia on the east, the off-axis fountain and palm, quiet mid-link passages north and south. Value contrast across the court is the composition: stone versus plaster, tall versus mid; the civic field stays quieter than the trade streets while remaining part of the aged market.
+### `FOUNTAIN_COURT`
 
-**Character schedule (build with the numbered tasks):**
+Guildhall entrance and fixed hall light. Merchant loggia, reception and entrance-side room stacks coordinated with the Souk reverse.
 
-- Preserve the stone madrasa and sandy plaster merchant house, their unequal heights, threshold rugs, palm, planters and tea spill. The court reads prosperous and maintained: crisp carved detail with softened stone arrises; no matching shop fronts around the fountain.
-- Keep the tall formal fields free of new repair patches; their stone/plaster contrast and carved detail distinguish the civic court from the visibly patched trade streets. Use SD-21 fine dressed edges on the madrasa and trowelled plaster on the merchant house. Only the existing fountain wet-contact patches are damp; traffic polish stays transparent enough to show stone joints.
+Primary focus: Retained fountain and guildhall destination. A deep, sealed merchant loggia and ordinary households frame the court. Civic transom/inscription craft belongs at the guildhall portal..
 
-## 2. Site
+## Architecture and craftsmanship
 
-### Site · `FOUNTAIN_COURT` (Fountain Court)
+**Primary:** Guildhall entrance and fixed hall light
 
-- Rect x 20..36, y 32..48 (16 × 16 m); floor z = 0; floor `patterned_cobblestone`; authored clear width **6 m** (protected).
-- Connects: LINK_EAST_MID, LINK_WEST_MID, SPICE_STREET, TEXTILE_ARCADE.
-- `north` edge: exempt (`architectural_cut_edge`): The 5.00m supported run on the 16.00m north edge frames authored connector cuts and is not a served facade plane.
-- `south` edge: exempt (`architectural_cut_edge`): The 4.00m supported run on the 16.00m south edge frames authored connector cuts and is not a served facade plane.
-- `west` edge: frontage `FRONTAGE_FOUNTAIN_COURT_WEST` → `BLD_MADRASA`.
-- `west` edge: frontage `FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH` → `BLD_MADRASA`.
-- `east` edge: frontage `FRONTAGE_FOUNTAIN_COURT_EAST` → `BLD_MERCHANT_HOUSE`.
-- `east` edge: frontage `FRONTAGE_FOUNTAIN_COURT_EAST_NORTH` → `BLD_MERCHANT_HOUSE`.
+**Supporting:** Merchant loggia, reception and entrance-side room stacks coordinated with the Souk reverse
 
-### Package outputs
+**Quiet fields and limits:** Quiet corner returns inherit their buildings; do not pattern every upper window or fill the court with props.
 
-| Package directory | Section zone | Owned runtime faces | Section GLB |
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
 |---|---|---|---|
-| `assets/source/unit-fountain-court/` | `FOUNTAIN_COURT` | `["east", "west"]` | `unit-fountain-court.glb` |
+| `F_NW` / `BLD_TEXTILE_WEST` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | West textile merchants - coordinated wing or return |
+| `F_NE` / `BLD_TEXTILE_EAST` | building | `ph_bz04_plastered_wall`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | East textile works - coordinated wing or return |
+| `F_E_LOGGIA` / `BLD_FOUNTAIN_MERCHANT` | building | `ph_bz04_beige_wall_002`; single-drip; CF-ENVELOPE / CF-JOINT | Upper narrow/broad stacks at33.6/36.6 balance the full32..39 facade across both upper floors. Their shared vertical grid accommodates different widths; ground entrance33.1 and loggia36.1 remain independent. |
+| `F_E_HOUSE` / `BLD_FOUNTAIN_HOUSE` | building | `ph_bz04_sandstone_blocks_05`; single-drip; CF-ENVELOPE / CF-JOINT | Merchant corner house - principal frontage |
+| `F_SW` / `BLD_SPICE_WEST_NORTH` | building | `ph_bz04_sandstone_blocks_06`; single-drip; CF-ENVELOPE / CF-JOINT | Red household return - coordinated wing or return |
+| `F_SE` / `BLD_SPICE_EAST_NORTH` | building | `ph_bz04_plastered_wall`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Spice warehouse with family rooms - coordinated wing or return |
+| `F_W_SERVICE` / `BLD_MADRASA_SERVICE` | building | `ph_bz04_beige_wall_002`; single-drip; CF-ENVELOPE / CF-JOINT | Guildhall service house - principal frontage |
+| `F_W_HALL` / `BLD_MADRASA` | building | `ph_bz04_sandstone_blocks_05`; civic-stepped; CF-ENVELOPE / CF-JOINT | Guildhall has one strong portal and crafted high light. Upper registry rooms use paired plain windows flanking the center rather than a third competing center window. |
 
-Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
+| Group | Actual trade | Parts / recipes | Acceptance |
+|---|---|---|---|
+| `G_FOUNTAIN_COURT_PLANT` | plant display | 5 / CF-PLANT | Build the named parts as plant display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
 
-**Existing source.** `assets/source/unit-fountain-court/` holds hand-modelled GLBs for all four faces and an unapplied package; reference only, rebuild to this sheet.
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-## 3. Walls
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT` | `F_E_HOUSE`, `F_E_LOGGIA`, `F_W_HALL`, `F_W_SERVICE`, `cc-en`, `cc-es-part-2`, `cs-wn`, `cs-ws`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s`, `tr-s` | `cc-en`, `cc-es-part-2`, `cs-wn`, `cs-ws`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s`, `tr-s` |
+| `ROOF_BUNDLE_UNIT_SPICE_STREET` | `A_NE_RETURN`, `A_NW_RETURN`, `F_SE`, `F_SW`, `S_E_MID`, `S_E_NORTH`, `S_E_SOUTH`, `S_W_MID`, `S_W_NORTH`, `S_W_SOUTH` | `A_NE_RETURN`, `A_NW_RETURN`, `S_E_MID`, `S_E_NORTH`, `S_E_SOUTH`, `S_W_MID`, `S_W_NORTH`, `S_W_SOUTH` |
+| `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` | `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` |
 
-### FRONTAGE_FOUNTAIN_COURT_WEST  ·  BLD_MADRASA (landmark, 2 storeys)
+**Required craft recipes:** CF-ENVELOPE, CF-FLOOR, CF-INSCRIPTION, CF-JOINT, CF-OPEN, CF-PLANT, CF-R4-GLASS, CF-R4-PORTAL
 
-- **Role:** landmark. A madrasa presents one grand sealed arch to the court and lights its hall from a high stained window; the students enter from the service wing, not the court.
-- **Wall line:** west edge of `FOUNTAIN_COURT`; x = 20, y = 41 .. 46.72 (a runs south to north); length **5.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (20, 41), (20, 46.72), faces='E')`.
-- **Retained massing `MASSING_TALL_HERO`:** wall top 9.5 local / 9.5 absolute, depth 5.4 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_05`, trim `ph_stone_trim_white`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 4.85 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 5.15 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28 sandstone; arch impost band 3.10 m; sill course 4.97..5.09 under the clerestory; coping 9.34..9.5; parapet +0.85.
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `arch_hero_courtyard` | sealed loggia arch, dark backing | 2.86 | (20, 43.86) | 4.2 × 0.5 × 4.85 | 0 / 4.85 | 0 |
-| `STORY_1_WINDOW_01` | `window_landmark_stained` | stained clerestory (`stained_glass_panel_001`) | 2.86 | (20, 43.86) | 1.2 × 0.25 × 1.75 | 5.15 / 6.9 | 1 |
+## Site, protected faces, and parcels
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.86, 4.2, 0, 4.85), (2.86, 1.2, 5.15, 1.75)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+### `FOUNTAIN_COURT` · `north`
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at flanking the arch at 0.60 m along, under the head; `ASSET_CC0_LANTERN` at flanking the arch at 5.12 m along, under the head; `ASSET_COURT_PLANTER` at one each side of the arch, 0.4 m off the wall.
+Quiet background: x=24..35 is exact immutable north opening..
 
-**Construction tasks (ordered; each has an observable completion):**
+Protected wall interval: **20..36 m**; floor grade: **z 0 m**.
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_05` full height, plinth 0..0.28, impost band `ph_stone_trim_white` 3.04..3.16 × 0.08 across the whole face, sill course 4.97..5.09, coping 9.34..9.50 × 0.18; corners `held`: end piers 0.60 wide × 0.16 proud full height at both ends. Completion: one tall pale civic face, no plaster.
-2. CREATE `GROUND_01` sealed hero arch 4.2 × 4.85 at a=2.86 (pointed, spring 3.10, ring 0.25 `ph_stone_trim_white`, depth 0.50): dark plaster back 0.5 m in, an SD-05 stone threshold with paving, and a carved band 0.30 high at 4.95..5.25 over the crown (three repeated rosettes 0.20; this closes the spec's `inscription_band` need; the `raised_parapet` need is closed as rejected: the parapet stays +0.85). Do not open it. Completion: reads as the madrasa's sealed loggia; the threshold rug `B4_FOUNTAIN_W_RUG_GROUND_01` at (21.10, 43.86) lies centred in front of it.
-3. CREATE `STORY_1_WINDOW_01` stained clerestory 1.2 × 1.75 at sill 5.15 / head 6.90, a=2.86: stone frame 0.12, pointed head, `stained_glass_panel_001` panel 0.03 behind a timber lattice of 0.02 bars at 0.15 pitch; no second or third window (old brief rejected). Completion: one glazed opening reads from the court floor.
-4. No awning, sign, balcony or goods. KEEP the Section 4 `B7_FOUNTAIN_PLANTER_WEST` and market-spill placements at their compiled table transforms. Completion: none added.
-5. APPLY wear: minimal; dust band 0..0.8, one water streak from the coping at a=0.4 (a spout SD-13 at a=0.4), hand polish either side of the arch at 1.0..1.4 m. Completion: as listed.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 20..24 | collider-backed solid | COLLIDER_WALL_023 |
+| 35..36 | collider-backed solid | COLLIDER_WALL_024 |
+| 24..35 | **ZERO BUILD protected opening** | TEXTILE_ARCADE |
 
-**Why it exists (reality check):** A madrasa presents one grand sealed arch to the court and lights its hall from a high stained window; the students enter from the service wing, not the court.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `F_NW` | 20..24 | (20, 48, 24, 51.4) | West textile merchants - coordinated wing or return | 11.1 | 3.4 | `ph_bz04_painted_plaster_warm` | slab 11.1..11.28; parapet 11.73; cap 11.83; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `F_NE` | 35..36 | (35, 48, 36, 50.7) | East textile works - coordinated wing or return | 10.2 | 2.7 | `ph_bz04_plastered_wall` | slab 10.2..10.38; parapet 10.83; cap 10.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-### FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH  ·  BLD_MADRASA (landmark, 2 storeys)
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `F_NW-L1-W1` | `F_NW` | vent | 22 | 6.63 / 7.28 | 1.25 × 0.65 × 0.3 | 48 | `SD-07`; closed timber louver | ventilated cloth sorting and stock; high ventilation |
+| `F_NW-L2-W1` | `F_NW` | window | 22 | 8.75 / 10.35 | 1.1 × 1.6 × 0.34 | 48 | `SD-07`; closed double paneled timber shutters | staff accommodation; daylight on its measured room axis |
 
-- **Role:** landmark. The madrasa's back-of-house: one service door and one window to the stair. Nothing to sell.
-- **Wall line:** west edge of `FOUNTAIN_COURT`; x = 20, y = 33.28 .. 36 (a runs south to north); length **2.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (20, 33.28), (20, 36), faces='E')`.
-- **Retained massing `MASSING_TALL_HERO`:** wall top 9.5 local / 9.5 absolute, depth 5.4 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_beige_wall_002`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 2.25 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 5.15, 7.35 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; string course 2.90; sill course 4.97..5.09; coping 9.34..9.5. Same building as the main face: same coping height, same parapet.
+### `FOUNTAIN_COURT` · `east`
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `door_residential_timber` | closed service door | 1.36 | (20, 34.64) | 1.05 × 0.2 × 2.25 | 0 / 2.25 | 0 |
-| `STORY_1_WINDOW_01` | `window_dark_recess` |  | 1.36 | (20, 34.64) | 0.9 × 0.28 × 1.25 | 5.15 / 6.4 | 1 |
+Quiet background: y=39..44 is exact east link, with no prop or return..
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.36, 1.05, 0, 2.25), (1.36, 0.9, 5.15, 1.25)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+Protected wall interval: **32..48 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 32..39 | collider-backed solid | COLLIDER_WALL_109 |
+| 44..48 | collider-backed solid | COLLIDER_WALL_110 |
+| 39..44 | **ZERO BUILD protected opening** | LINK_EAST_MID |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `F_E_LOGGIA` | 32..39 | (36, 32, 41, 39) | Upper narrow/broad stacks at33.6/36.6 balance the full32..39 facade across both upper floors. Their shared vertical grid accommodates different widths; ground entrance33.1 and loggia36.1 remain independent. | 10.9 | 5 | `ph_bz04_beige_wall_002` | slab 10.9..11.08; parapet 11.53; cap 11.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `F_E_HOUSE` | 44..48 | (36, 44, 41, 48) | Merchant corner house - principal frontage | 9.9 | 5 | `ph_bz04_aged_plaster_ochre` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `F_E_LOGGIA-PRINCIPAL` | `F_E_LOGGIA` | door | 33.1 | 0 / 2.75 | 1 × 2.75 × 0.36 | 36 | `SD-05`; Closed carved timber household entrance; architecturalDetail: `{"profile":"carved-timber-portal","surroundWidthM":0.15,"incisionDepthM":0.006,"receiverRule":"Cut carving and joinery inside this complete frame; keep the opening, back and bearing planes continuous.","includeThreshold":false,"frameColorSrgb":"#9c8060","frameMaterialId":"ph_bz04_weathered_brown_planks","materialProfile":"warmTimber","carving":{"pattern":"running-lozenge","modulePitchM":0.12,"moduleWidthM":0.085,"moduleHeightM":0.05,"incisionWidthM":0.006,"incisionDepthM":0.006,"placement":"One centered vertical chain on each outer timber jamb; stop 0.18 m above sill and 0.18 m below the arch spring/head. The head retains two continuous nested bands. No floral alternative."}}` | Principal office entrance and stair |
+| `F_E_ARCH` | `F_E_LOGGIA` | niche | 36.1 | 0 / 4.2 | 3.6 × 4.2 × 0.85 | 36 | `SD-11-CIVIC`; closed vertical slat timber screen over stone dado | Sealed civic loggia with continuous stone dado and closed screen |
+| `F_E_LOGGIA-L1-W1` | `F_E_LOGGIA` | window | 33.6 | 5.85 / 7.35 | 0.7 × 1.5 × 0.34 | 36 | `SD-07`; Closed 1-panel timber shutters | Private stair landing within the entrance bay |
+| `F_E_LOGGIA-RECEPTION` | `F_E_LOGGIA` | window | 36.6 | 5.65 / 7.35 | 2.6 × 1.7 × 0.5 | 36 | `SD-07`; Closed 3-panel timber shutters | One large reception-room opening above the shaded loggia |
+| `F_E_LOGGIA-L2-W1` | `F_E_LOGGIA` | window | 33.6 | 8.85 / 10.35 | 0.7 × 1.5 × 0.34 | 36 | `SD-07`; Closed 1-panel timber shutters | Private stair landing within the entrance bay |
+| `F_E_LOGGIA-L2-W2` | `F_E_LOGGIA` | window | 36.6 | 8.85 / 10.35 | 2 × 1.5 × 0.34 | 36 | `SD-07`; Closed 2-panel timber shutters | private household; daylight on its measured room axis |
+| `F_E_HOUSE-ENTRANCE` | `F_E_HOUSE` | door | 46 | 0 / 2.55 | 1.2 × 2.55 × 0.22 | 36 | `SD-05`; closed timber leaves | principal entrance and internal stair |
+| `F_E_HOUSE-L1-W1` | `F_E_HOUSE` | window | 46 | 4.25 / 5.85 | 1.1 × 1.6 × 0.34 | 36 | `SD-07`; closed double paneled timber shutters | family room; daylight on its measured room axis |
+| `F_E_HOUSE-L2-W1` | `F_E_HOUSE` | window | 46 | 7.55 / 9.15 | 1.1 × 1.6 × 0.34 | 36 | `SD-07`; closed double paneled timber shutters | bedroom; daylight on its measured room axis |
+
+### `FOUNTAIN_COURT` · `south`
+
+Quiet background: x=21..33 is exact Spice opening..
+
+Protected wall interval: **20..36 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 20..21 | collider-backed solid | COLLIDER_WALL_014 |
+| 33..36 | collider-backed solid | COLLIDER_WALL_015 |
+| 21..33 | **ZERO BUILD protected opening** | SPICE_STREET |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `F_SW` | 20..21 | (20, 29.6, 21, 32) | Red household return - coordinated wing or return | 9.9 | 2.4 | `ph_bz04_red_plaster_weathered` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `F_SE` | 33..36 | (33, 29.4, 36, 32) | Spice warehouse with family rooms - coordinated wing or return | 9.9 | 2.6 | `ph_bz04_beige_wall_002` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `F_SE-L1-W1` | `F_SE` | window | 34.5 | 4.35 / 5.8 | 1.45 × 1.45 × 0.38 | 32 | `SD-07`; closed timber louver | working stock rooms; daylight on its measured room axis |
+| `F_SE-L2-W1` | `F_SE` | window | 34.5 | 7.55 / 9.15 | 1.1 × 1.6 × 0.34 | 32 | `SD-07`; closed double paneled timber shutters | keeper household; daylight on its measured room axis |
+
+### `FOUNTAIN_COURT` · `west`
+
+Quiet background: y=36..41 exact west link is empty..
+
+Protected wall interval: **32..48 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 32..36 | collider-backed solid | COLLIDER_WALL_099 |
+| 41..48 | collider-backed solid | COLLIDER_WALL_100 |
+| 36..41 | **ZERO BUILD protected opening** | LINK_WEST_MID |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `F_W_SERVICE` | 32..36 | (15, 32, 20, 36) | Guildhall service house - principal frontage | 9.9 | 5 | `ph_bz04_beige_wall_002` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `F_W_HALL` | 41..48 | (15, 41, 20, 48) | Guildhall has one strong portal and crafted high light. Upper registry rooms use paired plain windows flanking the center rather than a third competing center window. | 11.4 | 5 | `ph_bz04_sandstone_blocks_05` | slab 11.4..11.58; parapet 12.03; cap 12.13; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `F_W_SERVICE-ENTRANCE` | `F_W_SERVICE` | door | 34 | 0 / 2.55 | 1.2 × 2.55 × 0.22 | 20 | `SD-05`; closed timber leaves | principal entrance and internal stair |
+| `F_W_SERVICE-L1-W1` | `F_W_SERVICE` | window | 34 | 4.25 / 5.85 | 1.1 × 1.6 × 0.34 | 20 | `SD-07`; closed double paneled timber shutters | caretaker room; daylight on its measured room axis |
+| `F_W_SERVICE-L2-W1` | `F_W_SERVICE` | vent | 34 | 8.73 / 9.38 | 1.25 × 0.65 × 0.3 | 20 | `SD-07`; closed timber louver | dry guild supplies; high ventilation |
+| `F_W_HALL-PRINCIPAL` | `F_W_HALL` | door | 44.5 | 0 / 4.4 | 3.6 × 4.4 × 0.24 | 20 | `SD-11+SD-05`; closed timber leaves with a fixed opaque transom; architecturalDetail: `{"profile":"dressed-stone-portal","surroundWidthM":0.28,"incisionDepthM":0.006,"receiverRule":"Cut carving and joinery inside this complete frame; keep the opening, back and bearing planes continuous.","includeThreshold":false,"frameColorSrgb":"#c6b391","frameMaterialId":"ph_bz04_stone_trim_sandstone"}` | Closed guildhall portal with timber leaves and fixed upper light |
+| `F_W_HALL-HIGH-LIGHT` | `F_W_HALL` | vent | 44.5 | 5.75 / 7.05 | 2.15 × 1.3 × 0.45 | 20 | `SD-07`; Closed timber lower leaves and fixed colored-glass upper lights; glazingProfile: `{"fromZM":5.75,"pattern":"plaster-tracery","paletteSrgb":["#d7ceb0","#ad8650","#6d8c87","#6c8096"],"paletteSequence":[0,1,0,2,0,3],"columnsPerLight":3,"rows":1,"webM":0.045,"glassThicknessM":0.006,"backing":"Opaque dark matte receiver at the scheduled recess back; no view through, emission or transmitted light.","materialProfile":"fixedGlass"}` | Fixed plaster-and-glass hall light above the principal guild portal |
+| `F_W_HALL-L1-W1` | `F_W_HALL` | window | 42.15 | 8.45 / 10.15 | 1.1 × 1.7 × 0.4 | 20 | `SD-07`; closed double paneled timber shutters | registry and guild offices; daylight on its measured room axis |
+| `F_W_HALL-L1-W3` | `F_W_HALL` | window | 46.85 | 8.45 / 10.15 | 1.1 × 1.7 × 0.4 | 20 | `SD-07`; closed double paneled timber shutters | registry and guild offices; daylight on its measured room axis |
+
+## Surface and floor treatments
+
+| Area / parcel | Receiver | Exact polygon / region | Alpha | Purpose |
+|---|---|---|---:|---|
+| `FOUNTAIN_COURT` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'FOUNTAIN_COURT-CLEAR', 'x': 25.0, 'y': 32, 'w': 6, 'h': 16, 'heightM': 2.2, 'floorSource': 'FOUNTAIN_COURT'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+## Activity groups and protected route regions
+
+| Area | Group / recipe | Receiver | Bounds min → max (x, y, z) | Contents | Supports |
+|---|---|---|---|---|---|
+| `FOUNTAIN_COURT` | `G_FOUNTAIN_COURT_PLANT` / `AG-PLANT` | north/F_NW | (21.45, 47.7, 0) → (22.55, 48, 0.95) | Build the named parts as plant display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | Grounded trough against the named north wall; soil and roots enclosed by 0.05m walls |
+| `FOUNTAIN_COURT` | `FOUNTAIN_COURT-CLEAR` | **CLEAR ROUTE** | (25, 32) → (31, 48) | Protected empty region | Do not place geometry |
+
+### Fixed composition `G_FOUNTAIN_COURT_PLANT`
+
+Along offsets from served opening centre (or group centre for a plant); out positive toward street; z above group bbox min, the finished deck. Build exactly these parts with their stated receivers.
+
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `trough` | hollow-stone-trough / `CF-PLANT` | [-0.55, 0, 0] / [0.55, 0.3, 0.5] | `ph_bz04_stone_trim_sandstone` | actual paving, full base contact |
+| `soil` | contained-soil / `CF-PLANT` | [-0.5, 0.05, 0.35] / [0.5, 0.25, 0.4] | `bz04_soil_project_original` | trough interior |
+| `plant-1` | contained-lancet-plant / `CF-PLANT` | [-0.42, 0.05, 0.4] / [-0.18, 0.25, 0.75] | `bz04_plant_project_original` | rooted in trough soil |
+| `plant-2` | contained-lancet-plant / `CF-PLANT` | [-0.12, 0.05, 0.4] / [0.12, 0.25, 0.95] | `bz04_plant_project_original` | rooted in trough soil |
+| `plant-3` | contained-lancet-plant / `CF-PLANT` | [0.18, 0.05, 0.4] / [0.42, 0.25, 0.8] | `bz04_plant_project_original` | rooted in trough soil |
+
+## Fixtures, receivers, budgets, and critical views
+
+| Area | Fixture | Recipe | Receiver | Bounds min → max (x, y, z) | Purpose |
+|---|---|---|---|---|---|
+| — | — | — | No fixtures scheduled | — | — |
+
+| Area | Triangle budget | Material bindings | Rendered primitives | Shadow primitives |
+|---|---:|---:|---:|---:|
+| `FOUNTAIN_COURT` | 48000 | 11 | 12 | 7 |
+
+Section origin (design coordinates): `{'x': 20, 'y': 32, 'z': 0, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-5.199999999999999, -0.02, -2.8000000000000007], 'max': [21.200000000000003, 11.42, 19.6]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `bz04_plant_project_original`, `bz04_soil_project_original`, `ph_bz04_aged_plaster_ochre`, `ph_bz04_beige_wall_002`, `ph_bz04_dark_wood`, `ph_bz04_painted_plaster_warm`, `ph_bz04_plastered_wall`, `ph_bz04_red_plaster_weathered`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`.
 
 
-**Construction tasks (ordered; each has an observable completion):**
+| Camera | Area | Position (x, y, z) | Yaw / pitch / FOV | Purpose |
+|---|---|---|---|---|
+| `FOUNTAIN_COURT-travel-reverse` | `FOUNTAIN_COURT` | (28, 47.35, 1.7) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `FOUNTAIN_COURT-travel-forward` | `FOUNTAIN_COURT` | (28, 32.65, 1.7) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `FOUNTAIN_COURT-north-F_NW-s1-base` | `FOUNTAIN_COURT` | (22, 32.35, 1.7) | 180° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-north-F_NE-s1-base` | `FOUNTAIN_COURT` | (35.5, 32.35, 1.7) | 180° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-east-F_E_LOGGIA-s1-base` | `FOUNTAIN_COURT` | (20.35, 35.5, 1.7) | 270° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-east-F_E_HOUSE-s1-base` | `FOUNTAIN_COURT` | (20.35, 46, 1.7) | 270° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-south-F_SW-s1-base` | `FOUNTAIN_COURT` | (20.5, 47.65, 1.7) | 0° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-south-F_SE-s1-base` | `FOUNTAIN_COURT` | (34.5, 47.65, 1.7) | 0° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-west-F_W_SERVICE-s1-base` | `FOUNTAIN_COURT` | (35.65, 34, 1.7) | 90° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-west-F_W_HALL-s1-base` | `FOUNTAIN_COURT` | (35.65, 44.5, 1.7) | 90° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `FOUNTAIN_COURT-R3-craft-detail` | `FOUNTAIN_COURT` | (23.5, 44.5, 1.7) | 90° / 20.376° / 75° | R3 receiver, joinery, support, material and trade-detail inspection: F_W_HALL-PRINCIPAL |
 
-1. CREATE the section finish: skin `ph_beige_wall_002` (the wing is plastered, the hall is stone: the correlated difference), plinth sandstone 0..0.28, course 2.84..2.96, sill course 4.97..5.09, coping 9.34..9.50; end piers 0.45 × 0.16 both ends (`held`). Completion: plaster wing reading as part of the stone hall.
-2. CREATE `GROUND_01` closed service door 1.05 × 2.25 at a=1.36 (SD-05), timber `ph_rough_pine_door`, iron straps, SD-05 threshold. Completion: closed, hinged.
-3. CREATE `STORY_1_WINDOW_01` dark recess 0.9 × 1.25 at sill 5.15 / head 6.40, a=1.36: frame 0.10, 0.28 deep, closed dark timber leaf. Do not build `STORY_2_WINDOW_01`: the wing stops at two storeys. Completion: one window only.
-4. APPLY wear: dust band, polish at the door jambs. No awning, sign or goods. Completion: as listed.
+## Landmarks and shared dependencies
 
-**Why it exists (reality check):** The madrasa's back-of-house: one service door and one window to the stair. Nothing to sell.
+| Landmark / dependency | Owner | Bounds or dependency | Clear void / arch profile |
+|---|---|---|---|
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `FOUNTAIN_COURT` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
 
-### FRONTAGE_FOUNTAIN_COURT_EAST  ·  BLD_MERCHANT_HOUSE (house, 2 storeys)
+## Roof installation references
 
-- **Role:** house. A merchant's house shows the court a formal loggia and two upper windows; the family's door is round the corner on the north wing, the trade is on the Souk side.
-- **Wall line:** east edge of `FOUNTAIN_COURT`; x = 36, y = 33.28 .. 39 (a runs south to north); length **5.72 m**; street side -X (street lies west of the wall); kit `Wall(F, (36, 33.28), (36, 39), faces='W')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_beige_wall_002`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 4.85 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 5.15 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; impost band 3.04..3.16; sill course 4.97..5.09; coping 6.84..7.0; parapet +0.75.
+Install or reuse the named roof bundles through [roof-bundles.md](roof-bundles.md). These are direct asset dependencies, not permission to build another area’s facades.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `STORY_1_WINDOW_01` | `window_dark_recess` |  | 1.05 | (36, 34.33) | 0.9 × 0.28 × 1.25 | 5.15 / 6.4 | 1 |
-| `GROUND_01` | `arch_hero_courtyard` | sealed loggia arch, dark backing | 2.86 | (36, 36.14) | 4.2 × 0.5 × 4.85 | 0 / 4.85 | 0 |
-| `STORY_1_WINDOW_02` | `window_dark_recess` |  | 4.67 | (36, 37.95) | 0.9 × 0.28 × 1.25 | 5.15 / 6.4 | 1 |
+- `FOUNTAIN_COURT` cells: `ROOF_CELL_054`, `ROOF_CELL_055`, `ROOF_CELL_058`, `ROOF_CELL_059`, `ROOF_CELL_069`, `ROOF_CELL_073`, `ROOF_CELL_075`, `ROOF_CELL_078`.
+- `FOUNTAIN_COURT` bundles: `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT`, `ROOF_BUNDLE_UNIT_SPICE_STREET`, `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE`.
+- `FOUNTAIN_COURT` interfaces: `ROOF_INTERFACE_ROOF_SEAM_010`, `ROOF_INTERFACE_ROOF_SEAM_011`, `ROOF_INTERFACE_ROOF_STEP_021`, `ROOF_INTERFACE_ROOF_STEP_035`, `ROOF_INTERFACE_ROOF_STEP_036`, `ROOF_INTERFACE_ROOF_STEP_037`, `ROOF_INTERFACE_ROOF_STEP_040`.
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.05, 0.9, 5.15, 1.25), (2.86, 4.2, 0, 4.85), (4.67, 0.9, 5.15, 1.25)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+## Material key
+
+| Alias | Source material | Color | Tile / normal / roughness / albedo |
+|---|---|---|---|
+| `ph_bz04_aged_plaster_ochre` | `ph_aged_plaster_ochre` | <span style="color:#c6a16c">■</span> `#c6a16c` | 2 / 0.28 / 0.93 / 1 |
+| `ph_bz04_beige_wall_002` | `ph_plastered_wall` | <span style="color:#d3bb93">■</span> `#d3bb93` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_painted_plaster_warm` | `ph_painted_plaster_warm` | <span style="color:#d8c4a0">■</span> `#d8c4a0` | 1.8 / 0.3 / 0.92 / 1 |
+| `ph_bz04_plastered_wall` | `ph_plastered_wall` | <span style="color:#ddd0b3">■</span> `#ddd0b3` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_red_plaster_weathered` | `ph_red_plaster_weathered` | <span style="color:#b77c62">■</span> `#b77c62` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_sandstone_blocks_05` | `ph_sandstone_blocks_05` | <span style="color:#bda985">■</span> `#bda985` | 2 / 0.45 / 0.94 / 1 |
+
+## Skyline and legacy producer dispositions
+
+| Skyline item | Zone | Owner | Bounds min → max (x, y, z) | Purpose / notes |
+|---|---|---|---|---|
+| `BG-15` | `FOUNTAIN_COURT` | shared-environment | (57, 44, 0) → (59.4, 46.4, 17.5) | Single distant civic orientation marker visible above the roof sequence. |
+
+| Legacy item | Zone | Existing producer | Required disposition | Replacement / notes |
+|---|---|---|---|---|
+| `PLACE_B4_FOUNTAIN_RUG_B4_FOUNTAIN_E_RUG_GROUND_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B4_FOUNTAIN_RUG_B4_FOUNTAIN_W_RUG_GROUND_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_MARKET_BASKET_B7_FOUNTAIN_MARKET_SPILL` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_MARKET_CRATE_B7_FOUNTAIN_MARKET_SPILL` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_MARKET_POT_B7_FOUNTAIN_MARKET_SPILL` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_EAST` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_WEST` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_TEA_STOOL_A_B7_FOUNTAIN_TEA_SPILLOVER` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_TEA_STOOL_B_B7_FOUNTAIN_TEA_SPILLOVER` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B7_FOUNTAIN_TEA_TABLE_B7_FOUNTAIN_TEA_SPILLOVER` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_BPL19_FOUNTAIN_MARKET_RUG_B7_FOUNTAIN_MARKET_SPILL` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_BPL19_FOUNTAIN_MARKET_STALL_B7_FOUNTAIN_MARKET_SPILL` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_CENTRAL_SCREENS_FOUNTAIN_COURT_CENTRAL_SCREEN_COURT` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_FOUNTAIN_COVER_COVER_FOUNTAIN_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | retain_gameplay | Retain exact geometry, transform and cover silhouette; common material calibration only. |
+| `PLACE_FOUNTAIN_LANTERN_LANTERN_FOUNTAIN_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_FOUNTAIN_LMK_FOUNTAIN_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | retain_gameplay | Retain exact geometry, transform and cover silhouette; common material calibration only. |
+| `PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01` | `FOUNTAIN_COURT` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_GROUND_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_MASSING` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_GROUND_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_MASSING` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_NORTH_STORY_1_WINDOW_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_STORY_1_WINDOW_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_EAST_STORY_1_WINDOW_02` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_GROUND_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_MASSING` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_GROUND_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_MASSING` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_STORY_1_WINDOW_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH_STORY_2_WINDOW_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_STORY_1_WINDOW_01` | `FOUNTAIN_COURT` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `BOUNDARY_FOUNTAIN_COURT_north` | `FOUNTAIN_COURT` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_FOUNTAIN_COURT_east` | `FOUNTAIN_COURT` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_FOUNTAIN_COURT_south` | `FOUNTAIN_COURT` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_FOUNTAIN_COURT_west` | `FOUNTAIN_COURT` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
 
 
-**Construction tasks (ordered; each has an observable completion):**
+## Drawings
 
-1. CREATE the section finish: skin `ph_beige_wall_002`, plinth sandstone, impost band, sill course, coping per datums; corners `held`: end piers 0.60 × 0.16. Completion: warm plaster block facing the pale madrasa (deliberate contrast across the court).
-2. CREATE `GROUND_01` sealed loggia arch 4.2 × 4.85 at a=2.86 with spring 3.10, ring 0.25 `ph_stone_trim_sandstone`, dark back at 0.5 m, flush threshold; rug `B4_FOUNTAIN_E_RUG_GROUND_01` at (34.90, 36.14) lies in front. Completion: sealed, no passage implied.
-3. CREATE `STORY_1_WINDOW_01/02` dark recesses 0.9 × 1.25 at sill 5.15 / head 6.40, a=1.05 and a=4.67 (a mirrored pair about the arch axis): frame 0.10, 0.28 deep, closed dark leaves. No balcony (old 2.4 m balcony rejected: no access). Completion: a pair, symmetric about a=2.86.
-4. CREATE the lantern bracket at a=5.72 on the north end pier: it starts at (36.0, 39.0, 4.515), reaches 0.55 m into the court to the placed lantern handle at (35.45, 39.0, 4.515), and carries `LANTERN_FOUNTAIN_01` centred at (35.45, 39.0, 4.25). No awning, sign or goods on the court face. KEEP the Section 4 `B7_FOUNTAIN_PLANTER_EAST`, tea-spill and cover placements at their compiled table transforms. Completion: lantern and retained court dressing are supported without adding floor clutter.
-5. APPLY wear: dust band, one spout SD-13 at a=5.3 with streak, polish on the arch jambs. Completion: as listed.
-
-**Why it exists (reality check):** A merchant's house shows the court a formal loggia and two upper windows; the family's door is round the corner on the north wing, the trade is on the Souk side.
-
-### FRONTAGE_FOUNTAIN_COURT_EAST_NORTH  ·  BLD_MERCHANT_HOUSE (house, 2 storeys)
-
-- **Role:** house. The merchant family's own door, one screened window above for the women's room. The north wing is the only wing this door serves (the passage cuts the block).
-- **Wall line:** east edge of `FOUNTAIN_COURT`; x = 36, y = 44 .. 46.72 (a runs south to north); length **2.72 m**; street side -X (street lies west of the wall); kit `Wall(F, (36, 44), (36, 46.72), faces='W')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_05`, trim `ph_stone_trim_white`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 2.25 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 5.05 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; string course 2.90; sill course 4.87..4.99; coping 6.84..7.0.
-
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `door_residential_timber` | primary closed household door | 1.36 | (36, 45.36) | 1.05 × 0.2 × 2.25 | 0 / 2.25 | 0 |
-| `STORY_1_WINDOW_01` | `window_screened` | SC-C fine crossed lattice (placed `ASSET_SCREEN_SC_C`) | 1.36 | (36, 45.36) | 1 × 0.24 × 1.4 | 5.05 / 6.45 | 1 |
-
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.36, 1.05, 0, 2.25), (1.36, 1, 5.05, 1.4)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
-
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at complete SC-C closure at the existing 5.15 m sill.
-
-**Construction tasks (ordered; each has an observable completion):**
-
-1. CREATE the section finish: skin `ph_sandstone_blocks_05` (stone wing against the plaster hall: correlated difference), plinth, course 2.84..2.96, sill course, coping 6.84..7.0, end piers 0.45 both ends. Completion: as datums.
-2. CREATE `GROUND_01` primary household door 1.05 × 2.25 at a=1.36 (SD-05) with a 0.30 stone step flush, ring pull and iron studs. No lantern bracket is added on this wing; the placed court lantern is carried by the south wing's north end pier. Completion: door reads as the family entrance.
-3. CREATE `STORY_1_WINDOW_01` rebate 1.0 × 1.4 at sill 5.05 / head 6.45, a=1.36: frame 0.10, reveal 0.135; the placed `ASSET_SCREEN_SC_C` (`CENTRAL_SCREEN_COURT` at (36.02, 45.36, 5.05)) fills it. Completion: screen sits in the rebate below the 6.45 m upper-clearance limit.
-4. APPLY wear: dust band, polish at the door. No awning, sign, goods. Completion: as listed.
-
-**Why it exists (reality check):** The merchant family's own door, one screened window above for the women's room. The north wing is the only wing this door serves (the passage cuts the block).
-
-## 4. Free placements (dressing, cover, landmarks)
-
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
-
-| Anchor | Type | Position | W × H | Yaw | Note |
-|---|---|---|---|---:|---|
-| `LMK_FOUNTAIN_01` | landmark | (24.5, 43.5, 0) | 3 × 1.32 | 0 | Off-center tiered carved-stone fountain relocated beyond the west-mid entry cone; its 3 m footprint leaves the x=26–32 six-meter rotation lane clear. |
-| `OPEN_FOUNTAIN_NORTH` | open_node | (31.5, 43.2, 0) |  | 0 | Open rotation pocket beside the fountain. |
-| `COVER_FOUNTAIN_01` | cover_cluster | (33.8, 35.2, 0) | 2.2 × 1.3 | 80 | Crate cluster breaks the diagonal sightline. |
-| `PALM_FOUNTAIN_01` | decorative_palm | (22.4, 45, 0) | 7.4 | 0 | Court silhouette marker. |
-| `LANTERN_FOUNTAIN_01` | lantern_anchor | (35.45, 39, 4.25) | 0.42 × 0.72 | 270 | CC0 wooden lantern marking Fountain Court. |
-
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_B7_FOUNTAIN_MARKET_BASKET_B7_FOUNTAIN_MARKET_SPILL` | `ASSET_CC0_BASKET` | `B7_FOUNTAIN_MARKET_SPILL` | (20.77, 37.5, 0) | 0.42 × 0.304 × 0.244 | 338 | KEEP at this transform |
-| `PLACE_FOUNTAIN_LANTERN_LANTERN_FOUNTAIN_01` | `ASSET_CC0_LANTERN` | `LANTERN_FOUNTAIN_01` | (35.45, 39, 4.25) | 0.221 × 0.235 × 0.53 | 270 | KEEP at this transform |
-| `PLACE_B7_FOUNTAIN_MARKET_POT_B7_FOUNTAIN_MARKET_SPILL` | `ASSET_CC0_POTTERY` | `B7_FOUNTAIN_MARKET_SPILL` | (20.65, 36.76, 0) | 0.551 × 0.422 × 0.312 | 357 | KEEP at this transform |
-| `PLACE_B7_FOUNTAIN_TEA_STOOL_A_B7_FOUNTAIN_TEA_SPILLOVER` | `ASSET_CC0_TEA_STOOL` | `B7_FOUNTAIN_TEA_SPILLOVER` | (32.73, 41.44, 0) | 0.369 × 0.39 × 0.556 | 172 | KEEP at this transform |
-| `PLACE_B7_FOUNTAIN_TEA_STOOL_B_B7_FOUNTAIN_TEA_SPILLOVER` | `ASSET_CC0_TEA_STOOL` | `B7_FOUNTAIN_TEA_SPILLOVER` | (34.27, 41.84, 0) | 0.339 × 0.357 × 0.509 | 354 | KEEP at this transform |
-| `PLACE_B7_FOUNTAIN_TEA_TABLE_B7_FOUNTAIN_TEA_SPILLOVER` | `ASSET_CC0_TEA_TABLE` | `B7_FOUNTAIN_TEA_SPILLOVER` | (33.55, 41.6, 0) | 1.134 × 0.706 × 0.8 | 98 | KEEP at this transform |
-| `PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_EAST` | `ASSET_COURT_PLANTER` | `B7_FOUNTAIN_PLANTER_EAST` | (34.55, 43.8, 0) | 1.05 × 1.05 × 1.2 | 11 | KEEP (shifted 2026-09-07 to y 43.8, out of the north-wing door floor; waiver CW-A0FABA3DAE26 retired) |
-| `PLACE_B7_FOUNTAIN_PLANTERS_B7_FOUNTAIN_PLANTER_WEST` | `ASSET_COURT_PLANTER` | `B7_FOUNTAIN_PLANTER_WEST` | (21.15, 41.9, 0) | 1.05 × 1.05 × 1.2 | 352 | KEEP at this transform |
-| `PLACE_FOUNTAIN_COVER_COVER_FOUNTAIN_01` | `ASSET_COVER_GOODS` | `COVER_FOUNTAIN_01` | (33.8, 35.2, 0) | 1.5 × 0.75 × 1 | 80 | KEEP (gameplay cover; silhouette and collider protected) |
-| `PLACE_B7_FOUNTAIN_MARKET_CRATE_B7_FOUNTAIN_MARKET_SPILL` | `ASSET_DECORATIVE_CRATE` | `B7_FOUNTAIN_MARKET_SPILL` | (22.17, 37.48, 0) | 0.71 × 0.352 × 0.301 | 1 | KEEP at this transform |
-| `PLACE_FOUNTAIN_LMK_FOUNTAIN_01` | `ASSET_FOUNTAIN` | `LMK_FOUNTAIN_01` | (24.5, 43.5, 0) | 3 × 3 × 1.32 | 0 | KEEP (landmark; 3 m footprint at (24.5, 43.5)) |
-| `PLACE_B4_FOUNTAIN_RUG_B4_FOUNTAIN_E_RUG_GROUND_01` | `ASSET_GROUND_RUG` | `B4_FOUNTAIN_E_RUG_GROUND_01` | (34.9, 36.14, 0) | 2.562 × 1.322 × 0.04 | 270 | KEEP at this transform |
-| `PLACE_B4_FOUNTAIN_RUG_B4_FOUNTAIN_W_RUG_GROUND_01` | `ASSET_GROUND_RUG` | `B4_FOUNTAIN_W_RUG_GROUND_01` | (21.1, 43.86, 0) | 2.562 × 1.322 × 0.04 | 90 | KEEP at this transform |
-| `PLACE_BPL19_FOUNTAIN_MARKET_RUG_B7_FOUNTAIN_MARKET_SPILL` | `ASSET_GROUND_RUG` | `B7_FOUNTAIN_MARKET_SPILL` | (21.39, 37.12, 0) | 2.091 × 1.288 × 0.04 | 345 | KEEP at this transform |
-| `PLACE_BPL19_FOUNTAIN_MARKET_STALL_B7_FOUNTAIN_MARKET_SPILL` | `ASSET_MARKET_STALL` | `B7_FOUNTAIN_MARKET_SPILL` | (21.35, 37.1, 0) | 1.672 × 1.107 × 1.672 | 342 | KEEP at this transform |
-| `PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01` | `ASSET_PALM` | `PALM_FOUNTAIN_01` | (22.4, 45, 0) | 3.8 × 3.8 × 7.8 | 0 | KEEP (fronds near the stained window are real-life plausible; waiver CW-216C7CBF937B stays) |
-| `PLACE_CENTRAL_SCREENS_FOUNTAIN_COURT_CENTRAL_SCREEN_COURT` | `ASSET_SCREEN_SC_C` | `CENTRAL_SCREEN_COURT` | (36.015, 45.36, 5.05) | 1 × 0.24 × 1.4 | 90 | KEEP at this transform |
-
-## 5. Overheads
-
-Canopies and lines are shared by both walls (owner OWN_OVERHEAD). Ends are fixed points on the receiving wall or roof tie; the cloth hangs between them per SD-17. Hem never below 4.2 m over a route floor.
-
-None scheduled. Do not add one.
-
-## 6. Ground, wear and drainage
-
-KEEP `patterned_cobblestone`. Finish: the pattern continues around the fountain with a 0.4 m wet-wear ring at its base; flush seams at y 32 and y 48 and at both mid-link mouths; polish along x 26..32 (the rotation lane); contact wear under the planters, spill cluster and tea table.
-
-**`FOUNTAIN_COURT` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
-
-```python
-wear_patch(F, [(23.0, 41.65, 0.014), (26.0, 41.65, 0.014), (26.0, 42.0, 0.014), (23.0, 42.0, 0.014)], 'damp')
-wear_patch(F, [(23.0, 45.0, 0.014), (26.0, 45.0, 0.014), (26.0, 45.35, 0.014), (23.0, 45.35, 0.014)], 'damp')
-wear_patch(F, [(22.65, 42.0, 0.014), (23.0, 42.0, 0.014), (23.0, 45.0, 0.014), (22.65, 45.0, 0.014)], 'damp')
-wear_patch(F, [(26.0, 42.0, 0.014), (26.35, 42.0, 0.014), (26.35, 45.0, 0.014), (26.0, 45.0, 0.014)], 'damp')
-wear_patch(F, [(28.8, 32.3, 0.014), (29.4, 32.3, 0.014), (29.4, 47.7, 0.014), (28.8, 47.7, 0.014)], 'polish')
-wear_patch(F, [(20.587936, 37.17648, 0.014), (21.125702, 37.393752, 0.014), (20.952064, 37.82352, 0.014), (20.414298, 37.606248, 0.014)], 'dust')
-wear_patch(F, [(21.730734, 37.231778, 0.014), (22.600336, 37.216599, 0.014), (22.609266, 37.728222, 0.014), (21.739664, 37.743401, 0.014)], 'dust')
-wear_patch(F, [(20.310189, 36.450952, 0.014), (21.020254, 36.488165, 0.014), (20.989811, 37.069048, 0.014), (20.279746, 37.031835, 0.014)], 'dust')
-wear_patch(F, [(33.840676, 43.321555, 0.014), (35.028445, 43.090676, 0.014), (35.259324, 44.278445, 0.014), (34.071555, 44.509324, 0.014)], 'dust')
-wear_patch(F, [(20.635088, 41.216688, 0.014), (21.833312, 41.385088, 0.014), (21.664912, 42.583312, 0.014), (20.466688, 42.414912, 0.014)], 'dust')
-wear_patch(F, [(32.953885, 41.749082, 0.014), (32.429593, 41.675398, 0.014), (32.506115, 41.130918, 0.014), (33.030407, 41.204602, 0.014)], 'dust')
-wear_patch(F, [(34.049076, 41.556682, 0.014), (34.545001, 41.608806, 0.014), (34.490924, 42.123318, 0.014), (33.994999, 42.071194, 0.014)], 'dust')
-wear_patch(F, [(33.211276, 42.301173, 0.014), (33.031128, 41.019354, 0.014), (33.888724, 40.898827, 0.014), (34.068872, 42.180646, 0.014)], 'dust')
-wear_patch(F, [(20.674594, 36.214446, 0.014), (22.41693, 36.780565, 0.014), (22.025406, 37.985554, 0.014), (20.28307, 37.419435, 0.014)], 'dust')
-wear_patch(F, [(33.207784, 35.938381, 0.014), (33.49604, 34.3036, 0.014), (34.392216, 34.461619, 0.014), (34.10396, 36.0964, 0.014)], 'dust')
-wear_patch(F, [(20.42, 43.02, 0.014), (24.38, 43.02, 0.014), (24.38, 46.98, 0.014), (20.42, 46.98, 0.014)], 'dust')
-```
-
-## 7. Roofs and skyline
-
-Madrasa roof base 9.5, cap 10.79, existing minaret vista kept; the Souk massing owns the merchant house's shared 7.0 / 8.19 roof, so this GLB adds no roof slab. No new dome.
-
-## 8. Required result
-
-- [ ] Both hero arches sealed with dark backs; the threshold rugs lie centred in front of them.
-- [ ] One stained window on the madrasa; a mirrored pair of dark windows on the merchant house; the screen seated in the north wing rebate.
-- [ ] Nothing new on the court floor; x 26..32 and both link cones clear.
-- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
-- [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
-- [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
-- [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
-- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
-- [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
-- [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
-
-Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
-
+- [FOUNTAIN_COURT dimensioned plan](drawings/fountain_court-plan.svg), [FOUNTAIN_COURT four elevations](drawings/fountain_court-elevations.svg), and [FOUNTAIN_COURT roof axonometric](drawings/fountain_court-axon.svg)
+- [Master plan](drawings/master-plan.svg)

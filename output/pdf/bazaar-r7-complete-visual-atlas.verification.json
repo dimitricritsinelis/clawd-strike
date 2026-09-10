@@ -1,0 +1,488 @@
+{
+  "pdf": "/Users/dimitri2/Desktop/clawdstrike/output/pdf/bazaar-r7-complete-visual-atlas.pdf",
+  "layoutTest": false,
+  "designSha256": "d9ba8a7d4b4c9872e5d959d49c342c511941eb0e4f7463d79d52c932b8495bdb",
+  "pageCount": 60,
+  "bookmarks": 60,
+  "areas": 25,
+  "faceGraphics": 100,
+  "openingRows": 249,
+  "perspectives": 12,
+  "sourceHashes": {
+    "docs/map-design/construction/drawings/master-plan.svg": "affa6ad651055b43bf6c0cd2c614f27ae4b8e62c2886278c096c7d1e788a66b0",
+    "docs/map-design/construction/drawings/roof-ownership-context.svg": "17276aa242a6d1b49573580790ed49f14fbe2f3a5f308fec3f8b73fb27ad12b2",
+    "docs/map-design/construction/drawings/skyline-compass-context.svg": "a786995f8d38528d1c85b569cf335e48621a3744e2010644764fe78952912293",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-character.svg": "b1e5dbccbbed40282b22c02cf08642e5c845a3be433b980d5e7490673eac8ca0",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-finish.svg": "5f8bbb33f36b2a738a6f03326c328d3547a0f4a615dabf5da17daeebd6dba898",
+    "docs/map-design/construction/drawings/spawn_a_courtyard-elevation-north.svg": "f723429ecd3de1ffa0bb1a7f9b2dbacbec0c177bdac6dc1faf86a4c74e09bcec",
+    "docs/map-design/construction/drawings/spawn_a_courtyard-elevation-east.svg": "0664910456a351d6e6c72c128145d68995d1e2e46f4e736fe09923454d89daad",
+    "docs/map-design/construction/drawings/spawn_a_courtyard-elevation-south.svg": "d82bd51ca07bd8b34037a359c95c6b304b9a936295542eabe872f44cc46eb9d5",
+    "docs/map-design/construction/drawings/spawn_a_courtyard-elevation-west.svg": "acece3d2ef8b221e2d0a6a41bcf53a9b3cc61edddb33949a7a20ce8a3e64470d",
+    "docs/map-design/construction/drawings/spice_street-elevation-north.svg": "c65b8d8b131cb38512f95a649cf65ade8f44194c01ebd0478e15325036c8765d",
+    "docs/map-design/construction/drawings/spice_street-elevation-east.svg": "3525650277e173cb5e45beee116e0e19436dd7697cb3d8e85a544f27de452b49",
+    "docs/map-design/construction/drawings/spice_street-elevation-south.svg": "0c4a2bb3076b49fef2b45878767fe61fad18ba8e9b47edce331c502b9dea8f93",
+    "docs/map-design/construction/drawings/spice_street-elevation-west.svg": "3565f330b5cf62fdd931fda42ca9b3ef3f8cc4b987e0db3f96a5f861204c6d1f",
+    "docs/map-design/construction/drawings/fountain_court-elevation-north.svg": "984e01425b8b59eface0267efa643830bca5e89988b8d86d2f27aaf33534f40e",
+    "docs/map-design/construction/drawings/fountain_court-elevation-east.svg": "f52713fd6425483274c490bc0ebd81fde697d921320d7f436236832df28fc192",
+    "docs/map-design/construction/drawings/fountain_court-elevation-south.svg": "96671bd70b5c2e9c47de1413a58ab4619a00a69c19fc644ea993fc0a4748bac6",
+    "docs/map-design/construction/drawings/fountain_court-elevation-west.svg": "faa1d5aa2bb3157d53b2b8620c0e823261a6d5184c31c2d13e68e70352495d76",
+    "docs/map-design/construction/drawings/textile_arcade-elevation-north.svg": "07ff86c43e6e6e492ea0eb0015e53ead7f1824de5468705e364ad73bd06d4968",
+    "docs/map-design/construction/drawings/textile_arcade-elevation-east.svg": "35576b8c262e1fa8c6b541aab32c3c1d27bc8dc1f237aea1c38d6f04c46b3b57",
+    "docs/map-design/construction/drawings/textile_arcade-elevation-south.svg": "fc48dd9016fc78f167d7559e904805373bf704d189f66b9fe810fa1d4960b359",
+    "docs/map-design/construction/drawings/textile_arcade-elevation-west.svg": "49948f64548be3702051af54053294c51a3e3470d7ee03fafb29fa8535317c00",
+    "docs/map-design/construction/drawings/rug_gate-elevation-north.svg": "873eab986c26a5643d4e4070fe0a1a16b32ff8ae8b63acbb9372a661439ffd4f",
+    "docs/map-design/construction/drawings/rug_gate-elevation-east.svg": "58a61df05d071d7fdfe55bf6b6d4dcc2386122162e34bd60d1b44c1a459ba764",
+    "docs/map-design/construction/drawings/rug_gate-elevation-south.svg": "28d5bca69376fd59cc9527218a58ddbad55ecf01587829615e7861b268b31ab9",
+    "docs/map-design/construction/drawings/rug_gate-elevation-west.svg": "2cdca4ccc80919ac6a55567805fb3ca840d4fab00b90da9c8cb879c44e4c5664",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-elevation-north.svg": "cfb03187f3d14ceb7b8d91adad7a30239205cb23e4c76b91d35d063e77bae733",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-elevation-east.svg": "6d6c546755bb72838bcd5d503cd7c68bdc19e245ea8921c5bc4b11044f1a422c",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-elevation-south.svg": "c28050b43ddf9719facc0a0b17347365c768b6f13500478b381f7c7f6e88795d",
+    "docs/map-design/construction/drawings/spawn_b_courtyard-elevation-west.svg": "e77aa1575edb35af0bea594d53135bb41310cc0203f0b5f28c8ceb07b9e7ca84",
+    "docs/map-design/construction/drawings/service_south-elevation-north.svg": "f5db85efaf92c903fc7f5f6c45bdcb592ea23454765e4921de8d8dc42d5b1ac7",
+    "docs/map-design/construction/drawings/service_south-elevation-east.svg": "1cfb7b20dafde6158bd370d7e2f647bdda7ee2272a4185173654548a8c7a649d",
+    "docs/map-design/construction/drawings/service_south-elevation-south.svg": "ada3339229f913873f635dcd648af00596989f859d28c1a8b71420f5467937d4",
+    "docs/map-design/construction/drawings/service_south-elevation-west.svg": "6d2fdae219f0f1f0995446ff4d283e4d59b00a875576d29fb94f6e3d5056fab0",
+    "docs/map-design/construction/drawings/caravan_court-elevation-north.svg": "fcd92acf2ff3b6c5c22e3a26133398bc0e3bf364d99831372df425157ac711c5",
+    "docs/map-design/construction/drawings/caravan_court-elevation-east.svg": "354433b3faefd547ab64619dc6e3228fbaad3e3abc8f94ac19217a685b78bacd",
+    "docs/map-design/construction/drawings/caravan_court-elevation-south.svg": "05638f10440dac4862381b4909e0cc97912283b220d2de179528d5c78854aae4",
+    "docs/map-design/construction/drawings/caravan_court-elevation-west.svg": "2b80ed4d1a640122308ee79bf15fa05237fef81a2bb41d0cea30c48b5a5fa0f4",
+    "docs/map-design/construction/drawings/service_north-elevation-north.svg": "1c33736cfc9787fabd12270dee1e00b9008e3f4dc6c0d8317a530cf038c12291",
+    "docs/map-design/construction/drawings/service_north-elevation-east.svg": "4d148f0e97a5c74da7feeebaa01912eaa745b133e8af86a6691743e19f01006c",
+    "docs/map-design/construction/drawings/service_north-elevation-south.svg": "a49951471986ff2c9c3201d82ccdc466b81d676f81bcfdb805e8067ddf6bf0e7",
+    "docs/map-design/construction/drawings/service_north-elevation-west.svg": "352d0d0a9d7ec459ac42f1f38873bc4ad208cff2ce19458f9e026311fdddec0b",
+    "docs/map-design/construction/drawings/tea_ramp-elevation-north.svg": "be05ddf0c0fd6ea81f78ee635ebb572a72bad12cf265f28601fc68c4d660487d",
+    "docs/map-design/construction/drawings/tea_ramp-elevation-east.svg": "5ac3274fd22c31bb13e3904308808a7c093772dcfdd03de64df23fa6f8275dc8",
+    "docs/map-design/construction/drawings/tea_ramp-elevation-south.svg": "7169f384d6afb64ac87f9f44bda19b0048640674dfa9508a9bfcd7f6b670cef2",
+    "docs/map-design/construction/drawings/tea_ramp-elevation-west.svg": "20f34b9a034c54b7a3b1fb26965403f61fe07a1d8999c2caa680974507b06b57",
+    "docs/map-design/construction/drawings/tea_terrace-elevation-north.svg": "39e31a97508a92f667546e96daf3d70856803519e4f62d4056e0188bbbf938cd",
+    "docs/map-design/construction/drawings/tea_terrace-elevation-east.svg": "ca18e148fe234f412c4242f039c0a89a3332dbe673f51900c3cbf1ee552daf75",
+    "docs/map-design/construction/drawings/tea_terrace-elevation-south.svg": "1a09e12ef20ec8bb97c3612ca749da69f459b5d0fb2bfd8cc52376a4e88faf67",
+    "docs/map-design/construction/drawings/tea_terrace-elevation-west.svg": "05edcc0ab82f5c2f5979e15447705a2917920efd916374118236dfcaed1ea8d3",
+    "docs/map-design/construction/drawings/tea_stairs-elevation-north.svg": "ebbb2b1212f5dc63f5c528d5f4a98684d1051fb080f747a0c578e4a6a3b24880",
+    "docs/map-design/construction/drawings/tea_stairs-elevation-east.svg": "dc8967a1666f32c130c2dd4a1421ec7079bf983bfe060775198350533049ef3b",
+    "docs/map-design/construction/drawings/tea_stairs-elevation-south.svg": "7e267ba0ae4b5a3f0163c843f619dabf564b4b8765d0fea8ce1c30a4ead1f7e0",
+    "docs/map-design/construction/drawings/tea_stairs-elevation-west.svg": "a9c9d2f82b688e122eff5b241c67c44754760bc143fe65885943ff70a4265889",
+    "docs/map-design/construction/drawings/tea_landing-elevation-north.svg": "2da9abdc003ec62d21fbc3dcf672ccf9d78f7768b7f1373072e36d0d08b417e8",
+    "docs/map-design/construction/drawings/tea_landing-elevation-east.svg": "7a8bbd9fc9ad8c13d15754110648d7423293b3b488e0c3a661beb027319b001a",
+    "docs/map-design/construction/drawings/tea_landing-elevation-south.svg": "65a5b5fa6b9a74471d5c5f032a3b20b2d5f56c31b6549b8ed14155fd321e924d",
+    "docs/map-design/construction/drawings/tea_landing-elevation-west.svg": "a62d76508f92781ec32bfdd05c4b454a40506bd8de3d8cb4ef08341d859cb35b",
+    "docs/map-design/construction/drawings/dyers_alley-elevation-north.svg": "a998d2d1cd3d507d4c3aad43bc6da3797809442251dfec500e20e71a4a40858e",
+    "docs/map-design/construction/drawings/dyers_alley-elevation-east.svg": "ac10103bf47b8e729f0486cbfcabbc98257d346ec66a122760891e2e55f683b0",
+    "docs/map-design/construction/drawings/dyers_alley-elevation-south.svg": "a4cdb442298c38252479ee9619a1c4050a652dfe856e029c0be6cba11552edd4",
+    "docs/map-design/construction/drawings/dyers_alley-elevation-west.svg": "cc998255ca6fd24a7373f1336a1dc5f1a7c729d3c6dd151b95828f6474c566b9",
+    "docs/map-design/construction/drawings/covered_souk-elevation-north.svg": "a686097a7e9157a59d5a9a98846b3dcfa4b81742c70b3e3e9f9d4c03160d3f64",
+    "docs/map-design/construction/drawings/covered_souk-elevation-east.svg": "80e51620276cfde3f9762afb20d6c3f032683365822a2914d9f5c3d5472849f3",
+    "docs/map-design/construction/drawings/covered_souk-elevation-south.svg": "8ed0497337adf6264db064bffb01c3c0ec723c0f947c13871082664564cb19df",
+    "docs/map-design/construction/drawings/covered_souk-elevation-west.svg": "8a50e781f9142d3cd3331d27cc75140888ef87696d7530d21dc2d10107af66f9",
+    "docs/map-design/construction/drawings/dyers_dogleg-elevation-north.svg": "68a169046c8c0d65d5cd7267138a1c1d3a1d8747eea9e5a29e3c604b6b544b0c",
+    "docs/map-design/construction/drawings/dyers_dogleg-elevation-east.svg": "d1e75dba6d0071159bec49ac6715714630da022889873f5fb935699f15d585cc",
+    "docs/map-design/construction/drawings/dyers_dogleg-elevation-south.svg": "4b7d6ff2a8cfcb1b292201ec60de9efe555136534133b817cb5dad57d5f0fa59",
+    "docs/map-design/construction/drawings/dyers_dogleg-elevation-west.svg": "3dc95153179b0d8e26f3f9593c25e53c2c08ef2f6708427176652a2241089fa0",
+    "docs/map-design/construction/drawings/north_court-elevation-north.svg": "7818670ba922e0a085a39325c038751f883adc5af71229ea749ab675ad715af6",
+    "docs/map-design/construction/drawings/north_court-elevation-east.svg": "f83823c5eddb7a829566b558ac1f514e872742c6ae113d93365b34b51d048c73",
+    "docs/map-design/construction/drawings/north_court-elevation-south.svg": "6c87ca89538878266df96963fe3d86bb9129f4cc8fbae6e09c22915a489915d7",
+    "docs/map-design/construction/drawings/north_court-elevation-west.svg": "a71860c7675f7dd8f01b91b52eeb85bdddc75bfe9f6291b3f5687e15b8711d7e",
+    "docs/map-design/construction/drawings/link_west_mid-elevation-north.svg": "5ba13b44609d4327759bda2b128681054bf7a1d55c071c908b054d7dc5c06ead",
+    "docs/map-design/construction/drawings/link_west_mid-elevation-east.svg": "b0cc8c806536006cc4367087cde61e56f0c217196b24445d143c1a7b474bb54b",
+    "docs/map-design/construction/drawings/link_west_mid-elevation-south.svg": "2f4fdc9ce252c4a3c7500d126c5ee594e09b3935815d07b818f1c10daf9ef2eb",
+    "docs/map-design/construction/drawings/link_west_mid-elevation-west.svg": "afb97f611dcfd7ca3a39b8ac1ce06787ab8b7c76ece088e03306d5c898b0c524",
+    "docs/map-design/construction/drawings/link_east_mid-elevation-north.svg": "627db0e902f96bd44323542ba0c39fee37e56d3730a34206d5c1d8c23b3f3201",
+    "docs/map-design/construction/drawings/link_east_mid-elevation-east.svg": "05a16b6881bdcefe1f0dc8d8baf8f9eb128300ce3c5a5f71357b097ac956cd0c",
+    "docs/map-design/construction/drawings/link_east_mid-elevation-south.svg": "0702d855589552715f72aba2dd107b023dbf2e0e27f5e839cb0425abaa427fa1",
+    "docs/map-design/construction/drawings/link_east_mid-elevation-west.svg": "fab57bad97b8d63780b716f534b9d1fd3120c130147f19fe2580c56dc29a852b",
+    "docs/map-design/construction/drawings/link_west_upper-elevation-north.svg": "98913206824cee720fffe076f05f0890647f1087aec32f421a928b7cc036d4dd",
+    "docs/map-design/construction/drawings/link_west_upper-elevation-east.svg": "b80d3b7c1079e4453b5b5238d0b0dce5cdd7bac7ccab424b7c2d16a0cd54aecc",
+    "docs/map-design/construction/drawings/link_west_upper-elevation-south.svg": "26c6a1ff08796f5b42dd3d0dad6bc6ec1d7390be24fde0249bab305b2329488b",
+    "docs/map-design/construction/drawings/link_west_upper-elevation-west.svg": "ece0114272b24d06d52e64f74e618518a90cdea723f5c4673e1f7fa2239f1ce0",
+    "docs/map-design/construction/drawings/link_east_upper-elevation-north.svg": "dc808946aaae392ce3d3dcfb50e11b4a1486414cb11ed16e102044003e14c3a9",
+    "docs/map-design/construction/drawings/link_east_upper-elevation-east.svg": "5c7ebe048d3a70d7b6aa3ea3282a84d4016bc6afbd8c3f99d4dc9cadf01a74fa",
+    "docs/map-design/construction/drawings/link_east_upper-elevation-south.svg": "0f1cc13aaf654acf9f37ac00c0fb1b622d3e7f821582ff038cc259a41bf9dedb",
+    "docs/map-design/construction/drawings/link_east_upper-elevation-west.svg": "ad45a1c5fb24f4b7cf7bc1bea5d619cebdcb599c1c1014179ebf9d0d482b6f32",
+    "docs/map-design/construction/drawings/link_south_west-elevation-north.svg": "fbba5d4dc540eacbcc0a5c3bca42553a44206be95b2c498cbae3cedac2949eb1",
+    "docs/map-design/construction/drawings/link_south_west-elevation-east.svg": "5c5fdae426e5dc333fafa023bf82d38658a434ac92af8fbc0bd15c5d71c357a3",
+    "docs/map-design/construction/drawings/link_south_west-elevation-south.svg": "6c04a86b3db779cfb84b3d9d4b384e6fa624e1e582fcae9daafc8377ca1108ae",
+    "docs/map-design/construction/drawings/link_south_west-elevation-west.svg": "040fb4d20b6ef66f6c15f416304a4ac8161d58e8bb0e3fa9060ba7a922a5c33d",
+    "docs/map-design/construction/drawings/link_south_east-elevation-north.svg": "8c7da4cef3b9a0d322f52287139fae92d14d2e4c05eb1e10184214a54b80af93",
+    "docs/map-design/construction/drawings/link_south_east-elevation-east.svg": "56080dd1b3420282c64c4ddb90610ce7b0c1b69bcec318b65f6d457ebb993995",
+    "docs/map-design/construction/drawings/link_south_east-elevation-south.svg": "23a3d42e846a74707c8c29479b207c4d8e3f0c11ebf988a3252b6d97dd1767d4",
+    "docs/map-design/construction/drawings/link_south_east-elevation-west.svg": "b80d0cbc305f88e6a3cd0b664c3fc07c036106ae07d5e51318a5d874c5b02929",
+    "docs/map-design/construction/drawings/link_north_west-elevation-north.svg": "9c9c87be6a9bdae834cf788370e71add8f093f7ba1f7feb5cca872c9cfe79373",
+    "docs/map-design/construction/drawings/link_north_west-elevation-east.svg": "df30ac01c028933229ce9da79cb78f3c78ed883121ec30ef4bc00f2d23e7a4bc",
+    "docs/map-design/construction/drawings/link_north_west-elevation-south.svg": "dd2ae3020cfaecba88f0a4c0b00eb41a9853ade973d674918be5155827f97c63",
+    "docs/map-design/construction/drawings/link_north_west-elevation-west.svg": "c404da9507bc1efda758f67fda58e8be783377959b792f70a0a34a455847c77a",
+    "docs/map-design/construction/drawings/link_north_east-elevation-north.svg": "c6b51a48a0cf1dd36a7df2f355c5571ce5a4e3447b5c16ae85935e10c986b2b0",
+    "docs/map-design/construction/drawings/link_north_east-elevation-east.svg": "5b5de93dd6c147178848f495d9a4d5acb1c1515bc76c38844832894d5436d723",
+    "docs/map-design/construction/drawings/link_north_east-elevation-south.svg": "c4ff7c7277a1ec1f95093e49c6f20742453216f9d172103e3ddf5814ce42f746",
+    "docs/map-design/construction/drawings/link_north_east-elevation-west.svg": "2839ce902dedb0f7e67cf635e5fca5c05b46c52bd84039454ca2df833db59ba0",
+    "artifacts/bazaar-r7-alignment-review/perspectives/spawn_a_courtyard.png": "0db208d43671cf6e5369f8f9fc6390d8537fb414ec3e638d6292ea556e0b94ff",
+    "artifacts/bazaar-r7-alignment-review/perspectives/spice_street.png": "dd4badc9c3852c4a85dd787255b86a7f3e5d0eae99009db6a16bc4f5bb229a06",
+    "artifacts/bazaar-r7-alignment-review/perspectives/fountain_court.png": "97c379c7108034aad9c5460eed01a5595babbf9bb6c5f05c12e26296cfbb55d2",
+    "artifacts/bazaar-r7-alignment-review/perspectives/textile_arcade.png": "a10afeebbbc912ab0fda26217745e485e6cd6e5624625e50b4954d4021d46ad1",
+    "artifacts/bazaar-r7-alignment-review/perspectives/rug_gate.png": "7196a2932d01232c78836cebc0df0cbf9966f14b78595150e028501bf5aeaeb4",
+    "artifacts/bazaar-r7-alignment-review/perspectives/spawn_b_courtyard.png": "3ea9aa683fe6d13a1efa194ed083b3b9b0cd99e02899366b5a6ee524cbd1e039",
+    "artifacts/bazaar-r7-alignment-review/perspectives/caravan_court.png": "d052bcbc47956474d8cc79e6cf730a37eaa289a96e8d531ccb57fa0d572e1822",
+    "artifacts/bazaar-r7-alignment-review/perspectives/tea_terrace.png": "99c181001daa3a0327cc477495fd497d6d7926438cac6a0689b6d47e844d1153",
+    "artifacts/bazaar-r7-alignment-review/perspectives/dyers_alley.png": "0740876f2be07324c59ca868ea6c6f36e7ff8033c03f49bdd52efc355b74903d",
+    "artifacts/bazaar-r7-alignment-review/perspectives/covered_souk.png": "9ccc87f2ae71c837310bcb2e6eab323d479ad4c7dcf2830ca6f187852def4696",
+    "artifacts/bazaar-r7-alignment-review/perspectives/dyers_dogleg.png": "b9079faafa0face533e55d07d1e1b04973707f8b8be08b393bbf6bab6ecf5cd9",
+    "artifacts/bazaar-r7-alignment-review/perspectives/north_court.png": "5e262725a57117e38105be01e3800a927f5ff25972efc6d4d951a4e2d7cd64d2"
+  },
+  "pages": [
+    {
+      "page": 2,
+      "kind": "plate",
+      "key": "master-plan",
+      "label": "Master plan"
+    },
+    {
+      "page": 3,
+      "kind": "plate",
+      "key": "roof-ownership-context",
+      "label": "Roof ownership and interfaces"
+    },
+    {
+      "page": 4,
+      "kind": "plate",
+      "key": "skyline-compass-context",
+      "label": "Skyline compass context"
+    },
+    {
+      "page": 5,
+      "kind": "area",
+      "key": "SPAWN_A_COURTYARD",
+      "label": "Spawn A Courtyard - four-face overview"
+    },
+    {
+      "page": 6,
+      "kind": "schedule",
+      "key": "SPAWN_A_COURTYARD-schedule-1",
+      "label": "Spawn A Courtyard - complete opening schedule 1/1"
+    },
+    {
+      "page": 7,
+      "kind": "perspective",
+      "key": "SPAWN_A_COURTYARD-perspective",
+      "label": "Spawn A Courtyard - schematic perspective"
+    },
+    {
+      "page": 8,
+      "kind": "area",
+      "key": "SPICE_STREET",
+      "label": "Spice Street - four-face overview"
+    },
+    {
+      "page": 9,
+      "kind": "schedule",
+      "key": "SPICE_STREET-schedule-1",
+      "label": "Spice Street - complete opening schedule 1/1"
+    },
+    {
+      "page": 10,
+      "kind": "perspective",
+      "key": "SPICE_STREET-perspective",
+      "label": "Spice Street - schematic perspective"
+    },
+    {
+      "page": 11,
+      "kind": "area",
+      "key": "FOUNTAIN_COURT",
+      "label": "Fountain Court - four-face overview"
+    },
+    {
+      "page": 12,
+      "kind": "schedule",
+      "key": "FOUNTAIN_COURT-schedule-1",
+      "label": "Fountain Court - complete opening schedule 1/1"
+    },
+    {
+      "page": 13,
+      "kind": "perspective",
+      "key": "FOUNTAIN_COURT-perspective",
+      "label": "Fountain Court - schematic perspective"
+    },
+    {
+      "page": 14,
+      "kind": "area",
+      "key": "TEXTILE_ARCADE",
+      "label": "Textile Arcade - four-face overview"
+    },
+    {
+      "page": 15,
+      "kind": "schedule",
+      "key": "TEXTILE_ARCADE-schedule-1",
+      "label": "Textile Arcade - complete opening schedule 1/1"
+    },
+    {
+      "page": 16,
+      "kind": "perspective",
+      "key": "TEXTILE_ARCADE-perspective",
+      "label": "Textile Arcade - schematic perspective"
+    },
+    {
+      "page": 17,
+      "kind": "area",
+      "key": "RUG_GATE",
+      "label": "Rug Gate - four-face overview"
+    },
+    {
+      "page": 18,
+      "kind": "schedule",
+      "key": "RUG_GATE-schedule-1",
+      "label": "Rug Gate - complete opening schedule 1/1"
+    },
+    {
+      "page": 19,
+      "kind": "perspective",
+      "key": "RUG_GATE-perspective",
+      "label": "Rug Gate - schematic perspective"
+    },
+    {
+      "page": 20,
+      "kind": "area",
+      "key": "SPAWN_B_COURTYARD",
+      "label": "Spawn B Courtyard - four-face overview"
+    },
+    {
+      "page": 21,
+      "kind": "schedule",
+      "key": "SPAWN_B_COURTYARD-schedule-1",
+      "label": "Spawn B Courtyard - complete opening schedule 1/2"
+    },
+    {
+      "page": 22,
+      "kind": "schedule",
+      "key": "SPAWN_B_COURTYARD-schedule-2",
+      "label": "Spawn B Courtyard - complete opening schedule 2/2"
+    },
+    {
+      "page": 23,
+      "kind": "perspective",
+      "key": "SPAWN_B_COURTYARD-perspective",
+      "label": "Spawn B Courtyard - schematic perspective"
+    },
+    {
+      "page": 24,
+      "kind": "area",
+      "key": "SERVICE_SOUTH",
+      "label": "Service South - four-face overview"
+    },
+    {
+      "page": 25,
+      "kind": "schedule",
+      "key": "SERVICE_SOUTH-schedule-1",
+      "label": "Service South - complete opening schedule 1/1"
+    },
+    {
+      "page": 26,
+      "kind": "area",
+      "key": "CARAVAN_COURT",
+      "label": "Caravan Court - four-face overview"
+    },
+    {
+      "page": 27,
+      "kind": "schedule",
+      "key": "CARAVAN_COURT-schedule-1",
+      "label": "Caravan Court - complete opening schedule 1/1"
+    },
+    {
+      "page": 28,
+      "kind": "perspective",
+      "key": "CARAVAN_COURT-perspective",
+      "label": "Caravan Court - schematic perspective"
+    },
+    {
+      "page": 29,
+      "kind": "area",
+      "key": "SERVICE_NORTH",
+      "label": "Service North - four-face overview"
+    },
+    {
+      "page": 30,
+      "kind": "schedule",
+      "key": "SERVICE_NORTH-schedule-1",
+      "label": "Service North - complete opening schedule 1/1"
+    },
+    {
+      "page": 31,
+      "kind": "area",
+      "key": "TEA_RAMP",
+      "label": "Tea Ramp - four-face overview"
+    },
+    {
+      "page": 32,
+      "kind": "schedule",
+      "key": "TEA_RAMP-schedule-1",
+      "label": "Tea Ramp - complete opening schedule 1/1"
+    },
+    {
+      "page": 33,
+      "kind": "area",
+      "key": "TEA_TERRACE",
+      "label": "Tea Terrace - four-face overview"
+    },
+    {
+      "page": 34,
+      "kind": "schedule",
+      "key": "TEA_TERRACE-schedule-1",
+      "label": "Tea Terrace - complete opening schedule 1/1"
+    },
+    {
+      "page": 35,
+      "kind": "perspective",
+      "key": "TEA_TERRACE-perspective",
+      "label": "Tea Terrace - schematic perspective"
+    },
+    {
+      "page": 36,
+      "kind": "area",
+      "key": "TEA_STAIRS",
+      "label": "Tea Stairs - four-face overview"
+    },
+    {
+      "page": 37,
+      "kind": "schedule",
+      "key": "TEA_STAIRS-schedule-1",
+      "label": "Tea Stairs - complete opening schedule 1/1"
+    },
+    {
+      "page": 38,
+      "kind": "area",
+      "key": "TEA_LANDING",
+      "label": "Tea Landing - four-face overview"
+    },
+    {
+      "page": 39,
+      "kind": "area",
+      "key": "DYERS_ALLEY",
+      "label": "Dyers Alley - four-face overview"
+    },
+    {
+      "page": 40,
+      "kind": "schedule",
+      "key": "DYERS_ALLEY-schedule-1",
+      "label": "Dyers Alley - complete opening schedule 1/1"
+    },
+    {
+      "page": 41,
+      "kind": "perspective",
+      "key": "DYERS_ALLEY-perspective",
+      "label": "Dyers Alley - schematic perspective"
+    },
+    {
+      "page": 42,
+      "kind": "area",
+      "key": "COVERED_SOUK",
+      "label": "Covered Souk - four-face overview"
+    },
+    {
+      "page": 43,
+      "kind": "schedule",
+      "key": "COVERED_SOUK-schedule-1",
+      "label": "Covered Souk - complete opening schedule 1/1"
+    },
+    {
+      "page": 44,
+      "kind": "perspective",
+      "key": "COVERED_SOUK-perspective",
+      "label": "Covered Souk - schematic perspective"
+    },
+    {
+      "page": 45,
+      "kind": "area",
+      "key": "DYERS_DOGLEG",
+      "label": "Dyers Dogleg - four-face overview"
+    },
+    {
+      "page": 46,
+      "kind": "schedule",
+      "key": "DYERS_DOGLEG-schedule-1",
+      "label": "Dyers Dogleg - complete opening schedule 1/1"
+    },
+    {
+      "page": 47,
+      "kind": "perspective",
+      "key": "DYERS_DOGLEG-perspective",
+      "label": "Dyers Dogleg - schematic perspective"
+    },
+    {
+      "page": 48,
+      "kind": "area",
+      "key": "NORTH_COURT",
+      "label": "North Court - four-face overview"
+    },
+    {
+      "page": 49,
+      "kind": "schedule",
+      "key": "NORTH_COURT-schedule-1",
+      "label": "North Court - complete opening schedule 1/1"
+    },
+    {
+      "page": 50,
+      "kind": "perspective",
+      "key": "NORTH_COURT-perspective",
+      "label": "North Court - schematic perspective"
+    },
+    {
+      "page": 51,
+      "kind": "area",
+      "key": "LINK_WEST_MID",
+      "label": "Link West Mid - four-face overview"
+    },
+    {
+      "page": 52,
+      "kind": "area",
+      "key": "LINK_EAST_MID",
+      "label": "Link East Mid - four-face overview"
+    },
+    {
+      "page": 53,
+      "kind": "area",
+      "key": "LINK_WEST_UPPER",
+      "label": "Link West Upper - four-face overview"
+    },
+    {
+      "page": 54,
+      "kind": "area",
+      "key": "LINK_EAST_UPPER",
+      "label": "Link East Upper - four-face overview"
+    },
+    {
+      "page": 55,
+      "kind": "area",
+      "key": "LINK_SOUTH_WEST",
+      "label": "Link South West - four-face overview"
+    },
+    {
+      "page": 56,
+      "kind": "area",
+      "key": "LINK_SOUTH_EAST",
+      "label": "Link South East - four-face overview"
+    },
+    {
+      "page": 57,
+      "kind": "area",
+      "key": "LINK_NORTH_WEST",
+      "label": "Link North West - four-face overview"
+    },
+    {
+      "page": 58,
+      "kind": "area",
+      "key": "LINK_NORTH_EAST",
+      "label": "Link North East - four-face overview"
+    },
+    {
+      "page": 59,
+      "kind": "plate",
+      "key": "spawn_b_courtyard-character",
+      "label": "B courtyard architecture and assembly"
+    },
+    {
+      "page": 60,
+      "kind": "plate",
+      "key": "spawn_b_courtyard-finish",
+      "label": "B courtyard finish detail"
+    }
+  ],
+  "pdfSha256": "61c8ea091a9af0a9c0390f35a02b973297af59bbfbf72fca3306a2a139cda385",
+  "assemblerSha256": "8546795cd38d8d31cba255b8aab4e852e7212b9d921b2b385a21ba1f066b47fe"
+}

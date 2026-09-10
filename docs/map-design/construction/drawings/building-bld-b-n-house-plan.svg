@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 b n house facade composition · BLD_B_N_HOUSE · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="221.44" y="408.04" width="587.11" height="350.52" fill="#e6e0d1"/>
+<line x1="221.44" y1="758.56" x2="221.44" y2="408.04" stroke="#344548" stroke-width="2"/>
+<line x1="808.56" y1="758.56" x2="808.56" y2="408.04" stroke="#344548" stroke-width="2"/>
+<line x1="221.44" y1="758.56" x2="808.56" y2="758.56" stroke="#344548" stroke-width="2"/>
+<line x1="221.44" y1="408.04" x2="808.56" y2="408.04" stroke="#344548" stroke-width="2"/>
+<rect x="414.23" y="416.80" width="201.55" height="332.99" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="515.00" y="583.30" text-anchor="middle">R1</text>
+<rect x="230.21" y="416.80" width="166.49" height="332.99" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="313.45" y="583.30" text-anchor="middle">R2</text>
+<rect x="633.30" y="416.80" width="166.49" height="332.99" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="716.55" y="583.30" text-anchor="middle">R3</text>
+<circle cx="515.00" cy="758.56" r="4" fill="#a14b3d"/>
+<text class="label" x="523.00" y="750.56">principal entrance</text>
+<circle cx="330.98" cy="758.56" r="4" fill="#77715f"/>
+<circle cx="699.02" cy="758.56" r="4" fill="#77715f"/>
+<text class="label" x="95" y="955">World footprint x 24.3..31 · y 92..96 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Merchant family house</text>
+<text class="label" x="1100" y="244">R1: principal vestibule and stair</text>
+<text class="label" x="1100" y="288">R2: family room</text>
+<text class="label" x="1100" y="332">R3: family room</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Merchant family house</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Use ground frontage piers separately from</text>
+<text class="tiny" x="1100" y="714">floor-specific upper room and framing axes.</text>
+<text class="tiny" x="1100" y="732">Corresponding openings serving one room share</text>
+<text class="tiny" x="1100" y="750">its canonical ID where the room spans opposite</text>
+<text class="tiny" x="1100" y="768">faces. A different front/rear axis must have a</text>
+<text class="tiny" x="1100" y="786">stated room-use relationship.</text>
+<text class="tiny" x="1100" y="804">The same entrance/stair axis connects the</text>
+<text class="tiny" x="1100" y="822">ground threshold, upper doors and balcony.</text>
+<text class="tiny" x="1100" y="840">Neighboring windows share proportions instead</text>
+<text class="tiny" x="1100" y="858">of competing with it.</text>
+</svg>

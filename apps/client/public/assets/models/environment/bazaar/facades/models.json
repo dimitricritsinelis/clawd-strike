@@ -23,6 +23,115 @@
         "ph_worn_planks",
         "ph_worn_plaster_ochre"
       ]
+    },
+    {
+      "id": "section_unit_spawn_b_courtyard",
+      "url": "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb": "e024e5e8612cc6ef3acc2654ab651680"
+      },
+      "materialIds": [
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_dark_wood",
+        "ph_bz04_fabric_leather_02",
+        "ph_bz04_hessian_230",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_red_plaster_weathered",
+        "ph_bz04_rusty_metal_02",
+        "ph_bz04_sandstone_blocks_05",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_weathered_brown_planks",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_spawn_b_courtyard",
+      "url": "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb": "9a9bd3511cf72a321b519b9c2c68ac39"
+      },
+      "materialIds": [
+        "ph_bz04_aged_plaster_ochre",
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_red_plaster_weathered",
+        "ph_bz04_rusty_metal_02",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz03_b_gate_cap_west",
+      "url": "unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb": "d8dc15ebdd72f8c4af5fd19ef0ee46d8"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz03_b_gate_cap_east",
+      "url": "unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb": "4cfbc8301ef236b3efe3d2c2cf4973a8"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_shared_environment",
+      "url": "unit-spawn-b-courtyard/bz04-shared-environment.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/bz04-shared-environment.glb": "f8f3eb4826d5fb4249ebb309afabb694"
+      },
+      "materialIds": [
+        "ph_bz04_beige_wall_002",
+        "ph_bz04_dark_wood",
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall",
+        "ph_bz04_sandstone_blocks_06",
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_weathered_brown_planks"
+      ]
+    }
+  ],
+  "auxiliaryAssets": [
+    {
+      "id": "retained-rug-gate-roof-bundle",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original",
+      "purpose": "Retained earlier roof bundle export, byte-identical to assets/source/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb. Not registered or placed as a current runtime model; B uses the separately registered temporary caps.",
+      "files": [
+        "unit-spawn-b-courtyard/roof-bundle-rug-gate.glb"
+      ],
+      "md5": {
+        "unit-spawn-b-courtyard/roof-bundle-rug-gate.glb": "6b27d0de3132ff8d0d4047e5ba461351"
+      }
     }
   ]
 }

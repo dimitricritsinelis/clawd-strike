@@ -1,0 +1,51 @@
+{
+  "asset": "assets/source/unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+  "triangles": 12,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -2.0,
+      0.0,
+      -0.75
+    ],
+    "max": [
+      2.0,
+      0.11999999731779099,
+      0.75
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -2.0,
+      0.0,
+      -0.75
+    ],
+    "max": [
+      2.0,
+      0.11999999731779099,
+      0.75
+    ]
+  },
+  "objects": [
+    {
+      "id": "bz03_b_gate_cap_west",
+      "material": "ph_bz04_stone_trim_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.0,
+          -0.75,
+          0.0
+        ],
+        "max": [
+          2.0,
+          0.75,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "de473a51d994ef8197253b3e5df9fcadc796d55bd272c63aaaedf416843335a3"
+}

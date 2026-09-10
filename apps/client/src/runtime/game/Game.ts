@@ -1141,7 +1141,7 @@ export class Game {
   }
 
   setWeaponCallbacks(cbs: {
-    onReloadStart?: () => void;
+    onReloadStart?: (durationSeconds: number) => void;
     onReloadEnd?: () => void;
     onReloadCancel?: () => void;
     onDryFire?: () => void;

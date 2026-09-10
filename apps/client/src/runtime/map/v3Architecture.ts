@@ -126,6 +126,8 @@ export type V3ArchitectureModulePlacement = {
 export type V3ArchitecturePlacement = V3ArchitectureMassingPlacement | V3ArchitectureModulePlacement;
 
 export type BuildV3ArchitectureOptions = {
+  bz04Courtyard?: boolean;
+  bz04Gateway?: boolean;
   placements: readonly V3ArchitecturePlacement[];
   massingProfiles: readonly V3MassingProfile[];
   facadeProfiles: readonly V3FacadeProfile[];
@@ -7795,9 +7797,9 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         backingOwnerByMassing: new Map<string, string>(),
       };
   pushElevationFoundations(options.traversalSurfaces, instances);
-  pushRugGateCrownBackdrop(options.zones, options.placements, instances);
+  if (!options.bz04Gateway) pushRugGateCrownBackdrop(options.zones, options.placements, instances);
   pushRugGateWestWallCoping(options.zones, options.placements, instances);
-  pushRugGateStructuralFinish(options.zones, options.placements, instances);
+  if (!options.bz04Gateway) pushRugGateStructuralFinish(options.zones, options.placements, instances);
   pushCoreBoundaryFacadeGrammar(
     options.segments,
     options.zones,
@@ -7810,6 +7812,7 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   for (const placement of [...options.placements].sort((left, right) => left.id.localeCompare(right.id))) {
     if (ids.has(placement.id)) fail(`duplicate placement id '${placement.id}'`);
     ids.add(placement.id);
+    if (options.bz04Courtyard && placement.zoneId === "SPAWN_B_COURTYARD") continue;
     if (placement.kind === "massing") {
       requirePbrMassingSlots("massing", placement.id, placement.materialSlots);
       if (!massingProfiles.has(placement.massingProfileId)) {

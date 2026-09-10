@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 link south west facade-centered upper openings · LINK_SOUTH_WEST · Roof and enclosure axonometric</text>
+<text class="sub" x="48" y="76">MEASURED MASSING · solid envelopes and roof levels · finish details are in the elevations</text><rect class="panel" x="48" y="105" width="1500" height="930" rx="8"/>
+<polygon points="318.31,790.21 511.75,737.98 511.75,475.13 318.31,527.36" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="318.31,790.21 299.82,782.53 299.82,519.68 318.31,527.36" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="318.31,527.36 511.75,475.13 493.26,467.45 299.82,519.68" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="405.8" y="497.4" text-anchor="middle">P2</text>
+<polygon points="113.49,845.51 318.31,790.21 318.31,469.89 113.49,525.20" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="113.49,845.51 95.00,837.83 95.00,517.51 113.49,525.20" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="113.49,525.20 318.31,469.89 299.82,462.21 95.00,517.51" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="206.7" y="493.7" text-anchor="middle">P1</text>
+<polygon points="538.78,870.09 715.15,822.47 715.15,217.68 538.78,265.30" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="538.78,870.09 520.29,862.41 520.29,257.62 538.78,265.30" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="538.78,265.30 715.15,217.68 696.66,210.00 520.29,257.62" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="617.7" y="237.7" text-anchor="middle">P4</text>
+<polygon points="316.89,930.00 538.78,870.09 538.78,607.24 316.89,667.15" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="316.89,930.00 298.40,922.32 298.40,659.47 316.89,667.15" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="316.89,667.15 538.78,607.24 520.29,599.56 298.40,659.47" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="418.6" y="633.4" text-anchor="middle">P3</text>
+<polygon points="269.95,930.00 298.40,922.32 298.40,659.47 269.95,667.15" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="269.95,930.00 195.99,899.28 195.99,636.42 269.95,667.15" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="269.95,667.15 298.40,659.47 224.44,628.74 195.99,636.42" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="247.2" y="647.9" text-anchor="middle">P5</text>
+<text class="label" x="1050" y="170">NUMERIC MASSING KEY</text>
+<text class="label" x="1050" y="227">P1: lsw-n</text><text class="tiny" x="1050" y="240">wall 4.9 · cap 5.63</text>
+<text class="label" x="1050" y="259">P2: lsw-n-part-2</text><text class="tiny" x="1050" y="272">wall 4.5 · cap 4.62</text>
+<text class="label" x="1050" y="291">P3: lsw-s</text><text class="tiny" x="1050" y="304">wall 4.5 · cap 4.62</text>
+<text class="label" x="1050" y="323">P4: lsw-s-part-2</text><text class="tiny" x="1050" y="336">wall 9.9 · cap 10.63</text>
+<text class="label" x="1050" y="355">P5: lsw-w</text><text class="tiny" x="1050" y="368">wall 4.5 · cap 4.62</text>
+<text class="tiny" x="95" y="995">Footprint overlaps use the shared roof coordination schedule; no duplicate slabs or buried faces.</text>
+</svg>

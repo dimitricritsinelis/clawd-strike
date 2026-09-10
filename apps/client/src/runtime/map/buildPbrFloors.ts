@@ -20,13 +20,20 @@ const INCLUDED_ZONE_TYPES = new Set([
 
 export type FloorMaterialId =
   | "large_sandstone_blocks_01"
+  | "bz04_large_sandstone_blocks_01"
   | "spice_laid_stone_01"
+  | "bz04_spice_laid_stone_01"
   | "grey_tiles"
   | "cobblestone_pavement"
+  | "bz04_cobblestone_pavement"
   | "cobblestone_color"
+  | "bz04_cobblestone_color"
   | "red_sandstone_pavement"
+  | "bz04_red_sandstone_pavement"
   | "patterned_cobblestone"
+  | "bz04_patterned_cobblestone"
   | "court_limestone_flags_01"
+  | "bz04_court_limestone_flags_01"
   | "sand_01";
 
 const UV_QUARTER_TURNS: 0 | 1 | 2 | 3 = 0;
@@ -115,13 +122,20 @@ type BuildPbrFloorsOptions = {
 
 const MATERIAL_ORDER: FloorMaterialId[] = [
   "large_sandstone_blocks_01",
+  "bz04_large_sandstone_blocks_01",
   "spice_laid_stone_01",
+  "bz04_spice_laid_stone_01",
   "grey_tiles",
   "cobblestone_pavement",
+  "bz04_cobblestone_pavement",
   "cobblestone_color",
+  "bz04_cobblestone_color",
   "red_sandstone_pavement",
+  "bz04_red_sandstone_pavement",
   "patterned_cobblestone",
+  "bz04_patterned_cobblestone",
   "court_limestone_flags_01",
+  "bz04_court_limestone_flags_01",
   "sand_01",
 ];
 
@@ -129,6 +143,13 @@ const FLOOR_MACRO_SETTINGS: Record<
   FloorMaterialId,
   { colorAmplitude: number; roughnessAmplitude: number; frequency: number }
 > = {
+  "bz04_court_limestone_flags_01": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.042},
+  "bz04_red_sandstone_pavement": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.16},
+  "bz04_cobblestone_pavement": {"colorAmplitude": 0.04, "roughnessAmplitude": 0.03, "frequency": 0.04},
+  "bz04_cobblestone_color": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.075},
+  "bz04_patterned_cobblestone": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.055},
+  "bz04_spice_laid_stone_01": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.045},
+  "bz04_large_sandstone_blocks_01": {"colorAmplitude": 0.045, "roughnessAmplitude": 0.05, "frequency": 0.05},
   // The lane paving is the largest single surface in most review cameras, so it
   // needs variation far coarser than its 2.6 m tile or it resolves into even
   // noise. At this frequency the two octaves land near 20 m and 42 m, which
@@ -675,6 +696,8 @@ function appendV3TransitionBands(
       const shared = sharedEdgeBetween(a, b);
       if (!shared || !sharedEdgeHasMatchingElevation(shared, opts.floorTopY)) continue;
 
+      // BZ-04 paving meets its retained neighbour flush at the exact shared edge.
+      if (a.materialId.startsWith("bz04_") || b.materialId.startsWith("bz04_")) continue;
       const materialChanges = a.materialId !== b.materialId;
       const elevationChanges = isElevationJoin(shared, opts.floorTopY);
       if (!materialChanges && !elevationChanges) continue;
@@ -881,6 +904,29 @@ function createFloorMaterial(
     macroFrequency: macro.frequency,
     macroSeed: deriveSubSeed(opts.seed, `floor-macro:${materialId}`),
   });
+  if (materialId === "bz04_large_sandstone_blocks_01") {
+    // BZ-04 courtyard floorTreatment. These exact receivers have no decal mesh
+    // and no height change. Door approaches and open connectors remain clean.
+    const previous = material.onBeforeCompile;
+    material.onBeforeCompile = (shader, renderer) => {
+      previous.call(material, shader, renderer);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>
+vec2 bz = vFloorWorldPos.xz;
+if (bz.x >= 17.0 && bz.x <= 39.0 && bz.y >= 78.0 && bz.y <= 92.0) {
+  if (bz.x >= 25.0 && bz.x <= 31.0) roughnessFactor = max(0.04, roughnessFactor - 0.025);
+  float edgeDistance = 100.0;
+  if (bz.y >= 81.0) edgeDistance = min(bz.x - 17.0, 39.0 - bz.x);
+  edgeDistance = min(edgeDistance, 92.0 - bz.y);
+  if (bz.x <= 21.0 || bz.x >= 34.0) edgeDistance = min(edgeDistance, bz.y - 78.0);
+  bool doorService = (bz.x >= 22.55000 && bz.x <= 23.65000 && bz.y >= 91.20000 && bz.y <= 92.00000) || (bz.x >= 26.97500 && bz.x <= 28.32500 && bz.y >= 91.20000 && bz.y <= 92.00000) || (bz.x >= 36.90000 && bz.x <= 38.10000 && bz.y >= 91.20000 && bz.y <= 92.00000) || (bz.y >= 82.75000 && bz.y <= 84.25000 && bz.x >= 38.20000 && bz.x <= 39.00000) || (bz.y >= 86.92500 && bz.y <= 88.07500 && bz.x >= 38.20000 && bz.x <= 39.00000) || (bz.y >= 82.95000 && bz.y <= 84.25000 && bz.x >= 17.00000 && bz.x <= 17.80000);
+  float edgeDust = doorService ? 0.0 : 0.06 * (1.0 - smoothstep(0.12, 0.18, edgeDistance));
+  diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.60,0.56,0.50), edgeDust);
+}
+`);
+    };
+    const cacheKey = material.customProgramCacheKey.bind(material);
+    material.customProgramCacheKey = () => cacheKey()+":bz04-b-floor-v1";
+  }
   return material;
 }
 

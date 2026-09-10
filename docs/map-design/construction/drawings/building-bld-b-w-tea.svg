@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1340" viewBox="0 0 2200 1340">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="2200" height="1340" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 b w tea facade composition · BLD_B_W_TEA · Structure</text>
+<text class="sub" x="48" y="76">UNTEXTURED STRUCTURE DRAWING · neutral clay/ink · dimensions in metres · composition review only</text>
+<rect class="panel" x="48" y="105" width="1080" height="1165" rx="8"/><rect class="panel" x="1160" y="105" width="990" height="1165" rx="8"/>
+<text id="principal-elevation" class="title" x="80" y="158">PRINCIPAL WEST ELEVATION</text><text id="transverse-section" class="title" x="1210" y="158">TRANSVERSE SECTION</text>
+<text class="sub" x="80" y="184">Tea house and guest rooms</text><text class="sub" x="1210" y="184">Through the shop counter, support and rear working strip</text>
+<rect x="150.00" y="396.31" width="447.41" height="763.69" fill="#ddd7ca" stroke="#24353a" stroke-width="2"/>
+<rect x="150.00" y="340.00" width="447.41" height="56.31" fill="#d1cabb" stroke="#687477"/>
+<line x1="150.00" y1="382.43" x2="597.41" y2="382.43" stroke="#b8b5ad" stroke-width="3"/>
+<line x1="150.00" y1="347.71" x2="597.41" y2="347.71" stroke="#cbc6ba" stroke-width="3"/>
+<line x1="150.00" y1="340.00" x2="597.41" y2="340.00" stroke="#565d5d" stroke-width="3"/>
+<defs><clipPath id="b-clip-B_W_SEAT"><path d="M 192.43 1160.00 L 192.43 951.72 L 331.28 951.72 L 331.28 1160.00 Z"/></clipPath></defs>
+<path d="M 192.43 1160.00 L 192.43 951.72 L 331.28 951.72 L 331.28 1160.00 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 192.43 1160.00 L 192.43 951.72 L 331.28 951.72 L 331.28 1160.00 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-B_W_SEAT)">
+</g>
+<path d="M 192.43 1160.00 L 192.43 951.72 L 331.28 951.72 L 331.28 1160.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-B_W_TEA_SHOP"><path d="M 385.28 1160.00 L 385.28 947.86 L 547.27 947.86 L 547.27 1160.00 Z"/></clipPath></defs>
+<path d="M 385.28 1160.00 L 385.28 947.86 L 547.27 947.86 L 547.27 1160.00 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 385.28 1160.00 L 385.28 947.86 L 547.27 947.86 L 547.27 1160.00 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-B_W_TEA_SHOP)">
+</g>
+<path d="M 385.28 1160.00 L 385.28 947.86 L 547.27 947.86 L 547.27 1160.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-B_W_TEA-L2-B1"><path d="M 296.57 531.31 L 296.57 469.60 L 450.85 469.60 L 450.85 531.31 Z"/></clipPath></defs>
+<path d="M 296.57 531.31 L 296.57 469.60 L 450.85 469.60 L 450.85 531.31 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 296.57 531.31 L 296.57 469.60 L 450.85 469.60 L 450.85 531.31 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-B_W_TEA-L2-B1)">
+<path d="M 300.42 525.14 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 518.97 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 512.79 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 506.62 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 500.45 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 494.28 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 488.11 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 481.94 H 446.99" stroke="#bba786" stroke-width="1"/>
+<path d="M 300.42 475.77 H 446.99" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 296.57 531.31 L 296.57 469.60 L 450.85 469.60 L 450.85 531.31 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-B_W_TEA_GALLERY"><path d="M 192.43 878.44 L 192.43 755.71 Q 223.10 725.86 247.20 712.59 Q 271.30 725.86 301.97 755.71 L 301.97 878.44 Z M 318.94 878.44 L 318.94 755.71 Q 349.61 725.86 373.71 712.59 Q 397.81 725.86 428.48 755.71 L 428.48 878.44 Z M 445.45 878.44 L 445.45 755.71 Q 476.12 725.86 500.22 712.59 Q 524.31 725.86 554.99 755.71 L 554.99 878.44 Z"/></clipPath></defs>
+<path d="M 192.43 878.44 L 192.43 755.71 Q 223.10 725.86 247.20 712.59 Q 271.30 725.86 301.97 755.71 L 301.97 878.44 Z M 318.94 878.44 L 318.94 755.71 Q 349.61 725.86 373.71 712.59 Q 397.81 725.86 428.48 755.71 L 428.48 878.44 Z M 445.45 878.44 L 445.45 755.71 Q 476.12 725.86 500.22 712.59 Q 524.31 725.86 554.99 755.71 L 554.99 878.44 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 192.43 878.44 L 192.43 755.71 Q 223.10 725.86 247.20 712.59 Q 271.30 725.86 301.97 755.71 L 301.97 878.44 Z M 318.94 878.44 L 318.94 755.71 Q 349.61 725.86 373.71 712.59 Q 397.81 725.86 428.48 755.71 L 428.48 878.44 Z M 445.45 878.44 L 445.45 755.71 Q 476.12 725.86 500.22 712.59 Q 524.31 725.86 554.99 755.71 L 554.99 878.44 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-B_W_TEA_GALLERY)">
+<rect x="203.42" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="215.76" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="228.10" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="240.45" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="252.79" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="265.13" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="277.47" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="289.82" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="302.16" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="314.50" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="326.84" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="339.19" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="351.53" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="363.87" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="376.21" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="388.56" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="400.90" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="413.24" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="425.58" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="437.93" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="450.27" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="462.61" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="474.95" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="487.30" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="499.64" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="511.98" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="524.32" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="536.67" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+<rect x="549.01" y="712.59" width="2.70" height="165.85" fill="#b9a485"/>
+</g>
+<path d="M 192.43 878.44 L 192.43 755.71 Q 223.10 725.86 247.20 712.59 Q 271.30 725.86 301.97 755.71 L 301.97 878.44 Z M 318.94 878.44 L 318.94 755.71 Q 349.61 725.86 373.71 712.59 Q 397.81 725.86 428.48 755.71 L 428.48 878.44 Z M 445.45 878.44 L 445.45 755.71 Q 476.12 725.86 500.22 712.59 Q 524.31 725.86 554.99 755.71 L 554.99 878.44 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<rect x="183.17" y="878.44" width="381.07" height="15.43" fill="#8f8d85" stroke="#66594a" stroke-width="1"/>
+<line x1="150.00" y1="1160.00" x2="597.41" y2="1160.00" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="607.41" y="1164.00">L floor 0 / slab 3.3</text>
+<text class="tiny" x="607.41" y="1041.20">trade/entry</text>
+<line x1="150.00" y1="905.44" x2="597.41" y2="905.44" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="607.41" y="909.44">L1 floor 3.3 / slab 6.6</text>
+<text class="tiny" x="607.41" y="786.64">family rooms</text>
+<line x1="150.00" y1="650.87" x2="597.41" y2="650.87" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="607.41" y="654.87">L2 floor 6.6 / slab 9.9</text>
+<text class="tiny" x="607.41" y="532.08">family or dry-stock roo…</text>
+<line x1="261.85" y1="1160.00" x2="261.85" y2="922.41" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="261.85" y="1175.00" text-anchor="middle">87.65</text>
+<line x1="466.27" y1="1160.00" x2="466.27" y2="922.41" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="466.27" y="1175.00" text-anchor="middle">90.3</text>
+<line x1="373.71" y1="905.44" x2="373.71" y2="667.85" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="373.71" y="920.44" text-anchor="middle">89.1</text>
+<line x1="373.71" y1="650.87" x2="373.71" y2="413.28" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="373.71" y="665.87" text-anchor="middle">89.1</text>
+<line x1="150.00" y1="1214.00" x2="597.41" y2="1214.00" stroke="#899294"/><text class="label" x="373.71" y="1231.00" text-anchor="middle">overall facade 5.8 m · lower dimensions are ground pier bays</text>
+<line x1="150.00" y1="1244.00" x2="373.71" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="261.85" y="1258.00" text-anchor="middle">2.9</text>
+<line x1="373.71" y1="1244.00" x2="597.41" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="485.56" y="1258.00" text-anchor="middle">2.9</text>
+<rect x="1305.00" y="396.31" width="277.70" height="763.69" fill="#e5e1d8" stroke="#24353a" stroke-width="2"/>
+<rect x="1305.00" y="382.43" width="277.70" height="13.89" fill="#818987"/>
+<rect x="1305.00" y="340.00" width="12.34" height="42.43" fill="#a5a398" stroke="#687477"/>
+<rect x="1570.36" y="340.00" width="12.34" height="42.43" fill="#a5a398" stroke="#687477"/>
+<rect x="1312.71" y="922.41" width="262.28" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1443.85" y="1041.20" text-anchor="middle">tea serving counter</text>
+<rect x="1312.71" y="667.85" width="262.28" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1443.85" y="786.64" text-anchor="middle">shared screened sitti…</text>
+<rect x="1312.71" y="413.28" width="262.28" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1443.85" y="532.08" text-anchor="middle">Gallery is the useful…</text>
+<rect x="1305.00" y="905.44" width="277.70" height="16.97" fill="#818987"/>
+<rect x="1305.00" y="650.87" width="277.70" height="16.97" fill="#818987"/>
+<rect x="1305.00" y="396.31" width="277.70" height="16.97" fill="#818987"/>
+<path d="M 1582.70 1160.00 L 1436.14 1160.00 L 1436.14 947.86 L 1582.70 947.86" fill="none" stroke="#b44b42" stroke-width="3"/>
+<rect x="1436.14" y="947.86" width="124.97" height="209.05" fill="#f4f1e9" stroke="#667477" stroke-width="1.3"/>
+<rect x="1561.11" y="947.86" width="21.60" height="209.05" fill="#f4f1e9" stroke="#475255" stroke-width="1.5" stroke-dasharray="5 3"/>
+<text class="tiny" x="1498.62" y="1129.92" text-anchor="middle">rectangular chamber behind front arch barrel</text>
+<text class="tiny" x="1571.90" y="940.86" text-anchor="middle">0.28 m barrel</text>
+<rect x="1540.28" y="1087.49" width="54.00" height="69.43" fill="#9b8c77" stroke="#4b5352"/>
+<rect x="1459.28" y="994.92" width="77.14" height="161.99" fill="none" stroke="#738f91" stroke-dasharray="5 4"/><text class="tiny" x="1497.85" y="1072.06" text-anchor="middle">1.00 m working strip</text>
+<rect x="1466.99" y="994.92" width="61.71" height="161.99" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="5 3"/>
+<text class="tiny" x="1497.85" y="988.92" text-anchor="middle">side-door projected · clear 0.8 m · see plan</text>
+<line x1="1305.00" y1="1190.00" x2="1582.70" y2="1190.00" stroke="#899294"/><text class="label" x="1443.85" y="1207.00" text-anchor="middle">enclosure depth 3.6 m</text>
+<text class="label" x="1230" y="1238">section opening 2.1 W × 2.75 H × 1.9 recess</text>
+<text class="tiny" x="1230" y="1256">opening support/return depth 1.9 m · closure: closed shop back and fixed counter</text>
+<text class="tiny" x="1210" y="232">Upper recesses show projected sill/head envelopes; exact curved profiles follow the instance opening schedule.</text>
+<rect x="1517.14" y="712.59" width="65.57" height="165.85" fill="#d0c7b4" stroke="#8f5548" stroke-width="2"/>
+<rect x="1513.28" y="878.44" width="78.68" height="15.43" fill="#a99b84" stroke="#475255"/>
+<text id="structural-grid" class="tiny" x="80" y="1242">Bay edges: 86.2, 89.1, 92</text>
+<text class="tiny" x="1210" y="210">Roof: One closed structural roof with a perimeter parapet; no detached roof boxes</text>
+</svg>

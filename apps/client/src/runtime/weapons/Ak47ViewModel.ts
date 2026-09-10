@@ -208,6 +208,7 @@ export class Ak47ViewModel {
   private loadPromise: Promise<void> | null = null;
   private disposed = false;
   private muzzleFlashTimerS = 0;
+  private shotPending = false;
   private muzzleFlashDurationS = MUZZLE_FLASH_DURATION_S;
   private muzzleFlashBaseScale = 1;
   private muzzleFlashLightPeak = MUZZLE_POINT_LIGHT_INTENSITY_MIN;
@@ -312,6 +313,7 @@ export class Ak47ViewModel {
     this.applyMuzzleFlashBasePosition();
     this.muzzleFlashDurationS = this.vmDebug ? MUZZLE_FLASH_DEBUG_DURATION_S : MUZZLE_FLASH_DURATION_S;
     this.muzzleFlashTimerS = this.muzzleFlashDurationS;
+    this.shotPending = true;
     this.muzzleFlash.visible = true;
 
     this.muzzleFlashBaseScale = 0.9 + this.nextMuzzleRand() * 0.35;
@@ -541,7 +543,10 @@ export class Ak47ViewModel {
 
   private updateShotFx(deltaSeconds: number): void {
     if (this.muzzleFlashTimerS > 0) {
-      this.muzzleFlashTimerS = Math.max(0, this.muzzleFlashTimerS - Math.max(0, deltaSeconds));
+      // A new shot must reach the renderer before its flash starts aging.
+      if (!this.shotPending) {
+        this.muzzleFlashTimerS = Math.max(0, this.muzzleFlashTimerS - Math.max(0, deltaSeconds));
+      }
       const lifeT = this.muzzleFlashDurationS > 0 ? this.muzzleFlashTimerS / this.muzzleFlashDurationS : 0;
 
       this.muzzleFlash.visible = lifeT > 0;
@@ -556,6 +561,7 @@ export class Ak47ViewModel {
       this.muzzleFlashLight.intensity = 0;
     }
 
+    this.shotPending = false;
     const dt = Math.max(0, Math.min(0.05, deltaSeconds));
 
     stepSpring(this.kickBack, 0, VIEWMODEL_KICK_SPRING_STIFFNESS, VIEWMODEL_KICK_SPRING_DAMPING, deltaSeconds);

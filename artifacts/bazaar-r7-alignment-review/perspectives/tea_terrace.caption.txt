@@ -1,0 +1,2 @@
+TEA_TERRACE | TEA_TERRACE-east-tt-e_tt-rug-return-s1-base | design XYZ (11.350, 61.000, 3.100) m | yaw 270.00°, pitch 3.74°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

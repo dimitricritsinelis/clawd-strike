@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 b n potter facade composition · BLD_B_N_POTTER · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="213.79" y="452.62" width="602.43" height="313.59" fill="#e6e0d1"/>
+<line x1="213.79" y1="766.21" x2="213.79" y2="452.62" stroke="#344548" stroke-width="2"/>
+<line x1="816.21" y1="766.21" x2="816.21" y2="452.62" stroke="#344548" stroke-width="2"/>
+<line x1="213.79" y1="766.21" x2="816.21" y2="766.21" stroke="#344548" stroke-width="2"/>
+<line x1="213.79" y1="452.62" x2="816.21" y2="452.62" stroke="#344548" stroke-width="2"/>
+<rect x="222.04" y="460.87" width="185.68" height="297.09" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="314.88" y="609.42" text-anchor="middle">R1</text>
+<rect x="424.22" y="460.87" width="185.68" height="297.09" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="517.06" y="609.42" text-anchor="middle">R2</text>
+<rect x="626.41" y="460.87" width="181.55" height="297.09" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="717.18" y="609.42" text-anchor="middle">R3</text>
+<circle cx="314.88" cy="766.21" r="4" fill="#77715f"/>
+<circle cx="517.06" cy="766.21" r="4" fill="#77715f"/>
+<polygon points="606.19,642.43 609.49,642.43 609.49,708.45 606.19,708.45" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="717.18,766.21 717.18,729.08 717.18,675.44 644.98,675.44 570.70,675.44" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="606.19" y="636.43">side-door → B_N_POTTER_DOOR</text>
+<circle cx="717.18" cy="766.21" r="4" fill="#a14b3d"/>
+<text class="label" x="725.18" y="758.21">principal entrance</text>
+<rect x="429.59" y="609.42" width="174.95" height="179.90" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<rect x="269.49" y="766.21" width="90.78" height="24.76" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 17..24.3 · y 92..95.8 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Potter workshop and family …</text>
+<text class="label" x="1100" y="244">R1: potter workroom</text>
+<text class="label" x="1100" y="288">R2: pottery display and working counter</text>
+<text class="label" x="1100" y="332">R3: private stair entrance</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Potter workshop and family house</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Upper opening groups balance the complete</text>
+<text class="tiny" x="1100" y="714">visible facade or established composition.</text>
+<text class="tiny" x="1100" y="732">Ground doors and shop axes remain independent.</text>
+<text class="tiny" x="1100" y="750">Existing shared physical room identities and</text>
+<text class="tiny" x="1100" y="768">floor levels are retained.</text>
+<text class="tiny" x="1100" y="786">The workroom, shop and stair retain their three</text>
+<text class="tiny" x="1100" y="804">structural bays. Drying loft vents are high and</text>
+<text class="tiny" x="1100" y="822">small; no arch is added to announce each room.</text>
+</svg>

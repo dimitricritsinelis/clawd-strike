@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1025" viewBox="0 0 1900 1025">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="1025" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 spawn a courtyard facade-centered upper openings · SPAWN_A_COURTYARD · North elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="870" rx="8"/>
+<text class="title" x="76" y="157">NORTH elevation</text>
+<line class="axis" x1="108.00" y1="615.00" x2="943.32" y2="615.00"/>
+<line class="solid" x1="108.00" y1="615.00" x2="259.88" y2="615.00"/>
+<line class="solid" x1="715.50" y1="615.00" x2="943.32" y2="615.00"/>
+<rect x="259.88" y="602.00" width="455.63" height="13" fill="url(#zero-build)"/><text class="tiny" x="487.69" y="642.00" text-anchor="middle">ZERO BUILD</text>
+<polygon points="108.00,615.00 108.00,239.11 259.88,239.11 259.88,615.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,615.00 259.88,615.00 259.88,603.61 108.00,603.61" fill="#bda985" fill-opacity=".82"/>
+<polygon points="108.00,603.61 259.88,603.61 259.88,239.11 108.00,239.11" fill="#d8c4a0" fill-opacity=".82"/>
+<rect x="108.00" y="211.39" width="151.88" height="27.72" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="232.27" x2="259.88" y2="232.27" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="215.19" x2="259.88" y2="215.19" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="211.39" x2="259.88" y2="211.39" stroke="#8b7451" stroke-width="2"/>
+<rect x="108.00" y="239.11" width="151.88" height="6.08" fill="#c8b692" stroke="#8b7451" stroke-width=".8"/>
+<text class="parcel" x="183.94" y="201.39" text-anchor="middle">P1</text>
+<defs><clipPath id="b-clip-A_NW_RETURN-L1-W1"><path d="M 163.05 453.63 L 163.05 392.88 L 204.82 392.88 L 204.82 453.63 Z"/></clipPath></defs>
+<path d="M 163.05 453.63 L 163.05 392.88 L 204.82 392.88 L 204.82 453.63 Z" fill="#ddd6c4" stroke="#cbb99b" stroke-width="3.80"/>
+<path d="M 163.05 453.63 L 163.05 392.88 L 204.82 392.88 L 204.82 453.63 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_NW_RETURN-L1-W1)">
+<rect x="165.71" y="427.51" width="15.57" height="20.81" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="165.71" y="398.96" width="15.57" height="24.91" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="186.60" y="427.51" width="15.57" height="20.81" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="186.60" y="398.96" width="15.57" height="24.91" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="166.09" y="437.12" width="0.95" height="2.66" fill="#56534b"/>
+<rect x="166.09" y="406.74" width="0.95" height="2.66" fill="#56534b"/>
+<rect x="200.83" y="437.12" width="0.95" height="2.66" fill="#56534b"/>
+<rect x="200.83" y="406.74" width="0.95" height="2.66" fill="#56534b"/>
+</g>
+<path d="M 163.05 453.63 L 163.05 392.88 L 204.82 392.88 L 204.82 453.63 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="183.94" y1="378.88" x2="183.94" y2="461.63" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="183.94" y="387.88" text-anchor="middle" font-size="10" fill="#234452">O1.1</text>
+<defs><clipPath id="b-clip-A_NW_RETURN-L2-W1"><path d="M 160.21 283.53 L 160.21 258.85 L 207.67 258.85 L 207.67 283.53 Z"/></clipPath></defs>
+<path d="M 160.21 283.53 L 160.21 258.85 L 207.67 258.85 L 207.67 283.53 Z" fill="#ddd6c4" stroke="#cbb99b" stroke-width="3.80"/>
+<path d="M 160.21 283.53 L 160.21 258.85 L 207.67 258.85 L 207.67 283.53 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_NW_RETURN-L2-W1)">
+<path d="M 162.11 280.49 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 277.46 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 274.42 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 271.38 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 268.34 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 265.31 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 262.27 H 205.77" stroke="#bba786" stroke-width="1"/>
+<path d="M 162.11 259.23 H 205.77" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 160.21 283.53 L 160.21 258.85 L 207.67 258.85 L 207.67 283.53 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="183.94" y1="244.85" x2="183.94" y2="291.53" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="183.94" y="253.85" text-anchor="middle" font-size="10" fill="#234452">O1.2</text>
+<line x1="108.00" x2="259.88" y1="489.70" y2="489.70" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="111.00" y="485.70" font-size="10" fill="#234452">L1 +3.3 m</text>
+<line x1="108.00" x2="259.88" y1="364.41" y2="364.41" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="111.00" y="360.41" font-size="10" fill="#234452">L2 +6.6 m</text>
+<polygon points="715.50,615.00 715.50,227.72 943.32,227.72 943.32,615.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="715.50,615.00 943.32,615.00 943.32,603.61 715.50,603.61" fill="#bda985" fill-opacity=".82"/>
+<polygon points="715.50,603.61 943.32,603.61 943.32,227.72 715.50,227.72" fill="#bda985" fill-opacity=".82"/>
+<rect x="715.50" y="200.00" width="227.81" height="27.72" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="715.50" y1="220.88" x2="943.32" y2="220.88" stroke="#d4c39e" stroke-width="2"/>
+<line x1="715.50" y1="203.80" x2="943.32" y2="203.80" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="715.50" y1="200.00" x2="943.32" y2="200.00" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="829.41" y="190.00" text-anchor="middle">P2</text>
+<defs><clipPath id="b-clip-A_NE_RETURN-L1-W1"><path d="M 799.03 404.27 L 799.03 377.69 L 859.78 377.69 L 859.78 404.27 Z"/></clipPath></defs>
+<path d="M 799.03 404.27 L 799.03 377.69 L 859.78 377.69 L 859.78 404.27 Z" fill="#ddd6c4" stroke="#e4d7bf" stroke-width="3.80"/>
+<path d="M 799.03 404.27 L 799.03 377.69 L 859.78 377.69 L 859.78 404.27 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_NE_RETURN-L1-W1)">
+<path d="M 800.93 401.24 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 398.20 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 395.16 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 392.12 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 389.09 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 386.05 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 383.01 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 379.97 H 857.89" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 799.03 404.27 L 799.03 377.69 L 859.78 377.69 L 859.78 404.27 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="829.41" y1="363.69" x2="829.41" y2="412.27" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="829.41" y="372.69" text-anchor="middle" font-size="10" fill="#234452">O2.3</text>
+<defs><clipPath id="b-clip-A_NE_RETURN-L2-W1"><path d="M 799.03 275.18 L 799.03 248.60 L 859.78 248.60 L 859.78 275.18 Z"/></clipPath></defs>
+<path d="M 799.03 275.18 L 799.03 248.60 L 859.78 248.60 L 859.78 275.18 Z" fill="#ddd6c4" stroke="#e4d7bf" stroke-width="3.80"/>
+<path d="M 799.03 275.18 L 799.03 248.60 L 859.78 248.60 L 859.78 275.18 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_NE_RETURN-L2-W1)">
+<path d="M 800.93 272.14 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 269.10 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 266.07 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 263.03 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 259.99 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 256.95 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 253.92 H 857.89" stroke="#bba786" stroke-width="1"/>
+<path d="M 800.93 250.88 H 857.89" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 799.03 275.18 L 799.03 248.60 L 859.78 248.60 L 859.78 275.18 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="829.41" y1="234.60" x2="829.41" y2="283.18" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="829.41" y="243.60" text-anchor="middle" font-size="10" fill="#234452">O2.4</text>
+<line x1="715.50" x2="943.32" y1="485.91" y2="485.91" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="718.50" y="481.91" font-size="10" fill="#234452">L1 +3.4 m</text>
+<line x1="715.50" x2="943.32" y1="356.81" y2="356.81" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="718.50" y="352.81" font-size="10" fill="#234452">L2 +6.8 m</text>
+<text class="tiny" x="108" y="657">along 17..39 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<text class="tiny" x="1220" y="213.00">P1 A_NW_RETURN</text>
+<text class="tiny" x="1220" y="227.00">slab 9.9..10.08</text>
+<text class="tiny" x="1220" y="241.00">parapet 10.53 · cap 10.63</text>
+<text class="tiny" x="1220" y="263.00">P2 A_NE_RETURN</text>
+<text class="tiny" x="1220" y="277.00">slab 10.2..10.38</text>
+<text class="tiny" x="1220" y="291.00">parapet 10.83 · cap 10.93</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 297.84 M 297.84 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="305.84" y="674">5 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<path d="M 76 745 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="760">O1.1</text><text font-size="12" x="76" y="777">A_NW_RETURN-L1-W1</text>
+<text class="tiny" x="458" y="760">L1 / 19</text>
+<text class="tiny" x="648" y="760">1.1 / 4.25 / 5.85</text>
+<text class="tiny" x="903" y="760">closed double paneled timber shutters</text>
+<path d="M 76 800 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="815">O1.2</text><text font-size="12" x="76" y="832">A_NW_RETURN-L2-W1</text>
+<text class="tiny" x="458" y="815">L2 / 19</text>
+<text class="tiny" x="648" y="815">1.25 / 8.73 / 9.38</text>
+<text class="tiny" x="903" y="815">closed timber louver</text>
+<path d="M 76 855 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="870">O2.3</text><text font-size="12" x="76" y="887">A_NE_RETURN-L1-W1</text>
+<text class="tiny" x="458" y="870">L1 / 36</text>
+<text class="tiny" x="648" y="870">1.6 / 5.55 / 6.25</text>
+<text class="tiny" x="903" y="870">closed timber louver</text>
+<path d="M 76 910 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="925">O2.4</text><text font-size="12" x="76" y="942">A_NE_RETURN-L2-W1</text>
+<text class="tiny" x="458" y="925">L2 / 36</text>
+<text class="tiny" x="648" y="925">1.6 / 8.95 / 9.65</text>
+<text class="tiny" x="903" y="925">closed timber louver</text>
+</svg>

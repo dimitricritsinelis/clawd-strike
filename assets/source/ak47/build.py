@@ -1,9 +1,10 @@
-"""Export the editable AK idle assembly and install its local runtime asset.
+"""Export the authored AK assembly and install its local runtime asset.
 
 Run from the repository:
   Blender --background --python-exit-code 1 --python assets/source/ak47/build.py
 
-Edit ak47.blend in Pose Mode. Its Idle NLA track owns the left-hand pose.
+reload.py authors the selected grip from left-hand-case04.blend into ak47.blend.
+The Idle NLA track retains the original ready pose.
 This exporter does not regenerate anatomy, solve the grip, or author reloads.
 """
 from pathlib import Path
@@ -141,12 +142,16 @@ manifest = {
     'reload': {
         'source': 'repo://assets/source/ak47/reload.py',
         'sourceMd5': md5(SOURCE / 'reload.py'),
+        'selectedCase': 'case-04',
+        'selectedGripSource': 'repo://assets/source/ak47/left-hand-case04.blend',
+        'selectedGripSourceMd5': md5(SOURCE / 'left-hand-case04.blend'),
         'durationSeconds': 1.225,
         'contactFrames': [33, 119],
         'magazineMotion': 'Existing magazine path and keyframes preserved',
         'handMotion': 'Release fore-end, approach from below, wrap the magazine, follow its motion, release and return to approved idle',
         'gripLayout': 'Wrist below the magazine, palm cupping its lower broad face, four fingers rising around the curved front edge, thumb wrapping around the rear corner onto the far broad face',
-        'thumbMotion': 'Thumb closes onto the far broad face with three measured outer padding points and full glove/padding clearance; pad normal follows the contacted surface; relaxed opening and idle fore-end contact preserved',
+        'thumbMotion': 'Selected Case 04 pose retained; CMC opens toward neutral, MCP/IP use the measured broad-pulp flex axes, and the original idle pose is restored',
+        'contactValidation': 'User-approved visual pose; known static contact and close-view trim limitations are documented in docs/reload_animation.md',
         'contactShading': 'Idle occlusion fades during hand travel; live self-shadows follow the reload',
     },
     'files': [{'file': export.name, 'md5': md5(export)}],

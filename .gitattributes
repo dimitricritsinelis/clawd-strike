@@ -6,3 +6,8 @@ apps/client/public/maps/** linguist-generated=true
 docs/map-design/specs/*.json text eol=lf
 docs/map-design/shots.json text eol=lf
 apps/client/public/maps/** text eol=lf
+
+# Keep approved drawing packages byte-identical; they are not mergeable text.
+*.pdf binary
+assets/source/ak47/hand-anatomy-study.blend filter=lfs diff=lfs merge=lfs -text
+assets/source/ak47/left-hand-selected-grip.blend filter=lfs diff=lfs merge=lfs -text

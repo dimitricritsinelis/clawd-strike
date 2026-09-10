@@ -1,0 +1,2 @@
+DYERS_ALLEY | DYERS_ALLEY-east-DA_E_WORK-s1-base | design XYZ (46.350, 14.800, 1.700) m | yaw 270.00°, pitch 4.30°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

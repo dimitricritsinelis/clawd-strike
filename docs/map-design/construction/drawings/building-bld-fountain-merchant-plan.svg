@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 fountain merchant facade composition · BLD_FOUNTAIN_MERCHANT · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="193.50" y="303.50" width="345.00" height="483.00" fill="#e6e0d1"/>
+<rect x="455.70" y="303.50" width="82.80" height="483.00" fill="#e6e0d1"/>
+<rect x="193.50" y="303.50" width="345.00" height="41.40" fill="#e6e0d1"/>
+<line x1="193.50" y1="786.50" x2="193.50" y2="344.90" stroke="#344548" stroke-width="2"/>
+<line x1="193.50" y1="786.50" x2="455.70" y2="786.50" stroke="#344548" stroke-width="2"/>
+<line x1="193.50" y1="344.90" x2="193.50" y2="303.50" stroke="#344548" stroke-width="2"/>
+<line x1="193.50" y1="303.50" x2="455.70" y2="303.50" stroke="#344548" stroke-width="2"/>
+<line x1="538.50" y1="786.50" x2="538.50" y2="344.90" stroke="#344548" stroke-width="2"/>
+<line x1="455.70" y1="786.50" x2="538.50" y2="786.50" stroke="#344548" stroke-width="2"/>
+<line x1="538.50" y1="344.90" x2="538.50" y2="303.50" stroke="#344548" stroke-width="2"/>
+<line x1="455.70" y1="303.50" x2="538.50" y2="303.50" stroke="#344548" stroke-width="2"/>
+<rect x="200.40" y="655.40" width="331.20" height="124.20" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="366.00" y="717.50" text-anchor="middle">R1</text>
+<rect x="200.40" y="310.40" width="151.80" height="331.20" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="276.30" y="476.00" text-anchor="middle">R2</text>
+<circle cx="193.50" cy="710.60" r="4" fill="#a14b3d"/>
+<text class="label" x="201.50" y="702.60">principal entrance</text>
+<circle cx="193.50" cy="503.60" r="4" fill="#77715f"/>
+<circle cx="538.50" cy="545.00" r="4" fill="#77715f"/>
+<polygon points="435.00,456.68 435.00,453.92 490.20,453.92 490.20,456.68" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="538.50,382.85 507.45,382.85 462.60,382.85 462.60,424.25 462.60,486.35" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="435.00" y="450.68">side-door → cs-ws-STAFF-DOOR</text>
+<circle cx="538.50" cy="382.85" r="4" fill="#77715f"/>
+<rect x="407.40" y="458.06" width="150.42" height="173.88" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 36..41 · y 32..39 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Merchant house and sheltere…</text>
+<text class="label" x="1100" y="244">R1: Entrance and stair circulation from the</text>
+<text class="label" x="1100" y="259">Fountain side</text>
+<text class="label" x="1100" y="288">R2: Shallow front loggia with its fixed</text>
+<text class="label" x="1100" y="303">screened recess</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Merchant house and sheltered loggia</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Upper opening groups balance the complete</text>
+<text class="tiny" x="1100" y="714">visible facade or established composition.</text>
+<text class="tiny" x="1100" y="732">Ground doors and shop axes remain independent.</text>
+<text class="tiny" x="1100" y="750">Existing shared physical room identities and</text>
+<text class="tiny" x="1100" y="768">floor levels are retained.</text>
+<text class="tiny" x="1100" y="786">Ground trade bays and staff stairs use</text>
+<text class="tiny" x="1100" y="804">different widths because they have different</text>
+<text class="tiny" x="1100" y="822">functions; residential principal elevations use</text>
+<text class="tiny" x="1100" y="840">a centered entrance. No free offsets or filler</text>
+<text class="tiny" x="1100" y="858">openings.</text>
+</svg>

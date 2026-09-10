@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="805" viewBox="0 0 1900 805">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="805" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 tea terrace facade-centered upper openings · TEA_TERRACE · West elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">WEST elevation</text>
+<line class="axis" x1="108.00" y1="546.81" x2="595.09" y2="546.81"/>
+<line class="solid" x1="108.00" y1="546.81" x2="595.09" y2="546.81"/>
+<polygon points="108.00,546.81 108.00,205.85 595.09,205.85 595.09,546.81" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,546.81 595.09,546.81 595.09,517.58 108.00,517.58" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="108.00,517.58 595.09,517.58 595.09,230.20 108.00,230.20" fill="#bda985" fill-opacity=".82"/>
+<polygon points="108.00,230.20 595.09,230.20 595.09,205.85 108.00,205.85" fill="#d9c9ae" fill-opacity=".82"/>
+<polygon points="108.00,546.81 595.09,546.81 595.09,517.58 108.00,517.58" fill="#bda985" fill-opacity=".52" stroke="#766345" stroke-width="1.2"/>
+<rect x="108.00" y="205.85" width="487.09" height="24.35" fill="#d9c7aa" fill-opacity=".62" stroke="#766345" stroke-width="1.2"/>
+<polygon points="108.00,546.81 108.00,205.85 115.79,205.85 115.79,546.81" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="343.75,546.81 343.75,205.85 359.34,205.85 359.34,546.81" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="587.30,546.81 587.30,205.85 595.09,205.85 595.09,546.81" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<rect x="108.00" y="200.00" width="487.09" height="5.85" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="200.00" x2="595.09" y2="200.00" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="200.00" x2="595.09" y2="200.00" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="200.00" x2="595.09" y2="200.00" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="351.54" y="190.00" text-anchor="middle">P1</text>
+<text class="tiny" x="108" y="657">along 56..66 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<text class="tiny" x="1220" y="213.00">P1 tt-w</text>
+<text class="tiny" x="1220" y="227.00">slab 8.4..8.52</text>
+<text class="tiny" x="1220" y="241.00">parapet 8.52 · cap 8.52</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 205.42 M 205.42 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="213.42" y="674">2 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +1.4 / +1.4 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+</svg>

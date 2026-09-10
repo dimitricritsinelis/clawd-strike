@@ -1,0 +1,31 @@
+{
+  "status": "RESEARCH CANDIDATES, NOT VISUAL APPROVAL",
+  "candidates": [
+    {
+      "assetId": "rough_linen",
+      "provider": "Poly Haven",
+      "url": "https://polyhaven.com/a/rough_linen",
+      "license": "CC0, confirmed on official asset page",
+      "nativeScale": "0.3 m tall (official page, rounded)",
+      "intendedTrialRole": "Fine cloth for tea linen/cushions if existing hessian remains visibly coarse.",
+      "sourceEvidence": "Official page identifies blue linen, fine woven crosshatch, matte surface, and supplies diffuse, normal, roughness and other PBR maps. This is provider description, not an inferred material type from its name.",
+      "calibration": "Blue source is not cream linen as-is. Trial existing bounded cloth paint formula on licensed maps; independently inspect normal pattern and any folds/seams at 1k/native scale. Do not enable anisotropy/transmission merely because supplied.",
+      "previewUrl": "https://cdn.polyhaven.com/asset_img/renders/rough_linen/primary_flat.png?height=110&quality=95&v=e0220d40",
+      "previewStatus": "Official preview link located, but visual inspection unavailable: web image open blocked and no CUA browser available.",
+      "status": "Candidate only; not downloaded, installed, rendered or approved."
+    },
+    {
+      "assetId": "rock_01",
+      "provider": "Poly Haven",
+      "url": "https://polyhaven.com/a/rock_01",
+      "license": "CC0, confirmed on official asset page",
+      "nativeScale": "1.5 m wide (official page)",
+      "intendedTrialRole": "Continuous mortar-free stone micro-surface on modeled monolithic trim if existing stone-face UV crops fail.",
+      "sourceEvidence": "Official page describes a solid weathered gray stone surface with fine grain, erosion streaks and some rusty speckles. It supplies diffuse, normal, roughness and height maps. This establishes a concrete source candidate, not dressed sandstone identity.",
+      "calibration": "Gray stone requires restrained warm calibration and reduced normal relief on sills. Check streaks/speckles and full repeat before adoption; reject if it reads as rough natural rock rather than dressed trim. Do not use displacement to change R5 geometry.",
+      "previewUrl": "https://cdn.polyhaven.com/asset_img/primary/rock_01.png?height=110&quality=95&v=7d245b68",
+      "previewStatus": "Official preview link located, but visual inspection unavailable: web image open blocked and no CUA browser available.",
+      "status": "Candidate only; not downloaded, installed, rendered or approved."
+    }
+  ]
+}

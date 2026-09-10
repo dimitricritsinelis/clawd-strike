@@ -1,0 +1,117 @@
+{
+  "stage": "Static review only; animation and runtime integration pending user approval",
+  "thumbRaiseMetres": 0.003,
+  "contactSide": "Near/left magazine face (positive Blender Y); earlier far/right-side request is unresolved",
+  "bodyNeutralMaxMirrorErrorM": 0.0,
+  "panels": {
+    "Dorsal reinforcement": {
+      "vertices": {
+        "minGapM": 0.0006883400455990341,
+        "penetratingSamples": 0,
+        "samples": 4433
+      },
+      "triangleCenters": {
+        "minGapM": 0.0006150224799057469,
+        "penetratingSamples": 0,
+        "samples": 8576
+      },
+      "weightMaxError": 3.725290298461914e-08,
+      "maxInfluences": 3,
+      "uvLayers": [
+        "UVMap",
+        "DetailUV"
+      ],
+      "materials": [
+        "Graphite suede reinforcement"
+      ]
+    },
+    "Index knuckle pad": {
+      "vertices": {
+        "minGapM": 1.7264436479536016e-05,
+        "penetratingSamples": 0,
+        "samples": 945
+      },
+      "triangleCenters": {
+        "minGapM": 0.00011542396648422937,
+        "penetratingSamples": 0,
+        "samples": 1760
+      },
+      "weightMaxError": 4.377216100692749e-08,
+      "maxInfluences": 3,
+      "uvLayers": [
+        "UVMap",
+        "DetailUV"
+      ],
+      "materials": [
+        "Graphite suede reinforcement"
+      ]
+    },
+    "Middle knuckle pad": {
+      "vertices": {
+        "minGapM": -0.0008670470488141291,
+        "penetratingSamples": 12,
+        "samples": 797
+      },
+      "triangleCenters": {
+        "minGapM": -0.0009656737856857944,
+        "penetratingSamples": 20,
+        "samples": 1472
+      },
+      "weightMaxError": 4.0745362639427185e-08,
+      "maxInfluences": 3,
+      "uvLayers": [
+        "UVMap",
+        "DetailUV"
+      ],
+      "materials": [
+        "Graphite suede reinforcement"
+      ]
+    },
+    "Ring knuckle pad": {
+      "vertices": {
+        "minGapM": 5.193019529059484e-05,
+        "penetratingSamples": 0,
+        "samples": 817
+      },
+      "triangleCenters": {
+        "minGapM": 0.0002119650712160137,
+        "penetratingSamples": 0,
+        "samples": 1504
+      },
+      "weightMaxError": 3.771856427192688e-08,
+      "maxInfluences": 3,
+      "uvLayers": [
+        "UVMap",
+        "DetailUV"
+      ],
+      "materials": [
+        "Graphite suede reinforcement"
+      ]
+    },
+    "Little knuckle pad": {
+      "vertices": {
+        "minGapM": 0.0007391322524199495,
+        "penetratingSamples": 0,
+        "samples": 1029
+      },
+      "triangleCenters": {
+        "minGapM": 0.000659649602312129,
+        "penetratingSamples": 0,
+        "samples": 1920
+      },
+      "weightMaxError": 3.888271749019623e-08,
+      "maxInfluences": 3,
+      "uvLayers": [
+        "UVMap",
+        "DetailUV"
+      ],
+      "materials": [
+        "Graphite suede reinforcement"
+      ]
+    }
+  },
+  "idempotentSecondCall": true,
+  "canonicalSourceUnchanged": true,
+  "canonicalSourceSHA256": "9acc1f46af78f2266c1516a5f7f2807169a61994dd0f29e56d8649e5e893fdbe",
+  "gloveClearanceStatus": "Four panels clear; middle knuckle pad retains approximately 0.97 mm overlap in the closed-finger crease."
+}

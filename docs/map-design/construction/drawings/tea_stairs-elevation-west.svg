@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="805" viewBox="0 0 1900 805">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="805" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 tea stairs facade-centered upper openings · TEA_STAIRS · West elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">WEST elevation</text>
+<polyline points="108.00,532.00 143.57,540.30 179.14,548.60 214.71,556.90 250.29,565.20 285.86,573.50 321.43,581.80 357.00,590.10 392.57,598.40 428.14,606.70 463.71,615.00" fill="none" stroke="#52676a" stroke-width="2"/>
+<line class="solid" x1="108.00" y1="532.00" x2="463.71" y2="615.00"/>
+<polygon points="108.00,532.00 108.00,265.24 463.71,265.24 463.71,615.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,532.00 463.71,615.00 463.71,579.43 108.00,496.43" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="108.00,496.43 463.71,579.43 463.71,294.88 108.00,294.88" fill="#bda985" fill-opacity=".82"/>
+<polygon points="108.00,294.88 463.71,294.88 463.71,265.24 108.00,265.24" fill="#d9c9ae" fill-opacity=".82"/>
+<polygon points="108.00,532.00 463.71,615.00 463.71,579.43 108.00,496.43" fill="#bda985" fill-opacity=".52" stroke="#766345" stroke-width="1.2"/>
+<rect x="108.00" y="265.24" width="355.71" height="29.64" fill="#d9c7aa" fill-opacity=".62" stroke="#766345" stroke-width="1.2"/>
+<polygon points="108.00,532.00 108.00,265.24 117.49,265.24 117.49,534.21" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="454.23,612.79 454.23,265.24 463.71,265.24 463.71,615.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<rect x="108.00" y="258.13" width="355.71" height="7.11" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="258.13" x2="463.71" y2="258.13" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="258.13" x2="463.71" y2="258.13" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="258.13" x2="463.71" y2="258.13" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="285.86" y="248.13" text-anchor="middle">P1</text>
+<polygon points="108.00,531.82 144.28,531.82 144.28,540.12 179.85,540.12 179.85,548.42 215.43,548.42 215.43,556.72 251.00,556.72 251.00,565.02 286.57,565.02 286.57,573.32 322.14,573.32 322.14,581.62 357.71,581.62 357.71,589.92 393.28,589.92 393.28,598.22 428.85,598.22 428.85,606.52 463.71,606.52 463.71,615.00 108.00,615.00" fill="#fbfaf5"/>
+<polyline points="108.00,531.82 144.28,531.82 144.28,540.12 179.85,540.12 179.85,548.42 215.43,548.42 215.43,556.72 251.00,556.72 251.00,565.02 286.57,565.02 286.57,573.32 322.14,573.32 322.14,581.62 357.71,581.62 357.71,589.92 393.28,589.92 393.28,598.22 428.85,598.22 428.85,606.52 463.71,606.52" fill="none" stroke="#52676a" stroke-width="1.4"/>
+<text class="tiny" x="108" y="657">along 66..72 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<text class="tiny" x="1220" y="213.00">P1 ts-w</text>
+<text class="tiny" x="1220" y="227.00">slab 5.9..6.02</text>
+<text class="tiny" x="1220" y="241.00">parapet 6.02 · cap 6.02</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 167.29 M 167.29 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="175.29" y="674">1 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +1.4 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+</svg>

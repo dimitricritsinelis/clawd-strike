@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 dyers alley facade-centered upper openings · DYERS_ALLEY · Roof and enclosure axonometric</text>
+<text class="sub" x="48" y="76">MEASURED MASSING · solid envelopes and roof levels · finish details are in the elevations</text><rect class="panel" x="48" y="105" width="1500" height="930" rx="8"/>
+<polygon points="539.60,472.96 656.11,441.50 656.11,259.67 539.60,291.13" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="539.60,472.96 420.02,423.29 420.02,241.46 539.60,291.13" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="539.60,291.13 656.11,259.67 536.53,210.00 420.02,241.46" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="538.1" y="250.6" text-anchor="middle">P3</text>
+<polygon points="667.15,525.94 783.67,494.48 783.67,312.66 667.15,344.12" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="667.15,525.94 539.60,472.96 539.60,291.13 667.15,344.12" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="667.15,344.12 783.67,312.66 656.11,259.67 539.60,291.13" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="661.6" y="301.9" text-anchor="middle">P2</text>
+<polygon points="294.50,593.91 404.89,564.11 404.89,320.96 294.50,350.76" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="294.50,593.91 95.00,511.04 95.00,267.89 294.50,350.76" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="294.50,350.76 404.89,320.96 205.38,238.09 95.00,267.89" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="249.9" y="294.4" text-anchor="middle">P6</text>
+<polygon points="858.48,605.42 975.00,573.96 975.00,392.13 858.48,423.59" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="858.48,605.42 667.15,525.94 667.15,344.12 858.48,423.59" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="858.48,423.59 975.00,392.13 783.67,312.66 667.15,344.12" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="821.1" y="368.1" text-anchor="middle">P1</text>
+<polygon points="473.68,668.34 584.06,638.53 584.06,401.51 473.68,431.32" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="473.68,668.34 294.50,593.91 294.50,356.89 473.68,431.32" fill="#c6a16c" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="473.68,431.32 584.06,401.51 404.89,327.09 294.50,356.89" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="439.3" y="379.2" text-anchor="middle">P5</text>
+<polygon points="655.81,668.34 870.44,610.38 870.44,468.73 655.81,526.68" fill="#b6a185" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="655.81,668.34 643.85,663.37 643.85,521.71 655.81,526.68" fill="#b6a185" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="655.81,526.68 870.44,468.73 858.48,463.76 643.85,521.71" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="757.1" y="495.2" text-anchor="middle">P4</text>
+<text class="label" x="1050" y="170">NUMERIC MASSING KEY</text>
+<text class="label" x="1050" y="227">P1: DA_E_WORK</text><text class="tiny" x="1050" y="240">wall 5.2 · cap 5.93</text>
+<text class="label" x="1050" y="259">P2: DA_E_SAMPLES</text><text class="tiny" x="1050" y="272">wall 5.2 · cap 5.93</text>
+<text class="label" x="1050" y="291">P3: DA_E_YARD</text><text class="tiny" x="1050" y="304">wall 5.2 · cap 5.93</text>
+<text class="label" x="1050" y="323">P4: da-s</text><text class="tiny" x="1050" y="336">wall 4.5 · cap 4.62</text>
+<text class="label" x="1050" y="355">P5: da-works</text><text class="tiny" x="1050" y="368">wall 7 · cap 7.73</text>
+<text class="label" x="1050" y="387">P6: da-house</text><text class="tiny" x="1050" y="400">wall 7.2 · cap 7.93</text>
+<text class="tiny" x="95" y="995">Footprint overlaps use the shared roof coordination schedule; no duplicate slabs or buried faces.</text>
+</svg>

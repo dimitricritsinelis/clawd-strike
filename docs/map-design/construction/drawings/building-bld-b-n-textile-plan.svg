@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 b n textile facade composition · BLD_B_N_TEXTILE · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="205.91" y="465.00" width="618.18" height="309.09" fill="#e6e0d1"/>
+<line x1="205.91" y1="774.09" x2="205.91" y2="465.00" stroke="#344548" stroke-width="2"/>
+<line x1="824.09" y1="774.09" x2="824.09" y2="465.00" stroke="#344548" stroke-width="2"/>
+<line x1="205.91" y1="774.09" x2="824.09" y2="774.09" stroke="#344548" stroke-width="2"/>
+<line x1="205.91" y1="465.00" x2="824.09" y2="465.00" stroke="#344548" stroke-width="2"/>
+<rect x="213.64" y="472.73" width="370.91" height="293.64" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="399.09" y="619.55" text-anchor="middle">R1</text>
+<rect x="600.00" y="472.73" width="216.36" height="293.64" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="708.18" y="619.55" text-anchor="middle">R2</text>
+<circle cx="399.09" cy="774.09" r="4" fill="#77715f"/>
+<polygon points="513.45,658.18 516.55,658.18 516.55,720.00 513.45,720.00" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="708.18,774.09 708.18,739.32 708.18,689.09 549.77,689.09 480.23,689.09" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="513.45" y="652.18">side-door → B_N_TEXTILE_DOOR</text>
+<circle cx="708.18" cy="774.09" r="4" fill="#a14b3d"/>
+<text class="label" x="716.18" y="766.09">principal entrance</text>
+<rect x="286.27" y="627.27" width="225.64" height="168.45" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 31..39 · y 92..96 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Textile store and packing r…</text>
+<text class="label" x="1100" y="244">R1: textile packing display</text>
+<text class="label" x="1100" y="288">R2: staff stair entrance</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Textile store and packing rooms</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Upper opening groups balance the complete</text>
+<text class="tiny" x="1100" y="714">visible facade or established composition.</text>
+<text class="tiny" x="1100" y="732">Ground doors and shop axes remain independent.</text>
+<text class="tiny" x="1100" y="750">Existing shared physical room identities and</text>
+<text class="tiny" x="1100" y="768">floor levels are retained.</text>
+<text class="tiny" x="1100" y="786">The large working room explains a wider</text>
+<text class="tiny" x="1100" y="804">opening. Simple shutters and a plain timber</text>
+<text class="tiny" x="1100" y="822">hood support the merchant house composition.</text>
+</svg>

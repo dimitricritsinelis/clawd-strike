@@ -1,0 +1,3324 @@
+{
+  "status": "PROPOSED EXACT ACCENT ASSIGNMENTS ONLY",
+  "precedence": "This exact per-instance schedule supersedes generic example teal/indigo targets in material-art-proposal.json. Preserve existing R5 joinery paint values; only the named Spice awning field is proposed to change color.",
+  "joineryAssignments": [
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "A_NW_RETURN",
+      "openingId": "A_NW_RETURN-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "A_NW_RETURN",
+      "openingId": "A_NW_RETURN-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_SPICE_EAST",
+      "parcelId": "A_NE_RETURN",
+      "openingId": "A_NE_RETURN-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_SPICE_EAST",
+      "parcelId": "A_NE_RETURN",
+      "openingId": "A_NE_RETURN-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DYEWORKS",
+      "parcelId": "A_E_DRYING",
+      "openingId": "A_E_DYE_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DYEWORKS",
+      "parcelId": "A_E_DRYING",
+      "openingId": "A_E_DRYING-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DYEWORKS",
+      "parcelId": "A_E_DRYING",
+      "openingId": "A_E_DRYING-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DYEWORKS",
+      "parcelId": "A_E_DRYING",
+      "openingId": "A_E_DRYING-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DYEWORKS",
+      "parcelId": "A_E_DRYING",
+      "openingId": "A_E_DRYING-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_WATCH",
+      "parcelId": "A_S_WATCH",
+      "openingId": "A_S_WATCH-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_WATCH",
+      "parcelId": "A_S_WATCH",
+      "openingId": "A_S_WATCH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_WATCH",
+      "parcelId": "A_S_WATCH",
+      "openingId": "A_S_WATCH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_GATE",
+      "parcelId": "A_S_GATE",
+      "openingId": "A_S_GATE-PRINCIPAL",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#8f775d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain ceremonial brown joinery; carving and civic opening composition provide distinction."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_GATE",
+      "parcelId": "A_S_GATE",
+      "openingId": "A_S_GATE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#8f775d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain ceremonial brown joinery; carving and civic opening composition provide distinction."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_GATE",
+      "parcelId": "A_S_GATE",
+      "openingId": "A_S_GATE-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#8f775d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain ceremonial brown joinery; carving and civic opening composition provide distinction."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_GATE",
+      "parcelId": "A_S_GATE",
+      "openingId": "A_S_GATE-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#8f775d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain ceremonial brown joinery; carving and civic opening composition provide distinction."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_GATE",
+      "parcelId": "A_S_GATE",
+      "openingId": "A_S_GATE-L2-W2",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#8f775d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain ceremonial brown joinery; carving and civic opening composition provide distinction."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_KEEPER",
+      "parcelId": "A_S_KEEPER",
+      "openingId": "A_S_KEEPER-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_KEEPER",
+      "parcelId": "A_S_KEEPER",
+      "openingId": "A_S_KEEPER-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_KEEPER",
+      "parcelId": "A_S_KEEPER",
+      "openingId": "A_S_KEEPER-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "parcelId": "A_W_SOUTH",
+      "openingId": "A_W_SOUTH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "parcelId": "A_W_SOUTH",
+      "openingId": "A_W_SOUTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "parcelId": "A_W_MID",
+      "openingId": "A_W_MID-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "parcelId": "A_W_MID",
+      "openingId": "A_W_MID-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "parcelId": "A_W_MID",
+      "openingId": "A_W_MID-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_EAST",
+      "parcelId": "S_E_SOUTH",
+      "openingId": "S_E_SOUTH-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_EAST",
+      "parcelId": "S_E_SOUTH",
+      "openingId": "S_E_SOUTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_EAST",
+      "parcelId": "S_E_SOUTH",
+      "openingId": "S_E_SOUTH-UPPER-SACK-HATCH",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_BULK",
+      "parcelId": "S_E_MID",
+      "openingId": "S_E_MID-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_BULK",
+      "parcelId": "S_E_MID",
+      "openingId": "S_E_MID-UPPER-SACK-HATCH",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "S_E_NORTH",
+      "openingId": "S_E_NORTH-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "S_E_NORTH",
+      "openingId": "S_E_NORTH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "S_E_NORTH",
+      "openingId": "S_E_NORTH-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "S_E_NORTH",
+      "openingId": "S_E_NORTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "S_E_NORTH",
+      "openingId": "S_E_NORTH-L2-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "S_W_SOUTH",
+      "openingId": "S_W_SHOP_1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "S_W_SOUTH",
+      "openingId": "S_W_SOUTH-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "S_W_SOUTH",
+      "openingId": "S_W_SOUTH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "S_W_SOUTH",
+      "openingId": "S_W_SOUTH-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_A_SPICE_WEST",
+      "parcelId": "S_W_SOUTH",
+      "openingId": "S_W_SOUTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_MID",
+      "parcelId": "S_W_MID",
+      "openingId": "S_W_SHOP_2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_MID",
+      "parcelId": "S_W_MID",
+      "openingId": "S_W_SHOP_3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_MID",
+      "parcelId": "S_W_MID",
+      "openingId": "S_W_MID-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_MID",
+      "parcelId": "S_W_MID",
+      "openingId": "S_W_MID-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "parcelId": "S_W_NORTH",
+      "openingId": "S_W_NORTH-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "parcelId": "S_W_NORTH",
+      "openingId": "S_W_NORTH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "parcelId": "S_W_NORTH",
+      "openingId": "S_W_NORTH-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "parcelId": "S_W_NORTH",
+      "openingId": "S_W_NORTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "parcelId": "S_W_NORTH",
+      "openingId": "S_W_NORTH-L2-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "F_NW",
+      "openingId": "F_NW-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "F_NW",
+      "openingId": "F_NW-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_LOGGIA-PRINCIPAL",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_ARCH",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_LOGGIA-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_LOGGIA-RECEPTION",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_LOGGIA-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "F_E_LOGGIA",
+      "openingId": "F_E_LOGGIA-L2-W2",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "parcelId": "F_E_HOUSE",
+      "openingId": "F_E_HOUSE-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "parcelId": "F_E_HOUSE",
+      "openingId": "F_E_HOUSE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "parcelId": "F_E_HOUSE",
+      "openingId": "F_E_HOUSE-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "F_SE",
+      "openingId": "F_SE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "parcelId": "F_SE",
+      "openingId": "F_SE-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "parcelId": "F_W_SERVICE",
+      "openingId": "F_W_SERVICE-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "parcelId": "F_W_SERVICE",
+      "openingId": "F_W_SERVICE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "parcelId": "F_W_SERVICE",
+      "openingId": "F_W_SERVICE-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "F_W_HALL",
+      "openingId": "F_W_HALL-PRINCIPAL",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "F_W_HALL",
+      "openingId": "F_W_HALL-HIGH-LIGHT",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "F_W_HALL",
+      "openingId": "F_W_HALL-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "F_W_HALL",
+      "openingId": "F_W_HALL-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_LOOM",
+      "openingId": "T_E_ARCH1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_LOOM",
+      "openingId": "T_E_LOOM-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_LOOM",
+      "openingId": "T_E_LOOM-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_LOOM",
+      "openingId": "T_E_LOOM-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_GALLERY",
+      "openingId": "T_E_ARCH2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_GALLERY",
+      "openingId": "T_E_GALLERY-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_GALLERY",
+      "openingId": "T_E_GALLERY-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_GALLERY",
+      "openingId": "T_E_GALLERY-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_CART",
+      "openingId": "T_E_ARCH3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_CART",
+      "openingId": "T_E_CART-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_CART",
+      "openingId": "T_E_CART-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "T_E_CART",
+      "openingId": "T_E_CART-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_LOOM",
+      "openingId": "T_W_ARCH1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_LOOM",
+      "openingId": "T_W_LOOM-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_LOOM",
+      "openingId": "T_W_LOOM-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_LOOM",
+      "openingId": "T_W_LOOM-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_DYER",
+      "openingId": "T_W_ARCH2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_DYER",
+      "openingId": "T_W_DYER-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_DYER",
+      "openingId": "T_W_DYER-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_DYER",
+      "openingId": "T_W_DYER-UPPER-SITTING",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_FOLDS",
+      "openingId": "T_W_ARCH3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_FOLDS",
+      "openingId": "T_W_FOLDS-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_FOLDS",
+      "openingId": "T_W_FOLDS-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "T_W_FOLDS",
+      "openingId": "T_W_FOLDS-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "R_E_SOUTH",
+      "openingId": "R_E_SOUTH-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_TEXTILE_EAST",
+      "parcelId": "R_E_SOUTH",
+      "openingId": "R_E_SOUTH-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "R_E_HOUSE",
+      "openingId": "R_E_HOUSE-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "R_E_HOUSE",
+      "openingId": "R_E_HOUSE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "R_E_HOUSE",
+      "openingId": "R_E_HOUSE-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "R_E_HOUSE",
+      "openingId": "R_E_HOUSE-COMMON-LOFT-VENT",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "R_S_CAP",
+      "openingId": "R_S_CAP-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "R_S_CAP",
+      "openingId": "R_S_CAP-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "R_W_MERCHANT",
+      "openingId": "R_W_SHOP",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "R_W_MERCHANT",
+      "openingId": "R_W_MERCHANT-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "R_W_MERCHANT",
+      "openingId": "R_W_MERCHANT-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "R_W_MERCHANT",
+      "openingId": "R_W_MERCHANT-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "RUG_GATE",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "R_W_MERCHANT",
+      "openingId": "R_W_MERCHANT-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER_WORK",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER_SHOP",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER_DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER-L1-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER-L1-B2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER-L1-B3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_POTTER",
+      "parcelId": "B_N_POTTER",
+      "openingId": "B_N_POTTER-COMMON-LOFT-VENT",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE_DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-ground-0",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-ground-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-L1-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-L1-B2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-L1-B3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-L2-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_HOUSE",
+      "parcelId": "B_N_HOUSE",
+      "openingId": "B_N_HOUSE-L2-B3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_TEXTILE",
+      "parcelId": "B_N_TEXTILE",
+      "openingId": "B_N_TEXTILE_SHOP",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_TEXTILE",
+      "parcelId": "B_N_TEXTILE",
+      "openingId": "B_N_TEXTILE_DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_TEXTILE",
+      "parcelId": "B_N_TEXTILE",
+      "openingId": "B_N_TEXTILE-L1-B3",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_TEXTILE",
+      "parcelId": "B_N_TEXTILE",
+      "openingId": "B_N_TEXTILE-L2-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_N_TEXTILE",
+      "parcelId": "B_N_TEXTILE",
+      "openingId": "B_N_TEXTILE_UPPER_SCREEN",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_STORE",
+      "parcelId": "B_E_STORE",
+      "openingId": "B_E_STORE-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_STORE",
+      "parcelId": "B_E_STORE",
+      "openingId": "B_E_STORE-L2-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_STORE",
+      "parcelId": "B_E_STORE",
+      "openingId": "B_E_STORE_LOADING",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACK_DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACK_SHOP",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACKER-L1-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACKER-L1-B2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACKER-L2-B1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_E_PACKER",
+      "parcelId": "B_E_PACKER",
+      "openingId": "B_E_PACKER-L2-B2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "B_S_EAST",
+      "openingId": "B_S_EAST-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "B_S_EAST",
+      "openingId": "B_S_EAST-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "parcelId": "B_S_EAST",
+      "openingId": "B_S_EAST-RETURN-LOFT-VENT",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-ground-0",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-ground-1",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-L1-B1",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-L1-B2",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-L2-B1",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_HOUSE",
+      "parcelId": "B_W_HOUSE",
+      "openingId": "B_W_HOUSE-L2-B2",
+      "sourceClosureMaterialId": "bz04_teal_timber_project_original",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_TEA",
+      "parcelId": "B_W_TEA",
+      "openingId": "B_W_SEAT",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_TEA",
+      "parcelId": "B_W_TEA",
+      "openingId": "B_W_TEA_SHOP",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_TEA",
+      "parcelId": "B_W_TEA",
+      "openingId": "B_W_TEA-L2-B1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "buildingId": "BLD_B_W_TEA",
+      "parcelId": "B_W_TEA",
+      "openingId": "B_W_TEA_GALLERY",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_COMPOUND",
+      "parcelId": "ss-e",
+      "openingId": "ss-e-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_COMPOUND",
+      "parcelId": "ss-e",
+      "openingId": "ss-e-CLERESTORY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_COMPOUND",
+      "parcelId": "ss-e",
+      "openingId": "ss-e-CLERESTORY-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_COMPOUND",
+      "parcelId": "ss-e",
+      "openingId": "ss-e-CLERESTORY-3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_WEST",
+      "parcelId": "ss-w",
+      "openingId": "ss-w-DELIVERY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_WEST",
+      "parcelId": "ss-w",
+      "openingId": "ss-w-DELIVERY-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_WEST",
+      "parcelId": "ss-w",
+      "openingId": "ss-w-HIGH-LIGHT-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "buildingId": "BLD_SPICE_SERVICE_WEST",
+      "parcelId": "ss-w",
+      "openingId": "ss-w-HIGH-LIGHT-3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "parcelId": "cc-es-part-2",
+      "openingId": "cc-es-part-2-F_W_SERVICE-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "parcelId": "cc-es-part-2",
+      "openingId": "cc-es-part-2-F_W_SERVICE-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "cc-en",
+      "openingId": "cc-en-F_W_HALL-HIGH-LIGHT",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "cc-en",
+      "openingId": "cc-en-F_W_HALL-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_MADRASA",
+      "parcelId": "cc-en",
+      "openingId": "cc-en-F_W_HALL-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_CARAVAN_STORES",
+      "parcelId": "cc-w",
+      "openingId": "CC_PACK_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_CARAVAN_STORES",
+      "parcelId": "cc-w",
+      "openingId": "cc-w-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_CARAVAN_STORES",
+      "parcelId": "cc-w",
+      "openingId": "cc-w-CLERESTORY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "buildingId": "BLD_CARAVAN_STORES",
+      "parcelId": "cc-w",
+      "openingId": "cc-w-CLERESTORY-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-DELIVERY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-GROUND-LIGHT-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-DELIVERY-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-GROUND-LIGHT-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-DELIVERY-3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-GROUND-LIGHT-3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "parcelId": "sn-w",
+      "openingId": "sn-w-L1-W5",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_RAMP",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tr-e",
+      "openingId": "tr-e-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_RAMP",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tr-e",
+      "openingId": "tr-e-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_RAMP",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tr-e",
+      "openingId": "tr-e-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tt-e",
+      "openingId": "tt-shop",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tt-e",
+      "openingId": "tt-e-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tt-e",
+      "openingId": "TT-SITTING-GALLERY",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tt-e",
+      "openingId": "tt-e-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "buildingId": "BLD_TEXTILE_WEST",
+      "parcelId": "tt-e",
+      "openingId": "tt-e-L2-W3",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_STAIRS",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "ts-e",
+      "openingId": "ts-e-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "TEA_STAIRS",
+      "buildingId": "BLD_RUG_MERCHANT",
+      "parcelId": "ts-e",
+      "openingId": "ts-e-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_WORK",
+      "openingId": "DA_E_WORK_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_WORK",
+      "openingId": "DA_E_WORK-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_WORK",
+      "openingId": "DA_E_WORK-CLERESTORY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_SAMPLES",
+      "openingId": "DA_E_SAMPLE_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_SAMPLES",
+      "openingId": "DA_E_SAMPLES-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_SAMPLES",
+      "openingId": "DA_E_SAMPLES-CLERESTORY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_YARD",
+      "openingId": "DA_E_YARD-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_EAST",
+      "parcelId": "DA_E_YARD",
+      "openingId": "DA_E_YARD-CLERESTORY-1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST",
+      "parcelId": "da-works",
+      "openingId": "da-works-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST",
+      "parcelId": "da-works",
+      "openingId": "da-works-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-GROUND-ROOM-0",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "parcelId": "da-house",
+      "openingId": "da-house-GROUND-ROOM-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_SOUK_EAST_STORAGE",
+      "parcelId": "cs-e",
+      "openingId": "COVERED_SOUK_EAST_GROUND_01",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_SOUK_EAST_STORAGE",
+      "parcelId": "cs-e",
+      "openingId": "COVERED_SOUK_EAST_GROUND_02",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_SOUK_EAST_STORAGE",
+      "parcelId": "cs-e",
+      "openingId": "COVERED_SOUK_EAST_GROUND_03",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_SOUK_EAST_STORAGE",
+      "parcelId": "cs-e",
+      "openingId": "cs-e-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "COVERED_SOUK_WEST_GROUND_01",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "cs-ws-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "cs-ws-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "cs-ws-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "cs-ws-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "parcelId": "cs-ws",
+      "openingId": "cs-ws-L2-W2",
+      "sourceClosureMaterialId": "ph_bz04_dark_wood",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "parcelId": "cs-wn",
+      "openingId": "cs-wn-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "parcelId": "cs-wn",
+      "openingId": "cs-wn-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-GROUND-ROOM-0",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "parcelId": "dd-e",
+      "openingId": "dd-e-GROUND-ROOM-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#66778c",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing Dogleg household indigo on its entrance, balcony door and room shutters; the dye-trade district gets a memorable domestic address."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "dd-w",
+      "openingId": "DD_WORKS_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "dd-w",
+      "openingId": "dd-w-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "dd-w",
+      "openingId": "dd-w-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "dd-w",
+      "openingId": "dd-w-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "dd-w",
+      "openingId": "dd-w-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-n",
+      "openingId": "nc-n-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-n",
+      "openingId": "nc-n-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-n",
+      "openingId": "nc-n-L2-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-L1-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-L2-W3",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-GROUND-ROOM-0",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "parcelId": "nc-eh",
+      "openingId": "nc-eh-GROUND-ROOM-2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#78978d",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain the existing complete household sage-teal family; this is its cool owner identity, not a new paint choice on each shutter."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-ey",
+      "openingId": "NC_DRY_RECESS",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-ey",
+      "openingId": "nc-ey-STAFF-DOOR",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-ey",
+      "openingId": "nc-ey-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-ey",
+      "openingId": "nc-ey-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "parcelId": "nc-ey",
+      "openingId": "nc-ey-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "nc-s",
+      "openingId": "nc-s-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "parcelId": "nc-s",
+      "openingId": "nc-s-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM",
+      "parcelId": "nc-ws",
+      "openingId": "nc-ws-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM",
+      "parcelId": "nc-ws",
+      "openingId": "nc-ws-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM",
+      "parcelId": "nc-ws",
+      "openingId": "nc-ws-L1-W2",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM_STORES",
+      "parcelId": "nc-wn",
+      "openingId": "nc-wn-ENTRANCE",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM_STORES",
+      "parcelId": "nc-wn",
+      "openingId": "nc-wn-L1-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "buildingId": "BLD_HAMMAM_STORES",
+      "parcelId": "nc-wn",
+      "openingId": "nc-wn-L2-W1",
+      "sourceClosureMaterialId": "ph_bz04_weathered_brown_planks",
+      "proposedPaintSrgb": "#9c8060",
+      "action": "retain exact R5 paint assignment",
+      "reason": "Retain shared warm timber; existing goods, owner wall and selected painted houses supply color."
+    }
+  ],
+  "shadeAssignments": [
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "fixtureId": "R4-SHADE-A_W_SEAT",
+      "buildingIds": [
+        "BLD_A_DOMESTIC_REAR"
+      ],
+      "receiverParcelIds": [
+        "A_W_SOUTH"
+      ],
+      "servedOpeningId": "A_W_SEAT",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPICE_STREET",
+      "fixtureId": "SHADE_S_W_SHOP_1",
+      "buildingIds": [
+        "BLD_A_SPICE_WEST"
+      ],
+      "receiverParcelIds": [
+        "S_W_SOUTH"
+      ],
+      "servedOpeningId": "S_W_SHOP_1",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#ae654c",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "The first spice retailer owns this existing small working shade; one muted rust cloth field echoes the founding reference and signals its spice counter. Keep its neighboring grain/apothecary shades and both overhead spans cream.",
+      "action": "proposed rust field"
+    },
+    {
+      "zone": "SPICE_STREET",
+      "fixtureId": "SHADE_S_W_SHOP_2",
+      "buildingIds": [
+        "BLD_SPICE_WEST_MID"
+      ],
+      "receiverParcelIds": [
+        "S_W_MID"
+      ],
+      "servedOpeningId": "S_W_SHOP_2",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPICE_STREET",
+      "fixtureId": "SHADE_S_W_SHOP_3",
+      "buildingIds": [
+        "BLD_SPICE_WEST_MID"
+      ],
+      "receiverParcelIds": [
+        "S_W_MID"
+      ],
+      "servedOpeningId": "S_W_SHOP_3",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPICE_STREET",
+      "fixtureId": "CANOPY_SPICE_S",
+      "buildingIds": [
+        "BLD_A_SPICE_WEST",
+        "BLD_A_SPICE_EAST"
+      ],
+      "receiverParcelIds": [
+        "S_W_SOUTH",
+        "S_E_SOUTH"
+      ],
+      "servedOpeningId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPICE_STREET",
+      "fixtureId": "CANOPY_SPICE_N",
+      "buildingIds": [
+        "BLD_SPICE_WEST_NORTH",
+        "BLD_SPICE_EAST_NORTH"
+      ],
+      "receiverParcelIds": [
+        "S_W_NORTH",
+        "S_E_NORTH"
+      ],
+      "servedOpeningId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "fixtureId": "CANOPY_TEXTILE",
+      "buildingIds": [
+        "BLD_TEXTILE_WEST",
+        "BLD_TEXTILE_EAST"
+      ],
+      "receiverParcelIds": [
+        "T_W_DYER",
+        "T_E_GALLERY"
+      ],
+      "servedOpeningId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "RUG_GATE",
+      "fixtureId": "SHADE_R_W_SHOP",
+      "buildingIds": [
+        "BLD_RUG_MERCHANT"
+      ],
+      "receiverParcelIds": [
+        "R_W_MERCHANT"
+      ],
+      "servedOpeningId": "R_W_SHOP",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep cream: the displayed rug already supplies rust/teal/indigo beneath the large gateway; a second painted shade would compete with those existing focal elements and repeat the Spice cue.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "fixtureId": "SHADE_B_N_POTTER",
+      "buildingIds": [
+        "BLD_B_N_POTTER"
+      ],
+      "receiverParcelIds": [
+        "B_N_POTTER"
+      ],
+      "servedOpeningId": "B_N_POTTER_SHOP",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "fixtureId": "SHADE_B_N_TEXTILE",
+      "buildingIds": [
+        "BLD_B_N_TEXTILE"
+      ],
+      "receiverParcelIds": [
+        "B_N_TEXTILE"
+      ],
+      "servedOpeningId": "B_N_TEXTILE_SHOP",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "fixtureId": "SHADE_B_W_TEA",
+      "buildingIds": [
+        "BLD_B_W_TEA"
+      ],
+      "receiverParcelIds": [
+        "B_W_TEA"
+      ],
+      "servedOpeningId": "B_W_TEA_SHOP",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "fixtureId": "SHADE_tt-shop",
+      "buildingIds": [
+        "BLD_TEXTILE_WEST"
+      ],
+      "receiverParcelIds": [
+        "tt-e"
+      ],
+      "servedOpeningId": "tt-shop",
+      "sourceMaterialId": "ph_bz04_fabric_leather_02",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "fixtureId": "R4-SHADE-TT-RECESSED-SEAT",
+      "buildingIds": [
+        "BLD_TEXTILE_WEST"
+      ],
+      "receiverParcelIds": [
+        "tt-e"
+      ],
+      "servedOpeningId": "TT-RECESSED-SEAT",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "fixtureId": "SHADE_DA_E_WORK_RECESS",
+      "buildingIds": [
+        "BLD_DYERS_EAST"
+      ],
+      "receiverParcelIds": [
+        "DA_E_WORK"
+      ],
+      "servedOpeningId": "DA_E_WORK_RECESS",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "fixtureId": "CANOPY_SOUK_S",
+      "buildingIds": [
+        "BLD_FOUNTAIN_MERCHANT",
+        "BLD_SOUK_EAST_STORAGE"
+      ],
+      "receiverParcelIds": [
+        "cs-ws",
+        "cs-e"
+      ],
+      "servedOpeningId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "fixtureId": "CANOPY_SOUK_N",
+      "buildingIds": [
+        "BLD_FOUNTAIN_HOUSE",
+        "BLD_SOUK_EAST_STORAGE"
+      ],
+      "receiverParcelIds": [
+        "cs-wn",
+        "cs-e"
+      ],
+      "servedOpeningId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "proposedSourceMaterialId": "ph_bz04_hessian_230",
+      "proposedDesiredAppearanceSrgb": "#dfcfab",
+      "colorScope": "cloth field only; retain all existing hem/accent colors and supports",
+      "reason": "Keep the existing cream shade hierarchy; trade stock and assigned joinery carry the local color.",
+      "action": "retain cream intent; replace leather source where scheduled"
+    }
+  ],
+  "stockAssignments": [
+    {
+      "sourcePath": "/areas/0/activityGroups/0/instanceLayout/parts/1/stockColorSrgb",
+      "existingPartId": "dye-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/0/activityGroups/0/instanceLayout/parts/2/stockColorSrgb",
+      "existingPartId": "lidded-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/1/stockColorSrgb",
+      "existingPartId": "tray-1-1",
+      "proposedStockColorSrgb": "#9c5139",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/2/stockColorSrgb",
+      "existingPartId": "tray-1-2",
+      "proposedStockColorSrgb": "#a47e3f",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/3/stockColorSrgb",
+      "existingPartId": "tray-1-3",
+      "proposedStockColorSrgb": "#657254",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "tray-2-1",
+      "proposedStockColorSrgb": "#9c5139",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "tray-2-2",
+      "proposedStockColorSrgb": "#a47e3f",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "tray-2-3",
+      "proposedStockColorSrgb": "#657254",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/8/stockColorSrgb",
+      "existingPartId": "jar-1-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/9/stockColorSrgb",
+      "existingPartId": "jar-1-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/10/stockColorSrgb",
+      "existingPartId": "jar-1-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/11/stockColorSrgb",
+      "existingPartId": "jar-1-4",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/13/stockColorSrgb",
+      "existingPartId": "jar-2-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/14/stockColorSrgb",
+      "existingPartId": "jar-2-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/15/stockColorSrgb",
+      "existingPartId": "jar-2-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/0/instanceLayout/parts/16/stockColorSrgb",
+      "existingPartId": "jar-2-4",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "herb-bottle-1-1",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "herb-bottle-1-2",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/7/stockColorSrgb",
+      "existingPartId": "herb-bottle-1-3",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/8/stockColorSrgb",
+      "existingPartId": "herb-bottle-1-4",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/9/stockColorSrgb",
+      "existingPartId": "herb-bottle-1-5",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/11/stockColorSrgb",
+      "existingPartId": "herb-bottle-2-1",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/12/stockColorSrgb",
+      "existingPartId": "herb-bottle-2-2",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/13/stockColorSrgb",
+      "existingPartId": "herb-bottle-2-3",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/14/stockColorSrgb",
+      "existingPartId": "herb-bottle-2-4",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/15/stockColorSrgb",
+      "existingPartId": "herb-bottle-2-5",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/17/stockColorSrgb",
+      "existingPartId": "herb-bottle-3-1",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/18/stockColorSrgb",
+      "existingPartId": "herb-bottle-3-2",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/19/stockColorSrgb",
+      "existingPartId": "herb-bottle-3-3",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/20/stockColorSrgb",
+      "existingPartId": "herb-bottle-3-4",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/21/stockColorSrgb",
+      "existingPartId": "herb-bottle-3-5",
+      "proposedStockColorSrgb": "#b6bca8",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/1/activityGroups/2/instanceLayout/parts/23/stockColorSrgb",
+      "existingPartId": "mortar",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/1/stockColorSrgb",
+      "existingPartId": "bowl-1",
+      "proposedStockColorSrgb": "#879b8b",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/2/stockColorSrgb",
+      "existingPartId": "bowl-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/3/stockColorSrgb",
+      "existingPartId": "bowl-3",
+      "proposedStockColorSrgb": "#b98970",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "bowl-4",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "bowl-5",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "bowl-6",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/7/stockColorSrgb",
+      "existingPartId": "plate-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/8/stockColorSrgb",
+      "existingPartId": "plate-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/11/stockColorSrgb",
+      "existingPartId": "lidded-jar-1-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/12/stockColorSrgb",
+      "existingPartId": "lidded-jar-1-2",
+      "proposedStockColorSrgb": "#879b8b",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/14/stockColorSrgb",
+      "existingPartId": "lidded-jar-2-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/0/instanceLayout/parts/15/stockColorSrgb",
+      "existingPartId": "lidded-jar-2-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "cup-1-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "cup-1-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "cup-1-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/7/stockColorSrgb",
+      "existingPartId": "cup-2-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/8/stockColorSrgb",
+      "existingPartId": "cup-2-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/9/stockColorSrgb",
+      "existingPartId": "cup-2-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/12/stockColorSrgb",
+      "existingPartId": "tea-stock-1-1",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/13/stockColorSrgb",
+      "existingPartId": "tea-stock-1-2",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/14/stockColorSrgb",
+      "existingPartId": "tea-stock-1-3",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/16/stockColorSrgb",
+      "existingPartId": "tea-stock-2-1",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/17/stockColorSrgb",
+      "existingPartId": "tea-stock-2-2",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/5/activityGroups/2/instanceLayout/parts/18/stockColorSrgb",
+      "existingPartId": "tea-stock-2-3",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "cup-1-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "cup-1-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "cup-1-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/7/stockColorSrgb",
+      "existingPartId": "cup-2-1",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/8/stockColorSrgb",
+      "existingPartId": "cup-2-2",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/9/stockColorSrgb",
+      "existingPartId": "cup-2-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/12/stockColorSrgb",
+      "existingPartId": "tea-stock-1-1",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/13/stockColorSrgb",
+      "existingPartId": "tea-stock-1-2",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/14/stockColorSrgb",
+      "existingPartId": "tea-stock-1-3",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/16/stockColorSrgb",
+      "existingPartId": "tea-stock-2-1",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/17/stockColorSrgb",
+      "existingPartId": "tea-stock-2-2",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/0/instanceLayout/parts/18/stockColorSrgb",
+      "existingPartId": "tea-stock-2-3",
+      "proposedStockColorSrgb": "#c1b69e",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/10/activityGroups/1/instanceLayout/parts/6/stockColorSrgb",
+      "existingPartId": "fitted-cushion",
+      "proposedStockColorSrgb": "#c8b896",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/0/instanceLayout/parts/1/stockColorSrgb",
+      "existingPartId": "dye-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/0/instanceLayout/parts/2/stockColorSrgb",
+      "existingPartId": "lidded-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/0/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "dyed-length",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/1/instanceLayout/parts/3/stockColorSrgb",
+      "existingPartId": "sample-1",
+      "proposedStockColorSrgb": "#66778c",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/1/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "sample-2",
+      "proposedStockColorSrgb": "#ba8d75",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/13/activityGroups/1/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "sample-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/15/activityGroups/0/instanceLayout/parts/3/stockColorSrgb",
+      "existingPartId": "sample-1",
+      "proposedStockColorSrgb": "#66778c",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/15/activityGroups/0/instanceLayout/parts/4/stockColorSrgb",
+      "existingPartId": "sample-2",
+      "proposedStockColorSrgb": "#ba8d75",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/15/activityGroups/0/instanceLayout/parts/5/stockColorSrgb",
+      "existingPartId": "sample-3",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/16/activityGroups/0/instanceLayout/parts/1/stockColorSrgb",
+      "existingPartId": "dye-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    },
+    {
+      "sourcePath": "/areas/16/activityGroups/0/instanceLayout/parts/2/stockColorSrgb",
+      "existingPartId": "lidded-vessel",
+      "proposedStockColorSrgb": "#d6c9b2",
+      "action": "retain exact R5"
+    }
+  ],
+  "stockRule": "Retain every existing stockColorSrgb exactly, including ceramics, textiles and any other stock; existing hem and glazing colors also stay unchanged.",
+  "sourceAvailability": [
+    {
+      "family": "cream/sand/pale-lime walls",
+      "reusableSourceIds": [
+        "ph_bz04_painted_plaster_warm",
+        "ph_bz04_plastered_wall"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Use the inspected existing plaster to replace the dark beige or over-mottled white-plaster source; exact alias/profile application awaits approval."
+    },
+    {
+      "family": "ochre/red plaster",
+      "reusableSourceIds": [
+        "ph_bz04_aged_plaster_ochre",
+        "ph_bz04_red_plaster_weathered"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Reuse current scanned sources with calibrated color; no red/ochre spread beyond named owner wall proposal."
+    },
+    {
+      "family": "masonry walls",
+      "reusableSourceIds": [
+        "ph_bz04_sandstone_blocks_05",
+        "ph_bz04_sandstone_blocks_06"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Existing scans acceptable for stated dressed/service roles; rustic stacked-stone appearance remains a full-wall sample concern."
+    },
+    {
+      "family": "one-piece stone trim",
+      "reusableSourceIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_stone_trim_white"
+      ],
+      "newTextureNeeded": "conditional",
+      "condition": "First verify mortar-free stone-face UV crops at the actual trim size and texel density. If no clean usable patch exists, a licensed fine-grain stone replacement is required. Do not approve full wall repeats as trim; no new source has been selected or inspected."
+    },
+    {
+      "family": "cream/rust awnings and sacks",
+      "reusableSourceIds": [
+        "ph_bz04_hessian_230"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Existing woven scan and bounded paint recipe suffice. Preserve repeat and hems; leather source removed from cloth role."
+    },
+    {
+      "family": "fine domestic linen/cushions",
+      "reusableSourceIds": [
+        "ph_bz04_hessian_230"
+      ],
+      "newTextureNeeded": "conditional",
+      "condition": "Trial tighter physical weave using existing hessian normal/albedo. If coarse burlap character persists at close range, use a licensed linen scan; no replacement candidate has been approved. Leather cannot establish textile quality."
+    },
+    {
+      "family": "public and service paving",
+      "reusableSourceIds": [
+        "bz04_court_limestone_flags_01",
+        "bz04_large_sandstone_blocks_01"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Reuse inspected flagstone and robust service stone; consistent physical units and calibrated mortar contrast required. No fresh mossy scan for dry connectors."
+    },
+    {
+      "family": "timber/opaque paint/iron",
+      "reusableSourceIds": [
+        "ph_bz04_weathered_brown_planks",
+        "ph_bz04_rough_pine_door",
+        "ph_bz04_rusty_metal_02"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Retain R5 craft formulas and corrected PBR. Crop/select member grain; raw rust or door-photo crossbars are not finish acceptance."
+    },
+    {
+      "family": "rugs and goods",
+      "reusableSourceIds": [
+        "bz04_levantine_rug_project_original"
+      ],
+      "newTextureNeeded": false,
+      "condition": "Retain exact existing rug and all stockColorSrgb values; no new motifs, stock or geometry."
+    }
+  ]
+}

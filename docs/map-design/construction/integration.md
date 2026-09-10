@@ -1,0 +1,133 @@
+# BZ-04 | Integration and verification contract
+
+This document schedules the implementation operations needed by the target design. It does not claim those operations have already been implemented. Source game files, asset exports and the live `map_spec.json` are unchanged by this documentation issue.
+
+## 1. Separate gameplay from appearance
+
+Preserve the projection in `scripts/lib/mapShoot.ts::protectedDomainProjection`, including playable zones, grades, actual opening envelopes, gameplay clusters, cover assets/transforms and protected anchors. Also preserve actual runtime collider arrays and cover silhouettes, which are not fully represented by the source projection. The paired runtime authority hash is the final identity check.
+
+Render-only appearance may change comprehensively. An exemption from frontage generation is not an exemption from design. Existing decorative walls, roofs, returns and dressing may be replaced only by the named target producer, with their previous producer suppressed or rebound to avoid duplicates.
+
+## 2. Coordinate and export contract
+
+Design coordinates are metres: x east, y north, z up; origin is the south-west corner of the 56 x 92 m playable boundary. Area plans always show north up. A wall's `along` coordinate runs from the lower world coordinate to the higher one; `out` is positive toward the street. New wall openings use the absolute world along coordinate printed in the target schedule, not a fraction of a frontage.
+
+`facade_kit.Wall.at()` takes distance from its supplied start point, not the sheet's absolute along value. Supply endpoints in increasing along order and use `helperAlong = alongM - intervalStartM`. Its `faces` argument names the side containing the street, which is opposite the area's boundary name:
+
+| Area boundary | Wall helper street side | Increasing along axis |
+|---|---|---|
+| north | `S` | x |
+| south | `N` | x |
+| east | `W` | y |
+| west | `E` | y |
+
+For example, the B north house face starts at `(24.3,92)` and ends at `(31,92)`. Its principal door at world along 27.65 uses helper along 3.35 and street side `S`. Do not pass 27.65 directly to the helper or reverse the awning normal.
+
+A section uses `facade_kit.Frame(zone rect)` for x/y. The existing `Frame.p()` returns its z argument unchanged: it does **not** subtract the zone floor. Author from the absolute design heights, then translate the owned export geometry down by the section origin's z exactly once before export. The resulting Blender local coordinates are `(x-zone.x, -(y-zone.y), z-origin.z)`. Y-up export produces glTF local `(x-zone.x, z-origin.z, y-zone.y)`; the runtime mounts that at the recorded section origin. Flat Tea Terrace has origin z=1.4. Ramp/stair receivers follow their printed absolute elevation profile. Check an asymmetric labelled coordinate fixture before applying a package; never subtract the floor twice.
+
+A BZ-04 free model uses a base-centre origin, metres and the baked world orientation in `design.json::freeModelFrame`. Its Blender local frame is `(worldX-originX, -(worldY-originY), worldZ-originZ)`; Y-up export produces glTF `(eastOffset, height, northOffset)`. `placements[].position` is absolute design x/y/z. Set the raw placement `yawDeg` to **180** for this frame: the existing `buildAuthoredPlacements` loader calls `designYawDegToWorldYawRad`, which adds 180 degrees, yielding a net 360-degree identity rotation. Raw yaw 0 would rotate the asset 180 degrees away from its scheduled receivers. Bake each skyline building's scheduled facing into the mesh and use the same raw yaw 180, as recorded for the shared environment. Do not change the legacy yaw helper or apply this free-model yaw to a section, which mounts without rotation.
+
+Run `node --import tsx docs/map-design/construction/verify-transforms.ts`. Its asymmetric probes pass through the actual section and authored-placement loaders for all 25 section origins and 19 roof bundles; the former yaw-zero placements must fail the comparison. This verifies the mounting contract without loading a game. The later exported-asset test must repeat the comparison with labelled vertices from the actual GLBs.
+
+The runtime compiler samples each zone's traversal surface at the rectangle centre when assigning the section origin. The exact `sectionOriginDesign` and `exportBoundsGltfLocal` are printed in the target data. Tea Ramp and Tea Stairs use origin z=0.70, not the low endpoint; Tea Terrace uses z=1.40. A graded section can therefore extend below its local origin. The declared-bounds check must handle that legitimate extent instead of moving the geometry to silence the legacy warning.
+
+## 3. Replacement operations
+
+| Operation | Existing path | Required implementation action | Proof |
+|---|---|---|---|
+| Section face finish | `assets/source/<unit>/build.py`; `buildFacadeModels.ts::buildSectionModels` | Build the target section and apply its exact face list using `scripts/apply-facade-package.mjs`. Cut every printed open span. | Source/export/integrated GLBs match; openings and receivers checked in context. |
+| Frontage modules and face grammar | `v3Architecture.ts` section-owned-face checks | Suppress old render modules/details for the target's owned frontage faces. Retain collision and any named backing. | No duplicate old modules or exposed backing in either approach view. |
+| Core boundary identity planes | `v3Architecture.ts::pushCoreBoundaryFacadeGrammar` | Honor target section ownership for the exact named boundary producer; its current suppression list covers only selected targets. | Producer-specific before/after visual inventory; runtime colliders identical. |
+| Sealed perimeter, end returns and boundary finish | `buildBlockout.ts` boundary finish/support production | Add the exact target owner condition at render emission, after collision geometry has been defined. Suppress only replaced visible faces/cornices/grammar; retain every collider and the other owner's surfaces. `sectionFaces` alone does not currently suppress all B perimeter geometry. | No old facade behind/over the new facade, no missing opposing face, identical collision arrays. |
+| Existing soft-visual dressing | `dressing_placements`, `asset_registry`, props model manifest and `buildProps.ts` | For per-instance replacement, create the named variant and rebind the exact placement ID. For removal, remove only the scheduled soft-visual placement and orphaned visual anchor if unreferenced. For global replacement, rebuild the original model only when every instance is scheduled to change. | Every old placement has one disposition; no duplicate model; dimensions/pivot/scale/source/license/hash agree. |
+| New separate model | area package `models[]` and `placements[]` | Add only scheduled groups that are not already represented by a rebound dressing placement or section mesh. | Placement count, transforms, supports and envelope agree with the design. |
+| Procedural roofs/slabs | `v3Architecture.ts` massing/roof generation | Bind the roof to its scheduled owner; suppress the replaced render roof only after the new owner exists. Never change gameplay elevation. | One slab/parapet/cap per target volume; shared seams match in absolute coordinates. |
+| Background city | `buildBlockout.ts::resolveBackgroundShellPlacements`, `createPbrBackgroundShells` | Replace the legacy shell set with the explicit BZ-04 skyline schedule. Use fixed positions and profiles, not runtime randomization. Keep cage/colliders independent. | Old shell IDs all accounted for; new profiles/coordinates/counts match; sky gaps and sightline backgrounds inspected. |
+| Material calibration | wall/floor pack `materials.json`, `facade_materials.py`, runtime material factory | Append the exact BZ-04 material aliases from design.json by cloning full source entries; change only alias id and target factors. Preserve old entries and source files. Wall aliases retain the ph_ prefix for GLB preloading. Add the seven explicit bz04_ floor IDs to buildPbrFloors.ts FloorMaterialId and isFloorMaterialId; do not replace the union/validator with arbitrary strings. Assign only the implemented zone its target floor ID. | Same source scan/scale in Blender and game; no renamed texture variant mistaken for distinct grain. |
+
+These are part of implementing the requested area, not a request to create a generic new framework. Reuse the existing producer and data path. The area package currently adds authored placements; it does not remove or replace arbitrary `dressing_placements`. Do not claim that adding a new placement retires the old one.
+
+### BZ-04 material, shadow and export corrections
+
+`design.json::materialRuntimeContract` supplies every numerical runtime override. Append its 20 BZ-04 pack aliases and seven floor aliases while preserving their source records. Add the pack aliases to explicit `wallShaderProfiles.ts` branches and authored-surface recognition. Disable procedural dirt, dust, bleach and localized wear for these aliases; the source scans and scheduled contact masks supply the aging. The five timber/iron aliases are required too: otherwise unchanged detail IDs can still receive generic authored dirt. Embedded ceramic, brass, rug and closure materials retain their explicitly listed PBR bindings.
+
+Add all seven floor aliases to `FloorMaterialId`, `isFloorMaterialId`, `MATERIAL_ORDER` and `FLOOR_MACRO_SETTINGS` in `buildPbrFloors.ts`, using the complete target table. Merely adding a string to a manifest is insufficient. Preserve the old entries and their ordering. In `buildFacadeModels.ts::rebindPackMaterials`, retain the BZ-04 `COLOR_0` attribute by enabling vertex colors on the new pack material; the existing exporter already fills unpainted vertices with white. Do not apply a scalar world-zero dirt band to the Tea slope.
+
+The area `shadowSchedule` and primitive budget are part of the export contract. `facade_kit.export_section` currently joins everything, and `PropModelLibrary.instantiate` currently forces every mesh to cast shadows. For BZ-04 exports, join by `(materialId, shadowClass)` and preserve per-node `bz04Shadow` extras with `export_extras=True`. Carry those extras through the model wrapper; instantiate `cast` nodes with cast/receive enabled and `receive` nodes with casting disabled. Preserve the existing behavior for untagged legacy assets. Verify actual glTF primitive and shadow-caster counts against the area schedule.
+
+Complete buildings extend farther behind the street than the loader's current 1.5 m advisory allowance. Stamp the independently checked `exportBoundsGltfLocal` on the exported scene as `bz04VisualBounds`, carry it onto the model wrapper, and compare the actual instantiated bounds with that finite declared box in `buildSectionModels`. Preserve the old advisory for untagged models. Do not replace a bounded check with an unconditional allowance. Target bounds, source/export bounds, frame conversion and receiver-clearance tests must agree before the metadata is stamped.
+
+## 4. Phasing and shared ownership
+
+**Approved R7 design review:** read the current per-face window decisions for the requested area and confirm the source hash before construction. A REVISE face is not ready. The user has approved this issue; consume the recorded check without commissioning it again. Follow the [canonical whole-map queue and readiness contract](README.md#approved-whole-map-queue-and-readiness), implement continuously and perform the usual consolidated end review. Do not invoke another wall-review subagent during routine mesh construction.
+
+**Schematic perspectives:** `perspectives.py` creates documentation previews only. Its render-notes.json records exact cameras, source hash and omissions. Never install these preview solids as game assets or use their render time as game-performance evidence. Retained cover is represented by its exact oriented envelope; material textures, carved microdetail and some stock silhouettes remain simplified.
+
+
+**R6 receiver readiness:** each area’s craftSchedule names every required roof-bundle receiver parcel and those outside the area. A bundle may activate only after those complete supports/returns exist in the installed issue or have been explicitly inspected as compatible. A model load or a placement row is insufficient. The dated coverage inventory already shows large roof-to-retained-neighbor gaps for some Spawn A, Tea and Fountain dependencies; it is not evidence that those neighbors are ready now.
+
+Within an authorized multi-area queue, construct the named receiver shells first, activate each supported shared bundle once, then complete the consolidated interface review. This is dependency ordering, not a new approval ladder. For a standalone area with unavailable receivers, use an already-dimensioned implementationPhase such as B’s; otherwise retain the affected legacy roof and report the named interface deferred. Do not promise complete standalone acceptance, invent caps or silently build neighboring facades. A fully complete single-area trial needs its exact phase solution authored before construction.
+
+**R7 compatibility:** the handoff lists opening profiles, carved/frame profiles, glazing patterns, balcony kinds and landscape kinds explicitly. A builder that only understands R3 rectangles/closures is not compatible. Implement the exact supported shapes/materials before starting the complete area pass; do not silently drop scheduled glass, seats or support geometry. Keep this one bounded compatibility check, then implement and perform one consolidated end review. The rejected Caravan palm and its landscape output are removed from the current handoff; do not retain them from an R4 extraction. The added visual export envelope does not modify any collider or playable boundary.
+
+**B R7 section scope:** the B-04 trial has already installed the local gateway caps and shared assets. Reuse those outputs; rebuild only the courtyard section for its R7 opening schedule and retained R6 finish recipes. Apply the private B material-copy mappings inside that GLB, preserving material/shadow batching. Do not recolor shared aliases or add a material per trim, rug border or hem. Use the four detail poses together with the unchanged original views; retain the concurrent workflow task’s merchant, gallery and guest-shutter poses plus B-05’s textile pose. The authorized B mesh cap is now 64,000, target 56,000; global performance limits and gameplay protection do not change.
+
+**B phase during the full-map queue:** the approved R7 B sheet’s `B-05-finish-only` phase reuses the installed B-04 local caps. Extend the existing B-04-only builder for the scheduled finishes and draped rug without weakening its guards. The following roof constraints apply until the supported full-map Rug Gate replacement is installed. Reuse the installed shared environment and portal. Use its exact local gateway cap slices instead of reinstalling the full Rug Gate roof above shorter retained neighbors; restore legacy roof output outside those slices. The full-map roof schedule remains the later completed-map target. This is an explicit phase, not permission to invent receiver walls or rebuild neighboring facades.
+
+The source design gives one owner for each closed face, exposed return, roof volume and skyline group. A package cannot suppress a neighbor's visual before its replacement is installed. Shared surfaces are either built once by the named owner or split at the printed seam; both sides retain the same seam coordinates and heights. During phased construction, the old neighbor remains until its named replacement is ready. An interim mismatch is reported, not hidden by a duplicate slab or a new wall.
+
+The user has authorized the full R7 implementation queue and shared scope in the [canonical README contract](README.md#approved-whole-map-queue-and-readiness). Continue after each area’s consolidated end review and targeted corrections without routine human approval. Reuse installed B/shared assets where the frozen handoff confirms compatibility; missing builder capabilities and later shared finishes are implementation work, not a new design approval gate.
+
+The logical building register coordinates all of its facades even when they fall in different gameplay zones. Implement the requested area’s complete faces from that shared design. Its required roof/return slices are enumerated in `roof-coordination.json`; install each slice once under its declared owner and preserve the existing neighboring facade until that facade is built. Building identity does not silently authorize a whole neighboring area. State the affected shared IDs in the area package and its evidence record.
+
+The roof schedule assigns each of the 78 cells to exactly one of 19 reusable installation bundles. [roof-bundles.md](roof-bundles.md) supplies the direct source cells, installation output unit, stable model/placement ID, component materials, owned seam/step returns, world bounds and glTF frame. The area’s `roofCellIds`, `roofBundleIds` and interface IDs must resolve to that schedule. A requesting area constructs or reuses the named bundle only; the owner-unit name does not authorize that whole area or recursively expand its queue. Roof geometry is excluded from the area section export, so it is never duplicated in both assets.
+
+Bundle bounds include their owned step returns and the 0.03 m cap overhang. The source assigns slab, finish, parapet, cap and collector materials; the builder does not select them from a broad palette. On successful load and interface verification, activate the bundle’s exact render-replacement coverage at the listed roof/slab/parapet/coping producers. Preserve outside fragments and all collider/wall generation. A mixed legacy visual may require deterministic source separation to retain its outside fragment. Do not retire any legacy roof merely because a placement row was upserted, or mark the requesting area built while a prescribed receiver or interface is unresolved.
+
+The runtime already supports the required static roof batching. Reuse that path: after the installed BZ-04 roof bundles load, bake their static transforms and merge their geometry by matching material/attribute signature and shadow class in `buildAuthoredPlacements`, using Three’s existing `BufferGeometryUtils.mergeGeometries`. Preserve contributor IDs and pre-merge bounds for inspection. This is required to meet `roofRenderingContract.postBatchPrimitiveCeiling`; keep untagged legacy props separate. The global allocation adds the section/shared geometry and the post-batch roofs, then reserves the remaining budget for retained gameplay assets and actors. It is a planning allocation until measured in the game.
+
+`BZ04-SHARED-ENVIRONMENT` already has an installed B-04 geometry baseline. The R6 complete-map target assigns finishes to all 15 background targets and the backlot ground. Reuse the installed geometry where the frozen phase allows; include a shared material update explicitly when its later finishes are required. For a fresh installation, build and bind the complete shared owner before atomically retiring the 120 old background shells. Replace the render output of `createSurroundTerrain` and `createNonWalkableInfill` with the exact BG-GROUND difference; keep playable floors and collision unchanged. Later area builds reuse this shared installation. The implementation prompt must name this shared scope, so a builder never decides independently whether to remove every old background.
+
+## 5. Required evidence per implemented area
+
+**Timing:** construct and integrate the whole approved area first. Gather the checks below in one consolidated end review, then make a short targeted correction pass. Baseline capture is the initial record, not a design-review gate. Cheap export assertions may run during construction. Do not repeatedly stop for aesthetic approval, rebuild unchanged shared assets, duplicate the baseline, or rerun unrelated checks. Reuse the existing trial capture/movement runner and report unchanged baseline failures once. Stop promptly when the user asks; preserve the last tested result and list remaining work.
+
+1. Save before captures and camera poses from the current game before changing it. Record the source revision, dirty-state fingerprint, material settings, viewport and baseline runtime authority. Never overwrite an existing before set.
+2. Build the exact design with deterministic headless Blender sources and apply the package and scheduled producer/registry operations as one continuous implementation pass.
+3. In the end review, inspect assemblies and their actual receivers for coplanarity, light leaks, missing backs, wrong grain, unresolved corners and unsupported dressing. Reapply the package once to establish idempotence. Compare source, integrated and production GLB hashes; verify the final asset manifest.
+4. Test exported triangles against route, doorway-service and open-transition volumes. AABB or vertex-only tests are insufficient. Allow only named flush wear marks and the retained gameplay exceptions. Preserve the existing guards and runtime collider hash.
+5. Capture after from the saved before poses and inspect every named critical view, including reverse arrivals and neighboring seams. Evaluate cover silhouette, opening semantics, target/background contrast, sky gaps, retained support contacts and the complete composition.
+6. Run the relevant existing checks, production build, actual-game movement routes and desktop/mobile-emulation performance checks. Record physical-device coverage separately. Correct defects caused by the implementation; document proven baseline failures precisely.
+
+`pnpm map:check` protects source gameplay domains and checks certain placements; it does not certify arbitrary section triangles, the appearance of a scene, or release readiness. An image difference percentage is not a quality score. Do not omit console/network errors to produce a nominally valid capture.
+
+## 6. Evidence and completion states
+
+Document review, implementation progress and game acceptance are separate. `not-started` and `building` describe implementation. `built` requires applied construction plus verified assemblies/interfaces. `complete` requires the area to meet the visual target in-game and the required gameplay/performance gates. Final user art acceptance is recorded separately and is never inferred from technical checks; it does not pause automatic continuation through the approved queue. An old applied trial never automatically satisfies a newer design issue.
+
+Reports state which claims were tested, failed, unavailable or blocked. Three AI document reviews are recorded with their scope, exact issue and material findings. They do not imply licensed engineering approval or user art acceptance. A user-rejected scene remains visually rejected even if its tooling checks pass.
+
+## 7. Frozen camera plan and before/document/after audit
+
+The authored poses in `design.json::areas[].criticalViews` use the runtime camera convention: yaw 0 looks south, 90 west, 180 north and 270 east. This differs from model-placement yaw. Every pose is at local floor +1.70 m, 75-degree vertical FOV, 1440 x900. `cameras.json` is generated from these poses; the long IDs remain traceable through each batch's `primary` and `context` aliases. Supplemental upper views preserve the player-eye position and only change pitch. The two portal context views cover the shared B/Rug Gate composition.
+
+Export one immutable capture plan before implementation:
+
+```sh
+python3 docs/map-design/construction/cameras.py --unit unit-spawn-b-courtyard --capture-plan /tmp/bz04-b-before-plan.json
+node apps/client/scripts/map-polish-capture.mjs capture --plan /tmp/bz04-b-before-plan.json --output /tmp/bz04-b-before --repo-root "$PWD"
+```
+
+Archive that JSON and its images under the requested area's evidence directory, with the document package manifest and before runtime snapshot. Reuse the same JSON for the after capture, changing only `--output`. The exporter refuses to overwrite a saved plan. The plan's `authorityHash` labels the runtime JSON bytes at export; the adapter separately records `protectedAuthorityHash`. Neither is a substitute for the required measured runtime collider comparison.
+
+These are source-geometry camera proposals, not a claim of unobstructed in-game views. Inspect the before set before changing geometry. If retained cover obstructs a critical subject, record the occlusion and add a legal supplementary pose to the saved plan and both sets. Never move only the after camera. Existing `map:shoot` does not automatically discover this new schedule. The direct adapter schema is the integration path; synthetic adapter checks establish schema compatibility only.
+
+The audit records a defect against the first stage where it appears: an omitted or conflicting target is a document defect; wrong mesh/support/UVs are construction defects; stale or duplicate producers are integration defects; unexpected PBR/exposure response is a renderer/material defect; movement, silhouette or performance regressions are game-validation defects. Keep the original image, target ID, expected result, actual result and correction together. Do not explain a user-rejected composition away with a passing tooling check.
+
+## Trial reliability corrections
+
+The tracked `apps/client/scripts/bz04-trial.mjs` runner replaces copies of the old trial script. See the construction README for exact commands and measurement semantics. Keep design, camera and installed-asset identities in each evidence record; never mix a newly authored issue with an older source export or performance baseline.
+
+`map:check` now uses transformed per-triangle bounds for authored placements. Each bound is conservative; the enclosing gap between disconnected pieces is no longer treated as solid. Float/sink, wall-distance and relief-height restrictions remain, and unreadable geometry fails closed. The exact exported-triangle route/door/ground tests remain separate. There is no special exemption for a model named `bz04_shared_environment`.
+
+For B-FIELD, the inset plaster `bbox` and the host stone `receiverBounds` are different surfaces. Both must be checked. Source names/IDs establish traceability; their mere presence does not prove coplanarity, support, visibility or material appearance.

@@ -2400,7 +2400,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   const resetAllBuffModifiers = (): void => {
     game.setPlayerSpeedMultiplier(1.0);
-    game.setWeaponFireInterval(0.1);
+    game.setWeaponFireInterval(1 / 8);
     game.setWeaponReloadSpeed(1.0);
     game.setWeaponFreeReloads(false);
     game.setOvershield(0);
@@ -2445,7 +2445,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         game.setPlayerSpeedMultiplier(1.0);
         break;
       case "rapid_fire":
-        game.setWeaponFireInterval(0.1);
+        game.setWeaponFireInterval(1 / 8);
         game.setWeaponReloadSpeed(1.0);
         break;
       case "unlimited_ammo":
@@ -2474,8 +2474,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   // Weapon audio callbacks: reload sounds + dry-fire click
   game.setWeaponCallbacks({
-    onReloadStart: () => {
-      weaponAudio.playReloadStart();
+    onReloadStart: (durationSeconds) => {
+      weaponAudio.playReloadStart(durationSeconds);
       pushPublicFeedback({ type: "reload-start" });
     },
     onReloadEnd: () => {

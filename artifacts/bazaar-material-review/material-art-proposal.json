@@ -1,0 +1,1247 @@
+{
+  "status": "PROPOSED MATERIAL ART REVIEW ONLY",
+  "sourceDesignSha256": "367ac474642c0e49557ffd784262246e4d5ce6b25a35e21e231ce06ffb4fa826",
+  "geometryChange": false,
+  "colorsAre": "Approximate desired neutral-daylight/unlit appearance proposals, not final shader tint values or approval.",
+  "palette": [
+    {
+      "id": "cream-plaster",
+      "sourceMaterialId": "ph_bz04_painted_plaster_warm",
+      "targetAppearanceSrgb": "#d8c4a0",
+      "repeatM": 1.8,
+      "proposal": "Reuse trowelled source; calibrate lightness without extra brown tint. Target is desired unlit appearance, not a multiplier."
+    },
+    {
+      "id": "sand-plaster",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "targetAppearanceSrgb": "#cbb38b",
+      "repeatM": 2,
+      "proposal": "Use existing quieter plaster source for dark beige aliases; shared sand variant."
+    },
+    {
+      "id": "pale-lime",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "targetAppearanceSrgb": "#ddd0b3",
+      "repeatM": 2,
+      "proposal": "Lighter civic/service lime; avoid near-white output."
+    },
+    {
+      "id": "faded-ochre",
+      "sourceMaterialId": "ph_bz04_aged_plaster_ochre",
+      "targetAppearanceSrgb": "#c6a16c",
+      "repeatM": 2,
+      "proposal": "Concentrate on dye-work ownership, never whole-map filter."
+    },
+    {
+      "id": "faded-earth-red",
+      "sourceMaterialId": "ph_bz04_red_plaster_weathered",
+      "targetAppearanceSrgb": "#b77c62",
+      "repeatM": 2,
+      "proposal": "Keep selective merchant/red household identity; subdued source already appropriate."
+    },
+    {
+      "id": "dressed-sandstone",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_05",
+      "targetAppearanceSrgb": "#c5b18d",
+      "repeatM": 2,
+      "proposal": "Keep civic/gateway masonry. Stone units about 0.2m high at this repeat; mortar belongs to wall, not one-piece trim."
+    },
+    {
+      "id": "service-stone",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_06",
+      "targetAppearanceSrgb": "#b6a185",
+      "repeatM": 1.8,
+      "proposal": "Restrict narrow layered rustic scan to existing low service/store masses; avoid cloning it onto additional landmark fronts."
+    },
+    {
+      "id": "quiet-flags",
+      "sourceMaterialId": "bz04_court_limestone_flags_01",
+      "targetAppearanceSrgb": "#c7b18b",
+      "repeatM": 3.2,
+      "proposal": "Reuse court_flagstone_01. Choose one shared 3.2m trial repeat across linked flag areas, not 2.6m/4.4m switches of the same visible units."
+    },
+    {
+      "id": "rough-service-paving",
+      "sourceMaterialId": "bz04_large_sandstone_blocks_01",
+      "targetAppearanceSrgb": "#baa17a",
+      "repeatM": 2.6,
+      "proposal": "Keep medieval_blocks_05 only where robust service/court paving is intended; do not inflate repeat to 3.6m merely for variation."
+    },
+    {
+      "id": "cream-woven-cloth",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "targetAppearanceSrgb": "#dfcfab",
+      "repeatM": 0.27,
+      "proposal": "Keep existing bounded grainMix 0.12 paint recipe. Reuse for shades and sacks; use finer physical repeat for domestic linen only after close sample. Replace leather source on linen; no new texture required for first sample."
+    },
+    {
+      "id": "timber",
+      "sourceMaterialId": "ph_bz04_weathered_brown_planks",
+      "targetAppearanceSrgb": null,
+      "proposal": "Retain R5 warmTimber bounded grainMix 0.28 recipe. Source is faded gray-brown with real board seams; member UVs must select grain within a board. Retain the current numeric paint binding; the appearance chip is illustrative, not a new paint instruction.",
+      "retainCurrentCraftRecipe": true,
+      "retainedPaintSrgb": "#9c8060"
+    },
+    {
+      "id": "teal",
+      "sourceMaterialId": "bz04_craft_painted_timber",
+      "targetAppearanceSrgb": "#78978d",
+      "proposal": "Retain the exact R5 owner paint assignment. This supersedes the earlier illustrative darker accent swatch; see accent-assignments-proposal.json."
+    },
+    {
+      "id": "indigo",
+      "sourceMaterialId": "bz04_craft_painted_timber",
+      "targetAppearanceSrgb": "#66778c",
+      "proposal": "Retain the exact R5 owner paint assignment. This supersedes the earlier illustrative darker accent swatch; see accent-assignments-proposal.json."
+    },
+    {
+      "id": "rust",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "targetAppearanceSrgb": "#ae654c",
+      "proposal": "Propose muted rust only for existing Spice shade SHADE_S_W_SHOP_1. Keep the other 15 shades cream and retain all existing authored stock colors. See exact accent assignments."
+    },
+    {
+      "id": "rug",
+      "sourceMaterialId": "bz04_levantine_rug_project_original",
+      "targetAppearanceSrgb": null,
+      "repeatM": 1.2,
+      "proposal": "Retain unmodified existing rug: muted indigo, rust, teal and flax already form the right accent family."
+    },
+    {
+      "id": "iron",
+      "sourceMaterialId": "bz04_craft_dark_iron",
+      "targetAppearanceSrgb": null,
+      "proposal": "Retain R5 craft override. Raw rusty_metal_02 is light zinc-gray/orange, so do not bind raw albedo on straps. Retain the current numeric paint binding; the appearance chip is illustrative, not a new paint instruction.",
+      "retainCurrentCraftRecipe": true,
+      "retainedPaintSrgb": "#56534b"
+    }
+  ],
+  "buildingAssignments": [
+    {
+      "buildingId": "BLD_B_N_POTTER",
+      "name": "Potter workshop and family house",
+      "parcelIds": [
+        "B_N_POTTER"
+      ],
+      "currentMaterialIds": {
+        "B_N_POTTER": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_N_HOUSE",
+      "name": "Merchant family house",
+      "parcelIds": [
+        "B_N_HOUSE"
+      ],
+      "currentMaterialIds": {
+        "B_N_HOUSE": "ph_bz04_red_plaster_weathered"
+      },
+      "proposedPalette": "faded-earth-red",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_N_TEXTILE",
+      "name": "Textile store and packing rooms",
+      "parcelIds": [
+        "B_N_TEXTILE"
+      ],
+      "currentMaterialIds": {
+        "B_N_TEXTILE": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_E_STORE",
+      "name": "Receiving store with upper stock rooms",
+      "parcelIds": [
+        "B_E_STORE",
+        "lne-n"
+      ],
+      "currentMaterialIds": {
+        "B_E_STORE": "ph_bz04_sandstone_blocks_06",
+        "lne-n": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_E_PACKER",
+      "name": "Cloth packer and family rooms",
+      "parcelIds": [
+        "B_E_PACKER"
+      ],
+      "currentMaterialIds": {
+        "B_E_PACKER": "ph_bz04_plastered_wall"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_W_HOUSE",
+      "name": "Guest house",
+      "parcelIds": [
+        "B_W_HOUSE",
+        "lnw-n-part-2"
+      ],
+      "currentMaterialIds": {
+        "B_W_HOUSE": "ph_bz04_beige_wall_002",
+        "lnw-n-part-2": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_B_W_TEA",
+      "name": "Tea house and guest rooms",
+      "parcelIds": [
+        "B_W_TEA"
+      ],
+      "currentMaterialIds": {
+        "B_W_TEA": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_B_GATE",
+      "name": "B gateway return structure",
+      "parcelIds": [
+        "B_S_WEST",
+        "R_W_ABUTMENT"
+      ],
+      "currentMaterialIds": {
+        "B_S_WEST": "ph_bz04_sandstone_blocks_05",
+        "R_W_ABUTMENT": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_SPICE_WEST",
+      "name": "Spice retailer and household",
+      "parcelIds": [
+        "A_NW_RETURN",
+        "S_W_SOUTH"
+      ],
+      "currentMaterialIds": {
+        "A_NW_RETURN": "ph_bz04_sandstone_blocks_06",
+        "S_W_SOUTH": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_SPICE_EAST",
+      "name": "Sack receiving warehouse",
+      "parcelIds": [
+        "A_NE_RETURN",
+        "S_E_SOUTH"
+      ],
+      "currentMaterialIds": {
+        "A_NE_RETURN": "ph_bz04_plastered_wall",
+        "S_E_SOUTH": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_DYEWORKS",
+      "name": "Courtyard dye works",
+      "parcelIds": [
+        "A_E_VATS",
+        "A_E_DRYING",
+        "lse-s"
+      ],
+      "currentMaterialIds": {
+        "A_E_VATS": "ph_bz04_whitewashed_brick_warm",
+        "A_E_DRYING": "ph_bz04_whitewashed_brick_warm",
+        "lse-s": "ph_bz04_whitewashed_brick_warm"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_A_E_NORTH_CAP",
+      "name": "Spawn A east boundary cap",
+      "parcelIds": [
+        "A_E_CAP"
+      ],
+      "currentMaterialIds": {
+        "A_E_CAP": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_GATE",
+      "name": "Ceremonial gate and registry",
+      "parcelIds": [
+        "A_S_GATE"
+      ],
+      "currentMaterialIds": {
+        "A_S_GATE": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_DOMESTIC_REAR",
+      "name": "Quiet courtyard household",
+      "parcelIds": [
+        "A_W_SOUTH",
+        "A_W_MID",
+        "A_W_NORTH",
+        "lsw-s-part-2"
+      ],
+      "currentMaterialIds": {
+        "A_W_SOUTH": "ph_bz04_beige_wall_002",
+        "A_W_MID": "ph_bz04_beige_wall_002",
+        "A_W_NORTH": "ph_bz04_beige_wall_002",
+        "lsw-s-part-2": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_A_W_NORTH_CAP",
+      "name": "Spawn A west boundary cap",
+      "parcelIds": [
+        "A_W_CAP"
+      ],
+      "currentMaterialIds": {
+        "A_W_CAP": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_EAST_BULK",
+      "name": "Low bulk-spice store",
+      "parcelIds": [
+        "S_E_MID"
+      ],
+      "currentMaterialIds": {
+        "S_E_MID": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_EAST_NORTH",
+      "name": "Warehouse with keeper rooms",
+      "parcelIds": [
+        "S_E_NORTH",
+        "F_SE"
+      ],
+      "currentMaterialIds": {
+        "S_E_NORTH": "ph_bz04_beige_wall_002",
+        "F_SE": "ph_bz04_plastered_wall"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_WEST_MID",
+      "name": "Grain and apothecary shops",
+      "parcelIds": [
+        "S_W_MID"
+      ],
+      "currentMaterialIds": {
+        "S_W_MID": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_WEST_NORTH",
+      "name": "Red household return",
+      "parcelIds": [
+        "S_W_NORTH",
+        "F_SW"
+      ],
+      "currentMaterialIds": {
+        "S_W_NORTH": "ph_bz04_red_plaster_weathered",
+        "F_SW": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "faded-earth-red",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_MADRASA",
+      "name": "Bazaar guildhall",
+      "parcelIds": [
+        "F_W_HALL",
+        "cc-en",
+        "tr-s",
+        "lwm-n"
+      ],
+      "currentMaterialIds": {
+        "F_W_HALL": "ph_bz04_sandstone_blocks_05",
+        "cc-en": "ph_bz04_sandstone_blocks_05",
+        "tr-s": "ph_bz04_sandstone_blocks_05",
+        "lwm-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_FOUNTAIN_MERCHANT",
+      "name": "Merchant house and sheltered loggia",
+      "parcelIds": [
+        "F_E_LOGGIA",
+        "cs-ws",
+        "lem-s"
+      ],
+      "currentMaterialIds": {
+        "F_E_LOGGIA": "ph_bz04_beige_wall_002",
+        "cs-ws": "ph_bz04_beige_wall_002",
+        "lem-s": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_TEXTILE_EAST",
+      "name": "Textile production house",
+      "parcelIds": [
+        "T_N_CAP",
+        "T_E_LOOM",
+        "T_E_GALLERY",
+        "T_E_CART",
+        "F_NE",
+        "R_E_SOUTH",
+        "leu-s"
+      ],
+      "currentMaterialIds": {
+        "T_N_CAP": "ph_bz04_plastered_wall",
+        "T_E_LOOM": "ph_bz04_plastered_wall",
+        "T_E_GALLERY": "ph_bz04_plastered_wall",
+        "T_E_CART": "ph_bz04_plastered_wall",
+        "F_NE": "ph_bz04_plastered_wall",
+        "R_E_SOUTH": "ph_bz04_plastered_wall",
+        "leu-s": "ph_bz04_plastered_wall"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_TEXTILE_WEST",
+      "name": "Textile merchants and raised tea room",
+      "parcelIds": [
+        "T_W_LOOM",
+        "T_W_DYER",
+        "T_W_FOLDS",
+        "F_NW",
+        "tt-e",
+        "R_S_CAP",
+        "tr-e"
+      ],
+      "currentMaterialIds": {
+        "T_W_LOOM": "ph_bz04_painted_plaster_warm",
+        "T_W_DYER": "ph_bz04_painted_plaster_warm",
+        "T_W_FOLDS": "ph_bz04_painted_plaster_warm",
+        "F_NW": "ph_bz04_painted_plaster_warm",
+        "tt-e": "ph_bz04_painted_plaster_warm",
+        "R_S_CAP": "ph_bz04_painted_plaster_warm",
+        "tr-e": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_RUG_EAST_GATEKEEPER",
+      "name": "Gatekeeper household",
+      "parcelIds": [
+        "R_E_HOUSE",
+        "B_S_EAST",
+        "leu-n",
+        "lne-w"
+      ],
+      "currentMaterialIds": {
+        "R_E_HOUSE": "ph_bz04_sandstone_blocks_06",
+        "B_S_EAST": "ph_bz04_sandstone_blocks_06",
+        "leu-n": "ph_bz04_sandstone_blocks_06",
+        "lne-w": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_RUG_MERCHANT",
+      "name": "Narrow rug-stock gallery",
+      "parcelIds": [
+        "R_W_MERCHANT",
+        "tt-rug-return",
+        "ts-e",
+        "lwu-s"
+      ],
+      "currentMaterialIds": {
+        "R_W_MERCHANT": "ph_bz04_painted_plaster_warm",
+        "tt-rug-return": "ph_bz04_painted_plaster_warm",
+        "ts-e": "ph_bz04_sandstone_blocks_05",
+        "lwu-s": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_SERVICE_COMPOUND",
+      "name": "Wholesale service receiving",
+      "parcelIds": [
+        "ss-e",
+        "cc-s",
+        "lsw-n"
+      ],
+      "currentMaterialIds": {
+        "ss-e": "ph_bz04_whitewashed_brick_warm",
+        "cc-s": "ph_bz04_whitewashed_brick_warm",
+        "lsw-n": "ph_bz04_whitewashed_brick_warm"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_CARAVAN_STORES",
+      "name": "Caravan receiving and packing stores",
+      "parcelIds": [
+        "cc-w"
+      ],
+      "currentMaterialIds": {
+        "cc-w": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_CARAVAN_GARDEN_WALLS",
+      "name": "Caravan garden enclosure",
+      "parcelIds": [
+        "cc-es"
+      ],
+      "currentMaterialIds": {
+        "cc-es": "ph_bz04_plastered_wall"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_CARAVAN_TRANSITIONS",
+      "name": "Caravan transition returns",
+      "parcelIds": [
+        "cc-n",
+        "cc-s-part-2"
+      ],
+      "currentMaterialIds": {
+        "cc-n": "ph_bz04_sandstone_blocks_06",
+        "cc-s-part-2": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_NORTH_SERVICE_COMPOUND",
+      "name": "North service stores",
+      "parcelIds": [
+        "sn-w"
+      ],
+      "currentMaterialIds": {
+        "sn-w": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_TEA_WEST_GRADE",
+      "name": "Tea west grade retaining",
+      "parcelIds": [
+        "tr-w",
+        "tt-w",
+        "ts-w",
+        "tl-w"
+      ],
+      "currentMaterialIds": {
+        "tr-w": "ph_bz04_sandstone_blocks_05",
+        "tt-w": "ph_bz04_sandstone_blocks_05",
+        "ts-w": "ph_bz04_sandstone_blocks_05",
+        "tl-w": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_TEA_LINK_RETURN",
+      "name": "Tea landing north return",
+      "parcelIds": [
+        "tl-n"
+      ],
+      "currentMaterialIds": {
+        "tl-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_DYERS_EAST",
+      "name": "Low wet-dye and sample works",
+      "parcelIds": [
+        "DA_E_WORK",
+        "DA_E_SAMPLES",
+        "DA_E_YARD"
+      ],
+      "currentMaterialIds": {
+        "DA_E_WORK": "ph_bz04_sandstone_blocks_06",
+        "DA_E_SAMPLES": "ph_bz04_aged_plaster_ochre",
+        "DA_E_YARD": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "faded-ochre",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_DYERS_SOUTH_WALL",
+      "name": "Dyers south boundary",
+      "parcelIds": [
+        "da-s"
+      ],
+      "currentMaterialIds": {
+        "da-s": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_DYERS_WEST",
+      "name": "Dye preparation store",
+      "parcelIds": [
+        "da-works",
+        "lse-n-part-2"
+      ],
+      "currentMaterialIds": {
+        "da-works": "ph_bz04_aged_plaster_ochre",
+        "lse-n-part-2": "ph_bz04_aged_plaster_ochre"
+      },
+      "proposedPalette": "faded-ochre",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_SOUK_NORTH_END",
+      "name": "Covered Souk north end",
+      "parcelIds": [
+        "cs-n"
+      ],
+      "currentMaterialIds": {
+        "cs-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SOUK_EAST_STORAGE",
+      "name": "Covered-souk trading store",
+      "parcelIds": [
+        "cs-e"
+      ],
+      "currentMaterialIds": {
+        "cs-e": "ph_bz04_whitewashed_brick_warm"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_SOUK_SOUTH_RETURN",
+      "name": "Covered Souk south return",
+      "parcelIds": [
+        "cs-s"
+      ],
+      "currentMaterialIds": {
+        "cs-s": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_DOGLEG_EAST_HOUSE",
+      "name": "Dyer household at the turn",
+      "parcelIds": [
+        "dd-e"
+      ],
+      "currentMaterialIds": {
+        "dd-e": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_DOGLEG_WEST_ANNEX",
+      "name": "Dye finishing and drying annex",
+      "parcelIds": [
+        "dd-w",
+        "nc-s",
+        "cs-n-part-2"
+      ],
+      "currentMaterialIds": {
+        "dd-w": "ph_bz04_sandstone_blocks_06",
+        "nc-s": "ph_bz04_whitewashed_brick_warm",
+        "cs-n-part-2": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_NORTH_DYERS_COMPOUND",
+      "name": "North drying and finishing compound",
+      "parcelIds": [
+        "nc-n",
+        "nc-ey",
+        "lne-e"
+      ],
+      "currentMaterialIds": {
+        "nc-n": "ph_bz04_plastered_wall",
+        "nc-ey": "ph_bz04_painted_plaster_warm",
+        "lne-e": "ph_bz04_painted_plaster_warm"
+      },
+      "proposedPalette": "cream-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_NORTH_EAST_HOUSE",
+      "name": "North court family house",
+      "parcelIds": [
+        "nc-eh"
+      ],
+      "currentMaterialIds": {
+        "nc-eh": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_HAMMAM",
+      "name": "Hammam entrance and changing pavilion",
+      "parcelIds": [
+        "nc-ws",
+        "leu-s-part-3"
+      ],
+      "currentMaterialIds": {
+        "nc-ws": "ph_bz04_sandstone_blocks_05",
+        "leu-s-part-3": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_WEST_UPPER",
+      "name": "West-upper link boundary",
+      "parcelIds": [
+        "lwu-n"
+      ],
+      "currentMaterialIds": {
+        "lwu-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_EAST_UPPER",
+      "name": "East-upper link boundary",
+      "parcelIds": [
+        "leu-s-part-2"
+      ],
+      "currentMaterialIds": {
+        "leu-s-part-2": "ph_bz04_whitewashed_brick_warm"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_SOUTH_WEST",
+      "name": "South-west link boundary",
+      "parcelIds": [
+        "lsw-w",
+        "lsw-n-part-2",
+        "lsw-s"
+      ],
+      "currentMaterialIds": {
+        "lsw-w": "ph_bz04_sandstone_blocks_05",
+        "lsw-n-part-2": "ph_bz04_whitewashed_brick_warm",
+        "lsw-s": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "pale-lime",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_SOUTH_EAST",
+      "name": "South-east link boundary",
+      "parcelIds": [
+        "lse-e",
+        "lse-n",
+        "lse-s-part-2"
+      ],
+      "currentMaterialIds": {
+        "lse-e": "ph_bz04_whitewashed_brick_warm",
+        "lse-n": "ph_bz04_aged_plaster_ochre",
+        "lse-s-part-2": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "faded-ochre",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_NORTH_WEST",
+      "name": "North-west link boundary",
+      "parcelIds": [
+        "lnw-e",
+        "lnw-s",
+        "lnw-w",
+        "lnw-n"
+      ],
+      "currentMaterialIds": {
+        "lnw-e": "ph_bz04_sandstone_blocks_05",
+        "lnw-s": "ph_bz04_beige_wall_002",
+        "lnw-w": "ph_bz04_sandstone_blocks_06",
+        "lnw-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_LINK_NORTH_EAST",
+      "name": "North-east link boundary",
+      "parcelIds": [
+        "lne-n-part-2"
+      ],
+      "currentMaterialIds": {
+        "lne-n-part-2": "ph_bz04_whitewashed_brick_warm"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_MADRASA_SERVICE",
+      "name": "Guildhall service house",
+      "parcelIds": [
+        "F_W_SERVICE",
+        "cc-es-part-2",
+        "lwm-s"
+      ],
+      "currentMaterialIds": {
+        "F_W_SERVICE": "ph_bz04_beige_wall_002",
+        "cc-es-part-2": "ph_bz04_beige_wall_002",
+        "lwm-s": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_FOUNTAIN_HOUSE",
+      "name": "Fountain corner household",
+      "parcelIds": [
+        "F_E_HOUSE",
+        "cs-wn",
+        "lem-n"
+      ],
+      "currentMaterialIds": {
+        "F_E_HOUSE": "ph_bz04_sandstone_blocks_05",
+        "cs-wn": "ph_bz04_aged_plaster_ochre",
+        "lem-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "faded-ochre",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Resolve undocumented same-owner face finish changes at the whole-building level.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_SPICE_SERVICE_WEST",
+      "name": "South service loading stores",
+      "parcelIds": [
+        "ss-w"
+      ],
+      "currentMaterialIds": {
+        "ss-w": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_NORTH_SERVICE_SPINE",
+      "name": "Tea and service-lane enclosure spine",
+      "parcelIds": [
+        "sn-es",
+        "sn-et",
+        "sn-en",
+        "sn-n"
+      ],
+      "currentMaterialIds": {
+        "sn-es": "ph_bz04_sandstone_blocks_06",
+        "sn-et": "ph_bz04_painted_plaster_warm",
+        "sn-en": "ph_bz04_whitewashed_brick_warm",
+        "sn-n": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_DYERS_WEST_HOUSE",
+      "name": "Dyer family house",
+      "parcelIds": [
+        "da-house",
+        "cs-s-part-2"
+      ],
+      "currentMaterialIds": {
+        "da-house": "ph_bz04_beige_wall_002",
+        "cs-s-part-2": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_HAMMAM_STORES",
+      "name": "Hammam linen store",
+      "parcelIds": [
+        "nc-wn",
+        "leu-n-part-2",
+        "lne-s"
+      ],
+      "currentMaterialIds": {
+        "nc-wn": "ph_bz04_sandstone_blocks_05",
+        "leu-n-part-2": "ph_bz04_sandstone_blocks_05",
+        "lne-s": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "ASM_SPICE_SOUTH_TERMINAL",
+      "name": "Service court south terminal wall",
+      "parcelIds": [
+        "ss-s"
+      ],
+      "currentMaterialIds": {
+        "ss-s": "ph_bz04_sandstone_blocks_06"
+      },
+      "proposedPalette": "service-stone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_WATCH",
+      "name": "Gate watch house",
+      "parcelIds": [
+        "A_S_WATCH"
+      ],
+      "currentMaterialIds": {
+        "A_S_WATCH": "ph_bz04_sandstone_blocks_05"
+      },
+      "proposedPalette": "dressed-sandstone",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    },
+    {
+      "buildingId": "BLD_A_KEEPER",
+      "name": "Gate keeper house",
+      "parcelIds": [
+        "A_S_KEEPER"
+      ],
+      "currentMaterialIds": {
+        "A_S_KEEPER": "ph_bz04_beige_wall_002"
+      },
+      "proposedPalette": "sand-plaster",
+      "scope": "wall fields only; preserve modeled bases, stone sills, trim and all geometry",
+      "reason": "Retain owner identity using curated source/appearance family.",
+      "status": "proposal"
+    }
+  ],
+  "floorAssignments": [
+    {
+      "zone": "SPAWN_A_COURTYARD",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "SPICE_STREET",
+      "currentMaterialId": "bz04_spice_laid_stone_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "FOUNTAIN_COURT",
+      "currentMaterialId": "bz04_patterned_cobblestone",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "TEXTILE_ARCADE",
+      "currentMaterialId": "bz04_cobblestone_color",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "RUG_GATE",
+      "currentMaterialId": "bz04_patterned_cobblestone",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "SPAWN_B_COURTYARD",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "SERVICE_SOUTH",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "rough-service-paving",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "CARAVAN_COURT",
+      "currentMaterialId": "bz04_red_sandstone_pavement",
+      "proposedPalette": "rough-service-paving",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "SERVICE_NORTH",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "rough-service-paving",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "TEA_RAMP",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "TEA_TERRACE",
+      "currentMaterialId": "bz04_patterned_cobblestone",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "TEA_STAIRS",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "TEA_LANDING",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "DYERS_ALLEY",
+      "currentMaterialId": "bz04_patterned_cobblestone",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "COVERED_SOUK",
+      "currentMaterialId": "bz04_court_limestone_flags_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "DYERS_DOGLEG",
+      "currentMaterialId": "bz04_cobblestone_color",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "NORTH_COURT",
+      "currentMaterialId": "bz04_court_limestone_flags_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_WEST_MID",
+      "currentMaterialId": "bz04_cobblestone_pavement",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_EAST_MID",
+      "currentMaterialId": "bz04_cobblestone_pavement",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_WEST_UPPER",
+      "currentMaterialId": "bz04_cobblestone_pavement",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_EAST_UPPER",
+      "currentMaterialId": "bz04_cobblestone_pavement",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_SOUTH_WEST",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "rough-service-paving",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_SOUTH_EAST",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_NORTH_WEST",
+      "currentMaterialId": "bz04_large_sandstone_blocks_01",
+      "proposedPalette": "rough-service-paving",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    },
+    {
+      "zone": "LINK_NORTH_EAST",
+      "currentMaterialId": "bz04_court_limestone_flags_01",
+      "proposedPalette": "quiet-flags",
+      "status": "proposal",
+      "transition": "Flush at existing shared edge; continuous UV/stone-unit scale within a paving family. Route/court boundary is a permissible change; no added curb."
+    }
+  ],
+  "sourceImageSheets": [
+    "actual-albedos-1.jpg",
+    "actual-albedos-2.jpg",
+    "actual-albedos-3.jpg"
+  ]
+}

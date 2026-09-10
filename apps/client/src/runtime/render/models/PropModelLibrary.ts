@@ -178,6 +178,7 @@ export class PropModelLibrary {
         root.name = `prop-template-${entry.id}`;
 
         const source = gltf.scene;
+        root.userData = { ...source.userData };
         if (entry.scale !== 1) {
           source.scale.multiplyScalar(entry.scale);
         }
@@ -192,7 +193,7 @@ export class PropModelLibrary {
             material?: unknown;
           };
           if (!mesh.isMesh) return;
-          mesh.castShadow = true;
+          mesh.castShadow = node.userData.bz04Shadow !== "receive";
           mesh.receiveShadow = true;
           const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
           for (const material of materials) {
@@ -244,7 +245,7 @@ export class PropModelLibrary {
     clone.traverse((node) => {
       const mesh = node as { isMesh?: boolean; castShadow?: boolean; receiveShadow?: boolean };
       if (!mesh.isMesh) return;
-      mesh.castShadow = true;
+      mesh.castShadow = node.userData.bz04Shadow !== "receive";
       mesh.receiveShadow = true;
     });
     return clone;

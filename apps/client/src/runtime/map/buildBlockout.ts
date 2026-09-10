@@ -1,3 +1,4 @@
+import { bz04CourtyardVisualSegments, bz04RoofFragments } from "./bz04Trial";
 import {
   BoxGeometry,
   CircleGeometry,
@@ -36,7 +37,7 @@ import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 import { buildDoorModels } from "./buildDoorModels";
-import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
+import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels, validateBz04Bounds } from "./buildFacadeModels";
 import { buildDecorativePalms } from "./buildDecorativePalms";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildV3Architecture, type V3ArchitectureBuildResult } from "./v3Architecture";
@@ -966,6 +967,7 @@ function createCourtPavingBorders(
 ): Mesh | null {
   const courtZones = spec.zones.filter((zone) => (
     /COURT|COURTYARD/.test(zone.id)
+    && !zone.floorMaterialId?.startsWith("bz04_")
     && zone.rect.w * zone.rect.h >= 180
   ));
   if (courtZones.length === 0) return null;
@@ -2594,6 +2596,21 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   const clearRects = clearZones.map((zone) => zone.rect);
   const traversalSurfaces = spec.traversalSurfaces ?? [];
   const wallSegments = deriveBlockoutWallSegments(spec);
+  const courtyardModel = spec.sectionModels?.find(s => s.zoneId === "SPAWN_B_COURTYARD");
+  const bz04Courtyard = Boolean(courtyardModel && options.facadeModels?.hasModel(courtyardModel.modelId)
+    && options.facadeModels.instantiate(courtyardModel.modelId).userData.bz04VisualBounds);
+  if (bz04Courtyard) validateBz04Bounds(options.facadeModels!.instantiate(courtyardModel!.modelId), courtyardModel!.modelId);
+  const bz04RoofCoverage: number[][] = [];
+  for (const placement of spec.authoredPlacements ?? []) {
+    if (!options.facadeModels?.hasModel(placement.modelId)) continue;
+    const model=options.facadeModels.instantiate(placement.modelId);
+    if (!model.userData.bz04RoofBundle) continue;
+    validateBz04Bounds(model,placement.modelId);
+    bz04RoofCoverage.push(...model.userData.bz04RetirementCoverage);
+  }
+  const bz04Environment = (spec.authoredPlacements ?? []).some(p => p.modelId === "bz04_shared_environment" && options.facadeModels?.hasModel(p.modelId));
+  if (bz04Environment) validateBz04Bounds(options.facadeModels!.instantiate("bz04_shared_environment"),"bz04_shared_environment");
+
   const wallThicknessM = Math.max(0.05, spec.defaults.wall_thickness);
 
   const floorTopY = spec.defaults.floor_height;
@@ -2618,7 +2635,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
 
     if (options.lightingPreset === "golden") {
       const sandAccumulation = buildSandAccumulation({
-        wallSegments,
+        wallSegments: bz04Courtyard ? wallSegments.flatMap(bz04CourtyardVisualSegments) : wallSegments,
         seed: options.seed,
         floorTopY,
         manifest: options.floorMaterials,
@@ -2627,7 +2644,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       root.add(sandAccumulation);
 
       const wallBaseDebris = buildWallBaseDebris({
-        wallSegments,
+        wallSegments: bz04Courtyard ? wallSegments.flatMap(bz04CourtyardVisualSegments) : wallSegments,
         seed: options.seed,
         floorTopY,
         manifest: options.floorMaterials,
@@ -2755,6 +2772,8 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
             .filter((anchor) => anchor.type === "shopfront_anchor" && anchor.servedBayId && anchor.frontageId)
             .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
         ),
+        bz04Courtyard,
+        bz04Gateway: Boolean(spec.dressingPlacements?.some(p => p.assetId === "ASSET_BZ04_RUG_GATE")),
         sectionOwnedFaces: new Set((spec.sectionModels ?? []).flatMap((section) => section.faces.map((face) => `${section.zoneId}:${face}`))),
       })
     : buildWallDetailPlacements({
@@ -2808,7 +2827,8 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         segment,
         sourceIndex: visualWallPlan.sourceSegmentIndices[index]!,
       }))
-      .filter((entry) => !repaintedEndCapIndices.has(entry.sourceIndex));
+      .filter((entry) => !repaintedEndCapIndices.has(entry.sourceIndex))
+      .flatMap(entry => (bz04Courtyard ? bz04CourtyardVisualSegments(entry.segment) : [entry.segment]).map(segment => ({...entry,segment})));
     const visualSegmentHeights = primaryVisualEntries.map(({ sourceIndex }) => (
       segmentHeights[sourceIndex]!
     ));
@@ -3206,7 +3226,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   }
 
   if (wallDetailPlacements.instances.length > 0) {
-    const detailRoot = buildWallDetailMeshes(wallDetailPlacements.instances, {
+    const detailRoot = buildWallDetailMeshes(wallDetailPlacements.instances.flatMap(instance => bz04RoofFragments(instance, bz04RoofCoverage)), {
       highVis: options.highVis,
       wallMode: options.wallMode,
       wallMaterials: options.wallMaterials,
@@ -3245,6 +3265,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     root.add(decorativePalms);
   }
 
+  if (!bz04Environment) {
   root.add(
     options.wallMode === "pbr" && options.wallMaterials
       ? createPbrBackgroundShells(spec.playable_boundary, options.wallMaterials, wallTextureQuality)
@@ -3258,6 +3279,8 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   if (String(spec.formatVersion).startsWith("3")) {
     const nonWalkableInfill = createNonWalkableInfill(spec.playable_boundary, traversalSurfaces);
     if (nonWalkableInfill) root.add(nonWalkableInfill);
+  }
+
   }
 
   if (traversalSurfaces.length === 0) {

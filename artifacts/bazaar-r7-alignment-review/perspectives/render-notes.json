@@ -1,0 +1,308 @@
+{
+  "label": "Schematic design perspective - not an in-game render",
+  "revision": "R7-facade-centered-upper-openings",
+  "designSha256": "d9ba8a7d4b4c9872e5d959d49c342c511941eb0e4f7463d79d52c932b8495bdb",
+  "renderEngine": "Cycles CPU",
+  "samples": 12,
+  "diagramLayerSeparationM": 0.003,
+  "clothThicknessM": 0.008,
+  "awningHemDepthM": 0.025,
+  "scheduledKneeRunRiseM": 0.3,
+  "includedZones": [
+    "SPAWN_A_COURTYARD",
+    "SPICE_STREET",
+    "FOUNTAIN_COURT",
+    "TEXTILE_ARCADE",
+    "RUG_GATE",
+    "SPAWN_B_COURTYARD",
+    "SERVICE_SOUTH",
+    "CARAVAN_COURT",
+    "SERVICE_NORTH",
+    "TEA_RAMP",
+    "TEA_TERRACE",
+    "TEA_STAIRS",
+    "TEA_LANDING",
+    "DYERS_ALLEY",
+    "COVERED_SOUK",
+    "DYERS_DOGLEG",
+    "NORTH_COURT",
+    "LINK_WEST_MID",
+    "LINK_EAST_MID",
+    "LINK_WEST_UPPER",
+    "LINK_EAST_UPPER",
+    "LINK_SOUTH_WEST",
+    "LINK_SOUTH_EAST",
+    "LINK_NORTH_WEST",
+    "LINK_NORTH_EAST"
+  ],
+  "views": [
+    {
+      "caption": "SPAWN_A_COURTYARD | SPAWN_A_COURTYARD-south-A_S_WATCH_A_S_GATE_A_S_KEEPER-s1-base | design XYZ (28.000, 13.650, 1.700) m | yaw 0.00\u00b0, pitch 2.10\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "spawn_a_courtyard.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "SPAWN_A_COURTYARD",
+      "id": "SPAWN_A_COURTYARD-south-A_S_WATCH_A_S_GATE_A_S_KEEPER-s1-base",
+      "position": [
+        28.0,
+        13.65,
+        1.7
+      ],
+      "yawDeg": 0,
+      "pitchDeg": 2.098,
+      "verticalFovDeg": 75.0,
+      "file": "spawn_a_courtyard.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "SPICE_STREET | SPICE_STREET-west-S_W_SOUTH_S_W_MID_S_W_NORTH-s1-base | design XYZ (32.650, 23.000, 1.700) m | yaw 90.00\u00b0, pitch 2.46\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "spice_street.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "SPICE_STREET",
+      "id": "SPICE_STREET-west-S_W_SOUTH_S_W_MID_S_W_NORTH-s1-base",
+      "position": [
+        32.65,
+        23.0,
+        1.7
+      ],
+      "yawDeg": 90,
+      "pitchDeg": 2.458,
+      "verticalFovDeg": 75.0,
+      "file": "spice_street.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "FOUNTAIN_COURT | FOUNTAIN_COURT-west-F_W_HALL-s1-base | design XYZ (35.650, 44.500, 1.700) m | yaw 90.00\u00b0, pitch 1.83\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "fountain_court.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "FOUNTAIN_COURT",
+      "id": "FOUNTAIN_COURT-west-F_W_HALL-s1-base",
+      "position": [
+        35.65,
+        44.5,
+        1.7
+      ],
+      "yawDeg": 90,
+      "pitchDeg": 1.83,
+      "verticalFovDeg": 75.0,
+      "file": "fountain_court.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "TEXTILE_ARCADE | TEXTILE_ARCADE-east-T_E_LOOM_T_E_GALLERY_T_E_CART-s1-base | design XYZ (24.350, 56.000, 1.700) m | yaw 270.00\u00b0, pitch 2.69\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "textile_arcade.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "TEXTILE_ARCADE",
+      "id": "TEXTILE_ARCADE-east-T_E_LOOM_T_E_GALLERY_T_E_CART-s1-base",
+      "position": [
+        24.35,
+        56.0,
+        1.7
+      ],
+      "yawDeg": 270,
+      "pitchDeg": 2.688,
+      "verticalFovDeg": 75.0,
+      "file": "textile_arcade.png",
+      "sourceFrameLimitations": "upper supplementary view required",
+      "cameraOverride": false
+    },
+    {
+      "caption": "RUG_GATE | RUG_GATE-travel-forward | design XYZ (27.500, 64.650, 1.700) m | yaw 180.00\u00b0, pitch 0.00\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "rug_gate.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "RUG_GATE",
+      "id": "RUG_GATE-travel-forward",
+      "position": [
+        27.5,
+        64.65,
+        1.7
+      ],
+      "yawDeg": 180,
+      "pitchDeg": 0,
+      "verticalFovDeg": 75,
+      "file": "rug_gate.png",
+      "sourceFrameLimitations": null,
+      "cameraOverride": false
+    },
+    {
+      "caption": "SPAWN_B_COURTYARD | SPAWN_B_COURTYARD-north-B_N_POTTER_B_N_HOUSE_B_N_TEXTILE-s1-base | design XYZ (28.000, 78.350, 1.700) m | yaw 180.00\u00b0, pitch 2.10\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "spawn_b_courtyard.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "SPAWN_B_COURTYARD",
+      "id": "SPAWN_B_COURTYARD-north-B_N_POTTER_B_N_HOUSE_B_N_TEXTILE-s1-base",
+      "position": [
+        28.0,
+        78.35,
+        1.7
+      ],
+      "yawDeg": 180,
+      "pitchDeg": 2.098,
+      "verticalFovDeg": 75.0,
+      "file": "spawn_b_courtyard.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "CARAVAN_COURT | CARAVAN_COURT-west-cc-w-s1-base | design XYZ (14.650, 39.000, 1.700) m | yaw 90.00\u00b0, pitch 2.46\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "caravan_court.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "CARAVAN_COURT",
+      "id": "CARAVAN_COURT-west-cc-w-s1-base",
+      "position": [
+        14.65,
+        39.0,
+        1.7
+      ],
+      "yawDeg": 90,
+      "pitchDeg": 2.458,
+      "verticalFovDeg": 75.0,
+      "file": "caravan_court.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "TEA_TERRACE | TEA_TERRACE-east-tt-e_tt-rug-return-s1-base | design XYZ (11.350, 61.000, 3.100) m | yaw 270.00\u00b0, pitch 3.74\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "tea_terrace.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "TEA_TERRACE",
+      "id": "TEA_TERRACE-east-tt-e_tt-rug-return-s1-base",
+      "position": [
+        11.35,
+        61.0,
+        3.1
+      ],
+      "yawDeg": 270,
+      "pitchDeg": 3.74,
+      "verticalFovDeg": 75.0,
+      "file": "tea_terrace.png",
+      "sourceFrameLimitations": "upper supplementary view required",
+      "cameraOverride": false
+    },
+    {
+      "caption": "DYERS_ALLEY | DYERS_ALLEY-east-DA_E_WORK-s1-base | design XYZ (46.350, 14.800, 1.700) m | yaw 270.00\u00b0, pitch 4.30\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "dyers_alley.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "DYERS_ALLEY",
+      "id": "DYERS_ALLEY-east-DA_E_WORK-s1-base",
+      "position": [
+        46.35,
+        14.8,
+        1.7
+      ],
+      "yawDeg": 270,
+      "pitchDeg": 4.3,
+      "verticalFovDeg": 75.0,
+      "file": "dyers_alley.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "COVERED_SOUK | COVERED_SOUK-east-cs-e-s1-base | design XYZ (41.350, 40.000, 1.700) m | yaw 270.00\u00b0, pitch 2.46\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "covered_souk.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "COVERED_SOUK",
+      "id": "COVERED_SOUK-east-cs-e-s1-base",
+      "position": [
+        41.35,
+        40.0,
+        1.7
+      ],
+      "yawDeg": 270,
+      "pitchDeg": 2.458,
+      "verticalFovDeg": 75.0,
+      "file": "covered_souk.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    },
+    {
+      "caption": "DYERS_DOGLEG | DYERS_DOGLEG-east-dd-e-s1-base | design XYZ (46.350, 51.500, 1.700) m | yaw 270.00\u00b0, pitch 4.30\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "dyers_dogleg.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "DYERS_DOGLEG",
+      "id": "DYERS_DOGLEG-east-dd-e-s1-base",
+      "position": [
+        46.35,
+        51.5,
+        1.7
+      ],
+      "yawDeg": 270,
+      "pitchDeg": 4.3,
+      "verticalFovDeg": 75.0,
+      "file": "dyers_dogleg.png",
+      "sourceFrameLimitations": "upper supplementary view required",
+      "cameraOverride": false
+    },
+    {
+      "caption": "NORTH_COURT | NORTH_COURT-west-nc-ws-s1-base | design XYZ (52.650, 64.500, 1.700) m | yaw 90.00\u00b0, pitch 2.46\u00b0, vertical FOV 75.00\u00b0 | 1440 \u00d7 900 px",
+      "captionFile": "north_court.caption.txt",
+      "resolution": [
+        1440,
+        900
+      ],
+      "zone": "NORTH_COURT",
+      "id": "NORTH_COURT-west-nc-ws-s1-base",
+      "position": [
+        52.65,
+        64.5,
+        1.7
+      ],
+      "yawDeg": 90,
+      "pitchDeg": 2.458,
+      "verticalFovDeg": 75.0,
+      "file": "north_court.png",
+      "sourceFrameLimitations": "full parcel height fits",
+      "cameraOverride": false
+    }
+  ],
+  "limitations": [
+    "Plain parcel diagram colors; material-region bands, source scan textures, weathering, lettering except the gateway inlay, metal hardware, fine carving and exact lattice/glazing web patterns are omitted.",
+    "Stock uses bounded schematic silhouettes; ceramics, vessels and rolls are simplified ellipsoids.",
+    "Baseline retained cover is a neutral oriented source envelope, not the installed mesh.",
+    "Roof slabs and perimeter parapets are schematic parcel envelopes; coordinated roof falls, collectors and hidden room partitions are omitted.",
+    "Nearby source districts are included for physical occlusion; distant skyline and background landscape are omitted. Balcony members and stock are schematic, not construction craft approval."
+  ],
+  "sourceSpecificOmissions": [
+    "Activity group without opening frame: G_FOUNTAIN_COURT_PLANT",
+    "Activity group without opening frame: G_SPAWN_B_COURTYARD_PLANT",
+    "Glazing web pattern simplified to clipped pane grid: B_N_HOUSE-L2-B1",
+    "Glazing web pattern simplified to clipped pane grid: B_N_HOUSE-L2-B3",
+    "Glazing web pattern simplified to clipped pane grid: F_W_HALL-HIGH-LIGHT",
+    "Glazing web pattern simplified to clipped pane grid: nc-ws-ENTRANCE",
+    "Inset finish field omitted: B-WEST-ABUTMENT-FIELD"
+  ]
+}

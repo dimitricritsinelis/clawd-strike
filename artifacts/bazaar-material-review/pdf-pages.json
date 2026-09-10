@@ -1,0 +1,21 @@
+{
+  "revision": "R7 source with unchanged R6 materials",
+  "sourceSha256": "d9ba8a7d4b4c9872e5d959d49c342c511941eb0e4f7463d79d52c932b8495bdb",
+  "pdf": "output/pdf/bazaar-material-review.pdf",
+  "pages": [
+    "Bazaar | R6 materials retained in R7",
+    "01 | Resolved source choices",
+    "02 | Selected palette and physical surface roles",
+    "03 | Selected palette and physical surface roles",
+    "04 | Whole-owner material and paving continuity",
+    "05 | Walls, horizontal ground and accents: neutral light",
+    "06 | Walls, horizontal ground and accents: warm light",
+    "07 | Cloth, timber and monolithic trim at useful scale",
+    "08 | Close comparison: fine weave and stone grain",
+    "09 | Retained models and decorative rug",
+    "10 | Local wear and material transitions",
+    "11 | Local wear and material transitions",
+    "12 | Efficient source and material reuse",
+    "13 | One consistent engineering handoff"
+  ]
+}

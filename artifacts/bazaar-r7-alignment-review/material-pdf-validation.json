@@ -1,0 +1,9 @@
+{
+  "pdf": "output/pdf/bazaar-material-review.pdf",
+  "pdfSha256": "eccf5322f5173b17216803d102668b4f4ba13c4c46f203403ace64f7b71f28b7",
+  "designSha256": "d9ba8a7d4b4c9872e5d959d49c342c511941eb0e4f7463d79d52c932b8495bdb",
+  "pages": 14,
+  "outsidePageText": 0,
+  "visualQA": "Cover and final source page reinspected; remaining layout and material sample content unchanged from fully reviewed R6 material specification. Updated footer fits every page.",
+  "scope": "R6materialrecipes retained in R7; no material redesign."
+}

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2000" height="1320" viewBox="0 0 2000 1320">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="2000" height="1320" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 link north east facade-centered upper openings · LINK_NORTH_EAST · Plan</text>
+<text class="sub" x="48" y="76">SCHEMA DRAWING ONLY · NOT PHOTOREAL · north up · design metres</text>
+<rect class="panel" x="48" y="105" width="1160" height="1040" rx="8"/>
+<rect x="268.40" y="377.17" width="713.21" height="509.43" fill="#efe4cf" stroke="#24353a" stroke-width="2"/>
+<rect x="268.40" y="453.58" width="713.21" height="356.60" fill="none" stroke="#387b78" stroke-width="3" stroke-dasharray="9 5"/>
+<text class="label" x="625.00" y="631.89" text-anchor="middle">LINK_NORTH_EAST-CLEAR</text>
+<line x1="915.38" y1="631.89" x2="813.49" y2="631.89" stroke="#573d7a" stroke-width="3" marker-end="url(#camera-arrow)"/><text class="tiny" x="915.38" y="624.89">LINK_NORTH_EA…</text>
+<line x1="334.62" y1="631.89" x2="436.51" y2="631.89" stroke="#573d7a" stroke-width="3" marker-end="url(#camera-arrow)"/><text class="tiny" x="334.62" y="624.89">LINK_NORTH_EA…</text>
+<line class="open" x1="981.60" y1="479.06" x2="981.60" y2="886.60"/>
+<line class="open" x1="472.17" y1="886.60" x2="981.60" y2="886.60"/>
+<line class="open" x1="268.40" y1="377.17" x2="268.40" y2="682.83"/>
+<line class="solid" x1="268.40" y1="377.17" x2="981.60" y2="377.17"/>
+<line class="solid" x1="981.60" y1="479.06" x2="981.60" y2="377.17"/>
+<line class="solid" x1="268.40" y1="886.60" x2="472.17" y2="886.60"/>
+<line class="solid" x1="268.40" y1="886.60" x2="268.40" y2="682.83"/>
+<rect x="268.40" y="305.85" width="366.79" height="71.32" fill="#b6a185" fill-opacity=".78" stroke="#24353a"/>
+<text class="parcel" x="451.79" y="341.51" text-anchor="middle">P1</text>
+<rect x="635.19" y="305.85" width="346.42" height="71.32" fill="#b6a185" fill-opacity=".78" stroke="#24353a"/>
+<line x1="635.19" y1="372.58" x2="981.60" y2="372.58" stroke="#657276" stroke-width="1.5" stroke-dasharray="4 3"/>
+<rect x="284.70" y="372.58" width="350.49" height="4.58" fill="#b8ad95" stroke="#475255" stroke-width="1"/>
+<rect x="635.19" y="372.58" width="6.11" height="4.58" fill="#b8ad95" stroke="#475255" stroke-width="1"/>
+<rect x="965.30" y="372.58" width="16.30" height="4.58" fill="#b8ad95" stroke="#475255" stroke-width="1"/>
+<text class="parcel" x="808.40" y="341.51" text-anchor="middle">P2</text>
+<rect x="981.60" y="377.17" width="61.13" height="101.89" fill="#d8c4a0" fill-opacity=".78" stroke="#24353a"/>
+<text class="parcel" x="1012.17" y="428.11" text-anchor="middle">P3</text>
+<rect x="268.40" y="886.60" width="203.77" height="61.13" fill="#bda985" fill-opacity=".78" stroke="#24353a"/>
+<text class="parcel" x="370.28" y="917.17" text-anchor="middle">P4</text>
+<rect x="207.26" y="682.83" width="61.13" height="203.77" fill="#b6a185" fill-opacity=".78" stroke="#24353a"/>
+<text class="parcel" x="237.83" y="784.72" text-anchor="middle">P5</text>
+<text class="label" x="1240" y="145">KEY</text>
+<line class="solid" x1="1240" y1="180" x2="1300" y2="180"/><text class="label" x="1320" y="185">Collider-backed face</text>
+<line class="open" x1="1240" y1="215" x2="1300" y2="215"/><text class="label" x="1320" y="220">Zero-build protected opening</text>
+<rect x="1240" y="242" width="60" height="18" fill="none" stroke="#b34f39" stroke-width="2"/><text class="label" x="1320" y="257">Fixture bounds</text>
+<rect x="1240" y="270" width="60" height="18" fill="#c2534d" fill-opacity=".16" stroke="#c2534d" stroke-width="2" stroke-dasharray="7 4"/><text class="label" x="1320" y="285">Retained gameplay</text>
+<line x1="1240" y1="312" x2="1300" y2="312" stroke="#573d7a" stroke-width="3"/><text class="label" x="1320" y="317">Camera direction</text>
+<text class="label" x="85" y="1125">N ↑ · scale 10 m</text>
+<rect x="1240" y="351" width="18" height="18" fill="#d8c4a0" stroke="#24353a"/><text class="label" x="1270" y="365">M1 ph_bz04_painted_pla… · #d8c4a0</text>
+<rect x="1240" y="377" width="18" height="18" fill="#bda985" stroke="#24353a"/><text class="label" x="1270" y="391">M2 ph_bz04_sandstone_b… · #bda985</text>
+<rect x="1240" y="403" width="18" height="18" fill="#b6a185" stroke="#24353a"/><text class="label" x="1270" y="417">M3 ph_bz04_sandstone_b… · #b6a185</text>
+<text class="label" x="1240" y="570">PARCEL KEY</text>
+<text class="tiny" x="1240" y="608">P1: lne-n</text>
+<text class="tiny" x="1240" y="626">P2: lne-n-part-2</text>
+<text class="tiny" x="1240" y="644">P3: lne-e</text>
+<text class="tiny" x="1240" y="662">P4: lne-s</text>
+<text class="tiny" x="1240" y="680">P5: lne-w</text>
+</svg>

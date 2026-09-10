@@ -1,0 +1,2 @@
+NORTH_COURT | NORTH_COURT-west-nc-ws-s1-base | design XYZ (52.650, 64.500, 1.700) m | yaw 90.00°, pitch 2.46°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

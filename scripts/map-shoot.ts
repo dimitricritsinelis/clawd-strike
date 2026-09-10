@@ -17,6 +17,7 @@ import {
   captureEvidenceErrors,
   detectProtectedChanges,
   glbBounds,
+  glbTriangleBounds,
   hashMapAuthority,
   hasFrameMeasurement,
   validateMapSpec,
@@ -192,17 +193,21 @@ function shoot(argv: string[]): void {
 }
 
 /** Bounds of each placed model, read from the GLB the facades manifest points at. */
-function placementBounds(): (modelId: string) => Bounds3 | null {
-  const cache = new Map<string, Bounds3 | null>();
-  return (modelId) => {
+function placementGeometry() {
+  const cache = new Map<string, { bounds: Bounds3 | null; triangles: Bounds3[] }>();
+  const manifest = JSON.parse(readFileSync(path.join(FACADES, "models.json"), "utf8")) as { models: { id: string; url: string }[] };
+  const get = (modelId: string) => {
     if (!cache.has(modelId)) {
-      const manifest = JSON.parse(readFileSync(path.join(FACADES, "models.json"), "utf8")) as { models: { id: string; url: string }[] };
       const model = manifest.models.find((m) => m.id === modelId);
       if (!model) throw new Error(`placement model ${modelId} is not in ${rel(path.join(FACADES, "models.json"))}`);
-      cache.set(modelId, glbBounds(readFileSync(path.join(FACADES, model.url))));
+      const bytes = readFileSync(path.join(FACADES, model.url));
+      const bounds=glbBounds(bytes), triangles=glbTriangleBounds(bytes);
+      if(!bounds&&triangles.length)throw new Error(`placement model ${modelId} has geometry but no declared bounds`);
+      cache.set(modelId, { bounds, triangles });
     }
     return cache.get(modelId)!;
   };
+  return { bounds: (id: string) => get(id).bounds, triangles: (id: string) => get(id).triangles };
 }
 
 /**
@@ -219,7 +224,8 @@ function check(): void {
   const knownHashes: Record<string, string> = usingBaseline ? JSON.parse(readFileSync(baselineHashes, "utf8")) : {};
   const touched = touchedFiles().filter((file) => knownHashes[file] !== fileHash(file));
   const reasons = detectProtectedChanges(base, spec, touched);
-  reasons.push(...authoredPlacementReasons(spec, placementBounds()));
+  const geometry = placementGeometry();
+  reasons.push(...authoredPlacementReasons(spec, geometry.bounds, undefined, undefined, geometry.triangles));
   const buildingIds = new Set(((spec.buildings as any[]) ?? []).map((b) => b.id));
   for (const f of spec.frontages as any[]) {
     if (!buildingIds.has(f.buildingId)) reasons.push(`frontage ${f.id} has no building (buildingId '${f.buildingId ?? ""}')`);

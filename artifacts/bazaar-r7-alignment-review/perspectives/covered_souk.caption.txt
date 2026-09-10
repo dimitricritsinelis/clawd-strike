@@ -1,0 +1,2 @@
+COVERED_SOUK | COVERED_SOUK-east-cs-e-s1-base | design XYZ (41.350, 40.000, 1.700) m | yaw 270.00°, pitch 2.46°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

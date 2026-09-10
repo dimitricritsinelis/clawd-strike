@@ -1,0 +1,205 @@
+{
+  "scope": "Approximate source-file footprint only: all 16 proposed palette families at 1k, resolving opaque timber to its two needed non-albedo maps and adding the unmodified rug. Excludes future derived bakes, repeated embedded copies, retained trim/roofs/props, unseen recipes and all runtime allocation. Comparison with current direct-reference subset is not a scene savings claim.",
+  "proposedPalette": {
+    "uniqueFiles": 33,
+    "encodedBytes": 18957041,
+    "estimatedRgba8MipBytes": 184451061
+  },
+  "currentDirectReferenceSubset": {
+    "uniqueFiles": 54,
+    "encodedBytes": 27696796,
+    "estimatedRgba8MipBytes": 289308654
+  },
+  "overlap": {
+    "uniqueFiles": 32,
+    "encodedBytes": 18345589,
+    "estimatedRgba8MipBytes": 178858656
+  },
+  "proposedOnly": {
+    "uniqueFiles": 1,
+    "encodedBytes": 611452,
+    "estimatedRgba8MipBytes": 5592405
+  },
+  "currentOnly": {
+    "uniqueFiles": 22,
+    "encodedBytes": 9351207,
+    "estimatedRgba8MipBytes": 110449998
+  },
+  "mapping": [
+    {
+      "paletteId": "cream-plaster",
+      "sourceMaterialId": "ph_bz04_painted_plaster_warm",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "sand-plaster",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "pale-lime",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "faded-ochre",
+      "sourceMaterialId": "ph_bz04_aged_plaster_ochre",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "faded-earth-red",
+      "sourceMaterialId": "ph_bz04_red_plaster_weathered",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "dressed-sandstone",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_05",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "service-stone",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_06",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "quiet-flags",
+      "sourceMaterialId": "bz04_court_limestone_flags_01",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "rough-service-paving",
+      "sourceMaterialId": "bz04_large_sandstone_blocks_01",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "cream-woven-cloth",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "timber",
+      "sourceMaterialId": "ph_bz04_weathered_brown_planks",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "teal",
+      "sourceMaterialId": "ph_bz04_rough_pine_door",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "indigo",
+      "sourceMaterialId": "ph_bz04_rough_pine_door",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "rust",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg"
+      ]
+    },
+    {
+      "paletteId": "rug",
+      "sourceMaterialId": "bz04_levantine_rug_project_original",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg"
+      ]
+    },
+    {
+      "paletteId": "iron",
+      "sourceMaterialId": "ph_bz04_rusty_metal_02",
+      "files": [
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
+        "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg"
+      ]
+    }
+  ],
+  "proposedFiles": [
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_arm_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+    "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg"
+  ]
+}

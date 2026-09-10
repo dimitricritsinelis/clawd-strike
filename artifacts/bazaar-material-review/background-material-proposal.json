@@ -1,0 +1,115 @@
+{
+  "status": "Proposal only; no geometry or active material changes",
+  "skylineAssignments": [
+    {
+      "id": "BG-01",
+      "zone": "SPAWN_A_COURTYARD",
+      "currentMaterialId": "ph_bz04_beige_wall_002",
+      "proposedPalette": "sand-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-02",
+      "zone": "SPAWN_A_COURTYARD",
+      "currentMaterialId": "ph_bz04_plastered_wall",
+      "proposedPalette": "pale-lime",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-03",
+      "zone": "SPAWN_A_COURTYARD",
+      "currentMaterialId": "ph_bz04_painted_plaster_warm",
+      "proposedPalette": "cream-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-04",
+      "zone": "SPAWN_B_COURTYARD",
+      "currentMaterialId": "ph_bz04_plastered_wall",
+      "proposedPalette": "pale-lime",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-05",
+      "zone": "SPAWN_B_COURTYARD",
+      "currentMaterialId": "ph_bz04_beige_wall_002",
+      "proposedPalette": "sand-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-06",
+      "zone": "SPAWN_B_COURTYARD",
+      "currentMaterialId": "ph_bz04_painted_plaster_warm",
+      "proposedPalette": "cream-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-07",
+      "zone": "SERVICE_SOUTH",
+      "currentMaterialId": "ph_bz04_beige_wall_002",
+      "proposedPalette": "sand-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-08",
+      "zone": "CARAVAN_COURT",
+      "currentMaterialId": "ph_bz04_sandstone_blocks_06",
+      "proposedPalette": "service-stone",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-09",
+      "zone": "SERVICE_NORTH",
+      "currentMaterialId": "ph_bz04_plastered_wall",
+      "proposedPalette": "pale-lime",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-10",
+      "zone": "SERVICE_NORTH",
+      "currentMaterialId": "ph_bz04_beige_wall_002",
+      "proposedPalette": "sand-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-11",
+      "zone": "DYERS_ALLEY",
+      "currentMaterialId": "ph_bz04_painted_plaster_warm",
+      "proposedPalette": "cream-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-12",
+      "zone": "COVERED_SOUK",
+      "currentMaterialId": "ph_bz04_beige_wall_002",
+      "proposedPalette": "sand-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-13",
+      "zone": "DYERS_DOGLEG",
+      "currentMaterialId": "ph_bz04_plastered_wall",
+      "proposedPalette": "pale-lime",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-14",
+      "zone": "NORTH_COURT",
+      "currentMaterialId": "ph_bz04_painted_plaster_warm",
+      "proposedPalette": "cream-plaster",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    },
+    {
+      "id": "BG-15",
+      "zone": "FOUNTAIN_COURT",
+      "currentMaterialId": "ph_bz04_plastered_wall",
+      "proposedPalette": "pale-lime",
+      "reason": "Reuse the same calibrated source family as foreground owners, preserving the current quiet distant massing and material role."
+    }
+  ],
+  "backlotGround": {
+    "currentMaterialId": "bz04_large_sandstone_blocks_01",
+    "proposedPalette": "rough-service-paving",
+    "reason": "Reuse the service paving family on the existing exposed nonplayable ground only; retain all exclusions and grade."
+  }
+}

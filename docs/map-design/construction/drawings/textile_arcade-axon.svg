@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 textile arcade facade-centered upper openings · TEXTILE_ARCADE · Roof and enclosure axonometric</text>
+<text class="sub" x="48" y="76">MEASURED MASSING · solid envelopes and roof levels · finish details are in the elevations</text><rect class="panel" x="48" y="105" width="1500" height="930" rx="8"/>
+<polygon points="523.42,557.66 552.37,549.84 552.37,233.45 523.42,241.26" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="523.42,557.66 482.03,540.46 482.03,224.07 523.42,241.26" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="523.42,241.26 552.37,233.45 510.97,216.25 482.03,224.07" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="517.2" y="228.8" text-anchor="middle">P1</text>
+<polygon points="644.57,588.14 731.41,564.69 731.41,248.30 644.57,271.74" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="644.57,588.14 552.37,549.84 552.37,233.45 644.57,271.74" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="644.57,271.74 731.41,248.30 639.21,210.00 552.37,233.45" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="641.9" y="240.9" text-anchor="middle">P4</text>
+<polygon points="747.11,630.74 868.69,597.91 868.69,281.51 747.11,314.34" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="747.11,630.74 644.57,588.14 644.57,271.74 747.11,314.34" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="747.11,314.34 868.69,281.51 766.14,238.92 644.57,271.74" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="756.6" y="276.6" text-anchor="middle">P3</text>
+<polygon points="853.42,674.89 975.00,642.07 975.00,325.67 853.42,358.50" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="853.42,674.89 747.11,630.74 747.11,314.34 853.42,358.50" fill="#ddd0b3" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="853.42,358.50 975.00,325.67 868.69,281.51 747.11,314.34" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="861.1" y="320.0" text-anchor="middle">P2</text>
+<polygon points="187.20,711.63 326.14,674.11 326.14,331.67 187.20,369.18" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="187.20,711.63 95.00,673.33 95.00,330.88 187.20,369.18" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="187.20,369.18 326.14,331.67 233.95,293.37 95.00,330.88" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="210.6" y="331.3" text-anchor="middle">P7</text>
+<polygon points="289.74,754.22 428.69,716.71 428.69,374.26 289.74,411.78" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="289.74,754.22 187.20,711.63 187.20,369.18 289.74,411.78" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="289.74,411.78 428.69,374.26 326.14,331.67 187.20,369.18" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="307.9" y="371.7" text-anchor="middle">P6</text>
+<polygon points="396.05,798.38 535.00,760.87 535.00,418.42 396.05,455.94" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="396.05,798.38 289.74,754.22 289.74,411.78 396.05,455.94" fill="#d8c4a0" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="396.05,455.94 535.00,418.42 428.69,374.26 289.74,411.78" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="412.4" y="415.1" text-anchor="middle">P5</text>
+<text class="label" x="1050" y="170">NUMERIC MASSING KEY</text>
+<text class="label" x="1050" y="227">P1: T_N_CAP</text><text class="tiny" x="1050" y="240">wall 10.2 · cap 10.93</text>
+<text class="label" x="1050" y="259">P2: T_E_LOOM</text><text class="tiny" x="1050" y="272">wall 10.2 · cap 10.93</text>
+<text class="label" x="1050" y="291">P3: T_E_GALLERY</text><text class="tiny" x="1050" y="304">wall 10.2 · cap 10.93</text>
+<text class="label" x="1050" y="323">P4: T_E_CART</text><text class="tiny" x="1050" y="336">wall 10.2 · cap 10.93</text>
+<text class="label" x="1050" y="355">P5: T_W_LOOM</text><text class="tiny" x="1050" y="368">wall 11.1 · cap 11.83</text>
+<text class="label" x="1050" y="387">P6: T_W_DYER</text><text class="tiny" x="1050" y="400">wall 11.1 · cap 11.83</text>
+<text class="label" x="1050" y="419">P7: T_W_FOLDS</text><text class="tiny" x="1050" y="432">wall 11.1 · cap 11.83</text>
+<text class="tiny" x="95" y="995">Footprint overlaps use the shared roof coordination schedule; no duplicate slabs or buried faces.</text>
+</svg>

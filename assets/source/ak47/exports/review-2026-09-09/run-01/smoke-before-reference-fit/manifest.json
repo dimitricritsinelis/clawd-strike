@@ -1,0 +1,204 @@
+{
+  "schema": 1,
+  "baseline": "/tmp/thumb-doe-20260909/baseline.blend",
+  "baselineSHA256": "7dd9bb95b29947d692720b512f02bbf13e9bd1dce430f8f8544099d6c37af73f",
+  "outputRoot": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/review-2026-09-09/run-01",
+  "workingRoot": "/tmp/thumb-doe-20260909/cases",
+  "fingerFitIterations": 60,
+  "flexAxesLocal": {
+    "L_thumb.02": [
+      -0.14966229327694838,
+      -1.7740930772900605e-08,
+      -0.9887371733535079
+    ],
+    "L_thumb.03": [
+      -0.020832259857646244,
+      3.2980260607790515e-08,
+      -0.9997829849268403
+    ]
+  },
+  "axesDefinitionSHA256": "9dfa1a8953619624dfc27506713d601da47cf0e7c68994e489ff68d51bd2750e",
+  "derivation": {
+    "metacarpalTargetWorld": [
+      -0.05000000074505806,
+      -0.003000000026077032,
+      -0.05999999865889549
+    ],
+    "fixedCMCRootWorld": [
+      -0.020617233589291573,
+      0.037000007927417755,
+      -0.09086877852678299
+    ],
+    "edgeTangentWorld": [
+      -0.4859825074672699,
+      0.0,
+      0.8739685416221619
+    ],
+    "hingeProjectionAlignmentDegrees": -99.99930221178343,
+    "C0ShortestRotationDegrees": 41.36865761726863,
+    "C1ShortestRotationDegrees": 39.0750428738839,
+    "note": "Controls derive from intended broad-pulp frame; C0 aligns that hinge projection with the declared rear-edge bend plane. C1 adds 15 degrees about metacarpal length. Geometry, weights and rest frames are unchanged."
+  },
+  "cases": [
+    {
+      "id": "control",
+      "control": true
+    },
+    {
+      "id": "control-repeat",
+      "control": true
+    },
+    {
+      "id": "case-01",
+      "levels": {
+        "placement": 0,
+        "cmc": 0,
+        "flexion": 0
+      },
+      "handRearShiftM": -0.0,
+      "cmcQuaternion": [
+        0.9355406761169434,
+        0.2847858965396881,
+        -0.11404335498809814,
+        0.1750851571559906
+      ],
+      "flexDegrees": [
+        55,
+        45
+      ]
+    },
+    {
+      "id": "case-02",
+      "levels": {
+        "placement": 0,
+        "cmc": 0,
+        "flexion": 1
+      },
+      "handRearShiftM": -0.0,
+      "cmcQuaternion": [
+        0.9355406761169434,
+        0.2847858965396881,
+        -0.11404335498809814,
+        0.1750851571559906
+      ],
+      "flexDegrees": [
+        45,
+        55
+      ]
+    },
+    {
+      "id": "case-03",
+      "levels": {
+        "placement": 0,
+        "cmc": 1,
+        "flexion": 0
+      },
+      "handRearShiftM": -0.0,
+      "cmcQuaternion": [
+        0.9424226880073547,
+        0.2594963312149048,
+        0.009044840931892395,
+        0.21075928211212158
+      ],
+      "flexDegrees": [
+        55,
+        45
+      ]
+    },
+    {
+      "id": "case-04",
+      "levels": {
+        "placement": 0,
+        "cmc": 1,
+        "flexion": 1
+      },
+      "handRearShiftM": -0.0,
+      "cmcQuaternion": [
+        0.9424226880073547,
+        0.2594963312149048,
+        0.009044840931892395,
+        0.21075928211212158
+      ],
+      "flexDegrees": [
+        45,
+        55
+      ]
+    },
+    {
+      "id": "case-05",
+      "levels": {
+        "placement": 1,
+        "cmc": 0,
+        "flexion": 0
+      },
+      "handRearShiftM": -0.015,
+      "cmcQuaternion": [
+        0.9355406761169434,
+        0.2847858965396881,
+        -0.11404335498809814,
+        0.1750851571559906
+      ],
+      "flexDegrees": [
+        55,
+        45
+      ]
+    },
+    {
+      "id": "case-06",
+      "levels": {
+        "placement": 1,
+        "cmc": 0,
+        "flexion": 1
+      },
+      "handRearShiftM": -0.015,
+      "cmcQuaternion": [
+        0.9355406761169434,
+        0.2847858965396881,
+        -0.11404335498809814,
+        0.1750851571559906
+      ],
+      "flexDegrees": [
+        45,
+        55
+      ]
+    },
+    {
+      "id": "case-07",
+      "levels": {
+        "placement": 1,
+        "cmc": 1,
+        "flexion": 0
+      },
+      "handRearShiftM": -0.015,
+      "cmcQuaternion": [
+        0.9424226880073547,
+        0.2594963312149048,
+        0.009044840931892395,
+        0.21075928211212158
+      ],
+      "flexDegrees": [
+        55,
+        45
+      ]
+    },
+    {
+      "id": "case-08",
+      "levels": {
+        "placement": 1,
+        "cmc": 1,
+        "flexion": 1
+      },
+      "handRearShiftM": -0.015,
+      "cmcQuaternion": [
+        0.9424226880073547,
+        0.2594963312149048,
+        0.009044840931892395,
+        0.21075928211212158
+      ],
+      "flexDegrees": [
+        45,
+        55
+      ]
+    }
+  ]
+}

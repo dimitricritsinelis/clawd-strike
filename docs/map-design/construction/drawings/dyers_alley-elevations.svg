@@ -1,0 +1,483 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="3719" viewBox="0 0 1900 3719">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="3719" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 dyers alley facade-centered upper openings · DYERS_ALLEY · Four elevations</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">NORTH elevation</text>
+<line class="axis" x1="108.00" y1="615.00" x2="523.00" y2="615.00"/>
+<rect x="108.00" y="602.00" width="415.00" height="13" fill="url(#zero-build)"/><text class="tiny" x="315.50" y="642.00" text-anchor="middle">ZERO BUILD</text>
+<text class="tiny" x="108" y="657">along 46..53 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 167.29 M 167.29 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="175.29" y="674">1 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+<rect class="panel" x="48" y="793" width="1800" height="1090" rx="8"/>
+<text class="title" x="76" y="835">EAST elevation</text>
+<line class="axis" x1="108.00" y1="1293.00" x2="1198.00" y2="1293.00"/>
+<line class="solid" x1="108.00" y1="1293.00" x2="1198.00" y2="1293.00"/>
+<polygon points="108.00,1293.00 108.00,1035.36 583.64,1035.36 583.64,1293.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,1293.00 583.64,1293.00 583.64,1278.14 108.00,1278.14" fill="#bda985" fill-opacity=".82"/>
+<polygon points="108.00,1278.14 583.64,1278.14 583.64,1035.36 108.00,1035.36" fill="#c6a16c" fill-opacity=".82"/>
+<rect x="108.00" y="999.20" width="475.64" height="36.17" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="1026.45" x2="583.64" y2="1026.45" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="1004.15" x2="583.64" y2="1004.15" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="999.20" x2="583.64" y2="999.20" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="345.82" y="989.20" text-anchor="middle">P1</text>
+<defs><clipPath id="b-clip-DA_E_WORK_RECESS"><path d="M 186.28 1293.00 L 186.28 1156.75 L 315.10 1156.75 L 315.10 1293.00 Z"/></clipPath></defs>
+<path d="M 186.28 1293.00 L 186.28 1156.75 L 315.10 1156.75 L 315.10 1293.00 Z" fill="#ddd6c4" stroke="#cbb99b" stroke-width="4.95"/>
+<path d="M 186.28 1293.00 L 186.28 1156.75 L 315.10 1156.75 L 315.10 1293.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_WORK_RECESS)">
+</g>
+<path d="M 186.28 1293.00 L 186.28 1156.75 L 315.10 1156.75 L 315.10 1293.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="250.69" y1="1142.75" x2="250.69" y2="1301.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="250.69" y="1151.75" text-anchor="middle" font-size="10" fill="#234452">O1.1</text>
+<defs><clipPath id="b-clip-DA_E_WORK-STAFF-DOOR"><path d="M 461.26 1293.00 L 461.26 1166.66 L 515.76 1166.66 L 515.76 1293.00 Z"/></clipPath></defs>
+<path d="M 461.26 1293.00 L 461.26 1166.66 L 515.76 1166.66 L 515.76 1293.00 Z" fill="#ddd6c4" stroke="#cbb99b" stroke-width="4.95"/>
+<path d="M 461.26 1293.00 L 461.26 1166.66 L 515.76 1166.66 L 515.76 1293.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_WORK-STAFF-DOOR)">
+<rect x="464.73" y="1238.67" width="47.56" height="47.39" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="464.73" y="1174.59" width="47.56" height="56.51" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 461.26 1293.00 L 461.26 1166.66 L 515.76 1166.66 L 515.76 1293.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="488.51" y1="1152.66" x2="488.51" y2="1301.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="488.51" y="1161.66" text-anchor="middle" font-size="10" fill="#234452">O1.2</text>
+<defs><clipPath id="b-clip-DA_E_WORK-CLERESTORY-1"><path d="M 301.23 1097.30 L 301.23 1062.61 L 390.41 1062.61 L 390.41 1097.30 Z"/></clipPath></defs>
+<path d="M 301.23 1097.30 L 301.23 1062.61 L 390.41 1062.61 L 390.41 1097.30 Z" fill="#ddd6c4" stroke="#cbb99b" stroke-width="4.95"/>
+<path d="M 301.23 1097.30 L 301.23 1062.61 L 390.41 1062.61 L 390.41 1097.30 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_WORK-CLERESTORY-1)">
+<path d="M 303.70 1093.33 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1089.37 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1085.40 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1081.44 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1077.48 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1073.51 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1069.55 H 387.93" stroke="#bba786" stroke-width="1"/>
+<path d="M 303.70 1065.59 H 387.93" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 301.23 1097.30 L 301.23 1062.61 L 390.41 1062.61 L 390.41 1097.30 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="345.82" y1="1048.61" x2="345.82" y2="1105.30" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="345.82" y="1057.61" text-anchor="middle" font-size="10" fill="#234452">O1.3</text>
+<polygon points="583.64,1293.00 583.64,1035.36 900.73,1035.36 900.73,1293.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="583.64,1293.00 900.73,1293.00 900.73,1278.14 583.64,1278.14" fill="#bda985" fill-opacity=".82"/>
+<polygon points="583.64,1278.14 900.73,1278.14 900.73,1035.36 583.64,1035.36" fill="#c6a16c" fill-opacity=".82"/>
+<rect x="583.64" y="999.20" width="317.09" height="36.17" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="583.64" y1="1026.45" x2="900.73" y2="1026.45" stroke="#d4c39e" stroke-width="2"/>
+<line x1="583.64" y1="1004.15" x2="900.73" y2="1004.15" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="583.64" y1="999.20" x2="900.73" y2="999.20" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="742.18" y="989.20" text-anchor="middle">P2</text>
+<defs><clipPath id="opening-clip-dyers_alley-east-1"><path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z"/></clipPath></defs>
+<defs><clipPath id="b-clip-DA_E_SAMPLE_RECESS"><path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z"/></clipPath></defs>
+<path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z" fill="#ddd6c4" stroke="#d2ba94" stroke-width="4.95"/>
+<path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_SAMPLE_RECESS)">
+</g>
+<path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="678.76" y1="1142.75" x2="678.76" y2="1301.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="678.76" y="1151.75" text-anchor="middle" font-size="10" fill="#234452">O2.4</text>
+<defs><clipPath id="b-clip-DA_E_SAMPLES-STAFF-DOOR"><path d="M 810.06 1293.00 L 810.06 1166.66 L 864.56 1166.66 L 864.56 1293.00 Z"/></clipPath></defs>
+<path d="M 810.06 1293.00 L 810.06 1166.66 L 864.56 1166.66 L 864.56 1293.00 Z" fill="#ddd6c4" stroke="#d2ba94" stroke-width="4.95"/>
+<path d="M 810.06 1293.00 L 810.06 1166.66 L 864.56 1166.66 L 864.56 1293.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_SAMPLES-STAFF-DOOR)">
+<rect x="813.53" y="1238.67" width="47.56" height="47.39" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="813.53" y="1174.59" width="47.56" height="56.51" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 810.06 1293.00 L 810.06 1166.66 L 864.56 1166.66 L 864.56 1293.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="837.31" y1="1152.66" x2="837.31" y2="1301.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="837.31" y="1161.66" text-anchor="middle" font-size="10" fill="#234452">O2.5</text>
+<defs><clipPath id="b-clip-DA_E_SAMPLES-CLERESTORY-1"><path d="M 697.59 1097.30 L 697.59 1062.61 L 786.77 1062.61 L 786.77 1097.30 Z"/></clipPath></defs>
+<path d="M 697.59 1097.30 L 697.59 1062.61 L 786.77 1062.61 L 786.77 1097.30 Z" fill="#ddd6c4" stroke="#d2ba94" stroke-width="4.95"/>
+<path d="M 697.59 1097.30 L 697.59 1062.61 L 786.77 1062.61 L 786.77 1097.30 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_SAMPLES-CLERESTORY-1)">
+<path d="M 700.07 1093.33 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1089.37 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1085.40 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1081.44 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1077.48 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1073.51 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1069.55 H 784.30" stroke="#bba786" stroke-width="1"/>
+<path d="M 700.07 1065.59 H 784.30" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 697.59 1097.30 L 697.59 1062.61 L 786.77 1062.61 L 786.77 1097.30 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="742.18" y1="1048.61" x2="742.18" y2="1105.30" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="742.18" y="1057.61" text-anchor="middle" font-size="10" fill="#234452">O2.6</text>
+<polygon points="900.73,1293.00 900.73,1035.36 1198.00,1035.36 1198.00,1293.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="900.73,1293.00 1198.00,1293.00 1198.00,1278.14 900.73,1278.14" fill="#bda985" fill-opacity=".82"/>
+<polygon points="900.73,1278.14 1198.00,1278.14 1198.00,1035.36 900.73,1035.36" fill="#c6a16c" fill-opacity=".82"/>
+<rect x="900.73" y="999.20" width="297.27" height="36.17" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="900.73" y1="1026.45" x2="1198.00" y2="1026.45" stroke="#d4c39e" stroke-width="2"/>
+<line x1="900.73" y1="1004.15" x2="1198.00" y2="1004.15" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="900.73" y1="999.20" x2="1198.00" y2="999.20" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="1049.36" y="989.20" text-anchor="middle">P3</text>
+<defs><clipPath id="b-clip-DA_E_YARD-ENTRANCE"><path d="M 1019.64 1293.00 L 1019.64 1166.66 L 1079.09 1166.66 L 1079.09 1293.00 Z"/></clipPath></defs>
+<path d="M 1019.64 1293.00 L 1019.64 1166.66 L 1079.09 1166.66 L 1079.09 1293.00 Z" fill="#ddd6c4" stroke="#dfcfb3" stroke-width="4.95"/>
+<path d="M 1019.64 1293.00 L 1019.64 1166.66 L 1079.09 1166.66 L 1079.09 1293.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_YARD-ENTRANCE)">
+<rect x="1023.10" y="1238.67" width="52.52" height="47.39" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1023.10" y="1174.59" width="52.52" height="56.51" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 1019.64 1293.00 L 1019.64 1166.66 L 1079.09 1166.66 L 1079.09 1293.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="1049.36" y1="1152.66" x2="1049.36" y2="1301.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="1049.36" y="1161.66" text-anchor="middle" font-size="10" fill="#234452">O3.7</text>
+<defs><clipPath id="b-clip-DA_E_YARD-CLERESTORY-1"><path d="M 1015.92 1097.30 L 1015.92 1062.61 L 1082.81 1062.61 L 1082.81 1097.30 Z"/></clipPath></defs>
+<path d="M 1015.92 1097.30 L 1015.92 1062.61 L 1082.81 1062.61 L 1082.81 1097.30 Z" fill="#ddd6c4" stroke="#dfcfb3" stroke-width="4.95"/>
+<path d="M 1015.92 1097.30 L 1015.92 1062.61 L 1082.81 1062.61 L 1082.81 1097.30 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-DA_E_YARD-CLERESTORY-1)">
+<path d="M 1018.40 1093.33 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1089.37 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1085.40 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1081.44 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1077.48 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1073.51 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1069.55 H 1080.33" stroke="#bba786" stroke-width="1"/>
+<path d="M 1018.40 1065.59 H 1080.33" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 1015.92 1097.30 L 1015.92 1062.61 L 1082.81 1062.61 L 1082.81 1097.30 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="1049.36" y1="1048.61" x2="1049.36" y2="1105.30" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="1049.36" y="1057.61" text-anchor="middle" font-size="10" fill="#234452">O3.8</text>
+<rect x="211.05" y="1179.54" width="30.72" height="59.45" fill="#d6c9b2" stroke="#675c4b" stroke-width=".7"/>
+<rect x="208.58" y="1284.58" width="52.02" height="6.44" fill="#d9c9ae" stroke="#675c4b" stroke-width=".7"/>
+<ellipse cx="227.65" cy="1266.99" rx="14.12" ry="17.59" fill="#d6c9b2" stroke="#675c4b" stroke-width=".7"/>
+<rect x="265.55" y="1247.42" width="26.26" height="43.60" fill="#dfc9a9" stroke="#675c4b" stroke-width=".7"/>
+<ellipse cx="253.17" cy="1273.68" rx="7.43" ry="10.90" fill="#d6c9b2" stroke="#675c4b" stroke-width=".7"/>
+<rect x="269.52" y="1240.48" width="18.33" height="6.94" fill="#dfcfab" stroke="#675c4b" stroke-width=".7"/>
+<rect x="188.76" y="1234.04" width="123.86" height="56.98" fill="none" stroke="#6c5944" stroke-width="2"/>
+<line x1="209.40" y1="1291.02" x2="209.40" y2="1234.04" stroke="#6c5944"/>
+<line x1="230.05" y1="1291.02" x2="230.05" y2="1234.04" stroke="#6c5944"/>
+<line x1="250.69" y1="1291.02" x2="250.69" y2="1234.04" stroke="#6c5944"/>
+<line x1="271.33" y1="1291.02" x2="271.33" y2="1234.04" stroke="#6c5944"/>
+<line x1="291.98" y1="1291.02" x2="291.98" y2="1234.04" stroke="#6c5944"/>
+<text class="tiny" x="250.69" y="1263.77" text-anchor="middle">G1</text>
+<g clip-path="url(#opening-clip-dyers_alley-east-1)">
+<rect x="638.14" y="1267.24" width="81.25" height="23.78" fill="#dfc9a9" stroke="#675c4b" stroke-width=".7"/>
+<rect x="636.15" y="1174.09" width="3.47" height="116.93" fill="#dfc9a9" stroke="#675c4b" stroke-width=".7"/>
+<rect x="717.90" y="1174.09" width="3.47" height="116.93" fill="#dfc9a9" stroke="#675c4b" stroke-width=".7"/>
+<rect x="636.15" y="1174.09" width="85.22" height="4.46" fill="#dfc9a9" stroke="#675c4b" stroke-width=".7"/>
+<rect x="642.10" y="1179.54" width="17.84" height="44.59" fill="#66778c" stroke="#675c4b" stroke-width=".7"/>
+<rect x="668.85" y="1179.54" width="19.82" height="64.41" fill="#ba8d75" stroke="#675c4b" stroke-width=".7"/>
+<rect x="699.57" y="1179.54" width="14.86" height="52.02" fill="#d6c9b2" stroke="#675c4b" stroke-width=".7"/>
+<rect x="616.83" y="1234.04" width="123.86" height="56.98" fill="none" stroke="#6c5944" stroke-width="2"/>
+<line x1="637.48" y1="1291.02" x2="637.48" y2="1234.04" stroke="#6c5944"/>
+<line x1="658.12" y1="1291.02" x2="658.12" y2="1234.04" stroke="#6c5944"/>
+<line x1="678.76" y1="1291.02" x2="678.76" y2="1234.04" stroke="#6c5944"/>
+<line x1="699.41" y1="1291.02" x2="699.41" y2="1234.04" stroke="#6c5944"/>
+<line x1="720.05" y1="1291.02" x2="720.05" y2="1234.04" stroke="#6c5944"/>
+</g>
+<path d="M 614.35 1293.00 L 614.35 1181.28 Q 678.76 1132.22 743.17 1181.28 L 743.17 1293.00 Z" fill="none" stroke="#24353a" stroke-width="1.7"/>
+<text class="tiny" x="678.76" y="1263.77" text-anchor="middle">G2</text>
+<path d="M 178.85 1140.40 L 322.53 1140.40 L 322.53 1151.30 Q 250.69 1161.21 178.85 1151.30 Z" fill="#dfcfab" stroke="#8b7451"/>
+<line x1="178.85" y1="1140.40" x2="322.53" y2="1140.40" stroke="#8b4e3f" stroke-width="4"/><text class="tiny" x="250.69" y="1134.40" text-anchor="middle">Shade Da E Work Recess<title>SHADE_DA_E_WORK_RECESS</title></text>
+<text class="tiny" x="108" y="1335">along 10..32 m · vertical absolute z</text>
+<text class="label" x="1220" y="865">PARCEL KEY</text>
+<text class="tiny" x="1220" y="891.00">P1 DA_E_WORK</text>
+<text class="tiny" x="1220" y="905.00">slab 5.2..5.38</text>
+<text class="tiny" x="1220" y="919.00">parapet 5.83 · cap 5.93</text>
+<text class="tiny" x="1220" y="941.00">P2 DA_E_SAMPLES</text>
+<text class="tiny" x="1220" y="955.00">slab 5.2..5.38</text>
+<text class="tiny" x="1220" y="969.00">parapet 5.83 · cap 5.93</text>
+<text class="tiny" x="1220" y="991.00">P3 DA_E_YARD</text>
+<text class="tiny" x="1220" y="1005.00">slab 5.2..5.38</text>
+<text class="tiny" x="1220" y="1019.00">parapet 5.83 · cap 5.93</text>
+<path d="M 108.00 1343 V 1353 M 108.00 1348 H 355.73 M 355.73 1343 V 1353" stroke="#24353a" fill="none"/><text class="tiny" x="363.73" y="1352">5 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="1323">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="1389">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="1414">Key / stable opening ID</text>
+<text class="tiny" x="458" y="1414">Storey / axis</text>
+<text class="tiny" x="648" y="1414">Width / sill / head</text>
+<text class="tiny" x="903" y="1414">Complete scheduled closure</text>
+<path d="M 76 1423 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1438">O1.1</text><text font-size="12" x="76" y="1455">DA_E_WORK_RECESS</text>
+<text class="tiny" x="458" y="1438">L0 / 12.88</text>
+<text class="tiny" x="648" y="1438">2.6 / 0 / 2.75</text>
+<text class="tiny" x="903" y="1438">locked half-height timber lattice gate and opaque recess back</text>
+<path d="M 76 1478 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1493">O1.2</text><text font-size="12" x="76" y="1510">DA_E_WORK-STAFF-DOOR</text>
+<text class="tiny" x="458" y="1493">L0 / 17.68</text>
+<text class="tiny" x="648" y="1493">1.1 / 0 / 2.55</text>
+<text class="tiny" x="903" y="1493">closed timber leaves</text>
+<path d="M 76 1533 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1548">O1.3</text><text font-size="12" x="76" y="1565">DA_E_WORK-CLERESTORY-1</text>
+<text class="tiny" x="458" y="1548">L0 / 14.8</text>
+<text class="tiny" x="648" y="1548">1.8 / 3.95 / 4.65</text>
+<text class="tiny" x="903" y="1548">closed timber louver</text>
+<path d="M 76 1588 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1603">O2.4</text><text font-size="12" x="76" y="1620">DA_E_SAMPLE_RECESS</text>
+<text class="tiny" x="458" y="1603">L0 / 21.52</text>
+<text class="tiny" x="648" y="1603">2.6 / 0 / 2.75</text>
+<text class="tiny" x="903" y="1603">locked half-height timber lattice gate and opaque recess back</text>
+<path d="M 76 1643 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1658">O2.5</text><text font-size="12" x="76" y="1675">DA_E_SAMPLES-STAFF-DOOR</text>
+<text class="tiny" x="458" y="1658">L0 / 24.72</text>
+<text class="tiny" x="648" y="1658">1.1 / 0 / 2.55</text>
+<text class="tiny" x="903" y="1658">closed timber leaves</text>
+<path d="M 76 1698 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1713">O2.6</text><text font-size="12" x="76" y="1730">DA_E_SAMPLES-CLERESTORY-1</text>
+<text class="tiny" x="458" y="1713">L0 / 22.8</text>
+<text class="tiny" x="648" y="1713">1.8 / 3.95 / 4.65</text>
+<text class="tiny" x="903" y="1713">closed timber louver</text>
+<path d="M 76 1753 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1768">O3.7</text><text font-size="12" x="76" y="1785">DA_E_YARD-ENTRANCE</text>
+<text class="tiny" x="458" y="1768">L0 / 29</text>
+<text class="tiny" x="648" y="1768">1.2 / 0 / 2.55</text>
+<text class="tiny" x="903" y="1768">closed timber leaves</text>
+<path d="M 76 1808 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="1823">O3.8</text><text font-size="12" x="76" y="1840">DA_E_YARD-CLERESTORY-1</text>
+<text class="tiny" x="458" y="1823">L0 / 29</text>
+<text class="tiny" x="648" y="1823">1.35 / 3.95 / 4.65</text>
+<text class="tiny" x="903" y="1823">closed timber louver</text>
+<rect class="panel" x="48" y="1911" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="1953">SOUTH elevation</text>
+<line class="axis" x1="108.00" y1="2411.00" x2="523.00" y2="2411.00"/>
+<line class="solid" x1="108.00" y1="2411.00" x2="523.00" y2="2411.00"/>
+<polygon points="108.00,2411.00 108.00,2144.21 523.00,2144.21 523.00,2411.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="108.00,2411.00 523.00,2411.00 523.00,2375.43 108.00,2375.43" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="108.00,2375.43 523.00,2375.43 523.00,2173.86 108.00,2173.86" fill="#b6a185" fill-opacity=".82"/>
+<polygon points="108.00,2173.86 523.00,2173.86 523.00,2144.21 108.00,2144.21" fill="#d9c9ae" fill-opacity=".82"/>
+<polygon points="108.00,2411.00 523.00,2411.00 523.00,2375.43 108.00,2375.43" fill="#b6a185" fill-opacity=".52" stroke="#766345" stroke-width="1.2"/>
+<rect x="108.00" y="2144.21" width="415.00" height="29.64" fill="#d9c7aa" fill-opacity=".62" stroke="#766345" stroke-width="1.2"/>
+<polygon points="108.00,2411.00 108.00,2144.21 117.49,2144.21 117.49,2411.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="306.01,2411.00 306.01,2144.21 324.99,2144.21 324.99,2411.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<polygon points="513.51,2411.00 513.51,2144.21 523.00,2144.21 523.00,2411.00" fill="#c3b69f" fill-opacity=".82" stroke="#5e696a" stroke-width="1.4"/>
+<rect x="108.00" y="2137.10" width="415.00" height="7.11" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="108.00" y1="2137.10" x2="523.00" y2="2137.10" stroke="#d4c39e" stroke-width="2"/>
+<line x1="108.00" y1="2137.10" x2="523.00" y2="2137.10" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="108.00" y1="2137.10" x2="523.00" y2="2137.10" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="315.50" y="2127.10" text-anchor="middle">P1</text>
+<text class="tiny" x="108" y="2453">along 46..53 m · vertical absolute z</text>
+<text class="label" x="1220" y="1983">PARCEL KEY</text>
+<text class="tiny" x="1220" y="2009.00">P1 da-s</text>
+<text class="tiny" x="1220" y="2023.00">slab 4.5..4.62</text>
+<text class="tiny" x="1220" y="2037.00">parapet 4.62 · cap 4.62</text>
+<path d="M 108.00 2461 V 2471 M 108.00 2466 H 167.29 M 167.29 2461 V 2471" stroke="#24353a" fill="none"/><text class="tiny" x="175.29" y="2470">1 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="2441">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="2507">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="2532">Key / stable opening ID</text>
+<text class="tiny" x="458" y="2532">Storey / axis</text>
+<text class="tiny" x="648" y="2532">Width / sill / head</text>
+<text class="tiny" x="903" y="2532">Complete scheduled closure</text>
+<text class="tiny" x="76" y="2556">No scheduled openings on this face.</text>
+<rect class="panel" x="48" y="2589" width="1800" height="1090" rx="8"/>
+<text class="title" x="76" y="2631">WEST elevation</text>
+<line class="axis" x1="108.00" y1="3089.00" x2="1198.00" y2="3089.00"/>
+<line class="solid" x1="256.64" y1="3089.00" x2="1198.00" y2="3089.00"/>
+<rect x="108.00" y="3076.00" width="148.64" height="13" fill="url(#zero-build)"/><text class="tiny" x="182.32" y="3116.00" text-anchor="middle">ZERO BUILD</text>
+<polygon points="256.64,3089.00 256.64,2742.18 702.05,2742.18 702.05,3089.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="256.64,3089.00 702.05,3089.00 702.05,3074.14 256.64,3074.14" fill="#bda985" fill-opacity=".82"/>
+<polygon points="256.64,3074.14 702.05,3074.14 702.05,2742.18 256.64,2742.18" fill="#c6a16c" fill-opacity=".82"/>
+<rect x="256.64" y="2706.01" width="445.41" height="36.17" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="256.64" y1="2733.26" x2="702.05" y2="2733.26" stroke="#d4c39e" stroke-width="2"/>
+<line x1="256.64" y1="2710.97" x2="702.05" y2="2710.97" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="256.64" y1="2706.01" x2="702.05" y2="2706.01" stroke="#8b7451" stroke-width="2"/>
+<text class="parcel" x="479.34" y="2696.01" text-anchor="middle">P1</text>
+<defs><clipPath id="surround-da-works-ENTRANCE"><rect x="426.83" y="2942.35" width="105.04" height="146.65"/></clipPath></defs>
+<g clip-path="url(#surround-da-works-ENTRANCE)">
+<path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00" fill="none" stroke="#d2ba94" stroke-width="15.85" stroke-linejoin="round"/>
+</g>
+<defs><clipPath id="b-clip-da-works-ENTRANCE"><path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00 Z"/></clipPath></defs>
+<path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00 Z" fill="#ddd6c4" stroke="#d2ba94" stroke-width="0.00"/>
+<path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-works-ENTRANCE)">
+<rect x="438.22" y="3029.35" width="37.65" height="52.72" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="438.22" y="2958.20" width="37.65" height="62.82" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="482.81" y="3029.35" width="37.65" height="52.72" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="482.81" y="2958.20" width="37.65" height="62.82" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="relief-da-works-ENTRANCE"><path d="M 434.75 3089.00 L 434.75 2950.27 L 523.93 2950.27 L 523.93 3089.00 Z"/></clipPath></defs>
+<g clip-path="url(#relief-da-works-ENTRANCE)">
+<path d="M 442.68 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 450.61 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 458.53 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 466.46 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 474.39 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 482.32 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 490.24 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 498.17 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 506.10 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 514.03 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+<path d="M 521.95 3089.00 V 2950.27" stroke="#b9a386" stroke-width=".6"/>
+</g>
+<line x1="479.34" y1="2936.27" x2="479.34" y2="3097.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="479.34" y="2945.27" text-anchor="middle" font-size="10" fill="#234452">O1.1</text>
+<defs><clipPath id="b-clip-da-works-L1-W2"><path d="M 400.07 2866.05 L 400.07 2781.82 L 558.62 2781.82 L 558.62 2866.05 Z"/></clipPath></defs>
+<path d="M 400.07 2866.05 L 400.07 2781.82 L 558.62 2781.82 L 558.62 2866.05 Z" fill="#ddd6c4" stroke="#d2ba94" stroke-width="4.95"/>
+<path d="M 400.07 2866.05 L 400.07 2781.82 L 558.62 2781.82 L 558.62 2866.05 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-works-L1-W2)">
+<rect x="403.54" y="2829.83" width="45.91" height="29.28" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="403.54" y="2789.75" width="45.91" height="35.03" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="456.39" y="2829.83" width="45.91" height="29.28" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="456.39" y="2789.75" width="45.91" height="35.03" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="509.24" y="2829.83" width="45.91" height="29.28" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="509.24" y="2789.75" width="45.91" height="35.03" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 400.07 2866.05 L 400.07 2781.82 L 558.62 2781.82 L 558.62 2866.05 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="479.34" y1="2767.82" x2="479.34" y2="2874.05" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="479.34" y="2776.82" text-anchor="middle" font-size="10" fill="#234452">O1.2</text>
+<line x1="256.64" x2="702.05" y1="2915.59" y2="2915.59" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="259.64" y="2911.59" font-size="10" fill="#234452">L1 +3.5 m</text>
+<polygon points="702.05,3089.00 702.05,2732.27 1198.00,2732.27 1198.00,3089.00" fill="#e8dfcb" stroke="#24353a" stroke-width="1.5"/>
+<polygon points="702.05,3089.00 1198.00,3089.00 1198.00,3074.14 702.05,3074.14" fill="#bda985" fill-opacity=".82"/>
+<polygon points="702.05,3074.14 1198.00,3074.14 1198.00,2732.27 702.05,2732.27" fill="#d3bb93" fill-opacity=".82"/>
+<rect x="702.05" y="2696.10" width="495.95" height="36.17" fill="#d8c9ad" stroke="#8b7451"/>
+<line x1="702.05" y1="2723.35" x2="1198.00" y2="2723.35" stroke="#d4c39e" stroke-width="2"/>
+<line x1="702.05" y1="2701.06" x2="1198.00" y2="2701.06" stroke="#e2d1ad" stroke-width="2"/>
+<line x1="702.05" y1="2696.10" x2="1198.00" y2="2696.10" stroke="#8b7451" stroke-width="2"/>
+<rect x="702.05" y="2732.27" width="495.95" height="7.93" fill="#c8b692" stroke="#8b7451" stroke-width=".8"/>
+<text class="parcel" x="950.02" y="2686.10" text-anchor="middle">P2</text>
+<defs><clipPath id="surround-da-house-ENTRANCE"><rect x="907.42" y="2954.73" width="85.22" height="134.27"/></clipPath></defs>
+<g clip-path="url(#surround-da-house-ENTRANCE)">
+<path d="M 915.34 3089.00 L 915.34 2962.66 L 984.71 2962.66 L 984.71 3089.00" fill="none" stroke="#d5c1a0" stroke-width="15.85" stroke-linejoin="round"/>
+</g>
+<defs><clipPath id="b-clip-da-house-ENTRANCE"><path d="M 915.34 3089.00 L 915.34 2962.66 L 984.71 2962.66 L 984.71 3089.00 Z"/></clipPath></defs>
+<path d="M 915.34 3089.00 L 915.34 2962.66 L 984.71 2962.66 L 984.71 3089.00 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="0.00"/>
+<path d="M 915.34 3089.00 L 915.34 2962.66 L 984.71 2962.66 L 984.71 3089.00 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-ENTRANCE)">
+<rect x="918.81" y="3034.67" width="62.43" height="47.39" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="918.81" y="2970.59" width="62.43" height="56.51" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="919.31" y="3055.68" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="919.31" y="2992.51" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="979.50" y="3055.68" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="979.50" y="2992.51" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 915.34 3089.00 L 915.34 2962.66 L 984.71 2962.66 L 984.71 3089.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="950.03" y1="2948.66" x2="950.03" y2="3097.00" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="950.03" y="2957.66" text-anchor="middle" font-size="10" fill="#234452">O2.3</text>
+<defs><clipPath id="b-clip-da-house-L1-W1"><path d="M 749.19 2863.57 L 749.19 2784.30 L 803.69 2784.30 L 803.69 2863.57 Z"/></clipPath></defs>
+<path d="M 749.19 2863.57 L 749.19 2784.30 L 803.69 2784.30 L 803.69 2863.57 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="4.95"/>
+<path d="M 749.19 2863.57 L 749.19 2784.30 L 803.69 2784.30 L 803.69 2863.57 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-L1-W1)">
+<rect x="752.66" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="752.66" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="779.91" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="779.91" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="753.16" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="753.16" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="798.49" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="798.49" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 749.19 2863.57 L 749.19 2784.30 L 803.69 2784.30 L 803.69 2863.57 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="776.44" y1="2770.30" x2="776.44" y2="2871.57" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="776.44" y="2779.30" text-anchor="middle" font-size="10" fill="#234452">O2.4</text>
+<defs><clipPath id="b-clip-da-house-L1-W2"><path d="M 922.78 2863.57 L 922.78 2784.30 L 977.28 2784.30 L 977.28 2863.57 Z"/></clipPath></defs>
+<path d="M 922.78 2863.57 L 922.78 2784.30 L 977.28 2784.30 L 977.28 2863.57 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="4.95"/>
+<path d="M 922.78 2863.57 L 922.78 2784.30 L 977.28 2784.30 L 977.28 2863.57 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-L1-W2)">
+<rect x="926.24" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="926.24" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="953.49" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="953.49" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="926.74" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="926.74" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="972.07" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="972.07" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 922.78 2863.57 L 922.78 2784.30 L 977.28 2784.30 L 977.28 2863.57 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="950.03" y1="2770.30" x2="950.03" y2="2871.57" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="950.03" y="2779.30" text-anchor="middle" font-size="10" fill="#234452">O2.5</text>
+<defs><clipPath id="b-clip-da-house-L1-W3"><path d="M 1096.36 2863.57 L 1096.36 2784.30 L 1150.86 2784.30 L 1150.86 2863.57 Z"/></clipPath></defs>
+<path d="M 1096.36 2863.57 L 1096.36 2784.30 L 1150.86 2784.30 L 1150.86 2863.57 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="4.95"/>
+<path d="M 1096.36 2863.57 L 1096.36 2784.30 L 1150.86 2784.30 L 1150.86 2863.57 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-L1-W3)">
+<rect x="1099.83" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1099.83" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1127.08" y="2829.48" width="20.31" height="27.15" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1127.08" y="2792.22" width="20.31" height="32.50" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1100.32" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1100.32" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1145.66" y="2842.02" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1145.66" y="2802.38" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 1096.36 2863.57 L 1096.36 2784.30 L 1150.86 2784.30 L 1150.86 2863.57 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="1123.61" y1="2770.30" x2="1123.61" y2="2871.57" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="1123.61" y="2779.30" text-anchor="middle" font-size="10" fill="#234452">O2.6</text>
+<defs><clipPath id="b-clip-da-house-GROUND-ROOM-0"><path d="M 752.91 3041.93 L 752.91 2967.12 L 799.98 2967.12 L 799.98 3041.93 Z"/></clipPath></defs>
+<path d="M 752.91 3041.93 L 752.91 2967.12 L 799.98 2967.12 L 799.98 3041.93 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="4.95"/>
+<path d="M 752.91 3041.93 L 752.91 2967.12 L 799.98 2967.12 L 799.98 3041.93 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-GROUND-ROOM-0)">
+<rect x="756.38" y="3009.76" width="40.13" height="25.23" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="756.38" y="2975.05" width="40.13" height="30.23" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="756.87" y="3021.49" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="756.87" y="2984.09" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="794.77" y="3021.49" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="794.77" y="2984.09" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 752.91 3041.93 L 752.91 2967.12 L 799.98 2967.12 L 799.98 3041.93 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="776.44" y1="2953.12" x2="776.44" y2="3049.93" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="776.44" y="2962.12" text-anchor="middle" font-size="10" fill="#234452">O2.7</text>
+<defs><clipPath id="b-clip-da-house-GROUND-ROOM-2"><path d="M 1100.07 3041.93 L 1100.07 2967.12 L 1147.14 2967.12 L 1147.14 3041.93 Z"/></clipPath></defs>
+<path d="M 1100.07 3041.93 L 1100.07 2967.12 L 1147.14 2967.12 L 1147.14 3041.93 Z" fill="#ddd6c4" stroke="#d5c1a0" stroke-width="4.95"/>
+<path d="M 1100.07 3041.93 L 1100.07 2967.12 L 1147.14 2967.12 L 1147.14 3041.93 Z" fill="#9c8060" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-da-house-GROUND-ROOM-2)">
+<rect x="1103.54" y="3009.76" width="40.13" height="25.23" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1103.54" y="2975.05" width="40.13" height="30.23" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="1104.04" y="3021.49" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1104.04" y="2984.09" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1141.94" y="3021.49" width="1.24" height="3.47" fill="#56534b"/>
+<rect x="1141.94" y="2984.09" width="1.24" height="3.47" fill="#56534b"/>
+</g>
+<path d="M 1100.07 3041.93 L 1100.07 2967.12 L 1147.14 2967.12 L 1147.14 3041.93 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="1123.61" y1="2953.12" x2="1123.61" y2="3049.93" stroke="#496c7c" stroke-width=".7" stroke-dasharray="4 4"/>
+<text x="1123.61" y="2962.12" text-anchor="middle" font-size="10" fill="#234452">O2.8</text>
+<line x1="702.05" x2="1198.00" y1="2910.64" y2="2910.64" stroke="#416779" stroke-width=".8" stroke-dasharray="7 5"/><text x="705.05" y="2906.64" font-size="10" fill="#234452">L1 +3.6 m</text>
+<text class="tiny" x="108" y="3131">along 10..32 m · vertical absolute z</text>
+<text class="label" x="1220" y="2661">PARCEL KEY</text>
+<text class="tiny" x="1220" y="2687.00">P1 da-works</text>
+<text class="tiny" x="1220" y="2701.00">slab 7..7.18</text>
+<text class="tiny" x="1220" y="2715.00">parapet 7.63 · cap 7.73</text>
+<text class="tiny" x="1220" y="2737.00">P2 da-house</text>
+<text class="tiny" x="1220" y="2751.00">slab 7.2..7.38</text>
+<text class="tiny" x="1220" y="2765.00">parapet 7.83 · cap 7.93</text>
+<path d="M 108.00 3139 V 3149 M 108.00 3144 H 355.73 M 355.73 3139 V 3149" stroke="#24353a" fill="none"/><text class="tiny" x="363.73" y="3148">5 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="3119">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="3185">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="3210">Key / stable opening ID</text>
+<text class="tiny" x="458" y="3210">Storey / axis</text>
+<text class="tiny" x="648" y="3210">Width / sill / head</text>
+<text class="tiny" x="903" y="3210">Complete scheduled closure</text>
+<path d="M 76 3219 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3234">O1.1</text><text font-size="12" x="76" y="3251">da-works-ENTRANCE</text>
+<text class="tiny" x="458" y="3234">L0 / 17.495</text>
+<text class="tiny" x="648" y="3234">1.8 / 0 / 2.8</text>
+<text class="tiny" x="903" y="3234">closed double timber loading leaves</text>
+<path d="M 76 3274 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3289">O1.2</text><text font-size="12" x="76" y="3306">da-works-L1-W2</text>
+<text class="tiny" x="458" y="3289">L1 / 17.495</text>
+<text class="tiny" x="648" y="3289">3.2 / 4.5 / 6.2</text>
+<text class="tiny" x="903" y="3289">Closed 3-panel timber shutters</text>
+<path d="M 76 3329 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3344">O2.3</text><text font-size="12" x="76" y="3361">da-house-ENTRANCE</text>
+<text class="tiny" x="458" y="3344">L0 / 26.995</text>
+<text class="tiny" x="648" y="3344">1.4 / 0 / 2.55</text>
+<text class="tiny" x="903" y="3344">closed timber leaves</text>
+<path d="M 76 3384 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3399">O2.4</text><text font-size="12" x="76" y="3416">da-house-L1-W1</text>
+<text class="tiny" x="458" y="3399">L1 / 23.491</text>
+<text class="tiny" x="648" y="3399">1.1 / 4.55 / 6.15</text>
+<text class="tiny" x="903" y="3399">Closed 2-panel timber shutters</text>
+<path d="M 76 3439 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3454">O2.5</text><text font-size="12" x="76" y="3471">da-house-L1-W2</text>
+<text class="tiny" x="458" y="3454">L1 / 26.995</text>
+<text class="tiny" x="648" y="3454">1.1 / 4.55 / 6.15</text>
+<text class="tiny" x="903" y="3454">Closed 2-panel timber shutters</text>
+<path d="M 76 3494 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3509">O2.6</text><text font-size="12" x="76" y="3526">da-house-L1-W3</text>
+<text class="tiny" x="458" y="3509">L1 / 30.498</text>
+<text class="tiny" x="648" y="3509">1.1 / 4.55 / 6.15</text>
+<text class="tiny" x="903" y="3509">Closed 2-panel timber shutters</text>
+<path d="M 76 3549 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3564">O2.7</text><text font-size="12" x="76" y="3581">da-house-GROUND-ROOM-0</text>
+<text class="tiny" x="458" y="3564">L0 / 23.491</text>
+<text class="tiny" x="648" y="3564">0.95 / 0.95 / 2.46</text>
+<text class="tiny" x="903" y="3564">closed paneled timber shutter</text>
+<path d="M 76 3604 H 1820" stroke="#d2d8d5"/>
+<text class="tiny" x="76" y="3619">O2.8</text><text font-size="12" x="76" y="3636">da-house-GROUND-ROOM-2</text>
+<text class="tiny" x="458" y="3619">L0 / 30.498</text>
+<text class="tiny" x="648" y="3619">0.95 / 0.95 / 2.46</text>
+<text class="tiny" x="903" y="3619">closed paneled timber shutter</text>
+</svg>

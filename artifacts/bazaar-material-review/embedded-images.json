@@ -1,0 +1,988 @@
+{
+  "scope": "All Bazaar GLBs on disk; includes retained and superseded assets, NOT active runtime residency. Exact embedded byte hashes only; recompressed equivalents are not detected.",
+  "embeddedImages": 175,
+  "uniqueEmbeddedImages": 68,
+  "totalBytes": 71351474,
+  "uniqueBytes": 30811998,
+  "redundantCopiesBytes": 40539476,
+  "duplicateGroups": [
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-590.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-595.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 3,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-490.glb",
+        "image": 0,
+        "name": "b18 joinery_normal",
+        "bytes": 50723
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 1,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb",
+        "image": 2,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-590.glb",
+        "image": 2,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb",
+        "image": 2,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-595.glb",
+        "image": 2,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 5,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-490.glb",
+        "image": 2,
+        "name": "b18 joinery_arm",
+        "bytes": 42136
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 2,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-610.glb",
+        "image": 1,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-590.glb",
+        "image": 1,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-555.glb",
+        "image": 1,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-595.glb",
+        "image": 1,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 4,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/roof-tie-490.glb",
+        "image": 1,
+        "name": "b18 joinery_albedo",
+        "bytes": 55285
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 3,
+        "name": "b18 masonry_normal",
+        "bytes": 651091
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-north.glb",
+        "image": 0,
+        "name": "b18 masonry_normal",
+        "bytes": 651091
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-south.glb",
+        "image": 0,
+        "name": "b18 masonry_normal",
+        "bytes": 651091
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-middle.glb",
+        "image": 0,
+        "name": "b18 masonry_normal",
+        "bytes": 651091
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 0,
+        "name": "b18 masonry_normal",
+        "bytes": 651091
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 4,
+        "name": "b18 masonry_arm",
+        "bytes": 585878
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-north.glb",
+        "image": 2,
+        "name": "b18 masonry_arm",
+        "bytes": 585878
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-south.glb",
+        "image": 2,
+        "name": "b18 masonry_arm",
+        "bytes": 585878
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-middle.glb",
+        "image": 2,
+        "name": "b18 masonry_arm",
+        "bytes": 585878
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 2,
+        "name": "b18 masonry_arm",
+        "bytes": 585878
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_roof_access/b18-roof-access.glb",
+        "image": 5,
+        "name": "b18 masonry_albedo",
+        "bytes": 836253
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-north.glb",
+        "image": 1,
+        "name": "b18 masonry_albedo",
+        "bytes": 836253
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-south.glb",
+        "image": 1,
+        "name": "b18 masonry_albedo",
+        "bytes": 836253
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-roof-middle.glb",
+        "image": 1,
+        "name": "b18 masonry_albedo",
+        "bytes": 836253
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bazaar_roofs/spice-upper-room.glb",
+        "image": 1,
+        "name": "b18 masonry_albedo",
+        "bytes": 836253
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb",
+        "image": 0,
+        "name": "rug-normal",
+        "bytes": 85505
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb",
+        "image": 0,
+        "name": "rug-normal",
+        "bytes": 85505
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb",
+        "image": 1,
+        "name": "rug-albedo",
+        "bytes": 388987
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb",
+        "image": 1,
+        "name": "rug-albedo",
+        "bytes": 388987
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-roll-chest.glb",
+        "image": 2,
+        "name": "rug-roughness",
+        "bytes": 8814
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/rug_displays/rug-gallery.glb",
+        "image": 2,
+        "name": "rug-roughness",
+        "bytes": 8814
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-roof-hatch.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-loft-vent.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb",
+        "image": 0,
+        "name": "b18-counter-normal",
+        "bytes": 18456
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-roof-hatch.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-loft-vent.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb",
+        "image": 1,
+        "name": "b18-counter-albedo",
+        "bytes": 494850
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-roof-hatch.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-loft-vent.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/dyers_house/dyers-screen-sc-d.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/textile-screen-sc-v.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/textile_openings/shutter-paneled.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/central_screen_sc_c/central-screen-sc-c.glb",
+        "image": 2,
+        "name": "b18-counter-roughness",
+        "bytes": 16153
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 0,
+        "name": "rough_pine_door_nor_gl_1k",
+        "bytes": 717358
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb",
+        "image": 3,
+        "name": "rough_pine_door_nor_gl_1k",
+        "bytes": 717358
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
+        "image": 1,
+        "name": "rough_pine_door_nor_gl_1k",
+        "bytes": 717358
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 1,
+        "name": "rough_pine_door_arm_1k",
+        "bytes": 201659
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb",
+        "image": 4,
+        "name": "rough_pine_door_arm_1k",
+        "bytes": 201659
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 2,
+        "name": "rough_pine_door_diff_1k",
+        "bytes": 721865
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-upper-room.glb",
+        "image": 5,
+        "name": "rough_pine_door_diff_1k",
+        "bytes": 721865
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
+        "image": 3,
+        "name": "rough_pine_door_diff_1k",
+        "bytes": 721865
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 6,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 9,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 18,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 18,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb",
+        "image": 0,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+        "image": 0,
+        "name": "sandstone_blocks_05_nor_gl_1k",
+        "bytes": 1224895
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 7,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 10,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 19,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 19,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb",
+        "image": 1,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+        "image": 1,
+        "name": "sandstone_blocks_05_arm_1k",
+        "bytes": 160386
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+        "image": 8,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 11,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 20,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 20,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb",
+        "image": 2,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+        "image": 2,
+        "name": "sandstone_blocks_05_diff_1k",
+        "bytes": 635678
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/grain-balance.glb",
+        "image": 0,
+        "name": "fixture-normal",
+        "bytes": 13551
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb",
+        "image": 0,
+        "name": "fixture-normal",
+        "bytes": 13551
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/apothecary.glb",
+        "image": 0,
+        "name": "fixture-normal",
+        "bytes": 13551
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/spice-drawers.glb",
+        "image": 0,
+        "name": "fixture-normal",
+        "bytes": 13551
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb",
+        "image": 0,
+        "name": "fixture-normal",
+        "bytes": 13551
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/grain-balance.glb",
+        "image": 1,
+        "name": "fixture-albedo",
+        "bytes": 401744
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb",
+        "image": 1,
+        "name": "fixture-albedo",
+        "bytes": 401744
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/apothecary.glb",
+        "image": 1,
+        "name": "fixture-albedo",
+        "bytes": 401744
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/spice-drawers.glb",
+        "image": 1,
+        "name": "fixture-albedo",
+        "bytes": 401744
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb",
+        "image": 1,
+        "name": "fixture-albedo",
+        "bytes": 401744
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/grain-balance.glb",
+        "image": 2,
+        "name": "booth_roughness.png-booth_roughness",
+        "bytes": 8514
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-woven.glb",
+        "image": 2,
+        "name": "booth_roughness.png-booth_roughness",
+        "bytes": 8514
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/apothecary.glb",
+        "image": 2,
+        "name": "booth_roughness.png-booth_roughness",
+        "bytes": 8514
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/spice-drawers.glb",
+        "image": 2,
+        "name": "booth_roughness.png-booth_roughness",
+        "bytes": 8514
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/market_fixtures/shutter-louvered.glb",
+        "image": 2,
+        "name": "booth_roughness.png-booth_roughness",
+        "bytes": 8514
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb",
+        "image": 0,
+        "name": "b18-display-normal",
+        "bytes": 19550
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb",
+        "image": 0,
+        "name": "b18-display-normal",
+        "bytes": 19550
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb",
+        "image": 1,
+        "name": "b18-display-albedo",
+        "bytes": 508543
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb",
+        "image": 1,
+        "name": "b18-display-albedo",
+        "bytes": 508543
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-dye-counter.glb",
+        "image": 2,
+        "name": "b18-display-roughness",
+        "bytes": 16329
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/b18_counters/b18-packing-finish.glb",
+        "image": 2,
+        "name": "b18-display-roughness",
+        "bytes": 16329
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb",
+        "image": 3,
+        "name": "worn_planks_nor_gl_1k",
+        "bytes": 454745
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb",
+        "image": 0,
+        "name": "worn_planks_nor_gl_1k",
+        "bytes": 454745
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb",
+        "image": 4,
+        "name": "worn_planks_arm_1k",
+        "bytes": 933408
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb",
+        "image": 1,
+        "name": "worn_planks_arm_1k",
+        "bytes": 933408
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-shade.glb",
+        "image": 5,
+        "name": "worn_planks_diff_1k",
+        "bytes": 943056
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/props/spawn_b/spawn-b-bench.glb",
+        "image": 2,
+        "name": "worn_planks_diff_1k",
+        "bytes": 943056
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 0,
+        "name": "painted_plaster_wall_nor_gl_1k",
+        "bytes": 339920
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 9,
+        "name": "painted_plaster_wall_nor_gl_1k",
+        "bytes": 339920
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 6,
+        "name": "painted_plaster_wall_nor_gl_1k",
+        "bytes": 339920
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 1,
+        "name": "painted_plaster_wall_arm_1k",
+        "bytes": 114136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 10,
+        "name": "painted_plaster_wall_arm_1k",
+        "bytes": 114136
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 7,
+        "name": "painted_plaster_wall_arm_1k",
+        "bytes": 114136
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 2,
+        "name": "painted_plaster_wall_diff_1k",
+        "bytes": 313885
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 11,
+        "name": "painted_plaster_wall_diff_1k",
+        "bytes": 313885
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 8,
+        "name": "painted_plaster_wall_diff_1k",
+        "bytes": 313885
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 3,
+        "name": "rusty_metal_02_nor_gl_1k",
+        "bytes": 403156
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 12,
+        "name": "rusty_metal_02_nor_gl_1k",
+        "bytes": 403156
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 4,
+        "name": "rusty_metal_02_arm_1k",
+        "bytes": 153031
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 13,
+        "name": "rusty_metal_02_arm_1k",
+        "bytes": 153031
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 5,
+        "name": "rusty_metal_02_diff_1k",
+        "bytes": 564932
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 14,
+        "name": "rusty_metal_02_diff_1k",
+        "bytes": 564932
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 6,
+        "name": "rustic_stone_wall_02_nor_gl_1k",
+        "bytes": 1191033
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 15,
+        "name": "rustic_stone_wall_02_nor_gl_1k",
+        "bytes": 1191033
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 15,
+        "name": "rustic_stone_wall_02_nor_gl_1k",
+        "bytes": 1191033
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 7,
+        "name": "rustic_stone_wall_02_arm_1k",
+        "bytes": 697745
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 16,
+        "name": "rustic_stone_wall_02_arm_1k",
+        "bytes": 697745
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 16,
+        "name": "rustic_stone_wall_02_arm_1k",
+        "bytes": 697745
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-rug-gate.glb",
+        "image": 8,
+        "name": "rustic_stone_wall_02_diff_1k",
+        "bytes": 794327
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 17,
+        "name": "rustic_stone_wall_02_diff_1k",
+        "bytes": 794327
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 17,
+        "name": "rustic_stone_wall_02_diff_1k",
+        "bytes": 794327
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 3,
+        "name": "beige_wall_002_nor_gl_1k",
+        "bytes": 71919
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 3,
+        "name": "beige_wall_002_nor_gl_1k",
+        "bytes": 71919
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 4,
+        "name": "beige_wall_002_arm_1k",
+        "bytes": 29281
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 4,
+        "name": "beige_wall_002_arm_1k",
+        "bytes": 29281
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 5,
+        "name": "beige_wall_002_diff_1k",
+        "bytes": 33581
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 5,
+        "name": "beige_wall_002_diff_1k",
+        "bytes": 33581
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 12,
+        "name": "plastered_wall_nor_gl_1k",
+        "bytes": 1072153
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 0,
+        "name": "plastered_wall_nor_gl_1k",
+        "bytes": 1072153
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 13,
+        "name": "plastered_wall_arm_1k",
+        "bytes": 624131
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 1,
+        "name": "plastered_wall_arm_1k",
+        "bytes": 624131
+      }
+    ],
+    [
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+        "image": 14,
+        "name": "plastered_wall_diff_1k",
+        "bytes": 617080
+      },
+      {
+        "glb": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+        "image": 2,
+        "name": "plastered_wall_diff_1k",
+        "bytes": 617080
+      }
+    ]
+  ]
+}

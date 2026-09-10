@@ -1,0 +1,12 @@
+{
+  "selectedCase": "case-04",
+  "source": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/left-hand-case04.blend",
+  "sha256": "1980b29ba9eed0f2eb46c447ca1661eca9f5b43d08af958d15799551d14ec1b3",
+  "previousCanonicalSHA256": "9acc1f46af78f2266c1516a5f7f2807169a61994dd0f29e56d8649e5e893fdbe",
+  "basis": "User selected CASE-04 P0 C1 F1 and the derived thumb-bend reference",
+  "staticPosePreserved": true,
+  "installationApproved": true,
+  "approval": "go ahead and implement.",
+  "installed": true,
+  "runtimeSHA256": "37e5be628a4b12ff92bea6f3711d3e621f2cc333c2d900443cf177f5de1311d7"
+}

@@ -1,0 +1,2 @@
+SPAWN_B_COURTYARD | SPAWN_B_COURTYARD-north-B_N_POTTER_B_N_HOUSE_B_N_TEXTILE-s1-base | design XYZ (28.000, 78.350, 1.700) m | yaw 180.00°, pitch 2.10°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

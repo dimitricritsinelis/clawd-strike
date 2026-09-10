@@ -7,7 +7,7 @@ import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 const DEG_TO_RAD = Math.PI / 180;
 const TAU = Math.PI * 2;
 
-const DEFAULT_FIRE_INTERVAL_S = 0.1; // 600 RPM
+const DEFAULT_FIRE_INTERVAL_S = 1 / 8; // 480 RPM (8 shots per second)
 const MAX_RANGE_M = 200;
 const MAX_SHOTS_PER_UPDATE = 3;
 

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="805" viewBox="0 0 1900 805">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="805" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 rug gate facade-centered upper openings · RUG_GATE · North elevation</text>
+<text class="sub" x="48" y="76">MEASURED FACADE DRAWING · actual floor contact, opening heads and scheduled closures · absolute design elevations</text>
+<rect class="panel" x="48" y="115" width="1800" height="650" rx="8"/>
+<text class="title" x="76" y="157">NORTH elevation</text>
+<line class="axis" x1="108.00" y1="615.00" x2="878.71" y2="615.00"/>
+<path d="M 108.00 173.32 L 878.71 173.32 L 878.71 366.00 Q 819.43 235.57 493.36 205.93 Q 167.29 235.57 108.00 366.00 Z" fill="#cbb99b" stroke="#766345" stroke-width="2"/>
+<rect x="30.93" y="366.00" width="77.07" height="249.00" fill="#cbb99b" stroke="#766345"/>
+<rect x="878.71" y="366.00" width="77.07" height="249.00" fill="#cbb99b" stroke="#766345"/>
+<polygon points="108.00,366.00 111.97,357.95 116.45,350.09 121.46,342.43 126.99,334.97 133.04,327.70 139.61,320.63 146.70,313.76 154.32,307.08 162.45,300.61 171.11,294.32 180.28,288.24 189.98,282.35 200.20,276.66 210.94,271.17 222.20,265.87 233.98,260.77 246.29,255.86 259.11,251.16 272.45,246.65 286.32,242.33 300.71,238.22 315.62,234.30 331.05,230.57 347.00,227.05 363.47,223.72 380.46,220.59 397.97,217.65 416.01,214.91 434.56,212.37 453.64,210.03 473.24,207.88 493.36,205.93 493.36,205.93 513.48,207.88 533.07,210.03 552.15,212.37 570.71,214.91 588.74,217.65 606.25,220.59 623.25,223.72 639.72,227.05 655.67,230.57 671.10,234.30 686.01,238.22 700.39,242.33 714.26,246.65 727.61,251.16 740.43,255.86 752.73,260.77 764.51,265.87 775.77,271.17 786.51,276.66 796.73,282.35 806.43,288.24 815.61,294.32 824.26,300.61 832.40,307.08 840.01,313.76 847.10,320.63 853.67,327.70 859.72,334.97 865.25,342.43 870.26,350.09 874.75,357.95 878.71,366.00 897.60,357.41 893.07,348.21 887.96,339.26 882.28,330.57 876.04,322.14 869.25,313.99 861.92,306.11 854.07,298.50 845.70,291.16 836.82,284.09 827.43,277.27 817.55,270.72 807.16,264.41 796.28,258.35 784.91,252.54 773.05,246.96 760.69,241.61 747.84,236.48 734.50,231.59 720.66,226.91 706.33,222.45 691.50,218.21 676.17,214.18 660.34,210.36 644.01,206.75 627.18,203.35 609.85,200.15 592.01,197.16 573.67,194.38 554.82,191.80 535.47,189.42 515.61,187.24 495.24,185.26 491.48,185.26 471.11,187.24 451.25,189.42 431.89,191.80 413.04,194.38 394.70,197.16 376.87,200.15 359.53,203.35 342.70,206.75 326.37,210.36 310.55,214.18 295.22,218.21 280.39,222.45 266.05,226.91 252.22,231.59 238.87,236.48 226.02,241.61 213.67,246.96 201.80,252.54 190.43,258.35 179.55,264.41 169.17,270.72 159.28,277.27 149.90,284.09 141.01,291.16 132.64,298.50 124.79,306.11 117.47,313.99 110.68,322.14 104.44,330.57 98.75,339.26 93.64,348.21 89.11,357.41" fill="#decbaa" stroke="#9e8766" stroke-width=".8"/>
+<text class="tiny" x="493.36" y="165.32" text-anchor="middle">LM-01 · 0.35 m stone arch ring · inlay on reverse north face</text>
+<rect x="108.00" y="602.00" width="770.71" height="13" fill="url(#zero-build)"/><text class="tiny" x="493.36" y="642.00" text-anchor="middle">ZERO BUILD</text>
+<text class="tiny" x="108" y="657">along 21..34 m · vertical absolute z</text>
+<text class="label" x="1220" y="187">PARCEL KEY</text>
+<path d="M 108.00 665 V 675 M 108.00 670 H 285.86 M 285.86 665 V 675" stroke="#24353a" fill="none"/><text class="tiny" x="293.86" y="674">3 m scale bar; horizontal = vertical</text>
+<text class="tiny" x="1220" y="645">Floor at span ends: +0 / +0 m</text>
+<text class="label" x="76" y="711">COMPLETE OPENING SCHEDULE · metres · axis is absolute plan coordinate; sill/head are absolute z</text>
+<text class="tiny" x="76" y="736">Key / stable opening ID</text>
+<text class="tiny" x="458" y="736">Storey / axis</text>
+<text class="tiny" x="648" y="736">Width / sill / head</text>
+<text class="tiny" x="903" y="736">Complete scheduled closure</text>
+<text class="tiny" x="76" y="760">No scheduled openings on this face.</text>
+</svg>

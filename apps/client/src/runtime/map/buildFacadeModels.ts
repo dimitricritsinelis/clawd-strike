@@ -1,4 +1,5 @@
-import { Box3, Group, type Material, type Mesh, type MeshStandardMaterial, type Object3D, Vector3 } from "three";
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
+import { Box3, Group, Mesh, type Material, type MeshStandardMaterial, type Object3D, Vector3 } from "three";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import type { WallMaterialLibrary, WallTextureQuality } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
@@ -38,6 +39,8 @@ function rebindPackMaterials(
       let replacement = cache.get(id);
       if (!replacement) {
         replacement = library.createStandardMaterial(id, binding.quality);
+        replacement.name = id;
+        if (id.startsWith("ph_bz04_")) replacement.vertexColors = true;
         const albedoBoost = typeof replacement.userData.wallAlbedoBoost === "number" ? replacement.userData.wallAlbedoBoost : 1;
         applyWallShaderTweaks(replacement, {
           albedoBoost,
@@ -78,12 +81,16 @@ export function buildSectionModels(models: readonly RuntimeSectionModel[], libra
     const model = library.instantiate(section.modelId);
     model.name = `section:${section.zoneId}`;
     _bbox.setFromObject(model);
+    const declared = model.userData.bz04VisualBounds;
+    if (declared) validateBz04Bounds(model, section.modelId);
+    else {
     if (_bbox.min.y < -0.05) {
       console.warn(`[section-models] '${section.modelId}' dips ${(-_bbox.min.y).toFixed(2)} m below the zone floor; author z=0 at the floor.`);
     }
     const slack = 1.5;
     if (_bbox.min.x < -slack || _bbox.max.x > section.sizeM.width + slack || _bbox.min.z < -slack || _bbox.max.z > section.sizeM.depth + slack) {
       console.warn(`[section-models] '${section.modelId}' extends beyond ${section.zoneId}'s rect (${section.sizeM.width} x ${section.sizeM.depth} m) by more than ${slack} m; check the Frame origin and plan axes.`);
+    }
     }
     const origin = designToWorldVec3(section.origin);
     model.position.set(origin.x, origin.y, origin.z);
@@ -118,7 +125,51 @@ export function buildAuthoredPlacements(placements: readonly RuntimeAuthoredPlac
     rebindPackMaterials(model, binding, origin.y);
     root.add(model);
   }
+  // Roof bundles share scanned materials and static transforms. Keep their
+  // provenance before merging by exact attribute signature and shadow class.
+  const batches = new Map<string, { material: Material; shadow: boolean; geometry: import("three").BufferGeometry[]; contributors: string[] }>();
+  for (const model of [...root.children]) {
+    if (!model.userData.bz04RoofBundle) continue;
+    validateBz04Bounds(library.instantiate(placements.find(p => model.name.endsWith(p.id))!.modelId), model.name);
+    model.updateMatrixWorld(true);
+    model.traverse(node => {
+      if (!(node instanceof Mesh) || Array.isArray(node.material)) return;
+      const signature = Object.entries((node.geometry as import("three").BufferGeometry).attributes).map(([k,v]) => `${k}:${v.itemSize}:${v.normalized}`).sort().join("|");
+      // Blender may suffix an identical alias across files. The reduced-detail
+      // mobile path keeps embedded materials instead of rebinding the pack.
+      const materialId = node.material.name.split(".")[0];
+      const key = `${materialId}:${node.castShadow}:${signature}`;
+      const batch: { material: Material; shadow: boolean; geometry: import("three").BufferGeometry[]; contributors: string[] } = batches.get(key) ?? { material: node.material, shadow: node.castShadow, geometry: [], contributors: [] };
+      batch.geometry.push(node.geometry.clone().applyMatrix4(node.matrixWorld));
+      batch.contributors.push(model.userData.bz04RoofBundle);
+      batches.set(key,batch);
+    });
+    root.userData.bz04RoofBounds ??= [];
+    root.userData.bz04RoofBounds.push({ id: model.userData.bz04RoofBundle, bounds: new Box3().setFromObject(model) });
+    root.remove(model);
+  }
+  for (const [key,batch] of batches) {
+    const geometry = mergeGeometries(batch.geometry, false);
+    if (!geometry) throw new Error(`BZ-04 roof batching failed: ${key}`);
+    const mesh = new Mesh(geometry,batch.material);
+    mesh.name = `bz04-roof-batch:${key}`; mesh.castShadow=batch.shadow; mesh.receiveShadow=true;
+    mesh.userData.bz04Contributors=[...new Set(batch.contributors)]; root.add(mesh);
+    for (const source of batch.geometry) source.dispose();
+  }
+  if (batches.size > 11) throw new Error(`BZ-04 roof primitive ceiling exceeded: ${batches.size}`);
   return root;
+}
+
+export function validateBz04Bounds(model: Object3D, id: string): void {
+  const value = model.userData.bz04VisualBounds;
+  if (!value || !Array.isArray(value.min) || !Array.isArray(value.max)
+      || value.min.length !== 3 || value.max.length !== 3
+      || ![...value.min,...value.max].every(Number.isFinite)) throw new Error(`Missing or invalid BZ-04 bounds: ${id}`);
+  const actual = new Box3().setFromObject(model);
+  for (let i=0;i<3;i++) {
+    if (value.min[i] > value.max[i] || actual.min.getComponent(i)<value.min[i]-.002 || actual.max.getComponent(i)>value.max[i]+.002)
+      throw new Error(`BZ-04 bounds mismatch: ${id}`);
+  }
 }
 
 const _bbox = new Box3();

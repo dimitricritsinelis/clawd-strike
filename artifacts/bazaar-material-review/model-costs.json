@@ -1,0 +1,145 @@
+[
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/wooden_crate_02/wooden_crate_02_1k.gltf",
+    "bytes": 4150,
+    "triangles": 5176,
+    "primitives": 2,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_wooden_crate_02",
+    "source": "https://polyhaven.com/a/wooden_crate_02",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/Barrel_02/Barrel_02_1k.gltf",
+    "bytes": 2639,
+    "triangles": 2688,
+    "primitives": 1,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_Barrel_02",
+    "source": "https://polyhaven.com/a/barrel_02",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf",
+    "bytes": 4497,
+    "triangles": 17850,
+    "primitives": 2,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_wicker_basket_02",
+    "source": "https://polyhaven.com/a/wicker_basket_02",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/ceramic_pot/ceramic_pot_1k.gltf",
+    "bytes": 2990,
+    "triangles": 3592,
+    "primitives": 1,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_ceramic_pot",
+    "source": "https://polyhaven.com/a/ceramic_pot",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/wine_barrel_01/wine_barrel_01_1k.gltf",
+    "bytes": 6673,
+    "triangles": 10820,
+    "primitives": 4,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_wine_barrel_01",
+    "source": "https://polyhaven.com/a/wine_barrel_01",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/wooden_crate_01/wooden_crate_01_1k.gltf",
+    "bytes": 5612,
+    "triangles": 6576,
+    "primitives": 3,
+    "materials": 1,
+    "images": 3,
+    "id": "ph_wooden_crate_01",
+    "source": "https://polyhaven.com/a/wooden_crate_01",
+    "license": "CC0-1.0"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/props/bz04_rug_gate/bz04-rug-gate.glb",
+    "bytes": 7025768,
+    "triangles": 1868,
+    "primitives": 4,
+    "materials": 4,
+    "images": 9,
+    "id": "bz04_rug_gate",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spice-street/unit-spice-street.glb",
+    "bytes": 1747092,
+    "triangles": 23768,
+    "primitives": 17,
+    "materials": 17,
+    "images": 0,
+    "id": "section_unit_spice_street",
+    "source": "repo://assets/source/unit-spice-street/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
+    "bytes": 6118516,
+    "triangles": 47860,
+    "primitives": 23,
+    "materials": 19,
+    "images": 4,
+    "id": "section_unit_spawn_b_courtyard",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+    "bytes": 11108756,
+    "triangles": 816,
+    "primitives": 8,
+    "materials": 8,
+    "images": 21,
+    "id": "bz04_roof_bundle_unit_spawn_b_courtyard",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
+    "bytes": 2024320,
+    "triangles": 12,
+    "primitives": 1,
+    "materials": 1,
+    "images": 3,
+    "id": "bz03_b_gate_cap_west",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz03_b_gate_cap_east.glb",
+    "bytes": 2024308,
+    "triangles": 12,
+    "primitives": 1,
+    "materials": 1,
+    "images": 3,
+    "id": "bz03_b_gate_cap_east",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  },
+  {
+    "path": "apps/client/public/assets/models/environment/bazaar/facades/unit-spawn-b-courtyard/bz04-shared-environment.glb",
+    "bytes": 12777288,
+    "triangles": 14586,
+    "primitives": 8,
+    "materials": 8,
+    "images": 24,
+    "id": "bz04_shared_environment",
+    "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+    "license": "Project-Original"
+  }
+]

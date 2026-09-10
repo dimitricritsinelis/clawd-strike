@@ -81,15 +81,14 @@ function setFrontageModel(frontageId, modelId) {
 function insertLineBeforeId(idStart, key, jsonValue) {
   const lineStart = spec.lastIndexOf("\n", idStart) + 1;
   const indent = spec.slice(lineStart, idStart);
-  const existing = new RegExp(`"${key}": (?:"[^"]*"|\\[[^\\]]*\\]),?`);
-  // Existing binding: either our own line just above the id, or a legacy one anywhere in the object.
-  const prevLineStart = spec.lastIndexOf("\n", lineStart - 2) + 1;
-  const prevLine = spec.slice(prevLineStart, lineStart);
-  const head = new RegExp(`^\\s*${existing.source}\\n$`).test(prevLine) ? spec.slice(0, prevLineStart) : spec.slice(0, lineStart);
+  // Section bindings stack above id. Scan the entire object so applying a
+  // second section revision replaces both keys instead of duplicating them.
+  const start = spec.lastIndexOf("\n    {", idStart) + "\n    {".length;
   const end = spec.indexOf("\n    }", idStart);
-  const block = spec.slice(lineStart, end).replace(new RegExp(`\\n(\\s*)${existing.source}`), "").replace(/,\s*$/, "");
+  const block = spec.slice(start, end).replace(new RegExp(`\\n[ \\t]*"${key}": (?:"[^"]*"|\\[[^\\]]*\\]),?`, "g"), "").replace(/,\s*$/, "");
+  const idLine = block.lastIndexOf("\n", block.indexOf('"id":')) + 1;
   const prefix = jsonValue === null ? "" : `${indent}"${key}": ${jsonValue},\n`;
-  spec = head + prefix + block + spec.slice(end);
+  spec = spec.slice(0, start) + block.slice(0, idLine) + prefix + block.slice(idLine) + spec.slice(end);
 }
 
 /** zones[].sectionModelId and sectionFaces, same approach anchored inside the zones array. */

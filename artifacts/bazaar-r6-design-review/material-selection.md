@@ -1,0 +1,32 @@
+# R6 selected material documentation
+
+The patch script applies the selected construction recipes and all 58 owner, 25 floor and 15 background assignment rows to a supplied design JSON. It preserves geometry, room/opening IDs, original texture assets, stock colors, fixed glass, material-region heights and shadow schedules. It does not install materials in the game. Invoke `apply-materials.py INPUT.json OUTPUT.json`; check with `verify-materials.py OUTPUT.json INPUT.json`.
+
+## Selected changes
+
+- Sand plaster desired appearance is `#d3bb93` (approximately L*77), cream and pale lime remain their previous warm targets. Dressed masonry is `#bda985` (approximately L*70); quiet flags `#baa47f` (approximately L*68.5); service paving `#b29972` (approximately L*64.5). Source-to-paint calibration is solved in linear space, so these desired colors are not shader tint multipliers.
+- Quiet flags use the existing `court_flagstone_01` source at 2.4 m repeat, approximately 0.6 m courses. No replacement paving texture or rotated variant is introduced. Existing stone owners carry their same material through lower regions; there is no new uniform dark base stripe. Plaster owners retain the already measured masonry lower construction bands.
+- Selected owner teal is `#5d9c8a`, indigo `#53799f`, with chroma near25 and original lightness retained within sRGB rounding. Only previously teal/indigo openings change. The one rust Spice shade remains `SHADE_S_W_SHOP_1`; all other existing shades remain cream. Existing stock colors and hem/glazing accents remain unchanged.
+- Fine domestic cloth uses the inspected existing hessian weave at 0.09 m repeat and normal0.10; shades/sacks use0.27 m and normal0.18. The source is still hessian, repurposed as a finer woven visual surface; this is not a claim that its photographed fiber is linen. No leather seam or leather normal is used. The measured12cm macro sample shows the distinctly finer grid, while the larger sample stays quiet.
+- Monolithic trim derives an exact joint-free patch from `sandstone_blocks_05`: pixel crop `(340,195)-(740,290)` in the1024² original. Corresponding world patch is0.78125×0.185546875m at original2m scale. A mirrored2×2 tile is1.5625×0.37109375m; X mirroring inverts tangent-normal red, Y mirroring inverts green. The same crop applies to albedo, normal and ARM. Normal0.12; roughness ARM green×0.94; metallic0. No geometry displacement. Longitudinal UV follows the member. This applies to one-piece sills/thresholds/trim faces; coherent masonry voussoir joints remain on arch rings.
+- Timber and iron retain R5 bounded paint recipes. Timber normal is explicitly connected at0.18; its grain remains subtle rather than artificially strengthened with a new macro mask. Existing wall macro profiles remain single, named effects. No new repair quota or periodic dirt mask is introduced.
+
+## Recipe/mapping authority
+
+`artifacts/bazaar-material-review/r6-selected-materials.json` carries exact source paths/hashes, paintLinear, paintSrgb, grainMix, desired appearance, normal strength, roughness mode, source scale and trim crop. The patch puts these into `materials[].baseColorRecipe`, `materials[].roughnessMode`, `craftStandards.materials.surfaceRecipes`, `fineLinen`, `monolithicStoneTrim` and `sourceToExportAndShadow`. Diagrams must use `targetAppearanceSrgb`, not calibrated `tintHex`.
+
+Existing targets retain their IDs, except the explicit derived `ph_bz04_fine_linen`. Dark-beige target switches to the existing plastered-wall source. Gray whitewash usages resolve to pale lime; leather cloth usages resolve to fine woven cloth. Calibrated construction exports use named `bz06_*` bindings with white base factors. Their baked albedos must not be stripped or rebound to raw pack images. Normal/ARM maps remain the original licensed source maps, except the precisely cropped/mirrored trim maps. Runtime support is a future implementation requirement, not a change made by this documentation task.
+
+## Bounded evidence inspected
+
+- `artifacts/bazaar-material-review/r6-samples/wall-ground-neutral.png` and `wall-ground-warm.png`: same scene dimensions and lighting strength, previous versus selected material fields, vertical wall/horizontal ground, real cast shade on teal/indigo, fixed figure-size proxy. The selected flag scale is smaller, wall/ground relationship clearer, and richer accents remain identifiable in shade. This proxy is not a game actor contrast certificate.
+- `close-details.png`:1.2m timber/cloth panels and1.2×0.16m sill; joint-free stone grain is visible, cloth stays quiet at normal viewing scale.
+- `macro-details.png`: actual0.12m cloth regions,0.24×0.18m timber region and0.24×0.06m stone region; fine weave versus shade/sack weave is legible without leather stitching. No denoising in this macro view. Timber grain is restrained and its source normal was separately inspected.
+
+Headless Blender completed with exit0; all four output images were opened. The initial sandbox launch crashed before rendering; the authorized outside-sandbox launch completed. These are controlled review samples, not shipped-lighting or whole-map acceptance. Original source hashes, all assignment references, unchanged geometry and existing stock colors pass the read-only verifier. Applying the patch twice produces identical JSON.
+
+## Final cloth binding clarification
+
+Cloth construction uses one neutral gray grain texture per source/PBR/shadow class. Decode the hessian source once, compute linear luminance with0.2126/0.7152/0.0722 weights, and bake `G=0.88+0.12*luminance` to sRGB. Base factor is white. Each existing cloth field/stock/hem receives `COLOR_0=desiredLinear/representativeG`; the exact representative value is stored in `cloth.vertexPaintRecipe`. This preserves desired field colors without multiplying rust by a cream bake and without one material per color. All selected stock/shade values fit within0..1 after solving. The review sample pre-bakes the mathematically equivalent result solely for controlled inspection. Its paintSrgb is a calibration coefficient, not an extra runtime factor.
+
+The final patch also sets the backlot assignment, synchronizes runtime area dependency lists, and synchronizes B's complete selected profiles while retaining private export names. Every opening names the monolithic trim override only for already-present one-piece sill/threshold parts; it does not create new parts or override coherent arch-ring masonry.

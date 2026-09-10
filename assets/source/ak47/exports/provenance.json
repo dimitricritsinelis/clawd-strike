@@ -1,9 +1,9 @@
 {
   "name": "AK47 Urban Breacher two-hand viewmodel",
   "source": "repo://assets/source/ak47/build.py",
-  "sourceMd5": "d55196a03d8f09ae7fe99dc7f43e753f",
+  "sourceMd5": "430153feb5c19ad8e40cbacec85414c1",
   "blendSource": "repo://assets/source/ak47/ak47.blend",
-  "blendMd5": "f2feabdffa8b48aa0fe43d9f75247afa",
+  "blendMd5": "4b06c77008f1fc99f145d16de1386bf6",
   "maxEmbeddedTextureSize": 2048,
   "license": "Existing AK: CC-BY-NC-4.0; hand topology: CC0; new rig and finish: project-original",
   "dependencies": [
@@ -206,7 +206,10 @@
   ],
   "reload": {
     "source": "repo://assets/source/ak47/reload.py",
-    "sourceMd5": "5864e60687fb28d2ff948b4aa7604031",
+    "sourceMd5": "4f09b31d34706774aef0decfedd98c24",
+    "selectedCase": "case-04",
+    "selectedGripSource": "repo://assets/source/ak47/left-hand-case04.blend",
+    "selectedGripSourceMd5": "34edf9c7969b69802083ea5e5fe4a645",
     "durationSeconds": 1.225,
     "contactFrames": [
       33,
@@ -215,13 +218,14 @@
     "magazineMotion": "Existing magazine path and keyframes preserved",
     "handMotion": "Release fore-end, approach from below, wrap the magazine, follow its motion, release and return to approved idle",
     "gripLayout": "Wrist below the magazine, palm cupping its lower broad face, four fingers rising around the curved front edge, thumb wrapping around the rear corner onto the far broad face",
-    "thumbMotion": "Thumb closes onto the far broad face with three measured outer padding points and full glove/padding clearance; pad normal follows the contacted surface; relaxed opening and idle fore-end contact preserved",
+    "thumbMotion": "Selected Case 04 pose retained; CMC opens toward neutral, MCP/IP use the measured broad-pulp flex axes, and the original idle pose is restored",
+    "contactValidation": "User-approved visual pose; known static contact and close-view trim limitations are documented in docs/reload_animation.md",
     "contactShading": "Idle occlusion fades during hand travel; live self-shadows follow the reload"
   },
   "files": [
     {
       "file": "ak47.glb",
-      "md5": "691fc17231d3eb97e16fd0a7a14d6e16"
+      "md5": "00a0caefcab8d0b42115dc1190c7e5c8"
     }
   ]
 }

@@ -1,0 +1,27 @@
+{
+  "status": "REVIEW COMPLETE; PROPOSALS NOT APPLIED TO ACTIVE HANDOFF",
+  "verifiedAt": "2026-09-10T05:03:39.692349+00:00",
+  "activeDesignSha256Unchanged": "367ac474642c0e49557ffd784262246e4d5ce6b25a35e21e231ce06ffb4fa826",
+  "sourceAlbedoHashesMatched": 16,
+  "ownerCoverage": 58,
+  "floorCoverage": 25,
+  "joineryRows": 247,
+  "shadeRows": 16,
+  "stockRows": 80,
+  "provenanceCheck": {
+    "match": 177
+  },
+  "pdf": "output/pdf/bazaar-material-review.pdf",
+  "pdfSha256": "f24c3ede558d26fa5a835dfbbdd6d1abb48481bb74ed5a2e958be2fb56866e29",
+  "pdfPages": 15,
+  "allPdfPagesRenderedAndVisuallyInspected": true,
+  "localReportLinks": "PASS",
+  "specialistConsistencyReview": "no material corrections",
+  "limits": [
+    "Review specimens are not game lighting or full-map visual acceptance.",
+    "Most complete R5 models are not built; model review separates current sources from planned assemblies.",
+    "Fine domestic linen and monolithic trim need final close samples.",
+    "No game FPS, GPU residency or draw-call savings measured.",
+    "No new external source downloaded."
+  ]
+}

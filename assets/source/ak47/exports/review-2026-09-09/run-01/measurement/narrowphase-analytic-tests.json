@@ -1,0 +1,11 @@
+{
+  "method": "Same functions executed with scalar vector arithmetic outside Blender; also re-executed using mathutils on every measure_scene call.",
+  "results": {
+    "coplanar_disjoint_overlapping_bounds": false,
+    "coplanar_containment": true,
+    "parallel_separated": false,
+    "transverse_crossing": true,
+    "vertex_touch": true,
+    "degenerate": false
+  }
+}

@@ -1,183 +1,255 @@
-# unit-rug-gate · Rug Gate
+# BZ-04 / R7 rug gate facade-centered upper openings · Rug Gate
 
-Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: Rug Gate, the gate.
+Controlled issue status: **PROPOSED**. Readiness is recorded in [audits.md](audits.md). SVGs are measured drawings, not game renders.
 
-**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.
+Read [design basis](design-basis.md), [integration contract](integration.md), and [standard details](details.md) with this sheet. The target data is the sole source for parcel, opening, roof, activity, and material values below; coverage is a protected baseline only.
 
-## 1. Design intent
+## Design intent
 
-The northern threshold: the repaired gate arch with its blue accent spans the lane; one rug merchant on the west, the gatekeeper's quiet house on the east, the receiving backdrop beyond. Restraint: the gate is the landmark, nothing competes; repairs remain integrated into its warm aged surface.
+### `RUG_GATE`
 
-**Character schedule (build with the numbered tasks):**
+Existing large gateway and carved rug-gallery workfront. Plain gatekeeper house and finished rug display. Preserve the fixed routes and use quieter fields to frame this composition.
 
-- The merchant plaster, retained rug rolls and warm timber face the gatekeeper rubble, planted sill and lantern. Keep the gate blue accent as the distant focal point; the house is an occupied home, not a second rug shop.
-- On FRONTAGE_RUG_GATE_WEST replace skin a=3.48..3.98, z=0.35..1.05 with `ph_worn_plaster_sun` (SD-21). The shop jambs get touch polish; the service door gets localized foot dust. Keep the unlike upper closures and use SD-21 softened plaster returns. No tilted portal or rug across its floor.
+Primary focus: The supported gateway frames arrival. A shallow rug-stock gallery and plain gatekeeper household support the arch, with textile craft concentrated at the existing shop..
 
-## 2. Site
+## Architecture and craftsmanship
 
-### Site · `RUG_GATE` (Rug Gate)
+**Primary:** Existing large gateway and carved rug-gallery workfront
 
-- Rect x 21..34, y 64..78 (13 × 14 m); floor z = 0; floor `patterned_cobblestone`; authored clear width **6 m** (protected).
-- Connects: LINK_EAST_UPPER, LINK_WEST_UPPER, SPAWN_B_COURTYARD, TEXTILE_ARCADE.
-- `north` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 13.00m north edge; the full face remains an authored traversal opening.
-- `south` edge: exempt (`architectural_cut_edge`): The 3.00m supported run on the 13.00m south edge frames the spawn connector and is not a served facade plane.
-- `west` edge: frontage `FRONTAGE_RUG_GATE_WEST` → `BLD_RUG_MERCHANT`.
-- `east` edge: frontage `FRONTAGE_RUG_GATE_EAST` → `BLD_GATE_KEEPER`.
-- `east` edge: frontage `FRONTAGE_RUG_GATE_EAST_SOUTH` → `BLD_GATE_KEEPER`.
+**Supporting:** Plain gatekeeper house and finished rug display
 
-### Package outputs
+**Quiet fields and limits:** Do not compete with B’s merchant balcony or deepen the narrow stock gallery.
 
-| Package directory | Section zone | Owned runtime faces | Section GLB |
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
 |---|---|---|---|
-| `assets/source/unit-rug-gate/` | `RUG_GATE` | `["east", "west"]` | `unit-rug-gate.glb` |
+| `R_E_SOUTH` / `BLD_TEXTILE_EAST` | building | `ph_bz04_plastered_wall`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Textile north return shares the workroom datum and plain timber family of the continuous east owner. |
+| `R_E_HOUSE` / `BLD_RUG_EAST_GATEKEEPER` | building | `ph_bz04_sandstone_blocks_06`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Gatekeeper has plain paired domestic windows and one centered loft louver. |
+| `R_S_CAP` / `BLD_TEXTILE_WEST` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | West textile merchants - coordinated wing or return |
+| `R_W_MERCHANT` / `BLD_RUG_MERCHANT` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | The common loft vent centers at68 in the complete64..72 upper field. The lower broad/narrow window group and ground access keep their existing roles. |
+| `R_W_ABUTMENT` / `ASM_B_GATE` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | West Rug Gate abutment enclosure return |
 
-Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
+| Group | Actual trade | Parts / recipes | Acceptance |
+|---|---|---|---|
+| `G_R_W_SHOP` | rug display | 10 / CF-COUNTER, CF-RUG, CF-TIMBER | Build the named parts as rug display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
 
-**Existing source.** `assets/source/unit-rug-gate/` holds hand-modelled GLBs and an unapplied package; reference only.
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-## 3. Walls
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_RUG_GATE` | `B_S_EAST`, `B_S_WEST`, `R_E_HOUSE`, `R_W_ABUTMENT`, `R_W_MERCHANT`, `leu-n`, `lne-w`, `lwu-s`, `ts-e`, `tt-rug-return` | `B_S_EAST`, `B_S_WEST`, `leu-n`, `lne-w`, `lwu-s`, `ts-e`, `tt-rug-return` |
+| `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE` | `F_NE`, `F_NW`, `R_E_SOUTH`, `R_S_CAP`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` | `F_NE`, `F_NW`, `T_E_CART`, `T_E_GALLERY`, `T_E_LOOM`, `T_N_CAP`, `T_W_DYER`, `T_W_FOLDS`, `T_W_LOOM`, `leu-s`, `tr-e`, `tt-e` |
 
-### FRONTAGE_RUG_GATE_WEST  ·  BLD_RUG_MERCHANT (shop, 2 storeys)
+**Required craft recipes:** CF-COUNTER, CF-ENVELOPE, CF-FLOOR, CF-JOINT, CF-OPEN, CF-R4-PORTAL, CF-RUG, CF-SHADE, CF-TIMBER
 
-- **Role:** shop. One rug merchant with his display, his locked service door and two upper rooms; the last shop before the city gate, so no second stall crowds the portal.
-- **Wall line:** west edge of `RUG_GATE`; x = 21, y = 65.12 .. 72 (a runs south to north); length **6.88 m**; street side +X (street lies east of the wall); kit `Wall(F, (21, 65.12), (21, 72), faces='E')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_plastered_wall`, trim `ph_trim_sanded_01`, timber `ph_worn_planks`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 2.7 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 3.68 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; awning ledger 2.85; signboard centre 3.10, nominal span 2.95..3.25; sill course 3.50..3.62; coping 6.84..7.0; parapet +0.75.
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `shop_recess_market` | RG-R roll chest (placed `ASSET_RUG_ROLL_CHEST`) | 1.8 | (21, 66.92) | 2.4 × 1.35 × 2.7 | 0 / 2.7 | 0 |
-| `STORY_1_WINDOW_01` | `window_shuttered` | SH-P paneled walnut (placed `ASSET_SHUTTER_PANELED`) | 1.8 | (21, 66.92) | 1.6 × 0.24 × 1.65 | 3.68 / 5.33 | 1 |
-| `GROUND_02` | `door_shop_timber` | closed service door (was a shop recess; same bay id) | 5.08 | (21, 70.2) | 1.15 × 0.22 × 2.7 | 0 / 2.7 | 0 |
-| `STORY_1_WINDOW_02` | `window_dark_recess` | dark recess 0.9 × 1.25 (kit window, closed timber leaf) | 5.08 | (21, 70.2) | 0.9 × 0.28 × 1.25 | 3.68 / 4.93 | 1 |
+## Site, protected faces, and parcels
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.8, 2.4, 0, 2.7), (1.8, 1.6, 3.68, 1.65), (5.08, 1.15, 0, 2.7), (5.08, 0.9, 3.68, 1.25)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+### `RUG_GATE` · `north`
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_RUG_ROLL_CHEST` at MOUNT_RUG_DISPLAY_COMPLETE; `ASSET_SHUTTER_PANELED` at MOUNT_RUG_PANELED_WINDOW.
+Quiet background: Exact immutable x=21..34 opening to Spawn B..
 
-**Construction tasks (ordered; each has an observable completion):**
+Protected wall interval: **21..34 m**; floor grade: **z 0 m**.
 
-1. CREATE the section finish: skin `ph_plastered_wall`, plinth sandstone, sill course 3.50..3.62, coping 6.84..7.0; corners `open` (south: the Textile arcade continues; north: the gate abutment): no end pilasters, but a 0.16 quoin strip at a=6.88 where the gate kit meets. Completion: the merchant house reads as the last shop before the gate.
-2. CREATE `GROUND_01` shop recess 2.4 × 2.7 × 1.35 at a=1.80 (as Spice); interior empty for the placed `ASSET_RUG_ROLL_CHEST` at (20.84, 66.92, 0.08). Completion: chest inside the recess.
-3. REPLACE `GROUND_02` with a closed shop-service door 1.15 × 2.7 at a=5.08 per SD-05 (`ph_rough_pine_door`, straps). This bay has no shop dressing. Completion: door reads closed; the `RUG_W_SHOP_2` collision anchor is untouched.
-4. CREATE `STORY_1_WINDOW_01` rebate 1.6 × 1.65 at sill 3.68 / head 5.33 over a=1.80 for the placed `ASSET_SHUTTER_PANELED` (z 3.68); CREATE `STORY_1_WINDOW_02` dark recess 0.9 × 1.25 at sill 3.68 / head 4.93 over a=5.08 with a closed dark leaf. Completion: two different upper closures.
-5. SD-08 awning: timber ledger 0.08 × 0.08 at z 2.85 spanning a=0.55..3.05, projection 1.10 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` only. Completion: one awning, hem 2.48.
-6. CREATE sign brackets for `RUG_W_SIGN_1` (a=1.80, board centre z 3.10, span 2.95..3.25) at z 3.25, ±0.9. `RUG_W_SIGN_2` stays dormant. Completion: the board clears the shutter sill by 0.10.
-7. KEEP `COVER_RUG_01` cluster at (23.0, 68.2). Nothing else on the paving; the door approach (0.8 m) and the gate abutment corner stay empty. Completion: as stated.
-8. APPLY wear: dust band, polish at both openings, light bleach. Completion: as listed.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 21..34 | **ZERO BUILD protected opening** | SPAWN_B_COURTYARD |
 
-**Why it exists (reality check):** One rug merchant with his display, his locked service door and two upper rooms; the last shop before the city gate, so no second stall crowds the portal.
+No target parcel is scheduled on this face. Preserve the baseline condition above.
 
-### FRONTAGE_RUG_GATE_EAST  ·  BLD_GATE_KEEPER (house, 1 storey)
+### `RUG_GATE` · `east`
 
-- **Role:** house. The gatekeeper's one-room house: a door with a lantern for the night watch, one window, nothing to sell.
-- **Wall line:** east edge of `RUG_GATE`; x = 34, y = 72 .. 76.88 (a runs south to north); length **4.88 m**; street side -X (street lies west of the wall); kit `Wall(F, (34, 72), (34, 76.88), faces='W')`.
-- **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 2.25 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; string course 2.90; coping 4.34..4.5; parapet +0.65.
+Quiet background: y=67..72 exact east link is empty..
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `BAY_01` | `door_residential_timber` | closed household door with lantern over | 1.775 | (34, 73.775) | 1.05 × 0.2 × 2.25 | 0 / 2.25 | 0 |
-| `BAY_02` | `window_dark_recess` | dark recess window, planter under | 3.18 | (34, 75.18) | 0.9 × 0.28 × 1.25 | 1 / 2.25 | 0 |
+Protected wall interval: **64..78 m**; floor grade: **z 0 m**.
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.775002, 1.05, 0, 2.25), (3.180003, 0.9, 1, 1.25)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 64..67 | collider-backed solid | COLLIDER_WALL_106 |
+| 72..78 | collider-backed solid | COLLIDER_WALL_107 |
+| 67..72 | **ZERO BUILD protected opening** | LINK_EAST_UPPER |
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_CC0_LANTERN` at over the door at 1.77 m along, under the head; `ASSET_COURT_PLANTER` at under the window.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `R_E_SOUTH` | 64..67 | (34, 64, 37, 67) | Textile north return shares the workroom datum and plain timber family of the continuous east owner. | 10.2 | 3 | `ph_bz04_plastered_wall` | slab 10.2..10.38; parapet 10.83; cap 10.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `R_E_HOUSE` | 72..78 | (34, 72, 37.5, 78) | Gatekeeper has plain paired domestic windows and one centered loft louver. | 9.9 | 3.5 | `ph_bz04_sandstone_blocks_06` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-**Construction tasks (ordered; each has an observable completion):**
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `R_E_SOUTH-L1-W1` | `R_E_SOUTH` | window | 65.5 | 4.2 / 6 | 1.45 × 1.8 × 0.38 | 34 | `SD-07`; Closed 2-panel timber shutters | broad daylit production rooms and narrow stairs; daylight on its measured room axis |
+| `R_E_SOUTH-L2-W1` | `R_E_SOUTH` | vent | 65.5 | 9.03 / 9.68 | 1.25 × 0.65 × 0.3 | 34 | `SD-07`; closed timber louver | high dry-stock loft; high ventilation |
+| `R_E_HOUSE-ENTRANCE` | `R_E_HOUSE` | door | 75 | 0 / 2.55 | 1.2 × 2.55 × 0.22 | 34 | `SD-05`; closed timber leaves | principal entrance and internal stair |
+| `R_E_HOUSE-L1-W1` | `R_E_HOUSE` | window | 73.62 | 4.25 / 5.85 | 1.1 × 1.6 × 0.34 | 34 | `SD-07`; closed double paneled timber shutters | household rooms; daylight on its measured room axis |
+| `R_E_HOUSE-L1-W2` | `R_E_HOUSE` | window | 76.38 | 4.25 / 5.85 | 1.1 × 1.6 × 0.34 | 34 | `SD-07`; closed double paneled timber shutters | household rooms; daylight on its measured room axis |
+| `R_E_HOUSE-COMMON-LOFT-VENT` | `R_E_HOUSE` | vent | 75 | 8.65 / 9.35 | 1.5 × 0.7 × 0.3 | 34 | `SD-07`; closed timber louver | dry gate stores; high ventilation |
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_06`, plinth, course 2.84..2.96, coping 4.34..4.5; corners `held`: end piers 0.45 × 0.16. Completion: a low stone house beside the gate.
-2. CREATE `BAY_01` closed door 1.05 × 2.25 at a=1.775 (SD-05). CREATE the lantern bracket at a=2.44: it starts at (34.0, 74.44, 3.915), reaches 0.25 m into the street to the placed lantern handle at (33.75, 74.44, 3.915), and carries `LANTERN_RUG_01` centred at (33.75, 74.44, 3.65). Completion: door reads closed and the lantern hangs from its wall bracket, not in the air.
-3. CREATE `BAY_02` dark recess window 0.9 × 1.25 at sill 1.0 / head 2.25, a=3.18, closed dark leaf and a 0.06 sill. CREATE a grounded architectural planter trough directly below it: 1.05 m along × 0.30 m projection × 0.55 m high, centred at (33.85, 75.18), bottom z=0; sandstone side, end and base walls 0.06 thick, soil top z=0.43, contained foliage to z=0.75 within the same 1.05 × 0.30 footprint. Its street edge is x=33.70, 0.30 m from the x=34 wall, so it stays inside the wall band and outside the door floor. Completion: planted sill feature with a grounded masonry base, no free placement.
-4. APPLY wear: dust band, polish at the door. No awning, sign, shop or goods. Completion: as listed.
+### `RUG_GATE` · `south`
 
-**Why it exists (reality check):** The gatekeeper's one-room house: a door with a lantern for the night watch, one window, nothing to sell.
+Quiet background: Exact immutable Textile Arcade opening x=24..34..
 
-### FRONTAGE_RUG_GATE_EAST_SOUTH  ·  BLD_GATE_KEEPER (house, 1 storey)
+Protected wall interval: **21..34 m**; floor grade: **z 0 m**.
 
-- **Role:** house. The blank flank of the same house on the other side of the link passage.
-- **Wall line:** east edge of `RUG_GATE`; x = 34, y = 65.12 .. 67 (a runs south to north); length **1.88 m**; street side -X (street lies west of the wall); kit `Wall(F, (34, 65.12), (34, 67), faces='W')`.
-- **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_05`, trim `ph_trim_sanded_01`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 3.4 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; string course 2.90; coping 4.34..4.5.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 21..24 | collider-backed solid | COLLIDER_WALL_027 |
+| 24..34 | **ZERO BUILD protected opening** | TEXTILE_ARCADE |
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `BAY_01` | `pilaster_facade` |  | 0.94 | (34, 66.06) | 0.42 × 0.24 × 3.4 | 0 / 3.4 | 0 |
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `R_S_CAP` | 21..24 | (21, 60.6, 24, 64) | West textile merchants - coordinated wing or return | 11.1 | 3.4 | `ph_bz04_painted_plaster_warm` | slab 11.1..11.28; parapet 11.73; cap 11.83; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `R_S_CAP-L1-W1` | `R_S_CAP` | vent | 22.5 | 6.63 / 7.28 | 1.25 × 0.65 × 0.3 | 64 | `SD-07`; closed timber louver | ventilated cloth sorting and stock; high ventilation |
+| `R_S_CAP-L2-W1` | `R_S_CAP` | window | 22.5 | 8.75 / 10.35 | 1.1 × 1.6 × 0.34 | 64 | `SD-07`; closed double paneled timber shutters | staff accommodation; daylight on its measured room axis |
+
+### `RUG_GATE` · `west`
+
+Quiet background: The merchant gallery ends before the protected west-upper link mouth..
+
+Protected wall interval: **64..78 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 64..72 | collider-backed solid | COLLIDER_WALL_102 |
+| 76.5..78 | collider-backed solid | COLLIDER_WALL_103 |
+| 72..76.5 | **ZERO BUILD protected opening** | LINK_WEST_UPPER |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `R_W_MERCHANT` | 64..72 | (19, 64, 21, 72) | The common loft vent centers at68 in the complete64..72 upper field. The lower broad/narrow window group and ground access keep their existing roles. | 9.9 | 2 | `ph_bz04_painted_plaster_warm` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `R_W_ABUTMENT` | 76.5..78 | (17, 76.5, 21, 78) | West Rug Gate abutment enclosure return | 9.9 | 4 | `ph_bz04_sandstone_blocks_05` | slab 9.9..10.02; parapet 10.02; cap 10.02; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `R_W_SHOP` | `R_W_MERCHANT` | shop | 66.4 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 21 | `SD-08`; closed backed shopfront with a continuous counter; side-door clear 0.8 m → `R_W_MERCHANT-STAFF-DOOR`; architecturalDetail: `{"profile":"carved-timber-portal","surroundWidthM":0.14,"incisionDepthM":0.006,"receiverRule":"Cut carving and joinery inside this complete frame; keep the opening, back and bearing planes continuous.","includeThreshold":false,"frameColorSrgb":"#9c8060","frameMaterialId":"ph_bz04_weathered_brown_planks","materialProfile":"warmTimber","carving":{"pattern":"running-lozenge","modulePitchM":0.12,"moduleWidthM":0.085,"moduleHeightM":0.05,"incisionWidthM":0.006,"incisionDepthM":0.006,"placement":"One centered vertical chain on each outer timber jamb; stop 0.18 m above sill and 0.18 m below the arch spring/head. The head retains two continuous nested bands. No floral alternative."}}` | rug workfront |
+| `R_W_MERCHANT-STAFF-DOOR` | `R_W_MERCHANT` | door | 70.4 | 0 / 2.55 | 1.1 × 2.55 × 0.22 | 21 | `SD-05`; closed timber leaves | staff stair and store entrance |
+| `R_W_MERCHANT-L1-W1` | `R_W_MERCHANT` | window | 66.4 | 4.25 / 5.85 | 1.8 × 1.6 × 0.3 | 21 | `SD-07`; Closed 2-panel timber shutters | hand-carried stock gallery; daylight on its measured room axis |
+| `R_W_MERCHANT-L1-W2` | `R_W_MERCHANT` | window | 70.4 | 4.25 / 5.85 | 0.8 × 1.6 × 0.3 | 21 | `SD-07`; Closed 1-panel timber shutters | hand-carried stock gallery; daylight on its measured room axis |
+| `R_W_MERCHANT-COMMON-LOFT-VENT` | `R_W_MERCHANT` | vent | 68 | 8.65 / 9.35 | 1.8 × 0.7 × 0.3 | 21 | `SD-07`; closed timber louver | ventilated dry rug loft; high ventilation |
+
+## Surface and floor treatments
+
+| Area / parcel | Receiver | Exact polygon / region | Alpha | Purpose |
+|---|---|---|---:|---|
+| `RUG_GATE` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'RUG_GATE-CLEAR', 'x': 24.5, 'y': 64, 'w': 6, 'h': 14, 'heightM': 2.2, 'floorSource': 'RUG_GATE'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+## Activity groups and protected route regions
+
+| Area | Group / recipe | Receiver | Bounds min → max (x, y, z) | Contents | Supports |
+|---|---|---|---|---|---|
+| `RUG_GATE` | `G_R_W_SHOP` / `AG-RUG` | west/R_W_MERCHANT/R_W_SHOP | (19.1, 65.14, 0.04) → (21.28, 67.66, 2.65) | Build the named parts as rug display. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `RUG_GATE` | `RUG_GATE-CLEAR` | **CLEAR ROUTE** | (24.5, 64) → (30.5, 78) | Protected empty region | Do not place geometry |
+
+### Fixed composition `G_R_W_SHOP`
+
+Along offsets from served opening centre (or group centre for a plant); out positive toward street; z above group bbox min, the finished deck. Build exactly these parts with their stated receivers.
+
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `counter` | grounded-counter-carcass / `CF-COUNTER` | [-1.25, -0.55, 0] / [1.25, 0.15, 0.9] | `ph_bz04_worn_planks` | recess deck; base feet are flat and continuous under the carcass |
+| `upright-1` | timber-member / `CF-TIMBER` | [-0.9, -1.9, 0] / [-0.83, -1.65, 2.45] | `ph_bz04_worn_planks` | recess deck and upper wall bracket |
+| `upright-2` | timber-member / `CF-TIMBER` | [0.83, -1.9, 0] / [0.9, -1.65, 2.45] | `ph_bz04_worn_planks` | recess deck and upper wall bracket |
+| `top-rail` | timber-member / `CF-TIMBER` | [-0.9, -1.9, 2.38] / [0.9, -1.65, 2.45] | `ph_bz04_worn_planks` | two uprights |
+| `hanging-rug-1` | bound-hanging-rug / `CF-RUG` | [-0.74, -1.73, 0.8499999999999999] / [-0.020000000000000018, -1.7, 2.3] | `bz04_levantine_rug_project_original` | two ties to top-rail, one at each upper corner |
+| `hanging-rug-2` | bound-hanging-rug / `CF-RUG` | [0.08000000000000002, -1.73, 1.0499999999999998] / [0.6599999999999999, -1.7, 2.3] | `bz04_levantine_rug_project_original` | two ties to top-rail, one at each upper corner |
+| `rolled-rug-1-1` | horizontal-rolled-rug / `CF-RUG` | [-0.655, -0.19, 0.9] / [-0.10499999999999998, -0.010000000000000009, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-1-2` | horizontal-rolled-rug / `CF-RUG` | [0.10499999999999998, -0.19, 0.9] / [0.655, -0.010000000000000009, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-2-1` | horizontal-rolled-rug / `CF-RUG` | [-0.655, -0.44999999999999996, 0.9] / [-0.10499999999999998, -0.27, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-2-2` | horizontal-rolled-rug / `CF-RUG` | [0.10499999999999998, -0.44999999999999996, 0.9] / [0.655, -0.27, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+
+## Fixtures, receivers, budgets, and critical views
+
+| Area | Fixture | Recipe | Receiver | Bounds min → max (x, y, z) | Purpose |
+|---|---|---|---|---|---|
+| `RUG_GATE` | `SHADE_R_W_SHOP` | `SD-12` | west/R_W_MERCHANT/R_W_SHOP | (20.92, 64.95, 2.54) → (22.025, 67.85, 3.145) | Supported working shade for sealed rug recess |
+| | `SHADE_R_W_SHOP` dimensions/supports | | | {'interval': [64.95, 67.85], 'ledgerZ': 3.08, 'armAxesM': [65.05, 67.75], 'projectionM': 1.0, 'dropM': 0.22, 'sagM': 0.1} | Exact instance values override the standard defaults. |
+
+**SHADE_R_W_SHOP membrane-only bounds:** `{'min': [21, 64.95, 2.752], 'max': [22.0, 67.85, 3.08]}`. Whole-assembly bounds above include the following supports:
+
+| Component | World bounds |
+|---|---|
+| ledger | `{'min': [20.92, 64.95, 3.04], 'max': [21.04, 67.85, 3.12]}` |
+| arm-knee-1 | `{'min': [20.96, 65.015, 2.54], 'max': [22.025, 65.085, 3.145]}` |
+| arm-knee-2 | `{'min': [20.96, 67.715, 2.54], 'max': [22.025, 67.785, 3.145]}` |
+| cloth-and-hem | `{'min': [21, 64.95, 2.727], 'max': [22.0, 67.85, 3.08]}` |
 
 
-**Construction tasks (ordered; each has an observable completion):**
+| Area | Triangle budget | Material bindings | Rendered primitives | Shadow primitives |
+|---|---:|---:|---:|---:|
+| `RUG_GATE` | 48000 | 12 | 14 | 9 |
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_05` (cut stone against the rubble stone of the main face: the validator's adjacent-material rule), plinth, course, coping continuous with the main face at 4.5. Completion: same coping height across the link.
-2. CREATE `BAY_01` grounded pilaster 0.42 × 0.24 × 3.4 at a=0.94 (SD, full height, not a bollard). Completion: touches ground and the course.
-3. APPLY wear: dust band only. Nothing else: no niche, door, window or goods. Completion: as listed.
+Section origin (design coordinates): `{'x': 21, 'y': 64, 'z': 0, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-4.199999999999999, -0.02, -3.6000000000000014], 'max': [16.700000000000003, 11.12, 14.200000000000003]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `bz04_levantine_rug_project_original`, `ph_bz04_dark_wood`, `ph_bz04_hessian_230`, `ph_bz04_painted_plaster_warm`, `ph_bz04_plastered_wall`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`, `ph_bz04_worn_planks`.
 
-**Why it exists (reality check):** The blank flank of the same house on the other side of the link passage.
 
-## 4. Free placements (dressing, cover, landmarks)
+| Camera | Area | Position (x, y, z) | Yaw / pitch / FOV | Purpose |
+|---|---|---|---|---|
+| `RUG_GATE-travel-reverse` | `RUG_GATE` | (27.5, 77.35, 1.7) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `RUG_GATE-travel-forward` | `RUG_GATE` | (27.5, 64.65, 1.7) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `RUG_GATE-portal-context` | `RUG_GATE` | (27.5, 69, 1.7) | 180° / 9.5° / 75° | Whole gateway and courtyard approach; verify the focal landmark in its neighboring frame |
+| `RUG_GATE-east-R_E_SOUTH-s1-base` | `RUG_GATE` | (21.35, 65.5, 1.7) | 270° / 2.263° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `RUG_GATE-east-R_E_HOUSE-s1-base` | `RUG_GATE` | (21.35, 75, 1.7) | 270° / 2.263° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `RUG_GATE-south-R_S_CAP-s1-base` | `RUG_GATE` | (22.5, 77.65, 1.7) | 0° / 2.098° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `RUG_GATE-west-R_W_MERCHANT-s1-base` | `RUG_GATE` | (33.65, 68, 1.7) | 90° / 2.263° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `RUG_GATE-west-R_W_ABUTMENT-s1-base` | `RUG_GATE` | (33.65, 77.25, 1.7) | 90° / 2.263° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `RUG_GATE-R3-craft-detail` | `RUG_GATE` | (24.5, 66.4, 1.7) | 90° / -1.637° / 75° | R3 receiver, joinery, support, material and trade-detail inspection: R_W_SHOP |
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
+## Landmarks and shared dependencies
 
-| Anchor | Type | Position | W × H | Yaw | Note |
-|---|---|---|---|---:|---|
-| `LMK_RUG_GATE_01` | hero_landmark | (27.5, 76.3, 0) | 13 × 6.8 | 180 | Lane-spanning northern gate arch tied into both inward-facing frontage walls without opening the exterior perimeter. |
-| `COVER_RUG_01` | cover_cluster | (23, 68.2, 0) | 1.7 × 1.1 | 0 | Rolled rugs protect the upper jog. |
-| `LANTERN_RUG_01` | lantern_anchor | (32.5, 70, 4.25) | 0.42 × 0.72 | 270 | CC0 wooden lantern below Rug Gate. |
+| Landmark / dependency | Owner | Bounds or dependency | Clear void / arch profile |
+|---|---|---|---|
+| `RUG-GATE-PORTAL` / `LM-01` | `unit-rug-gate` | (19.7, 76.7, 0.0, 35.3, 77.5, 7.45) | clear (21.0, 76.7, 0.0, 34.0, 77.5, 4.2); crown [27.5, 6.9]; cap 7.45 |
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `RUG_GATE` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
 
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_RUG_LANTERN_LANTERN_RUG_01` | `ASSET_CC0_LANTERN` | `LANTERN_RUG_01` | (33.75, 74.44, 3.65) | 0.221 × 0.235 × 0.53 | 270 | KEEP at this transform |
-| `PLACE_RUG_COVER_COVER_RUG_01` | `ASSET_COVER_GOODS` | `COVER_RUG_01` | (23, 68.2, 0) | 1.5 × 0.75 × 1 | 0 | KEEP (gameplay cover; silhouette and collider protected) |
-| `PLACE_RUG_ARCH_LMK_RUG_GATE_01` | `ASSET_HERO_ARCH` | `LMK_RUG_GATE_01` | (27.5, 76.3, 0) | 13 × 0.8 × 6.8 | 180 | KEEP (landmark kit; abutments, soffit and crown are one composition) |
-| `PLACE_RUG_DISPLAY_COMPLETE_MOUNT_RUG_DISPLAY_COMPLETE` | `ASSET_RUG_ROLL_CHEST` | `MOUNT_RUG_DISPLAY_COMPLETE` | (20.84, 66.92, 0.08) | 1.48 × 0.32 × 2.3 | 270 | KEEP at this transform |
-| `PLACE_RUG_PANELED_WINDOW_MOUNT_RUG_PANELED_WINDOW` | `ASSET_SHUTTER_PANELED` | `MOUNT_RUG_PANELED_WINDOW` | (20.985, 66.92, 3.68) | 1.6 × 0.24 × 1.65 | 270 | KEEP at this transform |
-| `PLACE_RUG_SIGNS_RUG_W_SIGN_1` | `ASSET_SIGNBOARD` | `RUG_W_SIGN_1` | (21.12, 66.92, 3.1) | 2.2 × 0.12 × 0.304 | 90 | KEEP (centre z 3.10, nominal board span 2.95..3.25; masonry stubs meet its top at z 3.25) |
+## Roof installation references
 
-## 5. Overheads
+Install or reuse the named roof bundles through [roof-bundles.md](roof-bundles.md). These are direct asset dependencies, not permission to build another area’s facades.
 
-Canopies and lines are shared by both walls (owner OWN_OVERHEAD). Ends are fixed points on the receiving wall or roof tie; the cloth hangs between them per SD-17. Hem never below 4.2 m over a route floor.
+- `RUG_GATE` cells: `ROOF_CELL_003`, `ROOF_CELL_064`, `ROOF_CELL_065`, `ROOF_CELL_066`, `ROOF_CELL_074`, `ROOF_CELL_075`, `ROOF_CELL_078`.
+- `RUG_GATE` bundles: `ROOF_BUNDLE_UNIT_RUG_GATE`, `ROOF_BUNDLE_UNIT_TEXTILE_ARCADE`.
+- `RUG_GATE` interfaces: `ROOF_INTERFACE_ROOF_SEAM_013`, `ROOF_INTERFACE_ROOF_SEAM_018`, `ROOF_INTERFACE_ROOF_SEAM_020`, `ROOF_INTERFACE_ROOF_STEP_027`.
 
-None scheduled. Do not add one.
+## Material key
 
-## 6. Ground, wear and drainage
+| Alias | Source material | Color | Tile / normal / roughness / albedo |
+|---|---|---|---|
+| `ph_bz04_painted_plaster_warm` | `ph_painted_plaster_warm` | <span style="color:#d8c4a0">■</span> `#d8c4a0` | 1.8 / 0.3 / 0.92 / 1 |
+| `ph_bz04_plastered_wall` | `ph_plastered_wall` | <span style="color:#ddd0b3">■</span> `#ddd0b3` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_sandstone_blocks_05` | `ph_sandstone_blocks_05` | <span style="color:#bda985">■</span> `#bda985` | 2 / 0.45 / 0.94 / 1 |
+| `ph_bz04_sandstone_blocks_06` | `ph_sandstone_blocks_06` | <span style="color:#b6a185">■</span> `#b6a185` | 1.8 / 0.42 / 0.94 / 1 |
 
-KEEP `patterned_cobblestone`; flush seam only at existing transitions; polish under the gate; contact wear under the cover cluster.
+## Skyline and legacy producer dispositions
 
-**`RUG_GATE` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+| Legacy item | Zone | Existing producer | Required disposition | Replacement / notes |
+|---|---|---|---|---|
+| `PLACE_RUG_ARCH_LMK_RUG_GATE_01` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | rebind_visual | Replace with ASSET_BZ04_RUG_GATE / bz04_rug_gate at (27.5,77.1,0), yaw180; full geometry in LM-01. Retire old procedural hero arch render emission. |
+| `PLACE_RUG_COVER_COVER_RUG_01` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | retain_gameplay | Retain exact geometry, transform and cover silhouette; common material calibration only. |
+| `PLACE_RUG_DISPLAY_COMPLETE_MOUNT_RUG_DISPLAY_COMPLETE` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_RUG_LANTERN_LANTERN_RUG_01` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_RUG_PANELED_WINDOW_MOUNT_RUG_PANELED_WINDOW` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_RUG_SIGNS_RUG_W_SIGN_1` | `RUG_GATE` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `ARCH_FRONTAGE_RUG_GATE_EAST_BAY_01` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_EAST_BAY_02` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_EAST_MASSING` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_BAY_01` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_EAST_SOUTH_MASSING` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_01` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_02` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_WEST_MASSING` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_01` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_RUG_GATE_WEST_STORY_1_WINDOW_02` | `RUG_GATE` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `BOUNDARY_RUG_GATE_north` | `RUG_GATE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_RUG_GATE_east` | `RUG_GATE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_RUG_GATE_south` | `RUG_GATE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_RUG_GATE_west` | `RUG_GATE` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
 
-```python
-wear_patch(F, [(27.2, 64.3, 0.014), (27.8, 64.3, 0.014), (27.8, 77.7, 0.014), (27.2, 77.7, 0.014)], 'polish')
-wear_patch(F, [(22.17, 67.745, 0.014), (23.83, 67.745, 0.014), (23.83, 68.655, 0.014), (22.17, 68.655, 0.014)], 'dust')
-```
 
-## 7. Roofs and skyline
+## Drawings
 
-Merchant house 7.0 / 8.19 (emitted max 8.87 kept); gatekeeper 4.5 / 5.59 low; the gate crown and the `pushRugGateCrownBackdrop` planes are kept as built.
-
-## 8. Required result
-
-- [ ] One shop recess, one closed service door, two different upper closures on the west; one door, one window on the east.
-- [ ] Sign at z 3.10 clearing the shutter frame.
-- [ ] The lantern hangs from a bracket over the gatekeeper's door; the planter sits under the window.
-- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
-- [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
-- [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
-- [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
-- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
-- [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
-- [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
-
-Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
-
+- [RUG_GATE dimensioned plan](drawings/rug_gate-plan.svg), [RUG_GATE four elevations](drawings/rug_gate-elevations.svg), and [RUG_GATE roof axonometric](drawings/rug_gate-axon.svg)
+- [Master plan](drawings/master-plan.svg)

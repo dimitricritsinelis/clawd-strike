@@ -1,0 +1,2155 @@
+{
+  "scope": "Adjacent sources.json records for wall/floor texture packs, textiles and palms; does not validate upstream authorship or legal claims. Windows SOURCE.md and model provenance are outside this bounded sources.json check.",
+  "summary": {
+    "match": 177
+  },
+  "families": [
+    {
+      "family": "beige_wall_001",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "beige_wall_002",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "brick_4_desert",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "painted_plaster_wall",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "plastered_wall",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rough_pine_door",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rustic_stone_wall_02",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rusty_metal_02",
+      "source": "https://polyhaven.com/a/rusty_metal_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "sandstone_blocks_05",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "white_plaster_02",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "white_sandstone_blocks_02",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "worn_planks",
+      "source": "https://polyhaven.com/a/worn_planks",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "worn_plaster_wall",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "plastered_wall_04",
+      "source": "https://polyhaven.com/a/plastered_wall_04",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "fabric_leather_02",
+      "source": "https://polyhaven.com/a/fabric_leather_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "red_plaster_weathered",
+      "source": "https://polyhaven.com/a/red_plaster_weathered",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "grey_plaster_02",
+      "source": "https://polyhaven.com/a/grey_plaster_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "plaster_brick_pattern",
+      "source": "https://polyhaven.com/a/plaster_brick_pattern",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "medieval_blocks_03",
+      "source": "https://polyhaven.com/a/medieval_blocks_03",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rough_block_wall",
+      "source": "https://polyhaven.com/a/rough_block_wall",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "stone_brick_wall_001",
+      "source": "https://polyhaven.com/a/stone_brick_wall_001",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "castle_brick_02_red",
+      "source": "https://polyhaven.com/a/castle_brick_02_red",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "weathered_brown_planks",
+      "source": "https://polyhaven.com/a/weathered_brown_planks",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rough_wood",
+      "source": "https://polyhaven.com/a/rough_wood",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "dark_wood",
+      "source": "https://polyhaven.com/a/dark_wood",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "brown_planks_03",
+      "source": "https://polyhaven.com/a/brown_planks_03",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "hessian_230",
+      "source": "https://polyhaven.com/a/hessian_230",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "dirty_carpet",
+      "source": "https://polyhaven.com/a/dirty_carpet",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "rusty_metal_04",
+      "source": "https://polyhaven.com/a/rusty_metal_04",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "painted_metal_shutter",
+      "source": "https://polyhaven.com/a/painted_metal_shutter",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "corrugated_iron_02",
+      "source": "https://polyhaven.com/a/corrugated_iron_02",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "terracotta_floor_tiles",
+      "source": "https://polyhaven.com/a/terracotta_floor_tiles",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "stone_embedded_tiles",
+      "source": "https://polyhaven.com/a/stone_embedded_tiles",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sources.json"
+    },
+    {
+      "family": "cobblestone_floor_04",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sources.json"
+    },
+    {
+      "family": "medieval_blocks_05",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sources.json"
+    },
+    {
+      "family": "red_sandstone_pavement",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "record": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sources.json"
+    },
+    {
+      "family": "sand_drift_01",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "record": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sources.json"
+    },
+    {
+      "family": "court_flagstone_01",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "record": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sources.json"
+    }
+  ],
+  "results": [
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
+      "family": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "expected": "7496cbf6e151fe1ac1451184996933ae",
+      "actual": "7496cbf6e151fe1ac1451184996933ae",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
+      "family": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "expected": "d3074a462f40f921137dc07f70a6b728",
+      "actual": "d3074a462f40f921137dc07f70a6b728",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/canopy_stripe_albedo_v1.jpg",
+      "family": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "expected": "b99e482c87fc3f34269c0c6ba124c9f1",
+      "actual": "b99e482c87fc3f34269c0c6ba124c9f1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
+      "family": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "expected": "748db3341007442fdf290851da01f8e7",
+      "actual": "748db3341007442fdf290851da01f8e7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_albedo_v1.jpg",
+      "family": "bazaar_project_original_textiles",
+      "source": "repo://generated/bazaar/textiles",
+      "license": "Project-Original",
+      "expected": "df9447fda8505e0d2ca8786bc4529ab8",
+      "actual": "df9447fda8505e0d2ca8786bc4529ab8",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_diff_1k.jpg",
+      "family": "beige_wall_001",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "a99610d7d72ec6fb20ae991ad69b3eb7",
+      "actual": "a99610d7d72ec6fb20ae991ad69b3eb7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_nor_gl_1k.jpg",
+      "family": "beige_wall_001",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "2f5fc5b63c425b359089468f4d719ef5",
+      "actual": "2f5fc5b63c425b359089468f4d719ef5",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_arm_1k.jpg",
+      "family": "beige_wall_001",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "665a2f0a2669e423ecdab3719a396739",
+      "actual": "665a2f0a2669e423ecdab3719a396739",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_diff_2k.jpg",
+      "family": "beige_wall_001",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "c927ac1136767f1df758ae064f50a2d1",
+      "actual": "c927ac1136767f1df758ae064f50a2d1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_nor_gl_2k.jpg",
+      "family": "beige_wall_001",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "127b2f5f2f8c2e57b1f08b263c0690bd",
+      "actual": "127b2f5f2f8c2e57b1f08b263c0690bd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_001/beige_wall_001_arm_2k.jpg",
+      "family": "beige_wall_001",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/beige_wall_001",
+      "license": "CC0-1.0",
+      "expected": "4b2733ac3dba7944316915e180a70a24",
+      "actual": "4b2733ac3dba7944316915e180a70a24",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_diff_1k.jpg",
+      "family": "beige_wall_002",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "67237dad18f795a43fb8a82d1b3aa227",
+      "actual": "67237dad18f795a43fb8a82d1b3aa227",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_nor_gl_1k.jpg",
+      "family": "beige_wall_002",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "9bc4777b2f38e2ef06e394f1fca2f749",
+      "actual": "9bc4777b2f38e2ef06e394f1fca2f749",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_arm_1k.jpg",
+      "family": "beige_wall_002",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "bd2f6015b85864d8f6359ec6d26cbec5",
+      "actual": "bd2f6015b85864d8f6359ec6d26cbec5",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_diff_2k.jpg",
+      "family": "beige_wall_002",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "2a28be17ac77d1d0edc0d6f59d0c2b6a",
+      "actual": "2a28be17ac77d1d0edc0d6f59d0c2b6a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_nor_gl_2k.jpg",
+      "family": "beige_wall_002",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "4b57a70dda94f3ab1ecf6c506ebc1190",
+      "actual": "4b57a70dda94f3ab1ecf6c506ebc1190",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/beige_wall_002/beige_wall_002_arm_2k.jpg",
+      "family": "beige_wall_002",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/beige_wall_002",
+      "license": "CC0-1.0",
+      "expected": "e2c9a4a72772565ef8e29303722be76a",
+      "actual": "e2c9a4a72772565ef8e29303722be76a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_diff_1k.jpg",
+      "family": "brick_4_desert",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "d796ac77f351cd9de096c64370700c1b",
+      "actual": "d796ac77f351cd9de096c64370700c1b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_nor_gl_1k.jpg",
+      "family": "brick_4_desert",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "db5c953bc1ca96ea6861a0a354624a85",
+      "actual": "db5c953bc1ca96ea6861a0a354624a85",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_arm_1k.jpg",
+      "family": "brick_4_desert",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "350348a669fdceae40bf35cf704364f2",
+      "actual": "350348a669fdceae40bf35cf704364f2",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_diff_2k.jpg",
+      "family": "brick_4_desert",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "6ae9df82d012c9ea49ac05d454358e37",
+      "actual": "6ae9df82d012c9ea49ac05d454358e37",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_nor_gl_2k.jpg",
+      "family": "brick_4_desert",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "63ddf407d2a3c41a51b56f70cf45431d",
+      "actual": "63ddf407d2a3c41a51b56f70cf45431d",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brick_4_desert/brick_4_desert_arm_2k.jpg",
+      "family": "brick_4_desert",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/brick_4",
+      "license": "CC0-1.0",
+      "expected": "861868c9ab8bd3481100fbb82b086afc",
+      "actual": "861868c9ab8bd3481100fbb82b086afc",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "d273ddf6a8d75c7f0e7e09cbe3de8d79",
+      "actual": "d273ddf6a8d75c7f0e7e09cbe3de8d79",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "113ddb47b677fc92710dda3b5d0f2bf9",
+      "actual": "113ddb47b677fc92710dda3b5d0f2bf9",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "3cd079adad9d00dade84be1d700608c7",
+      "actual": "3cd079adad9d00dade84be1d700608c7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_2k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "32f4f4e5ded7d20e55e337004d0d9691",
+      "actual": "32f4f4e5ded7d20e55e337004d0d9691",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_2k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "18faf9f7949aefdb3ae7cef7195cba04",
+      "actual": "18faf9f7949aefdb3ae7cef7195cba04",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_2k.jpg",
+      "family": "painted_plaster_wall",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/painted_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "b66f912016257faa7e71a1530e387545",
+      "actual": "b66f912016257faa7e71a1530e387545",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+      "family": "plastered_wall",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "9f64cd14ded4938e64ab6c6bb3de3c19",
+      "actual": "9f64cd14ded4938e64ab6c6bb3de3c19",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+      "family": "plastered_wall",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "e3e00c5d9a589621bf3cc541d9fb7d81",
+      "actual": "e3e00c5d9a589621bf3cc541d9fb7d81",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg",
+      "family": "plastered_wall",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "8f2c972159e4d346f37224b6886709d4",
+      "actual": "8f2c972159e4d346f37224b6886709d4",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_2k.jpg",
+      "family": "plastered_wall",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "1cacf2ddbccc137473e717f23db200a9",
+      "actual": "1cacf2ddbccc137473e717f23db200a9",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_2k.jpg",
+      "family": "plastered_wall",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "ccfd96ad464ed339f2df9d5d1bca878b",
+      "actual": "ccfd96ad464ed339f2df9d5d1bca878b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_2k.jpg",
+      "family": "plastered_wall",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/plastered_wall",
+      "license": "CC0-1.0",
+      "expected": "9c3bc94f7d0131e8290f5668ebbfbe19",
+      "actual": "9c3bc94f7d0131e8290f5668ebbfbe19",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+      "family": "rough_pine_door",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "expected": "8c1036e566fe8e925e98123458aae385",
+      "actual": "8c1036e566fe8e925e98123458aae385",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+      "family": "rough_pine_door",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "expected": "4ea81cbe11f012f8dd9490de124ed1fd",
+      "actual": "4ea81cbe11f012f8dd9490de124ed1fd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
+      "family": "rough_pine_door",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rough_pine_door",
+      "license": "CC0-1.0",
+      "expected": "f542d70fa482014e9533a896e917c161",
+      "actual": "f542d70fa482014e9533a896e917c161",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "9ca81a5ea589ea55a547bccc43c9df85",
+      "actual": "9ca81a5ea589ea55a547bccc43c9df85",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_1k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "9612e01f923facfdd420fd7b811269b0",
+      "actual": "9612e01f923facfdd420fd7b811269b0",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_arm_1k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "1c23adca55ff4f342ae63c3c3af8605a",
+      "actual": "1c23adca55ff4f342ae63c3c3af8605a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_diff_2k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "b2459f26bf75da47d7b828044049d3cd",
+      "actual": "b2459f26bf75da47d7b828044049d3cd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_2k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "96aa0239100b00082b64f952d53819dd",
+      "actual": "96aa0239100b00082b64f952d53819dd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_arm_2k.jpg",
+      "family": "rustic_stone_wall_02",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rustic_stone_wall_02",
+      "license": "CC0-1.0",
+      "expected": "31c0d4f6bf090448b92c793eff26e9af",
+      "actual": "31c0d4f6bf090448b92c793eff26e9af",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
+      "family": "rusty_metal_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rusty_metal_02",
+      "license": "CC0-1.0",
+      "expected": "476bff9959bc727bd4b83c0a9ac4aeaa",
+      "actual": "476bff9959bc727bd4b83c0a9ac4aeaa",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
+      "family": "rusty_metal_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rusty_metal_02",
+      "license": "CC0-1.0",
+      "expected": "8d6dc7e26f2708ec59e2a739711c612b",
+      "actual": "8d6dc7e26f2708ec59e2a739711c612b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg",
+      "family": "rusty_metal_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rusty_metal_02",
+      "license": "CC0-1.0",
+      "expected": "888da78afd9bfc9fd3dafbbf2a5b8134",
+      "actual": "888da78afd9bfc9fd3dafbbf2a5b8134",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "2c3651fdf1071d7b60d82f0e86953968",
+      "actual": "2c3651fdf1071d7b60d82f0e86953968",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "cb9d5f4e66155a34236d6e2420ce276b",
+      "actual": "cb9d5f4e66155a34236d6e2420ce276b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "d6eff1ed1206fac358da4a4d2a5e407d",
+      "actual": "d6eff1ed1206fac358da4a4d2a5e407d",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_2k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "486e2b51beffc6c050d1e2b25fa47cbd",
+      "actual": "486e2b51beffc6c050d1e2b25fa47cbd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_2k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "d4d54c89dce5e682e12e38f71db3820d",
+      "actual": "d4d54c89dce5e682e12e38f71db3820d",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_2k.jpg",
+      "family": "sandstone_blocks_05",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/sandstone_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "887ad0057682f01bf2705d4d1134c866",
+      "actual": "887ad0057682f01bf2705d4d1134c866",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_diff_1k.jpg",
+      "family": "white_plaster_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "7b10c2686bcfd76d1f309a20fd06b57e",
+      "actual": "7b10c2686bcfd76d1f309a20fd06b57e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
+      "family": "white_plaster_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "55fc03203ebf1dc703a380fde93ff502",
+      "actual": "55fc03203ebf1dc703a380fde93ff502",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_arm_1k.jpg",
+      "family": "white_plaster_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "4a5a080e2421fac4fa602680bef4c8b1",
+      "actual": "4a5a080e2421fac4fa602680bef4c8b1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_diff_2k.jpg",
+      "family": "white_plaster_02",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "35f9c96c16aa0d934da7884b232f6d07",
+      "actual": "35f9c96c16aa0d934da7884b232f6d07",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_nor_gl_2k.jpg",
+      "family": "white_plaster_02",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "a9fa643c4a200686ad89598b545b2adc",
+      "actual": "a9fa643c4a200686ad89598b545b2adc",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_arm_2k.jpg",
+      "family": "white_plaster_02",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/white_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "8037fca09e797a6664834a00adbe05aa",
+      "actual": "8037fca09e797a6664834a00adbe05aa",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "5a31e6268c764ffccc358420e3aa3fb5",
+      "actual": "5a31e6268c764ffccc358420e3aa3fb5",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "0de5ad6426e1415bc36d5d31c3a0f179",
+      "actual": "0de5ad6426e1415bc36d5d31c3a0f179",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "16deb112a37a5e9e966609d23f86ef0e",
+      "actual": "16deb112a37a5e9e966609d23f86ef0e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_2k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "141a8964984195586d2d6fac4ee34fef",
+      "actual": "141a8964984195586d2d6fac4ee34fef",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_2k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "aa73e395015c04dfe452405b8be5d337",
+      "actual": "aa73e395015c04dfe452405b8be5d337",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_2k.jpg",
+      "family": "white_sandstone_blocks_02",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/white_sandstone_blocks_02",
+      "license": "CC0-1.0",
+      "expected": "62719faf93f71a6daa3659bdc5dff0bd",
+      "actual": "62719faf93f71a6daa3659bdc5dff0bd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_diff_1k.jpg",
+      "family": "worn_planks",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/worn_planks",
+      "license": "CC0-1.0",
+      "expected": "c5f7b2343880a705e9acb471938e07da",
+      "actual": "c5f7b2343880a705e9acb471938e07da",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_nor_gl_1k.jpg",
+      "family": "worn_planks",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/worn_planks",
+      "license": "CC0-1.0",
+      "expected": "9a31cafe552f7e15228a513cfd25c574",
+      "actual": "9a31cafe552f7e15228a513cfd25c574",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_planks/worn_planks_arm_1k.jpg",
+      "family": "worn_planks",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/worn_planks",
+      "license": "CC0-1.0",
+      "expected": "1d4acce324ac8377e0eeace283da3cc3",
+      "actual": "1d4acce324ac8377e0eeace283da3cc3",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_1k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "e571a608f92ac2209389a35f2a378150",
+      "actual": "e571a608f92ac2209389a35f2a378150",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_1k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "0e41998ee988c493ade5c774a5c29057",
+      "actual": "0e41998ee988c493ade5c774a5c29057",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_1k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "15c83496e11bf088f375b21a313836c6",
+      "actual": "15c83496e11bf088f375b21a313836c6",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_diff_2k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "113c336124507f4b3fc7d440f6fd8346",
+      "actual": "113c336124507f4b3fc7d440f6fd8346",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_nor_gl_2k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "737e4eb8ec9af427c8aafe46675409d9",
+      "actual": "737e4eb8ec9af427c8aafe46675409d9",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/worn_plaster_wall/worn_plaster_wall_arm_2k.jpg",
+      "family": "worn_plaster_wall",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/worn_plaster_wall",
+      "license": "CC0-1.0",
+      "expected": "4131b686f55a1e47777f58931d423b66",
+      "actual": "4131b686f55a1e47777f58931d423b66",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_diff_1k.jpg",
+      "family": "plastered_wall_04",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/plastered_wall_04",
+      "license": "CC0-1.0",
+      "expected": "3a45e9e3ff0c6aa179371dff02bded1f",
+      "actual": "3a45e9e3ff0c6aa179371dff02bded1f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_nor_gl_1k.jpg",
+      "family": "plastered_wall_04",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/plastered_wall_04",
+      "license": "CC0-1.0",
+      "expected": "f18e649235bb688732fb0ef1d61a5286",
+      "actual": "f18e649235bb688732fb0ef1d61a5286",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall_04/plastered_wall_04_arm_1k.jpg",
+      "family": "plastered_wall_04",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/plastered_wall_04",
+      "license": "CC0-1.0",
+      "expected": "4d3c55b7cbb32cce818af5b2a1f18ffa",
+      "actual": "4d3c55b7cbb32cce818af5b2a1f18ffa",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_diff_1k.jpg",
+      "family": "fabric_leather_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/fabric_leather_02",
+      "license": "CC0-1.0",
+      "expected": "35256026fcf2734d558ee2aa8f939c10",
+      "actual": "35256026fcf2734d558ee2aa8f939c10",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
+      "family": "fabric_leather_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/fabric_leather_02",
+      "license": "CC0-1.0",
+      "expected": "1600b3fed674702eaa350cd627278a0f",
+      "actual": "1600b3fed674702eaa350cd627278a0f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/fabric_leather_02/fabric_leather_02_arm_1k.jpg",
+      "family": "fabric_leather_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/fabric_leather_02",
+      "license": "CC0-1.0",
+      "expected": "a1e746c80203a76940eb8aa7fec8d4cf",
+      "actual": "a1e746c80203a76940eb8aa7fec8d4cf",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
+      "family": "red_plaster_weathered",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/red_plaster_weathered",
+      "license": "CC0-1.0",
+      "expected": "67a54f08b3cba2bc58616a377f65884f",
+      "actual": "67a54f08b3cba2bc58616a377f65884f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
+      "family": "red_plaster_weathered",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/red_plaster_weathered",
+      "license": "CC0-1.0",
+      "expected": "8bc4d81b4a8d5c10fa05c275795879b6",
+      "actual": "8bc4d81b4a8d5c10fa05c275795879b6",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_arm_1k.jpg",
+      "family": "red_plaster_weathered",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/red_plaster_weathered",
+      "license": "CC0-1.0",
+      "expected": "7bdf1aec334a4aefa82d61be77516c83",
+      "actual": "7bdf1aec334a4aefa82d61be77516c83",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/grey_plaster_02/grey_plaster_02_diff_1k.jpg",
+      "family": "grey_plaster_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/grey_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "fe17ee482114c15690c2bc853c572bbc",
+      "actual": "fe17ee482114c15690c2bc853c572bbc",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/grey_plaster_02/grey_plaster_02_nor_gl_1k.jpg",
+      "family": "grey_plaster_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/grey_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "48636f9e7c651f6370b2549e0d3eaa4b",
+      "actual": "48636f9e7c651f6370b2549e0d3eaa4b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/grey_plaster_02/grey_plaster_02_arm_1k.jpg",
+      "family": "grey_plaster_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/grey_plaster_02",
+      "license": "CC0-1.0",
+      "expected": "25b57d92f54badf861a3c1fa0118123e",
+      "actual": "25b57d92f54badf861a3c1fa0118123e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plaster_brick_pattern/plaster_brick_pattern_diff_1k.jpg",
+      "family": "plaster_brick_pattern",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/plaster_brick_pattern",
+      "license": "CC0-1.0",
+      "expected": "20375d4e6759198b3cc48840a79b2172",
+      "actual": "20375d4e6759198b3cc48840a79b2172",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plaster_brick_pattern/plaster_brick_pattern_nor_gl_1k.jpg",
+      "family": "plaster_brick_pattern",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/plaster_brick_pattern",
+      "license": "CC0-1.0",
+      "expected": "533e1a687a013c9c827282f071c36b66",
+      "actual": "533e1a687a013c9c827282f071c36b66",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plaster_brick_pattern/plaster_brick_pattern_arm_1k.jpg",
+      "family": "plaster_brick_pattern",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/plaster_brick_pattern",
+      "license": "CC0-1.0",
+      "expected": "0fb812757effced4b0058ad38e7ae8ea",
+      "actual": "0fb812757effced4b0058ad38e7ae8ea",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/medieval_blocks_03/medieval_blocks_03_diff_1k.jpg",
+      "family": "medieval_blocks_03",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/medieval_blocks_03",
+      "license": "CC0-1.0",
+      "expected": "05e4e5292463b7edbde4b4a16bce1b3d",
+      "actual": "05e4e5292463b7edbde4b4a16bce1b3d",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/medieval_blocks_03/medieval_blocks_03_nor_gl_1k.jpg",
+      "family": "medieval_blocks_03",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/medieval_blocks_03",
+      "license": "CC0-1.0",
+      "expected": "1372aac76bbc3316292e592e1f38a1b8",
+      "actual": "1372aac76bbc3316292e592e1f38a1b8",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/medieval_blocks_03/medieval_blocks_03_arm_1k.jpg",
+      "family": "medieval_blocks_03",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/medieval_blocks_03",
+      "license": "CC0-1.0",
+      "expected": "8ee096bab4a681cd60e1e2734514aa44",
+      "actual": "8ee096bab4a681cd60e1e2734514aa44",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_block_wall/rough_block_wall_diff_1k.jpg",
+      "family": "rough_block_wall",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rough_block_wall",
+      "license": "CC0-1.0",
+      "expected": "c25f40a19ba91fe0f50a9f4fc5eb5dbf",
+      "actual": "c25f40a19ba91fe0f50a9f4fc5eb5dbf",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_block_wall/rough_block_wall_nor_gl_1k.jpg",
+      "family": "rough_block_wall",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rough_block_wall",
+      "license": "CC0-1.0",
+      "expected": "c72a22b35833cad334632ee6a3db381f",
+      "actual": "c72a22b35833cad334632ee6a3db381f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_block_wall/rough_block_wall_arm_1k.jpg",
+      "family": "rough_block_wall",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rough_block_wall",
+      "license": "CC0-1.0",
+      "expected": "d8c695c6fd0507783a1a0f3fb9befacb",
+      "actual": "d8c695c6fd0507783a1a0f3fb9befacb",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_brick_wall_001/stone_brick_wall_001_diff_1k.jpg",
+      "family": "stone_brick_wall_001",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/stone_brick_wall_001",
+      "license": "CC0-1.0",
+      "expected": "fe05d5a4be3e01e7d922e7e935d8dfd9",
+      "actual": "fe05d5a4be3e01e7d922e7e935d8dfd9",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_brick_wall_001/stone_brick_wall_001_nor_gl_1k.jpg",
+      "family": "stone_brick_wall_001",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/stone_brick_wall_001",
+      "license": "CC0-1.0",
+      "expected": "a389d00861e02eef39967dde975a8af4",
+      "actual": "a389d00861e02eef39967dde975a8af4",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_brick_wall_001/stone_brick_wall_001_arm_1k.jpg",
+      "family": "stone_brick_wall_001",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/stone_brick_wall_001",
+      "license": "CC0-1.0",
+      "expected": "431eade59e94c5900d52aed5898b0444",
+      "actual": "431eade59e94c5900d52aed5898b0444",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/castle_brick_02_red/castle_brick_02_red_diff_1k.jpg",
+      "family": "castle_brick_02_red",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/castle_brick_02_red",
+      "license": "CC0-1.0",
+      "expected": "2a4d048e27392dd5f02b4cfcd7c03a80",
+      "actual": "2a4d048e27392dd5f02b4cfcd7c03a80",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/castle_brick_02_red/castle_brick_02_red_nor_gl_1k.jpg",
+      "family": "castle_brick_02_red",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/castle_brick_02_red",
+      "license": "CC0-1.0",
+      "expected": "101cb56920bbe84c23e105333fbbc0cf",
+      "actual": "101cb56920bbe84c23e105333fbbc0cf",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/castle_brick_02_red/castle_brick_02_red_arm_1k.jpg",
+      "family": "castle_brick_02_red",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/castle_brick_02_red",
+      "license": "CC0-1.0",
+      "expected": "32e95446b2350b6c1a2d8acb629b5204",
+      "actual": "32e95446b2350b6c1a2d8acb629b5204",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+      "family": "weathered_brown_planks",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/weathered_brown_planks",
+      "license": "CC0-1.0",
+      "expected": "e2fbdf7ed402e272e33e3f7ba707cf69",
+      "actual": "e2fbdf7ed402e272e33e3f7ba707cf69",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
+      "family": "weathered_brown_planks",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/weathered_brown_planks",
+      "license": "CC0-1.0",
+      "expected": "1180a2ce3566529b25128252e02bd049",
+      "actual": "1180a2ce3566529b25128252e02bd049",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_arm_1k.jpg",
+      "family": "weathered_brown_planks",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/weathered_brown_planks",
+      "license": "CC0-1.0",
+      "expected": "be352d1156f18f438a44b290b494192e",
+      "actual": "be352d1156f18f438a44b290b494192e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_wood/rough_wood_diff_1k.jpg",
+      "family": "rough_wood",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rough_wood",
+      "license": "CC0-1.0",
+      "expected": "92d4b3dd46bab95248f5a7680b7882e7",
+      "actual": "92d4b3dd46bab95248f5a7680b7882e7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_wood/rough_wood_nor_gl_1k.jpg",
+      "family": "rough_wood",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rough_wood",
+      "license": "CC0-1.0",
+      "expected": "1c9829c9023f74c74eaeba28e56e5144",
+      "actual": "1c9829c9023f74c74eaeba28e56e5144",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_wood/rough_wood_arm_1k.jpg",
+      "family": "rough_wood",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rough_wood",
+      "license": "CC0-1.0",
+      "expected": "3879ef7144ffa11e43e504e590ccf1d7",
+      "actual": "3879ef7144ffa11e43e504e590ccf1d7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dark_wood/dark_wood_diff_1k.jpg",
+      "family": "dark_wood",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/dark_wood",
+      "license": "CC0-1.0",
+      "expected": "47fa883f1bb33acc5711245f64b75975",
+      "actual": "47fa883f1bb33acc5711245f64b75975",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dark_wood/dark_wood_nor_gl_1k.jpg",
+      "family": "dark_wood",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/dark_wood",
+      "license": "CC0-1.0",
+      "expected": "ca74ffa4c1b7ff5afe7316bbfa87f9a0",
+      "actual": "ca74ffa4c1b7ff5afe7316bbfa87f9a0",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dark_wood/dark_wood_arm_1k.jpg",
+      "family": "dark_wood",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/dark_wood",
+      "license": "CC0-1.0",
+      "expected": "5fcd59b788282269a279fef1d8fb3300",
+      "actual": "5fcd59b788282269a279fef1d8fb3300",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brown_planks_03/brown_planks_03_diff_1k.jpg",
+      "family": "brown_planks_03",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/brown_planks_03",
+      "license": "CC0-1.0",
+      "expected": "6c9fdc21afcdf171d0a39999392a70f4",
+      "actual": "6c9fdc21afcdf171d0a39999392a70f4",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brown_planks_03/brown_planks_03_nor_gl_1k.jpg",
+      "family": "brown_planks_03",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/brown_planks_03",
+      "license": "CC0-1.0",
+      "expected": "4944cb903b7d7c4029310deb8a51d69e",
+      "actual": "4944cb903b7d7c4029310deb8a51d69e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/brown_planks_03/brown_planks_03_arm_1k.jpg",
+      "family": "brown_planks_03",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/brown_planks_03",
+      "license": "CC0-1.0",
+      "expected": "ce863d98248b4f7005a238b182e70b60",
+      "actual": "ce863d98248b4f7005a238b182e70b60",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+      "family": "hessian_230",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/hessian_230",
+      "license": "CC0-1.0",
+      "expected": "6d2cee5fb9e5584b7a202ab27e1a6dcc",
+      "actual": "6d2cee5fb9e5584b7a202ab27e1a6dcc",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+      "family": "hessian_230",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/hessian_230",
+      "license": "CC0-1.0",
+      "expected": "468a884ffa63d912053840b110674c0a",
+      "actual": "468a884ffa63d912053840b110674c0a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg",
+      "family": "hessian_230",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/hessian_230",
+      "license": "CC0-1.0",
+      "expected": "e9fc979421ed612efc90a26f7bc15e31",
+      "actual": "e9fc979421ed612efc90a26f7bc15e31",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dirty_carpet/dirty_carpet_diff_1k.jpg",
+      "family": "dirty_carpet",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/dirty_carpet",
+      "license": "CC0-1.0",
+      "expected": "97c0a4b94e5660c117cc511b240aa3b3",
+      "actual": "97c0a4b94e5660c117cc511b240aa3b3",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dirty_carpet/dirty_carpet_nor_gl_1k.jpg",
+      "family": "dirty_carpet",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/dirty_carpet",
+      "license": "CC0-1.0",
+      "expected": "f6835454628831b0d8feceba6202e7a1",
+      "actual": "f6835454628831b0d8feceba6202e7a1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/dirty_carpet/dirty_carpet_arm_1k.jpg",
+      "family": "dirty_carpet",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/dirty_carpet",
+      "license": "CC0-1.0",
+      "expected": "fbe1d0c316caca13fccb36a92b5a0f75",
+      "actual": "fbe1d0c316caca13fccb36a92b5a0f75",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_04/rusty_metal_04_diff_1k.jpg",
+      "family": "rusty_metal_04",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/rusty_metal_04",
+      "license": "CC0-1.0",
+      "expected": "91832efd8e5896387e2af18a5b49b895",
+      "actual": "91832efd8e5896387e2af18a5b49b895",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_04/rusty_metal_04_nor_gl_1k.jpg",
+      "family": "rusty_metal_04",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/rusty_metal_04",
+      "license": "CC0-1.0",
+      "expected": "25f7f28b3546391532a5567b86e65aeb",
+      "actual": "25f7f28b3546391532a5567b86e65aeb",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_04/rusty_metal_04_arm_1k.jpg",
+      "family": "rusty_metal_04",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/rusty_metal_04",
+      "license": "CC0-1.0",
+      "expected": "279a6d62861e32e4ee43cce84b932e43",
+      "actual": "279a6d62861e32e4ee43cce84b932e43",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_metal_shutter/painted_metal_shutter_diff_1k.jpg",
+      "family": "painted_metal_shutter",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/painted_metal_shutter",
+      "license": "CC0-1.0",
+      "expected": "b2b648a56ca737d51999525e857f499a",
+      "actual": "b2b648a56ca737d51999525e857f499a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_metal_shutter/painted_metal_shutter_nor_gl_1k.jpg",
+      "family": "painted_metal_shutter",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/painted_metal_shutter",
+      "license": "CC0-1.0",
+      "expected": "a18c51114f00627f9e48254e870ceb91",
+      "actual": "a18c51114f00627f9e48254e870ceb91",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_metal_shutter/painted_metal_shutter_arm_1k.jpg",
+      "family": "painted_metal_shutter",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/painted_metal_shutter",
+      "license": "CC0-1.0",
+      "expected": "be0154e168d571f601cff127181d5ca0",
+      "actual": "be0154e168d571f601cff127181d5ca0",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/corrugated_iron_02/corrugated_iron_02_diff_1k.jpg",
+      "family": "corrugated_iron_02",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/corrugated_iron_02",
+      "license": "CC0-1.0",
+      "expected": "0437ba7acc3a60e9a00245580ae7e10b",
+      "actual": "0437ba7acc3a60e9a00245580ae7e10b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/corrugated_iron_02/corrugated_iron_02_nor_gl_1k.jpg",
+      "family": "corrugated_iron_02",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/corrugated_iron_02",
+      "license": "CC0-1.0",
+      "expected": "e3a9b41f29a5dee9f0835bddb440efbd",
+      "actual": "e3a9b41f29a5dee9f0835bddb440efbd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/corrugated_iron_02/corrugated_iron_02_arm_1k.jpg",
+      "family": "corrugated_iron_02",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/corrugated_iron_02",
+      "license": "CC0-1.0",
+      "expected": "58d9a11932fae9f85d4cbcde4700abb2",
+      "actual": "58d9a11932fae9f85d4cbcde4700abb2",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/terracotta_floor_tiles/terracotta_floor_tiles_diff_1k.jpg",
+      "family": "terracotta_floor_tiles",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/terracotta_floor_tiles",
+      "license": "CC0-1.0",
+      "expected": "06cc0f29e2a61115580fe147140c0201",
+      "actual": "06cc0f29e2a61115580fe147140c0201",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/terracotta_floor_tiles/terracotta_floor_tiles_nor_gl_1k.jpg",
+      "family": "terracotta_floor_tiles",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/terracotta_floor_tiles",
+      "license": "CC0-1.0",
+      "expected": "727399912c20adf49b87078c21af8071",
+      "actual": "727399912c20adf49b87078c21af8071",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/terracotta_floor_tiles/terracotta_floor_tiles_arm_1k.jpg",
+      "family": "terracotta_floor_tiles",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/terracotta_floor_tiles",
+      "license": "CC0-1.0",
+      "expected": "82da8f841a4b112206d535d4b4ff537a",
+      "actual": "82da8f841a4b112206d535d4b4ff537a",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_embedded_tiles/stone_embedded_tiles_diff_1k.jpg",
+      "family": "stone_embedded_tiles",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/stone_embedded_tiles",
+      "license": "CC0-1.0",
+      "expected": "dfe0a73b32750556bb14c2c88eb80ff3",
+      "actual": "dfe0a73b32750556bb14c2c88eb80ff3",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_embedded_tiles/stone_embedded_tiles_nor_gl_1k.jpg",
+      "family": "stone_embedded_tiles",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/stone_embedded_tiles",
+      "license": "CC0-1.0",
+      "expected": "921b139e6b85e8454ed6faaca31faeac",
+      "actual": "921b139e6b85e8454ed6faaca31faeac",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/stone_embedded_tiles/stone_embedded_tiles_arm_1k.jpg",
+      "family": "stone_embedded_tiles",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/stone_embedded_tiles",
+      "license": "CC0-1.0",
+      "expected": "538e982f9a1756536beb0ea1ba552108",
+      "actual": "538e982f9a1756536beb0ea1ba552108",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_arm_2k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "88aa9bb569fea8f1b7989b35d22696e1",
+      "actual": "88aa9bb569fea8f1b7989b35d22696e1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_diff_2k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "ce6ccdf926d67e1b1c629917635ae187",
+      "actual": "ce6ccdf926d67e1b1c629917635ae187",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_diff_1k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "d9c9ffbc6c32e51f81696416c0fc661e",
+      "actual": "d9c9ffbc6c32e51f81696416c0fc661e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_arm_1k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "87ddc2127e429d08a2b853e5b34165db",
+      "actual": "87ddc2127e429d08a2b853e5b34165db",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_nor_gl_2k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "613435764f3dea5301c5763733fb0c80",
+      "actual": "613435764f3dea5301c5763733fb0c80",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_tree_bark/palm_tree_bark_nor_gl_1k.jpg",
+      "family": "palm_tree_bark",
+      "source": "https://polyhaven.com/a/palm_tree_bark",
+      "license": "CC0",
+      "expected": "c98b2f2f05b5178b68e74c3272a4fe77",
+      "actual": "c98b2f2f05b5178b68e74c3272a4fe77",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_bark/palm_bark_nor_gl_1k.jpg",
+      "family": "palm_bark",
+      "source": "https://polyhaven.com/a/palm_bark",
+      "license": "CC0",
+      "expected": "47c13a26ef585fbb0d93f5593f8f711f",
+      "actual": "47c13a26ef585fbb0d93f5593f8f711f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_bark/palm_bark_diff_1k.jpg",
+      "family": "palm_bark",
+      "source": "https://polyhaven.com/a/palm_bark",
+      "license": "CC0",
+      "expected": "89e6474313f1547e3c12c4b68410ee39",
+      "actual": "89e6474313f1547e3c12c4b68410ee39",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_bark/palm_bark_arm_1k.jpg",
+      "family": "palm_bark",
+      "source": "https://polyhaven.com/a/palm_bark",
+      "license": "CC0",
+      "expected": "94ac0d9506483f206b67e20b3e4b590f",
+      "actual": "94ac0d9506483f206b67e20b3e4b590f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_frond_project_original/palm_frond_diff.png",
+      "family": "palm_frond_project_original",
+      "source": "repo://generated/bazaar/palm-frond",
+      "license": "Project-Original",
+      "expected": "2a878d2df9a4bb2cccec86199c527f36",
+      "actual": "2a878d2df9a4bb2cccec86199c527f36",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_diff_1k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "a1b3340f0bd79af01072f6ace0ac686b",
+      "actual": "a1b3340f0bd79af01072f6ace0ac686b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_nor_gl_1k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "2112456c57bf1a1d6fbd93692b8d2080",
+      "actual": "2112456c57bf1a1d6fbd93692b8d2080",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_arm_1k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "6a0ad4ed79907f7fa5c2e6def4eb93b5",
+      "actual": "6a0ad4ed79907f7fa5c2e6def4eb93b5",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_diff_2k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "6fd3d5dbaca10c763d813f1b9d532f1b",
+      "actual": "6fd3d5dbaca10c763d813f1b9d532f1b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_nor_gl_2k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "051fb80cac9f261e1d21f10b2a664245",
+      "actual": "051fb80cac9f261e1d21f10b2a664245",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/cobblestone_floor_04/cobblestone_floor_04_arm_2k.jpg",
+      "family": "cobblestone_floor_04",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/cobblestone_floor_04",
+      "license": "CC0-1.0",
+      "expected": "d14169c7746411fe3216071da9b23f96",
+      "actual": "d14169c7746411fe3216071da9b23f96",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "dae4c2458b3a3efbeda141a98a8d66dd",
+      "actual": "dae4c2458b3a3efbeda141a98a8d66dd",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "ebd5906c90bedce52817eb715e4424e9",
+      "actual": "ebd5906c90bedce52817eb715e4424e9",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_1k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "9b3f9ed1406ee6e091f15cf99a02b43c",
+      "actual": "9b3f9ed1406ee6e091f15cf99a02b43c",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "c88eb55a33d817fc4913aade5e6e621e",
+      "actual": "c88eb55a33d817fc4913aade5e6e621e",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "531215a47f1f242480e7c232b6ac8893",
+      "actual": "531215a47f1f242480e7c232b6ac8893",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_2k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "ce6be9c158f821923c9e3e3ed17fb349",
+      "actual": "ce6be9c158f821923c9e3e3ed17fb349",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "4k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "094d50f76d8b7d83babff8ae422e373f",
+      "actual": "094d50f76d8b7d83babff8ae422e373f",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "4k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "fa39a20eeac5cb56898836801e2383a1",
+      "actual": "fa39a20eeac5cb56898836801e2383a1",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_4k.jpg",
+      "family": "medieval_blocks_05",
+      "tier": "4k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/medieval_blocks_05",
+      "license": "CC0-1.0",
+      "expected": "9a2ea46368f1c335a5974fb93a279e23",
+      "actual": "9a2ea46368f1c335a5974fb93a279e23",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_diff_1k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "d7048c04e343b024b310277c5d7004ba",
+      "actual": "d7048c04e343b024b310277c5d7004ba",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_nor_gl_1k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "fd71afae36c61a0705b8e07f4ad42b9d",
+      "actual": "fd71afae36c61a0705b8e07f4ad42b9d",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_arm_1k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "5f78dc55ef9bcb3adf3931a468500e20",
+      "actual": "5f78dc55ef9bcb3adf3931a468500e20",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_diff_2k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "a1259b901bce5c5b428ca1fdbb5c8ac7",
+      "actual": "a1259b901bce5c5b428ca1fdbb5c8ac7",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_nor_gl_2k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "331f734509e5354c74012364d1c19faa",
+      "actual": "331f734509e5354c74012364d1c19faa",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/red_sandstone_pavement/red_sandstone_pavement_arm_2k.jpg",
+      "family": "red_sandstone_pavement",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "https://polyhaven.com/a/red_sandstone_pavement",
+      "license": "CC0-1.0",
+      "expected": "39b7314228c5066f0b9342502d69b769",
+      "actual": "39b7314228c5066f0b9342502d69b769",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_diff_1k.jpg",
+      "family": "sand_drift_01",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "2ceaba9013e8763e7ee91a54a53335ea",
+      "actual": "2ceaba9013e8763e7ee91a54a53335ea",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_nor_gl_1k.jpg",
+      "family": "sand_drift_01",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "fb698ea01374ae4834586d3383945a94",
+      "actual": "fb698ea01374ae4834586d3383945a94",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_arm_1k.jpg",
+      "family": "sand_drift_01",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "e8aedf461bc99d22eb99fe7cfa739589",
+      "actual": "e8aedf461bc99d22eb99fe7cfa739589",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_diff_2k.jpg",
+      "family": "sand_drift_01",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "ca9ce8ad297daa22e94593029853f4b3",
+      "actual": "ca9ce8ad297daa22e94593029853f4b3",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_nor_gl_2k.jpg",
+      "family": "sand_drift_01",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "d03575bb38e4a5dadddd253b7127fa6b",
+      "actual": "d03575bb38e4a5dadddd253b7127fa6b",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01/sand_drift_01_arm_2k.jpg",
+      "family": "sand_drift_01",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "license": "Project-Original",
+      "expected": "6c56355702f221e9014ee6bbd7e30eb5",
+      "actual": "6c56355702f221e9014ee6bbd7e30eb5",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "1k",
+      "channel": "albedo",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "53eb0148a7c9f715c1a0b224437cdd20",
+      "actual": "53eb0148a7c9f715c1a0b224437cdd20",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "1k",
+      "channel": "normal",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "365ee0ec717ada90854c8c8ff3fe2f55",
+      "actual": "365ee0ec717ada90854c8c8ff3fe2f55",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "1k",
+      "channel": "arm",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "8205d0f68013e381ec941bb21561a9cf",
+      "actual": "8205d0f68013e381ec941bb21561a9cf",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_2k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "2k",
+      "channel": "albedo",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "acad27c55f433ffe59a5d6515b375c91",
+      "actual": "acad27c55f433ffe59a5d6515b375c91",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_2k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "2k",
+      "channel": "normal",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "feb25573bca463167db440520f80e556",
+      "actual": "feb25573bca463167db440520f80e556",
+      "status": "match"
+    },
+    {
+      "path": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_2k.jpg",
+      "family": "court_flagstone_01",
+      "tier": "2k",
+      "channel": "arm",
+      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "license": "Project-Original",
+      "expected": "ddbe3396f9ad989796ff4ed2c3903ee9",
+      "actual": "ddbe3396f9ad989796ff4ed2c3903ee9",
+      "status": "match"
+    }
+  ]
+}

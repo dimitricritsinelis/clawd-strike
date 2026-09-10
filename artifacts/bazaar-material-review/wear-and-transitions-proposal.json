@@ -1,0 +1,843 @@
+{
+  "status": "PROPOSAL ONLY",
+  "userDirection": "Founding reference is primary: sun-faded cream/sand/pale ochre, golden warmth and cooler contrast; maintained, well-used minor damage/erosion and sandy/dirty flooring.",
+  "distinction": "Inherited scan wear remains inside source albedo/normal/roughness. Authored wear is a separate bounded treatment at named receivers; evaluate their combined appearance. Raw samples are not final materials.",
+  "existingLimits": "Existing floor edgeDust width 0.18m, alpha ceiling 0.06, feather 0.06m; existing wall contactBand height 0.18m, alpha ceiling 0.045, vertices at 0/0.12/0.18m. Treat these as ceilings for selected receiver patches, not a requirement to dirty every edge or floor.",
+  "drainRule": "Listed collectors are concealed rear collectors. Their IDs do not authorize a stain on the street face. Do not invent a drain or stain; only an actually exposed authored discharge and its verified receiving surface may receive the SD-14 local mark.",
+  "districts": [
+    {
+      "district": "A courtyard",
+      "zones": [
+        "SPAWN_A_COURTYARD"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_SPAWN_A_COURTYARD"
+      ],
+      "existingClearRegionIds": [
+        "SPAWN_A_COURTYARD-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "A_S_GATE-PRINCIPAL",
+        "A_W_MID-ENTRANCE",
+        "A_E_DYE_RECESS"
+      ],
+      "existingParcelIds": [
+        "A_S_GATE",
+        "A_W_MID",
+        "A_E_DRYING"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_A_DOMESTIC_REAR_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_A_DOMESTIC_REAR",
+          "pointXYZ": [
+            13.9,
+            6.825,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "A_W_MID",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_A_DYEWORKS_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_A_DYEWORKS",
+          "pointXYZ": [
+            42.2,
+            5.575,
+            10.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "A_E_DRYING",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_A_GATE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_A_GATE",
+          "pointXYZ": [
+            28.0,
+            -3.4,
+            11.02
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "A_S_GATE",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_059",
+        "ROOF_EDGE_060",
+        "ROOF_EDGE_061",
+        "ROOF_EDGE_062",
+        "ROOF_EDGE_063",
+        "ROOF_EDGE_064",
+        "ROOF_EDGE_102",
+        "ROOF_EDGE_103",
+        "ROOF_EDGE_152",
+        "ROOF_EDGE_153",
+        "ROOF_EDGE_154",
+        "ROOF_EDGE_175",
+        "ROOF_EDGE_176",
+        "ROOF_EDGE_177"
+      ],
+      "proposedAuthoredWear": "Polished threshold centers and sandy pockets at the solid household base; faint use discoloration contained inside the dye recess.",
+      "keepQuiet": "Ceremonial upper plaster, carved entrance silhouette and central court remain low contrast.",
+      "transitionLogic": "Court paving meets Spice at y=14; keep shared warm stone family and flush grade. Dye-work stone base ends at the actual doorway."
+    },
+    {
+      "district": "Spice Street",
+      "zones": [
+        "SPICE_STREET"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_SPICE_STREET"
+      ],
+      "existingClearRegionIds": [
+        "SPICE_STREET-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "S_W_SHOP_1",
+        "S_W_SHOP_2",
+        "S_W_SHOP_3",
+        "S_E_SOUTH-ENTRANCE"
+      ],
+      "existingParcelIds": [
+        "S_W_SOUTH",
+        "S_W_MID",
+        "S_E_SOUTH"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_A_SPICE_EAST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_A_SPICE_EAST",
+          "pointXYZ": [
+            39.0,
+            15.2,
+            10.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "S_E_SOUTH",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_A_SPICE_WEST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_A_SPICE_WEST",
+          "pointXYZ": [
+            16.2,
+            17.78,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "S_W_SOUTH",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_SPICE_WEST_MID_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_SPICE_WEST_MID",
+          "pointXYZ": [
+            16.2,
+            24.44,
+            7.52
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "S_W_MID",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_078",
+        "ROOF_EDGE_079",
+        "ROOF_EDGE_080",
+        "ROOF_EDGE_081",
+        "ROOF_EDGE_082",
+        "ROOF_EDGE_109",
+        "ROOF_EDGE_110",
+        "ROOF_EDGE_111"
+      ],
+      "proposedAuthoredWear": "Fine sand in existing paving joints near receiving doors; hand rub on counter edges and localized threshold abrasion. No scattered grain geometry.",
+      "keepQuiet": "Household upper fields and canopy daylight gaps; stock colors stay stronger than dirt.",
+      "transitionLogic": "Use one physical paving-unit scale through the street. At south/north mouths preserve clean flush court joins, not a brown transition stripe."
+    },
+    {
+      "district": "Fountain Court",
+      "zones": [
+        "FOUNTAIN_COURT"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_FOUNTAIN_COURT"
+      ],
+      "existingClearRegionIds": [
+        "FOUNTAIN_COURT-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "F_W_HALL-PRINCIPAL",
+        "F_E_LOGGIA-PRINCIPAL",
+        "F_W_SERVICE-ENTRANCE"
+      ],
+      "existingParcelIds": [
+        "F_W_HALL",
+        "F_E_LOGGIA",
+        "F_W_SERVICE"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_FOUNTAIN_MERCHANT_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_FOUNTAIN_MERCHANT",
+          "pointXYZ": [
+            41.0,
+            35.5,
+            11.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "F_E_LOGGIA",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_MADRASA_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_MADRASA",
+          "pointXYZ": [
+            15.0,
+            44.5,
+            11.62
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "F_W_HALL",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_MADRASA_SERVICE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_MADRASA_SERVICE",
+          "pointXYZ": [
+            15.0,
+            34.0,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "F_W_SERVICE",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_068",
+        "ROOF_EDGE_069",
+        "ROOF_EDGE_070",
+        "ROOF_EDGE_071",
+        "ROOF_EDGE_072",
+        "ROOF_EDGE_073",
+        "ROOF_EDGE_074",
+        "ROOF_EDGE_128",
+        "ROOF_EDGE_129",
+        "ROOF_EDGE_130",
+        "ROOF_EDGE_131"
+      ],
+      "proposedAuthoredWear": "Minor smooth wear at principal threshold and recessed loggia contacts. Any water mark requires a verified existing water receiver; district name alone is not evidence.",
+      "keepQuiet": "Broad civic stone and walkable flags; no blanket damp paving or fountain-shaped stain inferred from the name.",
+      "transitionLogic": "Civic flags continue to same-family links. Merchant wall plaster follows the owner into Souk; stone stays on modeled base and sill."
+    },
+    {
+      "district": "Textile Arcade",
+      "zones": [
+        "TEXTILE_ARCADE"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_TEXTILE_ARCADE"
+      ],
+      "existingClearRegionIds": [
+        "TEXTILE_ARCADE-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "T_E_ARCH1",
+        "T_E_ARCH2",
+        "T_W_ARCH2"
+      ],
+      "existingParcelIds": [
+        "T_E_LOOM",
+        "T_E_GALLERY",
+        "T_W_DYER"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_TEXTILE_EAST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_TEXTILE_EAST",
+          "pointXYZ": [
+            39.2,
+            53.55,
+            10.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "T_E_GALLERY",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_TEXTILE_WEST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_TEXTILE_WEST",
+          "pointXYZ": [
+            19.0,
+            56.0,
+            11.32
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "T_W_DYER",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_095",
+        "ROOF_EDGE_096",
+        "ROOF_EDGE_097",
+        "ROOF_EDGE_098",
+        "ROOF_EDGE_146",
+        "ROOF_EDGE_147"
+      ],
+      "proposedAuthoredWear": "Faint handled edges on existing counters/frames; small settled sand against closed wall contacts. Cloth fading follows exposed folds and bound edges, not random tears.",
+      "keepQuiet": "Continuous upper wall fields and clear central route. Rugs and dyed goods carry contrast.",
+      "transitionLogic": "Each side remains one building across its three drafting parcels; no dirt seam or material break at each parcel. Ground joins Fountain/Rug Gate at existing limits."
+    },
+    {
+      "district": "Rug Gate",
+      "zones": [
+        "RUG_GATE"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_RUG_GATE"
+      ],
+      "existingClearRegionIds": [
+        "RUG_GATE-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "R_W_SHOP",
+        "R_W_MERCHANT-STAFF-DOOR",
+        "R_E_HOUSE-ENTRANCE"
+      ],
+      "existingParcelIds": [
+        "R_W_MERCHANT",
+        "R_W_ABUTMENT",
+        "R_E_HOUSE"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_RUG_EAST_GATEKEEPER_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_RUG_EAST_GATEKEEPER",
+          "pointXYZ": [
+            39.0,
+            77.0,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "R_E_HOUSE",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_RUG_MERCHANT_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_RUG_MERCHANT",
+          "pointXYZ": [
+            19.0,
+            68.0,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "R_W_MERCHANT",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_099",
+        "ROOF_EDGE_100",
+        "ROOF_EDGE_101",
+        "ROOF_EDGE_120",
+        "ROOF_EDGE_121",
+        "ROOF_EDGE_122"
+      ],
+      "proposedAuthoredWear": "Light abrasion at gate-foot masonry and staff threshold; dusty ground joints beside abutment contacts; mild exposed stone-edge erosion inside the fixed silhouette.",
+      "keepQuiet": "Arch outline, north-facing inlay and rug field remain readable; no full-height gate grime.",
+      "transitionLogic": "Gateway flags meet B flush. Stair-side retaining stone remains distinct from the occupied merchant plaster above; do not smooth that meaningful construction change away."
+    },
+    {
+      "district": "B courtyard",
+      "zones": [
+        "SPAWN_B_COURTYARD"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_SPAWN_B_COURTYARD"
+      ],
+      "existingClearRegionIds": [
+        "SPAWN_B_COURTYARD-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "B_N_POTTER_SHOP",
+        "B_N_TEXTILE_SHOP",
+        "B_E_STORE-DOOR",
+        "B_W_HOUSE-DOOR"
+      ],
+      "existingParcelIds": [
+        "B_N_POTTER",
+        "B_N_TEXTILE",
+        "B_E_STORE",
+        "B_W_HOUSE"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_B_E_STORE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_B_E_STORE",
+          "pointXYZ": [
+            42.6,
+            83.5,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "B_E_STORE",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_B_N_POTTER_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_B_N_POTTER",
+          "pointXYZ": [
+            20.65,
+            95.8,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "B_N_POTTER",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_B_N_TEXTILE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_B_N_TEXTILE",
+          "pointXYZ": [
+            35.0,
+            96.0,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "B_N_TEXTILE",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_B_W_HOUSE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_B_W_HOUSE",
+          "pointXYZ": [
+            13.4,
+            83.6,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "B_W_HOUSE",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_045",
+        "ROOF_EDGE_046",
+        "ROOF_EDGE_047",
+        "ROOF_EDGE_092",
+        "ROOF_EDGE_093",
+        "ROOF_EDGE_094",
+        "ROOF_EDGE_106",
+        "ROOF_EDGE_107",
+        "ROOF_EDGE_108",
+        "ROOF_EDGE_158",
+        "ROOF_EDGE_159",
+        "ROOF_EDGE_160"
+      ],
+      "proposedAuthoredWear": "Minor pottery-work contact dust inside the shop, receiving-threshold rub, and loose-looking sand expressed in existing floor joints/edge shading.",
+      "keepQuiet": "Merchant balcony and upper glass, red household field and guest-house teal; no uniform brown wash on the whole courtyard.",
+      "transitionLogic": "Retain each B owner finish around its real returns; floor remains one court, not one differently dirty patch per shop."
+    },
+    {
+      "district": "Service circuit",
+      "zones": [
+        "SERVICE_SOUTH",
+        "SERVICE_NORTH"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_SERVICE_SOUTH",
+        "SURFACE_SERVICE_NORTH"
+      ],
+      "existingClearRegionIds": [
+        "SERVICE_SOUTH-CLEAR",
+        "SERVICE_NORTH-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "ss-w-DELIVERY-1",
+        "ss-w-DELIVERY-2",
+        "sn-w-DELIVERY-1",
+        "sn-w-DELIVERY-2"
+      ],
+      "existingParcelIds": [
+        "ss-w",
+        "ss-e",
+        "sn-w",
+        "sn-es"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_NORTH_SERVICE_COMPOUND_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_NORTH_SERVICE_COMPOUND",
+          "pointXYZ": [
+            -0.6,
+            64.0,
+            7.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "sn-w",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_SPICE_SERVICE_COMPOUND_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_SPICE_SERVICE_COMPOUND",
+          "pointXYZ": [
+            13.6,
+            21.5,
+            5.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "ss-e",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_SPICE_SERVICE_WEST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_SPICE_SERVICE_WEST",
+          "pointXYZ": [
+            -0.6,
+            20.0,
+            5.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "ss-w",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_001",
+        "ROOF_EDGE_002",
+        "ROOF_EDGE_003",
+        "ROOF_EDGE_006",
+        "ROOF_EDGE_007",
+        "ROOF_EDGE_008",
+        "ROOF_EDGE_026",
+        "ROOF_EDGE_027",
+        "ROOF_EDGE_028",
+        "ROOF_EDGE_029",
+        "ROOF_EDGE_036",
+        "ROOF_EDGE_037"
+      ],
+      "proposedAuthoredWear": "More visible retained scan wear and settled joint sand near delivery recesses; slight lower-door handling marks and threshold abrasion. Still maintained, without rubble piles.",
+      "keepQuiet": "High vents, upper lime fields and maneuvering strips; no repeating tire tracks or full-length dark base stripe.",
+      "transitionLogic": "Reuse robust paving and physical unit scale through the service route. Face finishes change at owners/retaining assemblies; subtract all open mouths and delivery service rectangles from edge dirt."
+    },
+    {
+      "district": "Caravan Court",
+      "zones": [
+        "CARAVAN_COURT"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_CARAVAN_COURT"
+      ],
+      "existingClearRegionIds": [
+        "CARAVAN_COURT-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "CC_PACK_RECESS",
+        "cc-w-STAFF-DOOR"
+      ],
+      "existingParcelIds": [
+        "cc-w",
+        "cc-s",
+        "cc-n"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_CARAVAN_STORES_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_CARAVAN_STORES",
+          "pointXYZ": [
+            -0.6,
+            39.0,
+            5.02
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "cc-w",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_004",
+        "ROOF_EDGE_005"
+      ],
+      "proposedAuthoredWear": "Sandy paving joints and low-contrast contact patches near packing/loading thresholds; softened worn edges on existing timber working surfaces.",
+      "keepQuiet": "Broad maneuvering court and existing cover silhouette. No extra wheel ruts, carts, sand piles or palm.",
+      "transitionLogic": "Receiving court may use rougher service paving; meet civic-side links at their exact shared boundary with no curb or decorative perimeter line."
+    },
+    {
+      "district": "Tea route",
+      "zones": [
+        "TEA_RAMP",
+        "TEA_TERRACE",
+        "TEA_STAIRS",
+        "TEA_LANDING"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_TEA_RAMP",
+        "SURFACE_TEA_TERRACE",
+        "SURFACE_TEA_STAIRS",
+        "SURFACE_TEA_LANDING"
+      ],
+      "existingClearRegionIds": [
+        "TEA_RAMP-CLEAR",
+        "TEA_TERRACE-CLEAR",
+        "TEA_STAIRS-CLEAR",
+        "TEA_LANDING-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "tt-shop",
+        "tt-e-STAFF-DOOR",
+        "TT-RECESSED-SEAT"
+      ],
+      "existingParcelIds": [
+        "tt-e",
+        "tt-w",
+        "tr-w",
+        "ts-w"
+      ],
+      "existingCollectors": [],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_038",
+        "ROOF_EDGE_041"
+      ],
+      "proposedAuthoredWear": "Small tea-counter handling marks and seat-edge wear; fine sand against uphill solid contacts, restrained tread-center polishing following actual step surfaces.",
+      "keepQuiet": "Tread noses and grade changes must stay readable; seat cloth remains cream with local fold shading.",
+      "transitionLogic": "Carry paving UV scale through ramp and individual treads, never a flat overlay spanning the slope. Contact tint follows exact local floor height; merchant/retaining interfaces stay flush."
+    },
+    {
+      "district": "Dyers and Dogleg",
+      "zones": [
+        "DYERS_ALLEY",
+        "DYERS_DOGLEG"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_DYERS_ALLEY",
+        "SURFACE_DYERS_DOGLEG"
+      ],
+      "existingClearRegionIds": [
+        "DYERS_ALLEY-CLEAR",
+        "DYERS_DOGLEG-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "DA_E_WORK_RECESS",
+        "DA_E_SAMPLE_RECESS",
+        "DD_WORKS_RECESS",
+        "dd-e-ENTRANCE"
+      ],
+      "existingParcelIds": [
+        "DA_E_WORK",
+        "DA_E_SAMPLES",
+        "DA_E_YARD",
+        "dd-w",
+        "dd-e"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_DOGLEG_EAST_HOUSE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_DOGLEG_EAST_HOUSE",
+          "pointXYZ": [
+            56.6,
+            55.0,
+            7.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "dd-e",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_DOGLEG_WEST_ANNEX_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_DOGLEG_WEST_ANNEX",
+          "pointXYZ": [
+            41.0,
+            61.6,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "dd-w",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_DYERS_EAST_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_DYERS_EAST",
+          "pointXYZ": [
+            56.8,
+            21.0,
+            5.42
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "DA_E_SAMPLES",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_172",
+        "ROOF_EDGE_173",
+        "ROOF_EDGE_174",
+        "ROOF_EDGE_187",
+        "ROOF_EDGE_188",
+        "ROOF_EDGE_189",
+        "ROOF_EDGE_202",
+        "ROOF_EDGE_203",
+        "ROOF_EDGE_204",
+        "ROOF_EDGE_207",
+        "ROOF_EDGE_208"
+      ],
+      "proposedAuthoredWear": "Muted dye handling residue only inside the existing wet-work receiver and sample workfront; tiny edge chips at used thresholds, sandy outer paving joints.",
+      "keepQuiet": "Domestic balcony/upper shutters and walkable center remain quiet; no saturated dye splashes across combat ground.",
+      "transitionLogic": "Ochre work-compound fields connect across drafting parcels, preserving masonry wet-work bases. Dogleg household finish remains distinct from annex; change ground at existing district limits."
+    },
+    {
+      "district": "Covered Souk",
+      "zones": [
+        "COVERED_SOUK"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_COVERED_SOUK"
+      ],
+      "existingClearRegionIds": [
+        "COVERED_SOUK-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "COVERED_SOUK_EAST_GROUND_01",
+        "COVERED_SOUK_EAST_GROUND_02",
+        "COVERED_SOUK_WEST_GROUND_01"
+      ],
+      "existingParcelIds": [
+        "cs-e",
+        "cs-ws",
+        "cs-wn"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_SOUK_EAST_STORAGE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_SOUK_EAST_STORAGE",
+          "pointXYZ": [
+            56.6,
+            40.0,
+            8.22
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "cs-e",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_205",
+        "ROOF_EDGE_206"
+      ],
+      "proposedAuthoredWear": "Dry dust in sheltered ground joints and slight handling polish at goods receivers; cloth exposure fade only on canopy upper surfaces/edges.",
+      "keepQuiet": "Daylight breaks, shop silhouettes and upper windows; keep shaded paving from becoming brown-black.",
+      "transitionLogic": "Shared flagstone scale continues through public links. West merchant/corner-house finishes wrap from Fountain at real owner joints, not souk-facing color swaps."
+    },
+    {
+      "district": "North Court",
+      "zones": [
+        "NORTH_COURT"
+      ],
+      "existingFloorReceiverIds": [
+        "SURFACE_NORTH_COURT"
+      ],
+      "existingClearRegionIds": [
+        "NORTH_COURT-CLEAR"
+      ],
+      "existingOpeningReceiverIds": [
+        "nc-ws-ENTRANCE",
+        "nc-wn-ENTRANCE",
+        "NC_DRY_RECESS",
+        "nc-eh-ENTRANCE"
+      ],
+      "existingParcelIds": [
+        "nc-ws",
+        "nc-wn",
+        "nc-ey",
+        "nc-eh"
+      ],
+      "existingCollectors": [
+        {
+          "id": "ROOF_COLLECTOR_BLD_HAMMAM_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_HAMMAM",
+          "pointXYZ": [
+            38.0,
+            64.5,
+            10.02
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "nc-ws",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_HAMMAM_STORES_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_HAMMAM_STORES",
+          "pointXYZ": [
+            39.25,
+            72.0,
+            10.1375
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "nc-wn",
+          "type": "concealed rear collector"
+        },
+        {
+          "id": "ROOF_COLLECTOR_BLD_NORTH_EAST_HOUSE_1",
+          "mayUseInternalDownpipe": true,
+          "ownerId": "BLD_NORTH_EAST_HOUSE",
+          "pointXYZ": [
+            56.6,
+            66.5,
+            10.12
+          ],
+          "rule": "Collector is on an exposed owner-island boundary; no drain is placed on a buried roof.",
+          "sourceParcelId": "nc-eh",
+          "type": "concealed rear collector"
+        }
+      ],
+      "existingRoofEdgeIds": [
+        "ROOF_EDGE_141",
+        "ROOF_EDGE_142",
+        "ROOF_EDGE_143",
+        "ROOF_EDGE_148",
+        "ROOF_EDGE_149",
+        "ROOF_EDGE_150",
+        "ROOF_EDGE_151",
+        "ROOF_EDGE_209",
+        "ROOF_EDGE_210",
+        "ROOF_EDGE_211",
+        "ROOF_EDGE_212",
+        "ROOF_EDGE_213"
+      ],
+      "proposedAuthoredWear": "Gentle threshold abrasion at Hammam and linen store; dry-work handling marks at existing finishing recess and fine sand at enclosed ground contacts.",
+      "keepQuiet": "Pavilion stone entrance and family-house upper fields. No wet sheen or steam implied without an authored receiver.",
+      "transitionLogic": "Hammam stone and linen-store returns stay coherent into links; household sand-plaster remains its own owner. Flags continue to north-east link with aligned scale."
+    }
+  ]
+}

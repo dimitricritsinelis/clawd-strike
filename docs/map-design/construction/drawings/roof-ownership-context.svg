@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1900" height="1510" viewBox="0 0 1900 1510">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1900" height="1510" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">R7-facade-centered-upper-openings · Roof ownership and interfaces</text>
+<text class="sub" x="48" y="76">PLAN · north up · exact cell footprints; diagram owner colors · step returns red, same-height seams teal</text>
+<rect x="552.05" y="1138.19" width="21.91" height="12.17" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_001 | owner ASM_A_E_NORTH_CAP | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 9.72 m</title></rect>
+<text x="563.01" y="1144.28" font-size="9" text-anchor="middle">001</text>
+<rect x="262.33" y="1138.19" width="21.91" height="12.17" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_002 | owner ASM_A_W_NORTH_CAP | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 9.72 m</title></rect>
+<text x="273.29" y="1144.28" font-size="9" text-anchor="middle">002</text>
+<rect x="284.25" y="359.11" width="48.69" height="18.26" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_003 | owner ASM_B_GATE | ROOF_BUNDLE_UNIT_RUG_GATE | cap 10.02 m</title></rect>
+<text x="308.59" y="368.24" font-size="9" text-anchor="middle">003</text>
+<rect x="259.90" y="919.07" width="7.30" height="24.35" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_004 | owner ASM_CARAVAN_GARDEN_WALLS | ROOF_BUNDLE_UNIT_CARAVAN_COURT | cap 5.02 m</title></rect>
+<rect x="242.86" y="943.42" width="17.04" height="6.09" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_005 | owner ASM_CARAVAN_TRANSITIONS | ROOF_BUNDLE_UNIT_CARAVAN_COURT | cap 4.62 m</title></rect>
+<rect x="637.26" y="1186.88" width="85.21" height="7.30" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_006 | owner ASM_DYERS_SOUTH_WALL | ROOF_BUNDLE_UNIT_DYERS_ALLEY | cap 4.62 m</title></rect>
+<rect x="527.71" y="493.02" width="12.17" height="7.30" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_007 | owner ASM_LINK_EAST_UPPER | ROOF_BUNDLE_UNIT_LINK_EAST_UPPER | cap 7.12 m</title></rect>
+<rect x="595.88" y="314.07" width="41.39" height="8.52" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_008 | owner ASM_LINK_NORTH_EAST | ROOF_BUNDLE_UNIT_LINK_NORTH_EAST | cap 7.12 m</title></rect>
+<rect x="191.73" y="322.60" width="7.30" height="3.65" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_009 | owner ASM_LINK_NORTH_WEST | ROOF_BUNDLE_UNIT_LINK_NORTH_WEST | cap 7.12 m</title></rect>
+<rect x="199.03" y="314.07" width="41.39" height="8.52" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_010 | owner ASM_LINK_NORTH_WEST | ROOF_BUNDLE_UNIT_LINK_NORTH_WEST | cap 7.12 m</title></rect>
+<rect x="208.77" y="383.46" width="2.43" height="7.30" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_011 | owner ASM_LINK_NORTH_WEST | ROOF_BUNDLE_UNIT_LINK_NORTH_WEST | cap 7.12 m</title></rect>
+<rect x="573.96" y="1144.28" width="19.48" height="6.09" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_012 | owner ASM_LINK_SOUTH_EAST | ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST | cap 4.62 m</title></rect>
+<rect x="591.01" y="1211.23" width="46.26" height="6.09" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_013 | owner ASM_LINK_SOUTH_EAST | ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST | cap 4.62 m</title></rect>
+<rect x="637.26" y="1194.19" width="6.09" height="17.04" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_014 | owner ASM_LINK_SOUTH_EAST | ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST | cap 4.62 m</title></rect>
+<rect x="192.95" y="1194.19" width="6.09" height="17.04" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_015 | owner ASM_LINK_SOUTH_WEST | ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST | cap 4.62 m</title></rect>
+<rect x="199.03" y="1211.23" width="47.47" height="6.09" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_016 | owner ASM_LINK_SOUTH_WEST | ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST | cap 4.62 m</title></rect>
+<rect x="242.86" y="1144.28" width="19.48" height="6.09" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_017 | owner ASM_LINK_SOUTH_WEST | ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST | cap 4.62 m</title></rect>
+<rect x="113.82" y="326.25" width="85.21" height="8.52" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_018 | owner ASM_NORTH_SERVICE_SPINE | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.12 m</title></rect>
+<rect x="199.03" y="383.46" width="2.43" height="340.85" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_019 | owner ASM_NORTH_SERVICE_SPINE | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.12 m</title></rect>
+<rect x="201.47" y="626.92" width="9.74" height="97.38" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_020 | owner ASM_NORTH_SERVICE_SPINE | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.12 m</title></rect>
+<rect x="201.47" y="383.46" width="7.30" height="121.73" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_021 | owner ASM_NORTH_SERVICE_SPINE | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.12 m</title></rect>
+<rect x="208.77" y="497.21" width="2.43" height="7.99" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_022 | owner ASM_NORTH_SERVICE_SPINE | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.12 m</title></rect>
+<rect x="576.40" y="714.57" width="17.04" height="9.74" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_023 | owner ASM_SOUK_NORTH_END | ROOF_BUNDLE_UNIT_COVERED_SOUK | cap 7.12 m</title></rect>
+<rect x="576.40" y="919.07" width="17.04" height="8.52" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_024 | owner ASM_SOUK_SOUTH_RETURN | ROOF_BUNDLE_UNIT_COVERED_SOUK | cap 7.12 m</title></rect>
+<rect x="113.82" y="1186.88" width="85.21" height="7.30" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_025 | owner ASM_SPICE_SOUTH_TERMINAL | ROOF_BUNDLE_UNIT_SERVICE_SOUTH | cap 5.02 m</title></rect>
+<rect x="201.47" y="505.19" width="9.74" height="121.73" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_026 | owner ASM_TEA_WEST_GRADE | ROOF_BUNDLE_UNIT_TEA_TERRACE | cap 8.52 m</title></rect>
+<rect x="208.77" y="432.15" width="2.43" height="65.05" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_027 | owner ASM_TEA_WEST_GRADE | ROOF_BUNDLE_UNIT_TEA_TERRACE | cap 6.02 m</title></rect>
+<rect x="208.77" y="390.76" width="2.43" height="41.39" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_028 | owner ASM_TEA_WEST_GRADE | ROOF_BUNDLE_UNIT_TEA_TERRACE | cap 4.62 m</title></rect>
+<rect x="246.51" y="1211.23" width="1.22" height="28.61" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_029 | owner BLD_A_DOMESTIC_REAR | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.63 m</title></rect>
+<rect x="247.73" y="1211.23" width="4.87" height="63.91" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_030 | owner BLD_A_DOMESTIC_REAR | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.63 m</title></rect>
+<rect x="252.60" y="1211.23" width="31.65" height="97.38" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_031 | owner BLD_A_DOMESTIC_REAR | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.63 m</title></rect>
+<text x="268.42" y="1259.92" font-size="9" text-anchor="middle">031</text>
+<rect x="552.05" y="1211.23" width="36.52" height="97.38" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_032 | owner BLD_A_DYEWORKS | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.93 m</title></rect>
+<text x="570.31" y="1259.92" font-size="9" text-anchor="middle">032</text>
+<rect x="588.57" y="1211.23" width="2.43" height="59.04" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_033 | owner BLD_A_DYEWORKS | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.93 m</title></rect>
+<rect x="338.42" y="1308.61" width="159.47" height="41.39" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_034 | owner BLD_A_GATE | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 11.53 m</title></rect>
+<text x="418.15" y="1329.31" font-size="9" text-anchor="middle">034</text>
+<rect x="497.88" y="1308.61" width="54.17" height="30.43" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_035 | owner BLD_A_KEEPER | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 10.63 m</title></rect>
+<text x="524.97" y="1323.83" font-size="9" text-anchor="middle">035</text>
+<rect x="479.01" y="1063.93" width="51.13" height="74.26" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_036 | owner BLD_A_SPICE_EAST | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 10.93 m</title></rect>
+<text x="504.58" y="1101.06" font-size="9" text-anchor="middle">036</text>
+<rect x="530.14" y="1108.97" width="21.91" height="29.22" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_037 | owner BLD_A_SPICE_EAST | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 10.93 m</title></rect>
+<text x="541.10" y="1123.58" font-size="9" text-anchor="middle">037</text>
+<rect x="274.51" y="1046.16" width="58.43" height="92.03" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_038 | owner BLD_A_SPICE_WEST | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 10.63 m</title></rect>
+<text x="303.72" y="1092.18" font-size="9" text-anchor="middle">038</text>
+<rect x="284.25" y="1308.61" width="54.17" height="38.95" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_039 | owner BLD_A_WATCH | ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD | cap 12.33 m</title></rect>
+<text x="311.33" y="1328.09" font-size="9" text-anchor="middle">039</text>
+<rect x="552.05" y="188.69" width="43.82" height="73.04" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_040 | owner BLD_B_E_PACKER | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.93 m</title></rect>
+<text x="573.96" y="225.21" font-size="9" text-anchor="middle">040</text>
+<rect x="552.05" y="261.73" width="43.82" height="60.87" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_041 | owner BLD_B_E_STORE | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.63 m</title></rect>
+<text x="573.96" y="292.16" font-size="9" text-anchor="middle">041</text>
+<rect x="373.11" y="140.00" width="81.56" height="48.69" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_042 | owner BLD_B_N_HOUSE | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.93 m</title></rect>
+<text x="413.89" y="164.35" font-size="9" text-anchor="middle">042</text>
+<rect x="284.25" y="142.43" width="88.86" height="46.26" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_043 | owner BLD_B_N_POTTER | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.63 m</title></rect>
+<text x="328.68" y="165.56" font-size="9" text-anchor="middle">043</text>
+<rect x="454.67" y="140.00" width="97.38" height="48.69" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_044 | owner BLD_B_N_TEXTILE | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.63 m</title></rect>
+<text x="503.36" y="164.35" font-size="9" text-anchor="middle">044</text>
+<rect x="240.42" y="259.30" width="43.82" height="63.30" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_045 | owner BLD_B_W_HOUSE | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.63 m</title></rect>
+<text x="262.33" y="290.95" font-size="9" text-anchor="middle">045</text>
+<rect x="240.42" y="188.69" width="43.82" height="70.60" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_046 | owner BLD_B_W_TEA | ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD | cap 10.63 m</title></rect>
+<text x="262.33" y="223.99" font-size="9" text-anchor="middle">046</text>
+<rect x="70.00" y="724.31" width="43.82" height="219.11" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_047 | owner BLD_CARAVAN_STORES | ROOF_BUNDLE_UNIT_CARAVAN_COURT | cap 5.53 m</title></rect>
+<text x="91.91" y="833.86" font-size="9" text-anchor="middle">047</text>
+<rect x="722.47" y="553.88" width="43.82" height="170.42" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_048 | owner BLD_DOGLEG_EAST_HOUSE | ROOF_BUNDLE_UNIT_DYERS_DOGLEG | cap 7.93 m</title></rect>
+<text x="744.39" y="639.09" font-size="9" text-anchor="middle">048</text>
+<rect x="576.40" y="553.88" width="60.87" height="9.74" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_049 | owner BLD_DOGLEG_WEST_ANNEX | ROOF_BUNDLE_UNIT_DYERS_DOGLEG | cap 10.63 m</title></rect>
+<rect x="593.44" y="563.62" width="43.82" height="160.68" fill="#ad7862" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_050 | owner BLD_DOGLEG_WEST_ANNEX | ROOF_BUNDLE_UNIT_DYERS_DOGLEG | cap 10.63 m</title></rect>
+<text x="615.35" y="643.96" font-size="9" text-anchor="middle">050</text>
+<rect x="722.47" y="919.07" width="46.26" height="267.81" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_051 | owner BLD_DYERS_EAST | ROOF_BUNDLE_UNIT_DYERS_ALLEY | cap 5.93 m</title></rect>
+<text x="745.60" y="1052.98" font-size="9" text-anchor="middle">051</text>
+<rect x="593.44" y="1040.93" width="43.82" height="109.44" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_052 | owner BLD_DYERS_WEST | ROOF_BUNDLE_UNIT_DYERS_ALLEY | cap 7.73 m</title></rect>
+<text x="615.35" y="1095.64" font-size="9" text-anchor="middle">052</text>
+<rect x="593.44" y="919.07" width="43.82" height="121.85" fill="#8fa8a0" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_053 | owner BLD_DYERS_WEST_HOUSE | ROOF_BUNDLE_UNIT_DYERS_ALLEY | cap 7.93 m</title></rect>
+<text x="615.35" y="980.00" font-size="9" text-anchor="middle">053</text>
+<rect x="515.53" y="724.31" width="60.87" height="48.69" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_054 | owner BLD_FOUNTAIN_HOUSE | ROOF_BUNDLE_UNIT_FOUNTAIN_COURT | cap 10.63 m</title></rect>
+<text x="545.97" y="748.65" font-size="9" text-anchor="middle">054</text>
+<rect x="515.53" y="833.86" width="60.87" height="85.21" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_055 | owner BLD_FOUNTAIN_MERCHANT | ROOF_BUNDLE_UNIT_FOUNTAIN_COURT | cap 11.63 m</title></rect>
+<text x="545.97" y="876.47" font-size="9" text-anchor="middle">055</text>
+<rect x="539.88" y="493.02" width="36.52" height="60.87" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_056 | owner BLD_HAMMAM | ROOF_BUNDLE_UNIT_NORTH_COURT | cap 10.53 m</title></rect>
+<text x="558.14" y="523.45" font-size="9" text-anchor="middle">056</text>
+<rect x="533.79" y="383.46" width="42.61" height="48.69" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_057 | owner BLD_HAMMAM_STORES | ROOF_BUNDLE_UNIT_NORTH_COURT | cap 10.63 m</title></rect>
+<text x="555.10" y="407.81" font-size="9" text-anchor="middle">057</text>
+<rect x="259.90" y="724.31" width="60.87" height="85.21" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_058 | owner BLD_MADRASA | ROOF_BUNDLE_UNIT_FOUNTAIN_COURT | cap 12.13 m</title></rect>
+<text x="290.33" y="766.91" font-size="9" text-anchor="middle">058</text>
+<rect x="259.90" y="870.38" width="60.87" height="48.69" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_059 | owner BLD_MADRASA_SERVICE | ROOF_BUNDLE_UNIT_FOUNTAIN_COURT | cap 10.63 m</title></rect>
+<text x="290.33" y="894.73" font-size="9" text-anchor="middle">059</text>
+<rect x="637.26" y="290.95" width="85.21" height="43.82" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_060 | owner BLD_NORTH_DYERS_COMPOUND | ROOF_BUNDLE_UNIT_NORTH_COURT | cap 10.63 m</title></rect>
+<text x="679.87" y="312.86" font-size="9" text-anchor="middle">060</text>
+<rect x="722.47" y="290.95" width="43.82" height="153.38" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_061 | owner BLD_NORTH_DYERS_COMPOUND | ROOF_BUNDLE_UNIT_NORTH_COURT | cap 10.63 m</title></rect>
+<text x="744.39" y="367.64" font-size="9" text-anchor="middle">061</text>
+<rect x="722.47" y="444.33" width="43.82" height="109.56" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_062 | owner BLD_NORTH_EAST_HOUSE | ROOF_BUNDLE_UNIT_NORTH_COURT | cap 10.63 m</title></rect>
+<text x="744.39" y="499.10" font-size="9" text-anchor="middle">062</text>
+<rect x="70.00" y="334.77" width="43.82" height="389.54" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_063 | owner BLD_NORTH_SERVICE_COMPOUND | ROOF_BUNDLE_UNIT_SERVICE_NORTH | cap 7.93 m</title></rect>
+<text x="91.91" y="529.54" font-size="9" text-anchor="middle">063</text>
+<rect x="491.19" y="359.11" width="42.61" height="73.04" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_064 | owner BLD_RUG_EAST_GATEKEEPER | ROOF_BUNDLE_UNIT_RUG_GATE | cap 10.63 m</title></rect>
+<text x="512.49" y="395.63" font-size="9" text-anchor="middle">064</text>
+<rect x="533.79" y="359.11" width="18.26" height="24.35" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_065 | owner BLD_RUG_EAST_GATEKEEPER | ROOF_BUNDLE_UNIT_RUG_GATE | cap 10.63 m</title></rect>
+<text x="542.92" y="371.29" font-size="9" text-anchor="middle">065</text>
+<rect x="308.59" y="432.15" width="24.35" height="97.38" fill="#8a9a7c" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_066 | owner BLD_RUG_MERCHANT | ROOF_BUNDLE_UNIT_RUG_GATE | cap 10.63 m</title></rect>
+<text x="320.76" y="480.85" font-size="9" text-anchor="middle">066</text>
+<rect x="722.47" y="724.31" width="43.82" height="194.77" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_067 | owner BLD_SOUK_EAST_STORAGE | ROOF_BUNDLE_UNIT_COVERED_SOUK | cap 8.73 m</title></rect>
+<text x="744.39" y="821.69" font-size="9" text-anchor="middle">067</text>
+<rect x="479.01" y="1006.72" width="51.13" height="57.21" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_068 | owner BLD_SPICE_EAST_BULK | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 7.93 m</title></rect>
+<text x="504.58" y="1035.33" font-size="9" text-anchor="middle">068</text>
+<rect x="479.01" y="919.07" width="51.13" height="87.65" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_069 | owner BLD_SPICE_EAST_NORTH | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 10.63 m</title></rect>
+<text x="504.58" y="962.90" font-size="9" text-anchor="middle">069</text>
+<rect x="199.03" y="943.42" width="43.82" height="206.94" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_070 | owner BLD_SPICE_SERVICE_COMPOUND | ROOF_BUNDLE_UNIT_SERVICE_SOUTH | cap 5.63 m</title></rect>
+<text x="220.95" y="1046.89" font-size="9" text-anchor="middle">070</text>
+<rect x="70.00" y="943.42" width="43.82" height="243.46" fill="#c78d67" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_071 | owner BLD_SPICE_SERVICE_WEST | ROOF_BUNDLE_UNIT_SERVICE_SOUTH | cap 5.63 m</title></rect>
+<text x="91.91" y="1065.15" font-size="9" text-anchor="middle">071</text>
+<rect x="274.51" y="976.04" width="58.43" height="70.12" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_072 | owner BLD_SPICE_WEST_MID | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 8.03 m</title></rect>
+<text x="303.72" y="1011.10" font-size="9" text-anchor="middle">072</text>
+<rect x="274.51" y="919.07" width="58.43" height="56.97" fill="#b29b71" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_073 | owner BLD_SPICE_WEST_NORTH | ROOF_BUNDLE_UNIT_SPICE_STREET | cap 10.63 m</title></rect>
+<text x="303.72" y="947.56" font-size="9" text-anchor="middle">073</text>
+<rect x="491.19" y="493.02" width="12.17" height="36.52" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_074 | owner BLD_TEXTILE_EAST | ROOF_BUNDLE_UNIT_TEXTILE_ARCADE | cap 10.93 m</title></rect>
+<rect x="503.36" y="493.02" width="24.35" height="231.29" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_075 | owner BLD_TEXTILE_EAST | ROOF_BUNDLE_UNIT_TEXTILE_ARCADE | cap 10.93 m</title></rect>
+<text x="515.53" y="608.66" font-size="9" text-anchor="middle">075</text>
+<rect x="527.71" y="529.54" width="12.17" height="194.77" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_076 | owner BLD_TEXTILE_EAST | ROOF_BUNDLE_UNIT_TEXTILE_ARCADE | cap 10.93 m</title></rect>
+<rect x="539.88" y="589.19" width="14.61" height="135.12" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_077 | owner BLD_TEXTILE_EAST | ROOF_BUNDLE_UNIT_TEXTILE_ARCADE | cap 10.93 m</title></rect>
+<rect x="308.59" y="529.54" width="60.87" height="194.77" fill="#d7b983" stroke="#3d4d4b" stroke-width=".65"><title>ROOF_CELL_078 | owner BLD_TEXTILE_WEST | ROOF_BUNDLE_UNIT_TEXTILE_ARCADE | cap 11.83 m</title></rect>
+<text x="339.02" y="626.92" font-size="9" text-anchor="middle">078</text>
+<path d="M 70.00 943.42 L 113.82 943.42" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_001 | [-0.6, 30.0] to [3.0, 30.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 70.00 724.31 L 113.82 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_002 | [-0.6, 48.0] to [3.0, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 192.95 1194.19 L 199.03 1194.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_003 | [9.5, 9.4] to [10.0, 9.4] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 246.51 1217.31 L 246.51 1211.23" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_004 | [13.9, 7.5] to [13.9, 8.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 201.47 724.31 L 201.47 383.46" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_005 | [10.2, 48.0] to [10.2, 76.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 240.42 322.60 L 240.42 314.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_006 | [13.4, 81.0] to [13.4, 81.7] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 201.47 626.92 L 211.21 626.92" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_007 | [10.2, 56.0] to [11.0, 56.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 201.47 626.92 L 201.47 505.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_008 | [10.2, 56.0] to [10.2, 66.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 201.47 505.19 L 211.21 505.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_009 | [10.2, 66.0] to [11.0, 66.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 505.19 L 208.77 383.46" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_010 | [10.8, 66.0] to [10.8, 76.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 201.47 505.19 L 208.77 505.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_011 | [10.2, 66.0] to [10.8, 66.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 505.19 L 211.21 505.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_012 | [10.8, 66.0] to [11.0, 66.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 497.21 L 211.21 497.21" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_013 | [10.8, 66.656] to [11.0, 66.656] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 497.21 L 208.77 432.15" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_014 | [10.8, 66.656] to [10.8, 72.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 432.15 L 211.21 432.15" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_015 | [10.8, 72.0] to [11.0, 72.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 432.15 L 208.77 390.76" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_016 | [10.8, 72.0] to [10.8, 75.4] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 208.77 390.76 L 211.21 390.76" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_017 | [10.8, 75.4] to [11.0, 75.4] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 242.86 1150.36 L 242.86 1144.28" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_018 | [13.6, 13.0] to [13.6, 13.5] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 262.33 1150.36 L 262.33 1144.28" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_019 | [15.2, 13.0] to [15.2, 13.5] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 242.86 949.51 L 242.86 943.42" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_020 | [13.6, 29.5] to [13.6, 30.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 259.90 919.07 L 267.20 919.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_021 | [15.0, 32.0] to [15.6, 32.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 262.33 1150.36 L 262.33 1138.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_022 | [15.2, 13.0] to [15.2, 14.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 274.51 1046.16 L 332.94 1046.16" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_023 | [16.2, 21.56] to [21.0, 21.56] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 274.51 976.04 L 332.94 976.04" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_024 | [16.2, 27.32] to [21.0, 27.32] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 338.42 1347.57 L 338.42 1308.61" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_025 | [21.45, -3.2] to [21.45, 0.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 373.11 188.69 L 373.11 142.43" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_026 | [24.3, 92.0] to [24.3, 95.8] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 308.59 529.54 L 332.94 529.54" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_027 | [19.0, 64.0] to [21.0, 64.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 338.42 1350.00 L 338.42 1308.61" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_028 | [21.45, -3.4] to [21.45, 0.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 497.88 1350.00 L 497.88 1308.61" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_029 | [34.55, -3.4] to [34.55, 0.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 373.11 188.69 L 373.11 140.00" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_030 | [24.3, 92.0] to [24.3, 96.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 454.67 188.69 L 454.67 140.00" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_031 | [31.0, 92.0] to [31.0, 96.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 479.01 1063.93 L 530.14 1063.93" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_032 | [33.0, 20.1] to [37.2, 20.1] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 479.01 1006.72 L 530.14 1006.72" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_033 | [33.0, 24.8] to [37.2, 24.8] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 497.88 1339.04 L 497.88 1308.61" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_034 | [34.55, -2.5] to [34.55, 0.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 503.36 724.31 L 527.71 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_035 | [35.0, 48.0] to [37.0, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 515.53 724.31 L 576.40 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_036 | [36.0, 48.0] to [41.0, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 527.71 724.31 L 539.88 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_037 | [37.0, 48.0] to [38.0, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 527.71 500.32 L 527.71 493.02" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_038 | [37.0, 66.4] to [37.0, 67.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 539.88 500.32 L 539.88 493.02" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_039 | [38.0, 66.4] to [38.0, 67.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 539.88 724.31 L 554.49 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_040 | [38.0, 48.0] to [39.2, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 573.96 1150.36 L 573.96 1138.19" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_041 | [40.8, 13.0] to [40.8, 14.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 552.05 261.73 L 595.88 261.73" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_042 | [39.0, 86.0] to [42.6, 86.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 573.96 1150.36 L 573.96 1144.28" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_043 | [40.8, 13.0] to [40.8, 13.5] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 593.44 1150.36 L 593.44 1144.28" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_044 | [42.4, 13.0] to [42.4, 13.5] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 593.44 927.60 L 593.44 919.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_045 | [42.4, 31.3] to [42.4, 32.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 593.44 724.31 L 593.44 714.57" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_046 | [42.4, 48.0] to [42.4, 48.8] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 591.01 1217.31 L 591.01 1211.23" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_047 | [42.2, 7.5] to [42.2, 8.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 593.44 1040.93 L 637.26 1040.93" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_048 | [42.4, 21.99] to [46.0, 21.99] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 595.88 322.60 L 595.88 314.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_049 | [42.6, 81.0] to [42.6, 81.7] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 637.26 322.60 L 637.26 314.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_050 | [46.0, 81.0] to [46.0, 81.7] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 722.47 919.07 L 768.73 919.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_051 | [53.0, 32.0] to [56.8, 32.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 722.47 919.07 L 766.30 919.07" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_052 | [53.0, 32.0] to [56.6, 32.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 722.47 724.31 L 766.30 724.31" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_053 | [53.0, 48.0] to [56.6, 48.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 722.47 553.88 L 766.30 553.88" stroke="#aa4437" stroke-width="2" fill="none"><title>ROOF_STEP_054 | [53.0, 62.0] to [56.6, 62.0] | The low return begins at the lower finished roof at this edge, with0.02m concealed overlap; never start it at the lower cap.</title></path>
+<path d="M 191.73 326.25 L 199.03 326.25" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_001 | [9.4, 80.7] to [10.0, 80.7] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 201.47 724.31 L 201.47 626.92" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_002 | [10.2, 48.0] to [10.2, 56.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 201.47 505.19 L 201.47 383.46" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_003 | [10.2, 66.0] to [10.2, 76.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 208.77 505.19 L 208.77 497.21" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_004 | [10.8, 66.0] to [10.8, 66.656] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 208.77 390.76 L 208.77 383.46" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_005 | [10.8, 75.4] to [10.8, 76.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 240.42 259.30 L 284.25 259.30" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_006 | [13.4, 86.2] to [17.0, 86.2] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 247.73 1239.83 L 247.73 1211.23" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_007 | [14.0, 5.65] to [14.0, 8.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 252.60 1275.14 L 252.60 1211.23" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_008 | [14.4, 2.75] to [14.4, 8.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 252.60 1308.61 L 252.60 1211.23" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_009 | [14.4, 0.0] to [14.4, 8.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 259.90 919.07 L 320.76 919.07" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_010 | [15.0, 32.0] to [20.0, 32.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 274.51 919.07 L 332.94 919.07" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_011 | [16.2, 32.0] to [21.0, 32.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 503.36 529.54 L 503.36 493.02" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_012 | [35.0, 64.0] to [35.0, 67.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 533.79 432.15 L 533.79 359.11" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_013 | [37.5, 72.0] to [37.5, 78.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 527.71 724.31 L 527.71 493.02" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_014 | [37.0, 48.0] to [37.0, 67.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 527.71 724.31 L 527.71 529.54" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_015 | [37.0, 48.0] to [37.0, 64.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 539.88 724.31 L 539.88 529.54" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_016 | [38.0, 48.0] to [38.0, 64.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 530.14 1138.19 L 530.14 1108.97" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_017 | [37.2, 14.0] to [37.2, 16.4] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 533.79 432.15 L 533.79 383.46" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_018 | [37.5, 72.0] to [37.5, 76.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 533.79 383.46 L 533.79 359.11" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_019 | [37.5, 76.0] to [37.5, 78.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 533.79 383.46 L 552.05 383.46" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_020 | [37.5, 76.0] to [39.0, 76.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<path d="M 539.88 724.31 L 539.88 589.19" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_021 | [38.0, 48.0] to [38.0, 59.1] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 588.57 1308.61 L 588.57 1211.23" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_022 | [42.0, 0.0] to [42.0, 8.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 576.40 563.62 L 637.26 563.62" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_023 | [41.0, 61.2] to [46.0, 61.2] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 588.57 1270.27 L 588.57 1211.23" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_024 | [42.0, 3.15] to [42.0, 8.0] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 593.44 563.62 L 637.26 563.62" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_025 | [42.4, 61.2] to [46.0, 61.2] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 637.26 1194.19 L 643.35 1194.19" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_026 | [46.0, 9.4] to [46.5, 9.4] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 722.47 334.77 L 722.47 290.95" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_027 | [53.0, 80.0] to [53.0, 83.6] | Continuous opaque finish/coping joint; no additional upstand. Close any finish-level difference with a 0.02m concealed overlap.</title></path>
+<path d="M 722.47 444.33 L 766.30 444.33" stroke="#147f88" stroke-width="2" fill="none"><title>ROOF_SEAM_028 | [53.0, 71.0] to [56.6, 71.0] | One 0.16m party-wall upstand to the common cap; each finished surface terminates against it.</title></path>
+<text class="label" x="70" y="1378">N ↑ · absolute plan metres · 78 cells / 19 installation bundles</text>
+<path d="M 70 1405 H 191.73" stroke="#24353a" stroke-width="3"/><text class="tiny" x="70" y="1427">10 m</text>
+<text class="label" x="1190" y="130">BUNDLE OWNERSHIP / INTERFACE INDEX</text>
+<rect x="1190" y="153" width="14" height="14" fill="#d7b983"/><text class="label" x="1215" y="165">B01 Caravan Court</text>
+<text class="tiny" x="1215" y="183">Cells 004, 005, 047</text>
+<text class="tiny" x="1215" y="200">0 owned steps · 0 owned seams · 4 interfaces</text>
+<rect x="1190" y="213" width="14" height="14" fill="#c78d67"/><text class="label" x="1215" y="225">B02 Covered Souk</text>
+<text class="tiny" x="1215" y="243">Cells 023, 024, 067</text>
+<text class="tiny" x="1215" y="260">3 owned steps · 0 owned seams · 5 interfaces</text>
+<rect x="1190" y="273" width="14" height="14" fill="#8fa8a0"/><text class="label" x="1215" y="285">B03 Dyers Alley</text>
+<text class="tiny" x="1215" y="303">Cells 006, 051, 052, 053</text>
+<text class="tiny" x="1215" y="320">3 owned steps · 1 owned seams · 5 interfaces</text>
+<rect x="1190" y="333" width="14" height="14" fill="#ad7862"/><text class="label" x="1215" y="345">B04 Dyers Dogleg</text>
+<text class="tiny" x="1215" y="363">Cells 048, 049, 050</text>
+<text class="tiny" x="1215" y="380">1 owned steps · 2 owned seams · 3 interfaces</text>
+<rect x="1190" y="393" width="14" height="14" fill="#b29b71"/><text class="label" x="1215" y="405">B05 Fountain Court</text>
+<text class="tiny" x="1215" y="423">Cells 054, 055, 058, 059</text>
+<text class="tiny" x="1215" y="440">1 owned steps · 2 owned seams · 7 interfaces</text>
+<rect x="1190" y="453" width="14" height="14" fill="#8a9a7c"/><text class="label" x="1215" y="465">B06 Link East Upper</text>
+<text class="tiny" x="1215" y="483">Cells 007</text>
+<text class="tiny" x="1215" y="500">0 owned steps · 0 owned seams · 2 interfaces</text>
+<rect x="1190" y="513" width="14" height="14" fill="#d7b983"/><text class="label" x="1215" y="525">B07 Link North East</text>
+<text class="tiny" x="1215" y="543">Cells 008</text>
+<text class="tiny" x="1215" y="560">0 owned steps · 0 owned seams · 2 interfaces</text>
+<rect x="1190" y="573" width="14" height="14" fill="#c78d67"/><text class="label" x="1215" y="585">B08 Link North West</text>
+<text class="tiny" x="1215" y="603">Cells 009, 010, 011</text>
+<text class="tiny" x="1215" y="620">1 owned steps · 2 owned seams · 4 interfaces</text>
+<rect x="1190" y="633" width="14" height="14" fill="#8fa8a0"/><text class="label" x="1215" y="645">B09 Link South East</text>
+<text class="tiny" x="1215" y="663">Cells 012, 013, 014</text>
+<text class="tiny" x="1215" y="680">0 owned steps · 0 owned seams · 5 interfaces</text>
+<rect x="1190" y="693" width="14" height="14" fill="#ad7862"/><text class="label" x="1215" y="705">B10 Link South West</text>
+<text class="tiny" x="1215" y="723">Cells 015, 016, 017</text>
+<text class="tiny" x="1215" y="740">0 owned steps · 0 owned seams · 5 interfaces</text>
+<rect x="1190" y="753" width="14" height="14" fill="#b29b71"/><text class="label" x="1215" y="765">B11 North Court</text>
+<text class="tiny" x="1215" y="783">Cells 056, 057, 060, 061, 062</text>
+<text class="tiny" x="1215" y="800">3 owned steps · 5 owned seams · 6 interfaces</text>
+<rect x="1190" y="813" width="14" height="14" fill="#8a9a7c"/><text class="label" x="1215" y="825">B12 Rug Gate</text>
+<text class="tiny" x="1215" y="843">Cells 003, 064, 065, 066</text>
+<text class="tiny" x="1215" y="860">0 owned steps · 1 owned seams · 4 interfaces</text>
+<rect x="1190" y="873" width="14" height="14" fill="#d7b983"/><text class="label" x="1215" y="885">B13 Service North</text>
+<text class="tiny" x="1215" y="903">Cells 018, 019, 020, 021, 022, 063</text>
+<text class="tiny" x="1215" y="920">5 owned steps · 3 owned seams · 13 interfaces</text>
+<rect x="1190" y="933" width="14" height="14" fill="#c78d67"/><text class="label" x="1215" y="945">B14 Service South</text>
+<text class="tiny" x="1215" y="963">Cells 025, 070, 071</text>
+<text class="tiny" x="1215" y="980">4 owned steps · 0 owned seams · 4 interfaces</text>
+<rect x="1190" y="993" width="14" height="14" fill="#8fa8a0"/><text class="label" x="1215" y="1005">B15 Spawn A Courtyard</text>
+<text class="tiny" x="1215" y="1023">Cells 001, 002, 029, 030, 031, 032, 033, 034, 035, 039</text>
+<text class="tiny" x="1215" y="1040">10 owned steps · 5 owned seams · 6 interfaces</text>
+<rect x="1190" y="1053" width="14" height="14" fill="#ad7862"/><text class="label" x="1215" y="1065">B16 Spawn B Courtyard</text>
+<text class="tiny" x="1215" y="1083">Cells 040, 041, 042, 043, 044, 045, 046</text>
+<text class="tiny" x="1215" y="1100">6 owned steps · 1 owned seams · 2 interfaces</text>
+<rect x="1190" y="1113" width="14" height="14" fill="#b29b71"/><text class="label" x="1215" y="1125">B17 Spice Street</text>
+<text class="tiny" x="1215" y="1143">Cells 036, 037, 038, 068, 069, 072, 073</text>
+<text class="tiny" x="1215" y="1160">4 owned steps · 1 owned seams · 2 interfaces</text>
+<rect x="1190" y="1173" width="14" height="14" fill="#8a9a7c"/><text class="label" x="1215" y="1185">B18 Tea Terrace</text>
+<text class="tiny" x="1215" y="1203">Cells 026, 027, 028</text>
+<text class="tiny" x="1215" y="1220">7 owned steps · 0 owned seams · 11 interfaces</text>
+<rect x="1190" y="1233" width="14" height="14" fill="#d7b983"/><text class="label" x="1215" y="1245">B19 Textile Arcade</text>
+<text class="tiny" x="1215" y="1263">Cells 074, 075, 076, 077, 078</text>
+<text class="tiny" x="1215" y="1280">6 owned steps · 5 owned seams · 6 interfaces</text>
+<text class="tiny" x="1190" y="1315">54 step edges / 28 same-height seams.</text>
+<text class="tiny" x="1190" y="1335">Exact cell owners, coordinates and return levels: roof-coordination.json.</text>
+<text class="tiny" x="48" y="1480">Diagram only. Bundle installation ownership does not authorize constructing another area. No new roof geometry or playable elevation.</text>
+</svg>

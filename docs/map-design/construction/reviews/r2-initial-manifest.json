@@ -1,0 +1,780 @@
+{
+  "issue": "BZ-04",
+  "revision": "R2-building-first",
+  "packageSha256": "a5ed1304b5bd49163cf9547b441d41bd28a1845d1c2016ada923eb19d596f821",
+  "hashRule": "SHA256 of sorted path + NUL + file sha256 + newline records; audit decisions and this self-manifest are excluded",
+  "files": [
+    {
+      "path": ".claude/skills/map-polish/SKILL.md",
+      "sha256": "8e083df9bec6bcf4e3a614b65df18996432da6ad55e1d76fa4df7d954a898396"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "7ee22f1b4ae96c699e2e40afa297cba6096096bda545de8028e3bcad87a659dd"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "0f2e1bb8393ac312eb6996dd44f06adc07ae27cd3d547ebdbaada6656a989957"
+    },
+    {
+      "path": "docs/map-design/construction/README.md",
+      "sha256": "b8f8cb4c2fc0066a330d1f1c8deda5b842a598ed0237bd4c45894af1bd284ffe"
+    },
+    {
+      "path": "docs/map-design/construction/building-catalog.md",
+      "sha256": "59b06344f23570f0f411df19e01782d81bfa93aec17d39b60e539b3890325420"
+    },
+    {
+      "path": "docs/map-design/construction/cameras.json",
+      "sha256": "bb6f26ef0abc6740340c2194a808d1803f0425ab060f70d843f415963c4ac620"
+    },
+    {
+      "path": "docs/map-design/construction/cameras.py",
+      "sha256": "7a6193bf4aac54524e1d83b7eaa1b1b19b6257c5e101fc390f4dc7ea934f7c8b"
+    },
+    {
+      "path": "docs/map-design/construction/coverage.json",
+      "sha256": "21b184708dc2f8b9820b411edda4edabf527bd3bb7fc4373398c151334e0a332"
+    },
+    {
+      "path": "docs/map-design/construction/design-basis.md",
+      "sha256": "58e8156d68f12f4527e27628cd7fd31741ff032d8b8b9fa0d71cec06c36a538f"
+    },
+    {
+      "path": "docs/map-design/construction/design.json",
+      "sha256": "6da66e765e7b47ca45390fe2818162c1bc9d2a3684aa8f97cc523ac971f276d7"
+    },
+    {
+      "path": "docs/map-design/construction/details.md",
+      "sha256": "c48a68f1bc5dc3d79c07158646b10780469e18de0c86a4c7b4531a1667e583d1"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-domestic-rear-plan.svg",
+      "sha256": "c219d07cc061310627c7d6e3224a0e8643a040bb008968594ca419b93058346e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-domestic-rear.svg",
+      "sha256": "f14e69823d7eee1500b6f0c802b068ddc8f2c663ff24ae76933235f646b4faad"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-dyeworks-plan.svg",
+      "sha256": "f2cf9184f491ea1fff71ed9dd5a6eae94273c0958eaf9c2c5fe6d549fe94012b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-dyeworks.svg",
+      "sha256": "c920113862bde655b175cc8beb93d90256977d20bd4b97df2c365eeabe4db4e8"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-gate-plan.svg",
+      "sha256": "bacda52a188898b3414b933bc2fc4ce73ee2f512ad371ff34999dab3c83d24cc"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-gate.svg",
+      "sha256": "fb51339488a1df49cf42429a0bc54a922af9a09b8f9184660b7d16b1e92cc601"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-keeper-plan.svg",
+      "sha256": "7593a262f49f1d189fa6609f5f02889c4eef2d6d29008e03871f679709fa9829"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-keeper.svg",
+      "sha256": "97378c4ba65c23ca0cdd24a2087a590b7ddf8c73521ba2c3413d0b89d92acdca"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-spice-east-plan.svg",
+      "sha256": "d3611a2d758501f4840822cda7ffc33056fa3f997bf4e353d382ca7e6a95d46a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-spice-east.svg",
+      "sha256": "96159447a0aa76c5e9482cdfb7ce20d1429147fa6ac8f260eafc5a3ac3314720"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-spice-west-plan.svg",
+      "sha256": "cd42cd98080dccd10feecba61046c6f06f543454194e65c438ee811422eb8d78"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-spice-west.svg",
+      "sha256": "e7606208b549070351fc2628a520531d5d4fcc7b96fef7b5ca644cdbcee11ac1"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-watch-plan.svg",
+      "sha256": "dbcd230e8df468dc316da43fc2c099ef81bb8124df1c7528c067fa7b677a2e1b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-a-watch.svg",
+      "sha256": "fb12c5a2fdcbfc0d2933c161ee82f65e6de86c71c8285a69b6b507f74ab75bd0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-e-packer-plan.svg",
+      "sha256": "a8701d6306c778bb0ba23f644e425bf3df5600b4412484e8ad3b6a01841cb7af"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-e-packer.svg",
+      "sha256": "57041654870b4ddbcf3ce645dc6a11e61079d24f35fce3deaec23f651b10ddfd"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-e-store-plan.svg",
+      "sha256": "7bb8c279da945c6fa6b3959ffdd29b64daa40e8d34081dcd4672fcd8d4c1ce29"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-e-store.svg",
+      "sha256": "06d782041b23d0ff22d470080e7a73f60c48f15e8caeeee91ad5cb6a67dc5b96"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-house-plan.svg",
+      "sha256": "2674359507a121e5cbb399760df6b37ad6d747e9651c8037a50d5f6f619f679f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-house.svg",
+      "sha256": "37a7b5410fdddcf6aebcaf2eded8fb245efb25a708bb8b138789f25fed961962"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-potter-plan.svg",
+      "sha256": "2d067f8e73087a9d4cdee0acbca127bd0632f2027f6f637b1db81919b18e5af0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-potter.svg",
+      "sha256": "4cc674fe442fec2f68f4ff35a39c7be86889af3e075a100702aea819ecad3eb1"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-textile-plan.svg",
+      "sha256": "0f7e84033565f9c8a72cd40d3c904a0acd79e1b8b23734eabdab3c1582d5d8a4"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-n-textile.svg",
+      "sha256": "85507aa8afdf38f6ba103a35cc66d1cdc709802e804de3ab813cc3a8cea0a9fe"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-w-house-plan.svg",
+      "sha256": "8c81ea613c2742a2ec9dc9f66950ec3fec3542d1be5ae8cbf9dadfcec3e93ad0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-w-house.svg",
+      "sha256": "b4a98549e56ea666baa2f4fe8f4b051075bd4090084ee1ec189db6c9f0c1aecc"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-w-tea-plan.svg",
+      "sha256": "e1e93817f87607350d2420c2864e02a93cd9f483af2e91331871503aa3dceced"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-b-w-tea.svg",
+      "sha256": "b44d7cb2d0b45354a58072cd9d75f6a5a2122eb43eaf1345ab7bd78910b00594"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-caravan-stores-plan.svg",
+      "sha256": "d80c40d3c92dcf1f83b33f260548209f5e181cac5cf473070d06114809551a66"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-caravan-stores.svg",
+      "sha256": "ba6324143b82ce98dbe053fbf5cad0664afb81a3d5e742919f329b1257d6e112"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dogleg-east-house-plan.svg",
+      "sha256": "be0cad815e5d2f5ceee6402648632a7447e6692c8547dc1c551c71da0ae3b7ca"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dogleg-east-house.svg",
+      "sha256": "5b46e7791dd9a1fab9e92c620ba15bd83bec90ad86915f3a3f55ddbf4ff7de92"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dogleg-west-annex-plan.svg",
+      "sha256": "20ce50b6af816729b7885d401ad9f748fc74851bd0c4efa48f144af9d5575f1e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dogleg-west-annex.svg",
+      "sha256": "415cf7d08065726dd01a6c9d022488a278b5957ca4467edde2591732a0408d0c"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-east-plan.svg",
+      "sha256": "54743afa889a21b1ae2e7b9d2efc89c3bef408c965eca616bb127b5364e261d2"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-east.svg",
+      "sha256": "7e367f2adfcc38432e801a8d8b6ed153480ca1c86984081bc8ac2a5c4f768987"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-west-house-plan.svg",
+      "sha256": "9abfa18840c824ffdb3fc4663a2c9519dcc948c99b65f10357b6152740709459"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-west-house.svg",
+      "sha256": "19feb057725ffc661e2db6e85536856ba6b85060cdc43aee90c6e2f10f1f3e15"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-west-plan.svg",
+      "sha256": "32b4f52be4a35a627a53171481a289e278c8c35f73bceecab236ec4ca6f58a0a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-dyers-west.svg",
+      "sha256": "5b2b1bd9e8986e714304e92740634f94d8badfd7b2f89453f1a9f831bd4b45ab"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-fountain-house-plan.svg",
+      "sha256": "4fce68a822802d7d791595ce0f5292b8b50c3674dc8bad965ba8f5107aa2881a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-fountain-house.svg",
+      "sha256": "338f0624e6e9cfd17dbd856f52a65ff484ab3f244cea413a7518e166e6d3cc21"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-fountain-merchant-plan.svg",
+      "sha256": "b191fde33fa62dff3734b7b4e936367b655adbf34bde08130abf59e972cf36eb"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-fountain-merchant.svg",
+      "sha256": "970a3f6b98141a314334e23689420385978cfac70194c059f4fc803876998370"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-hammam-plan.svg",
+      "sha256": "2e57d76d7de61001dba9a4690baa83e2454993383bd56d72f0b57b520060ceae"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-hammam-stores-plan.svg",
+      "sha256": "bf124a6919d8ef40585dd6b638996cb9b2dfad95e125011f968a9ccad4923f92"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-hammam-stores.svg",
+      "sha256": "3ccea5d644625e64a45bc12f778b8dc68522ac5310b57741dccc7950e09b386e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-hammam.svg",
+      "sha256": "1072058b631c0109ccc73fc592d9e884cedc3abef7c19261714bbe6cc2310c39"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-madrasa-plan.svg",
+      "sha256": "41b1fcfcd91d625180e3fb3f948f8af72d8b6976194c4654ff9a527c95987703"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-madrasa-service-plan.svg",
+      "sha256": "3be8bff018b19533b1ad142b0fef57cbd20170c4543185c3319392f52d112b57"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-madrasa-service.svg",
+      "sha256": "5070403566d1a8f83f232ff24edec1cb54fefe43e3ff7660892aa25a1a0e092b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-madrasa.svg",
+      "sha256": "52aa4ada30db74f22ec54b059600010aa3b8e0ff64ebc84a6bc5661f58987313"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-dyers-compound-plan.svg",
+      "sha256": "aaed605f6f0af998e9f1e797d5b126ad4fd38f50965d5f35e22f7e6b30663d4d"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-dyers-compound.svg",
+      "sha256": "d7006e34c80090feb50f785a2ff1b381dacdbdfe07fb5c91e92401c25429eeec"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-east-house-plan.svg",
+      "sha256": "33538a9426ed7d3d1bdfe3176877f3cfde0916c921ebc5390ecf2dc554435982"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-east-house.svg",
+      "sha256": "9e2f6bc7860bc2ff9a2c50a4fb2642e109a76cd1e2462e48fcc90c2b5861d9a1"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-service-compound-plan.svg",
+      "sha256": "483cae6c9690db3038a22ca32579e7fd28b33f3189db84f8c7fbff527071a17f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-north-service-compound.svg",
+      "sha256": "fd22a9ba086ae0dc0a0e7490152c29ece116173194097ed0dc9d9b4af2692c70"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-rug-east-gatekeeper-plan.svg",
+      "sha256": "cb264154bff221187b1cc45d51e63863d86e2f15b2513ef4dd9d49e1199cca01"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-rug-east-gatekeeper.svg",
+      "sha256": "59201cbd3eec75e998e1be1e7095e48cafe66ce7ef3727a9e1635f8d6cd2bbd2"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-rug-merchant-plan.svg",
+      "sha256": "a781aa42672d193e7138d8c154ce0ede6bbeb26df6a1fd4fa4bbbdac3e089297"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-rug-merchant.svg",
+      "sha256": "49738b77be29ef75b4b0db804f5432eda67ab62de6f8c1cc9112771edea4f428"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-souk-east-storage-plan.svg",
+      "sha256": "f58dfc0ebcd20c65d2b19cd0d629292df49f836935e86def312240c41a797a7f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-souk-east-storage.svg",
+      "sha256": "5f9a44da8fb068164ad31792bbe8156a3d0261a2a496c4766d17c66abc5659b0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-east-bulk-plan.svg",
+      "sha256": "663950fa7c7801db8a12a30daf9cf570b3ee617b3beb8606a2d4310ef49b21da"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-east-bulk.svg",
+      "sha256": "7d6be7d51595b08c7644ce92a3b58f7ea9decc1a7aca070a0993493dd844200a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-east-north-plan.svg",
+      "sha256": "ac6b0640f76dfd3972627bdeabb90d905864a74f3ec3eb9c4fac95815c8f19fb"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-east-north.svg",
+      "sha256": "c16bb39ab1cd7564fd26b70323941cd35af8e416d3039b0bad2660cfb6339c01"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-service-compound-plan.svg",
+      "sha256": "d808f8d5e020c3cb7c0534e14106fa77ecdc1905441850f8e4b2bb3a43319a59"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-service-compound.svg",
+      "sha256": "8084d43883c519496cd29850668f8defd9e3031c6386b6efbbd3016b1a061c12"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-service-west-plan.svg",
+      "sha256": "f9510f5aa009ec6102c955b9ee6adfca4e68d592a8d78b04a7a38b3f5cf21568"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-service-west.svg",
+      "sha256": "b628dae273dcf7351f42b39b7c7b9d39f6a1ff99084b50a862902cfcd98340f4"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-west-mid-plan.svg",
+      "sha256": "8d10830af716af117a840e066f06626d3c4ffac31e4156d21dd7f6149a7b5d2f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-west-mid.svg",
+      "sha256": "2bb708e6314fef7e413137e98f255827ac0a12478468d2e7f5395278f7fc0463"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-west-north-plan.svg",
+      "sha256": "06a9210327e19f64f054522d63e9b4836596863a70337cf35fee6022229d5951"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-spice-west-north.svg",
+      "sha256": "46db176c106837834bdd850e884dba7b88d99c2056f58c2570c9596e98a8e71a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-textile-east-plan.svg",
+      "sha256": "742c19ed99f36d18f490839785cafcd34683b81c6ad64b91b1830179acc82678"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-textile-east.svg",
+      "sha256": "bd892f2e381d8ddefef6551bc1a71041cdae8b9cedcac2d366969f1924055002"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-textile-west-plan.svg",
+      "sha256": "f70872be184d3f5d405b3614ac8bba4ab4b7217cfb16676133dd35e1bf07ce01"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/building-bld-textile-west.svg",
+      "sha256": "31d0a3cf018c523bd18b4508477905fae37b5bd9777408cf057c58c87b5d97c0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/caravan_court-axon.svg",
+      "sha256": "5963d43ff23640b1129ddcae8fb7878ed2d550d46dad9f74695f7d7d134a0e1c"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/caravan_court-elevations.svg",
+      "sha256": "3e49cbae1a5739e3443cf7ad160d60bb444508349336a0325d347f4459dd383e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/caravan_court-plan.svg",
+      "sha256": "43a5c3da6e021e9d2afd4f5c943168e8ee9f9db4a1d0ae809a1383ebc4cd2bcb"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/covered_souk-axon.svg",
+      "sha256": "30af0402f15000ad47aa8049202c6d4d4b6431ca4ace657ceb8050433d198cf8"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/covered_souk-elevations.svg",
+      "sha256": "663d8ca4b43db9d4560c663ad0cd942cbae890cf74e312676828c60e541b7722"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/covered_souk-plan.svg",
+      "sha256": "6fb1b71ba5a0fae49da21ee653a7daf6d1971f1033c424d978f132337b4a05dc"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_alley-axon.svg",
+      "sha256": "615c232b534d163ed574a4a888dec852c9c13ddc62756b3b2853c1f63d78dd4b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_alley-elevations.svg",
+      "sha256": "6005d77f2b2e5a1ce3ab5c035a6bbf79b2da04d45782d44cdcf45d228ce22cf6"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_alley-plan.svg",
+      "sha256": "140332d4963f449b82f47c27ce9fea4365b0dab58c043744949dd1501e688b8a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_dogleg-axon.svg",
+      "sha256": "de0f19f5178f07c32b788c85331fc788d5cf45946e8b40303ae8e28aae50a5dd"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_dogleg-elevations.svg",
+      "sha256": "34f0b7db724471ea1f66c4d5f196945a2f12ca45b7e94d1a5ba84477b0246e8b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/dyers_dogleg-plan.svg",
+      "sha256": "93169c3795a052f6d9d7b1650e3c0d38de7a8d10d0b9b49526fcf2810d2425e0"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/fountain_court-axon.svg",
+      "sha256": "67b79e82e0aea4c3cca1e89e73c0f12b77e95d96666d1ba2bebd3ff0fd4d6755"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/fountain_court-elevations.svg",
+      "sha256": "b6b15e0594bdd1c57b2ea627583cbbf26c1cb91d5a12db8a47136d545e5de355"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/fountain_court-plan.svg",
+      "sha256": "8128bb91d2b593451217f34ba5d85ef78c6f864c8cd71a1d7b4fbcc2085af706"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_mid-axon.svg",
+      "sha256": "2baf0d9d4b170c0301b022693121a7341723241af5765846e53a2b59fba0b5d5"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_mid-elevations.svg",
+      "sha256": "90133e241e7de1c7a0090c13ac080ece97233f1d92c21eb13316b42ae4325576"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_mid-plan.svg",
+      "sha256": "1778b490c6de929f7ae20d64b2dd33a3a596859f84af6445f03fa888df00fd3d"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_upper-axon.svg",
+      "sha256": "c87a303f96586dcf3385d11507ebc2b8623060570c49febf92346265d8635b16"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_upper-elevations.svg",
+      "sha256": "28c7911ff727ff4f5d92f31332aaa5a8c505baacdb0e43cc73e2a8dd997f9a9b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_east_upper-plan.svg",
+      "sha256": "696782f330a78c22fe819aff743f2de5a26aecf981a6489df6d35ace0a9b719b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_east-axon.svg",
+      "sha256": "37ee6dda87a0bce490ebbb411326c88bf13a9516bbe25a268b73ea26da473293"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_east-elevations.svg",
+      "sha256": "e78634fa7920068e1bdc43f17e9a08ce14c511f312b5c91f48fad874fc99c70b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_east-plan.svg",
+      "sha256": "8a83007abdc8884455266fb37c79c2703a4a928a310f84f7f68f00307f438388"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_west-axon.svg",
+      "sha256": "a691f16e06bc4f215e5c4767d2d5fd10a65fe0a98fbda69dbcfbdd80eb165031"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_west-elevations.svg",
+      "sha256": "7d75870340397203a95670f51a0ecff5f07e42218e77859ef39ad495e708adad"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_north_west-plan.svg",
+      "sha256": "788568bd92fc52a1e33984f5486b3c5e03b843edfcf03e46b110c5c35d602910"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_east-axon.svg",
+      "sha256": "a72febb97d8d4e31fb3bc609dee9b8df8626eb1e65559cdf1e9beaa90ddedd6c"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_east-elevations.svg",
+      "sha256": "60021813220d50424a84cc0eb72a37ed642d68ed61ef98b71e49f0bf7d695823"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_east-plan.svg",
+      "sha256": "75d04938583915c186af2712222d359ae622f6514d54c2a440449369dfd1777f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_west-axon.svg",
+      "sha256": "65b95e454eb0f3a7a5e1a9bac5967381c110298249d17edd98d856413f906ac7"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_west-elevations.svg",
+      "sha256": "813a3367eede52229b651e2feba894f107d0f197fe46388f5887525a04377bd4"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_south_west-plan.svg",
+      "sha256": "94c90de6970e799129c0414963cc165e710f9a3d17c3cb2113fb747bf5ff9c6e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_mid-axon.svg",
+      "sha256": "6d9b324e2be21360ab9da90f9f5819006f0b721b65bef9d5e2b5949df9ec4564"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_mid-elevations.svg",
+      "sha256": "b6ff2948a12637e7aeb9f0269628ca538bdddcd8ae2db93cda0025c4d3751995"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_mid-plan.svg",
+      "sha256": "c8a26049a157c744baa6e3ccc7015679aca3178df1f79697a29611dacaf90745"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_upper-axon.svg",
+      "sha256": "7f1a28888c6e921cba32492f39aaa07c43c67b65e6b4ef11577f51f3c7518473"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_upper-elevations.svg",
+      "sha256": "50d5dfbcd543eb6a51293962ebd973278fb53cfc4793b029e7e6f9e5c139af2e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/link_west_upper-plan.svg",
+      "sha256": "bcf832c8720120cc8c8f8dd14f43d0e2114e1002681f8d6bc0b0a7e29d163a2b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/master-plan.svg",
+      "sha256": "0b606d6fab71d97b6d5dc3b24ffd712557aae19574eef26f220c58ffef70b61f"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/north_court-axon.svg",
+      "sha256": "f58d85d44dd9397df106d51c2c448175d3d6dd6acf0978ae7a6355f2921f3fea"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/north_court-elevations.svg",
+      "sha256": "d948d1c515db00eeab2330c0fd5928de6ee074b935ecb387b87bfe24e1d0c35b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/north_court-plan.svg",
+      "sha256": "11e5ccd19101c2eaf525eb20ef449b55e90a44764d68bfd2426e00cecfdf4a8a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/rug_gate-axon.svg",
+      "sha256": "f820730691753dbb7a40ab23bd7ac58ff0d19747850aab22ed9d947807dc3ad3"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/rug_gate-elevations.svg",
+      "sha256": "0f749e46582165c24d3681aaa2785241ce984572271c377d51718f89086ae6e9"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/rug_gate-plan.svg",
+      "sha256": "5af6805a5c5f9fa1da6124b0be3ab5546bb9b166b304190ec6a04c39b6c901ae"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_north-axon.svg",
+      "sha256": "a2220fbb102161ac7cdb33d94da8981042b138f4acfda4f853c1db130b490d16"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_north-elevations.svg",
+      "sha256": "fbc3d52151ade0da21964cb399b49ad340e031c0e9c6c674cd9c3a6630df270b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_north-plan.svg",
+      "sha256": "0577149d8135fb27fbb5b8122c04e0ada120d7d48b94b136b562db60081f0423"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_south-axon.svg",
+      "sha256": "295855756523d6bd48e3609e2c207dad44c85567c39c2f8afedbd72b70cbe515"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_south-elevations.svg",
+      "sha256": "6ca5d2f55438026ed3694f8a2ed48a5d21cd7ffaca577908afe88af180f7be0e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/service_south-plan.svg",
+      "sha256": "44a178c0d9e0409a65afb9fd447c97006a518e594ba1fc9ff6ed5f275a4a1889"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_a_courtyard-axon.svg",
+      "sha256": "8999630f08b7bc36e6c2e264ff9f3c70c9e710f54815a9ce1badb055abb9409d"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_a_courtyard-elevations.svg",
+      "sha256": "223a3e3db97d70c75e5a750d2c8248d8c9469832e3ed2d7c13c10e466ebd7c73"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_a_courtyard-plan.svg",
+      "sha256": "e0659d805be4a53f748d932a3c3e23956a677bba47cf2b86bbff79288a125c89"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_b_courtyard-axon.svg",
+      "sha256": "e54d5f6fda2f2ccbd7f5458494b89c3e959a0274bd56bd640822743b98a61778"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_b_courtyard-elevations.svg",
+      "sha256": "1d8d72f1c98bb41af2589c3376d8782257ba779d7d58e845effa0aec38cd252a"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spawn_b_courtyard-plan.svg",
+      "sha256": "5b5940ea12ce777ead8cd8ee54ba02389a0ca70bec836ba5617f9651ff963912"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spice_street-axon.svg",
+      "sha256": "5fbf64a4e69568e195f3c13628ceedbc474f6983e17d5cc6de2651b3d453cd29"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spice_street-elevations.svg",
+      "sha256": "0267e33938bf90b602a96ac3af2832d04733b2cfa2cb1004f3c1397a78dfb806"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/spice_street-plan.svg",
+      "sha256": "a52db4d086488af517099b4eb704f1a3babab822f6184467287d25f235c340d6"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_landing-axon.svg",
+      "sha256": "b633f43e634138cfa9cefbc84132f20f97c7fd4d1f4dfc5da4f522e6d3da4d98"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_landing-elevations.svg",
+      "sha256": "640b326a1bdefe49616a361b0123112bd4db7491a508ffd25ad8a660dd3fbc84"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_landing-plan.svg",
+      "sha256": "6b54e58cf89d0cb6eca04e073ef7e33d66d679043078f745aab0269567eba7d2"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_ramp-axon.svg",
+      "sha256": "82b31e9fcd79f8edbc671cf46e9fa79f42640455966f7bf82df1c2b5e5e3783e"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_ramp-elevations.svg",
+      "sha256": "5cd57ffc23534ac00a7d7770955c1c4f7652289f28268ab2c04c48c35774c561"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_ramp-plan.svg",
+      "sha256": "53af91da72911ec046cdbc30b550a15482a3229a56599c3a3d1771aa5a7986df"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_stairs-axon.svg",
+      "sha256": "67788462d0f1c94ee9a00eb974604f486aa2ec080aa377c61e42b11941d1541c"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_stairs-elevations.svg",
+      "sha256": "0801b83aa0c2ba19c0488f7f311a0e3e72dd23d75f3536c15a5d87c60186c904"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_stairs-plan.svg",
+      "sha256": "0eb10aa97e14289635eaf12fb0a2ba60714511e48882c13fb796400cdd7741c1"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_terrace-axon.svg",
+      "sha256": "7f68c8b359bbe841406b87e2a208d2b90e1282c786b77a9ad2589357c49b9e9d"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_terrace-elevations.svg",
+      "sha256": "9c1b046b053f09065032577475775884e955a0b701277db3c72de027db977d03"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/tea_terrace-plan.svg",
+      "sha256": "66725cfb2c9e14eba64940ac4a01f5de81657a6b78afed4edd2a3b1becc7a8b3"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/textile_arcade-axon.svg",
+      "sha256": "9f4162c0174218ab42b4f3bb93e0f42a5cf3f69184841227ea6700474880ae2b"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/textile_arcade-elevations.svg",
+      "sha256": "7f6c091425b1d6892f5dff981b71ca1f94d7ec0426f82aca8caf1f166688b249"
+    },
+    {
+      "path": "docs/map-design/construction/drawings/textile_arcade-plan.svg",
+      "sha256": "d148808d573da83b94f29613a5714d2a05f7a77a757313db4bd73bed9f0b003c"
+    },
+    {
+      "path": "docs/map-design/construction/gen.py",
+      "sha256": "aade000cb004937b46693ac8800a3c8857b22c63563c6b31d770b9923ee686a5"
+    },
+    {
+      "path": "docs/map-design/construction/integration.md",
+      "sha256": "e3a672544ec9a8b9f24fcd73cba047bd3e14834c7b4e81d74a9b415215db62f2"
+    },
+    {
+      "path": "docs/map-design/construction/links.md",
+      "sha256": "5531583bf258118c1ca7605142ebd9e473b0290b36923650dd9373ace8b4d168"
+    },
+    {
+      "path": "docs/map-design/construction/roof-coordination.json",
+      "sha256": "55ed9eebc64a3eb3654126583eb856751812736273abc2ff153bac9be698cf87"
+    },
+    {
+      "path": "docs/map-design/construction/roofs.py",
+      "sha256": "6115703f49ecf999ebdf3da99e980c5c63248f09e8d93032ad3f05d2ea65d887"
+    },
+    {
+      "path": "docs/map-design/construction/runtime-materials.md",
+      "sha256": "ae6e4e7ba89a2946bdcc1e9d7fdbe8eeb3aa854b163470893aca05036af6f221"
+    },
+    {
+      "path": "docs/map-design/construction/skyline.md",
+      "sha256": "ee2550bb827e6d0bd2dc64bfcadf9eeb6e05fb77102a3f1ef91bef528a44196d"
+    },
+    {
+      "path": "docs/map-design/construction/survey.ts",
+      "sha256": "d1c40a5ea83c63f62adf44b75b2f45032984a6c0f55eab5795244c308e8765a4"
+    },
+    {
+      "path": "docs/map-design/construction/unit-caravan-court.md",
+      "sha256": "f510a3249f4aa7ec723156185111e2fea56d7e9415d015ba89f287351c0c367d"
+    },
+    {
+      "path": "docs/map-design/construction/unit-covered-souk.md",
+      "sha256": "343881b8ea50262478d5c6810b836ea8660c88e7bbfb97ae402ddc3a100a3935"
+    },
+    {
+      "path": "docs/map-design/construction/unit-dyers-alley.md",
+      "sha256": "568e6482c25a38437b04a71eb897a7bc4e4c2c8d40c283c039109fb3f8454352"
+    },
+    {
+      "path": "docs/map-design/construction/unit-dyers-dogleg.md",
+      "sha256": "313ac4b11da1bb3ad9a05126d4b866b19e81b4d312d492ba6edb6f481532e966"
+    },
+    {
+      "path": "docs/map-design/construction/unit-fountain-court.md",
+      "sha256": "e5afc170a58e6a150ba5ab6761236a9443ef5f8a4b4ccfc764d68e852e2ad642"
+    },
+    {
+      "path": "docs/map-design/construction/unit-north-court.md",
+      "sha256": "746940221248595e6bf7f21183e2910142d93b5dff5d27dcb9846f3c1d5a4d8f"
+    },
+    {
+      "path": "docs/map-design/construction/unit-rug-gate.md",
+      "sha256": "82995ba9a037bce720b45ae62b9c2561676597e5078bf82dbb47fd2127ab2551"
+    },
+    {
+      "path": "docs/map-design/construction/unit-service-north.md",
+      "sha256": "2fec81d19897635e4e67752ee490b34f3a8ed6f7e9954c10c027d38168b5a778"
+    },
+    {
+      "path": "docs/map-design/construction/unit-service-south.md",
+      "sha256": "d43f7178e6884ec674fd830b21643ea41f45babf422a6385eb63588cb956aefb"
+    },
+    {
+      "path": "docs/map-design/construction/unit-spawn-a-courtyard.md",
+      "sha256": "fbdb7b8ba0878cd02909ffdf14f7b3939c995479bc95adc3c443d217bce07d1a"
+    },
+    {
+      "path": "docs/map-design/construction/unit-spawn-b-courtyard.md",
+      "sha256": "da530eaf8968bb197891054e1490eb9759762b5926fdb631fb4f9b6e56aca823"
+    },
+    {
+      "path": "docs/map-design/construction/unit-spice-street.md",
+      "sha256": "b4ce14db623d6728b359884521d8a21be28e87a4ab8582386d491354db0b1aa6"
+    },
+    {
+      "path": "docs/map-design/construction/unit-tea-terrace.md",
+      "sha256": "a4e59bcfc5383438a1cf91259c4ec54a0abcad73b08b4b4c1d8f223e109e045d"
+    },
+    {
+      "path": "docs/map-design/construction/unit-textile-arcade.md",
+      "sha256": "88ed7b9f3e4bc38faed9d2086fc9b747982cbe499950ebf56c20f8751e89c2cc"
+    },
+    {
+      "path": "docs/map-design/construction/validate.py",
+      "sha256": "954f960f75e3fbe14f9aa582e462bbe3e4c627c75fa67b6e41e7e051ae93a003"
+    },
+    {
+      "path": "docs/map-design/construction/validate_buildings.py",
+      "sha256": "90a26d3cf7501bb266bbf936771b250bbd9a8314a4448bcc4210129a3c541434"
+    },
+    {
+      "path": "docs/map-design/development-plan/README.md",
+      "sha256": "de50d1ccad3e5f18452bd6daf88eb448bb200b9d7e85f085c0cc4172f25c0603"
+    },
+    {
+      "path": "docs/map-design/quality-bar.md",
+      "sha256": "bf58f8eb860da38417d9b44869716c963c27e084a7008eea0aa92da0699178d8"
+    }
+  ]
+}

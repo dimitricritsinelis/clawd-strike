@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1340" viewBox="0 0 2200 1340">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="2200" height="1340" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 spice west north facade composition · BLD_SPICE_WEST_NORTH · Structure</text>
+<text class="sub" x="48" y="76">UNTEXTURED STRUCTURE DRAWING · neutral clay/ink · dimensions in metres · composition review only</text>
+<rect class="panel" x="48" y="105" width="1080" height="1165" rx="8"/><rect class="panel" x="1160" y="105" width="990" height="1165" rx="8"/>
+<text id="principal-elevation" class="title" x="80" y="158">PRINCIPAL WEST ELEVATION</text><text id="transverse-section" class="title" x="1210" y="158">TRANSVERSE SECTION</text>
+<text class="sub" x="80" y="184">Red household return</text><text class="sub" x="1210" y="184">Through the principal entrance and floor structure</text>
+<rect x="150.00" y="396.31" width="361.02" height="763.69" fill="#ddd7ca" stroke="#24353a" stroke-width="2"/>
+<rect x="150.00" y="340.00" width="361.02" height="56.31" fill="#d1cabb" stroke="#687477"/>
+<line x1="150.00" y1="382.43" x2="511.02" y2="382.43" stroke="#b8b5ad" stroke-width="3"/>
+<line x1="150.00" y1="347.71" x2="511.02" y2="347.71" stroke="#cbc6ba" stroke-width="3"/>
+<line x1="150.00" y1="340.00" x2="511.02" y2="340.00" stroke="#565d5d" stroke-width="3"/>
+<defs><clipPath id="surround-S_W_NORTH-ENTRANCE"><rect x="272.65" y="951.72" width="115.71" height="208.28"/></clipPath></defs>
+<g clip-path="url(#surround-S_W_NORTH-ENTRANCE)">
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00" fill="none" stroke="#a4a4a0" stroke-width="23.14" stroke-linejoin="round"/>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00" fill="none" stroke="#72726f" stroke-width="18.51"/>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00" fill="none" stroke="#a4a4a0" stroke-width="17.51"/>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00" fill="none" stroke="#72726f" stroke-width="10.41"/>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00" fill="none" stroke="#a4a4a0" stroke-width="9.41"/>
+<polygon points="275.16,1144.19 278.44,1142.26 281.72,1144.19 278.44,1146.11" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1134.93 278.44,1133.00 281.72,1134.93 278.44,1136.86" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1125.67 278.44,1123.74 281.72,1125.67 278.44,1127.60" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1116.42 278.44,1114.49 281.72,1116.42 278.44,1118.34" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1107.16 278.44,1105.23 281.72,1107.16 278.44,1109.09" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1097.90 278.44,1095.97 281.72,1097.90 278.44,1099.83" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1088.65 278.44,1086.72 281.72,1088.65 278.44,1090.57" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1079.39 278.44,1077.46 281.72,1079.39 278.44,1081.32" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1070.13 278.44,1068.20 281.72,1070.13 278.44,1072.06" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1060.87 278.44,1058.95 281.72,1060.87 278.44,1062.80" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1051.62 278.44,1049.69 281.72,1051.62 278.44,1053.55" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1042.36 278.44,1040.43 281.72,1042.36 278.44,1044.29" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1033.10 278.44,1031.18 281.72,1033.10 278.44,1035.03" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1023.85 278.44,1021.92 281.72,1023.85 278.44,1025.78" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1014.59 278.44,1012.66 281.72,1014.59 278.44,1016.52" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,1005.33 278.44,1003.41 281.72,1005.33 278.44,1007.26" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,996.08 278.44,994.15 281.72,996.08 278.44,998.01" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="275.16,986.82 278.44,984.89 281.72,986.82 278.44,988.75" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1144.19 382.58,1142.26 385.86,1144.19 382.58,1146.11" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1134.93 382.58,1133.00 385.86,1134.93 382.58,1136.86" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1125.67 382.58,1123.74 385.86,1125.67 382.58,1127.60" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1116.42 382.58,1114.49 385.86,1116.42 382.58,1118.34" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1107.16 382.58,1105.23 385.86,1107.16 382.58,1109.09" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1097.90 382.58,1095.97 385.86,1097.90 382.58,1099.83" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1088.65 382.58,1086.72 385.86,1088.65 382.58,1090.57" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1079.39 382.58,1077.46 385.86,1079.39 382.58,1081.32" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1070.13 382.58,1068.20 385.86,1070.13 382.58,1072.06" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1060.87 382.58,1058.95 385.86,1060.87 382.58,1062.80" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1051.62 382.58,1049.69 385.86,1051.62 382.58,1053.55" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1042.36 382.58,1040.43 385.86,1042.36 382.58,1044.29" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1033.10 382.58,1031.18 385.86,1033.10 382.58,1035.03" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1023.85 382.58,1021.92 385.86,1023.85 382.58,1025.78" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1014.59 382.58,1012.66 385.86,1014.59 382.58,1016.52" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,1005.33 382.58,1003.41 385.86,1005.33 382.58,1007.26" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,996.08 382.58,994.15 385.86,996.08 382.58,998.01" fill="none" stroke="#757570" stroke-width="0.46"/>
+<polygon points="379.30,986.82 382.58,984.89 385.86,986.82 382.58,988.75" fill="none" stroke="#757570" stroke-width="0.46"/>
+</g>
+<defs><clipPath id="b-clip-S_W_NORTH-ENTRANCE"><path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00 Z"/></clipPath></defs>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="0.00"/>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-S_W_NORTH-ENTRANCE)">
+<rect x="289.62" y="1075.42" width="81.77" height="73.78" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="289.62" y="975.63" width="81.77" height="87.98" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="290.40" y="1108.12" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="290.40" y="1009.77" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="368.69" y="1108.12" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="368.69" y="1009.77" width="1.93" height="5.40" fill="#56534b"/>
+</g>
+<path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="relief-S_W_NORTH-ENTRANCE"><path d="M 284.22 1160.00 L 284.22 963.29 L 376.79 963.29 L 376.79 1160.00 Z"/></clipPath></defs>
+<g clip-path="url(#relief-S_W_NORTH-ENTRANCE)">
+<rect x="290.70" y="1073.45" width="33.32" height="74.21" fill="none" stroke="#70706c" stroke-width="0.46"/>
+<rect x="290.70" y="974.09" width="33.32" height="81.65" fill="none" stroke="#70706c" stroke-width="0.46"/>
+<rect x="336.99" y="1073.45" width="33.32" height="74.21" fill="none" stroke="#70706c" stroke-width="0.46"/>
+<rect x="336.99" y="974.09" width="33.32" height="81.65" fill="none" stroke="#70706c" stroke-width="0.46"/>
+</g>
+<defs><clipPath id="b-clip-S_W_NORTH-L1-W1"><path d="M 205.05 832.15 L 205.05 708.73 L 289.90 708.73 L 289.90 832.15 Z"/></clipPath></defs>
+<path d="M 205.05 832.15 L 205.05 708.73 L 289.90 708.73 L 289.90 832.15 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 205.05 832.15 L 205.05 708.73 L 289.90 708.73 L 289.90 832.15 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-S_W_NORTH-L1-W1)">
+<rect x="210.45" y="779.08" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="210.45" y="721.07" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="252.87" y="779.08" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="252.87" y="721.07" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="211.22" y="798.60" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="211.22" y="736.89" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="281.80" y="798.60" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="281.80" y="736.89" width="1.93" height="5.40" fill="#56534b"/>
+</g>
+<path d="M 205.05 832.15 L 205.05 708.73 L 289.90 708.73 L 289.90 832.15 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-S_W_NORTH-L1-W2"><path d="M 371.11 832.15 L 371.11 708.73 L 455.97 708.73 L 455.97 832.15 Z"/></clipPath></defs>
+<path d="M 371.11 832.15 L 371.11 708.73 L 455.97 708.73 L 455.97 832.15 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 371.11 832.15 L 371.11 708.73 L 455.97 708.73 L 455.97 832.15 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-S_W_NORTH-L1-W2)">
+<rect x="376.51" y="779.08" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="376.51" y="721.07" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="418.94" y="779.08" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="418.94" y="721.07" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="377.29" y="798.60" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="377.29" y="736.89" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="447.87" y="798.60" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="447.87" y="736.89" width="1.93" height="5.40" fill="#56534b"/>
+</g>
+<path d="M 371.11 832.15 L 371.11 708.73 L 455.97 708.73 L 455.97 832.15 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-S_W_NORTH-L2-W1"><path d="M 205.05 577.59 L 205.05 454.17 L 289.90 454.17 L 289.90 577.59 Z"/></clipPath></defs>
+<path d="M 205.05 577.59 L 205.05 454.17 L 289.90 454.17 L 289.90 577.59 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 205.05 577.59 L 205.05 454.17 L 289.90 454.17 L 289.90 577.59 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-S_W_NORTH-L2-W1)">
+<rect x="210.45" y="524.52" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="210.45" y="466.51" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="252.87" y="524.52" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="252.87" y="466.51" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="211.22" y="544.04" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="211.22" y="482.32" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="281.80" y="544.04" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="281.80" y="482.32" width="1.93" height="5.40" fill="#56534b"/>
+</g>
+<path d="M 205.05 577.59 L 205.05 454.17 L 289.90 454.17 L 289.90 577.59 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-S_W_NORTH-L2-W2"><path d="M 371.11 577.59 L 371.11 454.17 L 455.97 454.17 L 455.97 577.59 Z"/></clipPath></defs>
+<path d="M 371.11 577.59 L 371.11 454.17 L 455.97 454.17 L 455.97 577.59 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="7.71"/>
+<path d="M 371.11 577.59 L 371.11 454.17 L 455.97 454.17 L 455.97 577.59 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-S_W_NORTH-L2-W2)">
+<rect x="376.51" y="524.52" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="376.51" y="466.51" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="418.94" y="524.52" width="31.63" height="42.27" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="418.94" y="466.51" width="31.63" height="50.60" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="377.29" y="544.04" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="377.29" y="482.32" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="447.87" y="544.04" width="1.93" height="5.40" fill="#56534b"/>
+<rect x="447.87" y="482.32" width="1.93" height="5.40" fill="#56534b"/>
+</g>
+<path d="M 371.11 577.59 L 371.11 454.17 L 455.97 454.17 L 455.97 577.59 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<line x1="150.00" y1="1160.00" x2="511.02" y2="1160.00" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="521.02" y="1164.00">L floor 0 / slab 3.3</text>
+<text class="tiny" x="521.02" y="1041.20">private entry</text>
+<line x1="150.00" y1="905.44" x2="511.02" y2="905.44" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="521.02" y="909.44">L1 floor 3.3 / slab 6.6</text>
+<text class="tiny" x="521.02" y="786.64">family sitting rooms</text>
+<line x1="150.00" y1="650.87" x2="511.02" y2="650.87" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="521.02" y="654.87">L2 floor 6.6 / slab 9.9</text>
+<text class="tiny" x="521.02" y="532.08">bedrooms</text>
+<line x1="330.51" y1="1160.00" x2="330.51" y2="922.41" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="330.51" y="1175.00" text-anchor="middle">29.66</text>
+<line x1="247.47" y1="905.44" x2="247.47" y2="667.85" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="247.47" y="920.44" text-anchor="middle">28.584</text>
+<line x1="413.54" y1="905.44" x2="413.54" y2="667.85" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="413.54" y="920.44" text-anchor="middle">30.736</text>
+<line x1="247.47" y1="650.87" x2="247.47" y2="413.28" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="247.47" y="665.87" text-anchor="middle">28.584</text>
+<line x1="413.54" y1="650.87" x2="413.54" y2="413.28" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="413.54" y="665.87" text-anchor="middle">30.736</text>
+<line x1="150.00" y1="1214.00" x2="511.02" y2="1214.00" stroke="#899294"/><text class="label" x="330.51" y="1231.00" text-anchor="middle">overall facade 4.68 m · lower dimensions are ground pier bays</text>
+<line x1="150.00" y1="1244.00" x2="511.02" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="330.51" y="1258.00" text-anchor="middle">4.68</text>
+<circle cx="330.51" cy="951.29" r="5" fill="#b44b42"/><text class="tiny" x="330.51" y="942.29" text-anchor="middle">principal entrance</text>
+<rect x="1305.00" y="396.31" width="370.27" height="763.69" fill="#e5e1d8" stroke="#24353a" stroke-width="2"/>
+<rect x="1305.00" y="382.43" width="370.27" height="13.89" fill="#818987"/>
+<rect x="1305.00" y="340.00" width="12.34" height="42.43" fill="#a5a398" stroke="#687477"/>
+<rect x="1662.93" y="340.00" width="12.34" height="42.43" fill="#a5a398" stroke="#687477"/>
+<rect x="1312.71" y="922.41" width="354.84" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1490.14" y="1041.20" text-anchor="middle">principal entrance an…</text>
+<rect x="1312.71" y="667.85" width="354.84" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1490.14" y="786.64" text-anchor="middle">family sitting rooms</text>
+<rect x="1312.71" y="413.28" width="354.84" height="237.59" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1490.14" y="532.08" text-anchor="middle">bedrooms</text>
+<rect x="1305.00" y="905.44" width="370.27" height="16.97" fill="#818987"/>
+<rect x="1305.00" y="650.87" width="370.27" height="16.97" fill="#818987"/>
+<rect x="1305.00" y="396.31" width="370.27" height="16.97" fill="#818987"/>
+<path d="M 1675.27 1160.00 L 1658.30 1160.00 L 1658.30 963.29 L 1675.27 963.29" fill="none" stroke="#b44b42" stroke-width="3"/>
+<line x1="1305.00" y1="1190.00" x2="1675.27" y2="1190.00" stroke="#899294"/><text class="label" x="1490.14" y="1207.00" text-anchor="middle">enclosure depth 4.8 m</text>
+<text class="label" x="1230" y="1238">section opening 1.2 W × 2.55 H × 0.22 recess</text>
+<text class="tiny" x="1230" y="1256">opening support/return depth 0.22 m · closure: closed timber leaves</text>
+<text class="tiny" x="1210" y="232">Upper recesses show projected sill/head envelopes; exact curved profiles follow the instance opening schedule.</text>
+<text id="structural-grid" class="tiny" x="80" y="1242">Bay edges: 27.32, 32</text>
+<text class="tiny" x="1210" y="210">Roof: One closed structural roof with a perimeter parapet; no detached roof boxes</text>
+</svg>

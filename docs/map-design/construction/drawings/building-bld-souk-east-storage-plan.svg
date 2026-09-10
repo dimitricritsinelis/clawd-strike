@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 souk east storage facade composition · BLD_SOUK_EAST_STORAGE · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="144.47" y="254.47" width="130.74" height="581.05" fill="#e6e0d1"/>
+<line x1="144.47" y1="835.53" x2="144.47" y2="254.47" stroke="#344548" stroke-width="2"/>
+<line x1="275.21" y1="835.53" x2="275.21" y2="254.47" stroke="#344548" stroke-width="2"/>
+<line x1="144.47" y1="835.53" x2="275.21" y2="835.53" stroke="#344548" stroke-width="2"/>
+<line x1="144.47" y1="254.47" x2="275.21" y2="254.47" stroke="#344548" stroke-width="2"/>
+<rect x="148.11" y="645.47" width="123.47" height="186.42" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="209.84" y="738.68" text-anchor="middle">R1</text>
+<rect x="148.11" y="451.79" width="123.47" height="186.42" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="209.84" y="545.00" text-anchor="middle">R2</text>
+<rect x="148.11" y="258.11" width="123.47" height="186.42" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="209.84" y="351.32" text-anchor="middle">R3</text>
+<circle cx="275.21" cy="545.00" r="5" fill="#a14b3d"/><text class="label" x="283.21" y="537.00">rear staff entrance</text>
+<circle cx="144.47" cy="738.68" r="4" fill="#77715f"/>
+<polygon points="198.95,692.20 198.95,690.75 169.89,690.75 169.89,692.20" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="275.21,545.00 258.87,545.00 228.00,545.00 228.00,675.13 184.42,675.13 184.42,707.81" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="198.95" y="686.20">side-door → cs-e-REAR-STAFF-DOOR</text>
+<circle cx="144.47" cy="545.00" r="4" fill="#77715f"/>
+<polygon points="198.95,483.99 198.95,482.54 169.89,482.54 169.89,483.99" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="275.21,545.00 258.87,545.00 228.00,545.00 228.00,481.45 184.42,481.45 184.42,514.13" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="198.95" y="477.99">side-door → cs-e-REAR-STAFF-DOOR</text>
+<circle cx="144.47" cy="351.32" r="4" fill="#77715f"/>
+<polygon points="198.95,304.83 198.95,303.38 169.89,303.38 169.89,304.83" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="275.21,545.00 258.87,545.00 228.00,545.00 228.00,287.76 184.42,287.76 184.42,320.45" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="198.95" y="298.83">side-door → cs-e-REAR-STAFF-DOOR</text>
+<rect x="134.31" y="692.93" width="79.17" height="91.52" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<rect x="134.31" y="485.08" width="79.17" height="119.84" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<rect x="134.31" y="305.56" width="79.17" height="91.52" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 53..56.6 · y 32..48 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Covered-souk trading store</text>
+<text class="label" x="1100" y="244">R1: cloth, rug and folding workfronts</text>
+<text class="label" x="1100" y="288">R2: cloth, rug and folding workfronts</text>
+<text class="label" x="1100" y="332">R3: cloth, rug and folding workfronts</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Covered-souk trading store</text>
+<text class="tiny" x="1100" y="678">2 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Use ground frontage piers separately from</text>
+<text class="tiny" x="1100" y="714">floor-specific upper room and framing axes.</text>
+<text class="tiny" x="1100" y="732">Corresponding openings serving one room share</text>
+<text class="tiny" x="1100" y="750">its canonical ID where the room spans opposite</text>
+<text class="tiny" x="1100" y="768">faces. A different front/rear axis must have a</text>
+<text class="tiny" x="1100" y="786">stated room-use relationship.</text>
+<text class="tiny" x="1100" y="804">Ground trade bays and staff stairs use</text>
+<text class="tiny" x="1100" y="822">different widths because they have different</text>
+<text class="tiny" x="1100" y="840">functions; residential principal elevations use</text>
+<text class="tiny" x="1100" y="858">a centered entrance. No free offsets or filler</text>
+<text class="tiny" x="1100" y="876">openings.</text>
+</svg>

@@ -722,7 +722,7 @@ test("compiles signboard width from its served-opening anchor", async () => {
     await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
   );
   const runtime = compileMapSpec(source, authoritativeCompositionWaivers);
-  for (const anchorId of ["SPICE_W_SIGN_1", "DYE_W_SIGN_2"]) {
+  for (const anchorId of ["SPICE_W_SIGN_1", "DYE_E_SIGN_2"]) {
     const sourceAnchor = source.anchors.find((anchor) => anchor.id === anchorId);
     const placement = runtime.dressingPlacements.find((candidate) => candidate.anchorId === anchorId);
     assert.ok(sourceAnchor && placement);

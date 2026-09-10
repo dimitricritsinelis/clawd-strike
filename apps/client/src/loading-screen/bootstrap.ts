@@ -30,7 +30,7 @@ export type LoadingScreenHandle = {
 
 const DEFAULT_AUDIO: LoadingAmbientAudioOptions = {
   sources: getLoadingScreenAmbientAudioSources(),
-  gain: 0.45,
+  gain: 0.2,
   playFromSec: 0,
   loopStartSec: 0,
   loopEndSec: Number.POSITIVE_INFINITY,

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1340" viewBox="0 0 2200 1340">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="2200" height="1340" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 a gate facade composition · BLD_A_GATE · Structure</text>
+<text class="sub" x="48" y="76">UNTEXTURED STRUCTURE DRAWING · neutral clay/ink · dimensions in metres · composition review only</text>
+<rect class="panel" x="48" y="105" width="1080" height="1165" rx="8"/><rect class="panel" x="1160" y="105" width="990" height="1165" rx="8"/>
+<text id="principal-elevation" class="title" x="80" y="158">PRINCIPAL SOUTH ELEVATION</text><text id="transverse-section" class="title" x="1210" y="158">TRANSVERSE SECTION</text>
+<text class="sub" x="80" y="184">Ceremonial gate and registry</text><text class="sub" x="1210" y="184">Through the principal entrance and floor structure</text>
+<rect x="150.00" y="434.50" width="880.00" height="725.50" fill="#ddd7ca" stroke="#24353a" stroke-width="2"/>
+<rect x="150.00" y="385.47" width="880.00" height="49.04" fill="#d1cabb" stroke="#687477"/>
+<line x1="150.00" y1="422.41" x2="1030.00" y2="422.41" stroke="#b8b5ad" stroke-width="3"/>
+<line x1="150.00" y1="392.18" x2="1030.00" y2="392.18" stroke="#cbc6ba" stroke-width="3"/>
+<line x1="150.00" y1="385.47" x2="1030.00" y2="385.47" stroke="#565d5d" stroke-width="3"/>
+<defs><clipPath id="surround-A_S_GATE-PRINCIPAL"><rect x="481.18" y="869.80" width="217.65" height="290.20"/></clipPath></defs>
+<g clip-path="url(#surround-A_S_GATE-PRINCIPAL)">
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00" fill="none" stroke="#a4a4a0" stroke-width="29.56" stroke-linejoin="round"/>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00" fill="none" stroke="#72726f" stroke-width="23.65"/>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00" fill="none" stroke="#a4a4a0" stroke-width="22.65"/>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00" fill="none" stroke="#72726f" stroke-width="13.30"/>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00" fill="none" stroke="#a4a4a0" stroke-width="12.30"/>
+<polygon points="485.71,1146.23 488.56,1144.55 491.42,1146.23 488.56,1147.91" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1138.17 488.56,1136.49 491.42,1138.17 488.56,1139.85" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1130.11 488.56,1128.43 491.42,1130.11 488.56,1131.79" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1122.05 488.56,1120.37 491.42,1122.05 488.56,1123.73" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1113.98 488.56,1112.31 491.42,1113.98 488.56,1115.66" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1105.92 488.56,1104.24 491.42,1105.92 488.56,1107.60" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1097.86 488.56,1096.18 491.42,1097.86 488.56,1099.54" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1089.80 488.56,1088.12 491.42,1089.80 488.56,1091.48" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1081.74 488.56,1080.06 491.42,1081.74 488.56,1083.42" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1073.68 488.56,1072.00 491.42,1073.68 488.56,1075.36" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1065.62 488.56,1063.94 491.42,1065.62 488.56,1067.30" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1057.56 488.56,1055.88 491.42,1057.56 488.56,1059.24" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1049.50 488.56,1047.82 491.42,1049.50 488.56,1051.18" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1041.44 488.56,1039.76 491.42,1041.44 488.56,1043.11" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1033.37 488.56,1031.69 491.42,1033.37 488.56,1035.05" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1025.31 488.56,1023.63 491.42,1025.31 488.56,1026.99" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1017.25 488.56,1015.57 491.42,1017.25 488.56,1018.93" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1009.19 488.56,1007.51 491.42,1009.19 488.56,1010.87" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,1001.13 488.56,999.45 491.42,1001.13 488.56,1002.81" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,993.07 488.56,991.39 491.42,993.07 488.56,994.75" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,985.01 488.56,983.33 491.42,985.01 488.56,986.69" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="485.71,976.95 488.56,975.27 491.42,976.95 488.56,978.63" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1146.23 691.44,1144.55 694.29,1146.23 691.44,1147.91" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1138.17 691.44,1136.49 694.29,1138.17 691.44,1139.85" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1130.11 691.44,1128.43 694.29,1130.11 691.44,1131.79" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1122.05 691.44,1120.37 694.29,1122.05 691.44,1123.73" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1113.98 691.44,1112.31 694.29,1113.98 691.44,1115.66" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1105.92 691.44,1104.24 694.29,1105.92 691.44,1107.60" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1097.86 691.44,1096.18 694.29,1097.86 691.44,1099.54" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1089.80 691.44,1088.12 694.29,1089.80 691.44,1091.48" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1081.74 691.44,1080.06 694.29,1081.74 691.44,1083.42" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1073.68 691.44,1072.00 694.29,1073.68 691.44,1075.36" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1065.62 691.44,1063.94 694.29,1065.62 691.44,1067.30" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1057.56 691.44,1055.88 694.29,1057.56 691.44,1059.24" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1049.50 691.44,1047.82 694.29,1049.50 691.44,1051.18" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1041.44 691.44,1039.76 694.29,1041.44 691.44,1043.11" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1033.37 691.44,1031.69 694.29,1033.37 691.44,1035.05" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1025.31 691.44,1023.63 694.29,1025.31 691.44,1026.99" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1017.25 691.44,1015.57 694.29,1017.25 691.44,1018.93" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1009.19 691.44,1007.51 694.29,1009.19 691.44,1010.87" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,1001.13 691.44,999.45 694.29,1001.13 691.44,1002.81" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,993.07 691.44,991.39 694.29,993.07 691.44,994.75" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,985.01 691.44,983.33 694.29,985.01 691.44,986.69" fill="none" stroke="#757570" stroke-width="0.40"/>
+<polygon points="688.58,976.95 691.44,975.27 694.29,976.95 691.44,978.63" fill="none" stroke="#757570" stroke-width="0.40"/>
+</g>
+<defs><clipPath id="b-clip-A_S_GATE-PRINCIPAL"><path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00 Z"/></clipPath></defs>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="0.00"/>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-PRINCIPAL)">
+<path d="M 495.95 978.63 H 684.05 M 590.00 1160.00 V 978.63" stroke="#c7b18c" stroke-width="2"/>
+<path d="M 507.24 1129.77 H 582.48" stroke="#56534b" stroke-width="2"/>
+<path d="M 507.24 1002.14 H 582.48" stroke="#56534b" stroke-width="2"/>
+<path d="M 597.52 1129.77 H 672.76" stroke="#56534b" stroke-width="2"/>
+<path d="M 597.52 1002.14 H 672.76" stroke="#56534b" stroke-width="2"/>
+<path d="M 508.05 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 520.14 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 532.23 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 544.32 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 556.41 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 568.50 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 580.60 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 592.69 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 604.78 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 616.87 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 628.96 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 641.05 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 653.15 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 665.24 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+<path d="M 677.33 978.63 V 884.58" stroke="#c7b18c" stroke-width="1"/>
+</g>
+<path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="relief-A_S_GATE-PRINCIPAL"><path d="M 495.95 1160.00 L 495.95 956.19 Q 548.62 906.61 590.00 884.58 Q 631.38 906.61 684.05 956.19 L 684.05 1160.00 Z"/></clipPath></defs>
+<g clip-path="url(#relief-A_S_GATE-PRINCIPAL)">
+<rect x="509.12" y="1080.20" width="67.71" height="69.06" fill="none" stroke="#70706c" stroke-width="0.45"/>
+<rect x="509.12" y="988.03" width="67.71" height="75.84" fill="none" stroke="#70706c" stroke-width="0.45"/>
+<rect x="603.17" y="1080.20" width="67.71" height="69.06" fill="none" stroke="#70706c" stroke-width="0.45"/>
+<rect x="603.17" y="988.03" width="67.71" height="75.84" fill="none" stroke="#70706c" stroke-width="0.45"/>
+</g>
+<defs><clipPath id="b-clip-A_S_GATE-RELIEVING-1"><path d="M 230.61 1086.11 L 230.61 970.43 Q 284.35 919.65 338.09 970.43 L 338.09 1086.11 Z"/></clipPath></defs>
+<path d="M 230.61 1086.11 L 230.61 970.43 Q 284.35 919.65 338.09 970.43 L 338.09 1086.11 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 230.61 1086.11 L 230.61 970.43 Q 284.35 919.65 338.09 970.43 L 338.09 1086.11 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-RELIEVING-1)">
+</g>
+<path d="M 230.61 1086.11 L 230.61 970.43 Q 284.35 919.65 338.09 970.43 L 338.09 1086.11 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-A_S_GATE-RELIEVING-2"><path d="M 841.91 1086.11 L 841.91 970.43 Q 895.65 919.65 949.39 970.43 L 949.39 1086.11 Z"/></clipPath></defs>
+<path d="M 841.91 1086.11 L 841.91 970.43 Q 895.65 919.65 949.39 970.43 L 949.39 1086.11 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 841.91 1086.11 L 841.91 970.43 Q 895.65 919.65 949.39 970.43 L 949.39 1086.11 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-RELIEVING-2)">
+</g>
+<path d="M 841.91 1086.11 L 841.91 970.43 Q 895.65 919.65 949.39 970.43 L 949.39 1086.11 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-A_S_GATE-L1-W1"><path d="M 247.40 760.31 L 247.40 646.11 L 321.30 646.11 L 321.30 760.31 Z"/></clipPath></defs>
+<path d="M 247.40 760.31 L 247.40 646.11 L 321.30 646.11 L 321.30 760.31 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 247.40 760.31 L 247.40 646.11 L 321.30 646.11 L 321.30 760.31 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-L1-W1)">
+<rect x="252.11" y="711.20" width="27.54" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="252.11" y="656.85" width="27.54" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="289.05" y="711.20" width="27.54" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="289.05" y="656.85" width="27.54" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 247.40 760.31 L 247.40 646.11 L 321.30 646.11 L 321.30 760.31 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-A_S_GATE-L1-W2"><path d="M 506.03 760.31 L 506.03 646.11 L 673.97 646.11 L 673.97 760.31 Z"/></clipPath></defs>
+<path d="M 506.03 760.31 L 506.03 646.11 L 673.97 646.11 L 673.97 760.31 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 506.03 760.31 L 506.03 646.11 L 673.97 646.11 L 673.97 760.31 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-L1-W2)">
+<rect x="510.73" y="711.20" width="46.58" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="510.73" y="656.85" width="46.58" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="566.71" y="711.20" width="46.58" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="566.71" y="656.85" width="46.58" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="622.69" y="711.20" width="46.58" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="622.69" y="656.85" width="46.58" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 506.03 760.31 L 506.03 646.11 L 673.97 646.11 L 673.97 760.31 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-A_S_GATE-L1-W3"><path d="M 858.70 760.31 L 858.70 646.11 L 932.60 646.11 L 932.60 760.31 Z"/></clipPath></defs>
+<path d="M 858.70 760.31 L 858.70 646.11 L 932.60 646.11 L 932.60 760.31 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 858.70 760.31 L 858.70 646.11 L 932.60 646.11 L 932.60 760.31 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-L1-W3)">
+<rect x="863.40" y="711.20" width="27.54" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="863.40" y="656.85" width="27.54" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="900.35" y="711.20" width="27.54" height="39.70" fill="none" stroke="#bfa988" stroke-width="1"/>
+<rect x="900.35" y="656.85" width="27.54" height="47.49" fill="none" stroke="#bfa988" stroke-width="1"/>
+</g>
+<path d="M 858.70 760.31 L 858.70 646.11 L 932.60 646.11 L 932.60 760.31 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<defs><clipPath id="b-clip-A_S_GATE-L2-W2"><path d="M 529.54 515.11 L 529.54 468.09 L 650.46 468.09 L 650.46 515.11 Z"/></clipPath></defs>
+<path d="M 529.54 515.11 L 529.54 468.09 L 650.46 468.09 L 650.46 515.11 Z" fill="#ddd6c4" stroke="#a39276" stroke-width="6.72"/>
+<path d="M 529.54 515.11 L 529.54 468.09 L 650.46 468.09 L 650.46 515.11 Z" fill="#8e8d85" stroke="#4c514d" stroke-width="1.1"/>
+<g clip-path="url(#b-clip-A_S_GATE-L2-W2)">
+<path d="M 532.90 509.74 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 504.37 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 498.99 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 493.62 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 488.24 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 482.87 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 477.50 H 647.10" stroke="#bba786" stroke-width="1"/>
+<path d="M 532.90 472.12 H 647.10" stroke="#bba786" stroke-width="1"/>
+</g>
+<path d="M 529.54 515.11 L 529.54 468.09 L 650.46 468.09 L 650.46 515.11 Z" fill="none" stroke="#4c514d" stroke-width="1.3"/>
+<rect x="534.58" y="847.63" width="110.84" height="13.44" fill="#c5c1b6" stroke="#66594a" stroke-width="1"/>
+<text x="590.00" y="854.35" text-anchor="middle" dominant-baseline="central" font-size="6.72" fill="#675441">BAB AL-SUQ</text>
+<line x1="150.00" y1="1160.00" x2="1030.00" y2="1160.00" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="1040.00" y="1164.00">L floor 0 / slab 5</text>
+<text class="tiny" x="1040.00" y="999.45">closed gate vestibule a…</text>
+<line x1="150.00" y1="824.12" x2="1030.00" y2="824.12" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="1040.00" y="828.12">L1 floor 5 / slab 8</text>
+<text class="tiny" x="1040.00" y="730.75">gate registry office</text>
+<line x1="150.00" y1="622.60" x2="1030.00" y2="622.60" stroke="#687477" stroke-width="1.3"/><text class="tiny" x="1040.00" y="626.60">L2 floor 8 / slab 10.8</text>
+<text class="tiny" x="1040.00" y="535.94">archive and gate mainte…</text>
+<line x1="284.35" y1="1160.00" x2="284.35" y2="838.90" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="284.35" y="1175.00" text-anchor="middle">23.45</text>
+<line x1="590.00" y1="1160.00" x2="590.00" y2="838.90" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="590.00" y="1175.00" text-anchor="middle">28</text>
+<line x1="895.65" y1="1160.00" x2="895.65" y2="838.90" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="895.65" y="1175.00" text-anchor="middle">32.55</text>
+<line x1="284.35" y1="824.12" x2="284.35" y2="637.37" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="284.35" y="839.12" text-anchor="middle">23.45</text>
+<line x1="590.00" y1="824.12" x2="590.00" y2="637.37" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="590.00" y="839.12" text-anchor="middle">28</text>
+<line x1="895.65" y1="824.12" x2="895.65" y2="637.37" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="895.65" y="839.12" text-anchor="middle">32.55</text>
+<line x1="590.00" y1="622.60" x2="590.00" y2="449.28" stroke="#929b9a" stroke-width=".8" stroke-dasharray="4 4"/><text class="tiny" x="590.00" y="637.60" text-anchor="middle">28</text>
+<line x1="150.00" y1="1214.00" x2="1030.00" y2="1214.00" stroke="#899294"/><text class="label" x="590.00" y="1231.00" text-anchor="middle">overall facade 13.1 m · lower dimensions are ground pier bays</text>
+<line x1="150.00" y1="1244.00" x2="418.70" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="284.35" y="1258.00" text-anchor="middle">4</text>
+<line x1="418.70" y1="1244.00" x2="761.30" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="590.00" y="1258.00" text-anchor="middle">5.1</text>
+<line x1="761.30" y1="1244.00" x2="1030.00" y2="1244.00" stroke="#a2aaab"/><text class="tiny" x="895.65" y="1258.00" text-anchor="middle">4</text>
+<circle cx="590.00" cy="872.58" r="5" fill="#b44b42"/><text class="tiny" x="590.00" y="863.58" text-anchor="middle">principal entrance</text>
+<rect x="1305.00" y="391.92" width="241.80" height="768.08" fill="#e5e1d8" stroke="#24353a" stroke-width="2"/>
+<rect x="1305.00" y="379.12" width="241.80" height="12.80" fill="#818987"/>
+<rect x="1305.00" y="340.00" width="11.38" height="39.12" fill="#a5a398" stroke="#687477"/>
+<rect x="1535.42" y="340.00" width="11.38" height="39.12" fill="#a5a398" stroke="#687477"/>
+<rect x="1312.11" y="820.05" width="227.58" height="339.95" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1425.90" y="990.03" text-anchor="middle">closed gate vestibule…</text>
+<rect x="1312.11" y="606.70" width="227.58" height="197.71" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1425.90" y="705.55" text-anchor="middle">Carved portal is the …</text>
+<rect x="1312.11" y="407.56" width="227.58" height="183.49" fill="#f7f4ec" stroke="#687477" stroke-width="1"/><text class="tiny" x="1425.90" y="499.31" text-anchor="middle">Carved portal is the …</text>
+<rect x="1305.00" y="804.41" width="241.80" height="15.65" fill="#818987"/>
+<rect x="1305.00" y="591.05" width="241.80" height="15.65" fill="#818987"/>
+<rect x="1305.00" y="391.92" width="241.80" height="15.65" fill="#818987"/>
+<path d="M 1546.80 1160.00 L 1529.74 1160.00 L 1529.74 868.41 L 1546.80 868.41" fill="none" stroke="#b44b42" stroke-width="3"/>
+<line x1="1305.00" y1="1190.00" x2="1546.80" y2="1190.00" stroke="#899294"/><text class="label" x="1425.90" y="1207.00" text-anchor="middle">enclosure depth 3.4 m</text>
+<text class="label" x="1230" y="1238">section opening 2.8 W × 4.1 H × 0.24 recess</text>
+<text class="tiny" x="1230" y="1256">opening support/return depth 0.24 m · closure: closed timber leaves with a fixed opaque tran…</text>
+<text class="tiny" x="1210" y="232">Upper recesses show projected sill/head envelopes; exact curved profiles follow the instance opening schedule.</text>
+<rect x="1512.67" y="615.94" width="34.14" height="120.90" fill="#d0c7b4" stroke="#8f5548" stroke-width="2"/>
+<rect x="1525.47" y="427.48" width="21.34" height="49.78" fill="#d0c7b4" stroke="#8f5548" stroke-width="2"/>
+<rect x="1545.74" y="829.30" width="1.07" height="14.22" fill="#a99b84" stroke="#475255"/>
+<text id="structural-grid" class="tiny" x="80" y="1242">Bay edges: 21.45, 25.45, 30.55, 34.55</text>
+<text class="tiny" x="1210" y="210">Roof: One closed structural roof with a perimeter parapet; no detached roof boxes</text>
+</svg>

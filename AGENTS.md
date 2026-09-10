@@ -2,49 +2,56 @@
 
 ## Remaining work
 
-Finish the Bazaar map one named area at a time via TRANSFORM in [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md). [docs/map-design/construction/README.md](docs/map-design/construction/README.md) is the canonical handoff: each sheet fixes the layout, assemblies and character schedule, with bounded craft discretion in SD-21/22. TRANSFORM builds the sheet, performs its bounded assembly/interface inspection, and marks it `built` only with that construction evidence. A request for one named area stops there; continue only through an explicit user-provided area queue. Gameplay and aesthetic validation are a later user-authorized task. Each area should leave as a professional piece of environment design; rebuild whatever the sheet needs.
+[docs/map-design/construction/README.md](docs/map-design/construction/README.md) is the BZ-04 whole-map construction handoff. Its [design.json](docs/map-design/construction/design.json), complete zone drawings, assembly/material details and integration contract define the target. All 25 zones and 100 faces are designed, including boundaries, short returns, roofs and background. A frontage exemption is not visual approval.
+
+The user authorizes comprehensive redesign of weak render-only visuals, including old KEEP items. Preserve gameplay colliders, routes, cover silhouettes, spawns and playable elevation. Some existing massing heights drive collision; do not change them casually. New visual targets must cover the fixed collider envelope.
+
+Documentation work changes only the design handoff. The approved R7 full-map build follows [.claude/skills/map-polish/SKILL.md](.claude/skills/map-polish/SKILL.md) and the canonical [whole-map queue and readiness contract](docs/map-design/construction/README.md#approved-whole-map-queue-and-readiness). Continue automatically through that queue after each area’s end review and targeted corrections; routine human approval is not an area boundary. Complete builds require bounded source-to-game evidence; a user-requested construction-only task records the deferred checks honestly. The prior Spice and B trials do not satisfy BZ-04.
+
+Implementation follows **implement, review at the end, then quickly correct**. Trust the approved area documents; keep mid-build review minimal. Reuse installed shared assets and tooling. One consolidated end review covers correctness, visuals, gameplay and performance, followed by targeted corrections and affected checks only. No recurring review agents or approval ladder. Stop promptly when the user asks; preserve the last tested state and report remaining work.
+
+The B-04 trial is installed; its evidence is not final visual acceptance. The approved R7 B sheet uses `B-05-finish-only`; the B-04-only builder needs the scheduled implementation work before it can consume that phase. Historical PROPOSED labels do not reopen the user’s R7 approval. Read designRevision and implementationPhase from the active handoff. Never treat an installed older issue as implementing a newer proposal, and never silently skip unsupported feature kinds.
 
 ## Agent configuration
 
-Preferred implementing model: GPT-6 Astra. One implementing owner per area. Ask for approval before spawning subagents unless their configuration is already authorized in the current task; the user's preferred supporting configuration is Terra with high reasoning. This preference is not blanket permission to spawn. For a one-area implementation trial, use the main agent only unless the user requests otherwise.
+For the approved whole-map task, the user authorizes as many bounded subagents as are useful. Suggested configuration: GPT-6 Astra with high reasoning for the lead and medium reasoning for implementation workers; this is guidance, not a concurrency cap. One implementing owner per area; the lead owns integration and shared registries. Assign disjoint source/output files to parallel workers, coordinate dependencies, and serialize heavy Blender jobs and live-game verification. Follow the canonical README queue. A separately requested one-area trial stays with the main agent unless the user requests delegation.
 
 ## Art direction
 
-An active, flourishing Middle Eastern desert bazaar with the crafted realism and readability of a polished FPS environment. Heavy foot traffic, maintained businesses and occupied homes; worn and cared for, never sterile or filthy.
+A simple, readable FPS environment with traditional bazaar character and discreet modern utilities. Dust2 guides clear forms, routes, cover and selective detail. Souq Waqif and Mutrah guide architecture and craft, with selected Al Wakrah and Marrakech references. The map is inspired by these places, not a literal reconstruction.
 
-- Palette: warm sandstone, sandy ivory and cream-to-tan aged lime plaster with occasional scheduled faded earth-red fields, weathered brown timber, cream shade cloth, controlled rust-red / teal-green / indigo-blue textile accents. The base reads sun-aged and occupied, never newly whitewashed.
-- Preserve layered street depth, occupied upper volumes, distinct trades, quiet service faces and clear routes. Measured layout does not imply identical buildings: use the scheduled differences in plaster grain and color, stonework, repairs, rugs, joinery and cloth sag to give each tenancy its own history.
-- Build complete openings, joinery, displays, cloth supports and ground contacts. Keep junctions sound and support planes exact; hand-cut edges and trowelled plaster can soften visible right angles within the scheduled envelope. Surface aging follows use: base accumulation, use-polish at hands and feet, and localized drips or cloth-edge grime. Civic faces stay quieter than trades and services. Do not weather above human height except at drains or sun bleach.
-- Retained rugs, hanging and rolled textiles, stocked counters, pottery, benches, planted sills and laundry supply life. Add only the character details scheduled in the sheets. Earth-toned coarse plaster is a wall material, not a full-height dirt overlay; dirt collects in joints and sheltered feet, while busy paths are swept and polished.
-- Avoid flat procedural decoration, identical repair masks, uniformly beige or cold-white surfaces, uniform brown washes, sepia post-process, random clutter and cinematic effects that disguise weak assets. Never randomize the protected plan or move retained assets to achieve irregularity.
+- Design complete buildings first: use, storeys, structural bay axes, principal entrance, shopfront and roof. Align openings through the storeys; use symmetry where appropriate. Any asymmetry follows a specific stair, addition or trade function. During document authoring, judge the untextured elevation and section before materials or wear. During implementation, build the approved composition and review the complete result at the end.
+- Balanced aged plaster and stone, weathered timber, cream cloth, and concentrated rust/teal/indigo accents. Distinct owners, building ages and rooflines; no alternating-material formula or uniformly brown scene.
+- Compose the whole player view. Routes, cover and entrances read first; tenancies and shade second; joinery and wear at close range. Quiet fields are designed and finished, not unassigned blank walls.
+- Life comes from supported, purposeful groups: trading stock, rugs, seating, pottery, planting, storage and work. Keep breathing room between groups and every protected walkway clear. No random scatter or decorative quota.
+- Complete openings, closures, supports and ground contacts. Keep structural lines sound; softened plaster, hand-cut edges, unequal parcels and cloth curves supply irregularity. Do not distort gameplay geometry to simulate age.
+- Use the target material aliases/scales and actual licensed source scans. Dirt follows contact and use; it cannot repair weak proportions or hide a repeated texture. Avoid full-height grunge, artificial wear stripes, sepia grading and cinematic effects that conceal unfinished assets.
 
-Finish criteria: [docs/map-design/quality-bar.md](docs/map-design/quality-bar.md).
+Read [design-basis.md](docs/map-design/construction/design-basis.md) and [quality-bar.md](docs/map-design/quality-bar.md).
 
-## References
+## References and drawings
 
-Open the actual images at the start of every map session; a path is not visual inspection. Subagents do not inherit visual context: hand any delegated map task this art direction and the relevant images.
+Open the actual relevant images and current BZ-04 drawings; a path is not visual inspection. Hand delegated visual work this direction and the relevant images.
 
-1. [docs/map-design/refs/bazaar_main_hall_reference.png](docs/map-design/refs/bazaar_main_hall_reference.png): founding reference and primary authority for warm aged cream/tan surfaces, trade patina, street depth and composition.
-2. [docs/map-design/development-plan/references/](docs/map-design/development-plan/references/): per-district geometry, craft and trade-role studies. Never a texture, blueprint or stall template.
-3. [docs/map-design/refs/](docs/map-design/refs/) `cs2_daylight_ref_1..5.png`: finish and gameplay readability.
-4. [docs/map-design/development-plan/design-atlas.pdf](docs/map-design/development-plan/design-atlas.pdf) and [drawings/](docs/map-design/development-plan/drawings/): review elevations and massing proposals per building.
+1. [Current master plan](docs/map-design/construction/drawings/master-plan.svg) and per-zone plans/elevations linked by the area sheet: measured target composition.
+2. [Reference register](docs/map-design/construction/design-basis.md): exact source links and what may be borrowed from each.
+3. [Founding Bazaar image](docs/map-design/refs/bazaar_main_hall_reference.png): warmth, street depth and trade character. Images never supply dimensions or new gameplay.
+4. [CS2 daylight reference 1](docs/map-design/refs/cs2_daylight_ref_1.png): Dust2 gameplay readability; the other CS2 images are finish references from other maps.
 
-The [tracked engineering proof](docs/map-design/refs/spice-bay-engineering-proof.png) demonstrates one built Spice bay; its limits and the later trial defects are recorded in the construction README and progress index. It does not establish the revised finish quality. It is supporting evidence, not a replacement for the founding reference or the full area sheet.
-
-Images communicate appearance, never dimensions or gameplay. Dimensions come from the construction sheets and `map_spec.json`.
+The Revision 3 atlas, old building drawings, earlier AI boards and cropped Spice proof are superseded studies. They are not BZ-04 design or finish acceptance. Use the current target drawings and the three-discipline review record.
 
 ## Blender
 
 Two ways to drive Blender. Pick by need, not habit.
 
-- **Headless `bpy` (default for anything shipped).** `assets/source/<unit>/build.py` run with `/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python <script>`. Deterministic, reproducible, needs nothing running. Facades and section shells always ship this way.
+- **Headless `bpy` (default for anything shipped).** `assets/source/<unit>/build.py` run with `/Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python-exit-code 1 --python <script>`. Deterministic, reproducible, needs nothing running. Facades and section shells always ship this way.
 - **Blender MCP (live).** Talks to the addon inside the open Blender window on port 9876. Use it to inspect a scene, read real dimensions, take viewport screenshots, try geometry or materials, and preview Poly Haven assets. Prototype live, then port to `build.py` before shipping. One-off props and dressing may ship from a live-authored GLB when the `.blend` is committed next to it in the unit folder and `package.json` names that `.blend` as the model's `source`.
 
 Setup state on this machine (done 2026-09-07): Blender 5.2.1 LTS, addon `blender_mcp` 1.6 (protocol 5) installed and enabled, telemetry consent off, a startup script auto-starts the server whenever Blender opens with a window. This records the setup checked on that date, not a guarantee of a live connection in a new task. If a task uses MCP, first call addon-status or scene-info once; open Blender if it is unavailable. Headless construction needs no live MCP server and performs no new design survey. Several agents may be connected at once; commands run one at a time on Blender's main thread and the UI freezes while one runs.
 
 Clients: Claude Code uses `.mcp.json` (`uvx blender-mcp`, all tools). Codex uses `~/.codex/config.toml` `[mcp_servers.blender]`: the five core tools plus the three Poly Haven tools, `tool_timeout_sec = 180`, approvals `auto`. Hyper3D, Sketchfab, Hunyuan and Poly Pizza stay off everywhere; generated meshes fail the quality bar and the licence check.
 
-Codex sandbox (measured 2026-09-07): inside Codex's macOS sandbox headless Blender crashes at GPU backend detection and Playwright's Chromium cannot start, so `build.py`, `preview.py` and `pnpm map:shoot` all fail there while `pnpm map:check` runs. `.codex/config.toml` (git-ignored, local) therefore sets `sandbox_mode = "danger-full-access"` and `approval_policy = "never"` for this repo; on a fresh clone recreate it or pick Agent (full access) per thread. MCP calls are unaffected; the server runs outside the sandbox against the already open Blender.
+Codex sandbox: local QA servers, Chromium and headless Blender may require session-approved execution outside the sandbox. Follow the actual session permissions; a repository configuration is not evidence that those permissions are active. Use the authorized escalation path when a concrete launch error occurs. Do not change global sandbox settings as part of an area build.
 
 Using it well:
 
@@ -58,6 +65,6 @@ Using it well:
 
 ## Locks
 
-- `pnpm map:check` guards gameplay, collision, traversal, spawns and anchors during the later validation task. Never weaken the guard or rebaseline to hide a failure.
+- `pnpm map:check` guards gameplay, collision, traversal, spawns and anchors during implementation and validation. Never weaken the guard or rebaseline to hide a failure.
 - Gameplay baseline stands. New connectors or playable elevation need a separate user-authorized task. Everything render-only is open: walls, floors, materials, balconies, overheads, dressing, skyline, lighting.
-- [docs/map-design/specs/map_spec.json](docs/map-design/specs/map_spec.json) owns implemented state and protected measurements. The construction sheet decides the render-only work; use `scripts/apply-facade-package.mjs` to apply its package. Do not change the spec or design layer to fill a gap in a sheet. [docs/map-design/shots.json](docs/map-design/shots.json) owns later signoff cameras.
+- [docs/map-design/specs/map_spec.json](docs/map-design/specs/map_spec.json) owns implemented state and protected measurements. BZ-04 decides the render-only work. Use `scripts/apply-facade-package.mjs` for supported section/placement bindings and follow `construction/integration.md` for explicit registry and producer replacements. Do not invent changes to fill a design gap or weaken a guard. [docs/map-design/shots.json](docs/map-design/shots.json) owns later signoff cameras.

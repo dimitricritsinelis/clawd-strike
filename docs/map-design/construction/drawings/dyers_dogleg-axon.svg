@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 dyers dogleg facade-centered upper openings · DYERS_DOGLEG · Roof and enclosure axonometric</text>
+<text class="sub" x="48" y="76">MEASURED MASSING · solid envelopes and roof levels · finish details are in the elevations</text><rect class="panel" x="48" y="105" width="1500" height="930" rx="8"/>
+<polygon points="839.03,688.98 975.00,652.27 975.00,352.76 839.03,389.47" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="839.03,688.98 495.34,546.21 495.34,246.71 839.03,389.47" fill="#d3bb93" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="839.03,389.47 975.00,352.76 631.31,210.00 495.34,246.71" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="735.2" y="299.7" text-anchor="middle">P1</text>
+<polygon points="438.69,797.07 574.66,760.36 574.66,358.88 438.69,395.59" fill="#b6a185" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="438.69,797.07 95.00,654.31 95.00,252.83 438.69,395.59" fill="#b6a185" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<polygon points="438.69,395.59 574.66,358.88 230.97,216.12 95.00,252.83" fill="#e5d8bf" fill-opacity="1" stroke="#3b4646" stroke-width="1"/>
+<text class="parcel" x="334.8" y="305.9" text-anchor="middle">P2</text>
+<path d="M 675.88 519.87 L 703.45 512.43" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 703.45 512.43 L 644.53 487.95" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 644.53 487.95 L 616.96 495.40" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 616.96 495.40 L 675.88 519.87" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 675.88 459.82 L 703.45 452.37" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 703.45 452.37 L 644.53 427.90" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 644.53 427.90 L 616.96 435.34" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 616.96 435.34 L 675.88 459.82" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 675.88 519.87 L 675.88 459.82" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 703.45 512.43 L 703.45 452.37" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 644.53 487.95 L 644.53 427.90" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<path d="M 616.96 495.40 L 616.96 435.34" fill="none" stroke="#416e84" stroke-width="1.6" stroke-dasharray="4 3"/>
+<text class="label" x="1050" y="600">Blue wireframes: bounded scheduled facade features.</text><text class="tiny" x="1050" y="624">Balcony is open joinery, not a solid box; see its section.</text>
+<text class="label" x="1050" y="170">NUMERIC MASSING KEY</text>
+<text class="label" x="1050" y="227">P1: dd-e</text><text class="tiny" x="1050" y="240">wall 7.2 · cap 7.93</text>
+<text class="label" x="1050" y="259">P2: dd-w</text><text class="tiny" x="1050" y="272">wall 9.9 · cap 10.63</text>
+<text class="tiny" x="95" y="995">Footprint overlaps use the shared roof coordination schedule; no duplicate slabs or buried faces.</text>
+</svg>

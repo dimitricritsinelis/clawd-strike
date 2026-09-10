@@ -1,0 +1,2 @@
+RUG_GATE | RUG_GATE-travel-forward | design XYZ (27.500, 64.650, 1.700) m | yaw 180.00°, pitch 0.00°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

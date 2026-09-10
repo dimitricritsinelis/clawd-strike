@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 hammam stores facade composition · BLD_HAMMAM_STORES · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="237.86" y="347.86" width="345.00" height="394.29" fill="#e6e0d1"/>
+<rect x="237.86" y="683.00" width="345.00" height="59.14" fill="#e6e0d1"/>
+<rect x="385.71" y="347.86" width="197.14" height="59.14" fill="#e6e0d1"/>
+<line x1="237.86" y1="742.14" x2="237.86" y2="683.00" stroke="#344548" stroke-width="2"/>
+<line x1="237.86" y1="742.14" x2="385.71" y2="742.14" stroke="#344548" stroke-width="2"/>
+<line x1="237.86" y1="683.00" x2="237.86" y2="407.00" stroke="#344548" stroke-width="2"/>
+<line x1="237.86" y1="407.00" x2="237.86" y2="347.86" stroke="#344548" stroke-width="2"/>
+<line x1="237.86" y1="347.86" x2="385.71" y2="347.86" stroke="#344548" stroke-width="2"/>
+<line x1="582.86" y1="742.14" x2="582.86" y2="683.00" stroke="#344548" stroke-width="2"/>
+<line x1="385.71" y1="742.14" x2="582.86" y2="742.14" stroke="#344548" stroke-width="2"/>
+<line x1="582.86" y1="683.00" x2="582.86" y2="407.00" stroke="#344548" stroke-width="2"/>
+<line x1="582.86" y1="407.00" x2="582.86" y2="347.86" stroke="#344548" stroke-width="2"/>
+<line x1="385.71" y1="347.86" x2="582.86" y2="347.86" stroke="#344548" stroke-width="2"/>
+<rect x="247.71" y="357.71" width="325.29" height="374.57" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="410.36" y="545.00" text-anchor="middle">R1</text>
+<circle cx="582.86" cy="545.00" r="4" fill="#a14b3d"/>
+<text class="label" x="590.86" y="537.00">principal entrance</text>
+<text class="label" x="95" y="955">World footprint x 37.5..41 · y 72..76 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Hammam linen store</text>
+<text class="label" x="1100" y="244">R1: principal entrance and internal stair</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Hammam linen store</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Use ground frontage piers separately from</text>
+<text class="tiny" x="1100" y="714">floor-specific upper room and framing axes.</text>
+<text class="tiny" x="1100" y="732">Corresponding openings serving one room share</text>
+<text class="tiny" x="1100" y="750">its canonical ID where the room spans opposite</text>
+<text class="tiny" x="1100" y="768">faces. A different front/rear axis must have a</text>
+<text class="tiny" x="1100" y="786">stated room-use relationship.</text>
+<text class="tiny" x="1100" y="804">Ground trade bays and staff stairs use</text>
+<text class="tiny" x="1100" y="822">different widths because they have different</text>
+<text class="tiny" x="1100" y="840">functions; residential principal elevations use</text>
+<text class="tiny" x="1100" y="858">a centered entrance. No free offsets or filler</text>
+<text class="tiny" x="1100" y="876">openings.</text>
+</svg>

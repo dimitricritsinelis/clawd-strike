@@ -1,0 +1,2 @@
+SPICE_STREET | SPICE_STREET-west-S_W_SOUTH_S_W_MID_S_W_NORTH-s1-base | design XYZ (32.650, 23.000, 1.700) m | yaw 90.00°, pitch 2.46°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

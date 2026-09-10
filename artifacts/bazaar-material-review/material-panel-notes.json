@@ -1,0 +1,23 @@
+{
+  "status": "Experimental material specimens, not approved map appearance",
+  "sourceDesignSha256": "367ac474642c0e49557ffd784262246e4d5ce6b25a35e21e231ce06ffb4fa826",
+  "specimens": [
+    "cream-plaster",
+    "sand-plaster",
+    "faded-ochre",
+    "faded-earth-red",
+    "dressed-sandstone",
+    "quiet-flags",
+    "cream-woven-cloth",
+    "timber"
+  ],
+  "specimenSizeM": [
+    2,
+    2
+  ],
+  "calibration": "See calibrated-swatches.json; proposed base-color field, same selected source normal/roughness maps",
+  "metallic": "Constant zero for these nonmetals; no ARM blue connection",
+  "roughness": "Selected R5 scalar multiplied by ARM green; this review does not silently resolve that remaining target-vs-factor contract question",
+  "lighting": "Fixed cool sky and identical sun intensity; compare white versus warm sun color only. Exposure0, no fog or global color grade",
+  "limits": "All coupons are vertical, including paving. This is a controlled surface study, not a final scene, floor grazing-angle proof or shipped-game-lighting match."
+}

@@ -1,0 +1,10 @@
+case,placement,cmc,flexion,pulpCoveragePercent,largestQualifyingPulpPatchMM2,bodyThumbAffectedTriangleAreaMM2,bodyHandAffectedTriangleAreaMM2,allLayersAffectedTriangleAreaMM2,fingerSurfaceIntersectionTriangles,maxFingerMarkerDisplacementMM,fingerFitStatuses,protected
+control,reference,reference,reference,0.0,0,78.83275221420587,231.45250919601705,1133.9617832729898,0,0,reference,True
+case-01,0,0,0,0.0,0,217.549660432542,289.6349676835123,1634.369110667408,0,0.03103762103607726,"converged,stalled,converged,converged",True
+case-02,0,0,1,0.0,0,196.1520035239622,289.6349676835123,1637.6570975122297,0,0.03103762103607726,"converged,stalled,converged,converged",True
+case-03,0,1,0,0.0,0,208.87216172746867,282.3121272885888,1600.2037863209055,0,0.03103762103607726,"converged,stalled,converged,converged",True
+case-04,0,1,1,0.0,0,202.15393900661508,282.3121272885888,1583.5708698167202,0,0.03103762103607726,"converged,stalled,converged,converged",True
+case-05,1,0,0,6.322098045649832,15.842067012914876,100.84744461571097,196.2782775411645,955.2835489275295,27,4.879438663062986,"stalled,stalled,stalled,stalled",True
+case-06,1,0,1,0.0,0,87.13854452943636,196.2782775411645,935.6431064193463,27,4.879438663062986,"stalled,stalled,stalled,stalled",True
+case-07,1,1,0,0.0,0,132.4815731157119,172.50031811720757,979.8983760487255,27,4.879438663062986,"stalled,stalled,stalled,stalled",True
+case-08,1,1,1,0.0,0,121.62081400613846,172.50031811720757,946.7207576841587,27,4.879438663062986,"stalled,stalled,stalled,stalled",True

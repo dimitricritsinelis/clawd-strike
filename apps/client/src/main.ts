@@ -9,6 +9,14 @@ import type {
 import type { RuntimeWarmupAssets } from "./runtime/warmup";
 import { clampPlayerNameInput, validatePlayerName } from "../../shared/playerName";
 
+// Vercel serves analytics on deployments; local dev and preview have no endpoint.
+if (!["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
+  const analytics = document.createElement("script");
+  analytics.defer = true;
+  analytics.src = "/_vercel/insights/script.js";
+  document.head.appendChild(analytics);
+}
+
 type LaunchState = "idle" | "warming" | "revealing" | "active";
 type RuntimeHandle = {
   teardown: () => void;

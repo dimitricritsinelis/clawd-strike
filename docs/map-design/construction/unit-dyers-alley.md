@@ -1,197 +1,287 @@
-# unit-dyers-alley · Dyers Alley
+# BZ-04 / R7 dyers alley facade-centered upper openings · Dyers Alley
 
-Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: Dyers Alley.
+Controlled issue status: **PROPOSED**. Readiness is recorded in [audits.md](audits.md). SVGs are measured drawings, not game renders.
 
-**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.
+Read [design basis](design-basis.md), [integration contract](integration.md), and [standard details](details.md) with this sheet. The target data is the sole source for parcel, opening, roof, activity, and material values below; coverage is a protected baseline only.
 
-## 1. Design intent
+## Design intent
 
-The wet-work edge: the dye works' cart door and vents on the south-west, the dyer's plastered house north of it, the long drying wall east with four niches, racks and two workstations. Warm aged plaster holds the district together; dirt and dye stay only where the work is.
+### `DYERS_ALLEY`
 
-**Character schedule (build with the numbered tasks):**
+A broad preparation-room light above the receiving entrance. Plain domestic windows, sample workfronts and fewer purposeful clerestories.
 
-- The rubble works, sandy lime family house and drying wall remain distinct. Existing racks, vats, workstations and cloth provide saturated indigo/madder accents. Dye belongs to the work edge; the house and route centre stay maintained.
-- On FRONTAGE_DYERS_ALLEY_WEST_N replace skin a=2.61..3.21, z=0.31..0.75 with `ph_plastered_wall` (SD-21), a small repair below and beside the south screen. Keep the screen seats and timber closures unchanged. Wet-work wear stops within the scheduled station footprints; no general slime or garbage.
+Primary focus: Wet work, sample rails and domestic contrast. Low east works have high daylight; west preparation and house fronts differ through room proportion and joinery..
 
-## 2. Site
+## Architecture and craftsmanship
 
-### Site · `DYERS_ALLEY` (Dyers Alley)
+**Primary:** A broad preparation-room light above the receiving entrance
 
-- Rect x 46..53, y 10..32 (7 × 22 m); floor z = 0; floor `patterned_cobblestone`; authored clear width **4.5 m** (protected).
-- Connects: COVERED_SOUK, LINK_SOUTH_EAST.
-- `north` edge: exempt (`open_traversal_face`): No collision-wall span exists on the 7.00m north edge; the full face remains an authored traversal opening.
-- `south` edge: exempt (`sealed_perimeter`): The 7.00m wall run on the 7.00m south edge is a deliberately sealed back-of-house boundary.
-- `west` edge: frontage `FRONTAGE_DYERS_ALLEY_WEST_S` → `BLD_DYE_WORKS`.
-- `west` edge: frontage `FRONTAGE_DYERS_ALLEY_WEST_N` → `BLD_DYERS_HOUSE`.
-- `east` edge: frontage `FRONTAGE_DYERS_ALLEY_EAST` → `BLD_ALLEY_BACKS`.
+**Supporting:** Plain domestic windows, sample workfronts and fewer purposeful clerestories
 
-### Package outputs
+**Quiet fields and limits:** Drying samples stay on their supported frames. Wear follows vessels and handling, not arbitrary wall grunge.
 
-| Package directory | Section zone | Owned runtime faces | Section GLB |
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
 |---|---|---|---|
-| `assets/source/unit-dyers-alley/` | `DYERS_ALLEY` | `["east", "west"]` | `unit-dyers-alley.glb` |
+| `DA_E_WORK` / `BLD_DYERS_EAST` | building | `ph_bz04_sandstone_blocks_06`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | One high louver centers at 14.8 in the complete 10..19.6 work tenancy; the workfront and separate staff entrance retain their ground positions. |
+| `DA_E_SAMPLES` / `BLD_DYERS_EAST` | building | `ph_bz04_aged_plaster_ochre`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | One high louver centers at 22.8 in the complete 19.6..26 sample tenancy; the workfront and separate staff entrance retain their ground positions. |
+| `DA_E_YARD` / `BLD_DYERS_EAST` | building | `ph_bz04_painted_plaster_warm`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | East dyers works compound - coordinated wing or return |
+| `da-s` / `ASM_DYERS_SOUTH_WALL` | boundary-assembly | `ph_bz04_sandstone_blocks_06`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Dyers south boundary enclosure return |
+| `da-works` / `BLD_DYERS_WEST` | building | `ph_bz04_aged_plaster_ochre`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Workroom has one broad three-panel rectangular window above entrance; leave two quiet side wall fields instead of a decorative arch with flanking mini-windows. |
+| `da-house` / `BLD_DYERS_WEST_HOUSE` | building | `ph_bz04_beige_wall_002`; single-drip; CF-ENVELOPE / CF-JOINT | Plain rectangular domestic shutters form a matched three-window row. |
 
-Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
+| Group | Actual trade | Parts / recipes | Acceptance |
+|---|---|---|---|
+| `G_DA_E_WORK_RECESS` | sample dye preparation and finishing | 7 / CF-CERAMIC, CF-CLOTH, CF-DYE-VESSEL, CF-FURNITURE, CF-STONE, CF-TIMBER | The visible recess supports sample dye preparation/finishing; bulk wet work belongs inside the compound. Build only the listed vessel, lidded companion, table and cloth. |
+| `G_DA_E_SAMPLE_RECESS` | sample drying composition for this tenancy | 8 / CF-CLOTH, CF-FURNITURE, CF-TIMBER | Build the named parts as sample drying composition for this tenancy. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
 
-**Existing source.** `assets/source/dyers-house/` holds the Blender sources of the placed screens, loft vent and hatch (keep). No wall GLBs yet.
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-## 3. Walls
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_DYERS_ALLEY` | `DA_E_SAMPLES`, `DA_E_WORK`, `DA_E_YARD`, `cs-s-part-2`, `da-house`, `da-s`, `da-works`, `lse-n-part-2` | `cs-s-part-2`, `lse-n-part-2` |
 
-### FRONTAGE_DYERS_ALLEY_WEST_S  ·  BLD_DYE_WORKS (workshop, 2 storeys)
+**Required craft recipes:** CF-CERAMIC, CF-CLOTH, CF-DYE-VESSEL, CF-ENVELOPE, CF-FLOOR, CF-FURNITURE, CF-JOINT, CF-OPEN, CF-R4-PORTAL, CF-SHADE, CF-STONE, CF-TIMBER
 
-- **Role:** workshop. A dye works: one cart door for the wet work, vents high up to let the steam out, no windows to look through, staining where the vats are wheeled in and out.
-- **Wall line:** west edge of `DYERS_ALLEY`; x = 46, y = 13 .. 21.99 (a runs south to north); length **8.99 m**; street side +X (street lies east of the wall); kit `Wall(F, (46, 13), (46, 21.99), faces='E')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_white`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 2.5 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 3.68 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.44 (workshop, stone); string course 3.20 (between the 2.5 door head and the 3.68 vents); coping 6.84..7.0; parapet +0.75.
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `BAY_NICHE_S` | `blind_niche` |  | 1.91 | (46, 14.91) | 1.05 × 0.18 × 1.8 | 0.7 / 2.5 | 0 |
-| `BAY_VENT_S` | `vent_service` |  | 1.91 | (46, 14.91) | 0.58 × 0.18 × 0.48 | 3.68 / 4.16 | 0 |
-| `BAY_CART_DOOR` | `door_storage_heavy` | handcart work door (closed, dye stains) | 4.495 | (46, 17.495) | 1.35 × 0.25 × 2.5 | 0 / 2.5 | 0 |
-| `BAY_VENT_AXIS` | `vent_service` |  | 4.495 | (46, 17.495) | 0.58 × 0.18 × 0.48 | 3.68 / 4.16 | 0 |
-| `BAY_NICHE_N` | `blind_niche` |  | 7.08 | (46, 20.08) | 1.05 × 0.18 × 1.8 | 0.7 / 2.5 | 0 |
-| `BAY_VENT_N` | `vent_service` |  | 7.08 | (46, 20.08) | 0.58 × 0.18 × 0.48 | 3.68 / 4.16 | 0 |
+## Site, protected faces, and parcels
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.910375, 1.05, 0.7, 1.8), (1.910375, 0.58, 3.68, 0.48), (4.495, 1.35, 0, 2.5), (4.495, 0.58, 3.68, 0.48), (7.079625, 1.05, 0.7, 1.8), (7.079625, 0.58, 3.68, 0.48)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+### `DYERS_ALLEY` · `north`
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_DYERS_SEALED_VAT` at two beside the cart door on the south pier; `ASSET_DYERS_HANGING_TEXTILES` at drying rack on the north niche; `ASSET_DYERS_WORKSTATION` at under the south niche.
+Quiet background: open x=46..53.
 
-**Construction tasks (ordered; each has an observable completion):**
+Protected wall interval: **46..53 m**; floor grade: **z 0 m**.
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_06`, plinth 0..0.44 × 0.14, course 3.14..3.26, coping; end piers 0.45. Completion: a stone workshop wall, quiet above the vents.
-2. CREATE `BAY_CART_DOOR` 1.35 × 2.5 at a=4.495 (double leaves, straps, bumper rail 0.35, SD-05 threshold, dye stains on the leaves 0..0.9). Completion: closed work door.
-3. CREATE `BAY_NICHE_S/N` 1.05 × 1.8 at sill 0.70, a=1.91/7.08; `BAY_VENT_S/AXIS/N` 0.58 × 0.48 at sill 3.68 / head 4.16, a=1.91/4.495/7.08 with timber grilles. Completion: a niche under each outer vent, the door under the middle vent.
-4. KEEP the two `ASSET_DYERS_WORKSTATION` at (52.38, 17.0 / 21.0) on the EAST wall (they belong to the alley, not to this face). Nothing at this door's 0.8 m floor. No awning, sign or goods. Completion: as stated.
-5. CREATE one drain spout at a=0.5 (SD-13); APPLY wear: dirt band 0..1.5 heavy, indigo and madder splashes 0..0.9 around the door, cart scuffs, drip streak under each vent 0.3 long. Completion: the strongest evidence of wet trade on the map, localized at the cart door and vents; maintained masonry and swept paving remain visible.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 46..53 | **ZERO BUILD protected opening** | COVERED_SOUK |
 
-**Why it exists (reality check):** A dye works: one cart door for the wet work, vents high up to let the steam out, no windows to look through, staining where the vats are wheeled in and out.
+No target parcel is scheduled on this face. Preserve the baseline condition above.
 
-### FRONTAGE_DYERS_ALLEY_WEST_N  ·  BLD_DYERS_HOUSE (house, 1 storey)
+### `DYERS_ALLEY` · `east`
 
-- **Role:** house. The dyer's family house: one door in the middle, two lattice windows at eye height so the street can't see in, a loft above with a vent and a roof hatch to dry cloth up there.
-- **Wall line:** west edge of `DYERS_ALLEY`; x = 46, y = 21.99 .. 30.24 (a runs south to north); length **8.25 m**; street side +X (street lies east of the wall); kit `Wall(F, (46, 21.99), (46, 30.24), faces='E')`.
-- **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_beige_wall_002`, trim `ph_trim_sanded_01`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 2.25 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28 exposed stone; string course 2.90; loft vent sill 3.50; coping 4.34..4.5; slab 4.76, cap 5.59; hatch on the roof (placed).
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `BAY_WINDOW_S` | `window_screened` | SC-D diamond lattice (placed `ASSET_DYERS_SCREEN_SC_D`) | 1.8 | (46, 23.79) | 1 × 0.24 × 1.4 | 0.85 / 2.25 | 0 |
-| `BAY_DOOR` | `door_residential_timber` | closed household door | 4.125 | (46, 26.115) | 1.05 × 0.2 × 2.25 | 0 / 2.25 | 0 |
-| `BAY_WINDOW_N` | `window_screened` | SC-D diamond lattice (placed) | 6.45 | (46, 28.44) | 1 × 0.24 × 1.4 | 0.85 / 2.25 | 0 |
-| `LOFT_VENT` | `vent_service` | KEEP placed ASSET_DYERS_LOFT_VENT; skin rebate only | 4.125 | (46, 26.115) | 0.58 × 0.18 × 0.48 | 3.5 / 3.98 | 1 |
+Protected wall interval: **10..32 m**; floor grade: **z 0 m**.
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.799985, 1, 0.85, 1.4), (4.125, 1.05, 0, 2.25), (6.450015, 1, 0.85, 1.4), (4.125, 0.58, 3.5, 0.48)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 10..32 | collider-backed solid | COLLIDER_WALL_123 |
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_DYERS_SCREEN_SC_D` at the two unchanged window axes at sill 0.85 m; `ASSET_DYERS_LOFT_VENT` at loft at the door axis, sill 3.50 m; `ASSET_DYERS_ROOF_HATCH` at retained roof slab, x42.4..43.4/y23..24.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `DA_E_WORK` | 10..19.6 | (53, 10, 56.8, 19.6) | One high louver centers at 14.8 in the complete 10..19.6 work tenancy; the workfront and separate staff entrance retain their ground positions. | 5.2 | 3.8 | `ph_bz04_aged_plaster_ochre` | slab 5.2..5.38; parapet 5.83; cap 5.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `DA_E_SAMPLES` | 19.6..26 | (53, 19.6, 56.8, 26) | One high louver centers at 22.8 in the complete 19.6..26 sample tenancy; the workfront and separate staff entrance retain their ground positions. | 5.2 | 3.8 | `ph_bz04_aged_plaster_ochre` | slab 5.2..5.38; parapet 5.83; cap 5.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `DA_E_YARD` | 26..32 | (53, 26, 56.8, 32) | East dyers works compound - coordinated wing or return | 5.2 | 3.8 | `ph_bz04_aged_plaster_ochre` | slab 5.2..5.38; parapet 5.83; cap 5.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-**Construction tasks (ordered; each has an observable completion):**
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `DA_E_WORK_RECESS` | `DA_E_WORK` | shop | 12.88 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 53 | `SD-08`; locked half-height timber lattice gate and opaque recess back; side-door clear 0.8 m → `DA_E_WORK-STAFF-DOOR` | dye workfront |
+| `DA_E_WORK-STAFF-DOOR` | `DA_E_WORK` | door | 17.68 | 0 / 2.55 | 1.1 × 2.55 × 0.22 | 53 | `SD-05`; closed timber leaves | staff stair and store entrance |
+| `DA_E_WORK-CLERESTORY-1` | `DA_E_WORK` | vent | 14.8 | 3.95 / 4.65 | 1.8 × 0.7 × 0.22 | 53 | `SD-07`; closed timber louver | wet vessels, sample drying and yard service daylight and ventilation |
+| `DA_E_SAMPLE_RECESS` | `DA_E_SAMPLES` | shop | 21.52 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 53 | `SD-08`; locked half-height timber lattice gate and opaque recess back; side-door clear 0.8 m → `DA_E_SAMPLES-STAFF-DOOR` | dye workfront |
+| `DA_E_SAMPLES-STAFF-DOOR` | `DA_E_SAMPLES` | door | 24.72 | 0 / 2.55 | 1.1 × 2.55 × 0.22 | 53 | `SD-05`; closed timber leaves | staff stair and store entrance |
+| `DA_E_SAMPLES-CLERESTORY-1` | `DA_E_SAMPLES` | vent | 22.8 | 3.95 / 4.65 | 1.8 × 0.7 × 0.22 | 53 | `SD-07`; closed timber louver | wet vessels, sample drying and yard service daylight and ventilation |
+| `DA_E_YARD-ENTRANCE` | `DA_E_YARD` | door | 29 | 0 / 2.55 | 1.2 × 2.55 × 0.22 | 53 | `SD-05`; closed timber leaves | Secondary delivery or service entrance to its measured room/stair bay |
+| `DA_E_YARD-CLERESTORY-1` | `DA_E_YARD` | vent | 29 | 3.95 / 4.65 | 1.35 × 0.7 × 0.22 | 53 | `SD-07`; closed timber louver | wet vessels, sample drying and yard service daylight and ventilation |
 
-1. CREATE the section finish: skin `ph_beige_wall_002` lime plaster over an exposed stone base `ph_sandstone_blocks_05` 0..0.28 and stone quoins 0.30 wide at both ends full height (`held`), course 2.84..2.96 `ph_trim_sanded_01`, coping 4.34..4.5. Completion: a plastered house between two stone buildings.
-2. CREATE `BAY_DOOR` 1.05 × 2.25 at a=4.125 (SD-05): planks, ring pull, a 0.06 step flush with paving. Completion: closed household door on the axis.
-3. CREATE `BAY_WINDOW_S/N` rebates 1.0 × 1.4 at sill 0.85 / head 2.25, a=1.80/6.45, frame 0.10, reveal 0.135, sill 0.06 proud; the placed `ASSET_DYERS_SCREEN_SC_D` (45.98, 23.79 / 28.44, 0.85) fill them. Completion: screens seated, the pair mirrored about the door.
-4. KEEP the placed loft vent `ASSET_DYERS_LOFT_VENT` at (46.0, 26.11, 3.5): CREATE its 0.58 × 0.48 rebate at a=4.125, sill 3.50. KEEP the roof hatch at (42.9, 23.5, 4.76). Completion: vent in a rebate, hatch flush on the slab.
-5. No awning, sign, shop, vats or goods. APPLY wear: light dust band, polish at the door, one water streak from the coping at a=0.3. Completion: as listed.
+### `DYERS_ALLEY` · `south`
 
-**Why it exists (reality check):** The dyer's family house: one door in the middle, two lattice windows at eye height so the street can't see in, a loft above with a vent and a roof hatch to dry cloth up there.
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-### FRONTAGE_DYERS_ALLEY_EAST  ·  BLD_ALLEY_BACKS (service back, 1 storey)
+Protected wall interval: **46..53 m**; floor grade: **z 0 m**.
 
-- **Role:** service back. The backs of the houses east of the alley, rented to the dyers as a drying wall: hooks, racks, vats, splashes, but no way in.
-- **Wall line:** east edge of `DYERS_ALLEY`; x = 53, y = 11.76 .. 30.24 (a runs south to north); length **18.48 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 11.76), (53, 30.24), faces='W')`.
-- **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 3.4 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.44; string course 2.90; coping 4.74..4.9.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 46..53 | collider-backed solid | COLLIDER_WALL_008 |
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `blind_niche` |  | 1.125 | (53, 12.885) | 1.05 × 0.18 × 1.8 | 1.6 / 3.4 | 0 |
-| `GROUND_02` | `blind_niche` |  | 6.535 | (53, 18.295) | 1.05 × 0.18 × 1.8 | 1.6 / 3.4 | 0 |
-| `GROUND_03` | `blind_niche` |  | 11.945 | (53, 23.705) | 1.05 × 0.18 × 1.8 | 1.6 / 3.4 | 0 |
-| `GROUND_04` | `blind_niche` |  | 17.355 | (53, 29.115) | 1.05 × 0.18 × 1.8 | 1.6 / 3.4 | 0 |
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `da-s` | 46..53 | (46, 9.4, 53, 10) | Dyers south boundary enclosure return | 4.5 | 0.6 | `ph_bz04_sandstone_blocks_06` | slab 4.5..4.62; parapet 4.62; cap 4.62; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.125, 1.05, 1.6, 1.8), (6.535, 1.05, 1.6, 1.8), (11.945, 1.05, 1.6, 1.8), (17.355, 1.05, 1.6, 1.8)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
+
+### `DYERS_ALLEY` · `west`
+
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
+
+Protected wall interval: **10..32 m**; floor grade: **z 0 m**.
+
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 13..32 | collider-backed solid | COLLIDER_WALL_119 |
+| 10..13 | **ZERO BUILD protected opening** | LINK_SOUTH_EAST |
+
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `da-works` | 13..21.99 | (42.4, 13, 46, 21.99) | Workroom has one broad three-panel rectangular window above entrance; leave two quiet side wall fields instead of a decorative arch with flanking mini-windows. | 7 | 3.6 | `ph_bz04_aged_plaster_ochre` | slab 7..7.18; parapet 7.63; cap 7.73; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `da-house` | 21.99..32 | (42.4, 21.99, 46, 32) | Plain rectangular domestic shutters form a matched three-window row. | 7.2 | 3.6 | `ph_bz04_beige_wall_002` | slab 7.2..7.38; parapet 7.83; cap 7.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `da-works-ENTRANCE` | `da-works` | door | 17.495 | 0 / 2.8 | 1.8 × 2.8 × 0.35 | 46 | `SD-05`; closed double timber loading leaves; architecturalDetail: `{"profile":"planked-receiving","surroundWidthM":0.16,"incisionDepthM":0.006,"receiverRule":"Cut carving and joinery inside this complete frame; keep the opening, back and bearing planes continuous.","includeThreshold":false}` | Closed receiving/staff threshold serving the named storage bay; no new gameplay passage |
+| `da-works-L1-W2` | `da-works` | window | 17.495 | 4.5 / 6.2 | 3.2 × 1.7 × 0.45 | 46 | `SD-07`; Closed 3-panel timber shutters | Broad preparation-room daylight above the dye receiving entrance |
+| `da-house-ENTRANCE` | `da-house` | door | 26.995 | 0 / 2.55 | 1.4 × 2.55 × 0.22 | 46 | `SD-05`; closed timber leaves; architecturalDetail: `{"profile":"painted-domestic","surroundWidthM":0.16,"incisionDepthM":0.006,"receiverRule":"Cut carving and joinery inside this complete frame; keep the opening, back and bearing planes continuous.","includeThreshold":false}` | principal entrance and internal stair |
+| `da-house-L1-W1` | `da-house` | window | 23.491 | 4.55 / 6.15 | 1.1 × 1.6 × 0.34 | 46 | `SD-07`; Closed 2-panel timber shutters | bedrooms; daylight on its measured room axis |
+| `da-house-L1-W2` | `da-house` | window | 26.995 | 4.55 / 6.15 | 1.1 × 1.6 × 0.34 | 46 | `SD-07`; Closed 2-panel timber shutters | bedrooms; daylight on its measured room axis |
+| `da-house-L1-W3` | `da-house` | window | 30.498 | 4.55 / 6.15 | 1.1 × 1.6 × 0.34 | 46 | `SD-07`; Closed 2-panel timber shutters | bedrooms; daylight on its measured room axis |
+| `da-house-GROUND-ROOM-0` | `da-house` | window | 23.491 | 0.95 / 2.46 | 0.95 × 1.51 × 0.22 | 46 | `SD-07`; closed paneled timber shutter | ground family room |
+| `da-house-GROUND-ROOM-2` | `da-house` | window | 30.498 | 0.95 / 2.46 | 0.95 × 1.51 × 0.22 | 46 | `SD-07`; closed paneled timber shutter | ground family room |
+
+## Surface and floor treatments
+
+| Area / parcel | Receiver | Exact polygon / region | Alpha | Purpose |
+|---|---|---|---:|---|
+| `DYERS_ALLEY` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'DYERS_ALLEY-CLEAR', 'x': 47.25, 'y': 10, 'w': 4.5, 'h': 22, 'heightM': 2.2, 'floorSource': 'DYERS_ALLEY'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+## Activity groups and protected route regions
+
+| Area | Group / recipe | Receiver | Bounds min → max (x, y, z) | Contents | Supports |
+|---|---|---|---|---|---|
+| `DYERS_ALLEY` | `G_DA_E_WORK_RECESS` / `AG-DYE` | east/DA_E_WORK/DA_E_WORK_RECESS | (52.72, 11.62, 0.04) → (54.9, 14.14, 2.65) | The visible recess supports sample dye preparation/finishing; bulk wet work belongs inside the compound. Build only the listed vessel, lidded companion, table and cloth. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `DYERS_ALLEY` | `G_DA_E_SAMPLE_RECESS` / `AG-DYE` | east/DA_E_SAMPLES/DA_E_SAMPLE_RECESS | (52.72, 20.26, 0.04) → (54.9, 22.78, 2.65) | Build the named parts as sample drying composition for this tenancy. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `DYERS_ALLEY` | `DYERS_ALLEY-CLEAR` | **CLEAR ROUTE** | (47.25, 10) → (51.75, 32) | Protected empty region | Do not place geometry |
+
+### Fixed composition `G_DA_E_WORK_RECESS`
+
+along offsets from served opening centre; out positive to street; z above group bbox min (the finished deck). Dimensions are final part envelopes. This part list replaces the generic recipe contents, with the same workmanship and support standards.
+
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `vessel-plinth` | stone-plinth / `CF-STONE` | [-0.85, -0.48, 0] / [0.2, 0.14, 0.13] | `ph_bz04_stone_trim_sandstone` | recess deck |
+| `dye-vessel` | rounded-ceramic-vessel / `CF-DYE-VESSEL` | [-0.75, -0.42, 0.13] / [-0.18, 0.12, 0.84] | `bz04_ceramic_project_original`; albedo #d6c9b2 | vessel-plinth |
+| `lidded-vessel` | lidded-ceramic-vessel / `CF-CERAMIC` | [-0.1, -0.38, 0.13] / [0.2, -0.08, 0.57] | `bz04_ceramic_project_original`; albedo #d6c9b2 | vessel-plinth |
+| `side-table` | grounded-timber-table / `CF-FURNITURE` | [0.3, -0.4, 0] / [0.83, 0.15, 0.88] | `ph_bz04_worn_planks` | recess deck |
+| `folded-work` | folded-cloth / `CF-CLOTH` | [0.38, -0.32, 0.88] / [0.75, 0.1, 1.02] | `ph_bz04_fine_linen` | side-table |
+| `dyed-length` | hanging-cloth / `CF-CLOTH` | [-0.8, -1.82, 1.05] / [-0.18, -1.79, 2.25] | `ph_bz04_fine_linen`; albedo #d6c9b2 | wall rail with two ties at upper corners |
+| `closed-work-gate` | locked-timber-lattice-gate / `CF-TIMBER` | [-1.25, 0.18, 0] / [1.25, 0.23, 1.15] | `ph_bz04_worn_planks` | opening jambs: two hinge straps and one locked latch |
+
+### Fixed composition `G_DA_E_SAMPLE_RECESS`
+
+along offsets from served opening centre; out positive to street; z above group bbox min (the finished deck). Dimensions are final part envelopes. This part list replaces the generic recipe contents, with the same workmanship and support standards.
+
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `left-post` | timber-member / `CF-TIMBER` | [-0.86, -0.3, 0] / [-0.79, -0.23, 2.36] | `ph_bz04_worn_planks` | recess deck |
+| `right-post` | timber-member / `CF-TIMBER` | [0.79, -0.3, 0] / [0.86, -0.23, 2.36] | `ph_bz04_worn_planks` | recess deck |
+| `drying-rail` | timber-member / `CF-TIMBER` | [-0.86, -0.3, 2.27] / [0.86, -0.23, 2.36] | `ph_bz04_worn_planks` | left-post and right-post |
+| `sample-1` | hanging-cloth / `CF-CLOTH` | [-0.74, -0.285, 1.35] / [-0.38000000000000006, -0.255, 2.25] | `ph_bz04_fine_linen`; albedo #66778c | two ties to drying-rail |
+| `sample-2` | hanging-cloth / `CF-CLOTH` | [-0.2, -0.285, 0.95] / [0.2, -0.255, 2.25] | `ph_bz04_fine_linen`; albedo #ba8d75 | two ties to drying-rail |
+| `sample-3` | hanging-cloth / `CF-CLOTH` | [0.41999999999999993, -0.285, 1.2] / [0.72, -0.255, 2.25] | `ph_bz04_fine_linen`; albedo #d6c9b2 | two ties to drying-rail |
+| `folding-bench` | grounded-timber-bench / `CF-FURNITURE` | [-0.82, -0.4, 0] / [0.82, 0.15, 0.48] | `ph_bz04_worn_planks` | recess deck |
+| `closed-work-gate` | locked-timber-lattice-gate / `CF-TIMBER` | [-1.25, 0.18, 0] / [1.25, 0.23, 1.15] | `ph_bz04_worn_planks` | opening jambs: two hinge straps and one locked latch |
+
+## Fixtures, receivers, budgets, and critical views
+
+| Area | Fixture | Recipe | Receiver | Bounds min → max (x, y, z) | Purpose |
+|---|---|---|---|---|---|
+| `DYERS_ALLEY` | `SHADE_DA_E_WORK_RECESS` | `SD-12` | east/DA_E_WORK/DA_E_WORK_RECESS | (52.075, 11.43, 2.54) → (53.08, 14.33, 3.145) | Supported working shade for Wet-work sample counter and supported rack |
+| | `SHADE_DA_E_WORK_RECESS` dimensions/supports | | | {'interval': [11.43, 14.33], 'ledgerZ': 3.08, 'armAxesM': [11.53, 14.23], 'projectionM': 0.9, 'dropM': 0.22, 'sagM': 0.1} | Exact instance values override the standard defaults. |
+
+**SHADE_DA_E_WORK_RECESS membrane-only bounds:** `{'min': [52.1, 11.43, 2.752], 'max': [53, 14.33, 3.08]}`. Whole-assembly bounds above include the following supports:
+
+| Component | World bounds |
+|---|---|
+| ledger | `{'min': [52.96, 11.43, 3.04], 'max': [53.08, 14.33, 3.12]}` |
+| arm-knee-1 | `{'min': [52.075, 11.495, 2.54], 'max': [53.04, 11.565, 3.145]}` |
+| arm-knee-2 | `{'min': [52.075, 14.195, 2.54], 'max': [53.04, 14.265, 3.145]}` |
+| cloth-and-hem | `{'min': [52.1, 11.43, 2.727], 'max': [53, 14.33, 3.08]}` |
 
 
-**Construction tasks (ordered; each has an observable completion):**
+| Area | Triangle budget | Material bindings | Rendered primitives | Shadow primitives |
+|---|---:|---:|---:|---:|
+| `DYERS_ALLEY` | 48000 | 14 | 17 | 9 |
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_06`, plinth 0..0.44, course, coping 4.74..4.9; end piers 0.45. Completion: long quiet enclosure.
-2. REPLACE the three truncated pilaster-niche pieces with full blind niches `GROUND_01..04` 1.05 × 1.8 at sill 1.60, a=1.125/6.535/11.945/17.355. Completion: four equal high niches.
-3. KEEP the four rack clusters (`DYERS_E_RACK_01..04` at y 13.4 / 19.1 / 23.7 / 29.2, x 52.42) and the two workstations at (52.38, 17.0 / 21.0): CREATE iron rack hooks at z 2.4 for each hanging rack (two per rack, ±1.0 of its axis). Cloth stays within 0.35 m of the wall. Completion: every rack hangs from hooks.
-4. CREATE spouts at a=0.6 and a=17.9; APPLY wear: dirt band, dye splashes 0..0.9 under each workstation and rack, damp at the spouts. Completion: wear only where work happens.
+Section origin (design coordinates): `{'x': 46, 'y': 10, 'z': 0, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-3.8000000000000043, -0.02, -0.7999999999999989], 'max': [11.0, 7.22, 22.200000000000003]}`.
+Required bindings: `bz04_ceramic_project_original`, `bz04_court_limestone_flags_01`, `bz04_levantine_rug_project_original`, `ph_bz04_aged_plaster_ochre`, `ph_bz04_beige_wall_002`, `ph_bz04_fine_linen`, `ph_bz04_hessian_230`, `ph_bz04_painted_plaster_warm`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`, `ph_bz04_worn_planks`.
 
-**Why it exists (reality check):** The backs of the houses east of the alley, rented to the dyers as a drying wall: hooks, racks, vats, splashes, but no way in.
 
-## 4. Free placements (dressing, cover, landmarks)
+| Camera | Area | Position (x, y, z) | Yaw / pitch / FOV | Purpose |
+|---|---|---|---|---|
+| `DYERS_ALLEY-travel-reverse` | `DYERS_ALLEY` | (49.5, 31.35, 1.7) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `DYERS_ALLEY-travel-forward` | `DYERS_ALLEY` | (49.5, 10.65, 1.7) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `DYERS_ALLEY-east-DA_E_WORK-s1-base` | `DYERS_ALLEY` | (46.35, 14.8, 1.7) | 270° / 4.3° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `DYERS_ALLEY-east-DA_E_SAMPLES_DA_E_YARD-s1-base` | `DYERS_ALLEY` | (46.35, 25.8, 1.7) | 270° / 4.3° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `DYERS_ALLEY-south-da-s-s1-base` | `DYERS_ALLEY` | (49.5, 31.65, 1.7) | 0° / 0.636° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `DYERS_ALLEY-west-da-works-s1-base` | `DYERS_ALLEY` | (52.65, 17.495, 1.7) | 90° / 4.3° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `DYERS_ALLEY-west-da-works-s1-upper` | `DYERS_ALLEY` | (52.65, 17.495, 1.7) | 90° / 39.491° / 75° | upper facade, parapet and roof-step coverage |
+| `DYERS_ALLEY-west-da-house-s1-base` | `DYERS_ALLEY` | (52.65, 26.995, 1.7) | 90° / 4.3° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `DYERS_ALLEY-west-da-house-s1-upper` | `DYERS_ALLEY` | (52.65, 26.995, 1.7) | 90° / 40.502° / 75° | upper facade, parapet and roof-step coverage |
+| `DYERS_ALLEY-R3-craft-detail` | `DYERS_ALLEY` | (49.5, 12.88, 1.7) | 270° / -1.637° / 75° | R3 receiver, joinery, support, material and trade-detail inspection: DA_E_WORK_RECESS |
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
+## Landmarks and shared dependencies
 
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_01` | `ASSET_DYERS_CERAMIC_VESSEL` | `DYERS_E_RACK_01` | (52.5, 12.78, 0) | 0.656 × 0.502 × 0.372 | 281 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_03` | `ASSET_DYERS_CERAMIC_VESSEL` | `DYERS_E_RACK_03` | (52.5, 23.08, 0) | 0.656 × 0.502 × 0.372 | 281 | KEEP at this transform |
-| `PLACE_L34_DYERS_ALLEY_POTTERY_L34_DYERS_ALLEY_POTTERY_01` | `ASSET_DYERS_CERAMIC_VESSEL` | `L34_DYERS_ALLEY_POTTERY_01` | (52.45, 26.5, 0) | 0.538 × 0.412 × 0.305 | 280 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_01` | `ASSET_DYERS_HANGING_TEXTILES` | `DYERS_E_RACK_01` | (52.42, 13.4, 1.18) | 2.25 × 0.16 × 1.55 | 270 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_02` | `ASSET_DYERS_HANGING_TEXTILES` | `DYERS_E_RACK_02` | (52.42, 19.1, 1.18) | 2.25 × 0.16 × 1.55 | 270 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_03` | `ASSET_DYERS_HANGING_TEXTILES` | `DYERS_E_RACK_03` | (52.42, 23.7, 1.18) | 2.25 × 0.16 × 1.55 | 270 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_04` | `ASSET_DYERS_HANGING_TEXTILES` | `DYERS_E_RACK_04` | (52.42, 29.2, 1.18) | 2.25 × 0.16 × 1.55 | 270 | KEEP at this transform |
-| `PLACE_DYERS_HOUSE_VENT_DYERS_HOUSE_LOFT_VENT` | `ASSET_DYERS_LOFT_VENT` | `DYERS_HOUSE_LOFT_VENT` | (46, 26.115, 3.5) | 0.58 × 0.12 × 0.48 | 270 | KEEP at this transform |
-| `PLACE_DYERS_HOUSE_HATCH_DYERS_HOUSE_ROOF_HATCH` | `ASSET_DYERS_ROOF_HATCH` | `DYERS_HOUSE_ROOF_HATCH` | (42.9, 23.5, 4.76) | 1 × 1 × 0.18 | 180 | KEEP at this transform |
-| `PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_N` | `ASSET_DYERS_SCREEN_SC_D` | `DYERS_HOUSE_SCREEN_N` | (45.985, 28.44, 0.85) | 1 × 0.24 × 1.4 | 270 | KEEP at this transform |
-| `PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_S` | `ASSET_DYERS_SCREEN_SC_D` | `DYERS_HOUSE_SCREEN_S` | (45.985, 23.79, 0.85) | 1 × 0.24 × 1.4 | 270 | KEEP at this transform |
-| `PLACE_DYERS_E_RACK_VAT_DYERS_E_RACK_04` | `ASSET_DYERS_SEALED_VAT` | `DYERS_E_RACK_04` | (52.44, 29.75, 0) | 0.697 × 0.711 × 0.819 | 263 | KEEP at this transform |
-| `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_01` | `ASSET_DYERS_WORKSTATION` | `L34_DYERS_ALLEY_VAT_01` | (52.38, 17, 0) | 2.8 × 1.45 × 2.2 | 270 | KEEP at this transform |
-| `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_02` | `ASSET_DYERS_WORKSTATION` | `L34_DYERS_ALLEY_VAT_02` | (52.38, 21, 0) | 2.8 × 1.45 × 2.2 | 270 | KEEP at this transform |
+| Landmark / dependency | Owner | Bounds or dependency | Clear void / arch profile |
+|---|---|---|---|
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `DYERS_ALLEY` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
 
-## 5. Overheads
+## Roof installation references
 
-Canopies and lines are shared by both walls (owner OWN_OVERHEAD). Ends are fixed points on the receiving wall or roof tie; the cloth hangs between them per SD-17. Hem never below 4.2 m over a route floor.
+Install or reuse the named roof bundles through [roof-bundles.md](roof-bundles.md). These are direct asset dependencies, not permission to build another area’s facades.
 
-None scheduled. Do not add one.
+- `DYERS_ALLEY` cells: `ROOF_CELL_006`, `ROOF_CELL_051`, `ROOF_CELL_052`, `ROOF_CELL_053`.
+- `DYERS_ALLEY` bundles: `ROOF_BUNDLE_UNIT_DYERS_ALLEY`.
+- `DYERS_ALLEY` interfaces: `ROOF_INTERFACE_ROOF_SEAM_026`, `ROOF_INTERFACE_ROOF_STEP_044`, `ROOF_INTERFACE_ROOF_STEP_045`, `ROOF_INTERFACE_ROOF_STEP_051`, `ROOF_INTERFACE_ROOF_STEP_052`.
 
-## 6. Ground, wear and drainage
+## Material key
 
-KEEP `patterned_cobblestone`; dye splashes and damp under the two workstations and four racks only; polish along the centre 4.5 m; flush seam at y 32 and the south-east link.
+| Alias | Source material | Color | Tile / normal / roughness / albedo |
+|---|---|---|---|
+| `ph_bz04_aged_plaster_ochre` | `ph_aged_plaster_ochre` | <span style="color:#c6a16c">■</span> `#c6a16c` | 2 / 0.28 / 0.93 / 1 |
+| `ph_bz04_beige_wall_002` | `ph_plastered_wall` | <span style="color:#d3bb93">■</span> `#d3bb93` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_sandstone_blocks_06` | `ph_sandstone_blocks_06` | <span style="color:#b6a185">■</span> `#b6a185` | 1.8 / 0.42 / 0.94 / 1 |
 
-**`DYERS_ALLEY` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+## Skyline and legacy producer dispositions
 
-```python
-wear_patch(F, [(49.2, 10.3, 0.014), (49.8, 10.3, 0.014), (49.8, 31.7, 0.014), (49.2, 31.7, 0.014)], 'polish')
-wear_patch(F, [(51.7, 16.3, 0.014), (52.9, 16.3, 0.014), (52.9, 17.7, 0.014), (51.7, 17.7, 0.014)], 'dye')
-wear_patch(F, [(51.7, 20.3, 0.014), (52.9, 20.3, 0.014), (52.9, 21.7, 0.014), (51.7, 21.7, 0.014)], 'dye')
-wear_patch(F, [(52.924336, 29.377556, 0.014), (52.819847, 30.228553, 0.014), (51.955664, 30.122444, 0.014), (52.060153, 29.271447, 0.014)], 'dust')
-wear_patch(F, [(52.747069, 12.316338, 0.014), (52.902769, 13.117346, 0.014), (52.252931, 13.243662, 0.014), (52.097231, 12.442654, 0.014)], 'dust')
-wear_patch(F, [(52.747069, 22.616338, 0.014), (52.902769, 23.417346, 0.014), (52.252931, 23.543662, 0.014), (52.097231, 22.742654, 0.014)], 'dust')
-wear_patch(F, [(52.670881, 26.106709, 0.014), (52.792074, 26.794026, 0.014), (52.229119, 26.893291, 0.014), (52.107926, 26.205974, 0.014)], 'dust')
-wear_patch(F, [(53, 15.52, 0.014), (53, 18.48, 0.014), (51.575, 18.48, 0.014), (51.575, 15.52, 0.014)], 'dust')
-wear_patch(F, [(53, 19.52, 0.014), (53, 22.48, 0.014), (51.575, 22.48, 0.014), (51.575, 19.52, 0.014)], 'dust')
-```
+| Skyline item | Zone | Owner | Bounds min → max (x, y, z) | Purpose / notes |
+|---|---|---|---|---|
+| `BG-11` | `DYERS_ALLEY` | shared-environment | (59, 13, 0) → (64, 22, 9) | Distant inhabited city block; broad quiet surfaces and a stepped parapet, no visible loose roof tank or unsupported ornament. |
 
-## 7. Roofs and skyline
+| Legacy item | Zone | Existing producer | Required disposition | Replacement / notes |
+|---|---|---|---|---|
+| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_01` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_02` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_03` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_CLOTH_DYERS_E_RACK_04` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_VAT_DYERS_E_RACK_04` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_01` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_E_RACK_VESSEL_DYERS_E_RACK_03` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_HOUSE_HATCH_DYERS_HOUSE_ROOF_HATCH` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_N` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_HOUSE_SCREENS_DYERS_HOUSE_SCREEN_S` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_HOUSE_VENT_DYERS_HOUSE_LOFT_VENT` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_L34_DYERS_ALLEY_POTTERY_L34_DYERS_ALLEY_POTTERY_01` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_01` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_L34_DYERS_ALLEY_VATS_L34_DYERS_ALLEY_VAT_02` | `DYERS_ALLEY` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_01` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_02` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_03` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_EAST_GROUND_04` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_EAST_MASSING` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_DOOR` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_N` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_BAY_WINDOW_S` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_N_MASSING` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_CART_DOOR` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_N` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_NICHE_S` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_AXIS` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_N` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_BAY_VENT_S` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_DYERS_ALLEY_WEST_S_MASSING` | `DYERS_ALLEY` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `BOUNDARY_DYERS_ALLEY_north` | `DYERS_ALLEY` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | retain_open | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_DYERS_ALLEY_east` | `DYERS_ALLEY` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_DYERS_ALLEY_south` | `DYERS_ALLEY` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_DYERS_ALLEY_west` | `DYERS_ALLEY` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
 
-Works 7.0 / 8.19; house 4.5 / 5.59 with the placed hatch at 4.76; east wall 4.9 / 5.79. The works' party wall above the house roof stays blank stone.
 
-## 8. Required result
+## Drawings
 
-- [ ] Works: one cart door, two niches, three vents; house: one door, two seated screens, one seated loft vent; east: four equal niches.
-- [ ] Every rack hangs from hooks; cloth within 0.35 m of the wall; the middle 4.5 m empty.
-- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
-- [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
-- [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
-- [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
-- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
-- [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
-- [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
-
-Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
-
+- [DYERS_ALLEY dimensioned plan](drawings/dyers_alley-plan.svg), [DYERS_ALLEY four elevations](drawings/dyers_alley-elevations.svg), and [DYERS_ALLEY roof axonometric](drawings/dyers_alley-axon.svg)
+- [Master plan](drawings/master-plan.svg)

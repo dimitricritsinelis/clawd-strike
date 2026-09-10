@@ -276,7 +276,7 @@ test("merchant storefronts override legacy flat timber/metal templates with vari
 test("Rug Gate threshold awnings derive separated east/west silhouettes from their served openings", () => {
   const east = {
     ...modulePlacement(
-      "ARCH_FRONTAGE_RUG_GATE_EAST_GROUND_01",
+      "LEGACY_RUG_GATE_EAST_GROUND_01",
       "shop_recess_market",
       "shop_recess",
       { x: 10, y: 14, z: 1.35 },
@@ -286,7 +286,7 @@ test("Rug Gate threshold awnings derive separated east/west silhouettes from the
   };
   const west = {
     ...modulePlacement(
-      "ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_02",
+      "LEGACY_RUG_GATE_WEST_GROUND_02",
       "shop_recess_market",
       "shop_recess",
       { x: 10, y: 18, z: 1.35 },
@@ -306,6 +306,10 @@ test("Rug Gate threshold awnings derive separated east/west silhouettes from the
   assert.equal(typeof westAwning.detailTintHex, "number");
   assert.notEqual(westAwning.detailTintHex, eastAwning.detailTintHex);
   assert.ok(Math.abs(eastAwning.scale.x - westAwning.scale.x) < 0.2, "served-opening width stopped governing threshold hoods");
+  const retiredWest = { ...west, id: "ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_02" };
+  const retired = build([massingPlacement(), retiredWest], true, true);
+  assert.equal(retired.instances.some((instance) => instance.placementId?.startsWith(`${retiredWest.id}:awning`)), false,
+    "the explicitly retired west awning must not render beside its replacement");
 });
 
 test("covered-arcade ground openings derive generic occupied counters from their sill datum", () => {

@@ -1,0 +1,2 @@
+DYERS_DOGLEG | DYERS_DOGLEG-east-dd-e-s1-base | design XYZ (46.350, 51.500, 1.700) m | yaw 270.00°, pitch 4.30°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

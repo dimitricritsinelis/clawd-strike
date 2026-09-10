@@ -1,0 +1,272 @@
+{
+  "asset": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/case04-reload-preview.glb",
+  "assetSha256": "ba80a21dfec6e314958b29dd751833e6967d794ba55ccb2daa1075ba0a415253",
+  "loadedAssetSha256": "ba80a21dfec6e314958b29dd751833e6967d794ba55ccb2daa1075ba0a415253",
+  "assetHashMethod": "Exact bytes fulfilled for browser GLB request; browser inspector cache cannot retain this 77MB response.",
+  "source": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/source-validation.json",
+  "sourceSha256": "5eff36fef2b84d0bb63429b4fe7f4630ac13a36dcc492bd66bb586921c46beea",
+  "mapping": [
+    {
+      "name": "L_GloveAndForearm",
+      "sourceSamples": 162,
+      "matchedExportVertices": 168,
+      "unmatched": 0
+    },
+    {
+      "name": "Bound wrist cuff",
+      "sourceSamples": 88,
+      "matchedExportVertices": 91,
+      "unmatched": 0
+    },
+    {
+      "name": "Dorsal reinforcement",
+      "sourceSamples": 105,
+      "matchedExportVertices": 105,
+      "unmatched": 0
+    },
+    {
+      "name": "Index knuckle pad",
+      "sourceSamples": 86,
+      "matchedExportVertices": 86,
+      "unmatched": 0
+    },
+    {
+      "name": "Middle knuckle pad",
+      "sourceSamples": 89,
+      "matchedExportVertices": 89,
+      "unmatched": 0
+    },
+    {
+      "name": "Ring knuckle pad",
+      "sourceSamples": 82,
+      "matchedExportVertices": 82,
+      "unmatched": 0
+    },
+    {
+      "name": "Little knuckle pad",
+      "sourceSamples": 86,
+      "matchedExportVertices": 86,
+      "unmatched": 0
+    },
+    {
+      "name": "Tailored ripstop sleeve",
+      "sourceSamples": 81,
+      "matchedExportVertices": 81,
+      "unmatched": 0
+    },
+    {
+      "name": "Sleeve double topstitch",
+      "sourceSamples": 81,
+      "matchedExportVertices": 81,
+      "unmatched": 0
+    },
+    {
+      "name": "Sleeve double topstitch.001",
+      "sourceSamples": 81,
+      "matchedExportVertices": 81,
+      "unmatched": 0
+    },
+    {
+      "name": "Rolled cuff edge",
+      "sourceSamples": 82,
+      "matchedExportVertices": 85,
+      "unmatched": 0
+    },
+    {
+      "name": "Cuff saddle stitch",
+      "sourceSamples": 83,
+      "matchedExportVertices": 83,
+      "unmatched": 0
+    },
+    {
+      "name": "Rolled cuff edge.001",
+      "sourceSamples": 82,
+      "matchedExportVertices": 85,
+      "unmatched": 0
+    },
+    {
+      "name": "Cuff saddle stitch.001",
+      "sourceSamples": 83,
+      "matchedExportVertices": 83,
+      "unmatched": 0
+    },
+    {
+      "name": "Raised tan wrist closure",
+      "sourceSamples": 84,
+      "matchedExportVertices": 84,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure perimeter stitch",
+      "sourceSamples": 86,
+      "matchedExportVertices": 87,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure perimeter stitch.001",
+      "sourceSamples": 86,
+      "matchedExportVertices": 87,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure end stitch",
+      "sourceSamples": 120,
+      "matchedExportVertices": 120,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure end stitch.001",
+      "sourceSamples": 120,
+      "matchedExportVertices": 120,
+      "unmatched": 0
+    },
+    {
+      "name": "Raised tan closure pull tab",
+      "sourceSamples": 85,
+      "matchedExportVertices": 85,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure pull tab stitch",
+      "sourceSamples": 96,
+      "matchedExportVertices": 96,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure pull tab stitch.001",
+      "sourceSamples": 96,
+      "matchedExportVertices": 96,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure pull tab stitch.002",
+      "sourceSamples": 144,
+      "matchedExportVertices": 168,
+      "unmatched": 0
+    },
+    {
+      "name": "Closure pull tab stitch.003",
+      "sourceSamples": 144,
+      "matchedExportVertices": 144,
+      "unmatched": 0
+    },
+    {
+      "name": "Palm heel suede overlay",
+      "sourceSamples": 162,
+      "matchedExportVertices": 162,
+      "unmatched": 0
+    },
+    {
+      "name": "Palm overlay rolled seam",
+      "sourceSamples": 161,
+      "matchedExportVertices": 161,
+      "unmatched": 0
+    },
+    {
+      "name": "Palm overlay stitching",
+      "sourceSamples": 161,
+      "matchedExportVertices": 161,
+      "unmatched": 0
+    },
+    {
+      "name": "Palm overlay stitching.001",
+      "sourceSamples": 161,
+      "matchedExportVertices": 161,
+      "unmatched": 0
+    },
+    {
+      "name": "R_GloveAndForearm",
+      "sourceSamples": 81,
+      "matchedExportVertices": 84,
+      "unmatched": 0
+    }
+  ],
+  "frames": {
+    "1": {
+      "maxLocalErrorM": 0.000002798474204485381,
+      "maxModelSpaceErrorM": 0.0000027984742044675507,
+      "comparisons": 3102
+    },
+    "12": {
+      "maxLocalErrorM": 0.0000027984742044995453,
+      "maxModelSpaceErrorM": 0.0000027984742044995453,
+      "comparisons": 3102
+    },
+    "18": {
+      "maxLocalErrorM": 0.0000027984742045128496,
+      "maxModelSpaceErrorM": 0.000002798474204538538,
+      "comparisons": 3102
+    },
+    "24": {
+      "maxLocalErrorM": 0.000002798474204396959,
+      "maxModelSpaceErrorM": 0.000002798474204379129,
+      "comparisons": 3102
+    },
+    "28": {
+      "maxLocalErrorM": 0.000002798474204541484,
+      "maxModelSpaceErrorM": 0.000002798474204588545,
+      "comparisons": 3102
+    },
+    "31": {
+      "maxLocalErrorM": 0.0000030090222950211635,
+      "maxModelSpaceErrorM": 0.000003009022295049567,
+      "comparisons": 3102
+    },
+    "33": {
+      "maxLocalErrorM": 0.000003216752933416803,
+      "maxModelSpaceErrorM": 0.0000032167529334923164,
+      "comparisons": 3102
+    },
+    "76": {
+      "maxLocalErrorM": 0.000003223490955723448,
+      "maxModelSpaceErrorM": 0.0000032234909557457054,
+      "comparisons": 3102
+    },
+    "119": {
+      "maxLocalErrorM": 0.000003121684940318895,
+      "maxModelSpaceErrorM": 0.0000031216849403464773,
+      "comparisons": 3102
+    },
+    "123": {
+      "maxLocalErrorM": 0.0000027984742045142934,
+      "maxModelSpaceErrorM": 0.0000027984742045142934,
+      "comparisons": 3102
+    },
+    "126": {
+      "maxLocalErrorM": 0.0000027984742045860507,
+      "maxModelSpaceErrorM": 0.0000027984742045860507,
+      "comparisons": 3102
+    },
+    "132": {
+      "maxLocalErrorM": 0.0000027984742044357608,
+      "maxModelSpaceErrorM": 0.0000027984742044251335,
+      "comparisons": 3102
+    },
+    "137": {
+      "maxLocalErrorM": 0.0000027984742044989545,
+      "maxModelSpaceErrorM": 0.0000027984742044847256,
+      "comparisons": 3102
+    },
+    "148": {
+      "maxLocalErrorM": 0.000002798474204485381,
+      "maxModelSpaceErrorM": 0.0000027984742044675507,
+      "comparisons": 3102
+    }
+  },
+  "maxErrorM": 0.000003223490955723448,
+  "maxWorldErrorM": 0.0000032234909557457054,
+  "comparisons": 43428,
+  "finite": true,
+  "duration": 1.225000023841858,
+  "endpointErrorM": 5.505614743031042e-8,
+  "cancellations": {
+    "12": 0,
+    "33": 0,
+    "76": 0,
+    "119": 0,
+    "132": 0,
+    "147": 0
+  },
+  "failures": [],
+  "scope": "Sampled LBS position parity, finite poses, endpoints and cancellation. Does not approve contact/anatomy or motion appearance."
+}

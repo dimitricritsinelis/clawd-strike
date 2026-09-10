@@ -1,0 +1,94 @@
+{
+  "mapping": [
+    {
+      "family": "cream-plaster",
+      "targetMaterialId": "ph_bz04_painted_plaster_warm",
+      "sourceMaterialId": "ph_painted_plaster_warm",
+      "exportName": "bz06_cream_plaster",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "sand-plaster",
+      "targetMaterialId": "ph_bz04_beige_wall_002",
+      "sourceMaterialId": "ph_plastered_wall",
+      "exportName": "bz06_sand_plaster",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "pale-lime",
+      "targetMaterialId": "ph_bz04_plastered_wall",
+      "sourceMaterialId": "ph_plastered_wall",
+      "exportName": "bz06_pale_lime",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "faded-ochre",
+      "targetMaterialId": "ph_bz04_aged_plaster_ochre",
+      "sourceMaterialId": "ph_aged_plaster_ochre",
+      "exportName": "bz06_faded_ochre",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "faded-earth-red",
+      "targetMaterialId": "ph_bz04_red_plaster_weathered",
+      "sourceMaterialId": "ph_red_plaster_weathered",
+      "exportName": "bz06_faded_earth_red",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "dressed-sandstone",
+      "targetMaterialId": "ph_bz04_sandstone_blocks_05",
+      "sourceMaterialId": "ph_sandstone_blocks_05",
+      "exportName": "bz06_dressed_sandstone",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "service-stone",
+      "targetMaterialId": "ph_bz04_sandstone_blocks_06",
+      "sourceMaterialId": "ph_sandstone_blocks_06",
+      "exportName": "bz06_service_stone",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "quiet-flags",
+      "targetMaterialId": "bz04_court_limestone_flags_01",
+      "sourceMaterialId": "court_limestone_flags_01",
+      "exportName": "bz06_quiet_flags",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "rough-service-paving",
+      "targetMaterialId": "bz04_large_sandstone_blocks_01",
+      "sourceMaterialId": "large_sandstone_blocks_01",
+      "exportName": "bz06_rough_service_paving",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "cream-woven-cloth",
+      "targetMaterialId": "ph_bz04_hessian_230",
+      "sourceMaterialId": "ph_hessian_230",
+      "exportName": "bz06_cream_woven_cloth",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "fine-linen",
+      "targetMaterialId": "ph_bz04_fine_linen",
+      "sourceMaterialId": "ph_hessian_230",
+      "exportName": "bz06_fine_linen",
+      "shadowClass": "Retain owning area shadowSchedule; no extra material per shadow receiver or wear patch"
+    },
+    {
+      "family": "monolithic-stone-trim",
+      "targetMaterialId": "ph_bz04_trim_sanded_01",
+      "sourceMaterialId": "ph_sandstone_blocks_05",
+      "exportName": "bz06_monolithic_stone_trim",
+      "shadowClass": "Retain owning opening trim shadow class; crop adds no geometry/material per sill."
+    }
+  ],
+  "coverage": {
+    "ownerRows": 58,
+    "floorRows": 25,
+    "backgroundRows": 15,
+    "scope": "All current parcel fields resolved by original parcel ID; removed architecture openings are not recreated."
+  }
+}

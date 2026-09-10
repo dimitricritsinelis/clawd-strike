@@ -1,0 +1,62 @@
+{
+  "revision": "R7-facade-centered-upper-openings",
+  "verifiedAt": "2026-09-10T17:02:21.524590+00:00",
+  "sourceSha256": "d9ba8a7d4b4c9872e5d959d49c342c511941eb0e4f7463d79d52c932b8495bdb",
+  "scope": "Engineering alignment documentation and generated visual review; no game implementation.",
+  "changes": {
+    "windowAndVentAdjustments": 51,
+    "openingsRetained": 249,
+    "groundDoorShopPositions": "unchanged",
+    "materials": "R6selected recipes unchanged",
+    "gameplayBuildingFootprintsRoofsBudgets": "unchanged"
+  },
+  "review": {
+    "faces": 100,
+    "PASS": 100,
+    "REVISE": 0,
+    "freshFinalR7Visuals": 64,
+    "sameTaskCriterionVisualsWithExactGeometryCarry": 36
+  },
+  "checks": {
+    "constructionValidator": "PASS",
+    "buildingValidator": "PASS",
+    "17negativeFixtures": "PASS",
+    "284generatedDocumentReproducibility": "PASS",
+    "25scopedHandoffs": "PASS",
+    "protectedFileAndSemanticProjections": "PASS",
+    "sourceAndMaterialIdentity": "PASS",
+    "localLinksAnd263SvgParses": "PASS",
+    "diffWhitespace": "PASS",
+    "12freshPerspectives": "PASS",
+    "atlas": "PASS60pages,249openingrows,60bookmarks,0overflow",
+    "materialPDF": "PASS14pages,currenthash,unchangedmaterialcontent"
+  },
+  "pdfs": [
+    {
+      "path": "output/pdf/bazaar-r7-complete-visual-atlas.pdf",
+      "pages": 60,
+      "sha256": "61c8ea091a9af0a9c0390f35a02b973297af59bbfbf72fca3306a2a139cda385"
+    },
+    {
+      "path": "output/pdf/bazaar-material-review.pdf",
+      "pages": 14,
+      "sha256": "eccf5322f5173b17216803d102668b4f4ba13c4c46f203403ace64f7b71f28b7"
+    }
+  ],
+  "preview": {
+    "path": "artifacts/bazaar-r7-alignment-review/textile-centered-elevations.png",
+    "sha256": "236019fd04f9abb228920e1379fbef316c5c8a0062c150be9c89fc71c1ec67de"
+  },
+  "limits": [
+    "Schematic alignment decisions do not establish user art acceptance.",
+    "No game build, exportedmesh inspection, movement or runtime performance was performed for this documentation revision."
+  ],
+  "evidence": [
+    "alignment-changes.json",
+    "primary-face-review.json",
+    "secondary-face-review.json",
+    "textile-face-review.json",
+    "atlas-validation.json",
+    "material-pdf-validation.json"
+  ]
+}

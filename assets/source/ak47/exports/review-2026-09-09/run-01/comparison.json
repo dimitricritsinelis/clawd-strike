@@ -1,0 +1,160 @@
+{
+  "repeatExact": true,
+  "commonInputsAndProtectedState": true,
+  "rows": [
+    {
+      "case": "control",
+      "placement": "reference",
+      "cmc": "reference",
+      "flexion": "reference",
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 78.83275221420587,
+      "bodyHandAffectedTriangleAreaMM2": 231.45250919601705,
+      "allLayersAffectedTriangleAreaMM2": 1133.9617832729898,
+      "fingerSurfaceIntersectionTriangles": 0,
+      "maxFingerMarkerDisplacementMM": 0,
+      "fingerFitStatuses": "reference",
+      "protected": true
+    },
+    {
+      "case": "case-01",
+      "placement": 0,
+      "cmc": 0,
+      "flexion": 0,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 217.549660432542,
+      "bodyHandAffectedTriangleAreaMM2": 289.6349676835123,
+      "allLayersAffectedTriangleAreaMM2": 1634.369110667408,
+      "fingerSurfaceIntersectionTriangles": 0,
+      "maxFingerMarkerDisplacementMM": 0.03103762103607726,
+      "fingerFitStatuses": "converged,stalled,converged,converged",
+      "protected": true
+    },
+    {
+      "case": "case-02",
+      "placement": 0,
+      "cmc": 0,
+      "flexion": 1,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 196.1520035239622,
+      "bodyHandAffectedTriangleAreaMM2": 289.6349676835123,
+      "allLayersAffectedTriangleAreaMM2": 1637.6570975122297,
+      "fingerSurfaceIntersectionTriangles": 0,
+      "maxFingerMarkerDisplacementMM": 0.03103762103607726,
+      "fingerFitStatuses": "converged,stalled,converged,converged",
+      "protected": true
+    },
+    {
+      "case": "case-03",
+      "placement": 0,
+      "cmc": 1,
+      "flexion": 0,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 208.87216172746867,
+      "bodyHandAffectedTriangleAreaMM2": 282.3121272885888,
+      "allLayersAffectedTriangleAreaMM2": 1600.2037863209055,
+      "fingerSurfaceIntersectionTriangles": 0,
+      "maxFingerMarkerDisplacementMM": 0.03103762103607726,
+      "fingerFitStatuses": "converged,stalled,converged,converged",
+      "protected": true
+    },
+    {
+      "case": "case-04",
+      "placement": 0,
+      "cmc": 1,
+      "flexion": 1,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 202.15393900661508,
+      "bodyHandAffectedTriangleAreaMM2": 282.3121272885888,
+      "allLayersAffectedTriangleAreaMM2": 1583.5708698167202,
+      "fingerSurfaceIntersectionTriangles": 0,
+      "maxFingerMarkerDisplacementMM": 0.03103762103607726,
+      "fingerFitStatuses": "converged,stalled,converged,converged",
+      "protected": true
+    },
+    {
+      "case": "case-05",
+      "placement": 1,
+      "cmc": 0,
+      "flexion": 0,
+      "pulpCoveragePercent": 6.322098045649832,
+      "largestQualifyingPulpPatchMM2": 15.842067012914876,
+      "bodyThumbAffectedTriangleAreaMM2": 100.84744461571097,
+      "bodyHandAffectedTriangleAreaMM2": 196.2782775411645,
+      "allLayersAffectedTriangleAreaMM2": 955.2835489275295,
+      "fingerSurfaceIntersectionTriangles": 27,
+      "maxFingerMarkerDisplacementMM": 4.879438663062986,
+      "fingerFitStatuses": "stalled,stalled,stalled,stalled",
+      "protected": true
+    },
+    {
+      "case": "case-06",
+      "placement": 1,
+      "cmc": 0,
+      "flexion": 1,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 87.13854452943636,
+      "bodyHandAffectedTriangleAreaMM2": 196.2782775411645,
+      "allLayersAffectedTriangleAreaMM2": 935.6431064193463,
+      "fingerSurfaceIntersectionTriangles": 27,
+      "maxFingerMarkerDisplacementMM": 4.879438663062986,
+      "fingerFitStatuses": "stalled,stalled,stalled,stalled",
+      "protected": true
+    },
+    {
+      "case": "case-07",
+      "placement": 1,
+      "cmc": 1,
+      "flexion": 0,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 132.4815731157119,
+      "bodyHandAffectedTriangleAreaMM2": 172.50031811720757,
+      "allLayersAffectedTriangleAreaMM2": 979.8983760487255,
+      "fingerSurfaceIntersectionTriangles": 27,
+      "maxFingerMarkerDisplacementMM": 4.879438663062986,
+      "fingerFitStatuses": "stalled,stalled,stalled,stalled",
+      "protected": true
+    },
+    {
+      "case": "case-08",
+      "placement": 1,
+      "cmc": 1,
+      "flexion": 1,
+      "pulpCoveragePercent": 0.0,
+      "largestQualifyingPulpPatchMM2": 0,
+      "bodyThumbAffectedTriangleAreaMM2": 121.62081400613846,
+      "bodyHandAffectedTriangleAreaMM2": 172.50031811720757,
+      "allLayersAffectedTriangleAreaMM2": 946.7207576841587,
+      "fingerSurfaceIntersectionTriangles": 27,
+      "maxFingerMarkerDisplacementMM": 4.879438663062986,
+      "fingerFitStatuses": "stalled,stalled,stalled,stalled",
+      "protected": true
+    }
+  ],
+  "factorEffects": {
+    "placement": {
+      "lowMeanAffectedTriangleAreaMM2": 1613.9502160793159,
+      "highMeanAffectedTriangleAreaMM2": 954.3864472699399,
+      "highMinusLowMM2": -659.5637688093759
+    },
+    "cmc": {
+      "lowMeanAffectedTriangleAreaMM2": 1290.7382158816283,
+      "highMeanAffectedTriangleAreaMM2": 1277.5984474676275,
+      "highMinusLowMM2": -13.139768414000855
+    },
+    "flexion": {
+      "lowMeanAffectedTriangleAreaMM2": 1292.4387054911422,
+      "highMeanAffectedTriangleAreaMM2": 1275.8979578581138,
+      "highMinusLowMM2": -16.54074763302833
+    }
+  },
+  "interpretation": "Affected whole-triangle area is not penetration volume and includes tangency and overlapping garment layers. Marker displacement is not a surface contact gap. Pulp coverage is a frozen engineering proximity/orientation screen, not visual approval.",
+  "reviewStatus": "Static review only; no grip selected or reload integrated."
+}

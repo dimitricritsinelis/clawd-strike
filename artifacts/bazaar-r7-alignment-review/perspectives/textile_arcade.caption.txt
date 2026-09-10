@@ -1,0 +1,2 @@
+TEXTILE_ARCADE | TEXTILE_ARCADE-east-T_E_LOOM_T_E_GALLERY_T_E_CART-s1-base | design XYZ (24.350, 56.000, 1.700) m | yaw 270.00°, pitch 2.69°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

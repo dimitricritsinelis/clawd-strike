@@ -57,7 +57,7 @@ export class Ak47Weapon {
   private reloadQueued = false;
 
   // Callbacks for audio events
-  onReloadStart: (() => void) | null = null;
+  onReloadStart: ((durationSeconds: number) => void) | null = null;
   onReloadEnd: (() => void) | null = null;
   onReloadCancel: (() => void) | null = null;
   onDryFire: (() => void) | null = null;
@@ -249,7 +249,7 @@ export class Ak47Weapon {
     this.reloadTimerS = 0;
     this.reloadQueued = false;
     this.fireController.cancelTrigger();
-    this.onReloadStart?.();
+    this.onReloadStart?.(RELOAD_TIME_S / this.reloadSpeedMultiplier);
     return true;
   }
 

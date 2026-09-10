@@ -31,7 +31,7 @@ import {
   HERO_GATE_ROUTE_HALF_CLEARANCE_M,
   resolveHeroGateDressingLayout,
 } from "./propFamilies/gateDressing";
-import { parseAnchorsSpec, parseBlockoutSpec } from "./types";
+import { parseAnchorsSpec, parseBlockoutSpec, type RuntimeDressingPlacement } from "./types";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 
 const POLISH_MODULES = new Set([
@@ -198,7 +198,14 @@ async function buildSharedStallResult(includeStalls = true) {
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
   blockout.dressingPlacements = includeStalls
-    ? (blockout.dressingPlacements ?? []).filter((placement) => placement.runtime.id === "bazaar_market_stall")
+    ? Array.from({ length: 6 }, (_, index): RuntimeDressingPlacement => ({
+      id: `LEGACY_STALL_${index}`, clusterId: "LEGACY_STALL_FIXTURE", assetId: "ASSET_MARKET_STALL",
+      anchorId: `LEGACY_STALL_ANCHOR_${index}`, zoneId: "SPICE_STREET", districtId: "DISTRICT_SPICE",
+      classification: "soft_visual", position: { x: 27, y: 23 + index * 3, z: 0 }, yawDeg: 90,
+      scale: { x: 1, y: 1, z: 1 }, dimensionsM: { width: 2.2, depth: 1.35, height: 2.2 },
+      collisionClass: "none", shadowPolicy: "cast_receive", lodEligible: true, semanticClass: "furniture",
+      runtime: { mode: "procedural", id: "bazaar_market_stall" },
+    }))
     : [];
   return buildProps({
     mapId: blockout.mapId,
@@ -328,10 +335,19 @@ async function buildRugGateFixture() {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  const placement = (blockout.dressingPlacements ?? []).find((candidate) => (
-    candidate.runtime.id === "bazaar_rug_gate_arch"
+  const current = (blockout.dressingPlacements ?? []).find((candidate) => (
+    candidate.id === "PLACE_RUG_ARCH_LMK_RUG_GATE_01"
   ));
-  assert.ok(placement, "authored Rug Gate placement is missing");
+  assert.ok(current, "authored Rug Gate placement is missing");
+  // Exercise the retained procedural family independently of the current
+  // map's BZ-04 model replacement. The exported replacement has triangle and
+  // actual-game clearance checks in the courtyard trial.
+  const placement = {
+    ...current,
+    assetId: "ASSET_HERO_ARCH",
+    dimensionsM: { width: 13, depth: 0.8, height: 6.8 },
+    runtime: { mode: "procedural" as const, id: "bazaar_rug_gate_arch" },
+  };
   blockout.dressingPlacements = [placement];
   const result = buildProps({
     mapId: blockout.mapId,
@@ -394,11 +410,11 @@ function texturePixel(texture: DataTexture, u: number, v: number): readonly numb
 }
 
 test("compiled merchant stall is a complete grounded prefab rather than a bare table", async () => {
-  const result = await buildPolishResult();
+  const result = await buildSharedStallResult();
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   assert.equal(root.getObjectByName("v3-market-display"), undefined, "procedural table proxy is still rendered");
 
-  const placementId = "PLACE_SPICE_STALLS_SPICE_W_SHOP_1";
+  const placementId = "LEGACY_STALL_0";
   const goods = root.getObjectByName(`v3-market-stall-prefab-${placementId}`);
   assert.ok(goods instanceof Group, "market-stall goods composition is missing");
   assert.equal(goods.getObjectByName("model-ph_wooden_table_01"), undefined, "bare table mapping still renders");
@@ -1177,10 +1193,16 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   assert.equal(carrier.count, 1, "Dyers west requires its window-clearing receiver");
   assert.equal(trestles.count + carrier.count, 12, "each of the six cloth spans needs support on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.equal(root.children.length, 67, "canopy families, including the measured Dyers receiver, exceeded their batch budget");
+  assert.deepEqual(root.children.map((child) => child.name)
+    .filter((name) => name.startsWith("v3-canopy-") || name === "v3-dyers-west-canopy-carrier").sort(), [
+    "v3-canopy-cloth", "v3-canopy-cloth-plain", "v3-canopy-cloth-plain-alt",
+    "v3-canopy-edge-ropes", "v3-canopy-hang-ropes", "v3-canopy-rings-brackets",
+    "v3-canopy-scalloped-valance", "v3-canopy-scalloped-valance-plain", "v3-canopy-scalloped-valance-plain-alt",
+    "v3-canopy-wall-trestles", "v3-dyers-west-canopy-carrier",
+  ].sort(), "canopy draw families changed independently of the remaining legacy props");
 });
 
-test("Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
+test("Legacy Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
   const { placement, result, root } = await buildRugGateFixture();
   assert.equal(result.colliders.length, 0, "visual Rug Gate placement introduced gameplay collision");
   assert.equal(root.children.length, 9, "Rug Gate draw families drifted from its open arch, tiled crown, four-batch textile kit and ground contact");
@@ -1237,7 +1259,7 @@ test("Rug Gate stays collider-neutral and inside its exact authored telemetry en
   assert.ok(renderedTriangles <= 5_200, `Rug Gate exceeded its focused triangle budget: ${renderedTriangles}`);
 });
 
-test("Rug Gate spans the lane with a pointed crown, wall-buried returns, and no fake floor threshold", async () => {
+test("Legacy Rug Gate spans the lane with a pointed crown, wall-buried returns, and no fake floor threshold", async () => {
   const { root } = await buildRugGateFixture();
   const pillars = mesh(root, "v3-rug-gate-pillars");
   const crown = mesh(root, "v3-rug-gate-crown");

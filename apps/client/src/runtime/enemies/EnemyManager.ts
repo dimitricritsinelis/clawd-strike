@@ -1,6 +1,6 @@
 import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { AK47_AUDIO_TUNING, type WeaponAudio } from "../audio/WeaponAudio";
+import type { WeaponAudio } from "../audio/WeaponAudio";
 import type {
   RuntimeAnchorsSpec,
   RuntimeAuthoredSpawn,
@@ -2157,13 +2157,9 @@ export class EnemyManager {
       if (controller.isFiring()) {
         visual.triggerShotFx();
         const distanceToPlayerM = distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z);
-        const distanceNorm = clamp01(
-          (distanceToPlayerM - AK47_AUDIO_TUNING.enemy.distanceMinM)
-            / Math.max(0.001, AK47_AUDIO_TUNING.enemy.distanceMaxM - AK47_AUDIO_TUNING.enemy.distanceMinM),
-        );
         this.weaponAudio?.playAk47ShotQuiet({
-          layerGainScale: 1,
-          distanceNorm,
+          sourceId: controller.id,
+          distanceM: distanceToPlayerM,
         });
       }
       visual.updateFx(deltaSeconds);

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 a dyeworks facade composition · BLD_A_DYEWORKS · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="184.09" y="598.32" width="188.18" height="197.59" fill="#e6e0d1"/>
+<rect x="184.09" y="294.09" width="200.73" height="304.23" fill="#e6e0d1"/>
+<rect x="184.09" y="294.09" width="200.73" height="31.36" fill="#e6e0d1"/>
+<line x1="184.09" y1="795.91" x2="184.09" y2="598.32" stroke="#344548" stroke-width="2"/>
+<line x1="372.27" y1="795.91" x2="372.27" y2="598.32" stroke="#344548" stroke-width="2"/>
+<line x1="184.09" y1="795.91" x2="372.27" y2="795.91" stroke="#344548" stroke-width="2"/>
+<line x1="184.09" y1="598.32" x2="184.09" y2="325.45" stroke="#344548" stroke-width="2"/>
+<line x1="184.09" y1="325.45" x2="184.09" y2="294.09" stroke="#344548" stroke-width="2"/>
+<line x1="184.09" y1="294.09" x2="372.27" y2="294.09" stroke="#344548" stroke-width="2"/>
+<line x1="384.82" y1="598.32" x2="384.82" y2="325.45" stroke="#344548" stroke-width="2"/>
+<line x1="372.27" y1="598.32" x2="384.82" y2="598.32" stroke="#344548" stroke-width="2"/>
+<line x1="384.82" y1="325.45" x2="384.82" y2="294.09" stroke="#344548" stroke-width="2"/>
+<line x1="372.27" y1="294.09" x2="384.82" y2="294.09" stroke="#344548" stroke-width="2"/>
+<rect x="190.36" y="422.05" width="188.18" height="169.99" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="284.45" y="507.05" text-anchor="middle">R1</text>
+<rect x="190.36" y="300.36" width="188.18" height="109.15" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="284.45" y="354.94" text-anchor="middle">R2</text>
+<circle cx="184.09" cy="507.05" r="4" fill="#77715f"/>
+<polygon points="278.18,429.58 278.18,427.07 228.00,427.07 228.00,429.58" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="184.09,363.09 212.32,363.09 253.09,363.09 253.09,400.10 253.09,456.55" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="278.18" y="423.58">side-door → A_E_DRYING-STAFF-DOOR</text>
+<circle cx="184.09" cy="363.09" r="4" fill="#a14b3d"/>
+<text class="label" x="192.09" y="355.09">principal entrance</text>
+<rect x="166.53" y="430.84" width="136.75" height="152.43" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x 39..42.2 · y 0..8 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Courtyard dye works</text>
+<text class="label" x="1100" y="244">R1: wet work and separate service stair</text>
+<text class="label" x="1100" y="288">R2: staff stair and store entrance</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Courtyard dye works</text>
+<text class="tiny" x="1100" y="678">3 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Upper opening groups balance the complete</text>
+<text class="tiny" x="1100" y="714">visible facade or established composition.</text>
+<text class="tiny" x="1100" y="732">Ground doors and shop axes remain independent.</text>
+<text class="tiny" x="1100" y="750">Existing shared physical room identities and</text>
+<text class="tiny" x="1100" y="768">floor levels are retained.</text>
+<text class="tiny" x="1100" y="786">Ground trade bays and staff stairs use</text>
+<text class="tiny" x="1100" y="804">different widths because they have different</text>
+<text class="tiny" x="1100" y="822">functions; residential principal elevations use</text>
+<text class="tiny" x="1100" y="840">a centered entrance. No free offsets or filler</text>
+<text class="tiny" x="1100" y="858">openings.</text>
+</svg>

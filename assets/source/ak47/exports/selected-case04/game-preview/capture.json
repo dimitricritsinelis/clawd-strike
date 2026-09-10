@@ -1,0 +1,2792 @@
+{
+  "url": "http://127.0.0.1:5173/?autostart=agent&name=ReloadReview&map=bazaar-map&spawn=A&qa=0&vm=1&floors=pbr&walls=pbr&props=bazaar&lighting=golden&ao=1&shadows=1",
+  "expectedAssetPath": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/case04-reload-preview.glb",
+  "fps": 60,
+  "viewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "servedSha256": "ba80a21dfec6e314958b29dd751833e6967d794ba55ccb2daa1075ba0a415253",
+  "localSha256": "ba80a21dfec6e314958b29dd751833e6967d794ba55ccb2daa1075ba0a415253",
+  "loadedAssetSha256": "ba80a21dfec6e314958b29dd751833e6967d794ba55ccb2daa1075ba0a415253",
+  "closeups": [
+    {
+      "frame": 0,
+      "phase": "idle-before",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0000.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 30,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0030.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 40,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0040.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 46,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0046.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 60,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0060.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 75,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0075.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 90,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0090.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 98,
+      "phase": "reload",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0098.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 104,
+      "phase": "idle-after",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0104.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    },
+    {
+      "frame": 140,
+      "phase": "idle-after",
+      "file": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/closeup-0140.png",
+      "clip": {
+        "left": 640,
+        "top": 270,
+        "width": 960,
+        "height": 630
+      }
+    }
+  ],
+  "initial": {
+    "observation": {
+      "apiVersion": 1,
+      "contract": "public-agent-v1",
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "runtimeReady": true,
+      "gameplay": {
+        "alive": true,
+        "gameOverVisible": false
+      },
+      "health": 100,
+      "ammo": {
+        "mag": 30,
+        "reserve": 120,
+        "reloading": false
+      },
+      "score": {
+        "current": 0,
+        "best": 0,
+        "lastRun": null,
+        "scope": "browser-session"
+      },
+      "sharedChampion": null,
+      "lastRunSummary": null,
+      "feedback": {
+        "episodeId": 1,
+        "recentEvents": []
+      },
+      "perception": {
+        "visibleTargets": [],
+        "movementBlocked": false
+      }
+    },
+    "runtime": {
+      "apiVersion": 4,
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "map": {
+        "loaded": true,
+        "mapId": "bazaar-map",
+        "seed": 412805685,
+        "spawn": "A",
+        "highVis": false,
+        "colliderCount": 155,
+        "wallDetails": {
+          "enabled": true,
+          "density": 1,
+          "segmentsDecorated": 38,
+          "instanceCount": 3263
+        }
+      },
+      "shot": {
+        "active": false,
+        "id": null,
+        "cameraZoneId": null,
+        "cameraPose": null
+      },
+      "render": {
+        "webgl": true,
+        "viewport": {
+          "width": 1600,
+          "height": 900
+        },
+        "warnings": [],
+        "visibleSceneTags": [
+          "B6_LAUNDRY_TEXTILE_01",
+          "B7_FOUNTAIN_MARKET_SPILL",
+          "B7_FOUNTAIN_PLANTER_EAST",
+          "B7_FOUNTAIN_TEA_SPILLOVER",
+          "BPL16_TEXTILE_E_STOCK_GROUND_04",
+          "CANOPY_SPICE_01",
+          "CANOPY_TEXTILE_01",
+          "COVER_SPICE_01",
+          "COVER_TEXTILE_01",
+          "LANTERN_RUG_01",
+          "LANTERN_SPICE_01",
+          "LANTERN_TEXTILE_01",
+          "LMK_FOUNTAIN_01",
+          "LMK_RUG_GATE_01",
+          "LMK_SPICE_GATE_01",
+          "MOUNT_SPICE_COUNTER_3",
+          "MOUNT_SPICE_COUNTER_4",
+          "MOUNT_SPICE_ROOF_MIDDLE",
+          "MOUNT_SPICE_UPPER_ROOM",
+          "MOUNT_SPICE_WINDOW_2",
+          "MOUNT_SPICE_WINDOW_3",
+          "MOUNT_SPICE_WINDOW_4",
+          "MOUNT_SPICE_WINDOW_5",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+          "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+          "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+          "MOUNT_TEXTILE_SCREEN_1",
+          "PALM_FOUNTAIN_01",
+          "SPICE_E_WALLBASE_STOCK_02",
+          "SPICE_E_WALLBASE_STOCK_03",
+          "SPICE_E_WALLBASE_STOCK_04",
+          "SPICE_W_SHOP_1",
+          "SPICE_W_SIGN_1",
+          "SPICE_W_SIGN_3",
+          "TEXTILE_E_SIGN_1",
+          "TEXTILE_W_SIGN_1"
+        ],
+        "visibleAssets": [],
+        "artifactTags": []
+      },
+      "boot": {
+        "revealPhase": "active",
+        "warmupTimedOut": false,
+        "performanceSafeFallback": false,
+        "enemyVisualsReady": true,
+        "viewModelPrewarmed": true,
+        "hiddenWarmupRenderDone": false,
+        "precompiled": false,
+        "precompileTimedOut": false,
+        "textureStabilityTimedOut": true,
+        "readyAtMs": 1378.699999988079,
+        "readyTextureCount": 2,
+        "textureStableAtMs": 1378.5999999940395,
+        "stableTextureCount": 2,
+        "lateTextureGrowth": 0
+      },
+      "view": {
+        "camera": {
+          "pos": {
+            "x": 28,
+            "y": 1.7,
+            "z": 7
+          },
+          "yawDeg": 180,
+          "pitchDeg": 0,
+          "fovDeg": 75,
+          "aspect": 1.7777777777777777
+        }
+      },
+      "gameplay": {
+        "active": true,
+        "alive": true,
+        "health": 100,
+        "pointerLocked": false,
+        "focused": true,
+        "visibility": "visible",
+        "inputFrozen": false,
+        "grounded": true,
+        "speedMps": 0
+      },
+      "agent": {
+        "enabled": true,
+        "name": "ReloadReview"
+      },
+      "player": {
+        "name": "ReloadReview",
+        "pos": {
+          "x": 28,
+          "y": 0,
+          "z": 7
+        },
+        "vel": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "withinPlayableBounds": true,
+        "zoneId": "SPAWN_A_COURTYARD",
+        "zoneType": "spawn_plaza",
+        "zoneLabel": "Spawn A Courtyard",
+        "collision": {
+          "hitX": false,
+          "hitY": false,
+          "hitZ": false,
+          "grounded": true
+        }
+      },
+      "bots": {
+        "waveNumber": 1,
+        "waveElapsedS": 0,
+        "tier": 0,
+        "aliveCount": 10,
+        "graphNodeCount": 98,
+        "searchPhase": "caution",
+        "topSearchZones": [
+          {
+            "zoneId": "CARAVAN_COURT",
+            "score": 0,
+            "reason": "caution:idle",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "COVERED_SOUK",
+            "score": 0,
+            "reason": "caution:idle",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "DYERS_ALLEY",
+            "score": 0,
+            "reason": "caution:idle",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "DYERS_DOGLEG",
+            "score": 0,
+            "reason": "caution:idle",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "FOUNTAIN_COURT",
+            "score": 0,
+            "reason": "caution:idle",
+            "lastClearedAgeS": null
+          }
+        ],
+        "squadTasks": [],
+        "roleCounts": {
+          "anchor": 0,
+          "rifler": 10,
+          "flanker": 0,
+          "roamer": 0
+        },
+        "preventedFriendlyFireCount": 0,
+        "lastSeenPlayer": null,
+        "lastHeardPlayer": null,
+        "lastSpawn": {
+          "mode": "adaptive",
+          "distanceFloorM": null,
+          "minDistanceToPlayerM": 57.47295015918358,
+          "visibleCount": 0,
+          "selectedNodeIds": [
+            "edge:SERVICE_NORTH->LINK_NORTH_WEST",
+            "anchor:COVER_RUG_01",
+            "edge:LINK_NORTH_EAST->SPAWN_B_COURTYARD",
+            "edge:LINK_NORTH_WEST->SPAWN_B_COURTYARD",
+            "edge:RUG_GATE->LINK_WEST_UPPER",
+            "edge:NORTH_COURT->LINK_EAST_UPPER",
+            "anchor:COVER_TEA_01",
+            "edge:SPAWN_B_COURTYARD->LINK_NORTH_EAST",
+            "edge:DYERS_DOGLEG->NORTH_COURT",
+            "edge:TEA_LANDING->TEA_STAIRS"
+          ],
+          "playerZoneId": "SPAWN_A_COURTYARD",
+          "usedAdjacentZoneFallback": false,
+          "usedVisibilityFallback": false,
+          "usedPlayerZoneEmergencyFallback": false,
+          "usedDistanceEmergencyFallback": false,
+          "correctedPlacements": 0
+        }
+      },
+      "landmarks": {
+        "visible": [
+          {
+            "id": "LMK_SPICE_GATE_01",
+            "type": "hero_landmark",
+            "zone": "SPICE_STREET",
+            "distanceM": 8.50441062037811,
+            "screenX": 873.7674739344076,
+            "screenY": 239.7626992869376
+          },
+          {
+            "id": "LMK_FOUNTAIN_01",
+            "type": "landmark",
+            "zone": "FOUNTAIN_COURT",
+            "distanceM": 36.682170055764146,
+            "screenX": 856.2350674582162,
+            "screenY": 466.7098486161557
+          },
+          {
+            "id": "LMK_RUG_GATE_01",
+            "type": "hero_landmark",
+            "zone": "RUG_GATE",
+            "distanceM": 69.32265142072973,
+            "screenX": 804.2312512105234,
+            "screenY": 435.61374588422046
+          }
+        ],
+        "nearest": {
+          "id": "LMK_SPICE_GATE_01",
+          "type": "hero_landmark",
+          "zone": "SPICE_STREET",
+          "distanceM": 8.50441062037811
+        }
+      },
+      "assets": {
+        "floor": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 16
+        },
+        "wall": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 68
+        },
+        "props": {
+          "requestedVisualMode": "bazaar",
+          "activeVisualMode": "bazaar",
+          "modelCount": 42
+        }
+      },
+      "score": {
+        "current": 0,
+        "best": 0
+      },
+      "sharedChampion": null,
+      "gameOver": {
+        "visible": false,
+        "finalScore": 0,
+        "bestScore": 0,
+        "canPlayAgain": false
+      },
+      "anchorsDebug": {
+        "markersVisible": false,
+        "labelsVisible": false,
+        "totalAnchors": 165,
+        "filteredAnchors": 165,
+        "shownLabels": 0,
+        "filterTypes": []
+      },
+      "props": {
+        "profile": "subtle",
+        "jitter": 0,
+        "cluster": 0,
+        "density": 1,
+        "candidatesTotal": 73,
+        "collidersPlaced": 24,
+        "rejections": {
+          "clearZone": 7,
+          "bounds": 1,
+          "gapRule": 0
+        },
+        "visualOnlyLandmarks": 4,
+        "stallFillersPlaced": 0
+      },
+      "weapon": {
+        "enabled": true,
+        "visible": true,
+        "loaded": true,
+        "alignDot": 1,
+        "alignAngleDeg": 0
+      },
+      "perf": {
+        "visible": false,
+        "fps": 60,
+        "msPerFrame": 16.67,
+        "cpuFrameMedianMs": 433.89999997615814,
+        "cpuFrameSampleCount": 3,
+        "drawCalls": 854,
+        "triangles": 3443262,
+        "geometries": 424,
+        "textures": 611,
+        "materials": 0,
+        "instancedMeshes": 0,
+        "instancedInstances": 0,
+        "meshes": 0,
+        "potentialTriangles": 0,
+        "groups": {},
+        "topMeshes": [],
+        "combatFeedbackQueue": 0,
+        "lastCombatFeedbackMs": 0,
+        "lastKillFeedbackMs": 0,
+        "orbCount": 0,
+        "orbCapacity": 0,
+        "orbSpawnMs": 0,
+        "orbUpdateMs": 0
+      }
+    }
+  },
+  "fired": {
+    "observation": {
+      "apiVersion": 1,
+      "contract": "public-agent-v1",
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "runtimeReady": true,
+      "gameplay": {
+        "alive": true,
+        "gameOverVisible": false
+      },
+      "health": 100,
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      },
+      "score": {
+        "current": 0,
+        "best": 0,
+        "lastRun": null,
+        "scope": "browser-session"
+      },
+      "sharedChampion": null,
+      "lastRunSummary": null,
+      "feedback": {
+        "episodeId": 1,
+        "recentEvents": []
+      },
+      "perception": {
+        "visibleTargets": [],
+        "movementBlocked": false
+      }
+    },
+    "runtime": {
+      "apiVersion": 4,
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "map": {
+        "loaded": true,
+        "mapId": "bazaar-map",
+        "seed": 412805685,
+        "spawn": "A",
+        "highVis": false,
+        "colliderCount": 155,
+        "wallDetails": {
+          "enabled": true,
+          "density": 1,
+          "segmentsDecorated": 38,
+          "instanceCount": 3263
+        }
+      },
+      "shot": {
+        "active": false,
+        "id": null,
+        "cameraZoneId": null,
+        "cameraPose": null
+      },
+      "render": {
+        "webgl": true,
+        "viewport": {
+          "width": 1600,
+          "height": 900
+        },
+        "warnings": [],
+        "visibleSceneTags": [
+          "B6_LAUNDRY_TEXTILE_01",
+          "B7_FOUNTAIN_MARKET_SPILL",
+          "B7_FOUNTAIN_PLANTER_EAST",
+          "B7_FOUNTAIN_TEA_SPILLOVER",
+          "BPL16_TEXTILE_E_STOCK_GROUND_04",
+          "CANOPY_SPICE_01",
+          "CANOPY_TEXTILE_01",
+          "COVER_SPICE_01",
+          "COVER_TEXTILE_01",
+          "LANTERN_RUG_01",
+          "LANTERN_SPICE_01",
+          "LANTERN_TEXTILE_01",
+          "LMK_FOUNTAIN_01",
+          "LMK_RUG_GATE_01",
+          "LMK_SPICE_GATE_01",
+          "MOUNT_SPICE_COUNTER_3",
+          "MOUNT_SPICE_COUNTER_4",
+          "MOUNT_SPICE_ROOF_MIDDLE",
+          "MOUNT_SPICE_UPPER_ROOM",
+          "MOUNT_SPICE_WINDOW_2",
+          "MOUNT_SPICE_WINDOW_3",
+          "MOUNT_SPICE_WINDOW_4",
+          "MOUNT_SPICE_WINDOW_5",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+          "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+          "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+          "MOUNT_TEXTILE_SCREEN_1",
+          "PALM_FOUNTAIN_01",
+          "SPICE_E_WALLBASE_STOCK_02",
+          "SPICE_E_WALLBASE_STOCK_03",
+          "SPICE_E_WALLBASE_STOCK_04",
+          "SPICE_W_SHOP_1",
+          "SPICE_W_SIGN_1",
+          "SPICE_W_SIGN_3",
+          "TEXTILE_E_SIGN_1",
+          "TEXTILE_W_SIGN_1"
+        ],
+        "visibleAssets": [],
+        "artifactTags": []
+      },
+      "boot": {
+        "revealPhase": "active",
+        "warmupTimedOut": false,
+        "performanceSafeFallback": false,
+        "enemyVisualsReady": true,
+        "viewModelPrewarmed": true,
+        "hiddenWarmupRenderDone": false,
+        "precompiled": false,
+        "precompileTimedOut": false,
+        "textureStabilityTimedOut": true,
+        "readyAtMs": 1378.699999988079,
+        "readyTextureCount": 2,
+        "textureStableAtMs": 1378.5999999940395,
+        "stableTextureCount": 2,
+        "lateTextureGrowth": 0
+      },
+      "view": {
+        "camera": {
+          "pos": {
+            "x": 28.00002765348788,
+            "y": 1.6998499977746084,
+            "z": 7
+          },
+          "yawDeg": 180.02351335647518,
+          "pitchDeg": 0.5911117028770968,
+          "fovDeg": 75,
+          "aspect": 1.7777777777777777
+        }
+      },
+      "gameplay": {
+        "active": true,
+        "alive": true,
+        "health": 100,
+        "pointerLocked": false,
+        "focused": true,
+        "visibility": "visible",
+        "inputFrozen": false,
+        "grounded": true,
+        "speedMps": 0
+      },
+      "agent": {
+        "enabled": true,
+        "name": "ReloadReview"
+      },
+      "player": {
+        "name": "ReloadReview",
+        "pos": {
+          "x": 28,
+          "y": 0,
+          "z": 7
+        },
+        "vel": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "withinPlayableBounds": true,
+        "zoneId": "SPAWN_A_COURTYARD",
+        "zoneType": "spawn_plaza",
+        "zoneLabel": "Spawn A Courtyard",
+        "collision": {
+          "hitX": false,
+          "hitY": true,
+          "hitZ": false,
+          "grounded": true
+        }
+      },
+      "bots": {
+        "waveNumber": 1,
+        "waveElapsedS": 0.03333333333333333,
+        "tier": 0,
+        "aliveCount": 10,
+        "graphNodeCount": 98,
+        "searchPhase": "caution",
+        "topSearchZones": [
+          {
+            "zoneId": "LINK_SOUTH_EAST",
+            "score": 1,
+            "reason": "caution:gunshot",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "LINK_SOUTH_WEST",
+            "score": 1,
+            "reason": "caution:gunshot",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "SPAWN_A_COURTYARD",
+            "score": 1,
+            "reason": "caution:gunshot",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "SPICE_STREET",
+            "score": 0.942,
+            "reason": "caution:gunshot",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "DYERS_ALLEY",
+            "score": 0.638,
+            "reason": "caution:gunshot",
+            "lastClearedAgeS": null
+          }
+        ],
+        "squadTasks": [],
+        "roleCounts": {
+          "anchor": 2,
+          "rifler": 6,
+          "flanker": 0,
+          "roamer": 2
+        },
+        "preventedFriendlyFireCount": 0,
+        "lastSeenPlayer": null,
+        "lastHeardPlayer": {
+          "x": 28,
+          "y": 0,
+          "z": 7,
+          "timeS": 0,
+          "zoneId": "SPAWN_A_COURTYARD",
+          "lane": "main",
+          "radiusM": 5.2,
+          "confidence": 0.72,
+          "source": "gunshot",
+          "kind": "gunshot",
+          "precise": false,
+          "shared": false
+        },
+        "lastSpawn": {
+          "mode": "adaptive",
+          "distanceFloorM": null,
+          "minDistanceToPlayerM": 57.47295015918358,
+          "visibleCount": 0,
+          "selectedNodeIds": [
+            "edge:SERVICE_NORTH->LINK_NORTH_WEST",
+            "anchor:COVER_RUG_01",
+            "edge:LINK_NORTH_EAST->SPAWN_B_COURTYARD",
+            "edge:LINK_NORTH_WEST->SPAWN_B_COURTYARD",
+            "edge:RUG_GATE->LINK_WEST_UPPER",
+            "edge:NORTH_COURT->LINK_EAST_UPPER",
+            "anchor:COVER_TEA_01",
+            "edge:SPAWN_B_COURTYARD->LINK_NORTH_EAST",
+            "edge:DYERS_DOGLEG->NORTH_COURT",
+            "edge:TEA_LANDING->TEA_STAIRS"
+          ],
+          "playerZoneId": "SPAWN_A_COURTYARD",
+          "usedAdjacentZoneFallback": false,
+          "usedVisibilityFallback": false,
+          "usedPlayerZoneEmergencyFallback": false,
+          "usedDistanceEmergencyFallback": false,
+          "correctedPlacements": 0
+        }
+      },
+      "landmarks": {
+        "visible": [
+          {
+            "id": "LMK_SPICE_GATE_01",
+            "type": "hero_landmark",
+            "zone": "SPICE_STREET",
+            "distanceM": 8.504464142021288,
+            "screenX": 873.7451608887357,
+            "screenY": 246.54389152148443
+          },
+          {
+            "id": "LMK_FOUNTAIN_01",
+            "type": "landmark",
+            "zone": "FOUNTAIN_COURT",
+            "distanceM": 36.682168441806326,
+            "screenX": 856.4980183061109,
+            "screenY": 472.76533235378355
+          },
+          {
+            "id": "LMK_RUG_GATE_01",
+            "type": "hero_landmark",
+            "zone": "RUG_GATE",
+            "distanceM": 69.32265529885825,
+            "screenX": 804.4712759029135,
+            "screenY": 441.66508568395335
+          }
+        ],
+        "nearest": {
+          "id": "LMK_SPICE_GATE_01",
+          "type": "hero_landmark",
+          "zone": "SPICE_STREET",
+          "distanceM": 8.504464142021288
+        }
+      },
+      "assets": {
+        "floor": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 16
+        },
+        "wall": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 68
+        },
+        "props": {
+          "requestedVisualMode": "bazaar",
+          "activeVisualMode": "bazaar",
+          "modelCount": 42
+        }
+      },
+      "score": {
+        "current": 0,
+        "best": 0
+      },
+      "sharedChampion": null,
+      "gameOver": {
+        "visible": false,
+        "finalScore": 0,
+        "bestScore": 0,
+        "canPlayAgain": false
+      },
+      "anchorsDebug": {
+        "markersVisible": false,
+        "labelsVisible": false,
+        "totalAnchors": 165,
+        "filteredAnchors": 165,
+        "shownLabels": 0,
+        "filterTypes": []
+      },
+      "props": {
+        "profile": "subtle",
+        "jitter": 0,
+        "cluster": 0,
+        "density": 1,
+        "candidatesTotal": 73,
+        "collidersPlaced": 24,
+        "rejections": {
+          "clearZone": 7,
+          "bounds": 1,
+          "gapRule": 0
+        },
+        "visualOnlyLandmarks": 4,
+        "stallFillersPlaced": 0
+      },
+      "weapon": {
+        "enabled": true,
+        "visible": true,
+        "loaded": true,
+        "alignDot": 0.9996250120820614,
+        "alignAngleDeg": 1.569133303257978
+      },
+      "perf": {
+        "visible": false,
+        "fps": 60,
+        "msPerFrame": 16.67,
+        "cpuFrameMedianMs": 23.80000001192093,
+        "cpuFrameSampleCount": 7,
+        "drawCalls": 929,
+        "triangles": 3127490,
+        "geometries": 439,
+        "textures": 648,
+        "materials": 0,
+        "instancedMeshes": 0,
+        "instancedInstances": 0,
+        "meshes": 0,
+        "potentialTriangles": 0,
+        "groups": {},
+        "topMeshes": [],
+        "combatFeedbackQueue": 0,
+        "lastCombatFeedbackMs": 0,
+        "lastKillFeedbackMs": 0,
+        "orbCount": 0,
+        "orbCapacity": 0,
+        "orbSpawnMs": 0,
+        "orbUpdateMs": 0
+      }
+    }
+  },
+  "final": {
+    "observation": {
+      "apiVersion": 1,
+      "contract": "public-agent-v1",
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "runtimeReady": true,
+      "gameplay": {
+        "alive": true,
+        "gameOverVisible": false
+      },
+      "health": 100,
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      },
+      "score": {
+        "current": 0,
+        "best": 0,
+        "lastRun": null,
+        "scope": "browser-session"
+      },
+      "sharedChampion": null,
+      "lastRunSummary": null,
+      "feedback": {
+        "episodeId": 1,
+        "recentEvents": [
+          {
+            "id": 1,
+            "type": "reload-start"
+          },
+          {
+            "id": 2,
+            "type": "reload-end"
+          }
+        ]
+      },
+      "perception": {
+        "visibleTargets": [],
+        "movementBlocked": false
+      }
+    },
+    "runtime": {
+      "apiVersion": 4,
+      "mode": "runtime",
+      "profile": {
+        "profileId": "desktop-agent",
+        "tuningRevision": "desktop-agent-baseline-f30c73c70dc0-r3",
+        "balanceSeason": "preseason-2026-08"
+      },
+      "map": {
+        "loaded": true,
+        "mapId": "bazaar-map",
+        "seed": 412805685,
+        "spawn": "A",
+        "highVis": false,
+        "colliderCount": 155,
+        "wallDetails": {
+          "enabled": true,
+          "density": 1,
+          "segmentsDecorated": 38,
+          "instanceCount": 3263
+        }
+      },
+      "shot": {
+        "active": false,
+        "id": null,
+        "cameraZoneId": null,
+        "cameraPose": null
+      },
+      "render": {
+        "webgl": true,
+        "viewport": {
+          "width": 1600,
+          "height": 900
+        },
+        "warnings": [],
+        "visibleSceneTags": [
+          "B6_LAUNDRY_TEXTILE_01",
+          "B7_FOUNTAIN_MARKET_SPILL",
+          "B7_FOUNTAIN_PLANTER_EAST",
+          "B7_FOUNTAIN_TEA_SPILLOVER",
+          "BPL16_TEXTILE_E_STOCK_GROUND_04",
+          "CANOPY_SPICE_01",
+          "CANOPY_TEXTILE_01",
+          "COVER_SPICE_01",
+          "COVER_TEXTILE_01",
+          "LANTERN_RUG_01",
+          "LANTERN_SPICE_01",
+          "LANTERN_TEXTILE_01",
+          "LMK_FOUNTAIN_01",
+          "LMK_RUG_GATE_01",
+          "LMK_SPICE_GATE_01",
+          "MOUNT_SPICE_COUNTER_3",
+          "MOUNT_SPICE_COUNTER_4",
+          "MOUNT_SPICE_ROOF_MIDDLE",
+          "MOUNT_SPICE_UPPER_ROOM",
+          "MOUNT_SPICE_WINDOW_2",
+          "MOUNT_SPICE_WINDOW_3",
+          "MOUNT_SPICE_WINDOW_4",
+          "MOUNT_SPICE_WINDOW_5",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_01",
+          "MOUNT_SUPPORT_B6_LAUNDRY_TEXTILE_02",
+          "MOUNT_TEXTILE_EAST_GROUND_01_COMPLETE",
+          "MOUNT_TEXTILE_EAST_GROUND_04_COMPLETE",
+          "MOUNT_TEXTILE_SCREEN_1",
+          "PALM_FOUNTAIN_01",
+          "SPICE_E_WALLBASE_STOCK_02",
+          "SPICE_E_WALLBASE_STOCK_03",
+          "SPICE_E_WALLBASE_STOCK_04",
+          "SPICE_W_SHOP_1",
+          "SPICE_W_SIGN_1",
+          "SPICE_W_SIGN_3",
+          "TEXTILE_E_SIGN_1",
+          "TEXTILE_W_SIGN_1"
+        ],
+        "visibleAssets": [],
+        "artifactTags": []
+      },
+      "boot": {
+        "revealPhase": "active",
+        "warmupTimedOut": false,
+        "performanceSafeFallback": false,
+        "enemyVisualsReady": true,
+        "viewModelPrewarmed": true,
+        "hiddenWarmupRenderDone": false,
+        "precompiled": false,
+        "precompileTimedOut": false,
+        "textureStabilityTimedOut": true,
+        "readyAtMs": 1378.699999988079,
+        "readyTextureCount": 2,
+        "textureStableAtMs": 1378.5999999940395,
+        "stableTextureCount": 2,
+        "lateTextureGrowth": 0
+      },
+      "view": {
+        "camera": {
+          "pos": {
+            "x": 28,
+            "y": 1.7,
+            "z": 7
+          },
+          "yawDeg": 180.02351335647518,
+          "pitchDeg": 0.5911117028770968,
+          "fovDeg": 75,
+          "aspect": 1.7777777777777777
+        }
+      },
+      "gameplay": {
+        "active": true,
+        "alive": true,
+        "health": 100,
+        "pointerLocked": false,
+        "focused": true,
+        "visibility": "visible",
+        "inputFrozen": false,
+        "grounded": true,
+        "speedMps": 0
+      },
+      "agent": {
+        "enabled": true,
+        "name": "ReloadReview"
+      },
+      "player": {
+        "name": "ReloadReview",
+        "pos": {
+          "x": 28,
+          "y": 0,
+          "z": 7
+        },
+        "vel": {
+          "x": 0,
+          "y": 0,
+          "z": 0
+        },
+        "withinPlayableBounds": true,
+        "zoneId": "SPAWN_A_COURTYARD",
+        "zoneType": "spawn_plaza",
+        "zoneLabel": "Spawn A Courtyard",
+        "collision": {
+          "hitX": false,
+          "hitY": true,
+          "hitZ": false,
+          "grounded": true
+        }
+      },
+      "bots": {
+        "waveNumber": 1,
+        "waveElapsedS": 3.2833333333333266,
+        "tier": 0,
+        "aliveCount": 10,
+        "graphNodeCount": 98,
+        "searchPhase": "caution",
+        "topSearchZones": [
+          {
+            "zoneId": "LINK_SOUTH_EAST",
+            "score": 1,
+            "reason": "caution:visual",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "LINK_SOUTH_WEST",
+            "score": 1,
+            "reason": "caution:visual",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "SPAWN_A_COURTYARD",
+            "score": 1,
+            "reason": "caution:visual",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "SPICE_STREET",
+            "score": 1,
+            "reason": "caution:visual",
+            "lastClearedAgeS": null
+          },
+          {
+            "zoneId": "DYERS_ALLEY",
+            "score": 0.752,
+            "reason": "caution:visual",
+            "lastClearedAgeS": null
+          }
+        ],
+        "squadTasks": [],
+        "roleCounts": {
+          "anchor": 2,
+          "rifler": 6,
+          "flanker": 0,
+          "roamer": 2
+        },
+        "preventedFriendlyFireCount": 0,
+        "lastSeenPlayer": {
+          "x": 28,
+          "y": 0,
+          "z": 7,
+          "timeS": 0.9000000000000011,
+          "zoneId": "SPAWN_A_COURTYARD",
+          "lane": "main",
+          "radiusM": 1.2,
+          "confidence": 1,
+          "source": "visual",
+          "kind": "visual",
+          "precise": true,
+          "shared": false,
+          "sourceEnemyId": "enemy_viper"
+        },
+        "lastHeardPlayer": {
+          "x": 28,
+          "y": 0,
+          "z": 7,
+          "timeS": 0,
+          "zoneId": "SPAWN_A_COURTYARD",
+          "lane": "main",
+          "radiusM": 5.2,
+          "confidence": 0.72,
+          "source": "gunshot",
+          "kind": "gunshot",
+          "precise": false,
+          "shared": false
+        },
+        "lastSpawn": {
+          "mode": "adaptive",
+          "distanceFloorM": null,
+          "minDistanceToPlayerM": 57.47295015918358,
+          "visibleCount": 0,
+          "selectedNodeIds": [
+            "edge:SERVICE_NORTH->LINK_NORTH_WEST",
+            "anchor:COVER_RUG_01",
+            "edge:LINK_NORTH_EAST->SPAWN_B_COURTYARD",
+            "edge:LINK_NORTH_WEST->SPAWN_B_COURTYARD",
+            "edge:RUG_GATE->LINK_WEST_UPPER",
+            "edge:NORTH_COURT->LINK_EAST_UPPER",
+            "anchor:COVER_TEA_01",
+            "edge:SPAWN_B_COURTYARD->LINK_NORTH_EAST",
+            "edge:DYERS_DOGLEG->NORTH_COURT",
+            "edge:TEA_LANDING->TEA_STAIRS"
+          ],
+          "playerZoneId": "SPAWN_A_COURTYARD",
+          "usedAdjacentZoneFallback": false,
+          "usedVisibilityFallback": false,
+          "usedPlayerZoneEmergencyFallback": false,
+          "usedDistanceEmergencyFallback": false,
+          "correctedPlacements": 0
+        }
+      },
+      "landmarks": {
+        "visible": [
+          {
+            "id": "LMK_SPICE_GATE_01",
+            "type": "hero_landmark",
+            "zone": "SPICE_STREET",
+            "distanceM": 8.50441062037811,
+            "screenX": 873.7431424639212,
+            "screenY": 246.5548774348386
+          },
+          {
+            "id": "LMK_FOUNTAIN_01",
+            "type": "landmark",
+            "zone": "FOUNTAIN_COURT",
+            "distanceM": 36.682170055764146,
+            "screenX": 856.4975761999843,
+            "screenY": 472.76774422804857
+          },
+          {
+            "id": "LMK_RUG_GATE_01",
+            "type": "hero_landmark",
+            "zone": "RUG_GATE",
+            "distanceM": 69.32265142072973,
+            "screenX": 804.4710420303696,
+            "screenY": 441.66635457708725
+          }
+        ],
+        "nearest": {
+          "id": "LMK_SPICE_GATE_01",
+          "type": "hero_landmark",
+          "zone": "SPICE_STREET",
+          "distanceM": 8.50441062037811
+        }
+      },
+      "assets": {
+        "floor": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 16
+        },
+        "wall": {
+          "requestedMode": "pbr",
+          "activeMode": "pbr",
+          "materialCount": 68
+        },
+        "props": {
+          "requestedVisualMode": "bazaar",
+          "activeVisualMode": "bazaar",
+          "modelCount": 42
+        }
+      },
+      "score": {
+        "current": 0,
+        "best": 0
+      },
+      "sharedChampion": null,
+      "gameOver": {
+        "visible": false,
+        "finalScore": 0,
+        "bestScore": 0,
+        "canPlayAgain": false
+      },
+      "anchorsDebug": {
+        "markersVisible": false,
+        "labelsVisible": false,
+        "totalAnchors": 165,
+        "filteredAnchors": 165,
+        "shownLabels": 0,
+        "filterTypes": []
+      },
+      "props": {
+        "profile": "subtle",
+        "jitter": 0,
+        "cluster": 0,
+        "density": 1,
+        "candidatesTotal": 73,
+        "collidersPlaced": 24,
+        "rejections": {
+          "clearZone": 7,
+          "bounds": 1,
+          "gapRule": 0
+        },
+        "visualOnlyLandmarks": 4,
+        "stallFillersPlaced": 0
+      },
+      "weapon": {
+        "enabled": true,
+        "visible": true,
+        "loaded": true,
+        "alignDot": 0.9999995287346868,
+        "alignAngleDeg": 0.05562504623431908
+      },
+      "perf": {
+        "visible": false,
+        "fps": 60,
+        "msPerFrame": 16.67,
+        "cpuFrameMedianMs": 6.0999999940395355,
+        "cpuFrameSampleCount": 120,
+        "drawCalls": 916,
+        "triangles": 3127426,
+        "geometries": 439,
+        "textures": 648,
+        "materials": 0,
+        "instancedMeshes": 0,
+        "instancedInstances": 0,
+        "meshes": 0,
+        "potentialTriangles": 0,
+        "groups": {},
+        "topMeshes": [],
+        "combatFeedbackQueue": 0,
+        "lastCombatFeedbackMs": 0,
+        "lastKillFeedbackMs": 0,
+        "orbCount": 0,
+        "orbCapacity": 0,
+        "orbSpawnMs": 0,
+        "orbUpdateMs": 0
+      }
+    }
+  },
+  "samples": [
+    {
+      "frame": 0,
+      "seconds": 0,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 1,
+      "seconds": 0.016666666666666666,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 2,
+      "seconds": 0.03333333333333333,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 3,
+      "seconds": 0.05,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 4,
+      "seconds": 0.06666666666666667,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 5,
+      "seconds": 0.08333333333333333,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 6,
+      "seconds": 0.1,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 7,
+      "seconds": 0.11666666666666667,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 8,
+      "seconds": 0.13333333333333333,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 9,
+      "seconds": 0.15,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 10,
+      "seconds": 0.16666666666666666,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 11,
+      "seconds": 0.18333333333333332,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 12,
+      "seconds": 0.2,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 13,
+      "seconds": 0.21666666666666667,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 14,
+      "seconds": 0.23333333333333334,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 15,
+      "seconds": 0.25,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 16,
+      "seconds": 0.26666666666666666,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 17,
+      "seconds": 0.2833333333333333,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 18,
+      "seconds": 0.3,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 19,
+      "seconds": 0.31666666666666665,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 20,
+      "seconds": 0.3333333333333333,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 21,
+      "seconds": 0.35,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 22,
+      "seconds": 0.36666666666666664,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 23,
+      "seconds": 0.38333333333333336,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 24,
+      "seconds": 0.4,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 25,
+      "seconds": 0.4166666666666667,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 26,
+      "seconds": 0.43333333333333335,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 27,
+      "seconds": 0.45,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 28,
+      "seconds": 0.4666666666666667,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 29,
+      "seconds": 0.48333333333333334,
+      "phase": "idle-before",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 30,
+      "seconds": 0.5,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 31,
+      "seconds": 0.5166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 32,
+      "seconds": 0.5333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 33,
+      "seconds": 0.55,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 34,
+      "seconds": 0.5666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 35,
+      "seconds": 0.5833333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 36,
+      "seconds": 0.6,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 37,
+      "seconds": 0.6166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 38,
+      "seconds": 0.6333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 39,
+      "seconds": 0.65,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 40,
+      "seconds": 0.6666666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 41,
+      "seconds": 0.6833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 42,
+      "seconds": 0.7,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 43,
+      "seconds": 0.7166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 44,
+      "seconds": 0.7333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 45,
+      "seconds": 0.75,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 46,
+      "seconds": 0.7666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 47,
+      "seconds": 0.7833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 48,
+      "seconds": 0.8,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 49,
+      "seconds": 0.8166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 50,
+      "seconds": 0.8333333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 51,
+      "seconds": 0.85,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 52,
+      "seconds": 0.8666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 53,
+      "seconds": 0.8833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 54,
+      "seconds": 0.9,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 55,
+      "seconds": 0.9166666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 56,
+      "seconds": 0.9333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 57,
+      "seconds": 0.95,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 58,
+      "seconds": 0.9666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 59,
+      "seconds": 0.9833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 60,
+      "seconds": 1,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 61,
+      "seconds": 1.0166666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 62,
+      "seconds": 1.0333333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 63,
+      "seconds": 1.05,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 64,
+      "seconds": 1.0666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 65,
+      "seconds": 1.0833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 66,
+      "seconds": 1.1,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 67,
+      "seconds": 1.1166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 68,
+      "seconds": 1.1333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 69,
+      "seconds": 1.15,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 70,
+      "seconds": 1.1666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 71,
+      "seconds": 1.1833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 72,
+      "seconds": 1.2,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 73,
+      "seconds": 1.2166666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 74,
+      "seconds": 1.2333333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 75,
+      "seconds": 1.25,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 76,
+      "seconds": 1.2666666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 77,
+      "seconds": 1.2833333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 78,
+      "seconds": 1.3,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 79,
+      "seconds": 1.3166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 80,
+      "seconds": 1.3333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 81,
+      "seconds": 1.35,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 82,
+      "seconds": 1.3666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 83,
+      "seconds": 1.3833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 84,
+      "seconds": 1.4,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 85,
+      "seconds": 1.4166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 86,
+      "seconds": 1.4333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 87,
+      "seconds": 1.45,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 88,
+      "seconds": 1.4666666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 89,
+      "seconds": 1.4833333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 90,
+      "seconds": 1.5,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 91,
+      "seconds": 1.5166666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 92,
+      "seconds": 1.5333333333333334,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 93,
+      "seconds": 1.55,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 94,
+      "seconds": 1.5666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 95,
+      "seconds": 1.5833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 96,
+      "seconds": 1.6,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 97,
+      "seconds": 1.6166666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 98,
+      "seconds": 1.6333333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 99,
+      "seconds": 1.65,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 100,
+      "seconds": 1.6666666666666667,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 101,
+      "seconds": 1.6833333333333333,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 102,
+      "seconds": 1.7,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 103,
+      "seconds": 1.7166666666666666,
+      "phase": "reload",
+      "ammo": {
+        "mag": 29,
+        "reserve": 120,
+        "reloading": true
+      }
+    },
+    {
+      "frame": 104,
+      "seconds": 1.7333333333333334,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 105,
+      "seconds": 1.75,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 106,
+      "seconds": 1.7666666666666666,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 107,
+      "seconds": 1.7833333333333334,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 108,
+      "seconds": 1.8,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 109,
+      "seconds": 1.8166666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 110,
+      "seconds": 1.8333333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 111,
+      "seconds": 1.85,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 112,
+      "seconds": 1.8666666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 113,
+      "seconds": 1.8833333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 114,
+      "seconds": 1.9,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 115,
+      "seconds": 1.9166666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 116,
+      "seconds": 1.9333333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 117,
+      "seconds": 1.95,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 118,
+      "seconds": 1.9666666666666666,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 119,
+      "seconds": 1.9833333333333334,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 120,
+      "seconds": 2,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 121,
+      "seconds": 2.0166666666666666,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 122,
+      "seconds": 2.033333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 123,
+      "seconds": 2.05,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 124,
+      "seconds": 2.066666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 125,
+      "seconds": 2.0833333333333335,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 126,
+      "seconds": 2.1,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 127,
+      "seconds": 2.1166666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 128,
+      "seconds": 2.1333333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 129,
+      "seconds": 2.15,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 130,
+      "seconds": 2.1666666666666665,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 131,
+      "seconds": 2.183333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 132,
+      "seconds": 2.2,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 133,
+      "seconds": 2.216666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 134,
+      "seconds": 2.2333333333333334,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 135,
+      "seconds": 2.25,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 136,
+      "seconds": 2.2666666666666666,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 137,
+      "seconds": 2.283333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 138,
+      "seconds": 2.3,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 139,
+      "seconds": 2.316666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 140,
+      "seconds": 2.3333333333333335,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 141,
+      "seconds": 2.35,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 142,
+      "seconds": 2.3666666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 143,
+      "seconds": 2.3833333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 144,
+      "seconds": 2.4,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 145,
+      "seconds": 2.4166666666666665,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 146,
+      "seconds": 2.433333333333333,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 147,
+      "seconds": 2.45,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    },
+    {
+      "frame": 148,
+      "seconds": 2.466666666666667,
+      "phase": "idle-after",
+      "ammo": {
+        "mag": 30,
+        "reserve": 119,
+        "reloading": false
+      }
+    }
+  ],
+  "errors": [],
+  "video": "/Users/dimitri2/Desktop/clawdstrike/assets/source/ak47/exports/selected-case04/game-preview/reload-in-game.mp4"
+}

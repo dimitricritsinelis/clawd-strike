@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 north service compound facade composition · BLD_NORTH_SERVICE_COMPOUND · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="119.57" y="229.57" width="70.97" height="630.86" fill="#e6e0d1"/>
+<line x1="119.57" y1="860.43" x2="119.57" y2="229.57" stroke="#344548" stroke-width="2"/>
+<line x1="190.54" y1="860.43" x2="190.54" y2="229.57" stroke="#344548" stroke-width="2"/>
+<line x1="119.57" y1="860.43" x2="190.54" y2="860.43" stroke="#344548" stroke-width="2"/>
+<line x1="119.57" y1="229.57" x2="190.54" y2="229.57" stroke="#344548" stroke-width="2"/>
+<rect x="121.54" y="673.14" width="67.03" height="90.69" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="718.49" text-anchor="middle">R1</text>
+<rect x="121.54" y="767.77" width="67.03" height="90.69" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="813.11" text-anchor="middle">R2</text>
+<rect x="121.54" y="420.80" width="67.03" height="122.23" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="481.91" text-anchor="middle">R3</text>
+<rect x="121.54" y="546.97" width="67.03" height="122.23" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="608.09" text-anchor="middle">R4</text>
+<rect x="121.54" y="231.54" width="67.03" height="90.69" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="276.89" text-anchor="middle">R5</text>
+<rect x="121.54" y="326.17" width="67.03" height="90.69" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="155.06" y="371.51" text-anchor="middle">R6</text>
+<circle cx="190.54" cy="718.49" r="4" fill="#a14b3d"/>
+<text class="label" x="198.54" y="710.49">principal entrance</text>
+<circle cx="190.54" cy="813.11" r="4" fill="#77715f"/>
+<circle cx="190.54" cy="481.91" r="4" fill="#77715f"/>
+<circle cx="190.54" cy="608.09" r="4" fill="#77715f"/>
+<circle cx="190.54" cy="276.89" r="4" fill="#77715f"/>
+<circle cx="190.54" cy="371.51" r="4" fill="#77715f"/>
+<text class="label" x="95" y="955">World footprint x -0.6..3 · y 48..80 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">North service stores</text>
+<text class="label" x="1100" y="244">R1: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="259">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="288">R2: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="303">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="332">R3: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="347">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="376">R4: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="391">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="420">R5: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="435">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="464">R6: Three full receiving tenancies occupy</text>
+<text class="label" x="1100" y="479">48..57.6, 57.6..70.4 and 70.4..80. Upper</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">North service stores</text>
+<text class="tiny" x="1100" y="678">2 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Use ground frontage piers separately from</text>
+<text class="tiny" x="1100" y="714">floor-specific upper room and framing axes.</text>
+<text class="tiny" x="1100" y="732">Corresponding openings serving one room share</text>
+<text class="tiny" x="1100" y="750">its canonical ID where the room spans opposite</text>
+<text class="tiny" x="1100" y="768">faces. A different front/rear axis must have a</text>
+<text class="tiny" x="1100" y="786">stated room-use relationship.</text>
+<text class="tiny" x="1100" y="804">Three full receiving tenancies occupy 48..57.6,</text>
+<text class="tiny" x="1100" y="822">57.6..70.4 and 70.4..80. Upper storage lights</text>
+<text class="tiny" x="1100" y="840">at 52.8, 64 and 75.2 center a balanced row</text>
+<text class="tiny" x="1100" y="858">across the 48..80 facade. Ground work windows</text>
+<text class="tiny" x="1100" y="876">and delivery doors retain their paired-bay</text>
+<text class="tiny" x="1100" y="894">positions.</text>
+</svg>

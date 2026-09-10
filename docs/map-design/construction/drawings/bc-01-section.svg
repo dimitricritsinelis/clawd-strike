@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1120" viewBox="0 0 1800 1120">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1800" height="1120" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7-facade-centered-upper-openings · BC-01 · graded standard section</text>
+<text class="sub" x="48" y="76">SOURCE DATUM: TEA_RAMP WEST boundary · actual grade 0 → 1.4 m · render-only composition</text>
+<rect class="panel" x="48" y="105" width="1040" height="930" rx="8"/><rect class="panel" x="1120" y="105" width="630" height="930" rx="8"/>
+<text class="title" x="95" y="158">GRADED BOUNDARY ELEVATION</text><text class="title" x="1165" y="158">PIER / FIELD SECTION</text>
+<polygon points="135.00,890.00 791.00,775.20 791.00,406.23 135.00,406.23" fill="#e8dfcb" stroke="#24353a" stroke-width="2"/>
+<polygon points="135.00,890.00 791.00,775.20 791.00,726.00 135.00,840.80" fill="#cbb99b" stroke="#766345" stroke-width="1.5"/>
+<rect x="135.00" y="406.23" width="656.00" height="41.00" fill="#d9c7aa" stroke="#766345" stroke-width="1.5"/>
+<polygon points="135.00,890.00 135.00,406.23 148.12,406.23 148.12,887.70" fill="#bcb09a" stroke="#475255" stroke-width="1.5"/>
+<polygon points="449.88,834.90 449.88,406.23 476.12,406.23 476.12,830.30" fill="#bcb09a" stroke="#475255" stroke-width="1.5"/>
+<polygon points="777.88,777.50 777.88,406.23 791.00,406.23 791.00,775.20" fill="#bcb09a" stroke="#475255" stroke-width="1.5"/>
+<line x1="135.00" y1="840.80" x2="791.00" y2="726.00" stroke="#766345" stroke-dasharray="5 3"/>
+<text class="label" x="463.00" y="775.40" text-anchor="middle">0.60 m base measured above actual grade</text>
+<text class="label" x="463.00" y="424.23" text-anchor="middle">0.50 m upper band</text>
+<text class="tiny" x="135.00" y="758.80">Bay edges: 48, 52, 56</text>
+<rect x="1205.00" y="470.00" width="40.50" height="310" fill="#bcb09a" stroke="#475255" stroke-width="2"/>
+<rect x="1245.50" y="530.00" width="220" height="190" fill="#e8dfcb" stroke="#475255" stroke-width="1.5"/>
+<line x1="1205.00" y1="825.00" x2="1245.50" y2="825.00" stroke="#52676a"/><text class="label" x="1225.25" y="848.00" text-anchor="middle">0.045 m recess</text>
+<rect x="1205.00" y="940.00" width="288.00" height="52" fill="#bcb09a" stroke="#475255" stroke-width="2"/><text class="label" x="1349.00" y="1018.00" text-anchor="middle">0.32 m engaged pier at bay edge</text>
+<text class="tiny" x="1165" y="900">Piers remain at the wall plane; only fields step back.</text><text class="tiny" x="1165" y="918">No route, collider, or playable elevation is added.</text>
+</svg>

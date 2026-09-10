@@ -1,0 +1,5 @@
+Source: kyles, Arabic marketplace crowd, Gaza (2016).
+https://freesound.org/people/kyles/sounds/406381/
+License: CC0 1.0 https://creativecommons.org/publicdomain/zero/1.0/
+Adapted from the high-quality MP3 preview: https://cdn.freesound.org/previews/406/406381_612689-hq.mp3
+Processing: seconds 16-68, 220-1700 Hz bandpass, four-second loop crossfade, gentle saturation and 24-second slow level variation. Approved 48-second chatter stem resampled to 16 kHz stereo and raised 100 times for storage. Runtime gain 0.1 followed by master gain 0.1 restores the approved level, approximately 10 dB below the wind RMS.

@@ -92,7 +92,7 @@ export function planFloorWearDecals(
   const rngRoot = new DeterministicRng(deriveSubSeed(seed, "l3-4w-floor-wear"));
 
   for (const zone of spec.zones) {
-    if (!WEAR_ZONE_TYPES.has(zone.type)) continue;
+    if (!WEAR_ZONE_TYPES.has(zone.type) || zone.floorMaterialId?.startsWith("bz04_")) continue;
     const areaM2 = zone.rect.w * zone.rect.h;
     if (areaM2 < MIN_ZONE_AREA_M2) continue;
 

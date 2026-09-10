@@ -1,240 +1,345 @@
-# unit-covered-souk · Covered Dyers Souk
+# BZ-04 / R7 covered souk facade-centered upper openings · Covered Souk
 
-Construction sheet. Read [README.md](README.md) first: it holds the coordinate conventions, the standard details (SD-xx), the clearance rules and the finish requirements that every task below assumes. Dimensions and transforms below are compiled from the current spec. Build these decisions without another survey or design pass. Also called: Covered Souk, Covered Dyers Souk, the souk.
+Controlled issue status: **PROPOSED**. Readiness is recorded in [audits.md](audits.md). SVGs are measured drawings, not game renders.
 
-**Scope lock.** Render-only work only: walls, openings, materials, awnings, signs, goods, overheads, roofs, skyline, ground finish. Colliders, routes, clear widths, cover anchors, spawns and playable elevation are protected by `pnpm map:check`. Gameplay proposals from the atlas (E1 Tea slot, G1 Textile return) are **not** in this sheet.
+Read [design basis](design-basis.md), [integration contract](integration.md), and [standard details](details.md) with this sheet. The target data is the sole source for parcel, opening, roof, activity, and material values below; coverage is a protected baseline only.
 
-## 1. Design intent
+## Design intent
 
-Three fabric trades under repaired arches on the east (packing, the approved booth, dye samples), the merchant block's trade arch and north-wing door on the west, one shared canopy overhead, the 5 m structural end wall at the north. The B18 pilot roof room sits on the east roof. Warm aged plaster and stone frame concentrated fabric-trade wear at the arches and cloth edges.
+### `COVERED_SOUK`
 
-**Character schedule (build with the numbered tasks):**
+Larger central rug-showroom bay and related upper daylight. Smaller flanking workfronts and corrected merchant-house corner margins. Preserve the fixed routes and use quieter fields to frame this composition.
 
-- Retain three distinct east trades and the single approved booth. The ochre west trade face, aged pale north wing and cream east arcade carry different repairs; hanging cloth, packing folds and dye samples provide the colors. Do not make three copies of a tidy display cabinet.
-- On FRONTAGE_COVERED_SOUK_EAST replace skin a=3.45..4.05, z=0.34..1.13 with `ph_worn_plaster_sun` (SD-21), clear of the first arch ring and booth. Keep the booth seat at z 3.26 untouched. East awning sag GROUND_01=0.08 and GROUND_03=0.12 m; west remains 0.12. All supports, signs and canopy endpoints stay fixed.
+Primary focus: Coherent sheltered trading street. Three segmental east workfronts and the reverse merchant/loom face share measured lintels and the existing two cloth spans..
 
-## 2. Site
+## Architecture and craftsmanship
 
-### Site · `COVERED_SOUK` (Covered Dyers Souk)
+**Primary:** Larger central rug-showroom bay and related upper daylight
 
-- Rect x 41..53, y 32..48 (12 × 16 m); floor z = 0; floor `court_limestone_flags_01`; authored clear width **4.5 m** (protected).
-- Connects: DYERS_ALLEY, DYERS_DOGLEG, LINK_EAST_MID.
-- `north` edge: exempt (`system_articulated_boundary`): The 5.00m north wall is articulated by the covered-souk structural arcade; another frontage would duplicate render geometry.
-- `west` edge: frontage `FRONTAGE_COVERED_SOUK_WEST` → `BLD_DYERS_ARCADE_W`.
-- `west` edge: frontage `FRONTAGE_COVERED_SOUK_WEST_NORTH` → `BLD_DYERS_ARCADE_W`.
-- `east` edge: frontage `FRONTAGE_COVERED_SOUK_EAST` → `BLD_DYERS_ARCADE_E`.
-- `south` edge: frontage `FRONTAGE_COVERED_SOUK_SOUTH` → `BLD_SOUK_YARD_WALL`.
+**Supporting:** Smaller flanking workfronts and corrected merchant-house corner margins
 
-### Package outputs
+**Quiet fields and limits:** Daylight breaks and routes stay legible. No extra continuous dark roof or cloned display cabinets.
 
-| Package directory | Section zone | Owned runtime faces | Section GLB |
+[Shared craft recipes and material rules](craftsmanship.md) supply exact construction. The named instance boxes, profile dimensions, colors and receivers below remain authoritative.
+
+| Parcel / owner | Role | Envelope finish | Architectural limit |
 |---|---|---|---|
-| `assets/source/unit-covered-souk/` | `COVERED_SOUK` | `["east", "south", "west"]` | `unit-covered-souk.glb` |
+| `cs-n` / `ASM_SOUK_NORTH_END` | boundary-assembly | `ph_bz04_sandstone_blocks_05`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Covered Souk north end enclosure return |
+| `cs-n-part-2` / `BLD_DOGLEG_WEST_ANNEX` | building | `ph_bz04_sandstone_blocks_06`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Closed secondary face of Dogleg dye works annex; its entrance and floor hierarchy are defined on the principal elevation |
+| `cs-e` / `BLD_SOUK_EAST_STORAGE` | building | `ph_bz04_plastered_wall`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Three ground traders are a coherent arcade; one centered stockroom hatch and quieter blank upper flanks give the covered frontage hierarchy. |
+| `cs-s` / `ASM_SOUK_SOUTH_RETURN` | boundary-assembly | `ph_bz04_sandstone_blocks_06`; existing-roof-cap-only; CF-ENVELOPE / CF-JOINT | Covered Souk south return enclosure return |
+| `cs-s-part-2` / `BLD_DYERS_WEST_HOUSE` | building | `ph_bz04_beige_wall_002`; single-drip; CF-ENVELOPE / CF-JOINT | Closed secondary face of Dyer family house beside the works; its entrance and floor hierarchy are defined on the principal elevation |
+| `cs-ws` / `BLD_FOUNTAIN_MERCHANT` | building | `ph_bz04_beige_wall_002`; single-drip; CF-ENVELOPE / CF-JOINT | Upper narrow/broad stacks at33.6/36.6 balance the full32..39 facade and share the same physical ENTRY/MAIN rooms as the Fountain front. The ground counter and staff entrance remain independent. |
+| `cs-wn` / `BLD_FOUNTAIN_HOUSE` | building | `ph_bz04_aged_plaster_ochre`; single-drip; CF-ENVELOPE / CF-JOINT | Merchant corner house - coordinated wing or return |
 
-Each package uses `section: {zoneId, modelId, faces}` with exactly the listed faces. An empty list retains all runtime walls and adds only the scheduled finish. Export with `export_section(F, path)`; never bind this plan-frame GLB through `frontages`.
+| Group | Actual trade | Parts / recipes | Acceptance |
+|---|---|---|---|
+| `G_COVERED_SOUK_EAST_GROUND_01` | cloth bolt store | 5 / CF-COUNTER, CF-ROLLED-CLOTH | Build the named parts as cloth bolt store. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
+| `G_COVERED_SOUK_EAST_GROUND_02` | rug merchant | 10 / CF-COUNTER, CF-RUG, CF-TIMBER | Build the named parts as rug merchant. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
+| `G_COVERED_SOUK_EAST_GROUND_03` | tailoring and folding | 7 / CF-CLOTH, CF-FURNITURE, CF-TIMBER | Build the named parts as tailoring and folding. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
+| `G_COVERED_SOUK_WEST_GROUND_01` | weaving sample frame | 7 / CF-BASKET, CF-TIMBER, CF-WEAVING | Build the named parts as weaving and samples. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. |
 
-**Existing source.** `assets/source/b18-counters/`, `central-screen-sc-c/`, `textile-booth/`, `b18-roof-access/` are the sources of the placed assets (keep). No wall GLBs yet.
+**Roof installation readiness:** The whole-map permanent design is complete geometry, but a standalone area build can activate only supported roof pieces. Use a dimensioned implementationPhase where supplied (B). Otherwise preserve the affected legacy roof and report that named interface deferred until its receiver prerequisites are included in the authorized queue. Do not install a floating bundle, invent temporary caps or silently build another area. A requested fully complete one-area sample with unavailable receivers needs its exact phase detail authored before that build.
 
-## 3. Walls
+| Bundle | Required receivers | Receivers outside this area |
+|---|---|---|
+| `ROOF_BUNDLE_UNIT_COVERED_SOUK` | `cs-e`, `cs-n`, `cs-s` | none |
+| `ROOF_BUNDLE_UNIT_DYERS_ALLEY` | `DA_E_SAMPLES`, `DA_E_WORK`, `DA_E_YARD`, `cs-s-part-2`, `da-house`, `da-s`, `da-works`, `lse-n-part-2` | `DA_E_SAMPLES`, `DA_E_WORK`, `DA_E_YARD`, `da-house`, `da-s`, `da-works`, `lse-n-part-2` |
+| `ROOF_BUNDLE_UNIT_DYERS_DOGLEG` | `cs-n-part-2`, `dd-e`, `dd-w`, `nc-s` | `dd-e`, `dd-w`, `nc-s` |
+| `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT` | `F_E_HOUSE`, `F_E_LOGGIA`, `F_W_HALL`, `F_W_SERVICE`, `cc-en`, `cc-es-part-2`, `cs-wn`, `cs-ws`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s`, `tr-s` | `F_E_HOUSE`, `F_E_LOGGIA`, `F_W_HALL`, `F_W_SERVICE`, `cc-en`, `cc-es-part-2`, `lem-n`, `lem-s`, `lwm-n`, `lwm-s`, `tr-s` |
 
-### FRONTAGE_COVERED_SOUK_WEST  ·  BLD_DYERS_ARCADE_W (arcade, 2 storeys)
+**Required craft recipes:** CF-BASKET, CF-CLOTH, CF-COUNTER, CF-ENVELOPE, CF-FLOOR, CF-FURNITURE, CF-JOINT, CF-OPEN, CF-ROLLED-CLOTH, CF-RUG, CF-SHADE, CF-TIMBER, CF-WEAVING
 
-- **Role:** arcade. The merchant block's trade face onto the covered souk: a dye-sample seller in the arch, family rooms above behind fine lattice (the women's side looks onto the busy souk).
-- **Wall line:** west edge of `COVERED_SOUK`; x = 41, y = 33.28 .. 39 (a runs south to north); length **5.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 33.28), (41, 39), faces='E')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_aged_plaster_ochre`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 3.55 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 4.15 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; impost 1.93; signboard centre 3.67, nominal span 3.52..3.82; no continuous sill course (SD-06 sills at 4.09); coping 6.84..7.0.
+Review complete buildings in neutral elevation/section and the full area at the saved player poses. Detail diagrams must show backs, bearings, rebates, hems and grade contact, not only outer boxes.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `STORY_1_WINDOW_01` | `window_screened` | SC-C fine crossed lattice (placed `ASSET_SCREEN_SC_C`) | 1.1 | (41, 34.38) | 1 × 0.24 × 1.4 | 4.15 / 5.55 | 1 |
-| `GROUND_01` | `arch_arcade` | DY-S dye-sample counter (placed `ASSET_B18_DYE_COUNTER`) | 2.86 | (41, 36.14) | 2.6 × 0.42 × 3.55 | 0 / 3.55 | 0 |
-| `STORY_1_WINDOW_02` | `window_screened` | SC-C fine crossed lattice (placed) | 4.62 | (41, 37.9) | 1 × 0.24 × 1.4 | 4.15 / 5.55 | 1 |
+## Site, protected faces, and parcels
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.1, 1, 4.15, 1.4), (2.86, 2.6, 0, 3.55), (4.62, 1, 4.15, 1.4)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+### `COVERED_SOUK` · `north`
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at assigned upper windows only; `ASSET_B18_DYE_COUNTER` at south-wing GROUND_01, unit scale on its threshold.
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-**Construction tasks (ordered; each has an observable completion):**
+Protected wall interval: **41..53 m**; floor grade: **z 0 m**.
 
-1. CREATE the section finish: skin `ph_aged_plaster_ochre`, plinth sandstone, impost band, coping; end piers 0.45 × 0.16 (`held`). Completion: the trade side of the central merchant block.
-2. CREATE `GROUND_01` sealed arch 2.6 × 3.55 at a=2.86, floor deck 0.14, interior empty for the placed `ASSET_B18_DYE_COUNTER` (`CENTRAL_DYE_DISPLAY` at (40.83, 36.14, 0.14)). Completion: counter inside the arch.
-3. CREATE two screen rebates `STORY_1_WINDOW_01/02` 1.0 × 1.4 at sill 4.15 / head 5.55, a=1.10 and a=4.62 (a pair about the arch axis) for the placed `ASSET_SCREEN_SC_C` (`CENTRAL_SCREEN_SOUTH_1/2` at (40.98, 34.38 / 37.90, 4.15)). Completion: screens seated.
-4. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=1.41..4.31, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` (brackets on the piers at 2.55). Completion: one awning, evaluated hem at least 2.60, under the shared canopy above.
-5. CREATE sign brackets for `DYE_W_SIGN_1` (a=2.86, board centre z 3.67, span 3.52..3.82) at z 3.82, ±0.9. Completion: one sign.
-6. KEEP the cart at (43.10, 36.14) and the dormant rug anchor. APPLY wear: dust band, indigo drips 0..0.35 under the arch, polish on the jambs. Completion: as listed.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 41..46 | collider-backed solid | COLLIDER_WALL_025 |
+| 46..53 | **ZERO BUILD protected opening** | DYERS_DOGLEG |
 
-**Why it exists (reality check):** The merchant block's trade face onto the covered souk: a dye-sample seller in the arch, family rooms above behind fine lattice (the women's side looks onto the busy souk).
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `cs-n` | 41..42.4 | (41, 48, 42.4, 48.8) | Covered Souk north end enclosure return | 7 | 0.8 | `ph_bz04_sandstone_blocks_05` | slab 7..7.12; parapet 7.12; cap 7.12; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `cs-n-part-2` | 42.4..46 | (42.4, 48, 46, 48.8) | Closed secondary face of Dogleg dye works annex; its entrance and floor hierarchy are defined on the principal elevation | 9.9 | 0.8 | `ph_bz04_sandstone_blocks_06` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-### FRONTAGE_COVERED_SOUK_WEST_NORTH  ·  BLD_DYERS_ARCADE_W (arcade, 2 storeys)
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
 
-- **Role:** arcade. The north wing's service door: goods in, nothing sold here. It serves only the north wing (the passage separates the wings).
-- **Wall line:** west edge of `COVERED_SOUK`; x = 41, y = 44 .. 46.72 (a runs south to north); length **2.72 m**; street side +X (street lies east of the wall); kit `Wall(F, (41, 44), (41, 46.72), faces='E')`.
-- **Retained massing `MASSING_MID_MIXED`:** wall top 7 local / 7 absolute, depth 4.8 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_whitewashed_brick_cool`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `open`. Ground head datum 2.7 m. Exact end piers and finish datums are in the tasks below.
-- **Upper sill datums:** 4.15 m.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; string course 3.35 (head 2.7); no sill course (SD-06 sill at 4.09); coping 6.84..7.0.
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `door_shop_timber` | closed trade service door (north wing) | 1.36 | (41, 45.36) | 1.15 × 0.22 × 2.7 | 0 / 2.7 | 0 |
-| `STORY_1_WINDOW_01` | `window_screened` | SC-C fine crossed lattice (placed) | 1.36 | (41, 45.36) | 1 × 0.24 × 1.4 | 4.15 / 5.55 | 1 |
+### `COVERED_SOUK` · `east`
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.36, 1.15, 0, 2.7), (1.36, 1, 4.15, 1.4)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_SCREEN_SC_C` at assigned upper windows only.
+Protected wall interval: **32..48 m**; floor grade: **z 0 m**.
 
-**Construction tasks (ordered; each has an observable completion):**
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 32..48 | collider-backed solid | COLLIDER_WALL_124 |
 
-1. CREATE the section finish: skin `ph_whitewashed_brick_cool` (a muted aged limewash for the north wing: the correlated difference), plinth, course 3.29..3.41, coping; end piers 0.45. Completion: reads as the same block's north wing across the passage.
-2. CREATE `GROUND_01` closed trade service door 1.15 × 2.7 at a=1.36 (SD-05), quiet: no sign (`DYE_W_SIGN_2` dormant), no awning. Completion: closed, quiet.
-3. CREATE `STORY_1_WINDOW_01` rebate 1.0 × 1.4 at sill 4.15 / head 5.55, a=1.36 for the placed `ASSET_SCREEN_SC_C` (`CENTRAL_SCREEN_NORTH` at (40.98, 45.36, 4.15)). Completion: seated.
-4. The shared canopy `CANOPY_DYERS_01` lands on this wall at a=1.36 (inset 0.3) at z 5.90: CREATE a 0.10 × 0.10 timber ledger 1.2 m long at z 5.90 with two iron eyes (0.35 above the screen head 5.55, 0.94 below the coping). Completion: the canopy end bears on the ledger above the screen; nothing crosses the screen.
-5. APPLY wear: dust band, polish at the door. Completion: as listed.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `cs-e` | 32..48 | (53, 32, 56.6, 48) | Three ground traders are a coherent arcade; one centered stockroom hatch and quieter blank upper flanks give the covered frontage hierarchy. | 8 | 3.6 | `ph_bz04_plastered_wall` | slab 8..8.18; parapet 8.63; cap 8.73; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-**Why it exists (reality check):** The north wing's service door: goods in, nothing sold here. It serves only the north wing (the passage separates the wings).
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `COVERED_SOUK_EAST_GROUND_01` | `cs-e` | shop | 34.667 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 53 | `SD-11+SD-08`; closed backed shopfront with a continuous counter; side-door clear 0.8 m → `cs-e-REAR-STAFF-DOOR` | pack workfront |
+| `COVERED_SOUK_EAST_GROUND_02` | `cs-e` | shop | 40 | 0 / 3.1 | 3.4 × 3.1 × 1.9 | 53 | `SD-11+SD-08`; Closed continuous counter and deep display chamber; side-door clear 0.8 m → `cs-e-REAR-STAFF-DOOR` | Main cloth showroom opening in the central structural bay; flanking trading bays remain smaller |
+| `COVERED_SOUK_EAST_GROUND_03` | `cs-e` | shop | 45.333 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 53 | `SD-11+SD-08`; closed backed shopfront with a continuous counter; side-door clear 0.8 m → `cs-e-REAR-STAFF-DOOR` | dye workfront |
+| `cs-e-L1-W2` | `cs-e` | vent | 40 | 4.85 / 6.6 | 2.2 × 1.75 × 0.42 | 53 | `SD-07`; Closed broad timber shutters with plain fixed segmental upper light; no colored glass | Upper sorting room daylight aligned over the principal cloth showroom |
 
-### FRONTAGE_COVERED_SOUK_EAST  ·  BLD_DYERS_ARCADE_E (arcade, 1 storey)
+### `COVERED_SOUK` · `south`
 
-- **Role:** arcade. Three fabric businesses under repaired arches: a packer, the cloth booth and a dye-sample seller; their back store is off-map, the roof room is where the packer keeps bolts dry.
-- **Wall line:** east edge of `COVERED_SOUK`; x = 53, y = 33.28 .. 46.72 (a runs south to north); length **13.44 m**; street side -X (street lies west of the wall); kit `Wall(F, (53, 33.28), (53, 46.72), faces='W')`.
-- **Retained massing `MASSING_LOW_MERCHANT`:** wall top 4.5 local / 4.5 absolute, depth 4.2 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_painted_plaster_warm`, trim `ph_stone_trim_white`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 3.55 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.28; impost 1.93; signboard centres 3.80 (span 3.65..3.95) over the booth and 3.67 (span 3.52..3.82) over the dye counter; coping 4.34..4.5; slab 4.76, parapet cap 5.59; B18 roof-access room behind (placed).
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `GROUND_01` | `arch_arcade` | packing bay (placed `ASSET_B18_PACKING_FINISH`) | 1.9 | (53, 35.18) | 2.6 × 0.42 × 3.55 | 0 / 3.55 | 0 |
-| `GROUND_02` | `arch_arcade` | approved textile booth (placed `ASSET_TEXTILE_BOOTH`, untouchable) | 6.72 | (53, 40) | 2.6 × 0.42 × 3.55 | 0 / 3.55 | 0 |
-| `GROUND_03` | `arch_arcade` | DY-S dye-sample counter (placed `ASSET_B18_DYE_COUNTER`) | 11.54 | (53, 44.82) | 2.6 × 0.42 × 3.55 | 0 / 3.55 | 0 |
+Protected wall interval: **41..53 m**; floor grade: **z 0 m**.
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(1.9, 2.6, 0, 3.55), (6.72, 2.6, 0, 3.55), (11.54, 2.6, 0, 3.55)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 41..46 | collider-backed solid | COLLIDER_WALL_016 |
+| 46..53 | **ZERO BUILD protected opening** | DYERS_ALLEY |
 
-Bound dressing from the schedule (`walls[].dressing`): `ASSET_B18_PACKING_FINISH` at south GROUND_01, on the retained threshold; `ASSET_TEXTILE_BOOTH` at center GROUND_02; approved file and placement unchanged; `ASSET_B18_DYE_COUNTER` at north GROUND_03, front-served locked sample display; `ASSET_B18_ROOF_ACCESS` at roof room at x54.6..56.4, y40.9..44.7, base4.76, cap7.35.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `cs-s` | 41..42.4 | (41, 31.3, 42.4, 32) | Covered Souk south return enclosure return | 7 | 0.7 | `ph_bz04_sandstone_blocks_06` | slab 7..7.12; parapet 7.12; cap 7.12; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `cs-s-part-2` | 42.4..46 | (42.4, 31.3, 46, 32) | Closed secondary face of Dyer family house beside the works; its entrance and floor hierarchy are defined on the principal elevation | 7.2 | 0.7 | `ph_bz04_beige_wall_002` | slab 7.2..7.38; parapet 7.83; cap 7.93; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
-**Construction tasks (ordered; each has an observable completion):**
+BC-01 boundary composition: 0.32 m engaged piers at the listed bay edges, fields recessed 0.045 m, 0.60 m base and 0.50 m upper band. See [the graded BC-01 standard section](drawings/bc-01-section.svg).
 
-1. CREATE the section finish: skin `ph_painted_plaster_warm`, plinth sandstone, impost band between the three arches, coping 4.34..4.5; end piers 0.60 × 0.16. Completion: low lime arcade of three repaired arches.
-2. CREATE three sealed arches `GROUND_01/02/03` 2.6 × 3.55 at a=1.90/6.72/11.54 with floor deck 0.14. Interiors empty: `ASSET_B18_PACKING_FINISH` (a=1.90), the approved `ASSET_TEXTILE_BOOTH` (a=6.72, do not touch) and `ASSET_B18_DYE_COUNTER` (a=11.54) are placed. The booth's side braces seat on masonry at ±1.19 from its axis: give the `GROUND_02` piers a 0.05 flat seat at z 3.26. Completion: three different trades in three arches.
-3. SD-08 awning: timber ledger 0.08 × 0.08 at z 3.00 spanning a=0.45..3.35, projection 1.20 m, hem drop 0.25, default sag 0.12 (the character schedule overrides sag only), two 45° timber brackets at the span ends, cloth `ph_hessian_230` over `GROUND_01` and the same over `GROUND_03` (a=10.09..12.99). None over `GROUND_02` (the booth carries its own). Completion: exactly two awnings.
-4. CREATE sign brackets for `DYE_E_SIGN_1` (a=6.72, board centre z 3.80, span 3.65..3.95, brackets z 3.95) and `DYE_E_SIGN_2` (a=11.54, board centre z 3.67, span 3.52..3.82, brackets z 3.82). `GROUND_01` has no sign. Completion: two signs.
-5. CREATE the lantern bracket at a=7.22: it starts at (53.0, 40.5, 4.365), reaches 0.50 m into the street to the placed lantern handle at (52.5, 40.5, 4.365), and carries `LANTERN_DYERS_01` centred at (52.5, 40.5, 4.10). Completion: lantern on a bracket.
-6. KEEP `COVER_DYERS_01` (50.5, 43.6) and the process vessel at (51.98, 35.18). No floor stock. Completion: as stated.
-7. KEEP the placed `ASSET_B18_ROOF_ACCESS` room at (55.5, 42.8, 4.76) (cap 7.35) and the roof tie `ASSET_ROOF_TIE_590` at y 45.36 on the parapet (the canopy's east seat; the GLB coping passes under its foot); CREATE the low service vent cluster on the roof toward y 38.3 as two 0.4 × 0.4 × 0.6 plaster boxes at (55.6, 38.2, 4.76) and (56.2, 38.6, 4.76) via `placements[]`. APPLY wear: dust band, indigo drips under `GROUND_03`, polish on jambs, west-facing bleach strong. Completion: as listed.
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| — | — | — | — | — | — | — | — | No openings scheduled |
 
-**Why it exists (reality check):** Three fabric businesses under repaired arches: a packer, the cloth booth and a dye-sample seller; their back store is off-map, the roof room is where the packer keeps bolts dry.
+### `COVERED_SOUK` · `west`
 
-### FRONTAGE_COVERED_SOUK_SOUTH  ·  BLD_SOUK_YARD_WALL (compound wall, 1 storey)
+Quiet background: Keep route mouths and lower wall fields legible; detail belongs only to the listed openings and groups..
 
-- **Role:** compound wall. The yard wall of the house behind the Souk's south end; the route passes beside it.
-- **Wall line:** south edge of `COVERED_SOUK`; y = 32, x = 41.36 .. 45.56 (a runs west to east); length **4.2 m**; street side +Y (street lies north); kit `Wall(F, (41.36, 32), (45.56, 32), faces='N')`.
-- **Retained massing `MASSING_FRONTAGE_RELIEF`:** wall top 4.9 local / 4.9 absolute, depth 0.96 m; roof and parapet stay runtime-owned per section 7.
-- **Authoring:** include this wall in the zone section GLB using the printed `Wall(F, ...)` frame. Heights are above this zone's floor. Cut the skin around every active bay; no separate frontage binding.
-- **Blender materials:** wall `ph_sandstone_blocks_06`, trim `ph_stone_trim_sandstone`, timber `ph_rough_pine_door`; hardware `ph_rusty_metal_02`.
-- **Corners:** `held`. Ground head datum 3.1 m. Exact end piers and finish datums are in the tasks below.
-- **Horizontal datums (SD-01..SD-03 unless overridden):** plinth 0..0.44; string course 2.90; coping 4.74..4.9.
+Protected wall interval: **32..48 m**; floor grade: **z 0 m**.
 
-| Bay | Module / assembly | Variant | a (m) | World (x, y) | W × D × H (m) | Sill / head (m) | Storey |
-|---|---|---|---:|---|---|---|---:|
-| `BAY_01` | `blind_niche` |  | 2.1 | (43.46, 32) | 1.05 × 0.18 × 1.8 | 1.3 / 3.1 | 0 |
+| Baseline interval | Status | Notes |
+|---|---|---|
+| 32..39 | collider-backed solid | COLLIDER_WALL_115 |
+| 44..48 | collider-backed solid | COLLIDER_WALL_116 |
+| 39..44 | **ZERO BUILD protected opening** | LINK_EAST_MID |
 
-Skin aperture input for `Wall.skin(..., openings=...)`: `[(2.1, 1.05, 1.3, 1.8)]`. Values are `(along, width, sill, height)`; the wall's ordered tasks supply the jambs, closures and reveal backs.
+| Parcel | World along (m) | Footprint x0,y0 → x1,y1 | Purpose | Wall top | Shell depth | Material | Roof levels abs. z | Notes |
+|---|---:|---|---|---:|---:|---|---|---|
+| `cs-ws` | 32..39 | (39.8, 32, 41, 39) | Upper narrow/broad stacks at33.6/36.6 balance the full32..39 facade and share the same physical ENTRY/MAIN rooms as the Fountain front. The ground counter and staff entrance remain independent. | 10.9 | 1.2 | `ph_bz04_beige_wall_002` | slab 10.9..11.08; parapet 11.53; cap 11.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
+| `cs-wn` | 44..48 | (39.8, 44, 41, 48) | Merchant corner house - coordinated wing or return | 9.9 | 1.2 | `ph_bz04_aged_plaster_ochre` | slab 9.9..10.08; parapet 10.53; cap 10.63; setback 0 | Opaque enclosed volume; every roof step has a closed return. All additions are the explicit openings, groups and fixtures in this issue. |
 
+| Opening | Parcel | Kind | World along | Sill / head abs. z | W × H × D | Receiver plane | Assembly / closure / staff access | Purpose |
+|---|---|---|---:|---:|---|---|---|---|
+| `COVERED_SOUK_WEST_GROUND_01` | `cs-ws` | shop | 35.5 | 0 / 2.75 | 2.6 × 2.75 × 1.9 | 41 | `SD-08`; locked half-height timber lattice gate and opaque recess back; side-door clear 0.8 m → `cs-ws-STAFF-DOOR` | Rear dye-display tenancy of the merchant building |
+| `cs-ws-STAFF-DOOR` | `cs-ws` | door | 37.85 | 0 / 2.55 | 1.05 × 2.55 × 0.24 | 41 | `SD-05`; closed timber leaves with a fixed opaque transom | Staff access from the covered souk |
+| `cs-ws-L1-W1` | `cs-ws` | window | 33.6 | 5.85 / 7.35 | 0.7 × 1.5 × 0.34 | 41 | `SD-07`; Closed 1-panel timber shutters | family reception rooms; daylight on its measured room axis |
+| `cs-ws-L1-W2` | `cs-ws` | window | 36.6 | 5.85 / 7.35 | 2 × 1.5 × 0.34 | 41 | `SD-07`; Closed 2-panel timber shutters | family reception rooms; daylight on its measured room axis |
+| `cs-ws-L2-W1` | `cs-ws` | window | 33.6 | 8.85 / 10.35 | 0.7 × 1.5 × 0.34 | 41 | `SD-07`; Closed 1-panel timber shutters | private household; daylight on its measured room axis |
+| `cs-ws-L2-W2` | `cs-ws` | window | 36.6 | 8.85 / 10.35 | 2 × 1.5 × 0.34 | 41 | `SD-07`; Closed 2-panel timber shutters | private household; daylight on its measured room axis |
+| `cs-wn-L1-W1` | `cs-wn` | window | 46 | 4.25 / 5.85 | 1.1 × 1.6 × 0.34 | 41 | `SD-07`; closed double paneled timber shutters | family room; daylight on its measured room axis |
+| `cs-wn-L2-W1` | `cs-wn` | window | 46 | 7.55 / 9.15 | 1.1 × 1.6 × 0.34 | 41 | `SD-07`; closed double paneled timber shutters | bedroom; daylight on its measured room axis |
 
-**Construction tasks (ordered; each has an observable completion):**
+## Surface and floor treatments
 
-1. CREATE the section finish: skin `ph_sandstone_blocks_06`, plinth, course, coping 4.74..4.9 (closes `coping`); end piers 0.45. CREATE `BAY_01` niche at sill 1.30, a=2.1. One spout at a=0.5. Completion: a garden wall with one niche.
+| Area / parcel | Receiver | Exact polygon / region | Alpha | Purpose |
+|---|---|---|---:|---|
+| `COVERED_SOUK` floor | `bz04_court_limestone_flags_01` | {'receiver': 'bz04_court_limestone_flags_01', 'base': 'Original paving texture with full world-scale UVs; no added all-over tint or noise', 'trafficRegion': {'id': 'COVERED_SOUK-CLEAR', 'x': 44.75, 'y': 32, 'w': 4.5, 'h': 16, 'heightM': 2.2, 'floorSource': 'COVERED_SOUK'}, 'trafficRoughnessDelta': -0.025, 'trafficAlbedoDelta': 0, 'edgeDust': {'widthM': 0.18, 'maxAlpha': 0.06, 'extent': 'Only the solid face intervals; subtract door service rectangles and every open transition', 'featherM': 0.06}, 'colliderChange': False} | — | Original paving texture with full world-scale UVs; no added all-over tint or noise |
+## Activity groups and protected route regions
 
-**Why it exists (reality check):** The yard wall of the house behind the Souk's south end; the route passes beside it.
+| Area | Group / recipe | Receiver | Bounds min → max (x, y, z) | Contents | Supports |
+|---|---|---|---|---|---|
+| `COVERED_SOUK` | `G_COVERED_SOUK_EAST_GROUND_01` / `AG-PACK` | east/cs-e/COVERED_SOUK_EAST_GROUND_01 | (52.72, 33.407, 0.04) → (54.9, 35.927, 2.65) | Build the named parts as cloth bolt store. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `COVERED_SOUK` | `G_COVERED_SOUK_EAST_GROUND_02` / `AG-RUG` | east/cs-e/COVERED_SOUK_EAST_GROUND_02 | (52.72, 38.35, 0.04) → (54.9, 41.65, 2.65) | Build the named parts as rug merchant. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `COVERED_SOUK` | `G_COVERED_SOUK_EAST_GROUND_03` / `AG-DYE` | east/cs-e/COVERED_SOUK_EAST_GROUND_03 | (52.72, 44.073, 0.04) → (54.9, 46.593, 2.65) | Build the named parts as tailoring and folding. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `COVERED_SOUK` | `G_COVERED_SOUK_WEST_GROUND_01` / `AG-DYE` | west/cs-ws/COVERED_SOUK_WEST_GROUND_01 | (39.1, 34.24, 0.04) → (41.28, 36.76, 2.65) | Build the named parts as weaving and samples. The kind-specific craft recipe defines finished shape; localBox is a limit, not permission to ship a raw box. | SD-08 deck at absolute z=0.04, closed back at wall plane minus recess depth; all counter feet grounded |
+| `COVERED_SOUK` | `COVERED_SOUK-CLEAR` | **CLEAR ROUTE** | (44.75, 32) → (49.25, 48) | Protected empty region | Do not place geometry |
 
-## 4. Free placements (dressing, cover, landmarks)
+### Fixed composition `G_COVERED_SOUK_EAST_GROUND_01`
 
-Compiled world transforms from the spec (`dressing_placements` through their anchors). KEEP means the transform is protected or approved; REPLACE names the new asset that takes the same anchor. New free placements go in `placements[]` with their scheduled coordinates. Fitted details such as the named repair skins and back-wall textiles travel inside the owning section; do not duplicate them as placements.
+along offsets from served opening centre; out positive to street; z above group bbox min (the finished deck). Dimensions are final part envelopes. This part list replaces the generic recipe contents, with the same workmanship and support standards.
 
-| Anchor | Type | Position | W × H | Yaw | Note |
-|---|---|---|---|---:|---|
-| `LMK_DYERS_DISTRICT` | landmark | (43.1, 44.3, 0) | 1.5 × 1 | 0 | Sealed timber vats and a correctly scaled ceramic vessel identify the covered dyers route. |
-| `COVER_DYERS_01` | cover_cluster | (50.5, 43.6, 0) | 1.8 × 1.2 | 75 | Dye pots and barrels stagger the route. |
-| `LANTERN_DYERS_01` | lantern_anchor | (52.5, 40.5, 4.1) | 0.42 × 0.72 | 270 | CC0 wooden lantern under the dyers canopy. |
-
-| Placement | Asset | Anchor | Position (x, y, z) | W × D × H | Yaw | Disposition |
-|---|---|---|---|---|---:|---|
-| `PLACE_B18_DYE_COUNTER_B18_SAMPLE_DISPLAY` | `ASSET_B18_DYE_COUNTER` | `B18_SAMPLE_DISPLAY` | (53.17, 44.82, 0.14) | 1.48 × 0.34 × 2.11 | 90 | KEEP at this transform |
-| `PLACE_CENTRAL_DYE_DISPLAY_CENTRAL_DYE_DISPLAY` | `ASSET_B18_DYE_COUNTER` | `CENTRAL_DYE_DISPLAY` | (40.83, 36.14, 0.14) | 1.48 × 0.34 × 2.11 | 270 | KEEP at this transform |
-| `PLACE_B18_PACKING_FINISH_B18_PACKING_DISPLAY` | `ASSET_B18_PACKING_FINISH` | `B18_PACKING_DISPLAY` | (53.17, 35.18, 0.14) | 1.48 × 0.34 × 1.535 | 90 | KEEP at this transform |
-| `PLACE_B18_ROOF_ACCESS_B18_ROOF_ACCESS` | `ASSET_B18_ROOF_ACCESS` | `B18_ROOF_ACCESS` | (55.5, 42.8, 4.76) | 1.8 × 3.8 × 2.59 | 180 | KEEP at this transform |
-| `PLACE_L34_COVERED_SOUK_BASKET_LMK_DYERS_DISTRICT` | `ASSET_CC0_BASKET` | `LMK_DYERS_DISTRICT` | (42.38, 43.82, 0) | 0.413 × 0.298 × 0.24 | 348 | KEEP at this transform |
-| `PLACE_DYERS_LANTERN_LANTERN_DYERS_01` | `ASSET_CC0_LANTERN` | `LANTERN_DYERS_01` | (52.5, 40.5, 4.1) | 0.221 × 0.235 × 0.53 | 270 | KEEP at this transform |
-| `PLACE_DYERS_CANOPY_CANOPY_DYERS_01` | `ASSET_CLOTH_CANOPY` | `CANOPY_DYERS_01` | (47.15, 45.36, 5.9) | 4.4 × 11.7 × 0.18 | 90 | KEEP (raised 2026-09-07 to 5.90 at both ends: west on a ledger above the north-wing screen, east on a new roof tie; waiver CW-CCAEF9D05D21 retired) |
-| `PLACE_DYERS_COVER_COVER_DYERS_01` | `ASSET_COVER_GOODS` | `COVER_DYERS_01` | (50.5, 43.6, 0) | 1.5 × 0.75 × 1 | 75 | KEEP (gameplay cover; silhouette and collider protected) |
-| `PLACE_B4_SOUK_PROCESS_VESSEL_B4_SOUK_E_GOODS_GROUND_01` | `ASSET_DYERS_CERAMIC_VESSEL` | `B4_SOUK_E_GOODS_GROUND_01` | (51.98, 35.18, 0) | 0.551 × 0.422 × 0.312 | 277 | KEEP at this transform |
-| `PLACE_DYERS_CERAMIC_VESSEL_LMK_DYERS_DISTRICT` | `ASSET_DYERS_CERAMIC_VESSEL` | `LMK_DYERS_DISTRICT` | (43.42, 43.88, 0) | 0.564 × 0.432 × 0.32 | 348 | KEEP at this transform |
-| `PLACE_DYERS_VAT_EAST_LMK_DYERS_DISTRICT` | `ASSET_DYERS_SEALED_VAT` | `LMK_DYERS_DISTRICT` | (43.48, 44.5, 0) | 0.608 × 0.62 × 0.714 | 11 | KEEP at this transform |
-| `PLACE_DYERS_VAT_WEST_LMK_DYERS_DISTRICT` | `ASSET_DYERS_SEALED_VAT` | `LMK_DYERS_DISTRICT` | (42.72, 44.42, 0) | 0.705 × 0.718 × 0.828 | 352 | KEEP at this transform |
-| `PLACE_B4_SOUK_CART_B4_SOUK_W_CART_GROUND_01` | `ASSET_MARKET_CART` | `B4_SOUK_W_CART_GROUND_01` | (43.1, 36.14, 0) | 1.2 × 0.749 × 0.883 | 98 | KEEP at this transform |
-| `PLACE_SUPPORT_CANOPY_DYERS_01_MOUNT_SUPPORT_CANOPY_DYERS_01` | `ASSET_ROOF_TIE_590` | `MOUNT_SUPPORT_CANOPY_DYERS_01` | (54.875, 45.36, 5.59) | 3.75 × 0.16 × 0.45 | 180 | KEEP at this transform |
-| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_NORTH` | `ASSET_SCREEN_SC_C` | `CENTRAL_SCREEN_NORTH` | (40.985, 45.36, 4.15) | 1 × 0.24 × 1.4 | 270 | KEEP at this transform |
-| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_1` | `ASSET_SCREEN_SC_C` | `CENTRAL_SCREEN_SOUTH_1` | (40.985, 34.38, 4.15) | 1 × 0.24 × 1.4 | 270 | KEEP at this transform |
-| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_2` | `ASSET_SCREEN_SC_C` | `CENTRAL_SCREEN_SOUTH_2` | (40.985, 37.9, 4.15) | 1 × 0.24 × 1.4 | 270 | KEEP at this transform |
-| `PLACE_DYERS_SIGNS_DYE_E_SIGN_1` | `ASSET_SIGNBOARD` | `DYE_E_SIGN_1` | (52.88, 40, 3.8) | 2.2 × 0.12 × 0.304 | 270 | KEEP (centre z 3.80, nominal board span 3.65..3.95; masonry stubs meet its top at z 3.95) |
-| `PLACE_DYERS_SIGNS_DYE_E_SIGN_2` | `ASSET_SIGNBOARD` | `DYE_E_SIGN_2` | (52.88, 44.82, 3.67) | 2.2 × 0.12 × 0.304 | 270 | KEEP (centre z 3.67, nominal board span 3.52..3.82; masonry stubs meet its top at z 3.82) |
-| `PLACE_DYERS_SIGNS_DYE_W_SIGN_1` | `ASSET_SIGNBOARD` | `DYE_W_SIGN_1` | (41.12, 36.14, 3.67) | 2.2 × 0.12 × 0.304 | 90 | KEEP (centre z 3.67, nominal board span 3.52..3.82; masonry stubs meet its top at z 3.82) |
-| `PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH` | `ASSET_TEXTILE_BOOTH` | `DYE_E_TEXTILE_BOOTH` | (52.735, 40, 0) | 2.683 × 1.291 × 3.64 | 90 | KEEP exactly (user-approved at this location; never move, scale or re-export) |
-
-## 5. Overheads
-
-Canopies and lines are shared by both walls (owner OWN_OVERHEAD). Ends are fixed points on the receiving wall or roof tie; the cloth hangs between them per SD-17. Hem never below 4.2 m over a route floor.
-
-| Span | End A (x, y, z) | End B (x, y, z) | Width | Note |
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
 |---|---|---|---|---|
-| `CANOPY_DYERS_01` | (41, 45.36, 5.9) | (53, 45.36, 5.9) | 4.4 | Construction sheet 2026-09-07: both seats at 5.90, the west on a ledger above the north-wing screen (head 5.55), the east on a roof tie (ASSET_ROOF_TIE_590) behind the arcade parapet, as on Spice Street. Hem stays above 5.4 m. |
+| `chest` | grounded-plank-chest / `CF-COUNTER` | [-1.25, -0.55, 0] / [1.25, 0.15, 0.9] | `ph_bz04_worn_planks` | recess deck |
+| `bolt-1` | rolled-textile / `CF-ROLLED-CLOTH` | [-0.68, -0.23, 0.9] / [-0.44000000000000006, 0.03, 2.05] | `ph_bz04_fine_linen` | chest top; concealed dowel socket |
+| `bolt-2` | rolled-textile / `CF-ROLLED-CLOTH` | [-0.31, -0.23, 0.9] / [-0.07, 0.03, 2.25] | `ph_bz04_fine_linen` | chest top; concealed dowel socket |
+| `bolt-3` | rolled-textile / `CF-ROLLED-CLOTH` | [0.08000000000000002, -0.23, 0.9] / [0.32, 0.03, 1.95] | `ph_bz04_fine_linen` | chest top; concealed dowel socket |
+| `bolt-4` | rolled-textile / `CF-ROLLED-CLOTH` | [0.44999999999999996, -0.23, 0.9] / [0.69, 0.03, 2.17] | `ph_bz04_fine_linen` | chest top; concealed dowel socket |
 
-`CANOPY_DYERS_01` runs level at z 5.90 from the west north wing (41.3, 45.36) to the east parapet at a=0.899 (53, 45.36), the same construction as Spice Street: CREATE a 1.2 m ledger at z 5.90 on the west north wing; the east end bears on the placed roof tie `ASSET_ROOF_TIE_590` (`PLACE_SUPPORT_CANOPY_DYERS_01`, on the parapet cap 5.59 behind the arcade face). Cloth `ph_hessian_230`, sag ≤ 0.35, hem ≥ 5.4 over the sheltered floor.
+### Fixed composition `G_COVERED_SOUK_EAST_GROUND_02`
 
-## 6. Ground, wear and drainage
+Along offsets from served opening centre (or group centre for a plant); out positive toward street; z above group bbox min, the finished deck. Build exactly these parts with their stated receivers.
 
-KEEP `court_limestone_flags_01`; polish along the centre; indigo drips under both dye counters; contact wear under the cover and vats; flush seams at y 32 / 48 and the east-mid link mouth.
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `counter` | grounded-counter-carcass / `CF-COUNTER` | [-1.65, -0.55, 0] / [1.65, 0.15, 0.9] | `ph_bz04_worn_planks` | recess deck; base feet are flat and continuous under the carcass |
+| `upright-1` | timber-member / `CF-TIMBER` | [-0.9, -1.9, 0] / [-0.83, -1.65, 2.45] | `ph_bz04_worn_planks` | recess deck and upper wall bracket |
+| `upright-2` | timber-member / `CF-TIMBER` | [0.83, -1.9, 0] / [0.9, -1.65, 2.45] | `ph_bz04_worn_planks` | recess deck and upper wall bracket |
+| `top-rail` | timber-member / `CF-TIMBER` | [-0.9, -1.9, 2.38] / [0.9, -1.65, 2.45] | `ph_bz04_worn_planks` | two uprights |
+| `hanging-rug-1` | bound-hanging-rug / `CF-RUG` | [-0.74, -1.73, 0.8499999999999999] / [-0.020000000000000018, -1.7, 2.3] | `bz04_levantine_rug_project_original` | two ties to top-rail, one at each upper corner |
+| `hanging-rug-2` | bound-hanging-rug / `CF-RUG` | [0.08000000000000002, -1.73, 1.0499999999999998] / [0.6599999999999999, -1.7, 2.3] | `bz04_levantine_rug_project_original` | two ties to top-rail, one at each upper corner |
+| `rolled-rug-1-1` | horizontal-rolled-rug / `CF-RUG` | [-0.655, -0.19, 0.9] / [-0.10499999999999998, -0.010000000000000009, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-1-2` | horizontal-rolled-rug / `CF-RUG` | [0.10499999999999998, -0.19, 0.9] / [0.655, -0.010000000000000009, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-2-1` | horizontal-rolled-rug / `CF-RUG` | [-0.655, -0.44999999999999996, 0.9] / [-0.10499999999999998, -0.27, 1.08] | `bz04_levantine_rug_project_original` | countertop |
+| `rolled-rug-2-2` | horizontal-rolled-rug / `CF-RUG` | [0.10499999999999998, -0.44999999999999996, 0.9] / [0.655, -0.27, 1.08] | `bz04_levantine_rug_project_original` | countertop |
 
-**`COVERED_SOUK` floor finish** (use this zone's `F`; z is local and includes the 0.014 m render offset):
+### Fixed composition `G_COVERED_SOUK_EAST_GROUND_03`
 
-```python
-wear_patch(F, [(46.7, 32.3, 0.014), (47.3, 32.3, 0.014), (47.3, 47.7, 0.014), (46.7, 47.7, 0.014)], 'polish')
-wear_patch(F, [(41.02, 35.5, 0.014), (41.55, 35.5, 0.014), (41.55, 36.78, 0.014), (41.02, 36.78, 0.014)], 'dye')
-wear_patch(F, [(52.45, 44.18, 0.014), (53.0, 44.18, 0.014), (53.0, 45.46, 0.014), (52.45, 45.46, 0.014)], 'dye')
-wear_patch(F, [(42.74466, 36.876623, 0.014), (42.555384, 35.529858, 0.014), (43.45534, 35.403377, 0.014), (43.644616, 36.750142, 0.014)], 'dust')
-wear_patch(F, [(52.225345, 34.791686, 0.014), (52.311999, 35.497426, 0.014), (51.734655, 35.568314, 0.014), (51.648001, 34.862574, 0.014)], 'dust')
-wear_patch(F, [(43.127345, 43.515325, 0.014), (43.83568, 43.665886, 0.014), (43.712655, 44.244675, 0.014), (43.00432, 44.094114, 0.014)], 'dust')
-wear_patch(F, [(49.845684, 44.283956, 0.014), (50.275324, 42.680519, 0.014), (51.154316, 42.916044, 0.014), (50.724676, 44.519481, 0.014)], 'dust')
-wear_patch(F, [(43.028468, 44.190495, 0.014), (43.78271, 44.043885, 0.014), (43.931532, 44.809505, 0.014), (43.17729, 44.956115, 0.014)], 'dust')
-wear_patch(F, [(42.352918, 43.924978, 0.014), (43.209308, 44.045335, 0.014), (43.087082, 44.915022, 0.014), (42.230692, 44.794665, 0.014)], 'dust')
-wear_patch(F, [(42.147627, 43.536441, 0.014), (42.707617, 43.65547, 0.014), (42.612373, 44.103559, 0.014), (42.052383, 43.98453, 0.014)], 'dust')
-wear_patch(F, [(52.0095, 41.4215, 0.014), (52.0095, 38.5785, 0.014), (53, 38.5785, 0.014), (53, 41.4215, 0.014)], 'dust')
-```
+along offsets from served opening centre; out positive to street; z above group bbox min (the finished deck). Dimensions are final part envelopes. This part list replaces the generic recipe contents, with the same workmanship and support standards.
 
-## 7. Roofs and skyline
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `left-trestle` | framed-timber-trestle / `CF-FURNITURE` | [-0.74, -0.4, 0] / [-0.64, 0.15, 0.82] | `ph_bz04_worn_planks` | recess deck |
+| `right-trestle` | framed-timber-trestle / `CF-FURNITURE` | [0.64, -0.4, 0] / [0.74, 0.15, 0.82] | `ph_bz04_worn_planks` | recess deck |
+| `worktop` | plank-worktop / `CF-TIMBER` | [-1.25, -0.55, 0.82] / [1.25, 0.15, 0.9] | `ph_bz04_worn_planks` | both trestles |
+| `cloth-length` | folded-cloth / `CF-CLOTH` | [-0.75, -0.36, 0.9] / [0.15, 0.12, 1.04] | `bz04_levantine_rug_project_original` | worktop |
+| `folded-stack` | folded-cloth / `CF-CLOTH` | [0.28, -0.3, 0.9] / [0.73, 0.1, 1.2] | `ph_bz04_fine_linen` | worktop |
+| `wall-sample` | hanging-cloth / `CF-CLOTH` | [-0.55, -1.82, 1.5] / [0.4, -1.79, 2.28] | `bz04_levantine_rug_project_original` | two wall hooks at both upper corners |
+| `counter-apron` | timber-apron / `CF-TIMBER` | [-1.25, 0.1, 0.65] / [1.25, 0.15, 0.82] | `ph_bz04_worn_planks` | worktop and grounded trestles |
 
-East: slab 4.76, parapet 5.59, the placed roof room (cap 7.35) and the two vent boxes; the Souk massing owns the west merchant-house shared 7.0 / 8.19 roof, so this GLB adds none. The north end wall (x 41..46, y 48) is an arcade end wall: quiet stone field, coping at 7.0, zero arches.
+### Fixed composition `G_COVERED_SOUK_WEST_GROUND_01`
 
-## 8. Required result
+along offsets from served opening centre; out positive to street; z above group bbox min (the finished deck). Dimensions are final part envelopes. This part list replaces the generic recipe contents, with the same workmanship and support standards.
 
-- [ ] Three east arches with three different trades; the booth untouched; two awnings (bays 01 and 03) and two signs on the east (z 3.80 over the booth, 3.67 over the dye counter).
-- [ ] West: one arch with the dye counter, two seated screens, the north-wing door quiet; canopy ends on the west ledger and the east roof tie.
-- [ ] Lantern on a bracket; the west-mid link turn empty.
-- [ ] Every scheduled opening exists at its `a`, sill and head; retained code-owned openings in this area stay unchanged. No requirement imports work from another area.
-- [ ] Every placed asset in section 4 still sits in a rebate, floor or retained runtime plane that provides its seat (no shutter floating in front of plaster, no counter clipping a jamb).
-- [ ] No render-only geometry inside the walking envelope: nothing lower than 2.2 m projects more than 0.35 m from a wall into a route; awning hems are at or above 2.45 m; canopy hems at or above 4.2 m.
-- [ ] Doors have thresholds, jambs, heads and hardware and read closed; windows have jambs, heads, sills, reveals and a closure; no black holes, no paper-thin cards.
-- [ ] Inspect one close-up of every distinct assembly and one assembled context view with retained roofs, overheads, signs, dressing and ground. Confirm receiving surfaces, export materials, and no unintended coplanar faces; counts alone are insufficient.
-- [ ] Corners: solid piers as scheduled; no opening within the reserved end fields; pilasters reach the ground.
-- [ ] Plinth, course and below-wall-top facade cornice run the full wall and turn solid corners; the retained runtime coping continues the roofline without a second full-footprint slab.
-- [ ] The character schedule is present: distinct material fields, supported textiles where scheduled, sound softened edges, and localized wear. SD-12 bands are maximum receiving envelopes, never uniform brown strips; bleach follows the explicitly named exposed face.
+| Part | Construction shape | Local min / max (along, out, above deck) | Material | Receiver / support |
+|---|---|---|---|---|
+| `left-upright` | timber-member / `CF-TIMBER` | [-0.87, -0.28, 0] / [-0.8, -0.21, 2.35] | `ph_bz04_worn_planks` | recess deck and head wall brackets |
+| `right-upright` | timber-member / `CF-TIMBER` | [0.8, -0.28, 0] / [0.87, -0.21, 2.35] | `ph_bz04_worn_planks` | recess deck and head wall brackets |
+| `head` | timber-member / `CF-TIMBER` | [-0.87, -0.28, 2.28] / [0.87, -0.21, 2.35] | `ph_bz04_worn_planks` | both uprights |
+| `weft-panel` | taut-woven-panel / `CF-WEAVING` | [-0.72, -0.265, 0.65] / [0.72, -0.24, 2.2] | `bz04_levantine_rug_project_original` | head ties and lower timber roller |
+| `bottom-roller` | timber-roller / `CF-WEAVING` | [-0.84, -0.3, 0.56] / [0.84, -0.2, 0.66] | `ph_bz04_worn_planks` | both uprights |
+| `shuttle-basket` | woven-basket / `CF-BASKET` | [-0.35, -0.38, 0] / [0.35, 0.1, 0.35] | `ph_bz04_fine_linen` | recess deck |
+| `closed-work-gate` | locked-timber-lattice-gate / `CF-TIMBER` | [-1.25, 0.18, 0] / [1.25, 0.23, 1.15] | `ph_bz04_worn_planks` | opening jambs: two hinge straps and one locked latch |
 
-Record `built` after package application and the bounded construction inspection in README.md. Report export, assembly/interface evidence and any unavailable checks separately. Gameplay, aesthetic and performance acceptance remain the later validation task.
+## Fixtures, receivers, budgets, and critical views
 
+| Area | Fixture | Recipe | Receiver | Bounds min → max (x, y, z) | Purpose |
+|---|---|---|---|---|---|
+| `COVERED_SOUK` | `CANOPY_SOUK_S` | `SD-13` | cs-ws, cs-e | (40.95, 34.2, 4.242) → (53.05, 36.8, 4.55) | Ledger placed in the measured clear band between complete window assemblies. The low southern souk panel gives the market entrance an intimate shade layer while preserving the4.20m minimum overhead clearance. |
+| | `CANOPY_SOUK_S` dimensions/supports | | | {'sagM': 0.25, 'endA': [41, 35.5, 4.5], 'endB': [53, 35.5, 4.5], 'widthM': 2.4, 'ledgerLengthM': 2.6} | Exact instance values override the standard defaults. |
+| `COVERED_SOUK` | `CANOPY_SOUK_N` | `SD-13` | cs-wn, cs-e | (40.95, 44.7, 6.192) → (53.05, 47.3, 6.5) | Ledger placed in a measured structural band with0.21m clearance to the full adjacent window trim. |
+| | `CANOPY_SOUK_N` dimensions/supports | | | {'sagM': 0.25, 'endA': [41, 46.0, 6.45], 'endB': [53, 46.0, 6.45], 'widthM': 2.4, 'ledgerLengthM': 2.6} | Exact instance values override the standard defaults. |
+
+**CANOPY_SOUK_S membrane-only bounds:** `{'min': [41, 34.3, 4.242], 'max': [53, 36.7, 4.5]}`. Whole-assembly bounds above include the following supports:
+
+| Component | World bounds |
+|---|---|
+| cloth-or-line | `{'min': [41, 34.3, 4.242], 'max': [53, 36.7, 4.5]}` |
+| endpoint-ledger-1 | `{'min': [40.95, 34.2, 4.45], 'max': [41.05, 36.8, 4.55]}` |
+| endpoint-ledger-2 | `{'min': [52.95, 34.2, 4.45], 'max': [53.05, 36.8, 4.55]}` |
+
+
+**CANOPY_SOUK_N membrane-only bounds:** `{'min': [41, 44.8, 6.192], 'max': [53, 47.2, 6.45]}`. Whole-assembly bounds above include the following supports:
+
+| Component | World bounds |
+|---|---|
+| cloth-or-line | `{'min': [41, 44.8, 6.192], 'max': [53, 47.2, 6.45]}` |
+| endpoint-ledger-1 | `{'min': [40.95, 44.7, 6.4], 'max': [41.05, 47.3, 6.5]}` |
+| endpoint-ledger-2 | `{'min': [52.95, 44.7, 6.4], 'max': [53.05, 47.3, 6.5]}` |
+
+
+| Area | Triangle budget | Material bindings | Rendered primitives | Shadow primitives |
+|---|---:|---:|---:|---:|
+| `COVERED_SOUK` | 48000 | 14 | 16 | 10 |
+
+Section origin (design coordinates): `{'x': 41, 'y': 32, 'z': 0, 'source': 'gen-map-runtime.mjs resolves the traversal surface at the zone rectangle centre'}`.
+Declared export bounds (glTF local x, up, north): `{'min': [-2.1000000000000014, -0.02, -0.8999999999999986], 'max': [15.800000000000004, 10.92, 17.0]}`.
+Required bindings: `bz04_court_limestone_flags_01`, `bz04_levantine_rug_project_original`, `ph_bz04_aged_plaster_ochre`, `ph_bz04_beige_wall_002`, `ph_bz04_dark_wood`, `ph_bz04_fine_linen`, `ph_bz04_hessian_230`, `ph_bz04_plastered_wall`, `ph_bz04_sandstone_blocks_05`, `ph_bz04_sandstone_blocks_06`, `ph_bz04_stone_trim_sandstone`, `ph_bz04_trim_sanded_01`, `ph_bz04_weathered_brown_planks`, `ph_bz04_worn_planks`.
+
+
+| Camera | Area | Position (x, y, z) | Yaw / pitch / FOV | Purpose |
+|---|---|---|---|---|
+| `COVERED_SOUK-travel-reverse` | `COVERED_SOUK` | (47, 47.35, 1.7) | 0° / 0° / 75° | Reverse arrival and district transition |
+| `COVERED_SOUK-travel-forward` | `COVERED_SOUK` | (47, 32.65, 1.7) | 180° / 0° / 75° | Forward travel, route opening and whole-area focus |
+| `COVERED_SOUK-north-cs-n_cs-n-part-2-s1-base` | `COVERED_SOUK` | (43.5, 32.35, 1.7) | 180° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `COVERED_SOUK-east-cs-e-s1-base` | `COVERED_SOUK` | (41.35, 40, 1.7) | 270° / 2.458° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `COVERED_SOUK-south-cs-s_cs-s-part-2-s1-base` | `COVERED_SOUK` | (43.5, 47.65, 1.7) | 0° / 1.83° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `COVERED_SOUK-west-cs-ws-s1-base` | `COVERED_SOUK` | (52.65, 35.5, 1.7) | 90° / 2.458° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `COVERED_SOUK-west-cs-ws-s1-upper` | `COVERED_SOUK` | (52.65, 35.5, 1.7) | 90° / 38.839° / 75° | upper facade, parapet and roof-step coverage |
+| `COVERED_SOUK-west-cs-wn-s1-base` | `COVERED_SOUK` | (52.65, 46, 1.7) | 90° / 2.458° / 75° | lower and mid facade coverage with adjacent approach/return context |
+| `COVERED_SOUK-R3-craft-detail` | `COVERED_SOUK` | (44.5, 35.5, 1.7) | 90° / 0° / 75° | R3 receiver, joinery, support, material and trade-detail inspection: COVERED_SOUK_WEST_GROUND_01 |
+
+## Landmarks and shared dependencies
+
+| Landmark / dependency | Owner | Bounds or dependency | Clear void / arch profile |
+|---|---|---|---|
+| **shared dependency** `BZ04-SHARED-ENVIRONMENT` | `COVERED_SOUK` | Must remain coordinated with owner | No duplicate landmark or filled route opening |
+
+## Roof installation references
+
+Install or reuse the named roof bundles through [roof-bundles.md](roof-bundles.md). These are direct asset dependencies, not permission to build another area’s facades.
+
+- `COVERED_SOUK` cells: `ROOF_CELL_023`, `ROOF_CELL_024`, `ROOF_CELL_050`, `ROOF_CELL_053`, `ROOF_CELL_054`, `ROOF_CELL_055`, `ROOF_CELL_067`.
+- `COVERED_SOUK` bundles: `ROOF_BUNDLE_UNIT_COVERED_SOUK`, `ROOF_BUNDLE_UNIT_DYERS_ALLEY`, `ROOF_BUNDLE_UNIT_DYERS_DOGLEG`, `ROOF_BUNDLE_UNIT_FOUNTAIN_COURT`.
+- `COVERED_SOUK` interfaces: `ROOF_INTERFACE_ROOF_STEP_045`, `ROOF_INTERFACE_ROOF_STEP_046`, `ROOF_INTERFACE_ROOF_STEP_051`, `ROOF_INTERFACE_ROOF_STEP_052`, `ROOF_INTERFACE_ROOF_STEP_053`.
+
+## Material key
+
+| Alias | Source material | Color | Tile / normal / roughness / albedo |
+|---|---|---|---|
+| `ph_bz04_aged_plaster_ochre` | `ph_aged_plaster_ochre` | <span style="color:#c6a16c">■</span> `#c6a16c` | 2 / 0.28 / 0.93 / 1 |
+| `ph_bz04_beige_wall_002` | `ph_plastered_wall` | <span style="color:#d3bb93">■</span> `#d3bb93` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_plastered_wall` | `ph_plastered_wall` | <span style="color:#ddd0b3">■</span> `#ddd0b3` | 2 / 0.25 / 0.93 / 1 |
+| `ph_bz04_sandstone_blocks_05` | `ph_sandstone_blocks_05` | <span style="color:#bda985">■</span> `#bda985` | 2 / 0.45 / 0.94 / 1 |
+| `ph_bz04_sandstone_blocks_06` | `ph_sandstone_blocks_06` | <span style="color:#b6a185">■</span> `#b6a185` | 1.8 / 0.42 / 0.94 / 1 |
+
+## Skyline and legacy producer dispositions
+
+| Skyline item | Zone | Owner | Bounds min → max (x, y, z) | Purpose / notes |
+|---|---|---|---|---|
+| `BG-12` | `COVERED_SOUK` | shared-environment | (61, 34, 0) → (67, 43, 10.6) | Distant inhabited city block; broad quiet surfaces and a stepped parapet, no visible loose roof tank or unsupported ornament. |
+
+| Legacy item | Zone | Existing producer | Required disposition | Replacement / notes |
+|---|---|---|---|---|
+| `PLACE_B18_DYE_COUNTER_B18_SAMPLE_DISPLAY` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B18_PACKING_FINISH_B18_PACKING_DISPLAY` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B18_ROOF_ACCESS_B18_ROOF_ACCESS` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B4_SOUK_CART_B4_SOUK_W_CART_GROUND_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_B4_SOUK_PROCESS_VESSEL_B4_SOUK_E_GOODS_GROUND_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_CENTRAL_DYE_DISPLAY_CENTRAL_DYE_DISPLAY` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_NORTH` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_1` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_CENTRAL_SCREENS_COVERED_SOUK_CENTRAL_SCREEN_SOUTH_2` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_CANOPY_CANOPY_DYERS_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_CERAMIC_VESSEL_LMK_DYERS_DISTRICT` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_COVER_COVER_DYERS_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | retain_gameplay | Retain exact geometry, transform and cover silhouette; common material calibration only. |
+| `PLACE_DYERS_LANTERN_LANTERN_DYERS_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_SIGNS_DYE_E_SIGN_1` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_SIGNS_DYE_E_SIGN_2` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_SIGNS_DYE_W_SIGN_1` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_VAT_EAST_LMK_DYERS_DISTRICT` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_DYERS_VAT_WEST_LMK_DYERS_DISTRICT` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_L34_COVERED_SOUK_BASKET_LMK_DYERS_DISTRICT` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_SUPPORT_CANOPY_DYERS_01_MOUNT_SUPPORT_CANOPY_DYERS_01` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH` | `COVERED_SOUK` | buildProps.ts / dressing_placements / asset_registry | remove | Retire old visual when this owner is implemented; replace only with explicit target parcels/groups. Do not add an overlay duplicate. |
+| `ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_03` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_EAST_MASSING` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_BAY_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_SOUTH_MASSING` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_GROUND_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_MASSING` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_MASSING` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_STORY_1_WINDOW_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_01` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `ARCH_FRONTAGE_COVERED_SOUK_WEST_STORY_1_WINDOW_02` | `COVERED_SOUK` | v3Architecture.ts / architecturePlacements | replace_visual_only | Target face parcels and roof volumes; suppress previous render emission only and preserve collider production. |
+| `BOUNDARY_COVERED_SOUK_north` | `COVERED_SOUK` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_COVERED_SOUK_east` | `COVERED_SOUK` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_COVERED_SOUK_south` | `COVERED_SOUK` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+| `BOUNDARY_COVERED_SOUK_west` | `COVERED_SOUK` | buildBlockout.ts boundary finish, wallDetailPlacer.ts and v3Architecture.ts core boundary grammar | replace_visual_only | Target closed intervals exactly; no geometry over immutable openings. |
+
+
+## Drawings
+
+- [COVERED_SOUK dimensioned plan](drawings/covered_souk-plan.svg), [COVERED_SOUK four elevations](drawings/covered_souk-elevations.svg), and [COVERED_SOUK roof axonometric](drawings/covered_souk-axon.svg)
+- [Master plan](drawings/master-plan.svg)

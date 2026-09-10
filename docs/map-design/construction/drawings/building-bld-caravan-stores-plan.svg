@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<style>text{font-family:Arial,sans-serif;fill:#24353a}.title{font-size:28px;font-weight:700}.sub{font-size:15px;fill:#52676a}.label{font-size:13px}.tiny{font-size:11px;fill:#52676a}.parcel{font-size:12px;font-weight:700}.opening{font-size:10px;font-weight:700}.panel{fill:#fbfaf5;stroke:#87959a;stroke-width:1.5}.axis{stroke:#52676a;stroke-width:1}.solid{stroke:#3c5157;stroke-width:5}.open{stroke:#c2534d;stroke-width:5;stroke-dasharray:8 5}</style>
+<rect width="1600" height="1100" fill="#f5f1e8"/>
+<defs><pattern id="zero-build" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="8" stroke="#c2534d" stroke-width="2"/></pattern><marker id="camera-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#573d7a"/></marker></defs>
+<text class="title" x="48" y="48">BZ-04 / R7 caravan stores facade composition · BLD_CARAVAN_STORES · Building plan</text>
+<text class="sub" x="48" y="76">NORTH UP · complete connected footprint · room-use bays coordinate openings; hidden partitions are not scenery</text><rect class="panel" x="48" y="105" width="1010" height="910" rx="8"/>
+<rect x="139.29" y="249.29" width="118.29" height="591.43" fill="#e6e0d1"/>
+<line x1="139.29" y1="840.71" x2="139.29" y2="249.29" stroke="#344548" stroke-width="2"/>
+<line x1="257.57" y1="840.71" x2="257.57" y2="249.29" stroke="#344548" stroke-width="2"/>
+<line x1="139.29" y1="840.71" x2="257.57" y2="840.71" stroke="#344548" stroke-width="2"/>
+<line x1="139.29" y1="249.29" x2="257.57" y2="249.29" stroke="#344548" stroke-width="2"/>
+<rect x="142.57" y="252.57" width="111.71" height="230.00" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="198.43" y="367.57" text-anchor="middle">R1</text>
+<rect x="142.57" y="489.14" width="111.71" height="348.29" fill="none" stroke="#6d8383" stroke-dasharray="6 4"/><text class="parcel" x="198.43" y="663.29" text-anchor="middle">R2</text>
+<circle cx="257.57" cy="367.57" r="4" fill="#77715f"/>
+<polygon points="208.29,410.94 208.29,409.63 234.57,409.63 234.57,410.94" fill="#b7c8c4" fill-opacity=".30" stroke="#52676a" stroke-width="1.6" stroke-dasharray="5 3"/>
+<polyline points="257.57,663.29 242.79,663.29 221.43,663.29 221.43,425.07 221.43,395.50" fill="none" stroke="#52676a" stroke-width="2" stroke-dasharray="4 3"/>
+<text class="tiny" x="208.29" y="404.94">side-door → cc-w-STAFF-DOOR</text>
+<circle cx="257.57" cy="663.29" r="4" fill="#a14b3d"/>
+<text class="label" x="265.57" y="655.29">principal entrance</text>
+<circle cx="257.57" cy="692.86" r="4" fill="#77715f"/>
+<circle cx="257.57" cy="397.14" r="4" fill="#77715f"/>
+<rect x="195.14" y="326.17" width="71.63" height="82.80" fill="#b49777" fill-opacity=".35" stroke="#89684a"/>
+<text class="label" x="95" y="955">World footprint x -0.6..3 · y 30..48 m</text><text class="label" x="95" y="980">N ↑ · red point = principal entrance · brown envelope = fixed trade/dressing group · dashed blue = staff-only clear box/connection</text>
+<text class="title" x="1100" y="150">Caravan receiving and packi…</text>
+<text class="label" x="1100" y="244">R1: The high-light pair at 34.5 and 43.5</text>
+<text class="label" x="1100" y="259">centers on 39 across the continuous 30..48</text>
+<text class="label" x="1100" y="288">R2: The high-light pair at 34.5 and 43.5</text>
+<text class="label" x="1100" y="303">centers on 39 across the continuous 30..48</text>
+<text class="label" x="1100" y="630">BUILDING ORDER</text>
+<text class="tiny" x="1100" y="660">Caravan receiving and packing stores</text>
+<text class="tiny" x="1100" y="678">1 storeys; see section for floor datums</text>
+<text class="tiny" x="1100" y="696">Use ground frontage piers separately from</text>
+<text class="tiny" x="1100" y="714">floor-specific upper room and framing axes.</text>
+<text class="tiny" x="1100" y="732">Corresponding openings serving one room share</text>
+<text class="tiny" x="1100" y="750">its canonical ID where the room spans opposite</text>
+<text class="tiny" x="1100" y="768">faces. A different front/rear axis must have a</text>
+<text class="tiny" x="1100" y="786">stated room-use relationship.</text>
+<text class="tiny" x="1100" y="804">The high-light pair at 34.5 and 43.5 centers on</text>
+<text class="tiny" x="1100" y="822">39 across the continuous 30..48 facade. The</text>
+<text class="tiny" x="1100" y="840">receiving door and packing workfront retain</text>
+<text class="tiny" x="1100" y="858">their access positions.</text>
+</svg>

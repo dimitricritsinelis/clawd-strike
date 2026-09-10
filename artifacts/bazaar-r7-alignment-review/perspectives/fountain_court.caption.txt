@@ -1,0 +1,2 @@
+FOUNTAIN_COURT | FOUNTAIN_COURT-west-F_W_HALL-s1-base | design XYZ (35.650, 44.500, 1.700) m | yaw 90.00°, pitch 1.83°, vertical FOV 75.00° | 1440 × 900 px
+Schematic design perspective; not an in-game render.

@@ -1,20 +1,98 @@
 {
   "models": [
     {
-      "id": "spawn_b_west_stone_face",
-      "file": "spawn-b-west.glb",
+      "id": "section_unit_spawn_b_courtyard",
+      "file": "unit-spawn-b-courtyard.glb",
       "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original"
     },
     {
-      "id": "spawn_b_east_stone_face",
-      "file": "spawn-b-east.glb",
+      "id": "bz04_roof_bundle_unit_spawn_b_courtyard",
+      "file": "roof-bundle-spawn-b-courtyard.glb",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "bz03_b_gate_cap_west",
+      "file": "bz03_b_gate_cap_west.glb",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "bz03_b_gate_cap_east",
+      "file": "bz03_b_gate_cap_east.glb",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "bz04_shared_environment",
+      "file": "bz04-shared-environment.glb",
       "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_SPAWN_B_SOUTH_WEST": "spawn_b_west_stone_face",
-    "FRONTAGE_SPAWN_B_SOUTH_EAST": "spawn_b_east_stone_face"
-  }
+  "section": {
+    "zoneId": "SPAWN_B_COURTYARD",
+    "modelId": "section_unit_spawn_b_courtyard",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD",
+      "modelId": "bz04_roof_bundle_unit_spawn_b_courtyard",
+      "position": {
+        "x": 28.0,
+        "y": 88.5,
+        "z": 7.1
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    },
+    {
+      "id": "BZ03_B_GATE_CAP_WEST",
+      "modelId": "bz03_b_gate_cap_west",
+      "position": {
+        "x": 19.0,
+        "y": 77.25,
+        "z": 9.9
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ03_B_GATE_CAP_EAST",
+      "modelId": "bz03_b_gate_cap_east",
+      "position": {
+        "x": 36.5,
+        "y": 77.0,
+        "z": 9.9
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_SHARED_ENVIRONMENT",
+      "modelId": "bz04_shared_environment",
+      "position": {
+        "x": 28,
+        "y": 48,
+        "z": 0
+      },
+      "yawDeg": 180,
+      "role": "skyline"
+    }
+  ],
+  "sharedDependencies": [
+    "RUG-GATE-PORTAL",
+    "BZ04-SHARED-ENVIRONMENT"
+  ],
+  "roofBundleIds": [
+    "ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD"
+  ],
+  "implementationPhase": "B-04-only"
 }

@@ -139,7 +139,7 @@ test("Fountain and North courts keep distinct authored flagstone scales", () => 
     "the overlapping North-East connector must not expose a checked cobblestone tongue inside North Court",
   );
   assert.equal(teaLanding?.floorMaterialId, "large_sandstone_blocks_01");
-  assert.equal(spawnB?.floorMaterialId, teaLanding?.floorMaterialId);
+  assert.equal(spawnB?.floorMaterialId, "bz04_large_sandstone_blocks_01");
   assert.equal(
     northWestLink?.floorMaterialId,
     teaLanding?.floorMaterialId,

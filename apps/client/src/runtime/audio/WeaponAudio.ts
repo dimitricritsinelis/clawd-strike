@@ -7,32 +7,34 @@ const AUDIO_EXTENSIONS = [".mp3", ".ogg", ".wav"] as const;
 const FALLBACK_NOISE_SECONDS = 0.22;
 const EVENT_NOISE_POOL_SIZE = 4;
 const KILL_DING_TRIM_START_S = 0.26;
-const PLAYER_RELOAD_AUDIO_TARGET_DURATION_S = 1.2;
+const PLAYER_RELOAD_AUDIO_TARGET_DURATION_S = 1.225;
 
 export const AK47_AUDIO_TUNING = {
   player: {
     layerGainScale: 0.7,
     postGain: 0.1,
-    transientAttackMs: 2.4,
-    transientDrive: 1.1,
+    transientAttackMs: 2.7,
+    transientDrive: 1.05,
     lowShelfDb: 4.1,
-    highShelfHz: 3800,
-    highShelfDb: 0.85,
+    highShelfHz: 3300,
+    highShelfDb: -1.5,
   },
   enemy: {
-    layerGainScale: 0.7,
-    postGain: 0.1,
-    transientAttackMs: 3.1,
-    transientDrive: 0.95,
-    lowShelfDb: 3.9,
-    highShelfHz: 3400,
-    closeHighShelfDb: 0.45,
-    farHighShelfDb: -2.6,
-    distanceMinM: 8,
-    distanceMaxM: 42,
-    minGain: 0.28,
-    closeLowpassHz: 18000,
-    farLowpassHz: 1700,
+    postGain: 0.05,
+    mixPeakLimit: 0.025,
+    distanceMinM: 2,
+    distanceDecayM: 60,
+    distanceMaxM: 60,
+    farLowpassHz: 6500,
+  },
+  shot: {
+    presenceHz: 3200,
+    presenceDb: -3.5,
+    decayStartS: 0.1,
+    endFadeS: 0.02,
+    burstGapS: 0.2,
+    close: { durationS: 0.55, decayS: 0.11, lowpassHz: 11000, overlapGain: 0.35, overlapFadeS: 0.05 },
+    tail: { durationS: 0.7, decayS: 0.13, lowpassHz: 6500, overlapGain: 0.25, overlapFadeS: 0.08, gain: 0.75, attackS: 0.004 },
   },
 } as const;
 
@@ -43,9 +45,12 @@ type LoadedLayer = {
 };
 
 export type EnemyAk47ShotOptions = {
-  layerGainScale: number;
-  distanceNorm: number;
+  sourceId: string;
+  distanceM: number;
 };
+
+type Ak47Voice = { gain: GainNode; startTime: number };
+type Ak47Burst = { close?: Ak47Voice; tail?: Ak47Voice };
 
 type Ak47BufferPlaybackOptions = {
   destination?: AudioNode;
@@ -56,6 +61,7 @@ type Ak47BufferPlaybackOptions = {
   driveCurve?: Float32Array;
   lowpassFrequencyHz?: number;
   offsetSeconds?: number;
+  onEnded?: () => void;
 };
 
 function clamp01(value: number): number {
@@ -77,7 +83,6 @@ function createDriveCurve(samples: number, amount: number): Float32Array {
 
 const DRIVE_CURVE = createDriveCurve(512, 1.35);
 const PLAYER_AK47_DRIVE_CURVE = createDriveCurve(512, AK47_AUDIO_TUNING.player.transientDrive);
-const ENEMY_AK47_DRIVE_CURVE = createDriveCurve(512, AK47_AUDIO_TUNING.enemy.transientDrive);
 const KILL_DING_DRIVE_CURVE = createDriveCurve(512, 1.05);
 
 export class WeaponAudio {
@@ -93,6 +98,9 @@ export class WeaponAudio {
   private compressor: DynamicsCompressorNode | null = null;
   private playerGunGain: GainNode | null = null;
   private enemyGunGain: GainNode | null = null;
+  private enemyGunLimiter: WaveShaperNode | null = null;
+  private playerBurst: Ak47Burst = {};
+  private enemyBursts = new Map<string, Ak47Burst>();
 
   private closeBuffer: AudioBuffer | null = null;
   private tailBuffer: AudioBuffer | null = null;
@@ -114,10 +122,13 @@ export class WeaponAudio {
   private activeReloadSource: AudioBufferSourceNode | null = null;
   private activeReloadCleanup: (() => void) | null = null;
 
-  // Ambient audio: low wind loop
+  // Ambient audio: low wind and distant marketplace chatter.
   private ambientSource: AudioBufferSourceNode | null = null;
   private ambientGain: GainNode | null = null;
   private ambientRunning = false;
+  private marketplaceSource: AudioBufferSourceNode | null = null;
+  private marketplaceGain: GainNode | null = null;
+  private marketplaceLoadPromise: Promise<void> | null = null;
 
   ensureResumedFromGesture(): void {
     const ctx = this.ensureAudioGraph();
@@ -167,94 +178,88 @@ export class WeaponAudio {
 
     const now = ctx.currentTime;
 
-    if (this.closeBuffer) {
-      this.playBuffer(
-        this.closeBuffer,
-        now,
-        this.randRange(0.985, 1.015),
-        this.randRange(0.78, 0.9) * tuning.layerGainScale,
-        {
-          destination: this.playerGunGain,
-          attackSeconds: tuning.transientAttackMs / 1000,
-          lowShelfGainDb: tuning.lowShelfDb,
-          highShelfFrequencyHz: tuning.highShelfHz,
-          highShelfGainDb: tuning.highShelfDb,
-          driveCurve: PLAYER_AK47_DRIVE_CURVE,
-        },
-      );
-    } else {
+    this.playAk47Layers(now, this.playerGunGain, this.playerBurst);
+    if (!this.closeBuffer) {
       this.playFallbackCrack(now, tuning.layerGainScale, this.playerGunGain);
-    }
-
-    if (this.tailBuffer) {
-      this.playBuffer(
-        this.tailBuffer,
-        now + this.randRange(0.012, 0.024),
-        this.randRange(0.99, 1.01),
-        this.randRange(0.36, 0.52) * tuning.layerGainScale,
-        {
-          destination: this.playerGunGain,
-          attackSeconds: tuning.transientAttackMs / 1000,
-          lowShelfGainDb: tuning.lowShelfDb,
-          highShelfFrequencyHz: tuning.highShelfHz,
-          highShelfGainDb: tuning.highShelfDb,
-          driveCurve: PLAYER_AK47_DRIVE_CURVE,
-        },
-      );
     }
   }
 
   playAk47ShotQuiet(options: EnemyAk47ShotOptions): void {
+    if (!Number.isFinite(options.distanceM)) return;
     const ctx = this.ensureAudioGraph();
-    if (!ctx || !this.masterGain || !this.compressor || !this.enemyGunGain) return;
-    const tuning = AK47_AUDIO_TUNING.enemy;
-
+    if (!ctx || !this.enemyGunGain || ctx.state === "suspended") return;
     this.ensureBuffersLoaded();
+    if (!this.closeBuffer && !this.tailBuffer) return;
 
-    if (ctx.state === "suspended") return;
+    const tuning = AK47_AUDIO_TUNING.enemy;
+    const distanceM = Math.max(0, options.distanceM - tuning.distanceMinM);
+    const distanceGain = Math.exp(-distanceM / tuning.distanceDecayM);
+    const distanceNorm = clamp01(distanceM / (tuning.distanceMaxM - tuning.distanceMinM));
+    const burst = this.enemyBursts.get(options.sourceId) ?? {};
+    this.enemyBursts.set(options.sourceId, burst);
+    this.playAk47Layers(ctx.currentTime, this.enemyGunGain, burst, distanceGain, distanceNorm, () => {
+      if (!burst.close && !burst.tail && this.enemyBursts.get(options.sourceId) === burst) {
+        this.enemyBursts.delete(options.sourceId);
+      }
+    });
+  }
 
-    const now = ctx.currentTime;
-    const distanceNorm = clamp01(options.distanceNorm);
-    const distanceGain = lerp(1, tuning.minGain, distanceNorm);
-    const lowpassFrequencyHz = lerp(tuning.closeLowpassHz, tuning.farLowpassHz, distanceNorm);
-    const highShelfGainDb = lerp(tuning.closeHighShelfDb, tuning.farHighShelfDb, distanceNorm);
-    const g = Math.max(0, options.layerGainScale) * tuning.layerGainScale * distanceGain;
+  private playAk47Layers(
+    now: number,
+    destination: AudioNode,
+    burst: Ak47Burst,
+    distanceGain = 1,
+    distanceNorm = 0,
+    onEnded?: () => void,
+  ): void {
+    const ctx = this.audioContext;
+    if (!ctx) return;
+    const tuning = AK47_AUDIO_TUNING.player;
+    for (const kind of ["close", "tail"] as const) {
+      const buffer = kind === "close" ? this.closeBuffer : this.tailBuffer;
+      if (!buffer) continue;
+      const layer = AK47_AUDIO_TUNING.shot[kind];
+      const startTime = kind === "close" ? now : now + this.randRange(0.012, 0.024);
+      const playbackRate = kind === "close" ? this.randRange(0.985, 1.015) : this.randRange(0.99, 1.01);
+      const gain = kind === "close" ? this.randRange(0.78, 0.9) : this.randRange(0.36, 0.52);
 
-    if (this.closeBuffer) {
-      this.playBuffer(
-        this.closeBuffer,
-        now,
-        this.randRange(0.985, 1.015),
-        this.randRange(0.78, 0.9) * g,
-        {
-          destination: this.enemyGunGain,
-          attackSeconds: tuning.transientAttackMs / 1000,
+      const presence = ctx.createBiquadFilter();
+      presence.type = "peaking";
+      presence.frequency.value = AK47_AUDIO_TUNING.shot.presenceHz;
+      presence.Q.value = 1;
+      presence.gain.value = AK47_AUDIO_TUNING.shot.presenceDb;
+      const overlap = ctx.createGain();
+      overlap.gain.setValueAtTime(1, startTime);
+      const previous = burst[kind];
+      if (previous && startTime - previous.startTime < AK47_AUDIO_TUNING.shot.burstGapS) {
+        previous.gain.gain.setValueAtTime(1, startTime);
+        previous.gain.gain.exponentialRampToValueAtTime(layer.overlapGain, startTime + layer.overlapFadeS);
+      }
+      const voice = { gain: overlap, startTime };
+      burst[kind] = voice;
+      // Apply distance after saturation so enemies retain the approved shot timbre.
+      const distance = ctx.createGain();
+      distance.gain.value = distanceGain;
+      presence.connect(overlap);
+      overlap.connect(distance);
+      distance.connect(destination);
+      this.playBuffer(buffer, startTime, playbackRate,
+        gain * tuning.layerGainScale * (kind === "tail" ? AK47_AUDIO_TUNING.shot.tail.gain : 1), {
+          destination: presence,
+          attackSeconds: kind === "tail" ? AK47_AUDIO_TUNING.shot.tail.attackS : tuning.transientAttackMs / 1000,
           lowShelfGainDb: tuning.lowShelfDb,
           highShelfFrequencyHz: tuning.highShelfHz,
-          highShelfGainDb,
-          driveCurve: ENEMY_AK47_DRIVE_CURVE,
-          lowpassFrequencyHz,
-        },
-      );
-    }
-    // No fallback for enemy shots — silence is fine if audio hasn't loaded yet
-
-    if (this.tailBuffer) {
-      this.playBuffer(
-        this.tailBuffer,
-        now + this.randRange(0.012, 0.024),
-        this.randRange(0.99, 1.01),
-        this.randRange(0.36, 0.52) * g,
-        {
-          destination: this.enemyGunGain,
-          attackSeconds: tuning.transientAttackMs / 1000,
-          lowShelfGainDb: tuning.lowShelfDb,
-          highShelfFrequencyHz: tuning.highShelfHz,
-          highShelfGainDb,
-          driveCurve: ENEMY_AK47_DRIVE_CURVE,
-          lowpassFrequencyHz,
-        },
-      );
+          highShelfGainDb: tuning.highShelfDb,
+          driveCurve: PLAYER_AK47_DRIVE_CURVE,
+          lowpassFrequencyHz: lerp(layer.lowpassHz, AK47_AUDIO_TUNING.enemy.farLowpassHz, distanceNorm),
+          onEnded: () => {
+            presence.disconnect();
+            overlap.disconnect();
+            distance.disconnect();
+            if (burst[kind] === voice) delete burst[kind];
+            onEnded?.();
+          },
+        });
     }
   }
 
@@ -468,7 +473,8 @@ export class WeaponAudio {
    * Reload start — magazine drop: low plastic clunk.
    * Synthesized: bandpass noise with pitch drop envelope.
    */
-  playReloadStart(): void {
+  playReloadStart(durationSeconds: number): void {
+    if (!Number.isFinite(durationSeconds) || durationSeconds <= 0) return;
     const ctx = this.ensureAudioGraph();
     if (!ctx || !this.compressor) return;
     this.ensureBuffersLoaded();
@@ -476,7 +482,7 @@ export class WeaponAudio {
 
     const now = ctx.currentTime;
     if (this.reloadBuffer) {
-      this.playReloadClip(now);
+      this.playReloadClip(now, durationSeconds);
       return;
     }
 
@@ -635,19 +641,18 @@ export class WeaponAudio {
   }
 
   /**
-   * Start a subtle synthesized wind-drone ambient loop.
+   * Start subtle wind and marketplace ambient loops.
    * Safe to call multiple times — only starts once.
    */
   startAmbient(): void {
     if (this.ambientRunning) return;
     const ctx = this.ensureAudioGraph();
     if (!ctx || !this.masterGain) return;
-    if (ctx.state === "suspended") return;
-
+    // Schedule even while resume() is pending: the audio clock starts on unlock.
     this.ambientRunning = true;
 
-    // Create a 4-second loopable noise buffer
-    const AMBIENT_DURATION_S = 4.0;
+    // A longer bed with slow overlapping gusts avoids a static wind drone.
+    const AMBIENT_DURATION_S = 12.0;
     const sampleRate = ctx.sampleRate;
     const frameCount = Math.floor(AMBIENT_DURATION_S * sampleRate);
     const buf = ctx.createBuffer(1, frameCount, sampleRate);
@@ -664,7 +669,9 @@ export class WeaponAudio {
       b4 = 0.55000 * b4 + white * 0.5329522;
       b5 = -0.7616 * b5 - white * 0.0168980;
       const pink = (b0 + b1 + b2 + b3 + b4 + b5 + white * 0.5362) * 0.11;
-      data[i] = pink;
+      const phase = (i / frameCount) * Math.PI * 2;
+      const gust = 0.8 + 0.38 * Math.sin(phase) + 0.16 * Math.sin(phase * 3 + 0.7);
+      data[i] = pink * gust;
     }
 
     // Smooth loop transition: fade first/last 0.1s
@@ -679,10 +686,10 @@ export class WeaponAudio {
     source.buffer = buf;
     source.loop = true;
 
-    // Low-pass: only let frequencies < 600Hz through (wind feel)
+    // Soft air movement with enough upper body to read on smaller speakers.
     const lp = ctx.createBiquadFilter();
     lp.type = "lowpass";
-    lp.frequency.value = 550;
+    lp.frequency.value = 900;
     lp.Q.value = 0.5;
 
     const gainNode = ctx.createGain();
@@ -696,13 +703,49 @@ export class WeaponAudio {
     this.ambientSource = source;
     this.ambientGain = gainNode;
 
-    // Fade in over 3 seconds to 0.06 (very subtle)
+    // Fade in gently; the master bus applies a further 0.1 gain.
     const now = ctx.currentTime;
     gainNode.gain.setValueAtTime(0.0, now);
-    gainNode.gain.linearRampToValueAtTime(0.06, now + 3.0);
+    gainNode.gain.linearRampToValueAtTime(0.09, now + 3.0);
+    this.marketplaceLoadPromise ??= this.startMarketplace(ctx);
+  }
+
+  private async startMarketplace(ctx: AudioContext): Promise<void> {
+    try {
+      const response = await fetch("/assets/audio/ambient/market-chatter.wav");
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const buffer = await ctx.decodeAudioData(await response.arrayBuffer());
+      // A late load must not revive ambience after mute, disposal, or restart.
+      if (this.audioContext !== ctx || !this.ambientRunning || !this.masterGain) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = buffer;
+      source.loop = true;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0, ctx.currentTime);
+      // The asset is stored 100x louder; this and master 0.1 restore the approved level.
+      gain.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 3);
+      source.connect(gain);
+      gain.connect(this.masterGain);
+      source.start();
+      this.marketplaceSource = source;
+      this.marketplaceGain = gain;
+    } catch (error) {
+      if (this.audioContext === ctx) {
+        console.warn("[WeaponAudio] marketplace ambience unavailable:", error);
+      }
+    }
   }
 
   dispose(): void {
+    if (this.marketplaceSource) {
+      this.marketplaceSource.stop();
+      this.marketplaceSource.disconnect();
+      this.marketplaceSource = null;
+    }
+    this.marketplaceGain?.disconnect();
+    this.marketplaceGain = null;
+    this.marketplaceLoadPromise = null;
     if (this.ambientSource) {
       try { this.ambientSource.stop(); } catch { /* already stopped */ }
       this.ambientSource = null;
@@ -724,16 +767,20 @@ export class WeaponAudio {
     this.reloadStartNoisePool = null;
     this.reloadSnapNoisePool = null;
     this.footstepNoiseBuffer = null;
+    this.playerBurst = {};
+    this.enemyBursts.clear();
 
     this.masterGain?.disconnect();
     this.compressor?.disconnect();
     this.playerGunGain?.disconnect();
     this.enemyGunGain?.disconnect();
+    this.enemyGunLimiter?.disconnect();
 
     this.masterGain = null;
     this.compressor = null;
     this.playerGunGain = null;
     this.enemyGunGain = null;
+    this.enemyGunLimiter = null;
 
     if (this.audioContext) {
       const ctx = this.audioContext;
@@ -768,7 +815,7 @@ export class WeaponAudio {
       return null;
     }
 
-    const ctx = new AudioContextCtor();
+    const ctx = new AudioContextCtor({ latencyHint: "interactive" });
 
     const compressor = ctx.createDynamicsCompressor();
     compressor.threshold.value = -16;
@@ -783,9 +830,15 @@ export class WeaponAudio {
     playerGunGain.gain.value = AK47_AUDIO_TUNING.player.postGain;
     const enemyGunGain = ctx.createGain();
     enemyGunGain.gain.value = AK47_AUDIO_TUNING.enemy.postGain;
+    // Bound the combined enemy bus, even when several nearby enemies fire together.
+    const enemyGunLimiter = ctx.createWaveShaper();
+    const peakLimit = AK47_AUDIO_TUNING.enemy.mixPeakLimit;
+    enemyGunLimiter.curve = createDriveCurve(4096, 1 / peakLimit).map((value) => value * peakLimit);
+    enemyGunLimiter.oversample = "2x";
 
     playerGunGain.connect(compressor);
-    enemyGunGain.connect(compressor);
+    enemyGunGain.connect(enemyGunLimiter);
+    enemyGunLimiter.connect(compressor);
     compressor.connect(masterGain);
     masterGain.connect(ctx.destination);
 
@@ -794,6 +847,7 @@ export class WeaponAudio {
     this.masterGain = masterGain;
     this.playerGunGain = playerGunGain;
     this.enemyGunGain = enemyGunGain;
+    this.enemyGunLimiter = enemyGunLimiter;
     return ctx;
   }
 
@@ -811,9 +865,10 @@ export class WeaponAudio {
         this.loadLayerWithExtensions(ctx, KILL_DING_BASENAME),
       ]);
 
-      this.closeBuffer = closeLayer.buffer;
-      this.tailBuffer = tailLayer.buffer;
-      this.reloadBuffer = reloadLayer.buffer;
+      if (this.audioContext !== ctx) return;
+      this.closeBuffer = this.prepareAk47Layer(ctx, closeLayer.buffer, "close");
+      this.tailBuffer = this.prepareAk47Layer(ctx, tailLayer.buffer, "tail");
+      this.reloadBuffer = this.prepareReloadClip(ctx, reloadLayer.buffer);
       this.killDingBuffer = killDingLayer.buffer;
 
       if (!this.didLogMissingAssetWarning && !closeLayer.buffer) {
@@ -830,6 +885,24 @@ export class WeaponAudio {
         console.warn(`[WeaponAudio] failed loading weapon audio, using fallback: ${message}`);
       }
     });
+  }
+
+  private prepareAk47Layer(ctx: AudioContext, source: AudioBuffer | null, kind: "close" | "tail"): AudioBuffer | null {
+    if (!source) return null;
+    const tuning = AK47_AUDIO_TUNING.shot;
+    const layer = tuning[kind];
+    const frames = Math.min(source.length, Math.round(layer.durationS * source.sampleRate));
+    const buffer = ctx.createBuffer(source.numberOfChannels, frames, source.sampleRate);
+    for (let channel = 0; channel < source.numberOfChannels; channel += 1) {
+      const input = source.getChannelData(channel);
+      const output = buffer.getChannelData(channel);
+      for (let i = 0; i < frames; i += 1) {
+        const time = i / source.sampleRate;
+        const decay = Math.exp(-Math.max(0, time - tuning.decayStartS) / layer.decayS);
+        output[i] = input[i]! * decay * Math.min(1, (buffer.duration - time) / tuning.endFadeS);
+      }
+    }
+    return buffer;
   }
 
   private async loadLayerWithExtensions(ctx: AudioContext, baseUrl: string): Promise<LoadedLayer> {
@@ -947,20 +1020,48 @@ export class WeaponAudio {
       highShelf.disconnect();
       drive.disconnect();
       lowpass?.disconnect();
+      options.onEnded?.();
     };
   }
 
-  private playReloadClip(startTime: number): void {
+  private prepareReloadClip(ctx: AudioContext, source: AudioBuffer | null): AudioBuffer | null {
+    if (!source) return null;
+    const buffer = ctx.createBuffer(source.numberOfChannels,
+      Math.round(PLAYER_RELOAD_AUDIO_TARGET_DURATION_S * source.sampleRate), source.sampleRate);
+    // Split at the recording's quiet gaps. Preserve the original pitch and tone;
+    // place its transients at magazine release (frame 33), insertion (104),
+    // rock-in (114), and latch closure (119) in the 120 fps Reload clip.
+    const cues = [
+      { from: 0, to: 0.38, at: (33 - 1) / 120 - 0.06 },
+      { from: 0.38, to: 0.70, at: (104 - 1) / 120 - 0.14 },
+      { from: 0.70, to: 0.88, at: (114 - 1) / 120 - 0.10 },
+      { from: 0.88, to: source.duration, at: (119 - 1) / 120 - 0.08 },
+    ];
+    const fadeFrames = Math.round(0.003 * source.sampleRate);
+    for (let channel = 0; channel < source.numberOfChannels; channel += 1) {
+      const input = source.getChannelData(channel);
+      const output = buffer.getChannelData(channel);
+      for (const cue of cues) {
+        const first = Math.round(cue.from * source.sampleRate);
+        const count = Math.min(input.length, Math.round(cue.to * source.sampleRate)) - first;
+        const offset = Math.round(cue.at * source.sampleRate);
+        for (let i = 0; i < count && offset + i < output.length; i += 1) {
+          const fade = Math.min(1, i / fadeFrames, (count - 1 - i) / fadeFrames);
+          output[offset + i] = output[offset + i]! + input[first + i]! * fade;
+        }
+      }
+    }
+    return buffer;
+  }
+
+  private playReloadClip(startTime: number, durationSeconds: number): void {
     if (!this.audioContext || !this.playerGunGain || !this.reloadBuffer) return;
 
     this.stopReload();
 
     const source = this.audioContext.createBufferSource();
     source.buffer = this.reloadBuffer;
-    source.playbackRate.value = Math.max(
-      0.85,
-      Math.min(1.05, this.reloadBuffer.duration / PLAYER_RELOAD_AUDIO_TARGET_DURATION_S),
-    );
+    source.playbackRate.value = this.reloadBuffer.duration / durationSeconds;
 
     const highpass = this.audioContext.createBiquadFilter();
     highpass.type = "highpass";

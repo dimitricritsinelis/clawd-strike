@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { captureEvidenceErrors, detectProtectedChanges, hasFrameMeasurement } from "./mapShoot";
+import { captureEvidenceErrors, deriveReviewUnits, detectProtectedChanges, hasFrameMeasurement } from "./mapShoot";
 import type { CaptureEvidence } from "./mapShoot";
 
 const source = JSON.parse(readFileSync(new URL("../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"));
+
+test("B spawn survey includes both entrance wings even when a frontage is shorter than three metres", () => {
+  const unit = deriveReviewUnits(source).find((unit) => unit.id === "unit-spawn-b-courtyard")!;
+  for (const side of ["WEST", "EAST"]) {
+    assert.ok(unit.views.some((view) => view.id === `elev:FRONTAGE_SPAWN_B_SOUTH_${side}`));
+  }
+});
 
 test("static guard catches tactical inputs and cover transforms outside the old projection", () => {
   const edits = [
@@ -167,4 +174,23 @@ test("authoredPlacementReasons rejects walk-through props, floating bases and su
   assert.match(reasonsFor([at("float", 5, 0.15, 0.3)]).join("\n"), /placement float \(shelf\) floats 0\.30 m above the ground .* \(S_COURT at 0\.00 m\)/);
   assert.deepEqual(reasonsFor([at("ramp-ok", 0.15, 14, 0.7, 90)]), []);
   assert.match(reasonsFor([at("ramp-sunk", 0.15, 14, 0, 90)]).join("\n"), /placement ramp-sunk \(shelf\) sinks 0\.70 m into the ground .* \(S_RAMP at 0\.70 m\)/);
+});
+
+test("authored geometry guard leaves disconnected empty space open and rejects a spanning triangle", async () => {
+  const { glbTriangleBounds } = await import("./mapShoot");
+  const make = (points: number[]) => {
+    const binary=Buffer.alloc(points.length*4);points.forEach((v,i)=>binary.writeFloatLE(v,i*4));
+    const data={asset:{version:"2.0"},buffers:[{byteLength:binary.length}],bufferViews:[{buffer:0,byteOffset:0,byteLength:binary.length}],accessors:[{bufferView:0,componentType:5126,count:points.length/3,type:"VEC3"}],meshes:[{primitives:[{attributes:{POSITION:0}}]}],nodes:[{mesh:0,translation:[1,0,0]}],scenes:[{nodes:[0]}],scene:0};
+    const json=Buffer.from(JSON.stringify(data).padEnd(Math.ceil(JSON.stringify(data).length/4)*4," "));
+    const result=Buffer.alloc(28+json.length+binary.length);result.writeUInt32LE(0x46546c67,0);result.writeUInt32LE(2,4);result.writeUInt32LE(result.length,8);result.writeUInt32LE(json.length,12);result.writeUInt32LE(0x4e4f534a,16);json.copy(result,20);result.writeUInt32LE(binary.length,20+json.length);result.writeUInt32LE(0x004e4942,24+json.length);binary.copy(result,28+json.length);return result;
+  };
+  const apart=glbTriangleBounds(make([-3,0,0,-2,0,0,-2,0,10, 10,0,0,11,0,10,10,0,10]));
+  assert.deepEqual(apart[0],{min:[-2,0,0],max:[-1,0,10]});
+  const spec={zones:[],traversal_surfaces:[{id:"court",kind:"flat",rect:{x:0,y:0,w:10,h:10},elevationM:0}],authored_placements:[{id:"shared",modelId:"model",position:{x:0,y:0,z:0},yawDeg:180}]} as unknown as MapSpec;
+  const enclosing={min:[-2,0,0],max:[12,0,10]} as import("./mapShoot").Bounds3;
+  assert.match(authoredPlacementReasons(spec,()=>enclosing).join("\n"),/geometry below/);
+  assert.deepEqual(authoredPlacementReasons(spec,()=>enclosing,undefined,undefined,()=>apart),[]);
+  const crossing=glbTriangleBounds(make([-3,0,-2,11,0,-2,4,0,12]));
+  assert.match(authoredPlacementReasons(spec,()=>enclosing,undefined,undefined,()=>crossing).join("\n"),/geometry below/);
+  assert.throws(()=>glbTriangleBounds(make([0,0,0,1,0,0,Number.NaN,0,1])),/non-finite/);
 });

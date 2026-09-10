@@ -1,0 +1,588 @@
+{
+  "status": "R6 selected documentation recipes; bounded samples are not final-game approval",
+  "families": [
+    {
+      "family": "cream-plaster",
+      "materialId": "ph_bz04_painted_plaster_warm",
+      "sourceMaterialId": "ph_bz04_painted_plaster_warm",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/painted_plaster_wall/painted_plaster_wall_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "ec57d01d27651f483bc090d056b283ff50e7f9e0e2793f6eba5c49d49dc20307",
+        "normal": "773161a02c4e3a8b975bd3adbfa5306c44d4658e5d8c3a6a4d66bd8477230109",
+        "arm": "ec41a0b413679af0d7a50cda1c9429c7f9a658bfd3cf5df3f772faac04be6f28"
+      },
+      "desiredAppearanceSrgb": "#d8c4a0",
+      "paintSrgb": "#fce8bf",
+      "paintLinear": [
+        0.9759319078969907,
+        0.8080663901978523,
+        0.5201984763525123
+      ],
+      "grainMix": 0.5,
+      "repeatM": 1.8,
+      "normalScale": 0.3,
+      "roughness": 0.92,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/cream-plaster.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "sand-plaster",
+      "materialId": "ph_bz04_beige_wall_002",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "73312ebb6eabc8e0a55addd8a82a8924bcd1e717b9488a887cc77f14b6ea554e",
+        "normal": "504e1f7baf4b68714c64b6670e7954bebe99efe31c49f7ce5a2089e4b76023b5",
+        "arm": "cd927f46fa85b7e5c1a9747b90258c505529d7347d5f4dd356ae0ed2bda34d4f"
+      },
+      "desiredAppearanceSrgb": "#d3bb93",
+      "paintSrgb": "#f4dbb0",
+      "paintLinear": [
+        0.9014739814657824,
+        0.7089028117412087,
+        0.4348573119144994
+      ],
+      "grainMix": 0.5,
+      "repeatM": 2,
+      "normalScale": 0.25,
+      "roughness": 0.93,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/sand-plaster.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "pale-lime",
+      "materialId": "ph_bz04_plastered_wall",
+      "sourceMaterialId": "ph_bz04_plastered_wall",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "73312ebb6eabc8e0a55addd8a82a8924bcd1e717b9488a887cc77f14b6ea554e",
+        "normal": "504e1f7baf4b68714c64b6670e7954bebe99efe31c49f7ce5a2089e4b76023b5",
+        "arm": "cd927f46fa85b7e5c1a9747b90258c505529d7347d5f4dd356ae0ed2bda34d4f"
+      },
+      "desiredAppearanceSrgb": "#ddd0b3",
+      "paintSrgb": "#fdf1d4",
+      "paintLinear": [
+        0.9812088492707967,
+        0.8804478356651972,
+        0.6552866173193502
+      ],
+      "grainMix": 0.47422169068066733,
+      "repeatM": 2,
+      "normalScale": 0.25,
+      "roughness": 0.93,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/pale-lime.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "faded-ochre",
+      "materialId": "ph_bz04_aged_plaster_ochre",
+      "sourceMaterialId": "ph_bz04_aged_plaster_ochre",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/plastered_wall/plastered_wall_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "73312ebb6eabc8e0a55addd8a82a8924bcd1e717b9488a887cc77f14b6ea554e",
+        "normal": "504e1f7baf4b68714c64b6670e7954bebe99efe31c49f7ce5a2089e4b76023b5",
+        "arm": "cd927f46fa85b7e5c1a9747b90258c505529d7347d5f4dd356ae0ed2bda34d4f"
+      },
+      "desiredAppearanceSrgb": "#c6a16c",
+      "paintSrgb": "#e5bd82",
+      "paintLinear": [
+        0.7814988083980416,
+        0.5084248113955151,
+        0.22350127106028497
+      ],
+      "grainMix": 0.5,
+      "repeatM": 2,
+      "normalScale": 0.28,
+      "roughness": 0.93,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/faded-ochre.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "faded-earth-red",
+      "materialId": "ph_bz04_red_plaster_weathered",
+      "sourceMaterialId": "ph_bz04_red_plaster_weathered",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/red_plaster_weathered/red_plaster_weathered_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "b49519d865609f137b1796114234183f512d936a51989b74a17a67b47d3bf668",
+        "normal": "72ee053a5ea8a0e9c9a33bd6d84ab576cb218961c62f97b08804c3e19f824d5f",
+        "arm": "4fed44ce160da630bc6f6e7793a264d5375ad4602bf0d87499ee96eb894b3b7d"
+      },
+      "desiredAppearanceSrgb": "#b77c62",
+      "paintSrgb": "#dea183",
+      "paintLinear": [
+        0.7282053832884988,
+        0.35496713337145963,
+        0.2257058556419342
+      ],
+      "grainMix": 0.5,
+      "repeatM": 2,
+      "normalScale": 0.25,
+      "roughness": 0.93,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/faded-earth-red.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "dressed-sandstone",
+      "materialId": "ph_bz04_sandstone_blocks_05",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_05",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "d17c322d9e793ab9fc198948a34f2632595560471ff8714f2b0e052bc75c9ee3",
+        "normal": "ab42361855310d8de9b11470c6b21e512c9926decd5548dc9e9d72bd6cc06f3e",
+        "arm": "6bc226c4985aee587db5995754069dc2f01f6295cc997db3ebbebc6a33578e4d"
+      },
+      "desiredAppearanceSrgb": "#bda985",
+      "paintSrgb": "#eaddbb",
+      "paintLinear": [
+        0.8214550628297725,
+        0.7220556851362163,
+        0.4965705233480168
+      ],
+      "grainMix": 0.7,
+      "repeatM": 2,
+      "normalScale": 0.45,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/dressed-sandstone.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "service-stone",
+      "materialId": "ph_bz04_sandstone_blocks_06",
+      "sourceMaterialId": "ph_bz04_sandstone_blocks_06",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rustic_stone_wall_02/rustic_stone_wall_02_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "a091e04d73ddf7485d1b99a66d6cfe270e9ba36cdc26f98dbc17934427e43bc9",
+        "normal": "a7e5c96b8ba3ab3d066c673c4da9b1b7735f176ed6b6b2b9f74216fc151225f7",
+        "arm": "119a2dd5a764d82396e1ea3736aff0c981295ab756847a0bc90d455c182cb411"
+      },
+      "desiredAppearanceSrgb": "#b6a185",
+      "paintSrgb": "#f9e7c9",
+      "paintLinear": [
+        0.946174958515037,
+        0.7983868950319168,
+        0.5872168732348412
+      ],
+      "grainMix": 0.6707432788190668,
+      "repeatM": 1.8,
+      "normalScale": 0.42,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/service-stone.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "quiet-flags",
+      "materialId": "bz04_court_limestone_flags_01",
+      "sourceMaterialId": "bz04_court_limestone_flags_01",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "8d2458db374992bef26044610895f7bbf2acfdbbbcaa98cbacbc0ca2e168b7f1",
+        "normal": "c73e302b6ffacf5f28dece4d40acfeca854933980e661968e255de4ee07bb283",
+        "arm": "93272f7bb1013e7655678aef81ea21382ffce57e66f3641ce7ef3eab1e86cfb8"
+      },
+      "desiredAppearanceSrgb": "#baa47f",
+      "paintSrgb": "#eedebd",
+      "paintLinear": [
+        0.8552869216232429,
+        0.7317958404526851,
+        0.5079860185422087
+      ],
+      "grainMix": 0.7,
+      "repeatM": 2.4,
+      "normalScale": 0.3,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/quiet-flags.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "rough-service-paving",
+      "materialId": "bz04_large_sandstone_blocks_01",
+      "sourceMaterialId": "bz04_large_sandstone_blocks_01",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "b378f21aee692b297a84c6cb6e2c09c2149f192cb93ae7dc14436013c8d3c29f",
+        "normal": "b117c89f83372724d409c9d921fa1c8e0f488867ab4029dd98ed20cbce22c18d",
+        "arm": "f6217220ec9a33014f17d8e5bd33c92e28e2ec8ccb191cf9a2082d7485bb54b2"
+      },
+      "desiredAppearanceSrgb": "#b29972",
+      "paintSrgb": "#e5d8b0",
+      "paintLinear": [
+        0.7803693662498348,
+        0.6862490137981643,
+        0.4364997362754391
+      ],
+      "grainMix": 0.7,
+      "repeatM": 2.6,
+      "normalScale": 0.3,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/rough-service-paving.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "cream-woven-cloth",
+      "materialId": "ph_bz04_hessian_230",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "ef9ac1a0129b6d0f44b6d5beb68db7be7a0adf11e09fe52fd2cdc9370b27d4ba",
+        "normal": "6d5a6d23c880dbaae98477ed33dbd5d7c0eeda910a39319aec2d0014892974aa",
+        "arm": "963ba03b3583a9dcc3a10181a9042de63aec019ee1a8a89c8be77d33a2f6b691"
+      },
+      "desiredAppearanceSrgb": "#dfcfab",
+      "paintSrgb": "#e9d8b3",
+      "paintLinear": [
+        0.8149469973050627,
+        0.689100792708164,
+        0.4497553956762431
+      ],
+      "grainMix": 0.12,
+      "repeatM": 0.27,
+      "normalScale": 0.18,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/cream-woven-cloth.png",
+      "sourceToAlbedo": "Review bake equivalent: calibratedPaintLinear*((1-grainMix)+grainMix*linearSourceLuminance). Runtime construction uses shared neutral grain and calibrated per-part COLOR_0, white base.",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation",
+      "sourceInputMode": "neutral linear luminance replicated to RGB, weights0.2126/0.7152/0.0722"
+    },
+    {
+      "family": "timber",
+      "materialId": null,
+      "sourceMaterialId": "ph_bz04_weathered_brown_planks",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/weathered_brown_planks/weathered_brown_planks_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "94833feda44e025a9139f7b5723ea84e4f0258d3b54939a79e1013c133085e29",
+        "normal": "8d38f02f121c0e58eaedc19cd668faea21381ae3ff4d5332cd90de75e6683393",
+        "arm": "a428a3a6f89f7bb5c945c9668f2ac6ec268736fda7a4a421fd3ec80d3946929c"
+      },
+      "desiredAppearanceSrgb": null,
+      "paintSrgb": "#9c8060",
+      "paintLinear": [
+        0.33245153634617935,
+        0.21586050011389926,
+        0.11697066775851084
+      ],
+      "grainMix": 0.28,
+      "repeatM": 1.8,
+      "normalScale": 0.18,
+      "roughness": 0.86,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/timber.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "teal",
+      "materialId": null,
+      "sourceMaterialId": "ph_bz04_rough_pine_door",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "1a9b6a8a75d299a52fbfdcadeb71dcac8915503cb88fc817ccb2d24dd1086d07",
+        "normal": "0ddb4e16752e9dd443918f63d07c8a23c04fd0da2a907f6717b071650e587557",
+        "arm": "6556499108e94ffc682d63f5018ec0d2eb8d095f448e58dc36bf9177ab0c1b7d"
+      },
+      "desiredAppearanceSrgb": "#5d9c8a",
+      "paintSrgb": "#5d9c8a",
+      "paintLinear": [
+        0.10946171077829933,
+        0.33245153634617935,
+        0.25415209433082675
+      ],
+      "grainMix": 0.0,
+      "repeatM": 2,
+      "normalScale": 0.15,
+      "roughness": 0.86,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/teal.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "indigo",
+      "materialId": null,
+      "sourceMaterialId": "ph_bz04_rough_pine_door",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "1a9b6a8a75d299a52fbfdcadeb71dcac8915503cb88fc817ccb2d24dd1086d07",
+        "normal": "0ddb4e16752e9dd443918f63d07c8a23c04fd0da2a907f6717b071650e587557",
+        "arm": "6556499108e94ffc682d63f5018ec0d2eb8d095f448e58dc36bf9177ab0c1b7d"
+      },
+      "desiredAppearanceSrgb": "#53799f",
+      "paintSrgb": "#53799f",
+      "paintLinear": [
+        0.08650046203654976,
+        0.19120168274079138,
+        0.3467040563550296
+      ],
+      "grainMix": 0.0,
+      "repeatM": 2,
+      "normalScale": 0.15,
+      "roughness": 0.86,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/indigo.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "rust",
+      "materialId": null,
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "ef9ac1a0129b6d0f44b6d5beb68db7be7a0adf11e09fe52fd2cdc9370b27d4ba",
+        "normal": "6d5a6d23c880dbaae98477ed33dbd5d7c0eeda910a39319aec2d0014892974aa",
+        "arm": "963ba03b3583a9dcc3a10181a9042de63aec019ee1a8a89c8be77d33a2f6b691"
+      },
+      "desiredAppearanceSrgb": "#ae654c",
+      "paintSrgb": "#b66a50",
+      "paintLinear": [
+        0.4674560930576299,
+        0.14372250297303554,
+        0.07981690866942956
+      ],
+      "grainMix": 0.12,
+      "repeatM": 0.27,
+      "normalScale": 0.18,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/rust.png",
+      "sourceToAlbedo": "Review bake equivalent: calibratedPaintLinear*((1-grainMix)+grainMix*linearSourceLuminance). Runtime construction uses shared neutral grain and calibrated per-part COLOR_0, white base.",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation",
+      "sourceInputMode": "neutral linear luminance replicated to RGB, weights0.2126/0.7152/0.0722"
+    },
+    {
+      "family": "iron",
+      "materialId": null,
+      "sourceMaterialId": "ph_bz04_rusty_metal_02",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "adaf094391518b6afe787a123942110aa88ef521c844f970b124420f5ed5d3d9",
+        "normal": "995197a62cac6fbb000e6e6591a3330a3b77ef069c4ac58f505b586b9bdbd97b",
+        "arm": "2982943ffe3273a65bf788b77fc0c7a4fd8227824386d065d13a8c8c0e07db10"
+      },
+      "desiredAppearanceSrgb": null,
+      "paintSrgb": "#56534b",
+      "paintLinear": [
+        0.09305896284668745,
+        0.08650046203654976,
+        0.07036009569659588
+      ],
+      "grainMix": 0.12,
+      "repeatM": 1,
+      "normalScale": 0.42,
+      "roughness": 0.86,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0.15,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/iron.png",
+      "sourceToAlbedo": "paintLinear*((1-grainMix)+grainMix*sourceAlbedoLinear), source and paint decoded from sRGB once; bake output to sRGB once",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation"
+    },
+    {
+      "family": "fine-linen",
+      "materialId": "ph_bz04_fine_linen",
+      "sourceMaterialId": "ph_bz04_hessian_230",
+      "sourceFiles": {
+        "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_diff_1k.jpg",
+        "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_nor_gl_1k.jpg",
+        "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/hessian_230/hessian_230_arm_1k.jpg"
+      },
+      "sourceHashes": {
+        "albedo": "ef9ac1a0129b6d0f44b6d5beb68db7be7a0adf11e09fe52fd2cdc9370b27d4ba",
+        "normal": "6d5a6d23c880dbaae98477ed33dbd5d7c0eeda910a39319aec2d0014892974aa",
+        "arm": "963ba03b3583a9dcc3a10181a9042de63aec019ee1a8a89c8be77d33a2f6b691"
+      },
+      "desiredAppearanceSrgb": "#dfcfab",
+      "paintSrgb": "#e9d8b3",
+      "paintLinear": [
+        0.8149469973050627,
+        0.689100792708164,
+        0.4497553956762431
+      ],
+      "grainMix": 0.12,
+      "repeatM": 0.09,
+      "normalScale": 0.1,
+      "roughness": 0.94,
+      "roughnessMode": "ARM green multiplied by roughness scalar; not final constant roughness",
+      "metalness": 0,
+      "sampleAlbedo": "artifacts/bazaar-material-review/r6-samples/cream-woven-cloth.png",
+      "sourceToAlbedo": "Review bake equivalent: calibratedPaintLinear*((1-grainMix)+grainMix*linearSourceLuminance). Runtime construction uses shared neutral grain and calibrated per-part COLOR_0, white base.",
+      "macro": "Retain current BZ04 per-source macro profile; no additional mask or repair allocation",
+      "scope": "Tea/domestic cushions and linen; reuse hessian scan at one third shade/sack weave scale. No leather seam or leather normal. Keep awnings and sacks at 0.27m.",
+      "sourceInputMode": "neutral linear luminance replicated to RGB, weights0.2126/0.7152/0.0722"
+    }
+  ],
+  "trim": {
+    "materialId": "ph_bz04_trim_sanded_01",
+    "sourceMaterialId": "ph_bz04_sandstone_blocks_05",
+    "sourcePixelCropXYXY": [
+      340,
+      195,
+      740,
+      290
+    ],
+    "sourceImageSizePx": [
+      1024,
+      1024
+    ],
+    "cropWorldSizeM": [
+      0.78125,
+      0.185546875
+    ],
+    "mirrorTileWorldSizeM": [
+      1.5625,
+      0.37109375
+    ],
+    "recipe": "Crop each original map identically; mirror 2x2 in X/Y. For mirrored tangent normal maps invert red on X mirror and green on Y mirror. Preserve originals. Orient crop X along trim member, Y across its face; do not stretch a wall image across sill.",
+    "albedoPaintSrgb": "#dccba5",
+    "albedoPaintLinear": [
+      0.7175869406315156,
+      0.5951917042797605,
+      0.3778628251105845
+    ],
+    "grainMix": 0.4,
+    "desiredAppearanceSrgb": "#c5b18d",
+    "roughness": 0.94,
+    "roughnessMode": "ARM green times scalar",
+    "metalness": 0,
+    "normalScale": 0.12,
+    "scope": "Monolithic sills, threshold caps and single-piece trim faces only. Masonry arch rings retain coherent voussoir courses/joints; no mortar-free whole-ring override.",
+    "sampleFiles": {
+      "albedo": "artifacts/bazaar-material-review/r6-samples/trim-albedo.png",
+      "normal": "artifacts/bazaar-material-review/r6-samples/trim-normal.png",
+      "arm": "artifacts/bazaar-material-review/r6-samples/trim-arm.png"
+    },
+    "sourceFiles": {
+      "albedo": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
+      "normal": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
+      "arm": "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg"
+    },
+    "sourceHashes": {
+      "albedo": "d17c322d9e793ab9fc198948a34f2632595560471ff8714f2b0e052bc75c9ee3",
+      "normal": "ab42361855310d8de9b11470c6b21e512c9926decd5548dc9e9d72bd6cc06f3e",
+      "arm": "6bc226c4985aee587db5995754069dc2f01f6295cc997db3ebbebc6a33578e4d"
+    },
+    "exportName": "bz06_monolithic_stone_trim"
+  },
+  "accentMetrics": {
+    "teal": {
+      "hex": "#5d9c8a",
+      "Lab": [
+        59.83235947715758,
+        -24.64820133380141,
+        3.0701362073112692
+      ]
+    },
+    "indigo": {
+      "hex": "#53799f",
+      "Lab": [
+        49.515262461576185,
+        -2.5682214943090753,
+        -24.558168567104776
+      ]
+    }
+  },
+  "changedTargets": {
+    "sand-plaster": "#d3bb93",
+    "dressed-sandstone": "#bda985",
+    "quiet-flags": "#baa47f",
+    "rough-service-paving": "#b29972",
+    "teal": "#5d9c8a",
+    "indigo": "#53799f"
+  },
+  "assignmentSources": [
+    "material-art-proposal.json",
+    "background-material-proposal.json",
+    "accent-assignments-proposal.json"
+  ]
+}
