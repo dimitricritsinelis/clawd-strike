@@ -1,0 +1,263 @@
+{
+  "inputSha256": "bbf4e2edd7c269b3e11635ac91b4fa545d255ddad57188734792d5240ec7acfa",
+  "designRevision": {
+    "id": "R7 link east upper facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-fountain-court/fountain-receivers-link-east-upper.glb",
+  "triangles": 52,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      -0.6000000238418579
+    ],
+    "max": [
+      3.0,
+      10.199999809265137,
+      -0.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.20000000000000284,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.200000000000003,
+      10.219999999999999,
+      5.799999999999997
+    ]
+  },
+  "objects": [
+    {
+      "id": "leu-s-field",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          2.992500066757202,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.001",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          2.992500066757202,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.002",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          2.992500066757202,
+          0.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.003",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          7.0
+        ],
+        "max": [
+          2.992500066757202,
+          0.0,
+          10.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.004",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.992500066757202,
+          0.014999999664723873,
+          0.0
+        ],
+        "max": [
+          3.0,
+          0.014999999664723873,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.005",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.992500066757202,
+          0.014999999664723873,
+          0.11999999731779099
+        ],
+        "max": [
+          3.0,
+          0.014999999664723873,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.006",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.992500066757202,
+          0.014999999664723873,
+          0.18000000715255737
+        ],
+        "max": [
+          3.0,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-field.007",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.992500066757202,
+          0.0,
+          7.0
+        ],
+        "max": [
+          3.0,
+          0.0,
+          10.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-party-joint-reveal",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.992000102996826,
+          0.0,
+          0.0
+        ],
+        "max": [
+          2.993000030517578,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-end-closure",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.9800000190734863,
+          0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          3.0,
+          0.6000000238418579,
+          10.199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-base-closure",
+      "material": "bz06_pale_lime.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          3.0,
+          0.6000000238418579,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "b4aedfc950adf56679fbafdc569c886bac9587d4909bad2289dceaf2f66211f9",
+  "sourcePolygonTriangles": 52,
+  "materials": [
+    "bz06_pale_lime.001"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 6,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 52,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

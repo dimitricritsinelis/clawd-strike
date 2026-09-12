@@ -268,26 +268,26 @@
     {
       "id": "bz04_large_sandstone_blocks_01",
       "tileSizeM": 2.6,
-      "tintHex": "#d7c6a8",
+      "tintHex": "#ffffff",
       "albedoBoost": 1,
-      "albedoGamma": 0.98,
-      "dustStrength": 0.06,
+      "albedoGamma": 1,
+      "dustStrength": 0,
       "roughness": 0.94,
       "normalScale": 0.3,
       "aoIntensity": 0.45,
       "textures": {
         "1k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_1k.jpg",
+          "albedo": "./bz06-derived/bz06_rough_service_paving-albedo.png",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_1k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
+          "albedo": "./bz06-derived/bz06_rough_service_paving-albedo.png",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
         },
         "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
+          "albedo": "./bz06-derived/bz06_rough_service_paving-albedo.png",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
@@ -447,22 +447,22 @@
     },
     {
       "id": "bz04_court_limestone_flags_01",
-      "tileSizeM": 4.4,
-      "tintHex": "#d5c9b4",
+      "tileSizeM": 2.4,
+      "tintHex": "#ffffff",
       "albedoBoost": 1,
-      "albedoGamma": 0.98,
-      "dustStrength": 0.09,
+      "albedoGamma": 1,
+      "dustStrength": 0,
       "roughness": 0.94,
       "normalScale": 0.3,
       "aoIntensity": 0.4,
       "textures": {
         "1k": {
-          "albedo": "./court_flagstone_01/court_flagstone_01_diff_1k.jpg",
+          "albedo": "./bz06-derived/bz06_quiet_flags-albedo.png",
           "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
           "arm": "./court_flagstone_01/court_flagstone_01_arm_1k.jpg"
         },
         "2k": {
-          "albedo": "./court_flagstone_01/court_flagstone_01_diff_2k.jpg",
+          "albedo": "./bz06-derived/bz06_quiet_flags-albedo.png",
           "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_2k.jpg",
           "arm": "./court_flagstone_01/court_flagstone_01_arm_2k.jpg"
         }

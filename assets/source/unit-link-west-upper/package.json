@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "section_unit_link_west_upper",
+      "file": "unit-link-west-upper.glb",
+      "source": "repo://assets/source/unit-link-west-upper/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_WEST_UPPER",
+    "modelId": "section_unit_link_west_upper",
+    "faces": [
+      "north",
+      "south"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "c496cd3704793b7e2ec8e2d1c3b85f89855644bc88a26b1539db46a3d94e2702"
+}

@@ -53,7 +53,19 @@ test("B18 exported mounting preserves the booth and changes only the authorized 
   const anchors = parseAnchorsSpec(raw);
   const manifest = JSON.parse(await readFile(new URL("../../../public/assets/models/environment/bazaar/props/models.json", import.meta.url), "utf8"));
   const ids = new Set(["b18-dye-counter", "b18-packing-finish", "b18-roof-access", "original_textile_booth"]);
-  blockout.dressingPlacements = blockout.dressingPlacements!.filter((entry) => entry.id.startsWith("PLACE_B18_") || entry.runtime.id === "original_textile_booth" || entry.anchorId === "CANOPY_DYERS_01");
+  blockout.dressingPlacements = [
+    legacyPlacement("PLACE_B18_DYE_COUNTER_B18_SAMPLE_DISPLAY","b18-dye-counter",{width:1.48,depth:.34,height:2.11},
+      {x:53.17,y:44.82,z:.14},{anchorId:"B18_SAMPLE_DISPLAY",yawDeg:450}),
+    legacyPlacement("PLACE_B18_PACKING_FINISH_B18_PACKING_DISPLAY","b18-packing-finish",{width:1.48,depth:.34,height:1.535},
+      {x:53.17,y:35.18,z:.14},{anchorId:"B18_PACKING_DISPLAY",yawDeg:450}),
+    legacyPlacement("PLACE_B18_ROOF_ACCESS_B18_ROOF_ACCESS","b18-roof-access",{width:1.8,depth:3.8,height:2.59},
+      {x:55.5,y:42.8,z:4.76},{anchorId:"B18_ROOF_ACCESS",yawDeg:180,semanticClass:"architecture"}),
+    legacyPlacement("PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH","original_textile_booth",{width:2.683,depth:1.291,height:3.64},
+      {x:52.735,y:40,z:0},{anchorId:"DYE_E_TEXTILE_BOOTH",yawDeg:450}),
+    legacyPlacement("PLACE_DYERS_CANOPY_CANOPY_DYERS_01","bazaar_cloth_canopy",{width:4.4,depth:11.7,height:.18},
+      {x:47.15,y:45.36,z:5.9},{anchorId:"CANOPY_DYERS_01",classification:"overhead",semanticClass:"overhead",
+        spanSeats:{start:{x:41.3,y:45.36,z:5.9},end:{x:53,y:45.36,z:5.9}}}),
+  ];
   const templates = new Map<string, Group>();
   const loader = new GLTFLoader();
   // Node has no image decoder. Keep real GLB geometry/transforms; browser QA
@@ -168,11 +180,25 @@ function createSharedPropModelFixture(): PropModelLibrary {
   } as unknown as PropModelLibrary;
 }
 
-async function buildPolishResult() {
+// Explicit legacy renderer inputs survive approved retirement from the live map.
+function legacyPlacement(id: string, moduleId: string, dimensionsM: RuntimeDressingPlacement["dimensionsM"],
+  position: RuntimeDressingPlacement["position"], overrides: Partial<RuntimeDressingPlacement> = {}): RuntimeDressingPlacement {
+  return { id, clusterId:"LEGACY_FIXTURE", assetId:moduleId, anchorId:id, zoneId:"SPICE_STREET", districtId:"DISTRICT_SPICE",
+    classification:"soft_visual", position, yawDeg:90, scale:{x:1,y:1,z:1}, dimensionsM,
+    collisionClass:"none", shadowPolicy:"cast_receive", lodEligible:true, semanticClass:"furniture",
+    runtime:{mode:moduleId.startsWith("bazaar_")?"procedural":"model",id:moduleId}, ...overrides };
+}
+
+const legacyB4Placements = ["bazaar_ground_rug", "bazaar_market_cart"].flatMap(moduleId =>
+  Array.from({length:12},(_,index)=>legacyPlacement(`LEGACY_B4_${moduleId}_${index}`,moduleId,
+    moduleId === "bazaar_ground_rug" ? {width:2,depth:1.2,height:.04} : {width:1.2,depth:.75,height:.9},
+    {x:22,y:18+index,z:0})));
+
+async function buildPolishResult(placements?: RuntimeDressingPlacement[]) {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  blockout.dressingPlacements = (blockout.dressingPlacements ?? []).filter((placement) => (
+  blockout.dressingPlacements = placements ?? (blockout.dressingPlacements ?? []).filter((placement) => (
     POLISH_MODULES.has(placement.runtime.id)
     && !placement.id.includes("PLACE_B4_")
     && !placement.id.includes("PLACE_BPL")
@@ -219,15 +245,18 @@ async function buildSharedStallResult(includeStalls = true) {
   });
 }
 
+const legacySanitationPlacements = [
+  ["ASSET_DYERS_SEALED_VAT", "ph_wine_barrel_01"],
+  ["ASSET_DYERS_CERAMIC_VESSEL", "ph_ceramic_pot"],
+  ["ASSET_CARAVAN_LOAD_CRATE", "ph_wooden_crate_01"],
+].map(([assetId, modelId], index) => legacyPlacement(`LEGACY_SANITATION_${index}`, modelId!,
+  MODEL_FIXTURE_DIMENSIONS.get(modelId!)!, { x: 14, y: 34 + index, z: 0 }, { assetId: assetId! }));
+
 async function buildDistrictSanitationResult() {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  blockout.dressingPlacements = (blockout.dressingPlacements ?? []).filter((placement) => (
-    placement.assetId === "ASSET_DYERS_SEALED_VAT"
-    || placement.assetId === "ASSET_DYERS_CERAMIC_VESSEL"
-    || placement.assetId === "ASSET_CARAVAN_LOAD_CRATE"
-  ));
+  blockout.dressingPlacements = legacySanitationPlacements;
   return buildProps({
     mapId: blockout.mapId,
     blockout,
@@ -244,10 +273,7 @@ async function buildSharedBrassPotResult() {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  const authored = (blockout.dressingPlacements ?? []).find((placement) => (
-    placement.assetId === "ASSET_CC0_BRASS_POT"
-  ));
-  assert.ok(authored, "authoritative brass-pot placement is missing");
+  const authored = legacyPlacement("LEGACY_BRASS_POT","ph_brass_pot_01",{width:.302,depth:.302,height:.291},{x:27,y:23,z:0});
   blockout.dressingPlacements = Array.from({ length: 4 }, (_, index) => ({
     ...structuredClone(authored),
     id: `${authored.id}:batch-fixture:${index + 1}`,
@@ -272,11 +298,8 @@ async function buildB4DressingResult() {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  blockout.dressingPlacements = (blockout.dressingPlacements ?? []).filter((placement) => (
-    placement.id.includes("PLACE_B4_")
-  ));
-  const anchors = parseAnchorsSpec(raw, specUrl.pathname);
-  anchors.anchors = anchors.anchors.filter((anchor) => anchor.id.startsWith("B4_"));
+  blockout.dressingPlacements = legacyB4Placements;
+  const anchors = { mapId:blockout.mapId, anchors:[] };
   return buildProps({
     mapId: blockout.mapId,
     blockout,
@@ -500,8 +523,11 @@ test("shared merchant stalls seed complete counter, shelf, header, and canopy si
   assert.deepEqual(result.colliders, noStallBaseline.colliders, "stall finish changed gameplay collision");
 });
 
-test("Dyers wet-workstations are grounded seeded PBR prefabs without gameplay collision", async () => {
-  const result = await buildPolishResult();
+test("legacy Dyers wet-workstations are grounded seeded PBR prefabs without gameplay collision", async () => {
+  const result = await buildPolishResult([0,1,2,5].map((id,index) => legacyPlacement(
+    `LEGACY_WORKSTATION_${id}`, "bazaar_dyers_workstation", {width:2.8,depth:1.45,height:2.2},
+    {x:46.6,y:20+index*4,z:0}, {districtId:"DISTRICT_DYERS"},
+  )));
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   const stone = mesh(root, "v3-dyers-workstation-stone-apron");
   const indigoShell = mesh(root, "v3-dyers-workstation-indigo-basin-shell");
@@ -513,11 +539,10 @@ test("Dyers wet-workstations are grounded seeded PBR prefabs without gameplay co
   const drain = mesh(root, "v3-dyers-workstation-drainage-tools");
   const wetApron = mesh(root, "v3-dyers-workstation-wet-contact-apron");
 
-  // Four authored instances: the canonical Dogleg workstation, its North Court
-  // propagation, and the two Dyers Alley process vats upgraded to full
-  // wet-workstations when the polish queue advanced through the alley edge.
+  // Four explicit legacy instances retain the prefab propagation coverage
+  // after the map replaces its old workstation placements with R7 craft.
   for (const target of [stone, indigoShell, madderShell, timber, textiles, indigo, madder, drain, wetApron]) {
-    assert.equal(target.count, 4, `${target.name} did not propagate across the four authored workstation anchors`);
+    assert.equal(target.count, 4, `${target.name} did not propagate across the four legacy workstation fixtures`);
   }
   for (const target of [stone, indigoShell, madderShell, timber, drain, wetApron]) {
     const material = target.material as MeshStandardMaterial;
@@ -544,13 +569,17 @@ test("Dyers wet-workstations are grounded seeded PBR prefabs without gameplay co
   assert.ok(result.colliders.every((collider) => !collider.id.includes("WORKSTATION")), "render-only workstation added gameplay collision");
 });
 
-test("Spice display uses explicit CC0 sacks and brass pottery at human scale", async () => {
-  const result = await buildPolishResult();
+test("legacy Spice display keeps CC0 sacks and brass pottery at human scale", async () => {
+  const result = await buildPolishResult([
+    legacyPlacement("LEGACY_SACK","cc0_spice_sack",{width:.43,depth:.43,height:.405},{x:23,y:20,z:0},{scale:{x:.8,y:.8,z:.8}}),
+    legacyPlacement("LEGACY_POT","ph_brass_pot_01",{width:.302,depth:.302,height:.291},{x:24,y:20,z:0}),
+    legacyPlacement("LEGACY_SPICE_GOODS","bazaar_spice_goods",{width:1.4,depth:1,height:.6},{x:25,y:20,z:0}),
+  ]);
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   assert.equal(root.getObjectByName("v3-spice-tied-sacks"), undefined, "procedural sack proxy is still rendered");
 
   const sackPlacements = result.renderedPlacements.filter((placement) => placement.moduleId === "cc0_spice_sack");
-  assert.ok(sackPlacements.length > 0, "authoritative Spice dressing contains no explicit sack model");
+  assert.ok(sackPlacements.length > 0, "legacy fixture contains no explicit sack model");
   for (const placement of sackPlacements) {
     assert.equal(placement.representation, "model");
     assert.ok(placement.dimensionsM.height <= 0.46, `sack is too tall at ${placement.dimensionsM.height}m`);
@@ -671,7 +700,7 @@ test("CC0 merchant payloads preserve native pivots, dimensions, and focused tria
   }
 });
 
-test("Caravan and Dyers final mode use explicit finished models without cart, cone-vat, or rack proxies", async () => {
+test("legacy Caravan and Dyers model rendering excludes cart, cone-vat, and rack proxies", async () => {
   const result = await buildDistrictSanitationResult();
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   assert.equal(root.getObjectByName("v3-merchant-cart-body"), undefined);
@@ -684,9 +713,7 @@ test("Caravan and Dyers final mode use explicit finished models without cart, co
     || placement.assetId === "ASSET_DYERS_CERAMIC_VESSEL"
     || placement.assetId === "ASSET_CARAVAN_LOAD_CRATE"
   ));
-  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
-  const raw = JSON.parse(await readFile(specUrl, "utf8"));
-  const authority = parseBlockoutSpec(raw, specUrl.pathname).dressingPlacements ?? [];
+  const authority = legacySanitationPlacements;
   const expectedCounts = new Map(
     ["ASSET_DYERS_SEALED_VAT", "ASSET_DYERS_CERAMIC_VESSEL", "ASSET_CARAVAN_LOAD_CRATE"]
       .map((assetId) => [assetId, authority.filter((placement) => placement.assetId === assetId).length]),
@@ -694,11 +721,11 @@ test("Caravan and Dyers final mode use explicit finished models without cart, co
   assert.equal(
     modelPlacements.length,
     [...expectedCounts.values()].reduce((total, count) => total + count, 0),
-    "final-mode telemetry drifted from authoritative district dressing",
+    "final-mode telemetry drifted from the explicit legacy fixtures",
   );
   assert.ok(modelPlacements.every((placement) => placement.representation === "model"));
   for (const [assetId, expectedCount] of expectedCounts) {
-    assert.ok(expectedCount > 0, `${assetId} is missing from authoritative dressing`);
+    assert.ok(expectedCount > 0, `${assetId} is missing from the legacy fixture`);
     assert.equal(
       modelPlacements.filter((placement) => placement.assetId === assetId).length,
       expectedCount,
@@ -714,10 +741,7 @@ test("B4 lane dressing stays collisionless and renders its authored textured rug
 
   const rugs = mesh(root, "v3-main-lane-ground-rugs");
   const carts = mesh(root, "v3-main-lane-market-carts");
-  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
-  const raw = JSON.parse(await readFile(specUrl, "utf8"));
-  const b4Placements = (parseBlockoutSpec(raw, specUrl.pathname).dressingPlacements ?? [])
-    .filter((placement) => placement.id.includes("PLACE_B4_"));
+  const b4Placements = legacyB4Placements;
   assert.equal(
     rugs.count,
     b4Placements.filter((placement) => placement.runtime.id === "bazaar_ground_rug").length,
@@ -831,7 +855,9 @@ test("ground rugs receive cluster shadows without stacking a generic contact apr
 });
 
 test("merchant signs use painted fields with symmetric emblems instead of placeholder strokes", async () => {
-  const root = await buildPolishFixture();
+  const result = await buildPolishResult([0,1,2].map(index => legacyPlacement(`LEGACY_SIGN_${index}`,"bazaar_signboard",
+    {width:1.4,depth:.14,height:.8},{x:22,y:20+index*3,z:3},{semanticClass:"signage"})));
+  const root = result.root.getObjectByName("map-props-v3-compiled")!;
   const first = mesh(root, "v3-sign-board-handpainted-a");
   const second = mesh(root, "v3-sign-board-handpainted-b");
   const third = mesh(root, "v3-sign-board-handpainted-c");
@@ -877,8 +903,11 @@ test("merchant signs use painted fields with symmetric emblems instead of placeh
   assert.ok((rig.material as MeshStandardMaterial).metalness >= 0.45, "sign rig no longer reads as forged metal");
 });
 
-test("B6 laundry spans remain collisionless above head height and vary their textile layouts", async () => {
-  const result = await buildPolishResult();
+test("legacy laundry spans remain collisionless above head height and vary their textile layouts", async () => {
+  const result = await buildPolishResult(["B6_LAUNDRY_SPICE_01","L3R0_NORTH_DYERS_LINE","LAUNDRY_A","LAUNDRY_B","LAUNDRY_C","LAUNDRY_D"].map(
+    (id,index)=>legacyPlacement(id,"bazaar_laundry_line",{width:1.3,depth:11,height:.85},{x:29.5,y:20+index*3,z:6},
+      {classification:"overhead",semanticClass:"textile"})));
+
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   const ropes = mesh(root, "v3-overhead-laundry-rope");
   const clothA = mesh(root, "v3-overhead-laundry-cloth-a");
@@ -1132,13 +1161,26 @@ test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spou
   const qa = stone.userData.visualQaInstances as Array<{ dimensions?: { x: number; y: number; z: number } } | null>;
   assert.deepEqual(qa[0]?.dimensions, { x: 3, y: 1.32, z: 3 });
 
-  const planterStone = mesh(root, "v3-fountain-court-planter-stone");
-  assert.equal(planterStone.count, 3);
+  const planterFixture = await buildPolishResult([legacyPlacement("LEGACY_COURT_PLANTER","bazaar_court_planter",
+    {width:1.05,depth:1.05,height:1.2},{x:52,y:76.2,z:0},{semanticClass:"foliage"})]);
+  const planterStone = mesh(planterFixture.root.getObjectByName("map-props-v3-compiled")!, "v3-fountain-court-planter-stone");
+  assert.equal(planterStone.count, 1, "the explicit legacy planter did not render");
   assert.ok((planterStone.material as MeshStandardMaterial).map instanceof DataTexture);
 });
 
 test("canopy support reaches the cloth edge with a forged bracket and preserves the draw budget", async () => {
-  const root = await buildPolishFixture();
+  const result = await buildPolishResult([
+    legacyPlacement("LEGACY_DYERS_CANOPY","bazaar_cloth_canopy",{width:4.4,depth:11.7,height:.18},{x:47.15,y:45.36,z:5.9},
+      {anchorId:"CANOPY_DYERS_01",zoneId:"COVERED_SOUK",districtId:"DISTRICT_DYERS",classification:"overhead",semanticClass:"overhead",
+        spanSeats:{start:{x:41.3,y:45.36,z:5.9},end:{x:53,y:45.36,z:5.9}}}),
+    legacyPlacement("LEGACY_CANOPY_B","bazaar_cloth_canopy",{width:2.2,depth:9.6,height:.18},{x:9,y:46.6,z:4.41},
+      {classification:"overhead",semanticClass:"overhead"}),
+    legacyPlacement("LEGACY_CANOPY_D","bazaar_cloth_canopy",{width:1.9,depth:6.8,height:.18},{x:15,y:62.4,z:5.7},
+      {classification:"overhead",semanticClass:"overhead"}),
+  ]);
+  const root = result.root.getObjectByName("map-props-v3-compiled")!;
+  const canopyCount = result.renderedPlacements.filter(p => p.moduleId === "bazaar_cloth_canopy").length;
+  assert.ok(canopyCount > 0);
   const fixtures = mesh(root, "v3-canopy-rings-brackets");
   fixtures.geometry.computeBoundingBox();
   const fixtureSize = fixtures.geometry.boundingBox!.getSize(new Vector3());
@@ -1154,8 +1196,8 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   // follow the catenary; this batch carries the straight ties a rigid instanced
   // rope can still describe honestly: four wall corner ties per span, plus the
   // three intermediate lashings per wall edge added so the attachment closeup
-  // shows cordage mid-span. Six authored spans x (4 + 2 x 3) = 60.
-  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, 60, "corner ties and lashings are not batched with the canopy edge ropes");
+  // shows cordage mid-span. Every retained span has 4 + 2 x 3 ties.
+  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, canopyCount * 10, "corner ties and lashings are not batched with the canopy edge ropes");
   const cloth = mesh(root, "v3-canopy-cloth");
   const positions = cloth.geometry.getAttribute("position");
   const minYNear = (z: number): number => {
@@ -1191,7 +1233,7 @@ test("canopy support reaches the cloth edge with a forged bracket and preserves 
   const trestles = mesh(root, "v3-canopy-wall-trestles");
   const carrier = mesh(root, "v3-dyers-west-canopy-carrier");
   assert.equal(carrier.count, 1, "Dyers west requires its window-clearing receiver");
-  assert.equal(trestles.count + carrier.count, 12, "each of the six cloth spans needs support on both served walls");
+  assert.equal(trestles.count + carrier.count, canopyCount * 2, "each retained cloth span needs support on both served walls");
   assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
   assert.deepEqual(root.children.map((child) => child.name)
     .filter((name) => name.startsWith("v3-canopy-") || name === "v3-dyers-west-canopy-carrier").sort(), [
@@ -1427,4 +1469,30 @@ test("Rug Gate dressing keeps exactly three measured, asymmetric masses per flan
     layouts[1]!.masses.map((mass) => [mass.width, mass.height, mass.depth]),
     "gate flanks regressed to cloned dimensions",
   );
+});
+
+test("approved dye cabinet colliders survive visual retirement with exact bounds and anchor height authority", async () => {
+  const raw=JSON.parse(await readFile(new URL("../../../public/maps/bazaar-map/map_spec.json",import.meta.url),"utf8"));
+  const blockout=parseBlockoutSpec(raw);
+  const anchors=parseAnchorsSpec(raw);
+  anchors.anchors=anchors.anchors.filter(a=>a.id==="DYE_E_SHOP_2" || a.id==="DYE_W_SHOP_1");
+  const displays=[
+    legacyPlacement("OLD_B18_DISPLAY","ph_wooden_crate_01",{width:1.48,depth:.34,height:.76},{x:53.17,y:44.82,z:.14},{anchorId:"B18_SAMPLE_DISPLAY",yawDeg:450}),
+    legacyPlacement("OLD_CENTRAL_DISPLAY","ph_wooden_crate_01",{width:1.48,depth:.34,height:.76},{x:40.83,y:36.14,z:.14},{anchorId:"CENTRAL_DYE_DISPLAY",yawDeg:270}),
+  ];
+  const build=(placements:RuntimeDressingPlacement[], sourceAnchors=anchors) => buildProps({mapId:blockout.mapId,
+    blockout:{...blockout,dressingPlacements:placements},anchors:sourceAnchors,seedOverride:73,
+    propChaos:{profile:"subtle",jitter:null,cluster:null,density:null},propVisuals:"bazaar",propModels:createPropModelFixture(),highVis:false});
+  const before=build(displays),after=build([]);
+  assert.deepEqual(after.colliders,before.colliders);
+  assert.equal(after.colliders.length,2);
+  const expected={"DYE_E_SHOP_2-shop":[53,.14,44.08,53.34,.9,45.56],"DYE_W_SHOP_1-shop":[40.66,.14,35.4,41,.9,36.88]};
+  for(const c of after.colliders) {
+    const limits=expected[c.id as keyof typeof expected];assert.ok(limits);
+    [c.min.x,c.min.y,c.min.z,c.max.x,c.max.y,c.max.z].forEach((value,i)=>assert.ok(Math.abs(value-limits[i]!)<1e-10,`${c.id} bound${i}: ${value}`));
+  }
+  assert.equal(after.renderedPlacements.some(p=>p.placementId.startsWith("OLD_")),false);
+  const taller=build([],{...anchors,anchors:anchors.anchors.map(a=>({...a,heightM:1.1}))});
+  assert.ok(taller.colliders.every(c=>Math.abs(c.min.y-.14)<1e-10 && Math.abs(c.max.y-1.24)<1e-10));
+  assert.throws(()=>build([],{...anchors,anchors:anchors.anchors.map(({heightM:_heightM,...a})=>a)}),/requires its authored solid height/);
 });

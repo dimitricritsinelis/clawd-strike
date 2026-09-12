@@ -1549,10 +1549,10 @@
       "id": "bz04_rug_gate",
       "url": "bz04_rug_gate/bz04-rug-gate.glb",
       "scale": 1,
-      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      "source": "repo://assets/source/unit-rug-gate/build.py",
       "license": "Project-Original",
       "md5": {
-        "bz04_rug_gate/bz04-rug-gate.glb": "2030bc7bfaf47fdd71add16e9bea812c"
+        "bz04_rug_gate/bz04-rug-gate.glb": "51f8eed3a748fcaf64eb3e3456e1a524"
       }
     }
   ],

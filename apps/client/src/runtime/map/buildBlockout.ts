@@ -1,4 +1,4 @@
-import { bz04CourtyardVisualSegments, bz04RoofFragments } from "./bz04Trial";
+import { bz04CourtyardVisualSegments, bz04RoofFragments, bz04SectionVisualSegments, readBz04BoundaryCoverage, type Bz04BoundaryCoverage } from "./bz04Trial";
 import {
   BoxGeometry,
   CircleGeometry,
@@ -34,7 +34,7 @@ import { buildFloorWearDecals } from "./floorWearDecals";
 import { buildSandAccumulation } from "./buildSandAccumulation";
 import { buildWallBaseDebris } from "./buildWallBaseDebris";
 import { buildPbrWalls } from "./buildPbrWalls";
-import { buildWallDetailMeshes } from "./wallDetailKit";
+import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
 import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 import { buildDoorModels } from "./buildDoorModels";
 import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels, validateBz04Bounds } from "./buildFacadeModels";
@@ -2290,13 +2290,14 @@ function mergeV3BoundaryFinishRuns(
   return runs;
 }
 
-function createV3BoundaryFinishTrim(
+export function createV3BoundaryFinishTrim(
   segments: readonly BoundarySegment[],
   segmentHeights: readonly number[],
   segmentBaseYs: readonly number[],
   wallThicknessM: number,
   material: MeshStandardMaterial,
   seed: number,
+  receiverCoverage: readonly Bz04BoundaryCoverage[] = [],
 ): Group | null {
   if (segments.length === 0) return null;
   const copings: V3BoundaryFinishBox[] = [];
@@ -2466,6 +2467,11 @@ function createV3BoundaryFinishTrim(
     }
     if (endpoints.length !== 1) continue;
     const endpoint = endpoints[0]!;
+    // Retirement can expose an endpoint whose connecting wall is now owned
+    // by a checked receiver. That junction is not a new free wall terminal.
+    if (receiverCoverage.some(span => span.orientation === "horizontal"
+      ? Math.abs(endpoint.z-span.coord) <= .001 && endpoint.x >= span.start-.001 && endpoint.x <= span.end+.001
+      : Math.abs(endpoint.x-span.coord) <= .001 && endpoint.z >= span.start-.001 && endpoint.z <= span.end+.001)) continue;
     const { baseY, topY } = endpoint;
     if (topY - baseY < V3_BOUNDARY_BASE_HEIGHT_M) continue;
     const cappedTopY = topY + V3_BOUNDARY_COPING_HEIGHT_M;
@@ -2600,16 +2606,57 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
   const bz04Courtyard = Boolean(courtyardModel && options.facadeModels?.hasModel(courtyardModel.modelId)
     && options.facadeModels.instantiate(courtyardModel.modelId).userData.bz04VisualBounds);
   if (bz04Courtyard) validateBz04Bounds(options.facadeModels!.instantiate(courtyardModel!.modelId), courtyardModel!.modelId);
+  const bz04BoundaryCoverage: Bz04BoundaryCoverage[] = [];
+  const bz04SectionOwnedFaces = new Set<string>();
+  const bz04SectionZones = new Set<string>();
+  const bz04FloorTreatments: unknown[] = [];
+  for (const section of spec.sectionModels ?? []) {
+    if (!options.facadeModels?.hasModel(section.modelId)) continue;
+    const model = options.facadeModels.instantiate(section.modelId);
+    if (!model.userData.bz04BoundaryCoverage) continue;
+    validateBz04Bounds(model, section.modelId);
+    bz04BoundaryCoverage.push(...readBz04BoundaryCoverage(model.userData.bz04BoundaryCoverage));
+    bz04SectionZones.add(section.zoneId);
+    if (model.userData.bz04FloorTreatment) bz04FloorTreatments.push(model.userData.bz04FloorTreatment);
+    for (const face of section.faces) bz04SectionOwnedFaces.add(`${section.zoneId}:${face}`);
+  }
+  const visualSegments = (segment: BoundarySegment) => (
+    (bz04Courtyard ? bz04CourtyardVisualSegments(segment) : [segment])
+      .flatMap(part => bz04SectionVisualSegments(part, bz04BoundaryCoverage))
+  );
   const bz04RoofCoverage: number[][] = [];
   for (const placement of spec.authoredPlacements ?? []) {
     if (!options.facadeModels?.hasModel(placement.modelId)) continue;
     const model=options.facadeModels.instantiate(placement.modelId);
+    if (model.userData.bz04BoundaryCoverage) {
+      validateBz04Bounds(model,placement.modelId);
+      bz04BoundaryCoverage.push(...readBz04BoundaryCoverage(model.userData.bz04BoundaryCoverage));
+    }
     if (!model.userData.bz04RoofBundle) continue;
     validateBz04Bounds(model,placement.modelId);
     bz04RoofCoverage.push(...model.userData.bz04RetirementCoverage);
   }
   const bz04Environment = (spec.authoredPlacements ?? []).some(p => p.modelId === "bz04_shared_environment" && options.facadeModels?.hasModel(p.modelId));
   if (bz04Environment) validateBz04Bounds(options.facadeModels!.instantiate("bz04_shared_environment"),"bz04_shared_environment");
+  const bz04ReplacedRoofMassings = new Set((spec.architecturePlacements ?? []).flatMap(placement => {
+    if (placement.kind !== "massing") return [];
+    const footprint: WallDetailInstance = {
+      placementId: placement.id, meshId: "roof_slab", semanticClass: "roof_slab",
+      position: { x: placement.center.x, y: placement.center.z, z: placement.center.y },
+      scale: { x: placement.sizeM.width, y: .1, z: placement.sizeM.depth },
+      yawRad: placement.yawDeg * Math.PI / 180,
+      wallMaterialId: placement.materialSlots.wall, trimMaterialId: placement.materialSlots.trim,
+    };
+    if (bz04RoofFragments(footprint,bz04RoofCoverage).length === 0) return [placement.id];
+    // An approved building can be shallower than its retired visual mass.
+    // Its installed roof still owns the full street edge, including old lips.
+    const inward = placement.face === "west" ? [1,0] : placement.face === "east" ? [-1,0]
+      : placement.face === "south" ? [0,1] : [0,-1];
+    const streetEdge = {...footprint,position:{...footprint.position,
+      x:footprint.position.x+inward[0]!*(placement.sizeM.depth/2-.01),
+      z:footprint.position.z+inward[1]!*(placement.sizeM.depth/2-.01)},scale:{...footprint.scale,z:.01}};
+    return bz04RoofFragments(streetEdge,bz04RoofCoverage).length === 0 ? [placement.id] : [];
+  }));
 
   const wallThicknessM = Math.max(0.05, spec.defaults.wall_thickness);
 
@@ -2627,6 +2674,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       manifest: options.floorMaterials,
       patchSizeM: 2,
       floorTopY,
+      bz04FloorTreatments,
     });
     root.add(pbrFloors);
 
@@ -2635,7 +2683,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
 
     if (options.lightingPreset === "golden") {
       const sandAccumulation = buildSandAccumulation({
-        wallSegments: bz04Courtyard ? wallSegments.flatMap(bz04CourtyardVisualSegments) : wallSegments,
+        wallSegments: wallSegments.flatMap(visualSegments),
         seed: options.seed,
         floorTopY,
         manifest: options.floorMaterials,
@@ -2644,7 +2692,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       root.add(sandAccumulation);
 
       const wallBaseDebris = buildWallBaseDebris({
-        wallSegments: bz04Courtyard ? wallSegments.flatMap(bz04CourtyardVisualSegments) : wallSegments,
+        wallSegments: wallSegments.flatMap(visualSegments),
         seed: options.seed,
         floorTopY,
         manifest: options.floorMaterials,
@@ -2773,6 +2821,9 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
             .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
         ),
         bz04Courtyard,
+        bz04SectionOwnedFaces,
+        bz04BoundaryCoverage,
+        bz04ReplacedRoofMassings,
         bz04Gateway: Boolean(spec.dressingPlacements?.some(p => p.assetId === "ASSET_BZ04_RUG_GATE")),
         sectionOwnedFaces: new Set((spec.sectionModels ?? []).flatMap((section) => section.faces.map((face) => `${section.zoneId}:${face}`))),
       })
@@ -2819,7 +2870,8 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
           sourceSegmentIndices: wallSegments.map((_, index) => index),
           architectureOwnedFrontages: [],
         };
-    const supportPlans = isV3 ? planV3BoundarySupportReturns(wallSegments, spec.zones) : [];
+    const supportPlans = isV3 ? planV3BoundarySupportReturns(wallSegments, spec.zones)
+      .filter(plan => !bz04SectionZones.has(plan.sourceZoneId)) : [];
     const supportEndCaps = planV3BoundarySupportEndCaps(supportPlans, wallSegments, spec.zones);
     const repaintedEndCapIndices = new Set(supportEndCaps.map((entry) => entry.sourceSegmentIndex));
     const primaryVisualEntries = visualWallPlan.segments
@@ -2828,7 +2880,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         sourceIndex: visualWallPlan.sourceSegmentIndices[index]!,
       }))
       .filter((entry) => !repaintedEndCapIndices.has(entry.sourceIndex))
-      .flatMap(entry => (bz04Courtyard ? bz04CourtyardVisualSegments(entry.segment) : [entry.segment]).map(segment => ({...entry,segment})));
+      .flatMap(entry => visualSegments(entry.segment).map(segment => ({...entry,segment})));
     const visualSegmentHeights = primaryVisualEntries.map(({ sourceIndex }) => (
       segmentHeights[sourceIndex]!
     ));
@@ -2903,6 +2955,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         wallThicknessM,
         boundaryFinishMaterial,
         options.seed,
+        bz04BoundaryCoverage,
       );
       if (boundaryFinish) root.add(boundaryFinish);
     }
@@ -3209,14 +3262,16 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       }
     }
   } else {
+    const flatVisualEntries = wallSegments.flatMap((segment,index) =>
+      visualSegments(segment).map(part => ({segment:part,index})));
     const wallInstances = createWallInstances(
-      wallSegments,
+      flatVisualEntries.map(entry => entry.segment),
       new MeshLambertMaterial({ color: palette.wall }),
       spec.defaults.wall_height,
       wallThicknessM,
       floorTopY,
-      segmentHeights,
-      segmentBaseYs,
+      flatVisualEntries.map(entry => segmentHeights[entry.index]!),
+      flatVisualEntries.map(entry => segmentBaseYs[entry.index]!),
     );
     if (wallInstances) {
       wallInstances.castShadow = true;

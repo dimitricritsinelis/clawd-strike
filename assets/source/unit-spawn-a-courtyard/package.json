@@ -1,20 +1,55 @@
 {
   "models": [
     {
-      "id": "spawn_a_west_stone_face",
-      "file": "spawn-a-west.glb",
-      "source": "repo://assets/source/unit-spawn-a-courtyard/build.py",
+      "id": "bz04_roof_bundle_unit_spawn_a_courtyard",
+      "file": "roof-bundle-spawn-a-courtyard.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
       "license": "Project-Original"
     },
     {
-      "id": "spawn_a_east_stone_face",
-      "file": "spawn-a-east.glb",
+      "id": "section_unit_spawn_a_courtyard",
+      "file": "unit-spawn-a-courtyard.glb",
       "source": "repo://assets/source/unit-spawn-a-courtyard/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_SPAWN_A_NORTH_WEST": "spawn_a_west_stone_face",
-    "FRONTAGE_SPAWN_A_NORTH_EAST": "spawn_a_east_stone_face"
-  }
+  "section": {
+    "zoneId": "SPAWN_A_COURTYARD",
+    "modelId": "section_unit_spawn_a_courtyard",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD",
+      "modelId": "bz04_roof_bundle_unit_spawn_a_courtyard",
+      "position": {
+        "x": 28.05,
+        "y": 5.3,
+        "z": 4.6
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "6679acb94b92512bda162359059f89c92631779e2f3897db007a0980d40747b8",
+  "exportBudgetOverride": {
+    "maxMaterials": 15,
+    "maxRenderedPrimitives": 17,
+    "reason": "User authorized per-area material and primitive increases on 2026-09-10 to preserve all approved Spawn A finishes without atlas work. Original allocation:14materials/16primitives. Triangle ceiling48000,shadow ceiling9 and whole-map performance limits unchanged."
+  },
+  "roofExportBudgetOverride": {
+    "maxRenderedPrimitives": 8,
+    "reason": "Measured Spawn A roof requires8primitive bindings rather than planning7 to retain the approved step-return finish. User permits per-area primitive increases;4924triangle ceiling and whole-map performance limits unchanged. The measured mixed old/new roof batch requires16groups vs planning11; Spawn A owns the temporary5-group phase allowance. Remove when remaining old roof finishes are replaced; whole-map draw/frame/triangle limits stay unchanged.",
+    "phasePrimitiveAllowance": 5
+  },
+  "sharedExportBudgetOverride": {
+    "maxShadowPrimitives": 13,
+    "reason": "Spawn A-only background finish coexists with unchanged background owners, requiring13shadow groups instead of planning10. This is a phased per-area primitive allowance authorized by the user;38600triangles/20total primitives and whole-map performance limits remain unchanged."
+  },
+  "dependencyReceivers": []
 }

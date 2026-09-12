@@ -1,0 +1,263 @@
+{
+  "inputSha256": "67c98ce750eae935e6753660d03aafdfd7cc064a886aaa49b2bb3fc637aa22a6",
+  "designRevision": {
+    "id": "R7 caravan court facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-service-south/service-south-receivers-caravan-court.glb",
+  "triangles": 52,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      7.0,
+      -0.019999999552965164,
+      -0.5
+    ],
+    "max": [
+      10.600000381469727,
+      4.900000095367432,
+      -0.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -3.8,
+      -0.02,
+      -0.7
+    ],
+    "max": [
+      12.8,
+      11.42,
+      18.7
+    ]
+  },
+  "objects": [
+    {
+      "id": "cc-s-field",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          10.592499732971191,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.001",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          10.592499732971191,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.002",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          10.592499732971191,
+          0.0,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.003",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          0.0,
+          4.5
+        ],
+        "max": [
+          10.592499732971191,
+          0.0,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.004",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.592499732971191,
+          0.014999999664723873,
+          0.0
+        ],
+        "max": [
+          10.600000381469727,
+          0.014999999664723873,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.005",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.592499732971191,
+          0.014999999664723873,
+          0.11999999731779099
+        ],
+        "max": [
+          10.600000381469727,
+          0.014999999664723873,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.006",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.592499732971191,
+          0.014999999664723873,
+          0.18000000715255737
+        ],
+        "max": [
+          10.600000381469727,
+          0.014999999664723873,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-field.007",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.592499732971191,
+          0.0,
+          4.5
+        ],
+        "max": [
+          10.600000381469727,
+          0.0,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-s-party-joint-reveal",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.592000007629395,
+          0.0,
+          0.0
+        ],
+        "max": [
+          10.593000411987305,
+          0.014999999664723873,
+          4.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-s-end-closure",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          10.579999923706055,
+          0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          10.600000381469727,
+          0.5,
+          4.900000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-s-base-closure",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          10.600000381469727,
+          0.5,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "f0ec1e53e5f730889452707ea05dceb8d90f6d364baa42d8064819f51c9dfd78",
+  "sourcePolygonTriangles": 52,
+  "materials": [
+    "bz06_pale_lime"
+  ],
+  "exportBudget": {
+    "maxTriangles": 48000,
+    "maxRenderedPrimitives": 13,
+    "maxMaterials": 12,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 8
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 52,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 48000,
+      "maxMaterials": 12,
+      "maxRenderedPrimitives": 13,
+      "maxShadowPrimitives": 8
+    },
+    "overTarget": []
+  }
+}

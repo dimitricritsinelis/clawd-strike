@@ -1,0 +1,263 @@
+{
+  "inputSha256": "125a952e653fedc8c5fbc36916b17704d939387f449c4d0985c44c82c5d709e8",
+  "designRevision": {
+    "id": "R7 link north east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-spawn-b-courtyard/b-receivers-link-north-east.glb",
+  "triangles": 52,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      5.0
+    ],
+    "max": [
+      3.5999999046325684,
+      9.899999618530273,
+      5.699999809265137
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.8000000000000043,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.800000000000004,
+      9.92,
+      5.900000000000006
+    ]
+  },
+  "objects": [
+    {
+      "id": "lne-n-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-party-joint-reveal",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5920000076293945,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.5929999351501465,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5799999237060547,
+          -5.699999809265137,
+          0.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.019999980926514,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.699999809265137,
+          -0.019999999552965164
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "4b8d297a94698f3d874f949f900b1668400eaca1aeb70bf3f9daf88ab023e700",
+  "sourcePolygonTriangles": 52,
+  "materials": [
+    "bz06_service_stone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 6,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 52,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

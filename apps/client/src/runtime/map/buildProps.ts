@@ -4543,22 +4543,16 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
     }
 
     if (type === "shopfront_anchor") {
-      // User-approved B18 correction: the old 3.2 m stall box outlived its
-      // visuals. The finished cabinet sits wholly on the retained threshold.
-      // Its source anchor owns the solid height; the compiled model owns fit.
+      // These approved cabinet collision fits outlive their replaceable render
+      // props. Protected anchors retain their position, orientation and height.
       if (anchor.id === "DYE_E_SHOP_2" || anchor.id === "DYE_W_SHOP_1") {
-        const visualAnchor = anchor.id === "DYE_E_SHOP_2" ? "B18_SAMPLE_DISPLAY" : "CENTRAL_DYE_DISPLAY";
-        const display = options.blockout.dressingPlacements?.find((entry) => entry.anchorId === visualAnchor);
-        if (display) {
-          const origin = designToWorldVec3(display.position);
-          if (anchor.heightM === undefined) throw new Error("B18 north cabinet requires its authored solid height");
-          const cabinetHeight = anchor.heightM;
-          placeCollidingBox(anchor.id, "shop", batches.shopfront,
-            { ...origin, y: origin.y + cabinetHeight * 0.5 },
-            { x: display.dimensionsM.width, y: cabinetHeight, z: display.dimensionsM.depth },
-            designYawDegToWorldYawRad(display.yawDeg));
-          continue;
-        }
+        if (anchor.heightM === undefined) throw new Error("B18 north cabinet requires its authored solid height");
+        const cabinetHeight = anchor.heightM;
+        placeCollidingBox(anchor.id, "shop", batches.shopfront,
+          { x: base.x + (anchor.id === "DYE_E_SHOP_2" ? .33 : -.33), y: base.y + .14 + cabinetHeight * .5, z: base.z },
+          { x: 1.48, y: cabinetHeight, z: .34 },
+          designYawDegToWorldYawRad((anchor.yawDeg ?? 0) + 180));
+        continue;
       }
       if (anchor.id === "DYE_W_SHOP_2") {
         const door = options.blockout.architecturePlacements?.find((entry) => entry.id === "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01");

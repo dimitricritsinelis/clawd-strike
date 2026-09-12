@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_service_north",
+      "file": "roof-bundle-service-north.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_service_north",
+      "file": "unit-service-north.glb",
+      "source": "repo://assets/source/unit-service-north/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "SERVICE_NORTH",
+    "modelId": "section_unit_service_north",
+    "faces": [
+      "north",
+      "east",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_NORTH",
+      "modelId": "bz04_roof_bundle_unit_service_north",
+      "position": {
+        "x": 5.2,
+        "y": 64.35,
+        "z": 4.6
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "e762cbc68027347d63c8ca3170e01faa7ce68950486d89a34ad58c697a3a930f"
+}

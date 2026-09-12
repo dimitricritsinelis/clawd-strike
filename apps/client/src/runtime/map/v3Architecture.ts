@@ -1,5 +1,6 @@
 import { Euler } from "three";
 import type { BoundarySegment } from "./buildBlockout";
+import { bz04ReceiverFragments, bz04SectionVisualSegments, type Bz04BoundaryCoverage } from "./bz04Trial";
 import { designToWorldVec3, designYawDegToWorldYawRad } from "./coordinateTransforms";
 import type { RuntimeBlockoutZone, RuntimeTraversalSurface } from "./types";
 import { CASTLE_DOOR_ID, type DoorModelPlacement } from "./buildDoorModels";
@@ -127,6 +128,9 @@ export type V3ArchitecturePlacement = V3ArchitectureMassingPlacement | V3Archite
 
 export type BuildV3ArchitectureOptions = {
   bz04Courtyard?: boolean;
+  bz04SectionOwnedFaces?: ReadonlySet<string>;
+  bz04BoundaryCoverage?: readonly Bz04BoundaryCoverage[];
+  bz04ReplacedRoofMassings?: ReadonlySet<string>;
   bz04Gateway?: boolean;
   placements: readonly V3ArchitecturePlacement[];
   massingProfiles: readonly V3MassingProfile[];
@@ -6466,6 +6470,7 @@ function pointInRect(zone: RuntimeBlockoutZone, x: number, z: number): boolean {
 function pushElevationFoundations(
   surfaces: readonly RuntimeTraversalSurface[],
   instances: WallDetailInstance[],
+  coverage: readonly Bz04BoundaryCoverage[],
 ): void {
   for (const surface of surfaces) {
     if (surface.kind === "flat") {
@@ -6495,6 +6500,32 @@ function pushElevationFoundations(
       continue;
     }
 
+    const pushTrim = (instance: Parameters<typeof pushInstance>[1], side: number, nominalSpan?: [number,number]): void => {
+      const alongX = surface.axis === "x";
+      const axis = alongX ? "x" : "z";
+      const angle = alongX ? (instance.rollRad ?? 0) : -(instance.pitchRad ?? 0);
+      const cosine = Math.cos(angle);
+      const projectedLength = instance.scale[axis] * cosine;
+      const center = instance.position[axis];
+      const edge = {orientation:alongX ? "horizontal" as const : "vertical" as const,
+        coord:alongX ? surface.rect.y+(side<0 ? 0 : surface.rect.h) : surface.rect.x+(side<0 ? 0 : surface.rect.w),
+        start:center-projectedLength/2,end:center+projectedLength/2,outward:side<0 ? -1 as const : 1 as const};
+      // The cheek's 5 mm slice-overlap lips belong to that same slice. When
+      // its whole in-ramp span is owned, retire those lips with the cheek.
+      if (!bz04SectionVisualSegments({...edge,start:nominalSpan?.[0] ?? edge.start,end:nominalSpan?.[1] ?? edge.end},coverage).length) return;
+      const remaining = bz04SectionVisualSegments(edge,coverage);
+      if (remaining.length===1 && remaining[0]!.start===edge.start && remaining[0]!.end===edge.end) {
+        pushInstance(instances,instance);return;
+      }
+      for (const [index,part] of remaining.entries()) {
+        const midpoint=(part.start+part.end)/2;
+        // Keep the original tilted cap plane and cross-section while cutting
+        // only its owned along-edge span. Foundation bodies remain separate.
+        pushInstance(instances,{...instance,placementId:`${instance.placementId}:receiver-remainder-${index}`,
+          position:{...instance.position,[axis]:midpoint,y:instance.position.y+(midpoint-center)*Math.tan(angle)},
+          scale:{...instance.scale,[axis]:(part.end-part.start)/cosine}});
+      }
+    };
     const crossWidthM = surface.axis === "x" ? surface.rect.h : surface.rect.w;
     if (crossWidthM <= RAMP_RETAINING_CHEEK_WIDTH_M * 2 + MIN_DIMENSION_M) {
       fail(`surface '${surface.id}' is too narrow for retaining cheeks`);
@@ -6514,15 +6545,16 @@ function pushElevationFoundations(
       const z = surface.axis === "y"
         ? surface.rect.y + surface.rect.h * (t0 + t1) * 0.5
         : surface.rect.y + surface.rect.h * 0.5;
-      pushInstance(instances, {
+      const foundationHeight = height - ELEVATION_FOUNDATION_TOP_CLEARANCE_M;
+      if (foundationHeight >= MIN_DIMENSION_M) pushInstance(instances, {
         placementId: `ELEVATION_FOUNDATION:${surface.id}:${index + 1}`,
         moduleId: "elevation_foundation",
         semanticClass: "ramp_foundation",
         meshId: "facade_wall_shell",
-        position: { x, y: height * 0.5, z },
+        position: { x, y: foundationHeight * 0.5, z },
         scale: surface.axis === "x"
-          ? { x: width + 0.01, y: height, z: depth - RAMP_RETAINING_CHEEK_WIDTH_M * 2 }
-          : { x: width - RAMP_RETAINING_CHEEK_WIDTH_M * 2, y: height, z: depth + 0.01 },
+          ? { x: width + 0.01, y: foundationHeight, z: depth - RAMP_RETAINING_CHEEK_WIDTH_M * 2 }
+          : { x: width - RAMP_RETAINING_CHEEK_WIDTH_M * 2, y: foundationHeight, z: depth + 0.01 },
         yawRad: 0,
         wallMaterialId: ELEVATION_FOUNDATION_MATERIAL_ID,
       });
@@ -6538,7 +6570,7 @@ function pushElevationFoundations(
             ? RAMP_RETAINING_CHEEK_WIDTH_M * 0.5
             : surface.rect.h - RAMP_RETAINING_CHEEK_WIDTH_M * 0.5)
           : z;
-        pushInstance(instances, {
+        pushTrim({
           placementId: `ELEVATION_FOUNDATION:${surface.id}:cheek:${side}:${index + 1}`,
           moduleId: "elevation_retaining_cheek",
           semanticClass: "ramp_retaining_cheek",
@@ -6549,7 +6581,9 @@ function pushElevationFoundations(
             : { x: RAMP_RETAINING_CHEEK_WIDTH_M + 0.01, y: height, z: depth + 0.01 },
           yawRad: 0,
           wallMaterialId: ELEVATION_FOUNDATION_MATERIAL_ID,
-        });
+        }, side, surface.axis === "x"
+          ? [surface.rect.x+surface.rect.w*t0,surface.rect.x+surface.rect.w*t1]
+          : [surface.rect.y+surface.rect.h*t0,surface.rect.y+surface.rect.h*t1]);
       }
     }
 
@@ -6568,7 +6602,7 @@ function pushElevationFoundations(
           ? RAMP_RETAINING_CHEEK_WIDTH_M * 0.5
           : surface.rect.h - RAMP_RETAINING_CHEEK_WIDTH_M * 0.5)
         : surface.rect.y + surface.rect.h * 0.5;
-      pushInstance(instances, {
+      pushTrim({
         placementId: `ELEVATION_FOUNDATION:${surface.id}:cap:${side}`,
         moduleId: "elevation_retaining_cap",
         semanticClass: "ramp_retaining_cap",
@@ -6585,7 +6619,7 @@ function pushElevationFoundations(
         ...(capPitchRad !== 0 ? { pitchRad: capPitchRad } : {}),
         ...(capRollRad !== 0 ? { rollRad: capRollRad } : {}),
         trimMaterialId: ELEVATION_FOUNDATION_MATERIAL_ID,
-      });
+      }, side);
     }
   }
 }
@@ -7775,7 +7809,23 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   // An authored GLB replaces visible kit modules, but the original modules
   // still define apertures, recess depth, and shared-shell ownership.
   const sectionOwnedFaces = options.sectionOwnedFaces ?? new Set<string>();
-  const ownedBySection = (placement: { zoneId: string; face: FacadeFace }) => sectionOwnedFaces.has(`${placement.zoneId}:${placement.face}`);
+  const receiverCoverageByFrontage = new Map<string, Bz04BoundaryCoverage[]>();
+  const receiverOwnedFrontages = new Set(options.placements.flatMap(placement => {
+    if (placement.kind !== "massing") return [];
+    const zone = options.zones.find(zone => zone.id === placement.zoneId);
+    if (!zone) return [];
+    const horizontal = placement.face === "north" || placement.face === "south";
+    const center = horizontal ? placement.center.x : placement.center.y;
+    const coord = placement.face === "north" ? zone.rect.y + zone.rect.h : placement.face === "south" ? zone.rect.y
+      : placement.face === "east" ? zone.rect.x + zone.rect.w : zone.rect.x;
+    const coverage = (options.bz04BoundaryCoverage ?? []).filter(span => span.orientation === (horizontal ? "horizontal" : "vertical")
+      && Math.abs(span.coord-coord) <= .001 && span.start < center+placement.sizeM.width/2 && span.end > center-placement.sizeM.width/2);
+    receiverCoverageByFrontage.set(placement.frontageId, coverage);
+    const remaining = bz04SectionVisualSegments({orientation:horizontal ? "horizontal" : "vertical",coord,
+      start:center-placement.sizeM.width/2,end:center+placement.sizeM.width/2,outward:1},coverage);
+    return remaining.length === 0 ? [placement.frontageId] : [];
+  }));
+  const ownedBySection = (placement: { zoneId: string; face: FacadeFace; frontageId: string }) => sectionOwnedFaces.has(`${placement.zoneId}:${placement.face}`) || receiverOwnedFrontages.has(placement.frontageId);
   const facadeOwnedFrontageIds = new Set(options.placements.flatMap((placement) =>
     placement.kind === "massing" && (placement.facadeModelId || ownedBySection(placement)) ? [placement.frontageId] : []));
   const modulesByFrontage = new Map<string, V3ArchitectureModulePlacement[]>();
@@ -7796,7 +7846,7 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         sharedBackingByOwner: new Map<string, SharedBackingVolume>(),
         backingOwnerByMassing: new Map<string, string>(),
       };
-  pushElevationFoundations(options.traversalSurfaces, instances);
+  pushElevationFoundations(options.traversalSurfaces, instances, options.bz04BoundaryCoverage ?? []);
   if (!options.bz04Gateway) pushRugGateCrownBackdrop(options.zones, options.placements, instances);
   pushRugGateWestWallCoping(options.zones, options.placements, instances);
   if (!options.bz04Gateway) pushRugGateStructuralFinish(options.zones, options.placements, instances);
@@ -7813,6 +7863,9 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
     if (ids.has(placement.id)) fail(`duplicate placement id '${placement.id}'`);
     ids.add(placement.id);
     if (options.bz04Courtyard && placement.zoneId === "SPAWN_B_COURTYARD") continue;
+    const completeSection = options.bz04SectionOwnedFaces?.has(`${placement.zoneId}:${placement.face}`) || receiverOwnedFrontages.has(placement.frontageId);
+    if (completeSection && placement.kind === "facade_module") continue;
+    const firstInstance = instances.length;
     if (placement.kind === "massing") {
       requirePbrMassingSlots("massing", placement.id, placement.materialSlots);
       if (!massingProfiles.has(placement.massingProfileId)) {
@@ -7822,9 +7875,11 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         ?? fail(`massing '${placement.id}' references unknown facade profile '${placement.profileId}'`);
       const frontageModules = modulesByFrontage.get(placement.frontageId) ?? [];
       const hasVisualCutouts = frontageModules.some(createsVisualFacadeCutout);
+      const replacedRoof = options.bz04ReplacedRoofMassings?.has(placement.id);
+      const massingInstances: WallDetailInstance[] = completeSection || replacedRoof ? [] : instances;
       pushMassing(
         placement,
-        instances,
+        massingInstances,
         facadeProfile,
         frontageModules,
         experimentalVisualCutoutMassing,
@@ -7836,6 +7891,18 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
           : null,
         Boolean(placement.facadeModelId) || ownedBySection(placement),
       );
+      // Retain the legacy roof until its supported bundle replaces its footprint.
+      if (completeSection) {
+        // A fully replaced supporting footprint also retires its old projecting
+        // roof trim; leaving its outside lip would cut across the new windows.
+        if (!replacedRoof) {
+          instances.push(...massingInstances.filter(instance => /roof_slab|roof_parapet|roof_coping|roof_finish/.test(instance.meshId+":"+(instance.semanticClass??""))));
+        }
+        continue;
+      }
+      if (replacedRoof) {
+        instances.push(...massingInstances.filter(instance => !/roof_slab|roof_parapet|roof_coping|roof_finish/.test(instance.meshId+":"+(instance.semanticClass??""))));
+      }
       if (placement.facadeModelId) {
         const center = designToWorldVec3(placement.center);
         const inward = faceInward(placement.face);
@@ -7864,6 +7931,11 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         experimentalVisualCutoutMassing,
         options.stallSeatedPlacementIds?.has(placement.id) ?? false,
       );
+    }
+    const receiverCoverage = receiverCoverageByFrontage.get(placement.frontageId) ?? [];
+    if (receiverCoverage.length) {
+      const emitted = instances.splice(firstInstance);
+      instances.push(...emitted.flatMap(instance => bz04ReceiverFragments(instance, receiverCoverage)));
     }
   }
 

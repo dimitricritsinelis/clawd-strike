@@ -926,7 +926,7 @@ export function glbBounds(bytes: Buffer): Bounds3 | null {
  * Disconnected geometry must not turn the empty space between parts into solid cover.
  * Unsupported buffers fail closed; accessor min/max alone is not geometry evidence.
  */
-export function glbTriangleBounds(bytes: Buffer): Bounds3[] {
+export function glbTriangleBounds(bytes: Buffer, onVertex?: (vertex: Vec3) => void): Bounds3[] {
   if (bytes.length < 28 || bytes.readUInt32LE(0) !== 0x46546c67) throw new Error("not a GLB");
   const length = bytes.readUInt32LE(12);
   const g = JSON.parse(bytes.subarray(20, 20 + length).toString("utf8"));
@@ -964,6 +964,7 @@ export function glbTriangleBounds(bytes: Buffer): Bounds3[] {
         for(const id of indices.slice(i,i+3)){
           if(!Number.isInteger(id)||!vertices[id])throw new Error("GLB triangle index outside vertices");
           bounds=extend(bounds,vertices[id]!);
+          onVertex?.(vertices[id]!);
         }
         result.push(bounds!);
       }
@@ -979,16 +980,17 @@ export function glbTriangleBounds(bytes: Buffer): Bounds3[] {
  * buildAuthoredPlacements: world x = x, world y = z, world z = y, and the
  * model turns about the up axis by (yawDeg + 180) degrees.
  */
-export function placementDesignBounds(local: Bounds3, placement: AuthoredPlacement): Bounds3 {
+function placementDesignPoint([gx, gy, gz]: Vec3, placement: AuthoredPlacement): Vec3 {
   const theta = ((placement.yawDeg ?? 0) + 180) * Math.PI / 180;
   const cos = Math.cos(theta);
   const sin = Math.sin(theta);
+  return [placement.position.x + gx * cos + gz * sin,
+    placement.position.y - gx * sin + gz * cos, placement.position.z + gy];
+}
+
+export function placementDesignBounds(local: Bounds3, placement: AuthoredPlacement): Bounds3 {
   let bounds: Bounds3 | null = null;
-  for (const [gx, gy, gz] of corners(local)) {
-    const wx = gx * cos + gz * sin;
-    const wz = -gx * sin + gz * cos;
-    bounds = extend(bounds, [placement.position.x + wx, placement.position.y + wz, placement.position.z + gy]);
-  }
+  for (const point of corners(local)) bounds = extend(bounds, placementDesignPoint(point, placement));
   return bounds!;
 }
 
@@ -1051,6 +1053,7 @@ export function authoredPlacementReasons(
   rects: readonly Rect[] = (spec.traversal_surfaces ?? []).map((s) => s.rect),
   segments: readonly WallSegment[] = walkableBoundarySegments(rects),
   geometryBoundsOf?: (modelId: string) => readonly Bounds3[],
+  geometryVerticesOf?: (modelId: string) => readonly Vec3[],
 ): string[] {
   const reasons: string[] = [];
   const surfaces = spec.traversal_surfaces ?? [];
@@ -1059,11 +1062,20 @@ export function authoredPlacementReasons(
     if (!local) continue;
     const box = placementDesignBounds(local, placement);
     const label = `placement ${placement.id} (${placement.modelId})`;
-    const cx = (box.min[0] + box.max[0]) / 2;
-    const cy = (box.min[1] + box.max[1]) / 2;
-    const ground = groundAt(surfaces, cx, cy);
+    const vertices = geometryVerticesOf?.(placement.modelId);
+    // Compare each actual vertex to the floor at that same coordinate. A
+    // sloped base's global minimum does not lie at the bounding-box centre.
+    const points: Vec3[] = vertices?.length ? vertices.map(v => placementDesignPoint(v, placement))
+      : [[(box.min[0] + box.max[0]) / 2, (box.min[1] + box.max[1]) / 2, box.min[2]]];
+    let contact = { point: points[0]!, ground: groundAt(surfaces, points[0]![0], points[0]![1]), lift: Infinity };
+    for (const point of points) {
+      const ground = groundAt(surfaces, point[0], point[1]);
+      const lift = point[2] - (ground?.elevationM ?? 0);
+      if (lift < contact.lift) contact = { point, ground, lift };
+    }
+    const [cx, cy] = contact.point;
+    const { ground, lift } = contact;
     const groundM = ground?.elevationM ?? 0;
-    const lift = box.min[2] - groundM;
     const where = `at x ${cx.toFixed(2)} y ${cy.toFixed(2)}`;
     const on = ground ? `${ground.surface.id} at ${groundM.toFixed(2)} m` : "no traversal surface, ground taken as 0 m";
     if (lift > CONTACT_TOLERANCE_M && lift <= FLOAT_MAX_M) {

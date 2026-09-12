@@ -185,6 +185,45 @@ function build(
   });
 }
 
+test("complete roof replacement retires old overhangs without changing collision heights", () => {
+  const placement=massingPlacement();
+  const options={placements:[placement],massingProfiles,facadeProfiles,
+    segments:[{orientation:"vertical" as const,coord:10,start:10,end:22,outward:-1 as const}],
+    zones,traversalSurfaces:[],wallHeightM:9.5,fortifiedDoorModelAvailable:false,
+    bz04SectionOwnedFaces:new Set(["ARBITRARY_ZONE_ID:west"])};
+  const pending=buildV3Architecture(options);
+  const replaced=buildV3Architecture({...options,bz04ReplacedRoofMassings:new Set([placement.id])});
+  assert.ok(pending.instances.some(i=>/roof_slab|roof_parapet|roof_coping|roof_finish/.test(i.meshId+":"+i.semanticClass)));
+  assert.ok(!replaced.instances.some(i=>/roof_slab|roof_parapet|roof_coping|roof_finish/.test(i.meshId+":"+i.semanticClass)));
+  assert.deepEqual(replaced.segmentHeights,pending.segmentHeights);
+  const {bz04SectionOwnedFaces,...receiverOptions}=options;
+  const receiverOnly=buildV3Architecture({...receiverOptions,bz04ReplacedRoofMassings:new Set([placement.id])});
+  assert.ok(receiverOnly.instances.some(i=>!/roof_slab|roof_parapet|roof_coping|roof_finish/.test(i.meshId+":"+(i.semanticClass??""))));
+  assert.ok(!receiverOnly.instances.some(i=>/roof_slab|roof_parapet|roof_coping|roof_finish/.test(i.meshId+":"+(i.semanticClass??""))));
+  assert.deepEqual(receiverOnly.segmentHeights,pending.segmentHeights);
+});
+
+test("loaded receiver spans retire the covered legacy frontage and its reverse backing only", () => {
+  const placement=massingPlacement();
+  const options={placements:[placement],massingProfiles,facadeProfiles,segments:[{orientation:"vertical" as const,coord:10,start:10,end:22,outward:-1 as const}],zones,traversalSurfaces:[],wallHeightM:9.5,fortifiedDoorModelAvailable:false};
+  const coverage=[{orientation:"vertical" as const,coord:10,start:11,end:16},{orientation:"vertical" as const,coord:10,start:16,end:21}];
+  const original=buildV3Architecture(options);
+  const replaced=buildV3Architecture({...options,bz04BoundaryCoverage:coverage});
+  const section=buildV3Architecture({...options,bz04SectionOwnedFaces:new Set(["ARBITRARY_ZONE_ID:west"])});
+  assert.deepEqual(replaced.instances,section.instances);
+  assert.deepEqual(replaced.segmentHeights,original.segmentHeights);
+  const partial=buildV3Architecture({...options,bz04BoundaryCoverage:coverage.slice(0,1)});
+  const backing=partial.instances.find(i=>i.placementId?.startsWith(placement.id+":bz04-remainder-"));
+  assert.ok(backing);
+  assert.ok(Math.abs(backing.position.z-backing.scale.x/2-16)<1e-6);
+  assert.ok(Math.abs(backing.position.z+backing.scale.x/2-21)<1e-6);
+  assert.equal(backing.position.y,original.instances.find(i=>i.placementId===placement.id)!.position.y);
+  assert.equal(backing.wallMaterialId,original.instances.find(i=>i.placementId===placement.id)!.wallMaterialId);
+  assert.deepEqual(partial.segmentHeights,original.segmentHeights);
+  assert.deepEqual(placement,massingPlacement());
+  assert.deepEqual(buildV3Architecture({...options,bz04BoundaryCoverage:coverage.map(span=>({...span,coord:11}))}).instances,original.instances);
+});
+
 test("merchant storefronts override legacy flat timber/metal templates with varied PBR joinery", () => {
   const legacyProfiles = facadeProfiles.map((profile) => profile.family === "active_merchant"
     ? {
@@ -3074,5 +3113,70 @@ test("authored plaster faces use the wall wear profile in facade and section GLB
   for (const root of [facadeRoot, sectionRoot]) {
     const material = (root.children[0]!.children[0] as Mesh).material as MeshStandardMaterial;
     assert.match(material.customProgramCacheKey(), /:wear:/, "the plaster face receives repairs, chips, and datum drips");
+  }
+});
+
+test("checked ramp-edge receivers retire only covered caps and cheeks and preserve foundation bodies", () => {
+  for (const axis of ["x","y"] as const) {
+    const surface={id:"RAMP_RECEIVER",zoneId:"ARBITRARY_ZONE_ID",kind:"ramp" as const,
+      rect:{x:10,y:14,w:8,h:8},axis,startElevationM:0,endElevationM:1.4};
+    const options={placements:[massingPlacement()],massingProfiles,facadeProfiles,
+      segments:[{orientation:"vertical" as const,coord:10,start:10,end:22,outward:-1 as const}],
+      zones,traversalSurfaces:[surface],wallHeightM:9.5,fortifiedDoorModelAvailable:false};
+    const original=buildV3Architecture(options);
+    const coverage={orientation:axis==="y"?"vertical" as const:"horizontal" as const,
+      coord:axis==="y"?18:22,start:axis==="y"?14:10,end:axis==="y"?22:18};
+    const replaced=buildV3Architecture({...options,bz04BoundaryCoverage:[coverage]});
+    const capId="ELEVATION_FOUNDATION:RAMP_RECEIVER:cap:1";
+    assert.ok(original.instances.some(i=>i.placementId===capId));
+    assert.ok(!replaced.instances.some(i=>i.placementId?.startsWith(capId)));
+    const preserved=(rows:typeof original.instances)=>rows.filter(i=>i.moduleId==="elevation_foundation" || i.placementId?.includes(":cap:-1") || i.placementId?.includes(":cheek:-1"));
+    assert.deepEqual(preserved(replaced.instances),preserved(original.instances));
+    assert.deepEqual(replaced.segmentHeights,original.segmentHeights);
+    const halfway=(coverage.start+coverage.end)/2;
+    const partial=buildV3Architecture({...options,bz04BoundaryCoverage:[{...coverage,start:halfway}]});
+    const cap=partial.instances.find(i=>i.placementId?.startsWith(capId))!;
+    const oldCap=original.instances.find(i=>i.placementId===capId)!;
+    assert.ok(cap);
+    const component=axis==="y"?"z":"x";
+    const angle=axis==="y"?-(cap.pitchRad??0):(cap.rollRad??0);
+    assert.ok(Math.abs(cap.position[component]+cap.scale[component]*Math.cos(angle)/2-halfway)<1e-6);
+    assert.ok(Math.abs(cap.position.y-oldCap.position.y-(cap.position[component]-oldCap.position[component])*Math.tan(angle))<1e-6);
+    assert.equal(cap.scale.y,oldCap.scale.y);
+    assert.equal(cap.pitchRad,oldCap.pitchRad);assert.equal(cap.rollRad,oldCap.rollRad);
+    assert.deepEqual(buildV3Architecture({...options,bz04BoundaryCoverage:[{...coverage,coord:coverage.coord+.1}]}).instances,original.instances);
+  }
+});
+
+test("ramp foundation bodies clear both rising and falling floors without moving their footprint or base", () => {
+  for (const axis of ["x","y"] as const) for (const descending of [false,true]) {
+    const surface={id:"CLEAR_RAMP",zoneId:"ARBITRARY_ZONE_ID",kind:"ramp" as const,
+      rect:{x:10,y:14,w:8,h:8},axis,startElevationM:descending?1.4:0,endElevationM:descending?0:1.4};
+    const options={placements:[massingPlacement()],massingProfiles,facadeProfiles,
+      segments:[],zones,traversalSurfaces:[surface],wallHeightM:9.5,fortifiedDoorModelAvailable:false};
+    const result=buildV3Architecture(options);
+    const bodies=result.instances.filter(i=>i.semanticClass==="ramp_foundation");
+    assert.equal(bodies.length,9);
+    for(const body of bodies) {
+      assert.ok(body.placementId);
+      const index=Number(body.placementId.split(":").at(-1))-1;
+      const low=Math.min(...[index/10,(index+1)/10].map(t=>surface.startElevationM+(surface.endElevationM-surface.startElevationM)*t));
+      const top=body.position.y+body.scale.y/2;
+      assert.ok(Math.abs(body.position.y-body.scale.y/2)<1e-6);
+      assert.ok(Math.abs(top-(low-.02))<1e-6);
+      assert.equal(body.scale[axis==="x"?"x":"z"],.81);
+      const component=axis==="x"?"x":"z";
+      const start=axis==="x"?surface.rect.x:surface.rect.y;
+      assert.ok(Math.abs(body.position[component]-(start+8*(index+.5)/10))<1e-6);
+      assert.equal(body.position[axis==="x"?"z":"x"],axis==="x"?18:14);
+      for(const along of [body.position[component]-body.scale[component]/2,body.position[component]+body.scale[component]/2]) {
+        const floor=surface.startElevationM+(along-start)/8*(surface.endElevationM-surface.startElevationM);
+        assert.ok(top<floor,`foundation top ${top} intersects floor ${floor}`);
+      }
+    }
+    assert.equal(result.instances.filter(i=>i.semanticClass==="ramp_retaining_cap").length,2);
+    const tiny=buildV3Architecture({...options,traversalSurfaces:[{...surface,startElevationM:descending ? .04 : 0,endElevationM:descending ? 0 : .04}]});
+    assert.equal(tiny.instances.filter(i=>i.semanticClass==="ramp_foundation").length,0,"sub-minimum bodies must not be forced through the floor");
+    assert.equal(tiny.instances.filter(i=>i.semanticClass==="ramp_retaining_cap").length,2);
   }
 });

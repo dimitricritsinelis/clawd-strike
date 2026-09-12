@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_link_north_west",
+      "file": "roof-bundle-link-north-west.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_link_north_west",
+      "file": "unit-link-north-west.glb",
+      "source": "repo://assets/source/unit-link-north-west/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_NORTH_WEST",
+    "modelId": "section_unit_link_north_west",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_NORTH_WEST",
+      "modelId": "bz04_roof_bundle_unit_link_north_west",
+      "position": {
+        "x": 11.4,
+        "y": 78.55,
+        "z": 4.6
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "cf64ff9fc6c4a054132e78fd4cda252a34ac7bfa80f67d491c38977fc586b50c"
+}

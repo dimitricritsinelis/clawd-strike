@@ -1,0 +1,225 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 caravan court facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-caravan-court/roof-bundle-caravan-court.glb",
+  "triangles": 108,
+  "primitives": 4,
+  "castPrimitives": 2,
+  "actualBoundsGltf": {
+    "min": [
+      -8.130000114440918,
+      0.0,
+      -9.25
+    ],
+    "max": [
+      8.100000381469727,
+      1.0299999713897705,
+      9.279999732971191
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      8.13,
+      1.03,
+      9.28
+    ],
+    "min": [
+      -8.13,
+      0,
+      -9.28
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_004-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.5,
+          6.75,
+          0.4000000059604645
+        ],
+        "max": [
+          8.100000381469727,
+          8.75,
+          0.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_005-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.099999904632568,
+          8.75,
+          0.0
+        ],
+        "max": [
+          7.5,
+          9.25,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_047-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -8.100000381469727,
+          -9.25,
+          0.30000001192092896
+        ],
+        "max": [
+          -4.5,
+          8.75,
+          0.47999998927116394
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_047-finish",
+      "material": "bz06_faded_ochre",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -8.100000381469727,
+          -9.25,
+          0.47999998927116394
+        ],
+        "max": [
+          -4.5,
+          8.75,
+          0.5559999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_004-parapet",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -8.100000381469727,
+          -9.25,
+          0.47999998927116394
+        ],
+        "max": [
+          -7.940000057220459,
+          8.75,
+          0.9300000071525574
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_004-cap",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -8.130000114440918,
+          -9.279999732971191,
+          0.9300000071525574
+        ],
+        "max": [
+          -7.909999847412109,
+          8.779999732971191,
+          1.0299999713897705
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_005-parapet",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -4.659999847412109,
+          -9.25,
+          0.47999998927116394
+        ],
+        "max": [
+          -4.5,
+          8.75,
+          0.9300000071525574
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_005-cap",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -4.690000057220459,
+          -9.279999732971191,
+          0.9300000071525574
+        ],
+        "max": [
+          -4.46999979019165,
+          8.779999732971191,
+          1.0299999713897705
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_COLLECTOR_BLD_CARAVAN_STORES_1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -8.100000381469727,
+          -0.29499998688697815,
+          0.4950000047683716
+        ],
+        "max": [
+          -8.055000305175781,
+          -0.20499999821186066,
+          0.5220000147819519
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "b030fc561ce1831af74385e92164e3f6095bd105daa3f6eac394407fb61fa3ed",
+  "sourcePolygonTriangles": 108,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz06_faded_ochre",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 1066,
+    "maxRenderedPrimitives": 4
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 108,
+      "maxMaterials": 4,
+      "maxRenderedPrimitives": 4,
+      "maxShadowPrimitives": 2
+    },
+    "targets": {
+      "maxTriangles": 1066,
+      "maxRenderedPrimitives": 4
+    },
+    "overTarget": []
+  }
+}

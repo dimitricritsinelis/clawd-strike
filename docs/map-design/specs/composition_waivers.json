@@ -32,21 +32,6 @@
         "status": "legacy-migrated",
         "legacyRef": "L3.7"
       }
-    },
-    {
-      "id": "CW-216C7CBF937B",
-      "kind": "opening-service",
-      "signature": "opening-service|placementId=PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01|openingId=ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_STORY_1_WINDOW_01",
-      "match": {
-        "placementId": "PLACE_FOUNTAIN_PALM_PALM_FOUNTAIN_01",
-        "openingId": "ARCH_FRONTAGE_FOUNTAIN_COURT_WEST_STORY_1_WINDOW_01"
-      },
-      "reasonCode": "legacy-composition-conflict",
-      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
-      "approval": {
-        "status": "legacy-migrated",
-        "legacyRef": "L3.7"
-      }
     }
   ]
 }

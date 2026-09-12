@@ -13,6 +13,8 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     const { createAk47ViewModel } = await import(moduleUrl);
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { Triangle, Euler, Raycaster, Vector2, Vector3 } = await import(threeUrl);
+    const convexUrl = "/node_modules/three/examples/jsm/geometries/ConvexGeometry.js";
+    const { ConvexGeometry } = await import(convexUrl);
     const vm = createAk47ViewModel({ vmDebug: false, search: "?weapon=next" });
     await vm.load();
     vm.setAspect(16 / 9);
@@ -105,8 +107,32 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     vm.setAmmoState({ mag: 12, reserve: 90, reloading: false, reloadT01: 0 });
     vm.updateFromMainCamera(camera, 0);
     const cancelled = { magazine: magazine.position.toArray(), hand: handPosition(), contactAo: gloveMaterial.aoMapIntensity };
+    // The visible magazine is an open assembly. Its convex envelope provides
+    // capped contact planes and a well-defined inside for this grip region.
+    const magazineSurface = scene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
+    const surfacePositions = magazineSurface.geometry.getAttribute("position");
+    const proxy = new ConvexGeometry(Array.from({ length: surfacePositions.count }, (_, i) =>
+      magazine.worldToLocal(new Vector3().fromBufferAttribute(surfacePositions, i).applyMatrix4(magazineSurface.matrixWorld))));
+    const proxyPositions = proxy.getAttribute("position");
+    const triangles: { triangle: import("three").Triangle; normal: import("three").Vector3 }[] = [];
+    const edges = new Map<string, number>();
+    let proxyVolume = 0;
+    for (let i = 0; i < proxyPositions.count; i += 3) {
+      const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(proxyPositions, i + corner));
+      const triangle = new Triangle(...points);
+      triangles.push({ triangle, normal: triangle.getNormal(new Vector3()) });
+      proxyVolume += points[0]!.dot(points[1]!.clone().cross(points[2]!)) / 6;
+      const keys = points.map((point) => point.toArray().map((value: number) => Math.round(value / 1e-7)).join(","));
+      for (let corner = 0; corner < 3; corner++) {
+        const key = [keys[corner], keys[(corner + 1) % 3]].sort().join("/");
+        edges.set(key, (edges.get(key) ?? 0) + 1);
+      }
+    }
+    if (proxyVolume <= 0 || [...edges.values()].some((count) => count !== 2)) throw new Error("Magazine contact proxy must be a closed, outward-facing solid");
+    const nearFace = triangles.filter(({ normal }) => normal.z < -.8);
+    if (nearFace.length === 0) throw new Error("Magazine contact proxy has no near broad face");
     const contact: number[][] = [];
-    const reloadContact = { maxAnchorGap: 0, maxRotationDriftDeg: 0, maxFingerGap: 0, minFingerGap: Infinity, minPalmUpAlignment: 1, maxThumbIndexHeightGap: 0, thumbWithinFingerSpan: true, wrappedGrip: true };
+    const reloadContact = { maxAnchorGap: 0, maxRotationDriftDeg: 0, maxFingerGap: 0, minFingerGap: Infinity, minPalmUpAlignment: 1, thumbOnNearFace: true, minThumbUpAlignment: 1, wrappedGrip: true };
     const thumbPad = { maxGap: 0, minNormalAlignment: 1, maxMeshMismatch: 0, maxDrift: 0 };
     const padPositions = new Map<string, import("three").Vector3>();
     let gripRotation: import("three").Quaternion | null = null;
@@ -125,7 +151,6 @@ test("Blender AK grips the magazine through reload and restores its approved idl
       const knuckle = scene.getObjectByName("L_f_middle01") as Object3D;
       const palmUp = magazine.worldToLocal(knuckle.getWorldPosition(knuckle.position.clone())).sub(wristInMagazine).normalize();
       reloadContact.minPalmUpAlignment = Math.min(reloadContact.minPalmUpAlignment, palmUp.y);
-      let frontFingerMinX = Infinity, fingerLowY = Infinity, fingerHighY = -Infinity;
       for (const finger of ["f_index", "f_middle", "f_ring", "f_pinky"]) {
         const marker = scene.getObjectByName("GripContact_" + finger) as Object3D;
         const position = marker.getWorldPosition(marker.position.clone());
@@ -133,33 +158,35 @@ test("Blender AK grips the magazine through reload and restores its approved idl
         reloadContact.maxFingerGap = Math.max(reloadContact.maxFingerGap, gap);
         if (finger !== 'f_index') reloadContact.minFingerGap = Math.min(reloadContact.minFingerGap, gap);
         const pointInMagazine = magazine.worldToLocal(position);
-        frontFingerMinX = Math.min(frontFingerMinX, pointInMagazine.x);
-        fingerLowY = Math.min(fingerLowY, pointInMagazine.y);
-        fingerHighY = Math.max(fingerHighY, pointInMagazine.y);
         // Magazine thickness varies across the ribs. Check the actual surface
         // clearance and side rather than imposing the old grip's fixed width.
         reloadContact.wrappedGrip &&= pointInMagazine.z > .005;
       }
       const thumbBone = scene.getObjectByName("L_thumb03") as Bone;
+      const thumbMcp = scene.getObjectByName("L_thumb02") as Bone;
+      const thumbDirection = magazine.worldToLocal(thumbBone.getWorldPosition(new Vector3()))
+        .sub(magazine.worldToLocal(thumbMcp.getWorldPosition(new Vector3()))).normalize();
+      reloadContact.minThumbUpAlignment = Math.min(reloadContact.minThumbUpAlignment, thumbDirection.y);
       for (const name of ["ThumbPadContact", "ThumbPadContact1", "ThumbPadContact2"]) {
         const marker = scene.getObjectByName(name) as Object3D;
         const glove = scene.getObjectByName(marker.userData.sourceMesh.replaceAll(" ", "_")) as SkinnedMesh;
         const meshPositions = glove.geometry.getAttribute("position");
         const worldPoint = marker.getWorldPosition(marker.position.clone());
         const localPoint = magazine.worldToLocal(worldPoint.clone());
-        reloadContact.wrappedGrip &&= localPoint.z > .005 && localPoint.x < frontFingerMinX - .015;
-        reloadContact.thumbWithinFingerSpan &&= localPoint.y >= fingerLowY - .004 && localPoint.y <= fingerHighY + .004;
-        const indexContact = scene.getObjectByName("GripContact_f_index") as Object3D;
-        const indexPoint = magazine.worldToLocal(indexContact.getWorldPosition(indexContact.position.clone()));
-        reloadContact.maxThumbIndexHeightGap = Math.max(reloadContact.maxThumbIndexHeightGap, Math.abs(indexPoint.y - localPoint.y));
-        thumbPad.maxGap = Math.max(thumbPad.maxGap, surfaceGap(magazine, worldPoint));
+        reloadContact.thumbOnNearFace &&= localPoint.z < 0;
+        let nearGap = Infinity;
+        const nearNormal = new Vector3(), nearest = new Vector3();
+        for (const surface of nearFace) {
+          const gap = surface.triangle.closestPointToPoint(localPoint, nearest).distanceTo(localPoint);
+          if (gap < nearGap) { nearGap = gap; nearNormal.copy(surface.normal); }
+        }
+        thumbPad.maxGap = Math.max(thumbPad.maxGap, nearGap);
         const previous = padPositions.get(name);
         if (previous) thumbPad.maxDrift = Math.max(thumbPad.maxDrift, previous.distanceTo(localPoint));
         else padPositions.set(name, localPoint.clone());
         const normal = worldPoint.clone().fromArray(marker.userData.padNormalLocal)
           .applyQuaternion(thumbBone.getWorldQuaternion(thumbBone.quaternion.clone())).normalize();
-        const intoSurface = worldPoint.clone().fromArray(marker.userData.contactNormalMagazineLocal)
-          .applyQuaternion(magazine.getWorldQuaternion(magazine.quaternion.clone()));
+        const intoSurface = nearNormal.negate().applyQuaternion(magazine.getWorldQuaternion(magazine.quaternion.clone()));
         thumbPad.minNormalAlignment = Math.min(thumbPad.minNormalAlignment, normal.dot(intoSurface));
         // These markers must lie on the rendered skin, not merely be convenient
         // empty nodes that touch the gun while the visible thumb floats away.
@@ -174,32 +201,26 @@ test("Blender AK grips the magazine through reload and restores its approved idl
         }
       }
     }
-    const magazineSurface = scene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
-    const surfacePositions = magazineSurface.geometry.getAttribute("position"), surfaceIndices = magazineSurface.geometry.getIndex();
-    const triangles = [];
-    for (let i = 0; i < (surfaceIndices?.count ?? surfacePositions.count); i += 3) {
-      const triangle = new Triangle(...[0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(surfacePositions, surfaceIndices ? surfaceIndices.getX(i + corner) : i + corner)));
-      triangles.push({ triangle, normal: triangle.getNormal(new Vector3()) });
-    }
     const fingerSurfaceClearance = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].flatMap((name) => ["f_index", "f_middle", "f_ring", "f_pinky", "thumb"].map((finger) => {
       const mesh = scene.getObjectByName(name) as SkinnedMesh;
       const positions = mesh.geometry.getAttribute("position"), indices = mesh.geometry.getAttribute("skinIndex"), weights = mesh.geometry.getAttribute("skinWeight");
       const indexBones = new Set(mesh.skeleton.bones.map((bone, i) => bone.name.startsWith("L_" + finger) ? i : -1));
       let minimum = Infinity, minSurfaceGap = Infinity, checked = 0;
-      const point = new Vector3(), nearest = new Vector3(), closest = new Vector3(), normal = new Vector3();
+      const point = new Vector3(), nearest = new Vector3();
       for (let i = 0; i < positions.count; i++) {
         let influence = 0;
         for (let c = 0; c < 4; c++) if (indexBones.has(indices.getComponent(i, c))) influence += weights.getComponent(i, c);
         if (influence < (finger === "f_index" ? .2 : .8)) continue;
         mesh.getVertexPosition(i, point).applyMatrix4(mesh.matrixWorld);
-        magazineSurface.worldToLocal(point);
-        let distance = Infinity;
+        magazine.worldToLocal(point);
+        let distance = Infinity, signedClearance = -Infinity;
         for (const surface of triangles) {
           surface.triangle.closestPointToPoint(point, nearest);
           const candidate = nearest.distanceToSquared(point);
-          if (candidate < distance) { distance = candidate; closest.copy(nearest); normal.copy(surface.normal); }
+          distance = Math.min(distance, candidate);
+          signedClearance = Math.max(signedClearance, point.clone().sub(surface.triangle.a).dot(surface.normal));
         }
-        minimum = Math.min(minimum, point.sub(closest).dot(normal));
+        minimum = Math.min(minimum, signedClearance);
         minSurfaceGap = Math.min(minSurfaceGap, Math.sqrt(distance));
         checked++;
       }
@@ -266,6 +287,14 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     }
     const thumbFlexion = { minMcpDeg: Infinity, maxMcpDeg: -Infinity, minIpDeg: Infinity, maxIpDeg: -Infinity, maxOffAxisDeg: 0 };
     const thumbOpening = { maxFreeMcpDeg: 0, maxFreeIpDeg: 0, maxClosingReverseStepDeg: 0 };
+    const digitRest = skeletons.flatMap((skeleton) => skeleton.bones.flatMap((bone, index) => {
+      if (!/^L_(?:f_|thumb)/.test(bone.name)) return [];
+      const parent = skeleton.bones.indexOf(bone.parent as Bone);
+      if (parent < 0) throw new Error("Digit bone has no skeletal parent: " + bone.name);
+      const local = skeleton.boneInverses[parent]!.clone().multiply(skeleton.boneInverses[index]!.clone().invert());
+      return [{ bone, position: new Vector3().setFromMatrixPosition(local) }];
+    }));
+    let maxDigitDisplacement = 0;
     const previousClosingFlexion = new Map<string, number>();
     const previousArmRotations = new Map<string, import("three").Quaternion>();
     let maxArmStepDeg = 0;
@@ -275,6 +304,7 @@ test("Blender AK grips the magazine through reload and restores its approved idl
       rightPads.forEach((marker, i) => {
         rightGrip.maxDrift = Math.max(rightGrip.maxDrift, contactPosition(marker.name).distanceTo(rightPadRest[i]!));
       });
+      for (const { bone, position } of digitRest) maxDigitDisplacement = Math.max(maxDigitDisplacement, bone.position.distanceTo(position));
       for (const [name, joint] of [["L_thumb02", "Mcp"], ["L_thumb03", "Ip"]] as const) {
         const bone = scene.getObjectByName(name) as Bone;
         const skeleton = skeletons.find((skin) => skin.bones.includes(bone))!;
@@ -284,7 +314,10 @@ test("Blender AK grips the magazine through reload and restores its approved idl
         const restRotation = bone.quaternion.clone().setFromRotationMatrix(restLocal);
         const rotation = restRotation.invert().multiply(bone.quaternion);
         const angles = new Euler().setFromQuaternion(rotation, "XYZ");
-        const flexion = angles.x * 180 / Math.PI;
+        if (!Number.isFinite(bone.userData.restFlexionDeg) || JSON.stringify(bone.userData.flexAxisLocal) !== "[1,0,0]") {
+          throw new Error("Thumb requires authored restFlexionDeg and local +X flexion: " + name);
+        }
+        const flexion = bone.userData.restFlexionDeg + angles.x * 180 / Math.PI;
         thumbFlexion[`min${joint}Deg`] = Math.min(thumbFlexion[`min${joint}Deg`], flexion);
         thumbFlexion[`max${joint}Deg`] = Math.max(thumbFlexion[`max${joint}Deg`], flexion);
         thumbFlexion.maxOffAxisDeg = Math.max(thumbFlexion.maxOffAxisDeg, Math.hypot(angles.y, angles.z) * 180 / Math.PI);
@@ -409,7 +442,8 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     const legacyLoaded = legacy.getAlignmentSnapshot().loaded;
     const legacyName = legacy.constructor.name;
     legacy.dispose();
-    return { fingerSurfaceClearance, rightGrip, packageScale, hasRightHand, texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, construction, fingertipPaddingGaps, rest, readyGrip, fired, frozen, paused, lowFpsBolt, flashEnded, reload, cancelled, contact, reloadContact, thumbPad, cancellations, maxArmStepDeg, foreEndFingerGaps, skins: [...skins.values()], wrists, thumbFlexion, thumbOpening, beforeCameraKick, afterCameraKick, finalRound, firstSequence, caseTravel, caseExpired, resetSequence, socketParent, legacyLoaded, legacyName };
+    proxy.dispose();
+    return { maxDigitDisplacement, fingerSurfaceClearance, rightGrip, packageScale, hasRightHand, texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, construction, fingertipPaddingGaps, rest, readyGrip, fired, frozen, paused, lowFpsBolt, flashEnded, reload, cancelled, contact, reloadContact, thumbPad, cancellations, maxArmStepDeg, foreEndFingerGaps, skins: [...skins.values()], wrists, thumbFlexion, thumbOpening, beforeCameraKick, afterCameraKick, finalRound, firstSequence, caseTravel, caseExpired, resetSequence, socketParent, legacyLoaded, legacyName };
   });
   expect(result.fired.bolt).toBeLessThan(result.rest.bolt - .01);
   expect(result.fired.rise).toBeGreaterThan(.005);
@@ -444,7 +478,8 @@ test("Blender AK grips the magazine through reload and restores its approved idl
   // surfaces below rather than forcing every center into a 10mm shell.
   expect(result.reloadContact.minFingerGap, "finger center markers retain pad thickness outside the surface").toBeGreaterThan(.005);
   expect(result.reloadContact.minPalmUpAlignment, "palm rises from below along the magazine").toBeGreaterThan(.85);
-  expect(result.reloadContact.thumbWithinFingerSpan, "thumb opposes the four-finger grip instead of sitting outside its span").toBe(true);
+  expect(result.reloadContact.thumbOnNearFace, "thumb lies along the near broad face").toBe(true);
+  expect(result.reloadContact.minThumbUpAlignment, "thumb points toward the magazine well").toBeGreaterThan(.8);
   for (const surface of result.fingerSurfaceClearance) {
     expect(surface.checked, surface.name).toBeGreaterThan(500);
     expect(surface.minimum, `${surface.name} must not enter the magazine`).toBeGreaterThanOrEqual(-.00005);
@@ -456,13 +491,14 @@ test("Blender AK grips the magazine through reload and restores its approved idl
   }
   console.info("Finger surface clearance:", result.fingerSurfaceClearance);
   console.info("Reload contact:", result.reloadContact, "Thumb hinges:", result.thumbFlexion);
-  expect(result.reloadContact.wrappedGrip, "all four fingers and the thumb must close onto the far broad face").toBe(true);
+  expect(result.reloadContact.wrappedGrip, "four fingers wrap onto the far broad face").toBe(true);
   console.info("Visible thumb pad contact:", result.thumbPad);
-  expect(result.thumbPad.maxGap, "three outer padding points must press the far broad face").toBeLessThan(.0005);
+  expect(result.thumbPad.maxGap, "three outer padding points must lie within 1 mm of the near broad face").toBeLessThanOrEqual(.001);
   expect(result.thumbPad.minNormalAlignment, "thumb pad must face into the magazine").toBeGreaterThan(.94);
   expect(result.thumbPad.maxMeshMismatch, "contact samples must coincide with rendered skin").toBeLessThan(.0001);
   expect(result.thumbPad.maxDrift, "thumb pad must not slide during the hold").toBeLessThan(.001);
   expect(result.maxArmStepDeg).toBeLessThan(10);
+  expect(result.maxDigitDisplacement, "digit joints must not translate from their bind positions").toBeLessThan(.000001);
   console.info("Thumb hinge regression:", result.thumbFlexion);
   expect(result.thumbFlexion.minMcpDeg, "thumb MCP must not bend backward").toBeGreaterThanOrEqual(-.01);
   expect(result.thumbFlexion.minIpDeg, "thumb IP must not bend backward").toBeGreaterThanOrEqual(-.01);
@@ -525,9 +561,16 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
     const { createAk47ViewModel } = await import(moduleUrl);
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { Box3, PerspectiveCamera, Ray, Triangle, Vector3 } = await import(threeUrl);
+    const convexUrl = "/node_modules/three/examples/jsm/geometries/ConvexGeometry.js";
+    const { ConvexGeometry } = await import(convexUrl);
     const vm = createAk47ViewModel({ vmDebug: false, search: "" });
     await vm.load();
     const camera = new PerspectiveCamera();
+    const magazineSurface = vm.viewModelScene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
+    const magazinePositions = magazineSurface.geometry.getAttribute("position");
+    const proxy = new ConvexGeometry(Array.from({ length: magazinePositions.count }, (_, i) =>
+      new Vector3().fromBufferAttribute(magazinePositions, i)));
+    const proxyPositions = proxy.getAttribute("position");
     const fingers = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"];
     const surfaces = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].map((name) => {
       const mesh = vm.viewModelScene.getObjectByName(name) as SkinnedMesh;
@@ -587,6 +630,11 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
           const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(positions, index ? index.getX(i + corner) : i + corner).applyMatrix4(magazine.matrixWorld));
           triangles.push({ triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) });
         }
+        // Preserve crossings against visible triangles and add the closed caps.
+        for (let i = 0; i < proxyPositions.count; i += 3) {
+          const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(proxyPositions, i + corner).applyMatrix4(magazine.matrixWorld));
+          triangles.push({ triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) });
+        }
         names.push("magazine");
         digits.push(triangles);
       }
@@ -644,6 +692,7 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
       }
       samples.push({ progress, triangles: digits.map((digit) => digit.length), intersections });
     }
+    proxy.dispose();
     vm.dispose();
     return samples;
   });

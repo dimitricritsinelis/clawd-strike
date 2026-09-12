@@ -1,0 +1,32 @@
+{
+  "modelId": "covered_souk_receivers_dyers_dogleg",
+  "file": "covered-souk-receivers-dyers-dogleg.glb",
+  "source": "repo://assets/source/unit-covered-souk/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 46,
+    "y": 48,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "fcc8b1521eaffb1668bb58f586775b7ff0fb11c9f243c6727f7ba0393b734cf5",
+  "receiverParcelIds": [
+    "dd-e",
+    "dd-w"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 53,
+      "start": 48.0,
+      "end": 62.0
+    },
+    {
+      "orientation": "vertical",
+      "coord": 46,
+      "start": 48.0,
+      "end": 62.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

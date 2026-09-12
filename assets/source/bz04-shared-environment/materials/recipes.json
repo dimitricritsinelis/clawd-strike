@@ -1,0 +1,170 @@
+{
+  "ph_bz04_painted_plaster_warm": {
+    "id": "bz06_cream_plaster",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_cream_plaster-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_cream_plaster-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_cream_plaster-arm.png"
+    },
+    "sourceRecipeSha256": "9f9077039b771392408decd5c26e1af742ba6b52e638158f3c87d2b5d547f14d",
+    "sha256": {
+      "albedo": "98e13a6175b73f14d089b8764c4ed62bddd6c20dfb0c4780b0cb03b2b442f370",
+      "normal": "9a1f32382b00b99b6fd16bd9249db9d731b7c822df1bb877c78a72e125bc6c1e",
+      "arm": "3cb24e87737ab2e9e1d49598cd8b0baa6fb81abd214e46d35d1e30e087e04dff"
+    }
+  },
+  "ph_bz04_beige_wall_002": {
+    "id": "bz06_sand_plaster",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_sand_plaster-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_sand_plaster-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_sand_plaster-arm.png"
+    },
+    "sourceRecipeSha256": "3e83585f77ce15ab9db216f399ddbba4d4e5be9153517f04ff59b24cd7b611f0",
+    "sha256": {
+      "albedo": "0dc8a7d8c4f5d8b12a9d86002286b732b9899250b3ee000fff721fd452b7bda5",
+      "normal": "8a114674827c89ad05ca11dabae8022877e14c66bcc184c6d593b0c2b1fe7b77",
+      "arm": "cc8d7b181025cda1833fde87785d20a8d96b18025c6e3dd809a7de8ea68dad48"
+    }
+  },
+  "ph_bz04_plastered_wall": {
+    "id": "bz06_pale_lime",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_pale_lime-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_pale_lime-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_pale_lime-arm.png"
+    },
+    "sourceRecipeSha256": "37b679d39379f7d15eeea1d51be3ab5a609f87f11c020e17aec4d3e2f8cee132",
+    "sha256": {
+      "albedo": "01b1349e5c0faccb3fb4cef177a4555ea1dd2b3e04177b97174b27f44e060610",
+      "normal": "8a114674827c89ad05ca11dabae8022877e14c66bcc184c6d593b0c2b1fe7b77",
+      "arm": "cc8d7b181025cda1833fde87785d20a8d96b18025c6e3dd809a7de8ea68dad48"
+    }
+  },
+  "ph_bz04_aged_plaster_ochre": {
+    "id": "bz06_faded_ochre",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_faded_ochre-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_faded_ochre-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_faded_ochre-arm.png"
+    },
+    "sourceRecipeSha256": "8b07bbcc3e2944058cb4e2aaf63f3e24c0bf842242d08cec807b90885cd3056e",
+    "sha256": {
+      "albedo": "870bd166f0ac5c65a23bab03ec4021f9bf20fc3cbcd48f425b83271d045e6a50",
+      "normal": "8a114674827c89ad05ca11dabae8022877e14c66bcc184c6d593b0c2b1fe7b77",
+      "arm": "cc8d7b181025cda1833fde87785d20a8d96b18025c6e3dd809a7de8ea68dad48"
+    }
+  },
+  "ph_bz04_red_plaster_weathered": {
+    "id": "bz06_faded_earth_red",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_faded_earth_red-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_faded_earth_red-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_faded_earth_red-arm.png"
+    },
+    "sourceRecipeSha256": "edc1c58575b4932fd6078fa70e895aeca81bf14918b41c1c86b133954c311bbf",
+    "sha256": {
+      "albedo": "75b877ba6c03fcba46da7003daff6dadc9f85061a3d23dcb3e239d3ccd893a83",
+      "normal": "daeb0ca87a3f3be880ae5ce05909794f78e0be8437faea44d7106a16f606a358",
+      "arm": "d2ec96adb2467dd0b04003f8259c6521063183e21102eae7b6fb9716f71ee4fe"
+    }
+  },
+  "ph_bz04_sandstone_blocks_05": {
+    "id": "bz06_dressed_sandstone",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_dressed_sandstone-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_dressed_sandstone-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_dressed_sandstone-arm.png"
+    },
+    "sourceRecipeSha256": "9be032923a918b16baa307eb42b884712388bdedc2abc27f2f242d1b3db77879",
+    "sha256": {
+      "albedo": "3c796a6957a2cc3519352a68eaf5f7fa925c87662cf19baf2ce69495ce37ad44",
+      "normal": "0db2885d86e3e9cbd69d99c978858dab1a115016765adc0e2778bf80476eb180",
+      "arm": "97e78876987feb69ac6cac9218386ec460dbcc34066a4d4f98d9ab132338030d"
+    }
+  },
+  "ph_bz04_sandstone_blocks_06": {
+    "id": "bz06_service_stone",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_service_stone-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_service_stone-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_service_stone-arm.png"
+    },
+    "sourceRecipeSha256": "59b52f37245affcec34e8a51a244ea6280a37155faeff3b9cf5355e8dd065378",
+    "sha256": {
+      "albedo": "98d00c804e2a9a20751aec197b78b2f79670afc2b32515973e751a151109e204",
+      "normal": "3aad5b55160d6000580bbc1bd7e30d5b8964013e939882b58607e474755caefe",
+      "arm": "551eba3e3f1c87b8516daaee6d5a8fa4e3c1aac66d60f2f3e54f2b5efca995ad"
+    }
+  },
+  "ph_bz04_trim_sanded_01": {
+    "id": "bz06_monolithic_stone_trim",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_monolithic_stone_trim-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_monolithic_stone_trim-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_monolithic_stone_trim-arm.png"
+    },
+    "sourceRecipeSha256": "3a1ce01d6223a0a2b74d193cd7a6fddd6b6c7c45e19ba980102a2e63db4d1ee2",
+    "sha256": {
+      "albedo": "f96d90272893630c8c1573983471563becfc1bcdd7e10dd2d0ca1c47e37a8ee8",
+      "normal": "a0a053bd32ec4a64585f09421adff13282ebb6efc96a64497011ae8dfa3ca8d3",
+      "arm": "5beddbef8cb51e167e7e55c29af61a87c211e0e58faaaed067eb933a069433c0"
+    }
+  },
+  "ph_bz04_hessian_230": {
+    "id": "bz06_cream_woven_cloth",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_cream_woven_cloth-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_cream_woven_cloth-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_cream_woven_cloth-arm.png"
+    },
+    "sourceRecipeSha256": "7623dfb709a06c0333610e61db14dd149df22ea1f35d01bbdf40541f0dacfbe3",
+    "sha256": {
+      "albedo": "7d4c2c79d8a35666c8ce247fba90666cb998b0e4bbc6f74e058e2a16b613c746",
+      "normal": "82e7b25147e3f8d2b0e84463e658ea63fdd0a15c6f8a01f7134844d8a8087bea",
+      "arm": "2973b5bc17b272b1efe69d4517a4b029c71c39145bdd247a8df70194b2cf1b4f"
+    }
+  },
+  "bz04_large_sandstone_blocks_01": {
+    "id": "bz06_rough_service_paving",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_rough_service_paving-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_rough_service_paving-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_rough_service_paving-arm.png"
+    },
+    "sourceRecipeSha256": "e2931f7ee7435a40913fd73b805f0eef8d67a76b45f72e3fec217bb4a5899925",
+    "sha256": {
+      "albedo": "6b3a5644b46a26f468b2e362ae6daff7cae811730005dae78e70d0f5b6105cba",
+      "normal": "98c86efae6cf454b1dfb22af817a368971242804adc7ffa5966903892f19a277",
+      "arm": "7a070b65236be9b5ed45860784321b649c728b4c6582337ae07dc16505ba8547"
+    }
+  },
+  "bz04_court_limestone_flags_01": {
+    "id": "bz06_quiet_flags",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_quiet_flags-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_quiet_flags-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_quiet_flags-arm.png"
+    },
+    "sourceRecipeSha256": "75ff6989322b29d2255d7db2b247ea844cfcf777caec0f10d8b9f30d12750cf5",
+    "sha256": {
+      "albedo": "f3c99ab95789859b8ca81e83d3300e464e9f43c3cb1665e5d74015002f6bd249",
+      "normal": "68844f1aeb3ff7d11f8e217d6b8c842879d17aaa044b53647e7b997ff5e9c83d",
+      "arm": "a80996c04cda1c34fdbc1d1ef10419874f350ad5e580f12b5919293e971d1837"
+    }
+  },
+  "ph_bz04_fine_linen": {
+    "id": "bz06_fine_linen",
+    "textures": {
+      "albedo": "assets/source/bz04-shared-environment/materials/bz06_fine_linen-albedo.png",
+      "normal": "assets/source/bz04-shared-environment/materials/bz06_fine_linen-normal.png",
+      "arm": "assets/source/bz04-shared-environment/materials/bz06_fine_linen-arm.png"
+    },
+    "sourceRecipeSha256": "c825558e26d706c1ba18233d5a0d510aee8988602eae4697cb7038e1c811debb",
+    "sha256": {
+      "albedo": "7d4c2c79d8a35666c8ce247fba90666cb998b0e4bbc6f74e058e2a16b613c746",
+      "normal": "82e7b25147e3f8d2b0e84463e658ea63fdd0a15c6f8a01f7134844d8a8087bea",
+      "arm": "2973b5bc17b272b1efe69d4517a4b029c71c39145bdd247a8df70194b2cf1b4f"
+    }
+  }
+}

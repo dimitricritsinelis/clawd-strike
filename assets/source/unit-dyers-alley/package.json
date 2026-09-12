@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_dyers_alley",
+      "file": "roof-bundle-dyers-alley.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_dyers_alley",
+      "file": "unit-dyers-alley.glb",
+      "source": "repo://assets/source/unit-dyers-alley/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "DYERS_ALLEY",
+    "modelId": "section_unit_dyers_alley",
+    "faces": [
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_ALLEY",
+      "modelId": "bz04_roof_bundle_unit_dyers_alley",
+      "position": {
+        "x": 49.6,
+        "y": 20.7,
+        "z": 4.5
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "2c9b8c1bc9faebf414c3f81bee54964c4465a8b49b2f9a52885e31042d49927c",
+  "dependencyReceivers": []
+}

@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_link_south_east",
+      "file": "roof-bundle-link-south-east.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_link_south_east",
+      "file": "unit-link-south-east.glb",
+      "source": "repo://assets/source/unit-link-south-east/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_SOUTH_EAST",
+    "modelId": "section_unit_link_south_east",
+    "faces": [
+      "north",
+      "east",
+      "south"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST",
+      "modelId": "bz04_roof_bundle_unit_link_south_east",
+      "position": {
+        "x": 43.65,
+        "y": 10.5,
+        "z": 4.5
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "0c51dacbbc50165bed99ebf808f324e3ec49a8f3ee84fee5b9e7c6f4e5c79072"
+}

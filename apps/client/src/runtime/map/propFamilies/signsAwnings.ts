@@ -493,5 +493,9 @@ export function createDyersCanopyWestCarrierGeometry(): BufferGeometry {
   for (const part of parts) {
     if (!part.hasAttribute("color")) applyGeometryTint(part, [.72, .50, .30]);
   }
-  return applyBoxProjectedUv(mergeProceduralGeometry(parts));
+  const geometry = mergeProceduralGeometry(parts);
+  // This assembly was drawn above a datum 1.50 m below the cloth seat.
+  // Runtime spanSeats already supplies the measured seat elevation.
+  geometry.translate(0, -1.50, 0);
+  return applyBoxProjectedUv(geometry);
 }

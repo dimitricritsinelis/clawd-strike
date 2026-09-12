@@ -121,7 +121,7 @@ test("court limestone uses the authored flagstone family with honest quality fal
   assert.equal(resolveFloorTextureSetForQuality(court.textures, "4k").quality, "2k");
 });
 
-test("Fountain and North courts keep distinct authored flagstone scales", () => {
+test("R7 courts and the overlapping North-East link use the approved quiet flags", () => {
   const runtimeSpec = readJson(MAP_SPEC_URL) as {
     zones: Array<{ id: string; floorMaterialId?: string }>;
   };
@@ -131,19 +131,19 @@ test("Fountain and North courts keep distinct authored flagstone scales", () => 
   const teaLanding = runtimeSpec.zones.find((zone) => zone.id === "TEA_LANDING");
   const spawnB = runtimeSpec.zones.find((zone) => zone.id === "SPAWN_B_COURTYARD");
   const northWestLink = runtimeSpec.zones.find((zone) => zone.id === "LINK_NORTH_WEST");
-  assert.equal(fountain?.floorMaterialId, "patterned_cobblestone");
-  assert.equal(north?.floorMaterialId, "court_limestone_flags_01");
+  assert.equal(fountain?.floorMaterialId, "bz04_court_limestone_flags_01");
+  assert.equal(north?.floorMaterialId, "bz04_court_limestone_flags_01");
   assert.equal(
     northEastLink?.floorMaterialId,
     north?.floorMaterialId,
     "the overlapping North-East connector must not expose a checked cobblestone tongue inside North Court",
   );
-  assert.equal(teaLanding?.floorMaterialId, "large_sandstone_blocks_01");
-  assert.equal(spawnB?.floorMaterialId, "bz04_large_sandstone_blocks_01");
+  assert.equal(teaLanding?.floorMaterialId, "bz04_court_limestone_flags_01");
+  assert.equal(spawnB?.floorMaterialId, "bz04_court_limestone_flags_01");
   assert.equal(
     northWestLink?.floorMaterialId,
-    teaLanding?.floorMaterialId,
-    "the overlapping North-West connector must not expose a checked cobblestone tongue beside Tea Landing",
+    "bz04_large_sandstone_blocks_01",
+    "the North-West connector retains its service paving beside the limestone landing",
   );
 
   const floors = parseFloorMaterialManifest(readJson(FLOOR_MANIFEST_URL));
@@ -151,15 +151,12 @@ test("Fountain and North courts keep distinct authored flagstone scales", () => 
   const northMaterial = floors.find((entry) => entry.id === north?.floorMaterialId);
   assert.ok(fountainMaterial);
   assert.ok(northMaterial);
-  assert.match(fountainMaterial.textures["1k"]?.albedo ?? "", /court_flagstone_01/);
-  assert.match(northMaterial.textures["1k"]?.albedo ?? "", /court_flagstone_01/);
-  assert.ok(
-    fountainMaterial.tileSizeM < northMaterial.tileSizeM,
-    "Fountain Court lost its smaller coursed scale relative to North Court",
-  );
+  assert.match(fountainMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
+  assert.match(northMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
+  assert.equal(fountainMaterial.tileSizeM, northMaterial.tileSizeM);
 });
 
-test("Spice Street owns a warm laid-stone scale distinct from Caravan rubble", () => {
+test("R7 Spice and Tea Ramp limestone flags remain distinct from Caravan service paving", () => {
   const runtimeSpec = readJson(MAP_SPEC_URL) as {
     zones: Array<{ id: string; floorMaterialId?: string }>;
   };
@@ -167,10 +164,10 @@ test("Spice Street owns a warm laid-stone scale distinct from Caravan rubble", (
   const ramp = runtimeSpec.zones.find((zone) => zone.id === "TEA_RAMP");
   const caravan = runtimeSpec.zones.find((zone) => zone.id === "CARAVAN_COURT");
   const north = runtimeSpec.zones.find((zone) => zone.id === "NORTH_COURT");
-  assert.equal(spice?.floorMaterialId, "spice_laid_stone_01");
-  assert.equal(ramp?.floorMaterialId, "large_sandstone_blocks_01");
-  assert.equal(caravan?.floorMaterialId, "red_sandstone_pavement");
-  assert.equal(north?.floorMaterialId, "court_limestone_flags_01");
+  assert.equal(spice?.floorMaterialId, "bz04_court_limestone_flags_01");
+  assert.equal(ramp?.floorMaterialId, "bz04_court_limestone_flags_01");
+  assert.equal(caravan?.floorMaterialId, "bz04_large_sandstone_blocks_01");
+  assert.equal(north?.floorMaterialId, "bz04_court_limestone_flags_01");
 
   const floors = parseFloorMaterialManifest(readJson(FLOOR_MANIFEST_URL));
   const spiceMaterial = floors.find((entry) => entry.id === spice?.floorMaterialId);
@@ -181,17 +178,17 @@ test("Spice Street owns a warm laid-stone scale distinct from Caravan rubble", (
   assert.ok(rampMaterial);
   assert.ok(caravanMaterial);
   assert.ok(northMaterial);
-  assert.equal(spiceMaterial.tileSizeM, 3.6);
-  assert.equal(spiceMaterial.tintHex, "#c79b63");
-  assert.equal(spiceMaterial.albedoGamma, 1.02);
-  assert.equal(spiceMaterial.normalScale, 0.68);
-  assert.equal(spiceMaterial.aoIntensity, 0.32);
-  assert.match(spiceMaterial.textures["1k"]?.albedo ?? "", /medieval_blocks_05/);
-  assert.match(rampMaterial.textures["1k"]?.albedo ?? "", /medieval_blocks_05/);
-  assert.notEqual(spiceMaterial.tileSizeM, rampMaterial.tileSizeM);
-  assert.notEqual(spiceMaterial.tintHex, rampMaterial.tintHex);
+  assert.equal(spiceMaterial.tileSizeM, 2.4);
+  assert.equal(spiceMaterial.tintHex, "#ffffff");
+  assert.equal(spiceMaterial.albedoGamma, 1);
+  assert.equal(spiceMaterial.normalScale, 0.3);
+  assert.equal(spiceMaterial.aoIntensity, 0.4);
+  assert.match(spiceMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
+  assert.match(rampMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
+  assert.equal(spiceMaterial.tileSizeM, rampMaterial.tileSizeM);
+  assert.equal(spiceMaterial.tintHex, rampMaterial.tintHex);
   assert.notEqual(spiceMaterial.textures["1k"]?.albedo, caravanMaterial.textures["1k"]?.albedo);
-  assert.notEqual(spiceMaterial.textures["1k"]?.albedo, northMaterial.textures["1k"]?.albedo);
+  assert.equal(spiceMaterial.textures["1k"]?.albedo, northMaterial.textures["1k"]?.albedo);
 });
 
 test("no-upscale resolution is isolated to QA while normal fallback behavior remains compatible", () => {

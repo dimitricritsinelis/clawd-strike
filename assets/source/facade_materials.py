@@ -12,6 +12,7 @@ textures land at the same world scale as the kit walls. Materials are cached per
 """
 from pathlib import Path
 import json
+import hashlib
 
 import bpy
 
@@ -19,6 +20,7 @@ REPO = Path(__file__).resolve().parents[2]
 PACK = REPO / 'apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5'
 _ENTRIES = {m['id']: m for m in json.loads((PACK / 'materials.json').read_text())['materials']}
 _CACHE = {}
+_TARGETS = json.loads((REPO / 'docs/map-design/construction/design.json').read_text())['materials']
 
 
 def entry(material_id):
@@ -55,9 +57,24 @@ def _linear_channel(byte):
 def material(material_id, resolution='1k'):
     if material_id in _CACHE and _CACHE[material_id].users >= 0:
         return _CACHE[material_id]
-    e = entry(material_id)
+    target = _TARGETS.get(material_id, {})
+    recipe = target.get('baseColorRecipe')
+    if recipe:
+        recipes = REPO / 'assets/source/bz04-shared-environment/materials/recipes.json'
+        if not recipes.exists():
+            raise ValueError('Run python3 assets/source/bz04_material_recipes.py before R7 construction')
+        baked = json.loads(recipes.read_text())[material_id]
+        digest = hashlib.sha256(json.dumps(target, sort_keys=True).encode()).hexdigest()
+        if baked['sourceRecipeSha256'] != digest:
+            raise ValueError(f'Stale derived material recipe: {material_id}')
+        for channel, relative in baked['textures'].items():
+            if hashlib.sha256((REPO / relative).read_bytes()).hexdigest() != baked['sha256'][channel]:
+                raise ValueError(f'Derived material changed: {relative}')
+        e = {**target, 'textures': {'1k': {k: str(REPO/v) for k,v in baked['textures'].items()}}, 'tintHex': '#ffffff', 'albedoBoost': 1}
+    else:
+        e = entry(material_id)
     textures = e['textures'].get(resolution) or next(iter(e['textures'].values()))
-    mat = bpy.data.materials.new(material_id)
+    mat = bpy.data.materials.new(recipe['exportName'] if recipe else material_id)
     mat.use_nodes = True
     nodes, links = mat.node_tree.nodes, mat.node_tree.links
     bsdf = nodes['Principled BSDF']
@@ -79,7 +96,10 @@ def material(material_id, resolution='1k'):
     roughness.inputs[1].default_value = float(e.get('roughness', 0.95))
     links.new(split.outputs['Green'], roughness.inputs[0])
     links.new(roughness.outputs[0], bsdf.inputs['Roughness'])
-    links.new(split.outputs['Blue'], bsdf.inputs['Metallic'])
+    if 'metalness' in e:
+        bsdf.inputs['Metallic'].default_value = e['metalness']
+    else:
+        links.new(split.outputs['Blue'], bsdf.inputs['Metallic'])
     occlusion = nodes.new('ShaderNodeGroup'); occlusion.node_tree = _gltf_output_group(); occlusion.location = (0, -250)
     links.new(split.outputs['Red'], occlusion.inputs['Occlusion'])
 
@@ -90,6 +110,11 @@ def material(material_id, resolution='1k'):
     links.new(normal_map.outputs['Normal'], bsdf.inputs['Normal'])
 
     mat['tileSizeM'] = float(e['tileSizeM'])
+    if recipe:
+        mat['bz04SourceMaterial'] = material_id
+        mat['bz04RecipeMode'] = recipe['mode']
+        if target.get('surfaceCropRecipe'):
+            mat['bz04UvRepeat'] = target['surfaceCropRecipe']['mirrorTileWorldSizeM']
     _CACHE[material_id] = mat
     return mat
 
@@ -131,13 +156,20 @@ def world_uv(obj, tile_size_m):
     mesh = obj.data
     uv = mesh.uv_layers.active or mesh.uv_layers.new(name='UVMap')
     normal_matrix = obj.matrix_world.to_3x3().inverted().transposed()
+    repeat = mesh.materials[0].get('bz04UvRepeat') if mesh.materials else None
+    lengths = [max(v.co[i] for v in mesh.vertices)-min(v.co[i] for v in mesh.vertices) for i in range(3)] if repeat else None
     for face in mesh.polygons:
         normal = normal_matrix @ face.normal
         axis = max(range(3), key=lambda i: abs(normal[i]))
         for loop_index in face.loop_indices:
             point = obj.matrix_world @ mesh.vertices[mesh.loops[loop_index].vertex_index].co
             axes = (1, 2) if axis == 0 else (0, 2) if axis == 1 else (0, 1)
-            uv.data[loop_index].uv = (point[axes[0]] / tile_size_m, point[axes[1]] / tile_size_m)
+            if repeat:
+                along = max(axes, key=lambda i: lengths[i])
+                across = next(i for i in axes if i != along)
+                uv.data[loop_index].uv = (point[along]/repeat[0], point[across]/repeat[1])
+            else:
+                uv.data[loop_index].uv = (point[axes[0]] / tile_size_m, point[axes[1]] / tile_size_m)
     obj.select_set(False)
 
 

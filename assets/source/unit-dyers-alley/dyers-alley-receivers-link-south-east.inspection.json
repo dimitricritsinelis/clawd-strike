@@ -1,0 +1,245 @@
+{
+  "inputSha256": "0c51dacbbc50165bed99ebf808f324e3ec49a8f3ee84fee5b9e7c6f4e5c79072",
+  "designRevision": {
+    "id": "R7 link south east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-dyers-alley/dyers-alley-receivers-link-south-east.glb",
+  "triangles": 40,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      3.4000000953674316,
+      -0.019999999552965164,
+      5.0
+    ],
+    "max": [
+      7.0,
+      7.0,
+      5.5
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.20000000000000284,
+      -0.02,
+      -0.7000000000000002
+    ],
+    "max": [
+      7.700000000000003,
+      10.219999999999999,
+      5.699999999999999
+    ]
+  },
+  "objects": [
+    {
+      "id": "lse-n-part-2-field",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.001",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.002",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.003",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.0,
+          4.5
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.004",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.005",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.006",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-field.007",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          4.5
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-n-part-2-party-joint-reveal",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4070000648498535,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.4079999923706055,
+          -5.0,
+          4.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lse-n-part-2-base-closure",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.5,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.0,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "c41cd7d3c18f46021eac49b1776e65ffad61a42ec88e76eb6a4982bd37530d6c",
+  "sourcePolygonTriangles": 40,
+  "materials": [
+    "bz06_faded_ochre"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 7,
+    "maxMaterials": 7,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 6
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 40,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 7,
+      "maxRenderedPrimitives": 7,
+      "maxShadowPrimitives": 6
+    },
+    "overTarget": []
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "modelId": "fountain_receivers_rug_gate",
+  "file": "fountain-receivers-rug-gate.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 21,
+    "y": 64,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "0c2be8d4c99a4df91386e94047dee003b753099ebafa830458219ad90c74f51d",
+  "receiverParcelIds": [
+    "R_E_SOUTH",
+    "R_S_CAP"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 34,
+      "start": 64.0,
+      "end": 67.0
+    },
+    {
+      "orientation": "horizontal",
+      "coord": 64,
+      "start": 21.0,
+      "end": 24.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

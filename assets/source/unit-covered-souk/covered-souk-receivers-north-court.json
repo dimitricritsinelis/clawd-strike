@@ -1,0 +1,25 @@
+{
+  "modelId": "covered_souk_receivers_north_court",
+  "file": "covered-souk-receivers-north-court.glb",
+  "source": "repo://assets/source/unit-covered-souk/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 41,
+    "y": 62,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "3a79f347ba81e0f49596d3b2033a77da125ccc3623a1ce3fc99bb9ed0eee736e",
+  "receiverParcelIds": [
+    "nc-s"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 62,
+      "start": 41.0,
+      "end": 46.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

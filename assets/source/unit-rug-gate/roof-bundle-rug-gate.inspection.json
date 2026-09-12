@@ -1,4 +1,9 @@
 {
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 rug gate facade-centered upper openings",
+    "status": "PROPOSED"
+  },
   "asset": "assets/source/unit-rug-gate/roof-bundle-rug-gate.glb",
   "triangles": 300,
   "primitives": 5,
@@ -30,7 +35,7 @@
   "objects": [
     {
       "id": "ROOF_CELL_003-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -48,7 +53,7 @@
     },
     {
       "id": "ROOF_CELL_064-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -66,7 +71,7 @@
     },
     {
       "id": "ROOF_CELL_064-finish",
-      "material": "ph_bz04_aged_plaster_ochre",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -84,7 +89,7 @@
     },
     {
       "id": "ROOF_CELL_065-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -102,7 +107,7 @@
     },
     {
       "id": "ROOF_CELL_065-finish",
-      "material": "ph_bz04_aged_plaster_ochre",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -120,7 +125,7 @@
     },
     {
       "id": "ROOF_CELL_066-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -138,7 +143,7 @@
     },
     {
       "id": "ROOF_CELL_066-finish",
-      "material": "ph_bz04_aged_plaster_ochre",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -156,7 +161,7 @@
     },
     {
       "id": "ROOF_EDGE_099-parapet",
-      "material": "ph_bz04_painted_plaster_warm.001",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -174,7 +179,7 @@
     },
     {
       "id": "ROOF_EDGE_099-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -192,7 +197,7 @@
     },
     {
       "id": "ROOF_EDGE_100-parapet",
-      "material": "ph_bz04_painted_plaster_warm.001",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -210,7 +215,7 @@
     },
     {
       "id": "ROOF_EDGE_100-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -228,7 +233,7 @@
     },
     {
       "id": "ROOF_EDGE_101-parapet",
-      "material": "ph_bz04_painted_plaster_warm.001",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -246,7 +251,7 @@
     },
     {
       "id": "ROOF_EDGE_101-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -264,7 +269,7 @@
     },
     {
       "id": "ROOF_EDGE_120-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -282,7 +287,7 @@
     },
     {
       "id": "ROOF_EDGE_120-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -300,7 +305,7 @@
     },
     {
       "id": "ROOF_EDGE_121-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -318,7 +323,7 @@
     },
     {
       "id": "ROOF_EDGE_121-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -336,7 +341,7 @@
     },
     {
       "id": "ROOF_EDGE_122-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -354,7 +359,7 @@
     },
     {
       "id": "ROOF_EDGE_122-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -372,7 +377,7 @@
     },
     {
       "id": "ROOF_EDGE_144-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -390,7 +395,7 @@
     },
     {
       "id": "ROOF_EDGE_144-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -408,7 +413,7 @@
     },
     {
       "id": "ROOF_EDGE_145-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -426,7 +431,7 @@
     },
     {
       "id": "ROOF_EDGE_145-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -444,7 +449,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_RUG_EAST_GATEKEEPER_1",
-      "material": "ph_bz04_rusty_metal_02.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -462,7 +467,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_RUG_MERCHANT_1",
-      "material": "ph_bz04_rusty_metal_02.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -479,5 +484,31 @@
       "triangles": 12
     }
   ],
-  "sha256": "78c7d452354a4ceed784e35c80a121554225fd7ba4cf8a753da68e8809cebc52"
+  "sha256": "0225f9fc5a1136245b63b55a2fa0921ad3e82c5f5fc5cdd66e781f79d6b6bd8f",
+  "sourcePolygonTriangles": 300,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz06_cream_plaster",
+    "bz06_faded_ochre",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 1768,
+    "maxRenderedPrimitives": 6
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 300,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 3
+    },
+    "targets": {
+      "maxTriangles": 1768,
+      "maxRenderedPrimitives": 6
+    },
+    "overTarget": []
+  }
 }

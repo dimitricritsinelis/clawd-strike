@@ -1,0 +1,67 @@
+{
+  "modelId": "fountain_receivers_textile_arcade",
+  "file": "fountain-receivers-textile-arcade.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 24,
+    "y": 48,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "ae567f0b16e2c25563c59934f3c7f3207c8957f8be987b8bac6d5675726c260d",
+  "receiverParcelIds": [
+    "T_E_CART",
+    "T_E_GALLERY",
+    "T_E_LOOM",
+    "T_N_CAP",
+    "T_W_DYER",
+    "T_W_FOLDS",
+    "T_W_LOOM"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 64,
+      "start": 34.0,
+      "end": 35.0
+    },
+    {
+      "orientation": "vertical",
+      "coord": 35,
+      "start": 48.0,
+      "end": 53.65
+    },
+    {
+      "orientation": "vertical",
+      "coord": 35,
+      "start": 53.65,
+      "end": 59.1
+    },
+    {
+      "orientation": "vertical",
+      "coord": 35,
+      "start": 59.1,
+      "end": 64.0
+    },
+    {
+      "orientation": "vertical",
+      "coord": 24,
+      "start": 48.0,
+      "end": 53.65
+    },
+    {
+      "orientation": "vertical",
+      "coord": 24,
+      "start": 53.65,
+      "end": 59.1
+    },
+    {
+      "orientation": "vertical",
+      "coord": 24,
+      "start": 59.1,
+      "end": 64.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

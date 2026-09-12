@@ -1,27 +1,40 @@
 {
   "models": [
     {
-      "id": "rug_west_face",
-      "file": "rug-west.glb",
-      "source": "repo://assets/source/unit-rug-gate/build.py",
+      "id": "bz04_roof_bundle_unit_rug_gate",
+      "file": "roof-bundle-rug-gate.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
       "license": "Project-Original"
     },
     {
-      "id": "rug_east_face",
-      "file": "rug-east.glb",
-      "source": "repo://assets/source/unit-rug-gate/build.py",
-      "license": "Project-Original"
-    },
-    {
-      "id": "rug_east_south_face",
-      "file": "rug-east-south.glb",
+      "id": "section_unit_rug_gate",
+      "file": "unit-rug-gate.glb",
       "source": "repo://assets/source/unit-rug-gate/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_RUG_GATE_WEST": "rug_west_face",
-    "FRONTAGE_RUG_GATE_EAST": "rug_east_face",
-    "FRONTAGE_RUG_GATE_EAST_SOUTH": "rug_east_south_face"
-  }
+  "section": {
+    "zoneId": "RUG_GATE",
+    "modelId": "section_unit_rug_gate",
+    "faces": [
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_RUG_GATE",
+      "modelId": "bz04_roof_bundle_unit_rug_gate",
+      "position": {
+        "x": 28.0,
+        "y": 71.0,
+        "z": 9.9
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "0c2be8d4c99a4df91386e94047dee003b753099ebafa830458219ad90c74f51d",
+  "dependencyReceivers": []
 }

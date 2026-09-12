@@ -1,0 +1,309 @@
+{
+  "inputSha256": "7848d852d5aa8bfe7fe301efe595b2fde26570114c0b10e38cf5c89da823b1c5",
+  "designRevision": {
+    "id": "R7 link south west facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-south-west/spawn-a-receiver-lsw-s-part-2.glb",
+  "triangles": 100,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -1.5499999523162842,
+      -0.019999999552965164,
+      -0.25
+    ],
+    "max": [
+      1.5499999523162842,
+      9.899999618530273,
+      0.4099999964237213
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -1.549999999999999,
+      -0.02,
+      -0.25
+    ],
+    "max": [
+      1.5500000000000007,
+      9.9,
+      0.41000000000000014
+    ]
+  },
+  "objects": [
+    {
+      "id": "lsw-s-part-2-field",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.23499999940395355,
+          0.0
+        ],
+        "max": [
+          -1.5425000190734863,
+          -0.23499999940395355,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.001",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.23499999940395355,
+          0.11999999731779099
+        ],
+        "max": [
+          -1.5425000190734863,
+          -0.23499999940395355,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.002",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.23499999940395355,
+          0.18000000715255737
+        ],
+        "max": [
+          -1.5425000190734863,
+          -0.23499999940395355,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.003",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.25,
+          4.5
+        ],
+        "max": [
+          -1.5425000190734863,
+          -0.25,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.004",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5425000190734863,
+          -0.25,
+          0.0
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.25,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.005",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5425000190734863,
+          -0.25,
+          0.11999999731779099
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.25,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.006",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5425000190734863,
+          -0.25,
+          0.18000000715255737
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.25,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-field.007",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5425000190734863,
+          -0.25,
+          4.5
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.25,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lsw-s-part-2-party-joint-reveal",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5429999828338623,
+          -0.25,
+          0.0
+        ],
+        "max": [
+          -1.5420000553131104,
+          -0.23499999940395355,
+          4.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-end-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          -1.5299999713897705,
+          0.25,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-end-closure.001",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5299999713897705,
+          -0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          1.5499999523162842,
+          0.25,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-back",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          1.5499999523162842,
+          0.25,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-base-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.23000000417232513,
+          -0.019999999552965164
+        ],
+        "max": [
+          1.5499999523162842,
+          0.25,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-cornice-0",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.4099999964237213,
+          9.748000144958496
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.23000000417232513,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lsw-s-part-2-cornice-bearing",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.5499999523162842,
+          -0.38499999046325684,
+          9.739999771118164
+        ],
+        "max": [
+          1.5499999523162842,
+          -0.23000000417232513,
+          9.748000144958496
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "f0d97871336e2c68c0d85401aead8faea598d465a0b44e73cb960b25a1d36b17",
+  "sourcePolygonTriangles": 100
+}

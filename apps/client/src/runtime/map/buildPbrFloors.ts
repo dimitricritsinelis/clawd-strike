@@ -3,6 +3,7 @@ import type { FloorMaterialLibrary, FloorTextureQuality } from "../render/materi
 import { applyFloorShaderTweaks } from "../render/materials/applyFloorShaderTweaks";
 import { deriveSubSeed } from "../utils/Rng";
 import { resolveFloorMaterialIdForZone } from "./floorMaterialAssignment";
+import { bz04FloorTreatmentShader } from "./bz04Trial";
 import type {
   RuntimeBlockoutSpec,
   RuntimeBlockoutZone,
@@ -118,6 +119,7 @@ type BuildPbrFloorsOptions = {
   manifest: FloorMaterialLibrary;
   patchSizeM: number;
   floorTopY: number;
+  bz04FloorTreatments?: readonly unknown[];
 };
 
 const MATERIAL_ORDER: FloorMaterialId[] = [
@@ -904,7 +906,17 @@ function createFloorMaterial(
     macroFrequency: macro.frequency,
     macroSeed: deriveSubSeed(opts.seed, `floor-macro:${materialId}`),
   });
-  if (materialId === "bz04_large_sandstone_blocks_01") {
+  const treatment = namePrefix === "floor" ? (opts.bz04FloorTreatments ?? [])
+    .map(value => bz04FloorTreatmentShader(value, materialId)).join("\n") : "";
+  if (treatment.trim()) {
+    const previous = material.onBeforeCompile;
+    material.onBeforeCompile = (shader, renderer) => {
+      previous.call(material, shader, renderer);
+      shader.fragmentShader = shader.fragmentShader.replace("#include <roughnessmap_fragment>", `#include <roughnessmap_fragment>\n${treatment}`);
+    };
+    const cacheKey = material.customProgramCacheKey.bind(material);
+    material.customProgramCacheKey = () => cacheKey()+treatment;
+  } else if (materialId === "bz04_large_sandstone_blocks_01") {
     // BZ-04 courtyard floorTreatment. These exact receivers have no decal mesh
     // and no height change. Door approaches and open connectors remain clean.
     const previous = material.onBeforeCompile;

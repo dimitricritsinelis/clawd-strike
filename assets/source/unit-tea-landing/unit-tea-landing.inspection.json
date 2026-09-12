@@ -1,0 +1,805 @@
+{
+  "inputSha256": "7e37166bc68478980d2a2d64fca304c58110b098057438cc9edb6d3405e1db88",
+  "designRevision": {
+    "id": "R7 tea landing facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-tea-landing/unit-tea-landing.glb",
+  "triangles": 192,
+  "primitives": 3,
+  "castPrimitives": 3,
+  "actualBoundsGltf": {
+    "min": [
+      -0.6000000238418579,
+      -0.019999999552965164,
+      0.0
+    ],
+    "max": [
+      8.0,
+      4.5,
+      5.099999904632568
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.7999999999999989,
+      -0.02,
+      -0.20000000000000284
+    ],
+    "max": [
+      8.2,
+      4.52,
+      5.299999999999997
+    ]
+  },
+  "objects": [
+    {
+      "id": "tl-n-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -4.5,
+          0.0
+        ],
+        "max": [
+          6.159999847412109,
+          -4.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -4.5,
+          0.11999999731779099
+        ],
+        "max": [
+          6.159999847412109,
+          -4.5,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -4.5,
+          0.18000000715255737
+        ],
+        "max": [
+          6.159999847412109,
+          -4.5,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -4.5,
+          0.6000000238418579
+        ],
+        "max": [
+          6.159999847412109,
+          -4.5,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -4.5,
+          4.0
+        ],
+        "max": [
+          6.159999847412109,
+          -4.5,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.5,
+          0.0
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.5,
+          0.11999999731779099
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.5,
+          0.18000000715255737
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.008",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.545000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          7.840000152587891,
+          -4.545000076293945,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-pier-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.158999919891357,
+          -4.545000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          6.160999774932861,
+          -4.5,
+          4.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-n-pier-reveal.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.839000225067139,
+          -4.545000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          7.841000080108643,
+          -4.5,
+          4.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-n-band-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.545000076293945,
+          0.5989999771118164
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          0.6010000109672546
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-n-band-reveal.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.545000076293945,
+          3.999000072479248
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          4.000999927520752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-n-field.009",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.159999847412109,
+          -4.5,
+          4.0
+        ],
+        "max": [
+          7.840000152587891,
+          -4.5,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.010",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.840000152587891,
+          -4.5,
+          0.0
+        ],
+        "max": [
+          8.0,
+          -4.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.011",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.840000152587891,
+          -4.5,
+          0.11999999731779099
+        ],
+        "max": [
+          8.0,
+          -4.5,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.012",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.840000152587891,
+          -4.5,
+          0.18000000715255737
+        ],
+        "max": [
+          8.0,
+          -4.5,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.013",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.840000152587891,
+          -4.5,
+          0.6000000238418579
+        ],
+        "max": [
+          8.0,
+          -4.5,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-field.014",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.840000152587891,
+          -4.5,
+          4.0
+        ],
+        "max": [
+          8.0,
+          -4.5,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-n-base-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.0,
+          -5.099999904632568,
+          -0.019999999552965164
+        ],
+        "max": [
+          8.0,
+          -4.519999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          0.0
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          0.11999999731779099
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          0.18000000715255737
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          0.6000000238418579
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          4.0
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -3.8399999141693115,
+          0.0
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -3.8399999141693115,
+          0.11999999731779099
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -3.8399999141693115,
+          0.18000000715255737
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.008",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.04500000178813934,
+          -3.8399999141693115,
+          0.6000000238418579
+        ],
+        "max": [
+          -0.04500000178813934,
+          -0.1599999964237213,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-pier-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.04500000178813934,
+          -0.16099999845027924,
+          0.6000000238418579
+        ],
+        "max": [
+          0.0,
+          -0.1589999943971634,
+          4.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-pier-reveal.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.04500000178813934,
+          -3.8410000801086426,
+          0.6000000238418579
+        ],
+        "max": [
+          0.0,
+          -3.8389999866485596,
+          4.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-band-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.04500000178813934,
+          -3.8399999141693115,
+          0.5989999771118164
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          0.6010000109672546
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-band-reveal.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.04500000178813934,
+          -3.8399999141693115,
+          3.999000072479248
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          4.000999927520752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-field.009",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -3.8399999141693115,
+          4.0
+        ],
+        "max": [
+          0.0,
+          -0.1599999964237213,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.010",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -4.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          -3.8399999141693115,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.011",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -4.0,
+          0.11999999731779099
+        ],
+        "max": [
+          0.0,
+          -3.8399999141693115,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.012",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -4.0,
+          0.18000000715255737
+        ],
+        "max": [
+          0.0,
+          -3.8399999141693115,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.013",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -4.0,
+          0.6000000238418579
+        ],
+        "max": [
+          0.0,
+          -3.8399999141693115,
+          4.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-field.014",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -4.0,
+          4.0
+        ],
+        "max": [
+          0.0,
+          -3.8399999141693115,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tl-w-end-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.20000000298023224,
+          -0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          4.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tl-w-base-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          -4.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "3043e0c3390c4e33b40ac9a7d225134d54e931c6719aa7bf50373356bfd7ff44",
+  "sourcePolygonTriangles": 192,
+  "materials": [
+    "bz06_dressed_sandstone",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 12000,
+    "maxMaterials": 4,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxRenderedPrimitives": 4,
+    "maxShadowPrimitives": 3
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 192,
+      "maxMaterials": 3,
+      "maxRenderedPrimitives": 3,
+      "maxShadowPrimitives": 3
+    },
+    "targets": {
+      "maxTriangles": 12000,
+      "maxMaterials": 4,
+      "maxRenderedPrimitives": 4,
+      "maxShadowPrimitives": 3
+    },
+    "overTarget": []
+  }
+}

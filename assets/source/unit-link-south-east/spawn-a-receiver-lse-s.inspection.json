@@ -1,0 +1,273 @@
+{
+  "inputSha256": "0c51dacbbc50165bed99ebf808f324e3ec49a8f3ee84fee5b9e7c6f4e5c79072",
+  "designRevision": {
+    "id": "R7 link south east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-south-east/spawn-a-receiver-lse-s.glb",
+  "triangles": 76,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -1.600000023841858,
+      -0.019999999552965164,
+      -0.25
+    ],
+    "max": [
+      1.600000023841858,
+      10.199999809265137,
+      0.25
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -1.6000000000000014,
+      -0.02,
+      -0.25
+    ],
+    "max": [
+      1.6000000000000014,
+      10.2,
+      0.25
+    ]
+  },
+  "objects": [
+    {
+      "id": "lse-s-field",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.25,
+          0.0
+        ],
+        "max": [
+          1.5924999713897705,
+          -0.25,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.001",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.25,
+          0.11999999731779099
+        ],
+        "max": [
+          1.5924999713897705,
+          -0.25,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.002",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.25,
+          0.18000000715255737
+        ],
+        "max": [
+          1.5924999713897705,
+          -0.25,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.003",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.25,
+          4.5
+        ],
+        "max": [
+          1.5924999713897705,
+          -0.25,
+          10.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.004",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5924999713897705,
+          -0.23499999940395355,
+          0.0
+        ],
+        "max": [
+          1.600000023841858,
+          -0.23499999940395355,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.005",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5924999713897705,
+          -0.23499999940395355,
+          0.11999999731779099
+        ],
+        "max": [
+          1.600000023841858,
+          -0.23499999940395355,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.006",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5924999713897705,
+          -0.23499999940395355,
+          0.18000000715255737
+        ],
+        "max": [
+          1.600000023841858,
+          -0.23499999940395355,
+          4.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-field.007",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5924999713897705,
+          -0.25,
+          4.5
+        ],
+        "max": [
+          1.600000023841858,
+          -0.25,
+          10.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lse-s-party-joint-reveal",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5920000076293945,
+          -0.25,
+          0.0
+        ],
+        "max": [
+          1.593000054359436,
+          -0.23499999940395355,
+          4.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lse-s-end-closure",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          -1.5800000429153442,
+          0.25,
+          10.199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lse-s-end-closure.001",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5800000429153442,
+          -0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          1.600000023841858,
+          0.25,
+          10.199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lse-s-back",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          0.23000000417232513,
+          0.0
+        ],
+        "max": [
+          1.600000023841858,
+          0.25,
+          10.199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lse-s-base-closure",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.600000023841858,
+          -0.23000000417232513,
+          -0.019999999552965164
+        ],
+        "max": [
+          1.600000023841858,
+          0.25,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "a589eb885935e1b236be293941db6f66c98f5b2c7b2a2ef64ab34dfb59fb3775",
+  "sourcePolygonTriangles": 76
+}

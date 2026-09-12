@@ -1,0 +1,114 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 link south east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-south-east/roof-bundle-link-south-east.glb",
+  "triangles": 36,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -2.8499999046325684,
+      0.0,
+      -3.0
+    ],
+    "max": [
+      2.8499999046325684,
+      0.11999999731779099,
+      3.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      2.88,
+      0.12,
+      3.03
+    ],
+    "min": [
+      -2.88,
+      0,
+      -3.03
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_012-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.8499999046325684,
+          -3.0,
+          0.0
+        ],
+        "max": [
+          -1.25,
+          -2.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_013-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.4500000476837158,
+          2.5,
+          0.0
+        ],
+        "max": [
+          2.3499999046325684,
+          3.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_014-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.3499999046325684,
+          1.100000023841858,
+          0.0
+        ],
+        "max": [
+          2.8499999046325684,
+          2.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "7f9c8b58168515ae732b2e4c151a3ad00f26686c94c8185dc0b3f7b2ca83f994",
+  "sourcePolygonTriangles": 36,
+  "materials": [
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 810,
+    "maxRenderedPrimitives": 1
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 36,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 810,
+      "maxRenderedPrimitives": 1
+    },
+    "overTarget": []
+  }
+}

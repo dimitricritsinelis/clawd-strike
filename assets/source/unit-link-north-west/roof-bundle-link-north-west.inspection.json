@@ -1,0 +1,171 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 link north west facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-north-west/roof-bundle-link-north-west.glb",
+  "triangles": 72,
+  "primitives": 2,
+  "castPrimitives": 2,
+  "actualBoundsGltf": {
+    "min": [
+      -2.0,
+      8.881784197001252e-16,
+      -3.1500000953674316
+    ],
+    "max": [
+      2.0,
+      2.5199999809265137,
+      3.1500000953674316
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      2.03,
+      2.52,
+      3.18
+    ],
+    "min": [
+      -2.03,
+      0,
+      -3.18
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_009-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.0,
+          -2.450000047683716,
+          2.4000000953674316
+        ],
+        "max": [
+          -1.399999976158142,
+          -2.1500000953674316,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_010-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -1.399999976158142,
+          -3.1500000953674316,
+          2.4000000953674316
+        ],
+        "max": [
+          2.0,
+          -2.450000047683716,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_011-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          2.549999952316284,
+          2.4000000953674316
+        ],
+        "max": [
+          -0.4000000059604645,
+          3.1500000953674316,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_017",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          3.130000114440918,
+          8.881784197001252e-16
+        ],
+        "max": [
+          -0.4000000059604645,
+          3.1500000953674316,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_SEAM_001-upstand",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.0,
+          -2.2300000190734863,
+          2.5
+        ],
+        "max": [
+          -1.399999976158142,
+          -2.069999933242798,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_SEAM_005-upstand",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6800000071525574,
+          2.549999952316284,
+          2.5
+        ],
+        "max": [
+          -0.5199999809265137,
+          3.1500000953674316,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "5f05ed3950a27ef5da43ecda0925dd84121147659a970e98082190ee20cfda97",
+  "sourcePolygonTriangles": 72,
+  "materials": [
+    "bz06_dressed_sandstone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 954,
+    "maxRenderedPrimitives": 1
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 72,
+      "maxMaterials": 2,
+      "maxRenderedPrimitives": 2,
+      "maxShadowPrimitives": 2
+    },
+    "targets": {
+      "maxTriangles": 954,
+      "maxRenderedPrimitives": 1
+    },
+    "overTarget": [
+      "maxRenderedPrimitives"
+    ]
+  }
+}

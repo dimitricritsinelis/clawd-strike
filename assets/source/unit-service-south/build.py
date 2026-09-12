@@ -1,178 +1,164 @@
-"""Service South plaster backs, high blind niches and service vents. Metres, Z up, street -Y; scanned CC0 PBR."""
-import math
+"""Build the complete approved R7 Service South section from its frozen handoff.
+
+The shared courtyard primitives and Spawn A envelope builder preserve all open
+mouths. Roof bundle/floor bindings and producer retirement are whole-map operations.
+"""
 from pathlib import Path
-import bpy
+import hashlib
+import importlib.util
+import json
+import runpy
+import sys
 
-ROOT = Path(__file__).resolve().parents[3]
-OUT = Path(__file__).resolve().parent
-TEX = ROOT / 'apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05'
+ROOT=Path(__file__).resolve().parents[3]
+OUT=Path(__file__).resolve().parent
+UNIT='unit-service-south'
 
-def material(texture='sandstone_blocks_05'):
-    mat = bpy.data.materials.new('Scanned ' + texture)
-    mat.use_nodes = True
-    nodes, links = mat.node_tree.nodes, mat.node_tree.links
-    shader = nodes.get('Principled BSDF')
-    for suffix, kind in [('diff', 'color'), ('nor_gl', 'normal'), ('arm', 'arm')]:
-        tex = nodes.new('ShaderNodeTexImage')
-        tex.image = bpy.data.images.load(str(TEX.parent / texture / f'{texture}_{suffix}_1k.jpg'))
-        tex.image.pack()
-        if kind == 'color':
-            if texture in ('painted_plaster_wall', 'worn_plaster_wall'):
-                multiply = nodes.new('ShaderNodeMixRGB')
-                multiply.blend_type = 'MULTIPLY'
-                multiply.inputs[0].default_value = 1
-                multiply.inputs[2].default_value = (0.82, 0.66, 0.46, 1)
-                links.new(tex.outputs['Color'], multiply.inputs[1])
-                links.new(multiply.outputs['Color'], shader.inputs['Base Color'])
-            else:
-                links.new(tex.outputs['Color'], shader.inputs['Base Color'])
-        else:
-            tex.image.colorspace_settings.name = 'Non-Color'
-            if kind == 'normal':
-                normal = nodes.new('ShaderNodeNormalMap')
-                normal.inputs['Strength'].default_value = 0.65
-                links.new(tex.outputs['Color'], normal.inputs['Color'])
-                links.new(normal.outputs['Normal'], shader.inputs['Normal'])
-            else:
-                split = nodes.new('ShaderNodeSeparateColor')
-                links.new(tex.outputs['Color'], split.inputs['Color'])
-                links.new(split.outputs['Green'], shader.inputs['Roughness'])
-                links.new(split.outputs['Blue'], shader.inputs['Metallic'])
-                group = bpy.data.node_groups.new('glTF Material Output', 'ShaderNodeTree')
-                group.interface.new_socket(name='Occlusion', in_out='INPUT', socket_type='NodeSocketFloat')
-                ao = nodes.new('ShaderNodeGroup')
-                ao.node_tree = group
-                links.new(split.outputs['Red'], ao.inputs['Occlusion'])
-    return mat
 
-def block(name, pos, size, mat, bevel=0.012):
-    bpy.ops.mesh.primitive_cube_add(size=1, location=pos)
-    ob = bpy.context.object
-    ob.name = name
-    ob.dimensions = size
-    bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-    ob.data.materials.append(mat)
-    # World-size planar UVs keep each scan's masonry at a consistent two-metre scale.
-    uv = ob.data.uv_layers.active
-    for poly in ob.data.polygons:
-        axis = max(range(3), key=lambda a: abs(poly.normal[a]))
-        axes = ((1,2), (0,2), (0,1))[axis]
-        for li in poly.loop_indices:
-            co = ob.data.vertices[ob.data.loops[li].vertex_index].co + ob.location
-            scale = 4 if 'plaster' in mat.name else 2
-            uv.data[li].uv = (co[axes[0]] / scale, co[axes[1]] / scale)
-    if bevel:
-        mod = ob.modifiers.new('Worn stone edges', 'BEVEL')
-        mod.width, mod.segments = bevel, 2
-        bpy.ops.object.modifier_apply(modifier=mod.name)
-    return ob
+def validate_handoff(saved,current=None):
+    encoded={k:v for k,v in saved.items() if k not in {'source','designSha256','reading','inputSha256'}}
+    digest=hashlib.sha256(json.dumps(encoded,sort_keys=True,separators=(',',':')).encode()).hexdigest()
+    current=current or runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract'](UNIT)
+    if saved.get('unit')!=UNIT or digest!=saved.get('inputSha256') or digest!=current['inputSha256']:
+        raise ValueError('Service South handoff changed or is corrupt; no output replaced')
+    supported={'openingProfiles':{'rectangular','segmental'},'openingCraftProfiles':{'planked-receiving'},
+        'glazingPatterns':set(),'featureKinds':set(),'landscapeKinds':set(),'partKinds':set(),
+        'craftRecipes':{'CF-ENVELOPE','CF-FLOOR','CF-JOINT','CF-OPEN','CF-R4-PORTAL'}}
+    for key,allowed in supported.items():
+        if set(saved['requiredCapabilities'][key])-allowed:raise ValueError(('unsupported capability',key,saved['requiredCapabilities'][key]))
+    a=saved['areas'][0]
+    assert a['zone']=='SERVICE_SOUTH' and not a['fixtures'] and not a['activityGroups']
+    return a
 
-bpy.ops.object.select_all(action='SELECT')
-bpy.ops.object.delete(use_global=False)
-plaster = material('painted_plaster_wall')
-stone = material('sandstone_blocks_05')
-wood = material('worn_planks')
-wear = material('worn_plaster_wall')
-width=15.8
-# The thin skin and blind recesses leave the protected kit wall intact.
-block('Blind plaster backing',(0,-0.018,2.45),(width,0.036,4.9),plaster,0)
-# Three high blind niches, each at its authored quarter point.
-centres=[-3.95,0,3.95]
-last=-width/2
-for x in centres:
-    left,right=x-0.48,x+0.48
-    block('Broad blank plaster',((last+left)/2,-0.125,2.45),(left-last,0.25,4.9),plaster,0)
-    block('Plaster below blind niche',(x,-0.125,0.8),(0.96,0.25,1.6),plaster,0)
-    block('Plaster above blind niche',(x,-0.125,4.0),(0.96,0.25,1.8),plaster,0)
-    for dx in [-0.56,0.56]:
-        block('Stone niche jamb',(x+dx,-0.16,2.35),(0.16,0.32,1.65),stone)
-    for z in [1.55,3.17]:
-        block('Niche sill lintel',(x,-0.17,z),(1.27,0.34,0.15),stone)
-    last=right
-block('End blank plaster',((last+width/2)/2,-0.125,2.45),(width/2-last,0.25,4.9),plaster,0)
-# One closed maintenance hatch remains above the standing body envelope.
-for i in range(6):
-    block('Hatch plank',(-0.43+(i+0.5)*0.143,-0.045,2.44),(0.138,0.04,1.40),wood,0.003)
-for z in [1.94,2.96]:
-    block('Hatch brace',(0,-0.074,z),(0.84,0.04,0.09),wood,0.005)
-# Louvered high vents over blank bays, with shallow stone reveals.
-for x in [-6.2,2.0,6.15]:
-    for dx in [-0.75,0.75]:
-        block('Vent jamb',(x+dx,-0.29,3.97),(0.12,0.12,0.54),stone)
-    for z in [3.68,4.25]:
-        block('Vent lintel',(x,-0.29,z),(1.62,0.12,0.12),stone)
-    for j in range(4):
-        ob=block('Vent louver',(x,-0.29,3.78+j*0.115),(1.36,0.08,0.045),wood,0.003)
-        ob.rotation_euler.x=0.35
-# Worn low ashlar foundation, narrow enough to keep existing edge pottery clear.
-for i in range(24):
-    block('Base ashlar',(-width/2+(i+0.5)*width/24,-0.285,0.16),(width/24-0.014,0.10,0.32),stone)
-for z,h,d in [(3.4,0.10,0.20),(4.74,0.14,0.24)]:
-    for i in range(24):
-        block('Weathered stone course',(-width/2+(i+0.5)*width/24,-0.285,z),(width/24-0.012,0.10,h),stone)
-# Feather the existing scanned erosion into the plaster instead of hard patch edges.
-wear.surface_render_method='DITHERED'
-nodes,links=wear.node_tree.nodes,wear.node_tree.links
-color=nodes.new('ShaderNodeVertexColor');color.layer_name='WeatherFade'
-shader=nodes.get('Principled BSDF')
-base=next(n for n in nodes if n.type=='TEX_IMAGE' and '_diff_' in n.image.name).outputs['Color']
-mix=nodes.new('ShaderNodeMixRGB');mix.blend_type='MULTIPLY';mix.inputs[0].default_value=1
-links.new(base,mix.inputs[1]);links.new(color.outputs['Color'],mix.inputs[2])
-links.new(mix.outputs['Color'],shader.inputs['Base Color'])
-links.new(color.outputs['Alpha'],shader.inputs['Alpha'])
-for x,w,height in [(-7.0,1.4,0.88),(-4.4,1.9,0.65),(1.6,2.4,0.83),(6.8,1.6,0.85)]:
-    vertices=[];faces=[]
-    for j in range(5):
-        for i in range(9):
-            vertices.append((x-w/2+w*i/8,-0.254,0.29+height*j/4))
-    for j in range(4):
-        for i in range(8):
-            a=j*9+i;faces.append((a,a+1,a+10,a+9))
-    mesh=bpy.data.meshes.new('Scanned damp erosion')
-    mesh.from_pydata(vertices,[],faces)
-    ob=bpy.data.objects.new('Feathered base erosion',mesh);bpy.context.collection.objects.link(ob)
-    mesh.materials.append(wear);uv=mesh.uv_layers.new()
-    attr=mesh.color_attributes.new(name='WeatherFade',type='FLOAT_COLOR',domain='CORNER')
-    for poly in mesh.polygons:
-        for li in poly.loop_indices:
-            vi=mesh.loops[li].vertex_index;co=mesh.vertices[vi].co
-            uv.data[li].uv=(co.x/2,co.z/2)
-            i,j=vi%9,vi//9
-            alpha=min(i/2,(8-i)/2,1)*[0.75,0.8,0.36,0.08,0][j]
-            attr.data[li].color=(1,1,1,alpha)
-# Small roof drainage outlet and wall-mounted downpipe.
-for x in [-7.35]:
-    block('Drain spout',(x,-0.17,4.56),(0.18,0.34,0.15),stone)
-    block('Drain pipe',(x,-0.285,2.27),(0.065,0.075,4.34),wood,0.012)
-    for z in [0.45,2.1,3.9]:
-        block('Pipe wall strap',(x,-0.29,z),(0.14,0.10,0.045),wood,0.004)
-bpy.ops.object.select_all(action='SELECT')
-bpy.context.view_layer.objects.active=next(o for o in bpy.context.scene.objects if o.type=='MESH')
-bpy.ops.object.join()
-bpy.context.scene.cursor.location=(0,0,0)
-bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
-bpy.ops.export_scene.gltf(filepath=str(OUT/'service-south-east.glb'),export_format='GLB',export_yup=True,use_selection=True)
 
-# The exporter omits the constant multiply; preserve it as the native glTF factor.
-import json, struct
-path=OUT/'service-south-east.glb'
-data=path.read_bytes()
-length=struct.unpack_from('<I',data,12)[0]
-document=json.loads(data[20:20+length])
-for mat in document['materials']:
-    if any(name in mat['name'] for name in ['painted_plaster_wall','worn_plaster_wall']):
-        mat['pbrMetallicRoughness']['baseColorFactor']=[0.82,0.66,0.46,1]
-    if 'worn_plaster_wall' in mat['name']:
-        mat['alphaMode']='BLEND'
-        mat['doubleSided']=True
-for mesh in document['meshes']:
-    for primitive in mesh['primitives']:
-        mat=document['materials'][primitive['material']]
-        attributes=primitive['attributes']
-        if 'worn_plaster_wall' in mat['name'] and 'COLOR_1' in attributes:
-            attributes['COLOR_0']=attributes['COLOR_1']
-        attributes.pop('COLOR_1',None)
-payload=json.dumps(document,separators=(',',':')).encode()
-payload+=b' '*((-len(payload))%4)
-rest=data[20+length:]
-path.write_bytes(struct.pack('<III',0x46546c67,2,20+len(payload)+len(rest))+struct.pack('<II',len(payload),0x4e4f534a)+payload+rest)
+def geometry(saved):
+    global S,G
+    spec=importlib.util.spec_from_file_location('bz04_flat_envelope',ROOT/'assets/source/unit-spawn-a-courtyard/build.py')
+    S=importlib.util.module_from_spec(spec);spec.loader.exec_module(S)
+    G=S.geometry(saved);G.OUT=OUT
+    return G
+
+
+def receiving_opening(face,plane,o,trim,back):
+    G.opening(face,plane,o,trim,back)
+    if o['kind']!='door' or o['headShape']!='rectangular':return
+    # Ease the aperture-facing arris only. The outside jamb boundary must
+    # remain flush against the surrounding single-skin wall field.
+    for side,along in [('left',o['alongM']-o['widthM']/2),('right',o['alongM']+o['widthM']/2)]:
+        ob=G.bpy.data.objects[o['id']+'-'+side+'-return']
+        modifier=next(m for m in ob.modifiers if m.type=='BEVEL');modifier.limit_method='WEIGHT'
+        weights=ob.data.attributes.new('bevel_weight_edge','FLOAT','EDGE')
+        front=plane+(o['frontProjectionM'] if face=='west' else -o['frontProjectionM'])
+        for edge,weight in zip(ob.data.edges,weights.data):
+            weight.value=float(all(abs(G.ORIGIN[1]-ob.data.vertices[i].co.y-along)<1e-5 and abs(G.ORIGIN[0]+ob.data.vertices[i].co.x-front)<1e-5 for i in edge.vertices))
+
+
+def build(saved,export=True):
+    area=validate_handoff(saved);geometry(saved)
+    origin=area['sectionOriginDesign'];G.reset(tuple(origin[k] for k in ('x','y','z')))
+    interfaces=runpy.run_path(str(ROOT/'assets/source/unit-fountain-court/receiver-interfaces.py'))
+    interfaces['install'](G,area,additional_units={UNIT:None,'unit-caravan-court':{'cc-s'},'unit-link-south-west':{'lsw-n'}})
+    S.build_shells(area,receiving_opening)
+    # The north/south receiver fronts close the end caps of the retained
+    # exterior rear skin. Keep its exterior faces, remove only those caps.
+    import bmesh
+    from integrate_bz04 import load_handoff
+    rear=[ob for ob in G.bpy.context.scene.objects if ob.name=='ss-e-back' or ob.name.startswith('ss-e-back.')]
+    for unit,ident in [('unit-caravan-court','cc-s'),('unit-link-south-west','lsw-n')]:
+        receiver=load_handoff(ROOT/'artifacts/bazaar-r7-whole-map'/unit/'handoff.json')['areas'][0]
+        face,parcel=next((f,p) for f in receiver['faces'] for p in f['parcels'] if p['id']==ident)
+        for ob in rear:
+            bm=bmesh.new();bm.from_mesh(ob.data);caps=[]
+            for polygon in bm.faces:
+                points=[(v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]) for v in polygon.verts]
+                if all(abs(p[1]-face['wallPlaneM'])<1e-5 and parcel['interval'][0]-1e-5<=p[0]<=parcel['interval'][1]+1e-5 and parcel['floorElevationM']-1e-5<=p[2]<=parcel['wallTopM']+1e-5 for p in points):caps.append(polygon)
+            if caps:bmesh.ops.delete(bm,geom=caps,context='FACES_ONLY')
+            bm.to_mesh(ob.data);bm.free()
+
+    if export:
+        S.validate_objects(area)
+        G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+            {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+
+
+def self_test(saved):
+    build(saved,False);area=saved['areas'][0];objects=list(G.bpy.context.scene.objects)
+    for ob in objects:
+        G.prepare_mesh(ob)
+        assert min(v.co.z for v in ob.data.vertices)>=-.02001,ob.name
+    doors=vents=0
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for opening in parcel['openings']:
+                prefix=opening['id'];parts=[ob for ob in objects if ob.name.startswith(prefix+'-')]
+                assert parts,('Missing opening',prefix)
+                if opening['kind']=='door':
+                    doors+=1
+                    assert opening['architecturalDetail']['profile']=='planked-receiving' and opening['trimWidthM']==.16
+                    boards=[ob for ob in parts if '-leaf-board' in ob.name];straps=[ob for ob in parts if '-strap' in ob.name]
+                    assert len(boards)>=10 and len(straps)==4,('Incomplete double receiving leaf',prefix)
+                    for board in boards:
+                        along=[G.ORIGIN[1]-v.co.y for v in board.data.vertices]
+                        assert max(along)-min(along)<=.18001 and board.data.materials[0]==G.mat(G.WOOD)
+                    for strap in straps:
+                        assert abs(max(v.co.z for v in strap.data.vertices)-min(v.co.z for v in strap.data.vertices)-.04)<1e-5
+                        assert strap.data.materials[0]==G.mat(G.IRON)
+                    threshold=next(ob for ob in parts if ob.name in {prefix+'-threshold',prefix+'-sill'})
+                    assert min(v.co.z for v in threshold.data.vertices)>=-.02001 and max(v.co.z for v in threshold.data.vertices)<=.01001
+                else:
+                    vents+=1;assert any('-louver' in ob.name for ob in parts)
+            for ob in objects:
+                if not ob.name.startswith(parcel['id']+'-field'):continue
+                height=sum(v.co.z for v in ob.data.vertices)/len(ob.data.vertices)
+                region=next(r for r in parcel['materialRegions'] if r['zM'][0]<=height<=r['zM'][1])
+                assert ob.data.materials[0]==G.mat(region['materialId']),('Wrong wall region material',ob.name)
+    assert doors==3 and vents==5
+    assert {(o['kind'],o['headShape']) for f in area['faces'] for p in f['parcels'] for o in p['openings']}=={('door','rectangular'),('door','segmental'),('vent','rectangular')}
+    assert not any(ob.name.startswith('ss-e-end-closure') for ob in objects),'Internal receiver skin retained'
+    assert any(ob.name.startswith('ss-s-field') for ob in objects),'Closed south wall missing'
+    print('PASS Service South fixtures: 3 double planked doors, four dark straps each, bounded thresholds, 5 louvers, exact field materials and receiver skins',flush=True)
+
+def verify_jamb_export(saved):
+    """Ray-test the exported rectangular jamb boundary and retained inner arris."""
+    area=validate_handoff(saved);origin=area['sectionOriginDesign']
+    verifier=runpy.run_path(str(ROOT/'assets/source/unit-spawn-b-courtyard/verify.py'))
+    triangles,_=verifier['glb'](OUT/(UNIT+'.glb'),tuple(origin[k] for k in ('x','y','z')))
+    def ray(y,z,x,direction):
+        hits=[]
+        for material,t in triangles:
+            a,b,c=t;den=(b[1]-a[1])*(c[2]-a[2])-(b[2]-a[2])*(c[1]-a[1])
+            if abs(den)<1e-10:continue
+            u=((y-a[1])*(c[2]-a[2])-(z-a[2])*(c[1]-a[1]))/den
+            w=((b[1]-a[1])*(z-a[2])-(b[2]-a[2])*(y-a[1]))/den
+            if min(u,w,1-u-w)<-1e-7:continue
+            hit=a[0]+u*(b[0]-a[0])+w*(c[0]-a[0])
+            if (hit-x)*direction>=0:hits.append(((hit-x)*direction,hit))
+        return min(hits)[1]
+    count=0
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for o in parcel['openings']:
+                if o['kind']!='door' or o['headShape']!='rectangular':continue
+                plane=face['wallPlaneM'];outward=1 if face['face']=='west' else -1
+                for side in (-1,1):
+                    edge=o['alongM']+side*o['widthM']/2
+                    for z in (.713,1.513,2.213):
+                        flat=ray(edge+side*(o['trimWidthM']-.001),z,plane+outward,-outward)
+                        inner=ray(edge+side*.001,z,plane+outward,-outward)
+                        assert abs(flat-plane)<1e-5,('Jamb outer boundary is recessed',o['id'],side,z,flat)
+                        assert .005<abs(inner-plane)<.009,('Aperture arris lost its 8 mm bevel',o['id'],side,z,inner)
+                        count+=2
+    print('PASS exported jamb regression:',count,'rays; outer wall joins flush, aperture arrises remain eased',flush=True)
+
+
+if __name__=='__main__':
+    try:
+        if '--handoff' not in sys.argv:raise ValueError('Requires --handoff <frozen handoff.json>')
+        saved=json.loads(Path(sys.argv[sys.argv.index('--handoff')+1]).read_text());validate_handoff(saved)
+        if 'verify-jamb' in sys.argv:verify_jamb_export(saved)
+        elif 'check-inputs' in sys.argv:print('PASS Service South frozen input and capability validation')
+        elif 'self-test' in sys.argv:self_test(saved)
+        else:build(saved)
+    except Exception:
+        import traceback
+        traceback.print_exc();sys.exit(1)

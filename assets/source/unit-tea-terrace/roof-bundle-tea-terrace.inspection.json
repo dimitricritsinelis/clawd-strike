@@ -1,0 +1,243 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 tea terrace facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-tea-terrace/roof-bundle-tea-terrace.glb",
+  "triangles": 120,
+  "primitives": 2,
+  "castPrimitives": 2,
+  "actualBoundsGltf": {
+    "min": [
+      -0.4000000059604645,
+      0.0,
+      -9.699999809265137
+    ],
+    "max": [
+      0.4000000059604645,
+      4.019999980926514,
+      9.699999809265137
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      0.43,
+      4.02,
+      9.73
+    ],
+    "min": [
+      -0.43,
+      0,
+      -9.73
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_026-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          -0.30000001192092896,
+          3.9000000953674316
+        ],
+        "max": [
+          0.4000000059604645,
+          9.699999809265137,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_027-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.20000000298023224,
+          -6.300000190734863,
+          1.3995330333709717
+        ],
+        "max": [
+          0.4000000059604645,
+          -0.9559999704360962,
+          1.5195330381393433
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_028-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.20000000298023224,
+          -9.699999809265137,
+          0.0
+        ],
+        "max": [
+          0.4000000059604645,
+          -6.300000190734863,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_005",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          -0.30000001192092896,
+          2.5999999046325684
+        ],
+        "max": [
+          -0.3799999952316284,
+          9.699999809265137,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_007",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          9.680000305175781,
+          2.5999999046325684
+        ],
+        "max": [
+          0.4000000059604645,
+          9.699999809265137,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_008",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          -0.30000001192092896,
+          2.5999999046325684
+        ],
+        "max": [
+          -0.3799999952316284,
+          9.699999809265137,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_009",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          -0.30000001192092896,
+          2.5999999046325684
+        ],
+        "max": [
+          0.4000000059604645,
+          -0.2800000011920929,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_011",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.4000000059604645,
+          -0.30000001192092896,
+          2.5999999046325684
+        ],
+        "max": [
+          0.20000000298023224,
+          -0.2800000011920929,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_012",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.20000000298023224,
+          -0.30000001192092896,
+          2.5999999046325684
+        ],
+        "max": [
+          0.4000000059604645,
+          -0.2800000011920929,
+          4.019999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_015",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.20000000298023224,
+          -6.300000190734863,
+          0.10000000149011612
+        ],
+        "max": [
+          0.4000000059604645,
+          -6.28000020980835,
+          1.5195330381393433
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "d7cb00b5c2d60c0ead9cf8299de1eb32dee9332d266c0531a2dbbbb3083dd574",
+  "sourcePolygonTriangles": 120,
+  "materials": [
+    "bz06_dressed_sandstone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 666,
+    "maxRenderedPrimitives": 1
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 120,
+      "maxMaterials": 2,
+      "maxRenderedPrimitives": 2,
+      "maxShadowPrimitives": 2
+    },
+    "targets": {
+      "maxTriangles": 666,
+      "maxRenderedPrimitives": 1
+    },
+    "overTarget": [
+      "maxRenderedPrimitives"
+    ]
+  }
+}

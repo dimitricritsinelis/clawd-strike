@@ -1,0 +1,283 @@
+{
+  "inputSha256": "474c53fae15efdb6d14aaa1e1faf57e62475adc060543354ae03c69ada6d9b67",
+  "designRevision": {
+    "id": "R7 link east mid facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-fountain-court/fountain-receivers-link-east-mid.glb",
+  "triangles": 84,
+  "primitives": 3,
+  "castPrimitives": 3,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      -0.6000000238418579
+    ],
+    "max": [
+      5.0,
+      10.899999618530273,
+      5.599999904632568
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.20000000000000284,
+      -0.02,
+      -0.8000000000000043
+    ],
+    "max": [
+      5.200000000000003,
+      10.92,
+      5.800000000000004
+    ]
+  },
+  "objects": [
+    {
+      "id": "lem-n-field",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          5.0,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-n-field.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          5.0,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-n-field.002",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          5.0,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-n-base-closure",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.599999904632568,
+          -0.019999999552965164
+        ],
+        "max": [
+          5.0,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lem-n-cornice-0",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.019999980926514,
+          9.748000144958496
+        ],
+        "max": [
+          5.0,
+          -4.840000152587891,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lem-n-cornice-bearing",
+      "material": "bz06_faded_ochre",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.019999980926514,
+          9.739999771118164
+        ],
+        "max": [
+          5.0,
+          -4.864999771118164,
+          9.748000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lem-s-field",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-s-field.001",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-s-field.002",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          5.0,
+          0.0,
+          10.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lem-s-base-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          5.0,
+          0.6000000238418579,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lem-s-cornice-0",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.1599999964237213,
+          10.748000144958496
+        ],
+        "max": [
+          5.0,
+          0.019999999552965164,
+          10.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lem-s-cornice-bearing",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -0.13500000536441803,
+          10.739999771118164
+        ],
+        "max": [
+          5.0,
+          0.019999999552965164,
+          10.748000144958496
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "eedf838e150325253f391c263a47f6de2eb5c96fd74323bc8da6a912803cbf57",
+  "sourcePolygonTriangles": 84,
+  "materials": [
+    "bz06_dressed_sandstone",
+    "bz06_faded_ochre",
+    "bz06_sand_plaster"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 4,
+    "maxMaterials": 4,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 3
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 84,
+      "maxMaterials": 3,
+      "maxRenderedPrimitives": 3,
+      "maxShadowPrimitives": 3
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 4,
+      "maxRenderedPrimitives": 4,
+      "maxShadowPrimitives": 3
+    },
+    "overTarget": []
+  }
+}

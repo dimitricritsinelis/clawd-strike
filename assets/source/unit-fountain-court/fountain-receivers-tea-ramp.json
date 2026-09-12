@@ -1,0 +1,32 @@
+{
+  "modelId": "fountain_receivers_tea_ramp",
+  "file": "fountain-receivers-tea-ramp.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 11,
+    "y": 48,
+    "z": 0.7
+  },
+  "yawDeg": 180,
+  "inputSha256": "2ed13fb9948770685b2c5a35c3bdfc0211e20da5e2bac6712347893c51ec127a",
+  "receiverParcelIds": [
+    "tr-e",
+    "tr-s"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 19,
+      "start": 48.0,
+      "end": 56.0
+    },
+    {
+      "orientation": "horizontal",
+      "coord": 48,
+      "start": 15.0,
+      "end": 19.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

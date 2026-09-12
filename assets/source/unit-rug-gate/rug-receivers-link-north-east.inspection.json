@@ -1,0 +1,155 @@
+{
+  "inputSha256": "125a952e653fedc8c5fbc36916b17704d939387f449c4d0985c44c82c5d709e8",
+  "designRevision": {
+    "id": "R7 link north east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-rug-gate/rug-receivers-link-north-east.glb",
+  "triangles": 30,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -0.6000000238418579,
+      -0.019999999552965164,
+      0.0
+    ],
+    "max": [
+      0.0,
+      9.899999618530273,
+      2.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.8000000000000043,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.800000000000004,
+      9.92,
+      5.900000000000006
+    ]
+  },
+  "objects": [
+    {
+      "id": "lne-w-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.11999999731779099
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.18000000715255737
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          -0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-w-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          -2.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "d1c237481bcefc6400b90a0017122b0d609b56d3fc0d7657d849c08d44c8aa67",
+  "sourcePolygonTriangles": 30,
+  "materials": [
+    "bz06_service_stone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 6,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 30,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

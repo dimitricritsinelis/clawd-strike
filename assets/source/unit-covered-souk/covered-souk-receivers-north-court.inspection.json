@@ -1,0 +1,1401 @@
+{
+  "inputSha256": "3a79f347ba81e0f49596d3b2033a77da125ccc3623a1ce3fc99bb9ed0eee736e",
+  "designRevision": {
+    "id": "R7 north court facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-covered-souk/covered-souk-receivers-north-court.glb",
+  "triangles": 904,
+  "primitives": 5,
+  "castPrimitives": 4,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      -0.800000011920929
+    ],
+    "max": [
+      5.0,
+      9.899999618530273,
+      0.07999999821186066
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -3.700000000000003,
+      -0.02,
+      -1.0
+    ],
+    "max": [
+      15.800000000000004,
+      9.92,
+      21.799999999999997
+    ]
+  },
+  "objects": [
+    {
+      "id": "nc-s-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          1.5,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          1.5,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          1.5,
+          0.0,
+          0.30000001192092896
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.30000001192092896
+        ],
+        "max": [
+          1.5,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          0.0,
+          0.0
+        ],
+        "max": [
+          1.649999976158142,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          1.649999976158142,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          1.649999976158142,
+          0.0,
+          0.30000001192092896
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          0.0,
+          0.30000001192092896
+        ],
+        "max": [
+          1.649999976158142,
+          0.0,
+          4.239999771118164
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.008",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          0.0,
+          6.050000190734863
+        ],
+        "max": [
+          1.649999976158142,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.009",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          0.0
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.010",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.011",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          0.30000001192092896
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.012",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          0.30000001192092896
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          4.239999771118164
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.013",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          6.050000190734863
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          8.59000015258789
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.014",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          0.0,
+          9.449999809265137
+        ],
+        "max": [
+          3.3499999046325684,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.015",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.3499999046325684,
+          0.0,
+          0.0
+        ],
+        "max": [
+          3.5,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.016",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.3499999046325684,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.017",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.3499999046325684,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5,
+          0.0,
+          0.30000001192092896
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.018",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.3499999046325684,
+          0.0,
+          0.30000001192092896
+        ],
+        "max": [
+          3.5,
+          0.0,
+          4.239999771118164
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.019",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.3499999046325684,
+          0.0,
+          6.050000190734863
+        ],
+        "max": [
+          3.5,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.020",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          0.0,
+          0.0
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.021",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.022",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.30000001192092896
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-field.023",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          0.0,
+          0.30000001192092896
+        ],
+        "max": [
+          5.0,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "nc-s-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          0.019999999552965164,
+          0.800000011920929,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-back",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.7799999713897705,
+          0.0
+        ],
+        "max": [
+          1.399999976158142,
+          0.800000011920929,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          5.0,
+          0.800000011920929,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-back",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5800000429153442,
+          0.3799999952316284,
+          4.300000190734863
+        ],
+        "max": [
+          3.4200000762939453,
+          0.4000000059604645,
+          5.96999979019165
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-left-return",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          -0.07999999821186066,
+          4.300000190734863
+        ],
+        "max": [
+          1.600000023841858,
+          0.3799999952316284,
+          5.949999809265137
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L1-W1-right-return",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -0.07999999821186066,
+          4.300000190734863
+        ],
+        "max": [
+          3.5,
+          0.3799999952316284,
+          5.949999809265137
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L1-W1-head",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          -0.07999999821186066,
+          5.949999809265137
+        ],
+        "max": [
+          3.5,
+          0.3799999952316284,
+          6.050000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-sill",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          -0.07999999821186066,
+          4.248000144958496
+        ],
+        "max": [
+          3.5,
+          0.3799999952316284,
+          4.300000190734863
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L1-W1-sill-drip",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          -0.0560000017285347,
+          4.239999771118164
+        ],
+        "max": [
+          3.5,
+          0.3799999952316284,
+          4.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5,
+          -0.07999999821186066,
+          4.239999771118164
+        ],
+        "max": [
+          3.5,
+          -0.06400000303983688,
+          4.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-frame-jamb",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.600000023841858,
+          0.3400000035762787,
+          4.300000190734863
+        ],
+        "max": [
+          1.6799999475479126,
+          0.36500000953674316,
+          5.949999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-frame-jamb.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.319999933242798,
+          0.3400000035762787,
+          4.300000190734863
+        ],
+        "max": [
+          3.4000000953674316,
+          0.36500000953674316,
+          5.949999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-frame-bottom",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.600000023841858,
+          0.3400000035762787,
+          4.300000190734863
+        ],
+        "max": [
+          3.4000000953674316,
+          0.36500000953674316,
+          4.380000114440918
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L1-W1-frame-head",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.5999984741210938,
+          0.3400000035762787,
+          5.869999885559082
+        ],
+        "max": [
+          3.4000015258789062,
+          0.36500000953674316,
+          5.949999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-panel",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3479999899864197,
+          4.380000114440918
+        ],
+        "max": [
+          2.496999979019165,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-stile",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          1.7380000352859497,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-stile.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.441999912261963,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          2.496999979019165,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          2.496999979019165,
+          0.36500000953674316,
+          4.449999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3400000035762787,
+          5.800000190734863
+        ],
+        "max": [
+          2.496999979019165,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail.002",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3400000035762787,
+          5.099999904632568
+        ],
+        "max": [
+          2.496999979019165,
+          0.36500000953674316,
+          5.150000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-hinge",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3319999873638153,
+          4.559999942779541
+        ],
+        "max": [
+          1.7079999446868896,
+          0.3400000035762787,
+          4.659999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-hinge.001",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          1.6829999685287476,
+          0.3319999873638153,
+          5.590000152587891
+        ],
+        "max": [
+          1.7079999446868896,
+          0.3400000035762787,
+          5.690000057220459
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-latch",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          2.4170000553131104,
+          0.33000001311302185,
+          5.05049991607666
+        ],
+        "max": [
+          2.4719998836517334,
+          0.3400000035762787,
+          5.075500011444092
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-panel.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.503000020980835,
+          0.3479999899864197,
+          4.380000114440918
+        ],
+        "max": [
+          3.316999912261963,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-stile.002",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.503000020980835,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          2.558000087738037,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-stile.003",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.26200008392334,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          3.316999912261963,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail.003",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.503000020980835,
+          0.3400000035762787,
+          4.380000114440918
+        ],
+        "max": [
+          3.316999912261963,
+          0.36500000953674316,
+          4.449999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail.004",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.503000020980835,
+          0.3400000035762787,
+          5.800000190734863
+        ],
+        "max": [
+          3.316999912261963,
+          0.36500000953674316,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-leaf-rail.005",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          2.503000020980835,
+          0.3400000035762787,
+          5.099999904632568
+        ],
+        "max": [
+          3.316999912261963,
+          0.36500000953674316,
+          5.150000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-hinge.002",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          3.2920000553131104,
+          0.3319999873638153,
+          4.559999942779541
+        ],
+        "max": [
+          3.316999912261963,
+          0.3400000035762787,
+          4.659999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-hinge.003",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          3.2920000553131104,
+          0.3319999873638153,
+          5.590000152587891
+        ],
+        "max": [
+          3.316999912261963,
+          0.3400000035762787,
+          5.690000057220459
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L1-W1-latch.001",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          3.236999988555908,
+          0.33000001311302185,
+          5.05049991607666
+        ],
+        "max": [
+          3.2920000553131104,
+          0.3400000035762787,
+          5.075500011444092
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-back",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.7300000190734863,
+          0.30000001192092896,
+          8.649999618530273
+        ],
+        "max": [
+          3.2699999809265137,
+          0.3199999928474426,
+          9.369999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-left-return",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          -0.07999999821186066,
+          8.649999618530273
+        ],
+        "max": [
+          1.75,
+          0.30000001192092896,
+          9.350000381469727
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L2-W1-right-return",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.25,
+          -0.07999999821186066,
+          8.649999618530273
+        ],
+        "max": [
+          3.3499999046325684,
+          0.30000001192092896,
+          9.350000381469727
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L2-W1-head",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          -0.07999999821186066,
+          9.350000381469727
+        ],
+        "max": [
+          3.3499999046325684,
+          0.30000001192092896,
+          9.449999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-sill",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          -0.07999999821186066,
+          8.597999572753906
+        ],
+        "max": [
+          3.3499999046325684,
+          0.30000001192092896,
+          8.649999618530273
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L2-W1-sill-drip",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          -0.0560000017285347,
+          8.59000015258789
+        ],
+        "max": [
+          3.3499999046325684,
+          0.30000001192092896,
+          8.597999572753906
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.649999976158142,
+          -0.07999999821186066,
+          8.59000015258789
+        ],
+        "max": [
+          3.3499999046325684,
+          -0.06400000303983688,
+          8.597999572753906
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-frame-jamb",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.75,
+          0.25999999046325684,
+          8.649999618530273
+        ],
+        "max": [
+          1.8300000429153442,
+          0.2849999964237213,
+          9.350000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-frame-jamb.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.1700000762939453,
+          0.25999999046325684,
+          8.649999618530273
+        ],
+        "max": [
+          3.25,
+          0.2849999964237213,
+          9.350000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-frame-bottom",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.75,
+          0.25999999046325684,
+          8.649999618530273
+        ],
+        "max": [
+          3.25,
+          0.2849999964237213,
+          8.729999542236328
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "nc-s-L2-W1-frame-head",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.75,
+          0.25999999046325684,
+          9.270000457763672
+        ],
+        "max": [
+          3.25,
+          0.2849999964237213,
+          9.350000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          8.729999542236328
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          8.765000343322754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          8.8100004196167
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          8.845000267028809
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.002",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          8.890000343322754
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          8.925000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.003",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          8.970000267028809
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          9.005000114440918
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.004",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          9.050000190734863
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          9.085000038146973
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.005",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          9.130000114440918
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          9.164999961853027
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "nc-s-L2-W1-louver.006",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.8300000429153442,
+          0.25999999046325684,
+          9.210000038146973
+        ],
+        "max": [
+          3.1700000762939453,
+          0.2849999964237213,
+          9.244999885559082
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "84ecba9d5435d7a19820b7e17d4292cb69bbbba9665c7f95acbc4455bb20409a",
+  "sourcePolygonTriangles": 904,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz04_craft_warm_timber",
+    "bz06_monolithic_stone_trim",
+    "bz06_pale_lime",
+    "bz06_service_stone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 48000,
+    "maxRenderedPrimitives": 14,
+    "maxMaterials": 12,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 7
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 904,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 4
+    },
+    "targets": {
+      "maxTriangles": 48000,
+      "maxMaterials": 12,
+      "maxRenderedPrimitives": 14,
+      "maxShadowPrimitives": 7
+    },
+    "overTarget": []
+  }
+}

@@ -1,0 +1,299 @@
+{
+  "inputSha256": "cf64ff9fc6c4a054132e78fd4cda252a34ac7bfa80f67d491c38977fc586b50c",
+  "designRevision": {
+    "id": "R7 link north west facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-spawn-b-courtyard/b-receivers-link-north-west.glb",
+  "triangles": 76,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      3.4000000953674316,
+      -0.019999999552965164,
+      4.840000152587891
+    ],
+    "max": [
+      7.0,
+      9.899999618530273,
+      5.699999809265137
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.7999999999999989,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.800000000000001,
+      9.92,
+      5.900000000000006
+    ]
+  },
+  "objects": [
+    {
+      "id": "lnw-n-part-2-field",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.001",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.002",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.014999866485596,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.003",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          3.4075000286102295,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.004",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.005",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.006",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-field.007",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4075000286102295,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lnw-n-part-2-party-joint-reveal",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4070000648498535,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.4079999923706055,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lnw-n-part-2-end-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.699999809265137,
+          0.0
+        ],
+        "max": [
+          3.4200000762939453,
+          -5.019999980926514,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lnw-n-part-2-base-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.699999809265137,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.0,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lnw-n-part-2-cornice-0",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.019999980926514,
+          9.748000144958496
+        ],
+        "max": [
+          7.0,
+          -4.840000152587891,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lnw-n-part-2-cornice-bearing",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4000000953674316,
+          -5.019999980926514,
+          9.739999771118164
+        ],
+        "max": [
+          7.0,
+          -4.864999771118164,
+          9.748000144958496
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "2862b0ba5afaa9541b70433e0fe0369cd6ed039c813de0e35928ecf1db0e8ef1",
+  "sourcePolygonTriangles": 76,
+  "materials": [
+    "bz06_sand_plaster"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 5,
+    "maxMaterials": 5,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 4
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 76,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 4
+    },
+    "overTarget": []
+  }
+}

@@ -1,77 +1,6 @@
 {
   "models": [
     {
-      "id": "section_unit_spice_street",
-      "url": "unit-spice-street/unit-spice-street.glb",
-      "scale": 1,
-      "variants": {},
-      "source": "repo://assets/source/unit-spice-street/build.py",
-      "license": "Project-Original",
-      "md5": {
-        "unit-spice-street/unit-spice-street.glb": "5966d2062dcf8183a6104f8b2dda889c"
-      },
-      "materialIds": [
-        "ph_dark_wood",
-        "ph_hessian_230",
-        "ph_painted_plaster_warm",
-        "ph_rough_pine_door",
-        "ph_rusty_metal_02",
-        "ph_sandstone_blocks_05",
-        "ph_stone_trim_sandstone",
-        "ph_trim_sanded_01",
-        "ph_weathered_brown_planks",
-        "ph_worn_planks",
-        "ph_worn_plaster_ochre"
-      ]
-    },
-    {
-      "id": "section_unit_spawn_b_courtyard",
-      "url": "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
-      "scale": 1,
-      "variants": {},
-      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
-      "license": "Project-Original",
-      "md5": {
-        "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb": "e024e5e8612cc6ef3acc2654ab651680"
-      },
-      "materialIds": [
-        "ph_bz04_beige_wall_002",
-        "ph_bz04_dark_wood",
-        "ph_bz04_fabric_leather_02",
-        "ph_bz04_hessian_230",
-        "ph_bz04_painted_plaster_warm",
-        "ph_bz04_plastered_wall",
-        "ph_bz04_red_plaster_weathered",
-        "ph_bz04_rusty_metal_02",
-        "ph_bz04_sandstone_blocks_05",
-        "ph_bz04_sandstone_blocks_06",
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_weathered_brown_planks",
-        "ph_bz04_worn_planks"
-      ]
-    },
-    {
-      "id": "bz04_roof_bundle_unit_spawn_b_courtyard",
-      "url": "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
-      "scale": 1,
-      "variants": {},
-      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
-      "license": "Project-Original",
-      "md5": {
-        "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb": "9a9bd3511cf72a321b519b9c2c68ac39"
-      },
-      "materialIds": [
-        "ph_bz04_aged_plaster_ochre",
-        "ph_bz04_beige_wall_002",
-        "ph_bz04_painted_plaster_warm",
-        "ph_bz04_plastered_wall",
-        "ph_bz04_red_plaster_weathered",
-        "ph_bz04_rusty_metal_02",
-        "ph_bz04_sandstone_blocks_06",
-        "ph_bz04_stone_trim_sandstone"
-      ]
-    },
-    {
       "id": "bz03_b_gate_cap_west",
       "url": "unit-spawn-b-courtyard/bz03_b_gate_cap_west.glb",
       "scale": 1,
@@ -100,23 +29,1030 @@
       ]
     },
     {
-      "id": "bz04_shared_environment",
-      "url": "unit-spawn-b-courtyard/bz04-shared-environment.glb",
+      "id": "spawn_a_fountain_south_receivers",
+      "url": "unit-spawn-a-courtyard/fountain-south-receivers.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-a-courtyard/fountain-south-receivers.glb": "fda1db0fd2707274ded8f918b28c9110"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "textile_west_arcade_face",
+      "url": "unit-textile-arcade/textile-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-textile-arcade/textile-west.glb": "8282092c60cc414694ddc55bd22d6fad"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "textile_east_arcade_face",
+      "url": "unit-textile-arcade/textile-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-textile-arcade/textile-east.glb": "7f7efd6e9ec011dbad18cf7df9a465fd"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "fountain_receivers_textile_arcade",
+      "url": "unit-fountain-court/fountain-receivers-textile-arcade.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-textile-arcade.glb": "50c9f7d39e54e20e8e8f2eb258335111"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood"
+      ]
+    },
+    {
+      "id": "fountain_receivers_rug_gate",
+      "url": "unit-fountain-court/fountain-receivers-rug-gate.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-rug-gate.glb": "093c64b9c02b306913fa10025952b2a9"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_textile_arcade",
+      "url": "unit-textile-arcade/roof-bundle-textile-arcade.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-textile-arcade/roof-bundle-textile-arcade.glb": "1d5687b6e4bedfab2dce9d86ab6c15db"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_textile_arcade",
+      "url": "unit-textile-arcade/unit-textile-arcade.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-textile-arcade/unit-textile-arcade.glb": "8d474b270306bc4df79bfa43d8562f72"
+      },
+      "materialIds": [
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "fountain_receivers_caravan_court",
+      "url": "unit-fountain-court/fountain-receivers-caravan-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-caravan-court.glb": "97141e6168d11cec7960098862ea7fc5"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood"
+      ]
+    },
+    {
+      "id": "rug_receivers_tea_terrace",
+      "url": "unit-rug-gate/rug-receivers-tea-terrace.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/rug-receivers-tea-terrace.glb": "d21cba2933c1d713b671a6e5f66c9115"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_spice_street",
+      "url": "unit-spice-street/roof-bundle-spice-street.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spice-street/roof-bundle-spice-street.glb": "98b37478bb9467485c201480db16e59f"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_spice_street",
+      "url": "unit-spice-street/unit-spice-street.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spice-street/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spice-street/unit-spice-street.glb": "c035983142bf2950311d86e73eff0618"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "spawn_a_receiver_lsw_s_part_2",
+      "url": "unit-spawn-a-courtyard/spawn-a-receiver-lsw-s-part-2.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-south-west/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-a-courtyard/spawn-a-receiver-lsw-s-part-2.glb": "c4292ce57824b23d9b835fb24c27699e"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "service_south_receivers_caravan_court",
+      "url": "unit-service-south/service-south-receivers-caravan-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-service-south/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-south/service-south-receivers-caravan-court.glb": "d2f257a4c805887a2098a8fff1d5b577"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "fountain_receivers_tea_ramp",
+      "url": "unit-fountain-court/fountain-receivers-tea-ramp.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-tea-ramp.glb": "12b5d8e1a2efa66bc4cfd255e8d6bcd3"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "service_south_receivers_link_south_west",
+      "url": "unit-service-south/service-south-receivers-link-south-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-service-south/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-south/service-south-receivers-link-south-west.glb": "6f755ed2e2385989389d0f9b751db4a0"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_caravan_court",
+      "url": "unit-caravan-court/roof-bundle-caravan-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-caravan-court/roof-bundle-caravan-court.glb": "06e86dd37b7c974328d5834940883e22"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_caravan_court",
+      "url": "unit-caravan-court/unit-caravan-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-caravan-court/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-caravan-court/unit-caravan-court.glb": "dc28346ea011e7e4ee65662baee6946e"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "fountain_receivers_tea_terrace",
+      "url": "unit-fountain-court/fountain-receivers-tea-terrace.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-tea-terrace.glb": "3f2856a1e2a0058a9258d3e94e15093e"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood"
+      ]
+    },
+    {
+      "id": "fountain_receivers_covered_souk",
+      "url": "unit-fountain-court/fountain-receivers-covered-souk.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-covered-souk.glb": "40053791b109c6bd14f20494e1f7f084"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood"
+      ]
+    },
+    {
+      "id": "rug_receivers_tea_stairs",
+      "url": "unit-rug-gate/rug-receivers-tea-stairs.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/rug-receivers-tea-stairs.glb": "24ac9c0405c49b042670b071478dba1a"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_tea_ramp",
+      "url": "unit-tea-ramp/unit-tea-ramp.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-ramp/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-ramp/unit-tea-ramp.glb": "473709e06715a9afc30663403326adde"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "tea_terrace_receivers_tea_stairs",
+      "url": "unit-tea-terrace/tea-terrace-receivers-tea-stairs.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-terrace/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-terrace/tea-terrace-receivers-tea-stairs.glb": "514b8a6ebc87392a17322bacce124205"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "tea_terrace_receivers_tea_landing",
+      "url": "unit-tea-terrace/tea-terrace-receivers-tea-landing.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-terrace/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-terrace/tea-terrace-receivers-tea-landing.glb": "a6a655f6b73137aa10f0c4614468c5d4"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_tea_stairs",
+      "url": "unit-tea-stairs/unit-tea-stairs.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-stairs/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-stairs/unit-tea-stairs.glb": "56ba1be6e433c62d1e6e49f470074e77"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_tea_terrace",
+      "url": "unit-tea-terrace/roof-bundle-tea-terrace.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-terrace/roof-bundle-tea-terrace.glb": "1dcd6babc5ee57beb673e801bed70b66"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_tea_terrace",
+      "url": "unit-tea-terrace/unit-tea-terrace.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-terrace/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-terrace/unit-tea-terrace.glb": "e44bcf4903eea6c524e3850120e39ab9"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "dyers_alley_receivers_covered_souk",
+      "url": "unit-dyers-alley/dyers-alley-receivers-covered-souk.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-dyers-alley/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-alley/dyers-alley-receivers-covered-souk.glb": "612589fd0e8f42ac51c7eeb483fc1ef6"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "dyers_alley_receivers_link_south_east",
+      "url": "unit-dyers-alley/dyers-alley-receivers-link-south-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-dyers-alley/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-alley/dyers-alley-receivers-link-south-east.glb": "34e1187b2eb8afc79547d58d57e973d7"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "fountain_receivers_link_west_mid",
+      "url": "unit-fountain-court/fountain-receivers-link-west-mid.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-link-west-mid.glb": "90cac9897887b5c6e703ad35f0584703"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "covered_souk_receivers_dyers_dogleg",
+      "url": "unit-covered-souk/covered-souk-receivers-dyers-dogleg.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-covered-souk/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-covered-souk/covered-souk-receivers-dyers-dogleg.glb": "ddb91dd0ae6bc3ae635dea1d82bac235"
+      },
+      "materialIds": [
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "covered_souk_receivers_north_court",
+      "url": "unit-covered-souk/covered-souk-receivers-north-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-covered-souk/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-covered-souk/covered-souk-receivers-north-court.glb": "ff90846bb13dd9860d096daa4864eb9d"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_dyers_dogleg",
+      "url": "unit-dyers-dogleg/roof-bundle-dyers-dogleg.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-dogleg/roof-bundle-dyers-dogleg.glb": "965e0f8c9078bcf1653519712940bc72"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_dyers_dogleg",
+      "url": "unit-dyers-dogleg/unit-dyers-dogleg.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-dyers-dogleg/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-dogleg/unit-dyers-dogleg.glb": "22ed7f4fb7b88289b462bc777c3652f2"
+      },
+      "materialIds": [
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_covered_souk",
+      "url": "unit-covered-souk/roof-bundle-covered-souk.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-covered-souk/roof-bundle-covered-souk.glb": "ea6144900b2dfb4f03cf66aed533a72c"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_covered_souk",
+      "url": "unit-covered-souk/unit-covered-souk.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-covered-souk/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-covered-souk/unit-covered-souk.glb": "f9ea91fa2e4753adee7a7a1a2447ce6b"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "north_court_receivers_link_east_upper",
+      "url": "unit-north-court/north-court-receivers-link-east-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-north-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-north-court/north-court-receivers-link-east-upper.glb": "4da9d0b3defbf19cea73b6d00caeea17"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "fountain_receivers_link_east_mid",
+      "url": "unit-fountain-court/fountain-receivers-link-east-mid.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-link-east-mid.glb": "e99fe9e98ea3af2554fe5fa074eae5d1"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_link_west_mid",
+      "url": "unit-link-west-mid/unit-link-west-mid.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-west-mid/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-west-mid/unit-link-west-mid.glb": "727bf3e37176f537a2eb690ce5d6d21d"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "fountain_receivers_link_east_upper",
+      "url": "unit-fountain-court/fountain-receivers-link-east-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/fountain-receivers-link-east-upper.glb": "c0befc08863c4a2a592d2bfea8bad85b"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_link_east_mid",
+      "url": "unit-link-east-mid/unit-link-east-mid.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-east-mid/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-east-mid/unit-link-east-mid.glb": "dc7fc7d6a7dea32cd7e261483bd0ed22"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "rug_receivers_link_west_upper",
+      "url": "unit-rug-gate/rug-receivers-link-west-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/rug-receivers-link-west-upper.glb": "c1a871d2368f1b3db6d6446ccee3c507"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "rug_receivers_link_east_upper",
+      "url": "unit-rug-gate/rug-receivers-link-east-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/rug-receivers-link-east-upper.glb": "dd332e3dd405e25fad3ef36e02c20c46"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_link_west_upper",
+      "url": "unit-link-west-upper/unit-link-west-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-west-upper/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-west-upper/unit-link-west-upper.glb": "53624996634edeb4a50763f5c73a57cd"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_fountain_court",
+      "url": "unit-fountain-court/roof-bundle-fountain-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/roof-bundle-fountain-court.glb": "6c5905e6db30c983a22b083f94c4f9fe"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_fountain_court",
+      "url": "unit-fountain-court/unit-fountain-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-fountain-court/unit-fountain-court.glb": "9183e44c1dde483fb7c62184bb6a5746"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood",
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "north_court_receivers_link_north_east",
+      "url": "unit-north-court/north-court-receivers-link-north-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-north-court/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-north-court/north-court-receivers-link-north-east.glb": "c79b859d767cde44bb5fbd61d41dbde1"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_link_east_upper",
+      "url": "unit-link-east-upper/unit-link-east-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-east-upper/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-east-upper/unit-link-east-upper.glb": "7d3ef344c546d960f546b2576b973448"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_link_east_upper",
+      "url": "unit-link-east-upper/roof-bundle-link-east-upper.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-east-upper/roof-bundle-link-east-upper.glb": "3582c952db9eafb983510213cd12c31d"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_service_south",
+      "url": "unit-service-south/roof-bundle-service-south.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-south/roof-bundle-service-south.glb": "56dac3f083d85976e17289c21ed09c38"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_service_south",
+      "url": "unit-service-south/unit-service-south.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-service-south/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-south/unit-service-south.glb": "6db0063eac9c8619dbfc75e4cd2f98e6"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "spawn_a_receiver_lse_s",
+      "url": "unit-spawn-a-courtyard/spawn-a-receiver-lse-s.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-south-east/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-a-courtyard/spawn-a-receiver-lse-s.glb": "663321f11efa0d14070a6fa7fa4553b3"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_link_south_west",
+      "url": "unit-link-south-west/roof-bundle-link-south-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-south-west/roof-bundle-link-south-west.glb": "e2b58fe43c9e011c34ef31451dcd8ef9"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_link_south_west",
+      "url": "unit-link-south-west/unit-link-south-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-south-west/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-south-west/unit-link-south-west.glb": "00c873e95852a09d25af44b8bb99593a"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_dyers_alley",
+      "url": "unit-dyers-alley/roof-bundle-dyers-alley.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-alley/roof-bundle-dyers-alley.glb": "eab908096b6688fcb5ff880b8188908f"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_dyers_alley",
+      "url": "unit-dyers-alley/unit-dyers-alley.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-dyers-alley/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-dyers-alley/unit-dyers-alley.glb": "0bf3d34090c2e74f100b072daca833a3"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_spawn_a_courtyard",
+      "url": "unit-spawn-a-courtyard/roof-bundle-spawn-a-courtyard.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-a-courtyard/roof-bundle-spawn-a-courtyard.glb": "248edfa8bcbb5c5bae11d5801c2116c7"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_spawn_a_courtyard",
+      "url": "unit-spawn-a-courtyard/unit-spawn-a-courtyard.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-a-courtyard/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-a-courtyard/unit-spawn-a-courtyard.glb": "e922198f57fe489f1c4b1d375a0aae20"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_link_south_east",
+      "url": "unit-link-south-east/roof-bundle-link-south-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-south-east/roof-bundle-link-south-east.glb": "a064af068cdd4d0a06b4a06e9e86fa73"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_link_south_east",
+      "url": "unit-link-south-east/unit-link-south-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-south-east/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-south-east/unit-link-south-east.glb": "cc83cfd58d0bd9987bea1fbc49b991a4"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "b_receivers_link_north_west",
+      "url": "unit-spawn-b-courtyard/b-receivers-link-north-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/b-receivers-link-north-west.glb": "c6a471040ef4f853e814cb0cfcb804cb"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_service_north",
+      "url": "unit-service-north/roof-bundle-service-north.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-north/roof-bundle-service-north.glb": "799584c664cbdfd6ef3024312f9410cf"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_service_north",
+      "url": "unit-service-north/unit-service-north.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-service-north/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-service-north/unit-service-north.glb": "0c1c77c43e34c2e3eae42154952dd8f8"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "b_receivers_link_north_east",
+      "url": "unit-spawn-b-courtyard/b-receivers-link-north-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/b-receivers-link-north-east.glb": "8eaf2e063e47dec11ff52c39255b55e9"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "bz04_roof_bundle_unit_link_north_west",
+      "url": "unit-link-north-west/roof-bundle-link-north-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-north-west/roof-bundle-link-north-west.glb": "c1f3a3f33b634bb3d5360af5fcd94057"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_link_north_west",
+      "url": "unit-link-north-west/unit-link-north-west.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-north-west/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-north-west/unit-link-north-west.glb": "bb3e027211946bd9d16b9b02521a75e8"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "rug_receivers_link_north_east",
+      "url": "unit-rug-gate/rug-receivers-link-north-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/rug-receivers-link-north-east.glb": "8c3530289233013839df16a86a692f08"
+      },
+      "materialIds": []
+    },
+    {
+      "id": "section_unit_tea_landing",
+      "url": "unit-tea-landing/unit-tea-landing.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-tea-landing/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-tea-landing/unit-tea-landing.glb": "0469aee3041f3f63e6e3e2976dd97908"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_north_court",
+      "url": "unit-north-court/roof-bundle-north-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-north-court/roof-bundle-north-court.glb": "5cf35b9da24a0f1d5c6d052aee29cb58"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_north_court",
+      "url": "unit-north-court/unit-north-court.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-north-court/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-north-court/unit-north-court.glb": "544c35086c651a2b4c4dcece4a47ee83"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood",
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_rug_gate",
+      "url": "unit-rug-gate/roof-bundle-rug-gate.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/roof-bundle-rug-gate.glb": "c9b12151e140a279f10f3c028e1d2cdb"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_rug_gate",
+      "url": "unit-rug-gate/unit-rug-gate.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-rug-gate/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-rug-gate/unit-rug-gate.glb": "a307a52d397aed590a57e3775f7e6b22"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone",
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_link_north_east",
+      "url": "unit-link-north-east/roof-bundle-link-north-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-north-east/roof-bundle-link-north-east.glb": "6d0cb7726bca1b4de18a9ac0490d6f15"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_link_north_east",
+      "url": "unit-link-north-east/unit-link-north-east.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/unit-link-north-east/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-link-north-east/unit-link-north-east.glb": "d80075a591850e11a895c145992b3d9a"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "section_unit_spawn_b_courtyard",
+      "url": "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
       "scale": 1,
       "variants": {},
       "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original",
       "md5": {
-        "unit-spawn-b-courtyard/bz04-shared-environment.glb": "f8f3eb4826d5fb4249ebb309afabb694"
+        "unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb": "f78929ff8304f5580b54e40986d51d65"
       },
       "materialIds": [
-        "ph_bz04_beige_wall_002",
         "ph_bz04_dark_wood",
-        "ph_bz04_painted_plaster_warm",
-        "ph_bz04_plastered_wall",
-        "ph_bz04_sandstone_blocks_06",
         "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_weathered_brown_planks"
+        "ph_bz04_worn_planks"
+      ]
+    },
+    {
+      "id": "bz04_roof_bundle_unit_spawn_b_courtyard",
+      "url": "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb": "85b06b41fb0a62fe75ee0a2127d01955"
+      },
+      "materialIds": [
+        "ph_bz04_stone_trim_sandstone"
+      ]
+    },
+    {
+      "id": "bz04_shared_environment",
+      "url": "unit-spawn-b-courtyard/bz04-shared-environment.glb",
+      "scale": 1,
+      "variants": {},
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original",
+      "md5": {
+        "unit-spawn-b-courtyard/bz04-shared-environment.glb": "510c310dcfd05f0a3af5b4419cbe679b"
+      },
+      "materialIds": [
+        "ph_bz04_dark_wood",
+        "ph_bz04_stone_trim_sandstone"
       ]
     }
   ],

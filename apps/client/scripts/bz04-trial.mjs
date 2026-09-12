@@ -7,7 +7,7 @@ import { evaluateBazaarPerformance } from './lib/performanceAcceptance.mjs';
 import {parseArgs} from 'node:util';
 import {sampleTrialPerformance,compareTrialCpu} from './lib/trialPerformance.mjs';
 import {normalizeTrialCapturePlan} from './lib/trialCapturePlan.mjs';
-const {values}=parseArgs({options:{plan:{type:'string'},output:{type:'string'},phase:{type:'string',default:'capture'},lighting:{type:'string',default:'golden'},baseline:{type:'string'},views:{type:'string'},movement:{type:'boolean',default:false}}});
+const {values}=parseArgs({options:{plan:{type:'string'},output:{type:'string'},phase:{type:'string',default:'capture'},lighting:{type:'string',default:'golden'},baseline:{type:'string'},views:{type:'string'},movement:{type:'boolean',default:false},'capture-only':{type:'boolean',default:false}}});
 if(!values.plan||!values.output)throw new Error('Usage: --plan saved-plan.json --output new-directory [--baseline earlier-directory] [--views id,id] [--movement]');
 const root=process.cwd(),out=path.resolve(values.output),phase=values.phase;
 const plan=normalizeTrialCapturePlan(JSON.parse(await fs.readFile(values.plan,'utf8')));
@@ -56,7 +56,7 @@ try {
   const run={label,mobile,authorityHash,colliderCount:authority.colliders.length,views:[],routes:[],console:[],network};results.runs.push(run);
   await fs.mkdir(out+'/'+label+'-final',{recursive:true});await fs.writeFile(out+'/'+label+'-final'+'/authority.json',JSON.stringify(authority,null,2));
   for(const v of plan.units[0].views){
-   await pose(page,v);const perf=await sampleTrialPerformance(page);const camera=await page.evaluate(()=>window.agent_observe?.()?.camera??null);
+   await pose(page,v);const perf=values['capture-only']?await page.evaluate(()=>{const s=window.__qa_performance_state();return {measurementMode:'capture-only',drawCalls:s.perf.drawCalls,triangles:s.perf.triangles};}):await sampleTrialPerformance(page);const camera=await page.evaluate(()=>window.agent_observe?.()?.camera??null);
    await page.screenshot({path:out+'/'+label+'-final'+'/'+v.id+'.png'});run.views.push({id:v.id,performance:perf,camera});console.log(label,v.id,perf.drawCalls,perf.triangles,perf.medianFrameMs);
   }
   if(values.movement&&!mobile){
@@ -73,7 +73,7 @@ try {
 
  if(values.baseline){
   const prior=JSON.parse(await fs.readFile(path.resolve(values.baseline,'proof.json'),'utf8'));
-  const comparison=results.runs.flatMap(run=>run.views.map(view=>{const before=prior.runs.find(r=>r.mobile===run.mobile);const old=before?.views.find(v=>v.id===view.id);return {device:run.label,id:view.id,lightingIdentical:(prior.lighting??'golden')===values.lighting,cameraIdentical:JSON.stringify(old?.camera)===JSON.stringify(view.camera),authorityIdentical:before?.authorityHash===run.authorityHash,cpu:compareTrialCpu(old?.performance,view.performance)};}));
+  const comparison=results.runs.flatMap(run=>run.views.map(view=>{const before=prior.runs.find(r=>r.mobile===run.mobile);const old=before?.views.find(v=>v.id===view.id);return {device:run.label,id:view.id,lightingIdentical:(prior.lighting??'golden')===values.lighting,cameraIdentical:JSON.stringify(old?.camera)===JSON.stringify(view.camera),authorityIdentical:before?.authorityHash===run.authorityHash,cpu:values['capture-only']?{status:'deferred',reason:'User deferred performance work until full implementation'}:compareTrialCpu(old?.performance,view.performance)};}));
   results.comparison=comparison;
   await fs.writeFile(out+'/comparison.json',JSON.stringify(comparison,null,2));
   const escape=value=>String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
@@ -81,10 +81,12 @@ try {
   await fs.writeFile(out+'/comparisons.html','<!doctype html><meta charset="utf-8"><title>Matched courtyard evidence</title><h1>Before / after</h1>'+rows.join(''));
  }
  const desktop=results.runs.find(r=>!r.mobile),mobile=results.runs.find(r=>r.mobile);
- results.performance=mobile.views.map(v=>({id:v.id,acceptance:evaluateBazaarPerformance({desktop:desktop.views.find(d=>d.id===v.id).performance,mobile:v.performance})}));
- results.baselineMeaning='Absolute checks use repository release references; relative CPU comparison requires --baseline with compatible recorded samples.';
+ results.performanceDeferred=values['capture-only'];
+ results.measurementMode=values['capture-only']?'capture-only':'raf-full-step';
+ results.performance=values['capture-only']?[]:mobile.views.map(v=>({id:v.id,acceptance:evaluateBazaarPerformance({desktop:desktop.views.find(d=>d.id===v.id).performance,mobile:v.performance})}));
+ results.baselineMeaning=values['capture-only']?'Matched cameras and collider authority checked; performance deferred by user.':'Absolute checks use repository release references; relative CPU comparison requires --baseline with compatible recorded samples.';
  await fs.writeFile(out+'/proof.json',JSON.stringify(results,null,2));
- const failed=(results.comparison??[]).some(c=>!c.lightingIdentical||!c.cameraIdentical||!c.authorityIdentical||c.cpu.status!=='pass')||results.performance.some(p=>!p.acceptance.passed)||results.runs.some(r=>r.routes.some(p=>p.status==='fail')||r.console.some(e=>e.type==='error'||e.kind==='pageerror')||r.network.some(e=>e.status>=400||(e.error?.errorText!=='net::ERR_ABORTED'||!e.url.endsWith('/loading-screen/assets/loading-ambient.ogg'))));
+ const failed=(results.comparison??[]).some(c=>!c.lightingIdentical||!c.cameraIdentical||!c.authorityIdentical||(!values['capture-only']&&c.cpu.status!=='pass'))||results.performance.some(p=>!p.acceptance.passed)||results.runs.some(r=>r.routes.some(p=>p.status==='fail')||r.console.some(e=>e.type==='error'||e.kind==='pageerror')||r.network.some(e=>e.status>=400||(e.error?.errorText!=='net::ERR_ABORTED'||!e.url.endsWith('/loading-screen/assets/loading-ambient.ogg'))));
  if(failed)process.exitCode=1;
 
 }finally{await browser?.close();await server?.close();}

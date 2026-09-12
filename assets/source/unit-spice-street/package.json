@@ -1,6 +1,12 @@
 {
   "models": [
     {
+      "id": "bz04_roof_bundle_unit_spice_street",
+      "file": "roof-bundle-spice-street.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
       "id": "section_unit_spice_street",
       "file": "unit-spice-street.glb",
       "source": "repo://assets/source/unit-spice-street/build.py",
@@ -10,6 +16,23 @@
   "section": {
     "zoneId": "SPICE_STREET",
     "modelId": "section_unit_spice_street",
-    "faces": ["east", "west"]
-  }
+    "faces": [
+      "east",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPICE_STREET",
+      "modelId": "bz04_roof_bundle_unit_spice_street",
+      "position": {
+        "x": 27.6,
+        "y": 23.0,
+        "z": 7.2
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "dd3b5dd645f46bf372057c2f818db7435b802421b88877b5facb5c0bff0d18dd"
 }

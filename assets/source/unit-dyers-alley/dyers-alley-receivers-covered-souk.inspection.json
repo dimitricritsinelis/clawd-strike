@@ -1,0 +1,281 @@
+{
+  "inputSha256": "b963a1e3e7a71be33037cdcd0c41c143a78c291435e8967131e38fb99c7c607a",
+  "designRevision": {
+    "id": "R7 covered souk facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-dyers-alley/dyers-alley-receivers-covered-souk.glb",
+  "triangles": 64,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      1.399999976158142,
+      -0.019999999552965164,
+      -0.699999988079071
+    ],
+    "max": [
+      5.0,
+      7.199999809265137,
+      0.1599999964237213
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -2.1000000000000014,
+      -0.02,
+      -0.8999999999999986
+    ],
+    "max": [
+      15.800000000000004,
+      10.92,
+      17.0
+    ]
+  },
+  "objects": [
+    {
+      "id": "cs-s-part-2-field",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          0.014999999664723873,
+          0.0
+        ],
+        "max": [
+          1.4075000286102295,
+          0.014999999664723873,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.001",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          0.014999999664723873,
+          0.11999999731779099
+        ],
+        "max": [
+          1.4075000286102295,
+          0.014999999664723873,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.002",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          0.014999999664723873,
+          0.18000000715255737
+        ],
+        "max": [
+          1.4075000286102295,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.003",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          0.0,
+          7.0
+        ],
+        "max": [
+          1.4075000286102295,
+          0.0,
+          7.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.004",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.4075000286102295,
+          0.0,
+          0.0
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.005",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.4075000286102295,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          5.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.006",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.4075000286102295,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          5.0,
+          0.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-field.007",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.4075000286102295,
+          0.0,
+          7.0
+        ],
+        "max": [
+          5.0,
+          0.0,
+          7.199999809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cs-s-part-2-party-joint-reveal",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.406999945640564,
+          0.0,
+          0.0
+        ],
+        "max": [
+          1.4079999923706055,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cs-s-part-2-base-closure",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          5.0,
+          0.699999988079071,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cs-s-part-2-cornice-0",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          -0.1599999964237213,
+          7.047999858856201
+        ],
+        "max": [
+          5.0,
+          0.019999999552965164,
+          7.199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cs-s-part-2-cornice-bearing",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          1.399999976158142,
+          -0.13500000536441803,
+          7.039999961853027
+        ],
+        "max": [
+          5.0,
+          0.019999999552965164,
+          7.047999858856201
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "af70d2c92f3f42bb07fe5fca2f00ca5d1e553f41a8a3eb7c3eabd8d334a480fc",
+  "sourcePolygonTriangles": 64,
+  "materials": [
+    "bz06_sand_plaster"
+  ],
+  "exportBudget": {
+    "maxTriangles": 48000,
+    "maxRenderedPrimitives": 16,
+    "maxMaterials": 14,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 10
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 64,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 48000,
+      "maxMaterials": 14,
+      "maxRenderedPrimitives": 16,
+      "maxShadowPrimitives": 10
+    },
+    "overTarget": []
+  }
+}

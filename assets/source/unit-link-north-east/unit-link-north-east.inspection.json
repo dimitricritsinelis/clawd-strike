@@ -1,0 +1,987 @@
+{
+  "inputSha256": "125a952e653fedc8c5fbc36916b17704d939387f449c4d0985c44c82c5d709e8",
+  "designRevision": {
+    "id": "R7 link north east facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-north-east/unit-link-north-east.glb",
+  "triangles": 242,
+  "primitives": 5,
+  "castPrimitives": 5,
+  "actualBoundsGltf": {
+    "min": [
+      -0.6000000238418579,
+      -0.019999999552965164,
+      -0.6000000238418579
+    ],
+    "max": [
+      7.599999904632568,
+      9.899999618530273,
+      5.699999809265137
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.8000000000000043,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.800000000000004,
+      9.92,
+      5.900000000000006
+    ]
+  },
+  "objects": [
+    {
+      "id": "lne-n-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          3.5924999713897705,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.014999866485596,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5924999713897705,
+          -5.0,
+          7.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-party-joint-reveal",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5920000076293945,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.5929999351501465,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5799999237060547,
+          -5.699999809265137,
+          0.0
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.019999980926514,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.699999809265137,
+          -0.019999999552965164
+        ],
+        "max": [
+          3.5999999046325684,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.6075000762939453,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.6075000762939453,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.6075000762939453,
+          -5.014999866485596,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.014999866485596,
+          0.6000000238418579
+        ],
+        "max": [
+          3.6075000762939453,
+          -5.014999866485596,
+          6.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.014999866485596,
+          6.5
+        ],
+        "max": [
+          3.6075000762939453,
+          -5.014999866485596,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6075000762939453,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          3.6600000858306885,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.006",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6075000762939453,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.6600000858306885,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.007",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6075000762939453,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.6600000858306885,
+          -5.0,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.008",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6075000762939453,
+          -5.0,
+          0.6000000238418579
+        ],
+        "max": [
+          3.6600000858306885,
+          -5.0,
+          6.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.009",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6075000762939453,
+          -5.0,
+          6.5
+        ],
+        "max": [
+          3.6600000858306885,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.010",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.011",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.012",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.013",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.045000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          6.840000152587891,
+          -5.045000076293945,
+          6.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-pier-reveal",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6589999198913574,
+          -5.045000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          3.6610000133514404,
+          -5.0,
+          6.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-pier-reveal.001",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.839000225067139,
+          -5.045000076293945,
+          0.6000000238418579
+        ],
+        "max": [
+          6.841000080108643,
+          -5.0,
+          6.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-band-reveal",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.045000076293945,
+          0.5989999771118164
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          0.6010000109672546
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-band-reveal.001",
+      "material": "bz06_pale_lime",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.045000076293945,
+          6.499000072479248
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          6.500999927520752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-field.014",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6600000858306885,
+          -5.0,
+          6.5
+        ],
+        "max": [
+          6.840000152587891,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.015",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.840000152587891,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.016",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.840000152587891,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.017",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.840000152587891,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.6000000238418579
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.018",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.840000152587891,
+          -5.0,
+          0.6000000238418579
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          6.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-field.019",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.840000152587891,
+          -5.0,
+          6.5
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-n-part-2-party-joint-reveal",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.6070001125335693,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.6080000400543213,
+          -5.0,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-back",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.699999809265137,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -5.679999828338623,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-n-part-2-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5999999046325684,
+          -5.699999809265137,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.0,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-e-field",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -4.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-e-field.001",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          -4.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-e-field.002",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.0,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          -4.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-e-base-closure",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          7.019999980926514,
+          -5.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.599999904632568,
+          -4.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-s-field",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          2.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-s-field.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          2.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-s-field.002",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          2.0,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-s-base-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          2.0,
+          0.6000000238418579,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-w-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.0
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.11999999731779099
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -2.0,
+          0.18000000715255737
+        ],
+        "max": [
+          0.0,
+          -0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lne-w-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          -0.019999999552965164,
+          0.0
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lne-w-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.6000000238418579,
+          -2.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          -0.019999999552965164,
+          -0.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "36e1934f1156c96b70ceb7bdd05475f0cb0c27abad453c1de4eeb17ac7aad728",
+  "sourcePolygonTriangles": 242,
+  "materials": [
+    "bz06_cream_plaster",
+    "bz06_dressed_sandstone",
+    "bz06_pale_lime",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxRenderedPrimitives": 6,
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 242,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 5
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

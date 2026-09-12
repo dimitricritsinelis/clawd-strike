@@ -1,0 +1,227 @@
+{
+  "inputSha256": "bbf4e2edd7c269b3e11635ac91b4fa545d255ddad57188734792d5240ec7acfa",
+  "designRevision": {
+    "id": "R7 link east upper facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-rug-gate/rug-receivers-link-east-upper.glb",
+  "triangles": 48,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      5.0
+    ],
+    "max": [
+      3.5,
+      9.899999618530273,
+      5.599999904632568
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.20000000000000284,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.200000000000003,
+      10.219999999999999,
+      5.799999999999997
+    ]
+  },
+  "objects": [
+    {
+      "id": "leu-n-field",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          3.492500066757202,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-field.001",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          3.492500066757202,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-field.002",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          3.492500066757202,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-field.003",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.492500066757202,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.5,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-field.004",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.492500066757202,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.5,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-field.005",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.492500066757202,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.5,
+          -5.014999866485596,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-party-joint-reveal",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.492000102996826,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.493000030517578,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-n-end-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.4800000190734863,
+          -5.599999904632568,
+          0.0
+        ],
+        "max": [
+          3.5,
+          -5.019999980926514,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-n-base-closure",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.599999904632568,
+          -0.019999999552965164
+        ],
+        "max": [
+          3.5,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "f0ea953a99fd0d824cb01abea0e042cf9428cdd20b83e3fff58a3ef1f3510098",
+  "sourcePolygonTriangles": 48,
+  "materials": [
+    "bz06_service_stone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 6,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 48,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

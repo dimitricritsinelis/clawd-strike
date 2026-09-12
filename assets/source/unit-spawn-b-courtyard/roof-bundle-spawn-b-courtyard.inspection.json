@@ -1,4 +1,9 @@
 {
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 spawn b courtyard facade-centered upper openings",
+    "status": "PROPOSED"
+  },
   "asset": "assets/source/unit-spawn-b-courtyard/roof-bundle-spawn-b-courtyard.glb",
   "triangles": 816,
   "primitives": 8,
@@ -30,7 +35,7 @@
   "objects": [
     {
       "id": "ROOF_CELL_040-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -48,7 +53,7 @@
     },
     {
       "id": "ROOF_CELL_040-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -66,7 +71,7 @@
     },
     {
       "id": "ROOF_CELL_041-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -84,7 +89,7 @@
     },
     {
       "id": "ROOF_CELL_041-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -102,7 +107,7 @@
     },
     {
       "id": "ROOF_CELL_042-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -120,7 +125,7 @@
     },
     {
       "id": "ROOF_CELL_042-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -138,7 +143,7 @@
     },
     {
       "id": "ROOF_CELL_043-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -156,7 +161,7 @@
     },
     {
       "id": "ROOF_CELL_043-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -174,7 +179,7 @@
     },
     {
       "id": "ROOF_CELL_044-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -192,7 +197,7 @@
     },
     {
       "id": "ROOF_CELL_044-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -210,7 +215,7 @@
     },
     {
       "id": "ROOF_CELL_045-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -228,7 +233,7 @@
     },
     {
       "id": "ROOF_CELL_045-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -246,7 +251,7 @@
     },
     {
       "id": "ROOF_CELL_046-slab",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -264,7 +269,7 @@
     },
     {
       "id": "ROOF_CELL_046-finish",
-      "material": "ph_bz04_aged_plaster_ochre.001",
+      "material": "bz06_faded_ochre",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -282,7 +287,7 @@
     },
     {
       "id": "ROOF_EDGE_045-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -300,7 +305,7 @@
     },
     {
       "id": "ROOF_EDGE_045-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -318,7 +323,7 @@
     },
     {
       "id": "ROOF_EDGE_046-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -336,7 +341,7 @@
     },
     {
       "id": "ROOF_EDGE_046-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -354,7 +359,7 @@
     },
     {
       "id": "ROOF_EDGE_047-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -372,7 +377,7 @@
     },
     {
       "id": "ROOF_EDGE_047-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -390,7 +395,7 @@
     },
     {
       "id": "ROOF_EDGE_048-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -408,7 +413,7 @@
     },
     {
       "id": "ROOF_EDGE_048-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -426,7 +431,7 @@
     },
     {
       "id": "ROOF_EDGE_049-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -444,7 +449,7 @@
     },
     {
       "id": "ROOF_EDGE_049-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -462,7 +467,7 @@
     },
     {
       "id": "ROOF_EDGE_050-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -480,7 +485,7 @@
     },
     {
       "id": "ROOF_EDGE_050-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -498,7 +503,7 @@
     },
     {
       "id": "ROOF_EDGE_092-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -516,7 +521,7 @@
     },
     {
       "id": "ROOF_EDGE_092-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -534,7 +539,7 @@
     },
     {
       "id": "ROOF_EDGE_093-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -552,7 +557,7 @@
     },
     {
       "id": "ROOF_EDGE_093-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -570,7 +575,7 @@
     },
     {
       "id": "ROOF_EDGE_094-parapet",
-      "material": "ph_bz04_painted_plaster_warm.002",
+      "material": "bz06_cream_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -588,7 +593,7 @@
     },
     {
       "id": "ROOF_EDGE_094-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -606,7 +611,7 @@
     },
     {
       "id": "ROOF_EDGE_104-parapet",
-      "material": "ph_bz04_red_plaster_weathered.001",
+      "material": "bz06_faded_earth_red",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -624,7 +629,7 @@
     },
     {
       "id": "ROOF_EDGE_104-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -642,7 +647,7 @@
     },
     {
       "id": "ROOF_EDGE_105-parapet",
-      "material": "ph_bz04_red_plaster_weathered.001",
+      "material": "bz06_faded_earth_red",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -660,7 +665,7 @@
     },
     {
       "id": "ROOF_EDGE_105-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -678,7 +683,7 @@
     },
     {
       "id": "ROOF_EDGE_106-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -696,7 +701,7 @@
     },
     {
       "id": "ROOF_EDGE_106-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -714,7 +719,7 @@
     },
     {
       "id": "ROOF_EDGE_107-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -732,7 +737,7 @@
     },
     {
       "id": "ROOF_EDGE_107-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -750,7 +755,7 @@
     },
     {
       "id": "ROOF_EDGE_108-parapet",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -768,7 +773,7 @@
     },
     {
       "id": "ROOF_EDGE_108-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -786,7 +791,7 @@
     },
     {
       "id": "ROOF_EDGE_158-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.002",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -804,7 +809,7 @@
     },
     {
       "id": "ROOF_EDGE_158-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -822,7 +827,7 @@
     },
     {
       "id": "ROOF_EDGE_159-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.002",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -840,7 +845,7 @@
     },
     {
       "id": "ROOF_EDGE_159-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -858,7 +863,7 @@
     },
     {
       "id": "ROOF_EDGE_160-parapet",
-      "material": "ph_bz04_sandstone_blocks_06.002",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -876,7 +881,7 @@
     },
     {
       "id": "ROOF_EDGE_160-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -894,7 +899,7 @@
     },
     {
       "id": "ROOF_EDGE_161-parapet",
-      "material": "ph_bz04_plastered_wall.001",
+      "material": "bz06_pale_lime",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -912,7 +917,7 @@
     },
     {
       "id": "ROOF_EDGE_161-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -930,7 +935,7 @@
     },
     {
       "id": "ROOF_EDGE_162-parapet",
-      "material": "ph_bz04_plastered_wall.001",
+      "material": "bz06_pale_lime",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -948,7 +953,7 @@
     },
     {
       "id": "ROOF_EDGE_162-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -966,7 +971,7 @@
     },
     {
       "id": "ROOF_EDGE_163-parapet",
-      "material": "ph_bz04_plastered_wall.001",
+      "material": "bz06_pale_lime",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -984,7 +989,7 @@
     },
     {
       "id": "ROOF_EDGE_163-cap",
-      "material": "ph_bz04_stone_trim_sandstone.002",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1002,7 +1007,7 @@
     },
     {
       "id": "ROOF_STEP_006",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1020,7 +1025,7 @@
     },
     {
       "id": "ROOF_STEP_026",
-      "material": "ph_bz04_red_plaster_weathered.001",
+      "material": "bz06_faded_earth_red",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1038,7 +1043,7 @@
     },
     {
       "id": "ROOF_STEP_030",
-      "material": "ph_bz04_red_plaster_weathered.001",
+      "material": "bz06_faded_earth_red",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1056,7 +1061,7 @@
     },
     {
       "id": "ROOF_STEP_031",
-      "material": "ph_bz04_red_plaster_weathered.001",
+      "material": "bz06_faded_earth_red",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1074,7 +1079,7 @@
     },
     {
       "id": "ROOF_STEP_042",
-      "material": "ph_bz04_plastered_wall.001",
+      "material": "bz06_pale_lime",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1092,7 +1097,7 @@
     },
     {
       "id": "ROOF_STEP_049",
-      "material": "ph_bz04_sandstone_blocks_06.002",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1110,7 +1115,7 @@
     },
     {
       "id": "ROOF_SEAM_006-upstand",
-      "material": "ph_bz04_beige_wall_002.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1128,7 +1133,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_E_PACKER_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1146,7 +1151,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_E_STORE_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1164,7 +1169,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_N_HOUSE_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1182,7 +1187,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_N_POTTER_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1200,7 +1205,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_N_TEXTILE_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1218,7 +1223,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_W_HOUSE_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1236,7 +1241,7 @@
     },
     {
       "id": "ROOF_COLLECTOR_BLD_B_W_TEA_1",
-      "material": "ph_bz04_rusty_metal_02.002",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -1253,5 +1258,34 @@
       "triangles": 12
     }
   ],
-  "sha256": "8271e07f53fa6f3568757abe55a6b5a4e53360a518727f6a57d942295366a46c"
+  "sha256": "67680a79aec5a4b6b2e21c3194e636c52fd618b42f3acfa8585c7d65e67d2ab0",
+  "sourcePolygonTriangles": 816,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz06_cream_plaster",
+    "bz06_faded_earth_red",
+    "bz06_faded_ochre",
+    "bz06_pale_lime",
+    "bz06_sand_plaster",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 4146,
+    "maxRenderedPrimitives": 8
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 816,
+      "maxMaterials": 8,
+      "maxRenderedPrimitives": 8,
+      "maxShadowPrimitives": 6
+    },
+    "targets": {
+      "maxTriangles": 4146,
+      "maxRenderedPrimitives": 8
+    },
+    "overTarget": []
+  }
 }

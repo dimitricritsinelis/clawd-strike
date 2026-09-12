@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "section_unit_tea_stairs",
+      "file": "unit-tea-stairs.glb",
+      "source": "repo://assets/source/unit-tea-stairs/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "TEA_STAIRS",
+    "modelId": "section_unit_tea_stairs",
+    "faces": [
+      "east",
+      "west"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "726216e19d8dd170d848115c1bec3ca9198acae1e7a03d2480bbd025755d2225"
+}

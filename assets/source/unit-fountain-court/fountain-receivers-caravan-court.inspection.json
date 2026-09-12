@@ -1,0 +1,4300 @@
+{
+  "inputSha256": "67c98ce750eae935e6753660d03aafdfd7cc064a886aaa49b2bb3fc637aa22a6",
+  "designRevision": {
+    "id": "R7 caravan court facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-fountain-court/fountain-receivers-caravan-court.glb",
+  "triangles": 2818,
+  "primitives": 7,
+  "castPrimitives": 5,
+  "actualBoundsGltf": {
+    "min": [
+      11.84000015258789,
+      -0.019999999552965164,
+      2.0
+    ],
+    "max": [
+      12.600000381469727,
+      11.399999618530273,
+      18.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -3.8,
+      -0.02,
+      -0.7
+    ],
+    "max": [
+      12.8,
+      11.42,
+      18.7
+    ]
+  },
+  "objects": [
+    {
+      "id": "cc-es-part-2-field",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.015000343322754,
+          -2.007499933242798,
+          0.0
+        ],
+        "max": [
+          12.015000343322754,
+          -2.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.001",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.015000343322754,
+          -2.007499933242798,
+          0.11999999731779099
+        ],
+        "max": [
+          12.015000343322754,
+          -2.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.002",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.015000343322754,
+          -2.007499933242798,
+          0.18000000715255737
+        ],
+        "max": [
+          12.015000343322754,
+          -2.0,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.003",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -2.007499933242798,
+          4.900000095367432
+        ],
+        "max": [
+          12.0,
+          -2.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.004",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.2750000953674316,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -2.007499933242798,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.005",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.2750000953674316,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -2.007499933242798,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.006",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.2750000953674316,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -2.007499933242798,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.007",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.2750000953674316,
+          4.900000095367432
+        ],
+        "max": [
+          12.0,
+          -2.007499933242798,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.008",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.3499999046325684,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -3.2750000953674316,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.009",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.3499999046325684,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -3.2750000953674316,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.010",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.3499999046325684,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -3.2750000953674316,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.011",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.3499999046325684,
+          4.900000095367432
+        ],
+        "max": [
+          12.0,
+          -3.2750000953674316,
+          8.670000076293945
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.012",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -3.3499999046325684,
+          9.479999542236328
+        ],
+        "max": [
+          12.0,
+          -3.2750000953674316,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.013",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.650000095367432,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -3.3499999046325684,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.014",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.650000095367432,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -3.3499999046325684,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.015",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.650000095367432,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -3.3499999046325684,
+          4.190000057220459
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.016",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.650000095367432,
+          5.949999809265137
+        ],
+        "max": [
+          12.0,
+          -3.3499999046325684,
+          8.670000076293945
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.017",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.650000095367432,
+          9.479999542236328
+        ],
+        "max": [
+          12.0,
+          -3.3499999046325684,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.018",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.724999904632568,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -4.650000095367432,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.019",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.724999904632568,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -4.650000095367432,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.020",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.724999904632568,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -4.650000095367432,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.021",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.724999904632568,
+          4.900000095367432
+        ],
+        "max": [
+          12.0,
+          -4.650000095367432,
+          8.670000076293945
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.022",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -4.724999904632568,
+          9.479999542236328
+        ],
+        "max": [
+          12.0,
+          -4.650000095367432,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.023",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -6.0,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -4.724999904632568,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.024",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -6.0,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -4.724999904632568,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.025",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -6.0,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -4.724999904632568,
+          4.900000095367432
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-field.026",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -6.0,
+          4.900000095367432
+        ],
+        "max": [
+          12.0,
+          -4.724999904632568,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-es-part-2-party-joint-reveal",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -2.007999897003174,
+          0.0
+        ],
+        "max": [
+          12.015000343322754,
+          -2.006999969482422,
+          4.900000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-end-closure",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.020000457763672,
+          -2.0199999809265137,
+          0.0
+        ],
+        "max": [
+          12.600000381469727,
+          -2.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-base-closure",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.020000457763672,
+          -6.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          12.600000381469727,
+          -2.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-cornice-0",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.84000015258789,
+          -6.0,
+          9.748000144958496
+        ],
+        "max": [
+          12.020000457763672,
+          -2.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-cornice-bearing",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.864999771118164,
+          -6.0,
+          9.739999771118164
+        ],
+        "max": [
+          12.020000457763672,
+          -2.0,
+          9.748000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-back",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.34000015258789,
+          -4.570000171661377,
+          4.25
+        ],
+        "max": [
+          12.359999656677246,
+          -3.430000066757202,
+          5.869999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-left-return",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -3.450000047683716,
+          4.25
+        ],
+        "max": [
+          12.34000015258789,
+          -3.3499999046325684,
+          5.849999904632568
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-right-return",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.650000095367432,
+          4.25
+        ],
+        "max": [
+          12.34000015258789,
+          -4.550000190734863,
+          5.849999904632568
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-head",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.650000095367432,
+          5.849999904632568
+        ],
+        "max": [
+          12.34000015258789,
+          -3.3499999046325684,
+          5.949999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-sill",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.650000095367432,
+          4.197999954223633
+        ],
+        "max": [
+          12.34000015258789,
+          -3.3499999046325684,
+          4.25
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-sill-drip",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.944000244140625,
+          -4.650000095367432,
+          4.190000057220459
+        ],
+        "max": [
+          12.34000015258789,
+          -3.3499999046325684,
+          4.197999954223633
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.650000095367432,
+          4.190000057220459
+        ],
+        "max": [
+          11.935999870300293,
+          -3.3499999046325684,
+          4.197999954223633
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-frame-jamb",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.5299999713897705,
+          4.25
+        ],
+        "max": [
+          12.324999809265137,
+          -3.450000047683716,
+          5.849999904632568
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-frame-jamb.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.550000190734863,
+          4.25
+        ],
+        "max": [
+          12.324999809265137,
+          -4.46999979019165,
+          5.849999904632568
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-frame-bottom",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.550000190734863,
+          4.25
+        ],
+        "max": [
+          12.324999809265137,
+          -3.450000047683716,
+          4.329999923706055
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-frame-head",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.550000190734863,
+          5.769999980926514
+        ],
+        "max": [
+          12.324999809265137,
+          -3.450000047683716,
+          5.849999904632568
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-panel",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.307999610900879,
+          -3.996999979019165,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -3.5329999923706055,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-stile",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.5880000591278076,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -3.5329999923706055,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-stile.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.996999979019165,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -3.941999912261963,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.996999979019165,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -3.5329999923706055,
+          4.400000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.996999979019165,
+          5.699999809265137
+        ],
+        "max": [
+          12.324999809265137,
+          -3.5329999923706055,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail.002",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -3.996999979019165,
+          5.025000095367432
+        ],
+        "max": [
+          12.324999809265137,
+          -3.5329999923706055,
+          5.074999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-hinge",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.291999816894531,
+          -3.558000087738037,
+          4.510000228881836
+        ],
+        "max": [
+          12.300000190734863,
+          -3.5329999923706055,
+          4.610000133514404
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-hinge.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.291999816894531,
+          -3.558000087738037,
+          5.489999771118164
+        ],
+        "max": [
+          12.300000190734863,
+          -3.5329999923706055,
+          5.590000152587891
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-latch",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.289999961853027,
+          -3.9719998836517334,
+          4.978000164031982
+        ],
+        "max": [
+          12.300000190734863,
+          -3.9170000553131104,
+          5.002999782562256
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-panel.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.307999610900879,
+          -4.4670000076293945,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -4.002999782562256,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-stile.002",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.058000087738037,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -4.002999782562256,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-stile.003",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.4670000076293945,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -4.4120001792907715,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail.003",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.4670000076293945,
+          4.329999923706055
+        ],
+        "max": [
+          12.324999809265137,
+          -4.002999782562256,
+          4.400000095367432
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail.004",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.4670000076293945,
+          5.699999809265137
+        ],
+        "max": [
+          12.324999809265137,
+          -4.002999782562256,
+          5.769999980926514
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-leaf-rail.005",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.4670000076293945,
+          5.025000095367432
+        ],
+        "max": [
+          12.324999809265137,
+          -4.002999782562256,
+          5.074999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-hinge.002",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.291999816894531,
+          -4.4670000076293945,
+          4.510000228881836
+        ],
+        "max": [
+          12.300000190734863,
+          -4.441999912261963,
+          4.610000133514404
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-hinge.003",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.291999816894531,
+          -4.4670000076293945,
+          5.489999771118164
+        ],
+        "max": [
+          12.300000190734863,
+          -4.441999912261963,
+          5.590000152587891
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L1-W1-latch.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.289999961853027,
+          -4.441999912261963,
+          4.978000164031982
+        ],
+        "max": [
+          12.300000190734863,
+          -4.38700008392334,
+          5.002999782562256
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-back",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.300000190734863,
+          -4.644999980926514,
+          8.729999542236328
+        ],
+        "max": [
+          12.319999694824219,
+          -3.3550000190734863,
+          9.399999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-left-return",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -3.375,
+          8.729999542236328
+        ],
+        "max": [
+          12.300000190734863,
+          -3.2750000953674316,
+          9.380000114440918
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-right-return",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.724999904632568,
+          8.729999542236328
+        ],
+        "max": [
+          12.300000190734863,
+          -4.625,
+          9.380000114440918
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-head",
+      "material": "bz06_sand_plaster.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.724999904632568,
+          9.380000114440918
+        ],
+        "max": [
+          12.300000190734863,
+          -3.2750000953674316,
+          9.479999542236328
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-sill",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.724999904632568,
+          8.678000450134277
+        ],
+        "max": [
+          12.300000190734863,
+          -3.2750000953674316,
+          8.729999542236328
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-sill-drip",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.944000244140625,
+          -4.724999904632568,
+          8.670000076293945
+        ],
+        "max": [
+          12.300000190734863,
+          -3.2750000953674316,
+          8.678000450134277
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -4.724999904632568,
+          8.670000076293945
+        ],
+        "max": [
+          11.935999870300293,
+          -3.2750000953674316,
+          8.678000450134277
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-frame-jamb",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -3.4549999237060547,
+          8.729999542236328
+        ],
+        "max": [
+          12.28499984741211,
+          -3.375,
+          9.380000114440918
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-frame-jamb.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.625,
+          8.729999542236328
+        ],
+        "max": [
+          12.28499984741211,
+          -4.545000076293945,
+          9.380000114440918
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-frame-bottom",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.625,
+          8.729999542236328
+        ],
+        "max": [
+          12.28499984741211,
+          -3.375,
+          8.8100004196167
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-frame-head",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.625,
+          9.300000190734863
+        ],
+        "max": [
+          12.28499984741211,
+          -3.375,
+          9.380000114440918
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          8.8100004196167
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          8.845000267028809
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver.001",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          8.890000343322754
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          8.925000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver.002",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          8.970000267028809
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          9.005000114440918
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver.003",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          9.050000190734863
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          9.085000038146973
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver.004",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          9.130000114440918
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          9.164999961853027
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-es-part-2-F_W_SERVICE-L2-W1-louver.005",
+      "material": "bz04_craft_warm_timber.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.260000228881836,
+          -4.545000076293945,
+          9.210000038146973
+        ],
+        "max": [
+          12.28499984741211,
+          -3.4549999237060547,
+          9.244999885559082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-field",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -11.5,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -11.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -11.5,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -11.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.002",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -11.5,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -11.0,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.003",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -12.800000190734863,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -11.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.004",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -12.800000190734863,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -11.5,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.005",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -12.800000190734863,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -11.5,
+          8.390000343322754
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.006",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -12.800000190734863,
+          10.25
+        ],
+        "max": [
+          12.0,
+          -11.5,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.007",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.324999809265137,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -12.800000190734863,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.008",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.324999809265137,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -12.800000190734863,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.009",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.324999809265137,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -12.800000190734863,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.010",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.675000190734863,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -13.324999809265137,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.011",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.675000190734863,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -13.324999809265137,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.012",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.675000190734863,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -13.324999809265137,
+          5.690000057220459
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.013",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.675000190734863,
+          7.170000076293945
+        ],
+        "max": [
+          12.0,
+          -13.324999809265137,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.014",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -16.200000762939453,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -15.675000190734863,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.015",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -16.200000762939453,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -15.675000190734863,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.016",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -16.200000762939453,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -15.675000190734863,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.017",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -17.5,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -16.200000762939453,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.018",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -17.5,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -16.200000762939453,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.019",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -17.5,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -16.200000762939453,
+          8.390000343322754
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.020",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -17.5,
+          10.25
+        ],
+        "max": [
+          12.0,
+          -16.200000762939453,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.021",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -18.0,
+          0.0
+        ],
+        "max": [
+          12.0,
+          -17.5,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.022",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -18.0,
+          0.11999999731779099
+        ],
+        "max": [
+          12.0,
+          -17.5,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-field.023",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -18.0,
+          0.18000000715255737
+        ],
+        "max": [
+          12.0,
+          -17.5,
+          11.399999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-base-closure",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.020000457763672,
+          -18.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          12.600000381469727,
+          -11.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-cornice-0",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.899999618530273,
+          -18.0,
+          11.248000144958496
+        ],
+        "max": [
+          12.020000457763672,
+          -11.0,
+          11.319999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-cornice-bearing",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.925000190734863,
+          -18.0,
+          11.239999771118164
+        ],
+        "max": [
+          12.020000457763672,
+          -11.0,
+          11.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-cornice-1",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.84000015258789,
+          -18.0,
+          11.32800006866455
+        ],
+        "max": [
+          12.020000457763672,
+          -11.0,
+          11.399999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-cornice-bearing.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.864999771118164,
+          -18.0,
+          11.319999694824219
+        ],
+        "max": [
+          12.020000457763672,
+          -11.0,
+          11.32800006866455
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -13.604166984558105,
+          6.815999984741211
+        ],
+        "max": [
+          12.020000457763672,
+          -13.387935638427734,
+          6.981565475463867
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.570079803466797,
+          6.908877372741699
+        ],
+        "max": [
+          12.020000457763672,
+          -13.387935638427734,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.604166984558105,
+          6.815999984741211
+        ],
+        "max": [
+          12.239999771118164,
+          -13.425000190734863,
+          6.887499809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -13.783333778381348,
+          6.887499809265137
+        ],
+        "max": [
+          12.020000457763672,
+          -13.570079803466797,
+          7.042099952697754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.755474090576172,
+          6.981565475463867
+        ],
+        "max": [
+          12.020000457763672,
+          -13.570079803466797,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.783333778381348,
+          6.887499809265137
+        ],
+        "max": [
+          12.239999771118164,
+          -13.604166984558105,
+          6.946000099182129
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.002",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -13.962499618530273,
+          6.946000099182129
+        ],
+        "max": [
+          12.020000457763672,
+          -13.755474090576172,
+          7.08927583694458
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.002",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.941246032714844,
+          7.042099952697754
+        ],
+        "max": [
+          12.020000457763672,
+          -13.755474090576172,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.002",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.962499618530273,
+          6.946000099182129
+        ],
+        "max": [
+          12.239999771118164,
+          -13.783333778381348,
+          6.991499900817871
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.003",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -14.141666412353516,
+          6.991499900817871
+        ],
+        "max": [
+          12.020000457763672,
+          -13.941246032714844,
+          7.123028755187988
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.003",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.127315521240234,
+          7.08927583694458
+        ],
+        "max": [
+          12.020000457763672,
+          -13.941246032714844,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.003",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.141666412353516,
+          6.991499900817871
+        ],
+        "max": [
+          12.239999771118164,
+          -13.962499618530273,
+          7.02400016784668
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.004",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -14.320833206176758,
+          7.02400016784668
+        ],
+        "max": [
+          12.020000457763672,
+          -14.127315521240234,
+          7.143303394317627
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.004",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.313602447509766,
+          7.123028755187988
+        ],
+        "max": [
+          12.020000457763672,
+          -14.127315521240234,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.004",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.320833206176758,
+          7.02400016784668
+        ],
+        "max": [
+          12.239999771118164,
+          -14.141666412353516,
+          7.043499946594238
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.005",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -14.5,
+          7.043499946594238
+        ],
+        "max": [
+          12.020000457763672,
+          -14.313602447509766,
+          7.150065898895264
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.005",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.5,
+          7.143303394317627
+        ],
+        "max": [
+          12.020000457763672,
+          -14.313602447509766,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.005",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.5,
+          7.043499946594238
+        ],
+        "max": [
+          12.239999771118164,
+          -14.320833206176758,
+          7.050000190734863
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.006",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -14.686397552490234,
+          7.043499946594238
+        ],
+        "max": [
+          12.020000457763672,
+          -14.5,
+          7.150065898895264
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.006",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.686397552490234,
+          7.143303394317627
+        ],
+        "max": [
+          12.020000457763672,
+          -14.5,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.006",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.679166793823242,
+          7.043499946594238
+        ],
+        "max": [
+          12.239999771118164,
+          -14.5,
+          7.050000190734863
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.007",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -14.872684478759766,
+          7.02400016784668
+        ],
+        "max": [
+          12.020000457763672,
+          -14.679166793823242,
+          7.143303394317627
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.007",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.872684478759766,
+          7.123028755187988
+        ],
+        "max": [
+          12.020000457763672,
+          -14.686397552490234,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.007",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -14.858333587646484,
+          7.02400016784668
+        ],
+        "max": [
+          12.239999771118164,
+          -14.679166793823242,
+          7.043499946594238
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.008",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.058753967285156,
+          6.991499900817871
+        ],
+        "max": [
+          12.020000457763672,
+          -14.858333587646484,
+          7.123028755187988
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.008",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.058753967285156,
+          7.08927583694458
+        ],
+        "max": [
+          12.020000457763672,
+          -14.872684478759766,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.008",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.037500381469727,
+          6.991499900817871
+        ],
+        "max": [
+          12.239999771118164,
+          -14.858333587646484,
+          7.02400016784668
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.009",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.244525909423828,
+          6.946000099182129
+        ],
+        "max": [
+          12.020000457763672,
+          -15.037500381469727,
+          7.08927583694458
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.009",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.244525909423828,
+          7.042099952697754
+        ],
+        "max": [
+          12.020000457763672,
+          -15.058753967285156,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.009",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.216666221618652,
+          6.946000099182129
+        ],
+        "max": [
+          12.239999771118164,
+          -15.037500381469727,
+          6.991499900817871
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.010",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.429920196533203,
+          6.887499809265137
+        ],
+        "max": [
+          12.020000457763672,
+          -15.216666221618652,
+          7.042099952697754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.010",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.429920196533203,
+          6.981565475463867
+        ],
+        "max": [
+          12.020000457763672,
+          -15.244525909423828,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.010",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.395833015441895,
+          6.887499809265137
+        ],
+        "max": [
+          12.239999771118164,
+          -15.216666221618652,
+          6.946000099182129
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-arch-surround.011",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.612064361572266,
+          6.815999984741211
+        ],
+        "max": [
+          12.020000457763672,
+          -15.395833015441895,
+          6.981565475463867
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-spandrel.011",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.612064361572266,
+          6.908877372741699
+        ],
+        "max": [
+          12.020000457763672,
+          -15.429920196533203,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-barrel.011",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.574999809265137,
+          6.815999984741211
+        ],
+        "max": [
+          12.239999771118164,
+          -15.395833015441895,
+          6.887499809265137
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-jamb",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -13.425000190734863,
+          5.75
+        ],
+        "max": [
+          12.239999771118164,
+          -13.324999809265137,
+          6.815999984741211
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-jamb.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.675000190734863,
+          5.75
+        ],
+        "max": [
+          12.239999771118164,
+          -15.574999809265137,
+          6.815999984741211
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-shoulder",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -13.387935638427734,
+          6.908877372741699
+        ],
+        "max": [
+          12.020000457763672,
+          -13.324999809265137,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-shoulder.001",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.0,
+          -15.675000190734863,
+          6.908877372741699
+        ],
+        "max": [
+          12.020000457763672,
+          -15.612064361572266,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-back",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.239999771118164,
+          -15.675000190734863,
+          5.75
+        ],
+        "max": [
+          12.260000228881836,
+          -13.324999809265137,
+          7.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-sill",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -15.675000190734863,
+          5.690000057220459
+        ],
+        "max": [
+          12.239999771118164,
+          -13.324999809265137,
+          5.75
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-jamb",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.505000114440918,
+          5.75
+        ],
+        "max": [
+          12.225000381469727,
+          -13.425000190734863,
+          6.847925662994385
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-jamb.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.574999809265137,
+          5.75
+        ],
+        "max": [
+          12.225000381469727,
+          -15.494999885559082,
+          6.847925662994385
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-bottom",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.574999809265137,
+          5.75
+        ],
+        "max": [
+          12.225000381469727,
+          -13.425000190734863,
+          5.829999923706055
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.670833587646484,
+          6.761790752410889
+        ],
+        "max": [
+          12.225000381469727,
+          -13.425000190734863,
+          6.887499809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.83666706085205,
+          6.825110912322998
+        ],
+        "max": [
+          12.225000381469727,
+          -13.604166984558105,
+          6.946000099182129
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.0024995803833,
+          6.877004623413086
+        ],
+        "max": [
+          12.225000381469727,
+          -13.783333778381348,
+          6.991499900817871
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.168333053588867,
+          6.917450428009033
+        ],
+        "max": [
+          12.225000381469727,
+          -13.962499618530273,
+          7.02400016784668
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.004",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.334166526794434,
+          6.94642972946167
+        ],
+        "max": [
+          12.225000381469727,
+          -14.141666412353516,
+          7.043499946594238
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.005",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.5,
+          6.963931083679199
+        ],
+        "max": [
+          12.225000381469727,
+          -14.320833206176758,
+          7.050000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.006",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.679166793823242,
+          6.963931083679199
+        ],
+        "max": [
+          12.225000381469727,
+          -14.5,
+          7.050000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.007",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.858333587646484,
+          6.94642972946167
+        ],
+        "max": [
+          12.225000381469727,
+          -14.665833473205566,
+          7.043499946594238
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.008",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.037500381469727,
+          6.917450428009033
+        ],
+        "max": [
+          12.225000381469727,
+          -14.831666946411133,
+          7.02400016784668
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.009",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.216666221618652,
+          6.877004623413086
+        ],
+        "max": [
+          12.225000381469727,
+          -14.9975004196167,
+          6.991499900817871
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.010",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.395833015441895,
+          6.825110912322998
+        ],
+        "max": [
+          12.225000381469727,
+          -15.16333293914795,
+          6.946000099182129
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-frame-head.011",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.574999809265137,
+          6.761790752410889
+        ],
+        "max": [
+          12.225000381469727,
+          -15.329166412353516,
+          6.887499809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.539999961853027,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -13.505000114440918,
+          6.7751545906066895
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.699999809265137,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -13.664999961853027,
+          6.834238052368164
+        ]
+      },
+      "triangles": 16
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -13.859999656677246,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -13.824999809265137,
+          6.88269567489624
+        ]
+      },
+      "triangles": 16
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.020000457763672,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -13.984999656677246,
+          6.92050838470459
+        ]
+      },
+      "triangles": 16
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.004",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.180000305175781,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.145000457763672,
+          6.94766092300415
+        ]
+      },
+      "triangles": 16
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.005",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.34000015258789,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.305000305175781,
+          6.964142799377441
+        ]
+      },
+      "triangles": 16
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.006",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.5,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.46500015258789,
+          6.969947338104248
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.007",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.65999984741211,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.625,
+          6.965412616729736
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.008",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.819999694824219,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.78499984741211,
+          6.95135498046875
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.009",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -14.979999542236328,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -14.944999694824219,
+          6.926624774932861
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.010",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.140000343322754,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -15.104999542236328,
+          6.891232013702393
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.011",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.300000190734863,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -15.265000343322754,
+          6.845190525054932
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-HIGH-LIGHT-vertical-slat.012",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.199999809265137,
+          -15.460000038146973,
+          5.829999923706055
+        ],
+        "max": [
+          12.225000381469727,
+          -15.425000190734863,
+          6.788518905639648
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-back",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.399999618530273,
+          -12.720000267028809,
+          8.449999809265137
+        ],
+        "max": [
+          12.420000076293945,
+          -11.579999923706055,
+          10.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-left-return",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -11.600000381469727,
+          8.449999809265137
+        ],
+        "max": [
+          12.399999618530273,
+          -11.5,
+          10.149999618530273
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-right-return",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -12.800000190734863,
+          8.449999809265137
+        ],
+        "max": [
+          12.399999618530273,
+          -12.699999809265137,
+          10.149999618530273
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-head",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -12.800000190734863,
+          10.149999618530273
+        ],
+        "max": [
+          12.399999618530273,
+          -11.5,
+          10.25
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-sill",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -12.800000190734863,
+          8.39799976348877
+        ],
+        "max": [
+          12.399999618530273,
+          -11.5,
+          8.449999809265137
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-sill-drip",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.944000244140625,
+          -12.800000190734863,
+          8.390000343322754
+        ],
+        "max": [
+          12.399999618530273,
+          -11.5,
+          8.39799976348877
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -12.800000190734863,
+          8.390000343322754
+        ],
+        "max": [
+          11.935999870300293,
+          -11.5,
+          8.39799976348877
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-frame-jamb",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -11.680000305175781,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -11.600000381469727,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-frame-jamb.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.699999809265137,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -12.619999885559082,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-frame-bottom",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.699999809265137,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -11.600000381469727,
+          8.529999732971191
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-frame-head",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.700000762939453,
+          10.069999694824219
+        ],
+        "max": [
+          12.385000228881836,
+          -11.599998474121094,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-panel",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.368000030517578,
+          -12.147000312805176,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -11.682999610900879,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-stile",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -11.73799991607666,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -11.682999610900879,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-stile.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.147000312805176,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -12.092000007629395,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.147000312805176,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -11.682999610900879,
+          8.600000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.147000312805176,
+          10.0
+        ],
+        "max": [
+          12.385000228881836,
+          -11.682999610900879,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.147000312805176,
+          9.274999618530273
+        ],
+        "max": [
+          12.385000228881836,
+          -11.682999610900879,
+          9.324999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-hinge",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -11.708000183105469,
+          8.710000038146973
+        ],
+        "max": [
+          12.359999656677246,
+          -11.682999610900879,
+          8.8100004196167
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-hinge.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -11.708000183105469,
+          9.789999961853027
+        ],
+        "max": [
+          12.359999656677246,
+          -11.682999610900879,
+          9.890000343322754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-latch",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.350000381469727,
+          -12.121999740600586,
+          9.222999572753906
+        ],
+        "max": [
+          12.359999656677246,
+          -12.067000389099121,
+          9.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-panel.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.368000030517578,
+          -12.616999626159668,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -12.152999877929688,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-stile.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.208000183105469,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -12.152999877929688,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-stile.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.616999626159668,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -12.562000274658203,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.616999626159668,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -12.152999877929688,
+          8.600000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail.004",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.616999626159668,
+          10.0
+        ],
+        "max": [
+          12.385000228881836,
+          -12.152999877929688,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-leaf-rail.005",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -12.616999626159668,
+          9.274999618530273
+        ],
+        "max": [
+          12.385000228881836,
+          -12.152999877929688,
+          9.324999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-hinge.002",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -12.616999626159668,
+          8.710000038146973
+        ],
+        "max": [
+          12.359999656677246,
+          -12.592000007629395,
+          8.8100004196167
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-hinge.003",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -12.616999626159668,
+          9.789999961853027
+        ],
+        "max": [
+          12.359999656677246,
+          -12.592000007629395,
+          9.890000343322754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W1-latch.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.350000381469727,
+          -12.592000007629395,
+          9.222999572753906
+        ],
+        "max": [
+          12.359999656677246,
+          -12.536999702453613,
+          9.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-back",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.399999618530273,
+          -17.420000076293945,
+          8.449999809265137
+        ],
+        "max": [
+          12.420000076293945,
+          -16.280000686645508,
+          10.170000076293945
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-left-return",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -16.299999237060547,
+          8.449999809265137
+        ],
+        "max": [
+          12.399999618530273,
+          -16.200000762939453,
+          10.149999618530273
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-right-return",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -17.5,
+          8.449999809265137
+        ],
+        "max": [
+          12.399999618530273,
+          -17.399999618530273,
+          10.149999618530273
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-head",
+      "material": "bz06_dressed_sandstone.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -17.5,
+          10.149999618530273
+        ],
+        "max": [
+          12.399999618530273,
+          -16.200000762939453,
+          10.25
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-sill",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -17.5,
+          8.39799976348877
+        ],
+        "max": [
+          12.399999618530273,
+          -16.200000762939453,
+          8.449999809265137
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-sill-drip",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.944000244140625,
+          -17.5,
+          8.390000343322754
+        ],
+        "max": [
+          12.399999618530273,
+          -16.200000762939453,
+          8.39799976348877
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-sill-drip.001",
+      "material": "bz06_monolithic_stone_trim.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.920000076293945,
+          -17.5,
+          8.390000343322754
+        ],
+        "max": [
+          11.935999870300293,
+          -16.200000762939453,
+          8.39799976348877
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-frame-jamb",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.3799991607666,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -16.299999237060547,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-frame-jamb.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.399999618530273,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -17.31999969482422,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-frame-bottom",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.399999618530273,
+          8.449999809265137
+        ],
+        "max": [
+          12.385000228881836,
+          -16.299999237060547,
+          8.529999732971191
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-frame-head",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.400001525878906,
+          10.069999694824219
+        ],
+        "max": [
+          12.385000228881836,
+          -16.299999237060547,
+          10.149999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-panel",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.368000030517578,
+          -16.847000122070312,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.382999420166016,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-stile",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.437999725341797,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.382999420166016,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-stile.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.847000122070312,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.79199981689453,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.847000122070312,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.382999420166016,
+          8.600000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.847000122070312,
+          10.0
+        ],
+        "max": [
+          12.385000228881836,
+          -16.382999420166016,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.847000122070312,
+          9.274999618530273
+        ],
+        "max": [
+          12.385000228881836,
+          -16.382999420166016,
+          9.324999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-hinge",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -16.408000946044922,
+          8.710000038146973
+        ],
+        "max": [
+          12.359999656677246,
+          -16.382999420166016,
+          8.8100004196167
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-hinge.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -16.408000946044922,
+          9.789999961853027
+        ],
+        "max": [
+          12.359999656677246,
+          -16.382999420166016,
+          9.890000343322754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-latch",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.350000381469727,
+          -16.82200050354004,
+          9.222999572753906
+        ],
+        "max": [
+          12.359999656677246,
+          -16.767000198364258,
+          9.248000144958496
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-panel.001",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.368000030517578,
+          -17.316999435424805,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.85300064086914,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-stile.002",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -16.908000946044922,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.85300064086914,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-stile.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.316999435424805,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -17.261999130249023,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail.003",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.316999435424805,
+          8.529999732971191
+        ],
+        "max": [
+          12.385000228881836,
+          -16.85300064086914,
+          8.600000381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail.004",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.316999435424805,
+          10.0
+        ],
+        "max": [
+          12.385000228881836,
+          -16.85300064086914,
+          10.069999694824219
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-leaf-rail.005",
+      "material": "ph_bz04_dark_wood.001",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          12.359999656677246,
+          -17.316999435424805,
+          9.274999618530273
+        ],
+        "max": [
+          12.385000228881836,
+          -16.85300064086914,
+          9.324999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-hinge.002",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -17.316999435424805,
+          8.710000038146973
+        ],
+        "max": [
+          12.359999656677246,
+          -17.29199981689453,
+          8.8100004196167
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-hinge.003",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.35200023651123,
+          -17.316999435424805,
+          9.789999961853027
+        ],
+        "max": [
+          12.359999656677246,
+          -17.29199981689453,
+          9.890000343322754
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "cc-en-F_W_HALL-L1-W3-latch.001",
+      "material": "bz04_craft_dark_iron.001",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          12.350000381469727,
+          -17.29199981689453,
+          9.222999572753906
+        ],
+        "max": [
+          12.359999656677246,
+          -17.23699951171875,
+          9.248000144958496
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "416a85ce6615b68f08b2e57a0cc9ee6e262e2ddd6e62e34a69aa1ee8cf288169",
+  "sourcePolygonTriangles": 2818,
+  "materials": [
+    "bz04_craft_dark_iron.001",
+    "bz04_craft_warm_timber.001",
+    "bz06_dressed_sandstone.001",
+    "bz06_monolithic_stone_trim.001",
+    "bz06_sand_plaster.001",
+    "ph_bz04_dark_wood.001"
+  ],
+  "exportBudget": {
+    "maxTriangles": 48000,
+    "maxRenderedPrimitives": 13,
+    "maxMaterials": 12,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 8
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 2818,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 7,
+      "maxShadowPrimitives": 5
+    },
+    "targets": {
+      "maxTriangles": 48000,
+      "maxMaterials": 12,
+      "maxRenderedPrimitives": 13,
+      "maxShadowPrimitives": 8
+    },
+    "overTarget": []
+  }
+}

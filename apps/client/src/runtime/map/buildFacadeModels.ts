@@ -1,5 +1,5 @@
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { Box3, Group, Mesh, type Material, type MeshStandardMaterial, type Object3D, Vector3 } from "three";
+import { Box3, Group, Mesh, ShaderChunk, type Material, type MeshStandardMaterial, type Object3D, Vector3 } from "three";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import type { WallMaterialLibrary, WallTextureQuality } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
@@ -35,6 +35,42 @@ function rebindPackMaterials(
     if (!(mesh as { isMesh?: boolean }).isMesh) return;
     const swap = (material: Material): Material => {
       const id = (material.name ?? "").split(".")[0] ?? "";
+      if (material.userData.bz04Atlas) {
+        let atlas = cache.get(id);
+        if (!atlas) {
+          atlas = material.clone() as MeshStandardMaterial;
+          atlas.onBeforeCompile = shader => {
+            shader.vertexShader = "attribute vec4 _bz04_atlas; varying vec4 vBz04Atlas;\n"+shader.vertexShader;
+            shader.vertexShader = shader.vertexShader.replace("#include <begin_vertex>", "#include <begin_vertex>\nvBz04Atlas=_bz04_atlas;");
+            shader.fragmentShader = "varying vec4 vBz04Atlas;\nvec4 bz04AtlasSample(sampler2D tex, vec2 uv) { return textureGrad(tex, vBz04Atlas.xy+fract(uv)*vBz04Atlas.zw, dFdx(uv)*vBz04Atlas.zw, dFdy(uv)*vBz04Atlas.zw); }\n"+shader.fragmentShader;
+            for (const chunk of ["map_fragment", "normal_fragment_maps", "roughnessmap_fragment", "metalnessmap_fragment", "aomap_fragment"] as const) {
+              shader.fragmentShader = shader.fragmentShader.replace(`#include <${chunk}>`, ShaderChunk[chunk]
+                .replace(/texture2D\(\s*(map|normalMap|roughnessMap|metalnessMap|aoMap)\s*,\s*([^)]*)\)/g, "bz04AtlasSample($1,$2)"));
+            }
+          };
+          atlas.customProgramCacheKey = () => "bz04-periodic-craft-atlas-v1";
+          cache.set(id, atlas);
+        }
+        return atlas;
+      }
+      const sourceId = material.userData.bz04SourceMaterial;
+      if (id.startsWith("bz06_") && typeof sourceId === "string" && sourceId.startsWith("ph_bz04_")) {
+        let derived = cache.get(id);
+        if (!derived) {
+          derived = material.clone() as MeshStandardMaterial;
+          // The calibrated albedo and COLOR_0 already contain the selected paint.
+          // Add the approved source macro once without rebinding or tinting it.
+          applyWallShaderTweaks(derived, {
+            albedoBoost: 1,
+            macroSeed: deriveSubSeed(binding.seed, `authored:${sourceId}`),
+            tileSizeM: Number(material.userData.tileSizeM),
+            floorTopY,
+            ...resolveAuthoredWallShaderProfile(sourceId),
+          });
+          cache.set(id, derived);
+        }
+        return derived;
+      }
       if (!ids.has(id)) return material;
       let replacement = cache.get(id);
       if (!replacement) {
@@ -128,8 +164,12 @@ export function buildAuthoredPlacements(placements: readonly RuntimeAuthoredPlac
   // Roof bundles share scanned materials and static transforms. Keep their
   // provenance before merging by exact attribute signature and shadow class.
   const batches = new Map<string, { material: Material; shadow: boolean; geometry: import("three").BufferGeometry[]; contributors: string[] }>();
+  let roofPhaseAllowance = 0;
   for (const model of [...root.children]) {
     if (!model.userData.bz04RoofBundle) continue;
+    const allowance = model.userData.bz04RoofPhasePrimitiveAllowance ?? 0;
+    if (!Number.isInteger(allowance) || allowance < 0) throw new Error("Invalid per-area roof primitive allowance");
+    roofPhaseAllowance += allowance;
     validateBz04Bounds(library.instantiate(placements.find(p => model.name.endsWith(p.id))!.modelId), model.name);
     model.updateMatrixWorld(true);
     model.traverse(node => {
@@ -156,7 +196,8 @@ export function buildAuthoredPlacements(placements: readonly RuntimeAuthoredPlac
     mesh.userData.bz04Contributors=[...new Set(batch.contributors)]; root.add(mesh);
     for (const source of batch.geometry) source.dispose();
   }
-  if (batches.size > 11) throw new Error(`BZ-04 roof primitive ceiling exceeded: ${batches.size}`);
+  // Construction retains measured costs; performance acceptance is a later task.
+  root.userData.bz04RoofPrimitiveCounts = { actual: batches.size, planning: 11, phasedAreaAllowance: roofPhaseAllowance, performanceDeferred: true };
   return root;
 }
 

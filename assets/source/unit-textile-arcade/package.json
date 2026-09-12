@@ -1,20 +1,39 @@
 {
   "models": [
     {
-      "id": "textile_west_arcade_face",
-      "file": "textile-west.glb",
-      "source": "repo://assets/source/unit-textile-arcade/build.py",
+      "id": "bz04_roof_bundle_unit_textile_arcade",
+      "file": "roof-bundle-textile-arcade.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
       "license": "Project-Original"
     },
     {
-      "id": "textile_east_arcade_face",
-      "file": "textile-east.glb",
+      "id": "section_unit_textile_arcade",
+      "file": "unit-textile-arcade.glb",
       "source": "repo://assets/source/unit-textile-arcade/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_TEXTILE_ARCADE_WEST": "textile_west_arcade_face",
-    "FRONTAGE_TEXTILE_ARCADE_EAST": "textile_east_arcade_face"
-  }
+  "section": {
+    "zoneId": "TEXTILE_ARCADE",
+    "modelId": "section_unit_textile_arcade",
+    "faces": [
+      "north",
+      "east",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEXTILE_ARCADE",
+      "modelId": "bz04_roof_bundle_unit_textile_arcade",
+      "position": {
+        "x": 29.1,
+        "y": 57.5,
+        "z": 7.1
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "ae567f0b16e2c25563c59934f3c7f3207c8957f8be987b8bac6d5675726c260d"
 }

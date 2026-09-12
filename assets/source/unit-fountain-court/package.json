@@ -1,34 +1,41 @@
 {
   "models": [
     {
-      "id": "fountain_west_face",
-      "file": "fountain-west.glb",
-      "source": "repo://assets/source/unit-fountain-court/build.py",
+      "id": "bz04_roof_bundle_unit_fountain_court",
+      "file": "roof-bundle-fountain-court.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
       "license": "Project-Original"
     },
     {
-      "id": "fountain_west_south_face",
-      "file": "fountain-west-south.glb",
-      "source": "repo://assets/source/unit-fountain-court/build.py",
-      "license": "Project-Original"
-    },
-    {
-      "id": "fountain_east_face",
-      "file": "fountain-east.glb",
-      "source": "repo://assets/source/unit-fountain-court/build.py",
-      "license": "Project-Original"
-    },
-    {
-      "id": "fountain_east_north_face",
-      "file": "fountain-east-north.glb",
+      "id": "section_unit_fountain_court",
+      "file": "unit-fountain-court.glb",
       "source": "repo://assets/source/unit-fountain-court/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_FOUNTAIN_COURT_WEST": "fountain_west_face",
-    "FRONTAGE_FOUNTAIN_COURT_WEST_SOUTH": "fountain_west_south_face",
-    "FRONTAGE_FOUNTAIN_COURT_EAST": "fountain_east_face",
-    "FRONTAGE_FOUNTAIN_COURT_EAST_NORTH": "fountain_east_north_face"
-  }
+  "section": {
+    "zoneId": "FOUNTAIN_COURT",
+    "modelId": "section_unit_fountain_court",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_FOUNTAIN_COURT",
+      "modelId": "bz04_roof_bundle_unit_fountain_court",
+      "position": {
+        "x": 28.0,
+        "y": 40.0,
+        "z": 5.0
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "4b07116fa9e2448db95c0a359597f42fd46175d7a896684e472a6b356183e022",
+  "dependencyReceivers": []
 }

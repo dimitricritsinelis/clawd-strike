@@ -499,6 +499,9 @@ test("procedural bazaar props remain deterministic, culled, and clear-zone safe 
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
   const anchors = parseAnchorsSpec(raw, specUrl.pathname);
+  // Exercise the fallback canopy after R7 retires its live render anchors.
+  anchors.anchors.push({id:"LEGACY_CANOPY_FIXTURE",type:"cloth_canopy_span",zone:"COVERED_SOUK",
+    pos:{x:42,y:40,z:5},endPos:{x:52,y:40,z:5},widthM:2.8});
   const options = {
     mapId: blockout.mapId,
     blockout,

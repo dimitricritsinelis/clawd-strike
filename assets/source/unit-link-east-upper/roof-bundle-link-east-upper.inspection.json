@@ -1,0 +1,78 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 link east upper facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-link-east-upper/roof-bundle-link-east-upper.glb",
+  "triangles": 12,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      -0.5,
+      0.0,
+      -0.30000001192092896
+    ],
+    "max": [
+      0.5,
+      0.11999999731779099,
+      0.30000001192092896
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      0.53,
+      0.12,
+      0.33
+    ],
+    "min": [
+      -0.53,
+      0,
+      -0.33
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_007-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -0.5,
+          -0.30000001192092896,
+          0.0
+        ],
+        "max": [
+          0.5,
+          0.30000001192092896,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "b2cc5b78c2f6e02b6134279f2a279c9f97143fe5eb6ea304d2b1671e522589c1",
+  "sourcePolygonTriangles": 12,
+  "materials": [
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 206,
+    "maxRenderedPrimitives": 1
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 12,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 206,
+      "maxRenderedPrimitives": 1
+    },
+    "overTarget": []
+  }
+}

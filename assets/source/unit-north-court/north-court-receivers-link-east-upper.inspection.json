@@ -1,0 +1,461 @@
+{
+  "inputSha256": "bbf4e2edd7c269b3e11635ac91b4fa545d255ddad57188734792d5240ec7acfa",
+  "designRevision": {
+    "id": "R7 link east upper facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-north-court/north-court-receivers-link-east-upper.glb",
+  "triangles": 124,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      3.5,
+      -0.019999999552965164,
+      -0.6000000238418579
+    ],
+    "max": [
+      7.0,
+      9.899999618530273,
+      5.599999904632568
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.20000000000000284,
+      -0.02,
+      -0.7999999999999972
+    ],
+    "max": [
+      7.200000000000003,
+      10.219999999999999,
+      5.799999999999997
+    ]
+  },
+  "objects": [
+    {
+      "id": "leu-n-part-2-field",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.507499933242798,
+          -5.014999866485596,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-field.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          -5.014999866485596,
+          0.11999999731779099
+        ],
+        "max": [
+          3.507499933242798,
+          -5.014999866485596,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-field.002",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          -5.014999866485596,
+          0.18000000715255737
+        ],
+        "max": [
+          3.507499933242798,
+          -5.014999866485596,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-field.003",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.507499933242798,
+          -5.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-field.004",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.507499933242798,
+          -5.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-field.005",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.507499933242798,
+          -5.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-n-part-2-party-joint-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.506999969482422,
+          -5.014999866485596,
+          0.0
+        ],
+        "max": [
+          3.507999897003174,
+          -5.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-n-part-2-base-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          3.5,
+          -5.599999904632568,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.0,
+          -5.019999980926514,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-field",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          0.014999999664723873,
+          0.0
+        ],
+        "max": [
+          4.007500171661377,
+          0.014999999664723873,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          0.014999999664723873,
+          0.11999999731779099
+        ],
+        "max": [
+          4.007500171661377,
+          0.014999999664723873,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.002",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          0.014999999664723873,
+          0.18000000715255737
+        ],
+        "max": [
+          4.007500171661377,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.003",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          0.0,
+          7.0
+        ],
+        "max": [
+          4.007500171661377,
+          0.0,
+          9.800000190734863
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.004",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.007500171661377,
+          0.0,
+          0.0
+        ],
+        "max": [
+          7.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.005",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.007500171661377,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          7.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.006",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.007500171661377,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          7.0,
+          0.0,
+          7.0
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-field.007",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.007500171661377,
+          0.0,
+          7.0
+        ],
+        "max": [
+          7.0,
+          0.0,
+          9.800000190734863
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "leu-s-part-3-party-joint-reveal",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.006999969482422,
+          0.0,
+          0.0
+        ],
+        "max": [
+          4.007999897003174,
+          0.014999999664723873,
+          7.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-base-closure",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          7.0,
+          0.6000000238418579,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-cornice-0",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          -0.10000000149011612,
+          9.64799976348877
+        ],
+        "max": [
+          7.0,
+          0.019999999552965164,
+          9.720000267028809
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-cornice-bearing",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          -0.07500000298023224,
+          9.640000343322754
+        ],
+        "max": [
+          7.0,
+          0.019999999552965164,
+          9.64799976348877
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-cornice-1",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          -0.1599999964237213,
+          9.727999687194824
+        ],
+        "max": [
+          7.0,
+          0.019999999552965164,
+          9.800000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "leu-s-part-3-cornice-bearing.001",
+      "material": "bz06_dressed_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.0,
+          -0.13500000536441803,
+          9.720000267028809
+        ],
+        "max": [
+          7.0,
+          0.019999999552965164,
+          9.727999687194824
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "d348280e765f2fbeac696be4aa7ee71e89c9b7fa01efcb10be043e282f555000",
+  "sourcePolygonTriangles": 124,
+  "materials": [
+    "bz06_dressed_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 6,
+    "maxMaterials": 6,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 5
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 124,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 6,
+      "maxRenderedPrimitives": 6,
+      "maxShadowPrimitives": 5
+    },
+    "overTarget": []
+  }
+}

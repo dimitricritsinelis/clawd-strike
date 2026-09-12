@@ -184,7 +184,9 @@ test("authored geometry guard leaves disconnected empty space open and rejects a
     const json=Buffer.from(JSON.stringify(data).padEnd(Math.ceil(JSON.stringify(data).length/4)*4," "));
     const result=Buffer.alloc(28+json.length+binary.length);result.writeUInt32LE(0x46546c67,0);result.writeUInt32LE(2,4);result.writeUInt32LE(result.length,8);result.writeUInt32LE(json.length,12);result.writeUInt32LE(0x4e4f534a,16);json.copy(result,20);result.writeUInt32LE(binary.length,20+json.length);result.writeUInt32LE(0x004e4942,24+json.length);binary.copy(result,28+json.length);return result;
   };
-  const apart=glbTriangleBounds(make([-3,0,0,-2,0,0,-2,0,10, 10,0,0,11,0,10,10,0,10]));
+  const vertices: [number, number, number][] = [];
+  const apart=glbTriangleBounds(make([-3,0,0,-2,0,0,-2,0,10, 10,0,0,11,0,10,10,0,10]), vertex => vertices.push(vertex));
+  assert.deepEqual(vertices.slice(0,3), [[-2,0,0],[-1,0,0],[-1,0,10]]);
   assert.deepEqual(apart[0],{min:[-2,0,0],max:[-1,0,10]});
   const spec={zones:[],traversal_surfaces:[{id:"court",kind:"flat",rect:{x:0,y:0,w:10,h:10},elevationM:0}],authored_placements:[{id:"shared",modelId:"model",position:{x:0,y:0,z:0},yawDeg:180}]} as unknown as MapSpec;
   const enclosing={min:[-2,0,0],max:[12,0,10]} as import("./mapShoot").Bounds3;
@@ -193,4 +195,19 @@ test("authored geometry guard leaves disconnected empty space open and rejects a
   const crossing=glbTriangleBounds(make([-3,0,-2,11,0,-2,4,0,12]));
   assert.match(authoredPlacementReasons(spec,()=>enclosing,undefined,undefined,()=>crossing).join("\n"),/geometry below/);
   assert.throws(()=>glbTriangleBounds(make([0,0,0,1,0,0,Number.NaN,0,1])),/non-finite/);
+});
+
+
+test("placement contact uses transformed mesh vertices on a slope and still rejects sinking and floating", () => {
+  const local = { min: [0.1,0,10], max: [0.1,3,18] } as import("./mapShoot").Bounds3;
+  const points: [number,number,number][] = [[0.1,0,10],[0.1,1.4,18],[0.1,3,10]];
+  const ramp = { id:"ramp",kind:"ramp",rect:{x:0,y:10,w:10,h:8},axis:"y",startElevationM:0,endElevationM:1.4 };
+  const reasons = (z: number, vertices = points) => authoredPlacementReasons(
+    { zones:[],traversal_surfaces:[ramp],authored_placements:[{id:"sloped",modelId:"mesh",position:{x:0,y:0,z},yawDeg:180}] } as unknown as MapSpec,
+    () => local, undefined, undefined, undefined, () => vertices,
+  );
+  assert.deepEqual(reasons(0), []);
+  assert.match(reasons(-0.2).join("\n"), /sinks 0\.20 m/);
+  assert.match(reasons(0.3).join("\n"), /floats 0\.30 m/);
+  assert.match(reasons(0, [[0.1,0,10],[0.1,1.1,18],[0.1,3,10]]).join("\n"), /sinks 0\.30 m/);
 });

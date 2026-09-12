@@ -1,0 +1,25 @@
+{
+  "modelId": "rug_receivers_link_east_upper",
+  "file": "rug-receivers-link-east-upper.glb",
+  "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 34,
+    "y": 67,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "bbf4e2edd7c269b3e11635ac91b4fa545d255ddad57188734792d5240ec7acfa",
+  "receiverParcelIds": [
+    "leu-n"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 72,
+      "start": 34.0,
+      "end": 37.5
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

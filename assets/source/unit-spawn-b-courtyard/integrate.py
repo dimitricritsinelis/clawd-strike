@@ -17,8 +17,8 @@ def load_handoff(path):
  extract = runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']
  if digest != extract(UNIT)['inputSha256']:
   raise ValueError('Area inputs changed since handoff extraction; resolve the changed issue before integration')
- if saved['areas'][0].get('implementationPhase', {}).get('id') != 'B-04-only':
-  raise ValueError('Legacy integration supports only B-04-only; implement section-only finish integration for B-05/R7 first')
+ if saved['areas'][0].get('implementationPhase', {}).get('id') not in {'B-04-only','B-05-finish-only'}:
+  raise ValueError('Unsupported B courtyard installation phase')
  return saved
 
 def integrate(path):
@@ -27,6 +27,39 @@ def integrate(path):
  R = D
  A = D['areas'][0]
  unit=ROOT/'assets/source/unit-spawn-b-courtyard'
+ if A['implementationPhase']['id']=='B-05-finish-only':
+  helpers=runpy.run_path(str(ROOT/'assets/source/integrate_bz04.py'))
+  _,section_report=helpers['validate_section'](D)
+  # Preserve every installed shared binding and placement. The finish phase only
+  # replaces the B section; the apply tool records the normal reversible backup.
+  package=json.loads((unit/'package.json').read_text())
+  if package.get('section',{}).get('modelId')!='section_unit_spawn_b_courtyard':
+   raise ValueError('B-05 requires the installed B courtyard section package')
+  source=unit/'unit-spawn-b-courtyard.glb'
+  proof=json.loads(source.with_suffix('.inspection.json').read_text())
+  if proof.get('inputSha256')!=D['inputSha256'] or proof.get('sha256')!=hashlib.sha256(source.read_bytes()).hexdigest():
+   raise ValueError('B section export does not match the frozen handoff and inspection hash')
+  # The package applier treats omitted placements as removal. Preserve the exact
+  # live package, and reject stale placements rather than restoring retired caps.
+  spec=json.loads((ROOT/'docs/map-design/specs/map_spec.json').read_text())
+  live=[{k:v for k,v in placement.items() if k!='unit'} for placement in spec.get('authored_placements',[]) if placement.get('unit')==UNIT]
+  if live!=package.get('placements',[]):
+   raise ValueError('B shared placements changed; update the package to current shared ownership before applying the finish')
+  for item in package['models']:
+   if item['id']=='section_unit_spawn_b_courtyard':continue
+   installed=ROOT/'apps/client/public/assets/models/environment/bazaar/facades'/UNIT/Path(item['file']).name
+   if not installed.exists() or (unit/item['file']).read_bytes()!=installed.read_bytes():
+    raise ValueError('B-05 cannot replace a changed shared dependency: '+item['id'])
+  package['implementationPhase']='B-05-finish-only'
+  write(unit/'package.json',package)
+  subprocess.run(['node','scripts/apply-facade-package.mjs','apply','unit-spawn-b-courtyard'],cwd=ROOT,check=True)
+  spec=helpers['retired_spec'](json.loads((ROOT/'docs/map-design/specs/map_spec.json').read_text()),D)
+  write(ROOT/'docs/map-design/specs/map_spec.json',spec)
+  helpers['install_floor'](D)
+  subprocess.run(['node','apps/client/scripts/gen-map-runtime.mjs'],cwd=ROOT,check=True)
+  section_report.update(unit=UNIT,inputSha256=D['inputSha256'],implementationPhase=A['implementationPhase']['id'])
+  write(path.parent/'section-integration.json',section_report)
+  return
  bundles=[b for b in R['roofBundles'] if b['id']=='ROOF_BUNDLE_UNIT_SPAWN_B_COURTYARD']
  models=[model('section_unit_spawn_b_courtyard','unit-spawn-b-courtyard.glb','assets/source/unit-spawn-b-courtyard/build.py')]
  placements=[]
@@ -83,15 +116,18 @@ def self_test():
  stale = copy.deepcopy(current); stale['areas'][0]['floorMaterialId'] = 'stale-fixture'; seal(stale)
  tampered = copy.deepcopy(current); tampered['areas'][0]['floorMaterialId'] = 'tampered-fixture'
  wrong = copy.deepcopy(current); wrong['unit'] = 'unit-spice-street'; seal(wrong)
- unsupported = copy.deepcopy(current); unsupported['areas'][0]['implementationPhase']['id'] = 'B-05-finish-only'; seal(unsupported)
+ unsupported = copy.deepcopy(current); unsupported['areas'][0]['implementationPhase']['id'] = 'unsupported-fixture'; seal(unsupported)
  with TemporaryDirectory() as directory:
-  for name, saved, live, expected in [('stale', stale, current, 'changed since'), ('tampered', tampered, current, 'contents do not match'), ('wrong unit', wrong, current, 'exact B courtyard'), ('unsupported phase', unsupported, unsupported, 'supports only B-04-only')]:
+  for name, saved, live, expected in [('stale', stale, current, 'changed since'), ('tampered', tampered, current, 'contents do not match'), ('wrong unit', wrong, current, 'exact B courtyard'), ('unsupported phase', unsupported, unsupported, 'Unsupported B courtyard')]:
    path = Path(directory)/'handoff.json'; path.write_text(json.dumps(saved))
    with patch.object(runpy, 'run_path', return_value={'extract': lambda unit: live}), patch.object(shutil, 'copy2') as copied, patch.object(Path, 'write_text') as written, patch.object(Path, 'mkdir') as made, patch.object(subprocess, 'run') as applied:
     try: integrate(path)
     except ValueError as error: assert expected in str(error), error
     else: raise AssertionError(f'{name} handoff accepted')
     copied.assert_not_called(); written.assert_not_called(); made.assert_not_called(); applied.assert_not_called()
+ with TemporaryDirectory() as directory:
+  path=Path(directory)/'handoff.json';path.write_text(json.dumps(current))
+  assert load_handoff(path)['areas'][0]['implementationPhase']['id']=='B-05-finish-only'
  print('PASS integration fixtures: wrong unit, tampering, stale input and unsupported phase reject before copies/writes/processes')
 
 def main(argv=None):

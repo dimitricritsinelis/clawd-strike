@@ -1,0 +1,155 @@
+{
+  "inputSha256": "c496cd3704793b7e2ec8e2d1c3b85f89855644bc88a26b1539db46a3d94e2702",
+  "designRevision": {
+    "id": "R7 link west upper facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-rug-gate/rug-receivers-link-west-upper.glb",
+  "triangles": 30,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      0.0,
+      -0.019999999552965164,
+      -0.5
+    ],
+    "max": [
+      2.0,
+      9.899999618530273,
+      -0.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -0.1999999999999993,
+      -0.02,
+      -0.7000000000000028
+    ],
+    "max": [
+      2.1999999999999993,
+      9.92,
+      5.200000000000003
+    ]
+  },
+  "objects": [
+    {
+      "id": "lwu-s-field",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "max": [
+          2.0,
+          0.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lwu-s-field.001",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.11999999731779099
+        ],
+        "max": [
+          2.0,
+          0.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lwu-s-field.002",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.0,
+          0.18000000715255737
+        ],
+        "max": [
+          2.0,
+          0.0,
+          9.899999618530273
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "lwu-s-base-closure",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.0,
+          0.019999999552965164,
+          -0.015333333052694798
+        ],
+        "max": [
+          0.6000000238418579,
+          0.5,
+          0.11666666716337204
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "lwu-s-base-closure.001",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.6000000238418579,
+          0.019999999552965164,
+          -0.019999999552965164
+        ],
+        "max": [
+          2.0,
+          0.5,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "0392e893fa4c2b941cc9a6a54316f4d015837a10c102ddbb0ffb45fc2e6cba2f",
+  "sourcePolygonTriangles": 30,
+  "materials": [
+    "bz06_cream_plaster"
+  ],
+  "exportBudget": {
+    "maxTriangles": 5000,
+    "maxRenderedPrimitives": 5,
+    "maxMaterials": 5,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 4
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 30,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 5000,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 4
+    },
+    "overTarget": []
+  }
+}

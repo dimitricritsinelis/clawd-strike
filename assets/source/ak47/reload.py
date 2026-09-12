@@ -1,9 +1,10 @@
-"""Bake the user-selected Case 04 grip into the existing magazine reload.
+"""Bake the repaired near-face grip into the existing magazine reload.
 
 The selected blend owns the glove and closed pose. Its original Reload action
-owns the wrist/arm path. Weapon, magazine, right-hand and idle actions stay intact.
+owns the wrist/arm path. The source owns the converted idle and its surface
+corrective. Weapon, magazine, right-hand and source idle actions stay intact.
 Writes an isolated review blend by default. Pass -- --install to promote the
-validated result to ak47.blend after approval; build.py exports the runtime file.
+verified result to ak47.blend; build.py exports the runtime file.
 """
 from pathlib import Path
 import argparse
@@ -16,13 +17,13 @@ import numpy as np
 from mathutils import Quaternion
 
 SOURCE = Path(__file__).resolve().parent
-SELECTED = SOURCE / 'left-hand-case04.blend'
-OUT = SOURCE / 'exports/selected-case04'
+SELECTED = SOURCE / 'left-hand-near-face.blend'
+OUT = SOURCE / 'exports/near-face-grip'
 OUT.mkdir(parents=True, exist_ok=True)
 parser = argparse.ArgumentParser()
 parser.add_argument('--install', action='store_true')
 args = parser.parse_args(sys.argv[sys.argv.index('--')+1:] if '--' in sys.argv else [])
-destination = SOURCE/'ak47.blend' if args.install else OUT/'case04-reload-preview.blend'
+destination = SOURCE/'ak47.blend' if args.install else OUT/'near-face-reload-preview.blend'
 bpy.ops.wm.open_mainfile(filepath=str(SELECTED))
 scene = bpy.context.scene
 rig = bpy.data.objects['L_Armature']
@@ -57,17 +58,29 @@ def coordinates(ob):
     return values.reshape((-1, 3))
 
 left_meshes = [o for o in scene.objects if o.type == 'MESH' and any(m.type == 'ARMATURE' and m.object == rig for m in o.modifiers)]
+correctives = []
+for ob in left_meshes:
+    keys = ob.data.shape_keys
+    if not keys or any(name not in keys.key_blocks for name in ['IdleGripRestore', 'MagazineContact']):
+        raise RuntimeError('Missing authored idle corrective: ' + ob.name)
+    if keys.key_blocks['IdleGripRestore'].value != 0 or keys.key_blocks['MagazineContact'].value != 1 or (keys.animation_data and (keys.animation_data.action or keys.animation_data.nla_tracks)):
+        raise RuntimeError('Selected idle corrective must be static and zero: ' + ob.name)
+    correctives.append(keys)
+if any(rig.pose.bones[name].location.length > 1e-7 for name in digits):
+    raise RuntimeError('Selected grip translates a digit joint')
 selected_surface = {o.name: coordinates(o) for o in left_meshes}
 closed = {n: (rig.pose.bones[n].location.copy(), rig.pose.bones[n].rotation_quaternion.copy(), rig.pose.bones[n].scale.copy()) for n in digits}
 selected_hand = rig.pose.bones['SupportHand'].matrix.copy()
 selected_magazine = magazine.matrix_world.copy()
-flex_axes = {}
+flex_axes = {name: (1., 0., 0.) for name in thumb_names[1:]}
+rest_flexion = {}
 for name in thumb_names[1:]:
-    q = closed[name][1].copy()
-    if q.w < 0:
-        q.negate()
-    flex_axes[name] = q.axis.normalized()
+    rest_flexion[name] = float(rig.pose.bones[name]['restFlexionDeg'])
+    if not math.isfinite(rest_flexion[name]):
+        raise RuntimeError('Thumb rest flexion must be finite: ' + name)
     rig.pose.bones[name]['flexAxisLocal'] = list(flex_axes[name])
+    rig.data.bones[name]['flexAxisLocal'] = list(flex_axes[name])
+    rig.data.bones[name]['restFlexionDeg'] = rest_flexion[name]
 
 idle_track = rig.animation_data.nla_tracks['Idle']
 reload_track = rig.animation_data.nla_tracks['Reload']
@@ -76,12 +89,36 @@ base_action = reload_strip.action
 protected_actions = {a.name: signature(curve_rows(a)) for a in bpy.data.actions}
 digit_paths = {f'pose.bones["{n}"].{p}' for n in digits for p in ['location', 'rotation_quaternion', 'scale']}
 arm_curves = signature(curve_rows(base_action, lambda c: c.data_path not in digit_paths))
+# Matching track names merge the morph channels into the rig's glTF clips.
+for keys in correctives:
+    animation = keys.animation_data_create()
+    animation.action = bpy.data.actions.new('Idle_GripRestore_' + keys.name)
+    key = keys.key_blocks['IdleGripRestore']
+    key.value = 1.
+    contact_key = keys.key_blocks['MagazineContact']
+    contact_key.value = 0.
+    for frame in [1, 148]:
+        key.keyframe_insert('value', frame=frame)
+        contact_key.keyframe_insert('value', frame=frame)
+    idle_action = animation.action
+    idle_slot = animation.action_slot
+    animation.action = None
+    track = animation.nla_tracks.new()
+    track.name = 'Idle'
+    strip = track.strips.new('Idle', 1, idle_action)
+    strip.action_slot = idle_slot
 rig.animation_data.action = idle_track.strips[0].action
 rig.animation_data.action_slot = rig.animation_data.action.slots[0]
 scene.frame_set(1)
 bpy.context.view_layer.update()
 idle = {n: (rig.pose.bones[n].location.copy(), rig.pose.bones[n].rotation_quaternion.copy(), rig.pose.bones[n].scale.copy()) for n in digits}
 idle_surface = {o.name: coordinates(o) for o in left_meshes}
+if any(rig.pose.bones[name].location.length > 1e-7 for name in digits):
+    raise RuntimeError('Converted idle translates a digit joint')
+for keys in correctives:
+    keys.animation_data.nla_tracks['Idle'].mute = True
+    keys.animation_data.action = bpy.data.actions.new('Reload_GripRestore_' + keys.name)
+    keys.key_blocks['IdleGripRestore'].value = 0.
 rig.animation_data.action = base_action
 rig.animation_data.action_slot = base_action.slots[0]
 scene.frame_set(33)
@@ -89,7 +126,7 @@ bpy.context.view_layer.update()
 if max(abs(a-b) for ra,rb in zip(selected_hand, rig.pose.bones['SupportHand'].matrix) for a,b in zip(ra,rb)) > 1e-5:
     raise RuntimeError('Selected wrist differs from the preserved reload path')
 action = base_action.copy()
-action.name = 'Reload_LeftHand_Case04'
+action.name = 'Reload_LeftHand_NearFace'
 rig.animation_data.action = action
 rig.animation_data.action_slot = action.slots[0]
 
@@ -109,6 +146,8 @@ for frame in range(1, 149):
     else:
         amount = 1-smooth((frame-119)/29)
         opening = smooth((frame-119)/7) * (1-smooth((frame-137)/11))
+    contact_weight = smooth((frame-24)/9) if frame < 33 else 1. if frame <= 119 else 1-smooth((frame-119)/7)
+    idle_weight = 1-smooth((frame-3)/9) if frame <= 12 else smooth((frame-137)/11) if frame >= 137 else 0.
     for name in digits:
         bone = rig.pose.bones[name]
         bone.location = idle[name][0].lerp(closed[name][0], amount)
@@ -116,10 +155,18 @@ for frame in range(1, 149):
         rotation = idle[name][1].slerp(closed[name][1], amount)
         joint = int(name[-2:])
         if name.startswith('L_thumb.'):
-            # Open at the CMC, retaining slight curvature on the measured
-            # broad-pulp hinge axes. The selected grip remains exact at contact.
-            opened = Quaternion() if joint == 1 else Quaternion(flex_axes[name], math.radians(3 if joint == 2 else 2))
-            rotation = rotation.slerp(opened, opening)
+            # Hinge angles are relative to the naturally flexed bind pose.
+            opened = Quaternion((0, 0, 1), math.radians(12)) if joint == 1 else Quaternion(flex_axes[name], math.radians((3 if joint == 2 else 2) - rest_flexion[name]))
+            if frame <= 12:
+                rotation = idle[name][1].slerp(opened, 1-idle_weight)
+            elif frame < 33:
+                rotation = opened.slerp(closed[name][1], smooth((frame-24)/9))
+            elif frame <= 119:
+                rotation = closed[name][1].copy()
+            elif frame < 137:
+                rotation = closed[name][1].slerp(opened, smooth((frame-119)/7))
+            else:
+                rotation = opened.slerp(idle[name][1], idle_weight)
         else:
             release = [0, .08 if name.startswith('L_f_pinky.') else .28, .38, .18][joint] * opening
             rotation = rotation @ Quaternion((1, 0, 0), -release)
@@ -129,8 +176,15 @@ for frame in range(1, 149):
         previous[name] = rotation.copy()
         for path in ['location', 'rotation_quaternion', 'scale']:
             bone.keyframe_insert(path, frame=frame, group=name)
+    for keys in correctives:
+        key = keys.key_blocks['IdleGripRestore']
+        key.value = idle_weight
+        key.keyframe_insert('value', frame=frame)
+        contact_key = keys.key_blocks['MagazineContact']
+        contact_key.value = contact_weight
+        contact_key.keyframe_insert('value', frame=frame)
     bpy.context.view_layer.update()
-    pose_samples.append({'frame':frame, 'amount':amount, 'opening':opening, 'wrist':list(rig.pose.bones['SupportHand'].head), 'thumbQuaternions':{n:list(rig.pose.bones[n].rotation_quaternion) for n in thumb_names}})
+    pose_samples.append({'frame':frame, 'amount':amount, 'opening':opening, 'idleGripRestore':idle_weight, 'magazineContact':contact_weight, 'wrist':list(rig.pose.bones['SupportHand'].head), 'thumbQuaternions':{n:list(rig.pose.bones[n].rotation_quaternion) for n in thumb_names}})
 for layer in action.layers:
     for strip in layer.strips:
         for bag in strip.channelbags:
@@ -138,6 +192,21 @@ for layer in action.layers:
                 if curve.data_path in digit_paths:
                     for point in curve.keyframe_points:
                         point.interpolation = 'LINEAR'
+for keys in correctives:
+    animation = keys.animation_data
+    morph_action = animation.action
+    morph_slot = animation.action_slot
+    for layer in morph_action.layers:
+        for strip in layer.strips:
+            for bag in strip.channelbags:
+                for curve in bag.fcurves:
+                    for point in curve.keyframe_points:
+                        point.interpolation = 'LINEAR'
+    animation.action = None
+    track = animation.nla_tracks.new()
+    track.name = 'Reload'
+    strip = track.strips.new('Reload', 1, morph_action)
+    strip.action_slot = morph_slot
 if arm_curves != signature(curve_rows(action, lambda c: c.data_path not in digit_paths)):
     raise RuntimeError('Authoring altered the original arm/wrist curves')
 if any(protected_actions[a.name] != signature(curve_rows(a)) for a in bpy.data.actions if a.name in protected_actions):
@@ -185,20 +254,21 @@ for frame in [1, 12, 18, 24, 28, 31, 33, 76, 119, 123, 126, 132, 137, 148]:
         values = coordinates(ob)
         record = source_samples[ob.name]
         record['frames'][frame] = {'positions':values[record['indices']].tolist(), 'matrixWorld':[list(row) for row in ob.matrix_world]}
-validation = {'selectedCase':'case-04', 'selectedSource':SELECTED.name, 'selectedSourceSHA256':hashlib.sha256(SELECTED.read_bytes()).hexdigest(),
+validation = {'selectedCase':'near-face-rebind', 'selectedSource':SELECTED.name, 'selectedSourceSHA256':hashlib.sha256(SELECTED.read_bytes()).hexdigest(),
               'sourcePromoted':args.install, 'blendDestination':str(destination),
               'durationSeconds':147/120, 'contactFrames':[33,119], 'staticSurfaceMaxErrorM':static_error,
               'holdMatrixMaxError':hold_error, 'endpointSurfaceMaxErrorsM':endpoint_errors,
               'originalActionsUnchanged':True, 'armWristCurvesUnchanged':True, 'thumbFlexAxesLocal':{n:list(a) for n,a in flex_axes.items()},
-              'staticContactStatus':'User-selected visual pose retained, including its recorded static contact limitations.',
+              'staticContactStatus':'Authored near-face grip preserved; contact and intersection checks are reported separately.',
               'samples':pose_samples, 'meshes':source_samples}
 (OUT/'source-validation.json').write_text(json.dumps(validation, indent=2)+'\n')
 for track in rig.animation_data.nla_tracks:
     track.mute = False
-scene['selected_grip'] = 'Case 04, selected by user from the controlled grip comparison'
-scene['review_status'] = 'User-approved Case 04 reload installed' if args.install else 'Case 04 reload preview; awaiting approval to replace the active asset'
-if args.install:
-    scene['grip_experiment_status'] = 'Case 04 selected and approved; experiment results retained separately'
+for keys in correctives:
+    for track in keys.animation_data.nla_tracks:
+        track.mute = False
+scene['selected_grip'] = 'Near-face grip with repaired thumb rest pose and fixed local-X hinges'
+scene['review_status'] = 'Near-face reload installed' if args.install else 'Near-face reload preview; validation required before installation'
 scene.frame_set(1)
 bpy.context.view_layer.update()
 bpy.context.preferences.filepaths.save_version = 0

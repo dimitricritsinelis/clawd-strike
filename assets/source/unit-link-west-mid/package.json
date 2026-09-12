@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "section_unit_link_west_mid",
+      "file": "unit-link-west-mid.glb",
+      "source": "repo://assets/source/unit-link-west-mid/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_WEST_MID",
+    "modelId": "section_unit_link_west_mid",
+    "faces": [
+      "north",
+      "south"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "b880b8f401445e207fbca03cc374e2ddc119f60bd44f036ab2af83027bebd021"
+}

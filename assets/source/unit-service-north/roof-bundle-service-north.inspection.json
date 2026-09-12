@@ -1,0 +1,408 @@
+{
+  "inputSha256": null,
+  "designRevision": {
+    "id": "R7 service north facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-service-north/roof-bundle-service-north.glb",
+  "triangles": 228,
+  "primitives": 5,
+  "castPrimitives": 3,
+  "actualBoundsGltf": {
+    "min": [
+      -5.829999923706055,
+      8.881784197001252e-16,
+      -16.3799991607666
+    ],
+    "max": [
+      5.800000190734863,
+      3.3299999237060547,
+      16.350000381469727
+    ]
+  },
+  "declaredBoundsGltf": {
+    "max": [
+      5.83,
+      3.33,
+      16.38
+    ],
+    "min": [
+      -5.83,
+      0,
+      -16.38
+    ]
+  },
+  "objects": [
+    {
+      "id": "ROOF_CELL_018-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.200000047683716,
+          -16.350000381469727,
+          2.4000000953674316
+        ],
+        "max": [
+          4.800000190734863,
+          -15.649999618530273,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_019-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          4.800000190734863,
+          -11.649999618530273,
+          2.4000000953674316
+        ],
+        "max": [
+          5.0,
+          16.350000381469727,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_020-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.0,
+          8.350000381469727,
+          2.4000000953674316
+        ],
+        "max": [
+          5.800000190734863,
+          16.350000381469727,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_021-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.0,
+          -11.649999618530273,
+          2.4000000953674316
+        ],
+        "max": [
+          5.599999904632568,
+          -1.649999976158142,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_022-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.599999904632568,
+          -2.305999994277954,
+          2.4000000953674316
+        ],
+        "max": [
+          5.800000190734863,
+          -1.649999976158142,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_063-slab",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          -15.649999618530273,
+          2.5999999046325684
+        ],
+        "max": [
+          -2.200000047683716,
+          16.350000381469727,
+          2.7799999713897705
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_CELL_063-finish",
+      "material": "bz06_faded_ochre",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          -15.649999618530273,
+          2.7799999713897705
+        ],
+        "max": [
+          -2.200000047683716,
+          16.350000381469727,
+          2.8559999465942383
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_006-parapet",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          -15.649999618530273,
+          2.7799999713897705
+        ],
+        "max": [
+          -5.639999866485596,
+          16.350000381469727,
+          3.2300000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_006-cap",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.829999923706055,
+          -15.680000305175781,
+          3.2300000190734863
+        ],
+        "max": [
+          -5.610000133514404,
+          16.3799991607666,
+          3.3299999237060547
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_007-parapet",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.359999895095825,
+          -15.649999618530273,
+          2.7799999713897705
+        ],
+        "max": [
+          -2.200000047683716,
+          16.350000381469727,
+          3.2300000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_007-cap",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -2.390000104904175,
+          -15.680000305175781,
+          3.2300000190734863
+        ],
+        "max": [
+          -2.1700000762939453,
+          16.3799991607666,
+          3.3299999237060547
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_008-parapet",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          -15.649999618530273,
+          2.7799999713897705
+        ],
+        "max": [
+          -2.200000047683716,
+          -15.489999771118164,
+          3.2300000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_EDGE_008-cap",
+      "material": "ph_bz04_stone_trim_sandstone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.829999923706055,
+          -15.680000305175781,
+          3.2300000190734863
+        ],
+        "max": [
+          -2.1700000762939453,
+          -15.460000038146973,
+          3.3299999237060547
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_002",
+      "material": "bz06_sand_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          16.329999923706055,
+          0.4000000059604645
+        ],
+        "max": [
+          -2.200000047683716,
+          16.350000381469727,
+          3.3299999237060547
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_010",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.579999923706055,
+          -11.649999618530273,
+          1.3995330333709717
+        ],
+        "max": [
+          5.599999904632568,
+          -1.649999976158142,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_013",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.599999904632568,
+          -2.305999994277954,
+          1.3995330333709717
+        ],
+        "max": [
+          5.800000190734863,
+          -2.2860000133514404,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_014",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.579999923706055,
+          -7.650000095367432,
+          1.3995330333709717
+        ],
+        "max": [
+          5.599999904632568,
+          -2.305999994277954,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_STEP_016",
+      "material": "bz06_service_stone",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          5.579999923706055,
+          -11.050000190734863,
+          8.881784197001252e-16
+        ],
+        "max": [
+          5.599999904632568,
+          -7.650000095367432,
+          2.5199999809265137
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "ROOF_COLLECTOR_BLD_NORTH_SERVICE_COMPOUND_1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -5.800000190734863,
+          0.3050000071525574,
+          2.7950000762939453
+        ],
+        "max": [
+          -5.755000114440918,
+          0.39500001072883606,
+          2.822000026702881
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "98f0814fbde9bf89deac7733916fbe41704ab9b0ce4eab935d56ba5f7d095ec7",
+  "sourcePolygonTriangles": 228,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz06_faded_ochre",
+    "bz06_sand_plaster",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 2068,
+    "maxRenderedPrimitives": 4
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 228,
+      "maxMaterials": 5,
+      "maxRenderedPrimitives": 5,
+      "maxShadowPrimitives": 3
+    },
+    "targets": {
+      "maxTriangles": 2068,
+      "maxRenderedPrimitives": 4
+    },
+    "overTarget": [
+      "maxRenderedPrimitives"
+    ]
+  }
+}

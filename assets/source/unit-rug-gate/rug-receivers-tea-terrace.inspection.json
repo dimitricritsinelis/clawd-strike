@@ -1,0 +1,173 @@
+{
+  "inputSha256": "d55fb3f4ed990e727c6e1885819eddddfbf7856a1d8afacbae3ce0c34fc9db94",
+  "designRevision": {
+    "id": "R7 tea terrace facade-centered upper openings",
+    "status": "PROPOSED"
+  },
+  "asset": "assets/source/unit-rug-gate/rug-receivers-tea-terrace.glb",
+  "triangles": 42,
+  "primitives": 1,
+  "castPrimitives": 1,
+  "actualBoundsGltf": {
+    "min": [
+      8.0,
+      -0.019999999552965164,
+      8.0
+    ],
+    "max": [
+      10.0,
+      8.5,
+      10.0
+    ]
+  },
+  "declaredBoundsGltf": {
+    "min": [
+      -1.0,
+      -0.020000000000000018,
+      -0.20000000000000284
+    ],
+    "max": [
+      10.2,
+      9.719999999999999,
+      10.200000000000003
+    ]
+  },
+  "objects": [
+    {
+      "id": "tt-rug-return-field",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.0,
+          -10.0,
+          0.0
+        ],
+        "max": [
+          8.0,
+          -8.0,
+          0.11999999731779099
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tt-rug-return-field.001",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.0,
+          -10.0,
+          0.11999999731779099
+        ],
+        "max": [
+          8.0,
+          -8.0,
+          0.18000000715255737
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tt-rug-return-field.002",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.0,
+          -10.0,
+          0.18000000715255737
+        ],
+        "max": [
+          8.0,
+          -8.0,
+          8.5
+        ]
+      },
+      "triangles": 2
+    },
+    {
+      "id": "tt-rug-return-end-closure",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.020000457763672,
+          -8.020000457763672,
+          0.0
+        ],
+        "max": [
+          10.0,
+          -8.0,
+          8.5
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tt-rug-return-base-closure",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.020000457763672,
+          -9.100000381469727,
+          -0.019999999552965164
+        ],
+        "max": [
+          10.0,
+          -8.0,
+          0.0
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "tt-rug-return-base-closure.001",
+      "material": "bz06_cream_plaster",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          8.020000457763672,
+          -10.0,
+          -0.019999999552965164
+        ],
+        "max": [
+          8.100000381469727,
+          -9.100000381469727,
+          0.0
+        ]
+      },
+      "triangles": 12
+    }
+  ],
+  "sha256": "52069a92a728a654759cd243ba04daf2c16b41ad82072ff84c9fbd7d0b0d56d1",
+  "sourcePolygonTriangles": 42,
+  "materials": [
+    "bz06_cream_plaster"
+  ],
+  "exportBudget": {
+    "maxTriangles": 48000,
+    "maxRenderedPrimitives": 15,
+    "maxMaterials": 12,
+    "castsShadows": "primary architecture and shade; no microhardware or wear shadows",
+    "maxShadowPrimitives": 8
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 42,
+      "maxMaterials": 1,
+      "maxRenderedPrimitives": 1,
+      "maxShadowPrimitives": 1
+    },
+    "targets": {
+      "maxTriangles": 48000,
+      "maxMaterials": 12,
+      "maxRenderedPrimitives": 15,
+      "maxShadowPrimitives": 8
+    },
+    "overTarget": []
+  }
+}

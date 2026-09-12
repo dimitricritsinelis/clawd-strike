@@ -1,0 +1,39 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_tea_terrace",
+      "file": "roof-bundle-tea-terrace.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_tea_terrace",
+      "file": "unit-tea-terrace.glb",
+      "source": "repo://assets/source/unit-tea-terrace/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "TEA_TERRACE",
+    "modelId": "section_unit_tea_terrace",
+    "faces": [
+      "east",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEA_TERRACE",
+      "modelId": "bz04_roof_bundle_unit_tea_terrace",
+      "position": {
+        "x": 10.6,
+        "y": 65.7,
+        "z": 4.5
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "d55fb3f4ed990e727c6e1885819eddddfbf7856a1d8afacbae3ce0c34fc9db94",
+  "dependencyReceivers": []
+}

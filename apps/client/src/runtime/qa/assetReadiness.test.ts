@@ -113,6 +113,16 @@ function directTexturePlan(urls: readonly string[]): QaAssetPlan {
   };
 }
 
+test("retained prefab children preload after standalone dressing is retired", () => {
+  const map=fixtureMap();
+  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_spawn_cover"};
+  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["ph_wooden_crate_01"]);
+  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_cover_goods"};
+  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack"]);
+  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_market_stall"};
+  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack","ph_brass_pot_01","ph_ceramic_pot","ph_wicker_basket_02","ph_wooden_crate_01"]);
+});
+
 test("QA asset plan is deterministic and sorts compiled dependencies", () => {
   const first = createQaAssetPlan(fixtureMap(), "cell-review");
   const second = createQaAssetPlan(fixtureMap(), "cell-review");
@@ -245,7 +255,7 @@ test("QA facade requests remain pending between prop and door packs until the GL
   // A poll after prior packs finish but before doors start must see the facade
   // still pending, even when the manifest and all other requests have settled.
   await Promise.resolve();
-  assert.deepEqual(tracker.state().pending, [requestId]);
+  assert.deepEqual(tracker.state().pending, plan.requiredLogicalRequestIds);
   assert.notEqual(tracker.state().observedPlanHash, plan.hash);
   assert.equal(tracker.state().ready, false);
   finishGlb();
@@ -592,4 +602,38 @@ test("QA profile and timeout require explicit, bounded parameters", () => {
   assert.equal(resolveQaAssetTimeoutMs(""), 20_000);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=100"), 1_000);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=500000"), 120_000);
+});
+
+
+test("pending snapshots include planned requests before starts and between completed batches", () => {
+  const tracker=new QaAssetReadinessTracker(trackerPlan(["logical:a","logical:b"]),1_000,()=>0,()=>"stable");
+  tracker.expectChild("child:a");
+  assert.deepEqual(tracker.state().pending,["child:a","logical:a","logical:b"]);
+  assert.equal(tracker.state().requestedCount,0);
+  assert.equal(tracker.state().completedCount,0);
+  tracker.start("logical:a");tracker.complete("logical:a");
+  const gap=tracker.state();
+  assert.deepEqual(gap.pending,["child:a","logical:b"]);
+  assert.equal(gap.requestedCount,1);assert.equal(gap.completedCount,1);
+  assert.notEqual(gap.observedPlanHash,gap.planHash);assert.equal(gap.ready,false);
+  tracker.start("unexpected:flight");
+  assert.deepEqual(tracker.state().pending,["child:a","logical:b","unexpected:flight"]);
+  tracker.fail("unexpected:flight",new Error("failed"));
+  assert.deepEqual(tracker.state().pending,["child:a","logical:b"]);
+  assert.deepEqual(tracker.state().unexpectedRequests,["unexpected:flight"]);
+  assert.equal(tracker.state().failed.length,1);
+});
+
+test("a planned request that never starts stays pending and times out", () => {
+  let now=0;
+  const tracker=new QaAssetReadinessTracker(trackerPlan(["logical"]),1_000,()=>now,()=>"stable");
+  tracker.expectChild("missing:child");
+  tracker.start("logical");tracker.complete("logical");
+  for(let i=0;i<8;i++)tracker.recordRenderedFrame(1);
+  now=1_001;
+  const state=tracker.state();
+  assert.deepEqual(state.pending,["missing:child"]);
+  assert.equal(state.requestedCount,1);assert.equal(state.completedCount,1);
+  assert.equal(state.observedPlanHash,state.planHash);
+  assert.equal(state.ready,false);assert.equal(state.timedOut,true);assert.equal(state.readyAtMs,null);
 });

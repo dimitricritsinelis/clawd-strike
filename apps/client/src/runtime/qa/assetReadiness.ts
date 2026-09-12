@@ -1,6 +1,14 @@
 import type { RuntimeMapAssets } from "../map/types";
 
 export type QaAssetProfile = "qa" | "cell-review";
+
+/** CC0 children emitted by the retained procedural prefab layouts. */
+export function compiledPrefabModelIds(runtimeId: string): readonly string[] {
+  if (runtimeId === "bazaar_spawn_cover") return ["ph_wooden_crate_01"];
+  if (runtimeId === "bazaar_cover_goods") return ["cc0_spice_sack"];
+  if (runtimeId === "bazaar_market_stall") return ["ph_wooden_crate_01", "ph_wicker_basket_02", "cc0_spice_sack", "ph_brass_pot_01", "ph_ceramic_pot"];
+  return [];
+}
 export type QaTextureTier = "1k" | "2k" | "4k";
 
 export type QaResolvedTexture = {
@@ -297,9 +305,7 @@ export function createQaAssetPlan(
         ...(mapAssets.blockout.dressingPlacements ?? []).flatMap((placement) => (
           placement.runtime.mode === "model" ? [placement.runtime.id] : []
         )),
-        ...(mapAssets.blockout.dressingPlacements ?? []).some((placement) => (
-          placement.runtime.id === "bazaar_cover_goods"
-        )) ? ["ph_wooden_crate_01"] : [],
+        ...(mapAssets.blockout.dressingPlacements ?? []).flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
       ]);
   const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
   const facadeModelIds = sortedUnique(
@@ -498,7 +504,8 @@ export class QaAssetReadinessTracker {
         .sort((left, right) => left.localeCompare(right)),
       unexpectedRequests: [...this.unexpectedRequestIds]
         .sort((left, right) => left.localeCompare(right)),
-      pending: [...this.pending].sort((left, right) => left.localeCompare(right)),
+      pending: sortedUnique([...this.pending, ...this.requiredLogicalRequestIds, ...this.plannedChildRequestIds]
+        .filter((id) => !this.completed.has(id) && !this.failures.has(id))),
       failed,
       totalRequests: this.requested.size,
       requestedCount: this.requested.size,
