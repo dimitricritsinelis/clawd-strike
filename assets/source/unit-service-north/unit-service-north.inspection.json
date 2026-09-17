@@ -5,9 +5,9 @@
     "status": "PROPOSED"
   },
   "asset": "assets/source/unit-service-north/unit-service-north.glb",
-  "triangles": 4534,
-  "primitives": 9,
-  "castPrimitives": 8,
+  "triangles": 4862,
+  "primitives": 12,
+  "castPrimitives": 9,
   "actualBoundsGltf": {
     "min": [
       -3.5999999046325684,
@@ -4445,7 +4445,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-panel",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4463,7 +4463,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-stile",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4481,7 +4481,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-stile.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4499,7 +4499,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4517,7 +4517,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4535,7 +4535,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4607,7 +4607,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-panel.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4625,7 +4625,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-stile.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4643,7 +4643,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-stile.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4661,7 +4661,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4679,7 +4679,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail.004",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4697,7 +4697,7 @@
     },
     {
       "id": "sn-w-DELIVERY-1-leaf-rail.005",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5381,7 +5381,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-panel",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5399,7 +5399,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-stile",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5417,7 +5417,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-stile.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5435,7 +5435,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5453,7 +5453,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5471,7 +5471,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5543,7 +5543,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-panel.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5561,7 +5561,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-stile.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5579,7 +5579,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-stile.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5597,7 +5597,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5615,7 +5615,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail.004",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5633,7 +5633,7 @@
     },
     {
       "id": "sn-w-DELIVERY-2-leaf-rail.005",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6317,7 +6317,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-panel",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6335,7 +6335,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-stile",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6353,7 +6353,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-stile.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6371,7 +6371,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6389,7 +6389,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6407,7 +6407,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6479,7 +6479,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-panel.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6497,7 +6497,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-stile.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6515,7 +6515,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-stile.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6533,7 +6533,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6551,7 +6551,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail.004",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6569,7 +6569,7 @@
     },
     {
       "id": "sn-w-DELIVERY-3-leaf-rail.005",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8114,12 +8114,85 @@
         ]
       },
       "triangles": 12
+    },
+    {
+      "id": "life-wear-sn-w-0-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.003000000026077032,
+          -5.882388114929199,
+          0.5173500776290894
+        ],
+        "max": [
+          0.004999999888241291,
+          -5.4280686378479,
+          1.3031278848648071
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-sn-w-0-broken-plaster-edge",
+      "material": "bz06_sand_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.003000000026077032,
+          -5.902595520019531,
+          0.4832065999507904
+        ],
+        "max": [
+          0.010999999940395355,
+          -5.4087700843811035,
+          1.337312936782837
+        ]
+      },
+      "triangles": 112
+    },
+    {
+      "id": "life-wear-sn-w-1-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.003000000026077032,
+          -17.836849212646484,
+          0.6875852346420288
+        ],
+        "max": [
+          0.004999999888241291,
+          -17.147932052612305,
+          1.1679257154464722
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-sn-w-1-broken-plaster-edge",
+      "material": "bz06_sand_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.003000000026077032,
+          -17.866140365600586,
+          0.6656361222267151
+        ],
+        "max": [
+          0.010999999940395355,
+          -17.11731719970703,
+          1.1877453327178955
+        ]
+      },
+      "triangles": 112
     }
   ],
-  "sha256": "8e24c1a8a01489229e77b28b020c9a04b08947558ec5df788ba398a5f22c3f8f",
-  "sourcePolygonTriangles": 4534,
+  "sha256": "f7e4a15409ab6126e63f6a91c673bef00029977fbcaeb1afbaa6c906497376a9",
+  "sourcePolygonTriangles": 4862,
   "materials": [
     "bz04_craft_dark_iron",
+    "bz04_craft_painted_timber",
     "bz04_craft_warm_timber",
     "bz06_cream_plaster",
     "bz06_dressed_sandstone",
@@ -8139,10 +8212,10 @@
   "budget": {
     "status": "deferred",
     "counts": {
-      "maxTriangles": 4534,
-      "maxMaterials": 9,
-      "maxRenderedPrimitives": 9,
-      "maxShadowPrimitives": 8
+      "maxTriangles": 4862,
+      "maxMaterials": 10,
+      "maxRenderedPrimitives": 12,
+      "maxShadowPrimitives": 9
     },
     "targets": {
       "maxTriangles": 48000,
@@ -8151,6 +8224,8 @@
       "maxShadowPrimitives": 7
     },
     "overTarget": [
+      "maxMaterials",
+      "maxRenderedPrimitives",
       "maxShadowPrimitives"
     ]
   }

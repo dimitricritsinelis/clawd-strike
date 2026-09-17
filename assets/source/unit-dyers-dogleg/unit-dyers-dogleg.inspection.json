@@ -5,9 +5,9 @@
     "status": "PROPOSED"
   },
   "asset": "assets/source/unit-dyers-dogleg/unit-dyers-dogleg.glb",
-  "triangles": 9483,
-  "primitives": 11,
-  "castPrimitives": 6,
+  "triangles": 14347,
+  "primitives": 15,
+  "castPrimitives": 8,
   "actualBoundsGltf": {
     "min": [
       -3.5999999046325684,
@@ -35,7 +35,7 @@
   "objects": [
     {
       "id": "dd-e-field",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -53,7 +53,7 @@
     },
     {
       "id": "dd-e-field.001",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -71,7 +71,7 @@
     },
     {
       "id": "dd-e-field.002",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -89,7 +89,7 @@
     },
     {
       "id": "dd-e-field.003",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -107,7 +107,7 @@
     },
     {
       "id": "dd-e-field.004",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -125,7 +125,7 @@
     },
     {
       "id": "dd-e-field.005",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -143,7 +143,7 @@
     },
     {
       "id": "dd-e-field.006",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -161,7 +161,7 @@
     },
     {
       "id": "dd-e-field.007",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -179,7 +179,7 @@
     },
     {
       "id": "dd-e-field.008",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -197,7 +197,7 @@
     },
     {
       "id": "dd-e-field.009",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -215,7 +215,7 @@
     },
     {
       "id": "dd-e-field.010",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -233,7 +233,7 @@
     },
     {
       "id": "dd-e-field.011",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -251,7 +251,7 @@
     },
     {
       "id": "dd-e-field.012",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -269,7 +269,7 @@
     },
     {
       "id": "dd-e-field.013",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -287,7 +287,7 @@
     },
     {
       "id": "dd-e-field.014",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -305,7 +305,7 @@
     },
     {
       "id": "dd-e-field.015",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -323,7 +323,7 @@
     },
     {
       "id": "dd-e-field.016",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -341,7 +341,7 @@
     },
     {
       "id": "dd-e-field.017",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -359,7 +359,7 @@
     },
     {
       "id": "dd-e-field.018",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -377,7 +377,7 @@
     },
     {
       "id": "dd-e-field.019",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -395,7 +395,7 @@
     },
     {
       "id": "dd-e-field.020",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -413,7 +413,7 @@
     },
     {
       "id": "dd-e-field.021",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -431,7 +431,7 @@
     },
     {
       "id": "dd-e-field.022",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -449,7 +449,7 @@
     },
     {
       "id": "dd-e-field.023",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -467,7 +467,7 @@
     },
     {
       "id": "dd-e-field.024",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -485,7 +485,7 @@
     },
     {
       "id": "dd-e-field.025",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -503,7 +503,7 @@
     },
     {
       "id": "dd-e-field.026",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -521,7 +521,7 @@
     },
     {
       "id": "dd-e-field.027",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -539,7 +539,7 @@
     },
     {
       "id": "dd-e-field.028",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -557,7 +557,7 @@
     },
     {
       "id": "dd-e-field.029",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -575,7 +575,7 @@
     },
     {
       "id": "dd-e-field.030",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -593,7 +593,7 @@
     },
     {
       "id": "dd-e-field.031",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -611,7 +611,7 @@
     },
     {
       "id": "dd-e-field.032",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -629,7 +629,7 @@
     },
     {
       "id": "dd-e-field.033",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -647,7 +647,7 @@
     },
     {
       "id": "dd-e-field.034",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -665,7 +665,7 @@
     },
     {
       "id": "dd-e-field.035",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -683,7 +683,7 @@
     },
     {
       "id": "dd-e-field.036",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -701,7 +701,7 @@
     },
     {
       "id": "dd-e-field.037",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -719,7 +719,7 @@
     },
     {
       "id": "dd-e-field.038",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -737,7 +737,7 @@
     },
     {
       "id": "dd-e-field.039",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -755,7 +755,7 @@
     },
     {
       "id": "dd-e-field.040",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -773,7 +773,7 @@
     },
     {
       "id": "dd-e-field.041",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -791,7 +791,7 @@
     },
     {
       "id": "dd-e-field.042",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -809,7 +809,7 @@
     },
     {
       "id": "dd-e-field.043",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -827,7 +827,7 @@
     },
     {
       "id": "dd-e-field.044",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -845,7 +845,7 @@
     },
     {
       "id": "dd-e-field.045",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -863,7 +863,7 @@
     },
     {
       "id": "dd-e-field.046",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -881,7 +881,7 @@
     },
     {
       "id": "dd-e-field.047",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -899,7 +899,7 @@
     },
     {
       "id": "dd-e-field.048",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -917,7 +917,7 @@
     },
     {
       "id": "dd-e-field.049",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -935,7 +935,7 @@
     },
     {
       "id": "dd-e-field.050",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -953,7 +953,7 @@
     },
     {
       "id": "dd-e-field.051",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -971,7 +971,7 @@
     },
     {
       "id": "dd-e-field.052",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -989,7 +989,7 @@
     },
     {
       "id": "dd-e-field.053",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1007,7 +1007,7 @@
     },
     {
       "id": "dd-e-end-closure",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1025,7 +1025,7 @@
     },
     {
       "id": "dd-e-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1043,7 +1043,7 @@
     },
     {
       "id": "dd-e-base-closure",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1061,7 +1061,7 @@
     },
     {
       "id": "dd-e-cornice-0",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1079,7 +1079,7 @@
     },
     {
       "id": "dd-e-cornice-bearing",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1097,7 +1097,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1115,7 +1115,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1133,7 +1133,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1151,7 +1151,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1169,7 +1169,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1187,7 +1187,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1205,7 +1205,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.002",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1223,7 +1223,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.002",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1241,7 +1241,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.002",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1259,7 +1259,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.003",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1277,7 +1277,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.003",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1295,7 +1295,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.003",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1313,7 +1313,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.004",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1331,7 +1331,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.004",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1349,7 +1349,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.004",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1367,7 +1367,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.005",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1385,7 +1385,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.005",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1403,7 +1403,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.005",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1421,7 +1421,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.006",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1439,7 +1439,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.006",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1457,7 +1457,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.006",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1475,7 +1475,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.007",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1493,7 +1493,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.007",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1511,7 +1511,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.007",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1529,7 +1529,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.008",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1547,7 +1547,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.008",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1565,7 +1565,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.008",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1583,7 +1583,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.009",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1601,7 +1601,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.009",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1619,7 +1619,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.009",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1637,7 +1637,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.010",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1655,7 +1655,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.010",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1673,7 +1673,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.010",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1691,7 +1691,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-arch-surround.011",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1709,7 +1709,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spandrel.011",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1727,7 +1727,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-barrel.011",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1745,7 +1745,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-jamb",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1763,7 +1763,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-jamb.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1781,7 +1781,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-shoulder",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1799,7 +1799,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-shoulder.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1817,7 +1817,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1835,7 +1835,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1853,7 +1853,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1871,7 +1871,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1889,7 +1889,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1907,7 +1907,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1925,7 +1925,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1943,7 +1943,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1961,7 +1961,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1979,7 +1979,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.004",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1997,7 +1997,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.005",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2015,7 +2015,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.006",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2033,7 +2033,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.007",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2051,7 +2051,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.008",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2069,7 +2069,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.009",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2087,7 +2087,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.010",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2105,7 +2105,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-frame-head.011",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2123,7 +2123,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2141,7 +2141,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2159,7 +2159,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2177,7 +2177,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2195,7 +2195,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2213,7 +2213,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2231,7 +2231,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2249,7 +2249,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2267,7 +2267,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2285,7 +2285,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-panel.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2303,7 +2303,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-stile.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2321,7 +2321,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-stile.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2339,7 +2339,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2357,7 +2357,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail.004",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2375,7 +2375,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-leaf-rail.005",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2393,7 +2393,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2411,7 +2411,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2429,7 +2429,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2447,7 +2447,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spring-closure",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2465,7 +2465,7 @@
     },
     {
       "id": "dd-e-ENTRANCE-spring-closure.001",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2483,7 +2483,7 @@
     },
     {
       "id": "dd-e-L1-W1-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2501,7 +2501,7 @@
     },
     {
       "id": "dd-e-L1-W1-left-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2519,7 +2519,7 @@
     },
     {
       "id": "dd-e-L1-W1-right-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2537,7 +2537,7 @@
     },
     {
       "id": "dd-e-L1-W1-head",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2555,7 +2555,7 @@
     },
     {
       "id": "dd-e-L1-W1-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2573,7 +2573,7 @@
     },
     {
       "id": "dd-e-L1-W1-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2591,7 +2591,7 @@
     },
     {
       "id": "dd-e-L1-W1-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2609,7 +2609,7 @@
     },
     {
       "id": "dd-e-L1-W1-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2627,7 +2627,7 @@
     },
     {
       "id": "dd-e-L1-W1-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2645,7 +2645,7 @@
     },
     {
       "id": "dd-e-L1-W1-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2663,7 +2663,7 @@
     },
     {
       "id": "dd-e-L1-W1-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2681,7 +2681,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2699,7 +2699,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2717,7 +2717,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2735,7 +2735,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2753,7 +2753,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2771,7 +2771,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2789,7 +2789,7 @@
     },
     {
       "id": "dd-e-L1-W1-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2807,7 +2807,7 @@
     },
     {
       "id": "dd-e-L1-W1-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2825,7 +2825,7 @@
     },
     {
       "id": "dd-e-L1-W1-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2843,7 +2843,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-panel.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2861,7 +2861,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-stile.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2879,7 +2879,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-stile.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2897,7 +2897,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2915,7 +2915,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail.004",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2933,7 +2933,7 @@
     },
     {
       "id": "dd-e-L1-W1-leaf-rail.005",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2951,7 +2951,7 @@
     },
     {
       "id": "dd-e-L1-W1-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2969,7 +2969,7 @@
     },
     {
       "id": "dd-e-L1-W1-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2987,7 +2987,7 @@
     },
     {
       "id": "dd-e-L1-W1-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3005,7 +3005,7 @@
     },
     {
       "id": "dd-e-L1-W2-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3023,7 +3023,7 @@
     },
     {
       "id": "dd-e-L1-W2-left-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3041,7 +3041,7 @@
     },
     {
       "id": "dd-e-L1-W2-right-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3059,7 +3059,7 @@
     },
     {
       "id": "dd-e-L1-W2-head",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3077,7 +3077,7 @@
     },
     {
       "id": "dd-e-L1-W2-threshold",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3095,7 +3095,7 @@
     },
     {
       "id": "dd-e-L1-W2-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3113,7 +3113,7 @@
     },
     {
       "id": "dd-e-L1-W2-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3131,7 +3131,7 @@
     },
     {
       "id": "dd-e-L1-W2-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3149,7 +3149,7 @@
     },
     {
       "id": "dd-e-L1-W2-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3167,7 +3167,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3185,7 +3185,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3203,7 +3203,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3221,7 +3221,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3239,7 +3239,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3257,7 +3257,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3275,7 +3275,7 @@
     },
     {
       "id": "dd-e-L1-W2-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3293,7 +3293,7 @@
     },
     {
       "id": "dd-e-L1-W2-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3311,7 +3311,7 @@
     },
     {
       "id": "dd-e-L1-W2-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3329,7 +3329,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-panel.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3347,7 +3347,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-stile.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3365,7 +3365,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-stile.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3383,7 +3383,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3401,7 +3401,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail.004",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3419,7 +3419,7 @@
     },
     {
       "id": "dd-e-L1-W2-leaf-rail.005",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3437,7 +3437,7 @@
     },
     {
       "id": "dd-e-L1-W2-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3455,7 +3455,7 @@
     },
     {
       "id": "dd-e-L1-W2-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3473,7 +3473,7 @@
     },
     {
       "id": "dd-e-L1-W2-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3491,7 +3491,7 @@
     },
     {
       "id": "dd-e-L1-W3-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3509,7 +3509,7 @@
     },
     {
       "id": "dd-e-L1-W3-left-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3527,7 +3527,7 @@
     },
     {
       "id": "dd-e-L1-W3-right-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3545,7 +3545,7 @@
     },
     {
       "id": "dd-e-L1-W3-head",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3563,7 +3563,7 @@
     },
     {
       "id": "dd-e-L1-W3-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3581,7 +3581,7 @@
     },
     {
       "id": "dd-e-L1-W3-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3599,7 +3599,7 @@
     },
     {
       "id": "dd-e-L1-W3-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3617,7 +3617,7 @@
     },
     {
       "id": "dd-e-L1-W3-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3635,7 +3635,7 @@
     },
     {
       "id": "dd-e-L1-W3-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3653,7 +3653,7 @@
     },
     {
       "id": "dd-e-L1-W3-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3671,7 +3671,7 @@
     },
     {
       "id": "dd-e-L1-W3-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3689,7 +3689,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3707,7 +3707,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3725,7 +3725,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3743,7 +3743,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3761,7 +3761,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3779,7 +3779,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3797,7 +3797,7 @@
     },
     {
       "id": "dd-e-L1-W3-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3815,7 +3815,7 @@
     },
     {
       "id": "dd-e-L1-W3-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3833,7 +3833,7 @@
     },
     {
       "id": "dd-e-L1-W3-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3851,7 +3851,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-panel.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3869,7 +3869,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-stile.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3887,7 +3887,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-stile.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3905,7 +3905,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail.003",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3923,7 +3923,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail.004",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3941,7 +3941,7 @@
     },
     {
       "id": "dd-e-L1-W3-leaf-rail.005",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3959,7 +3959,7 @@
     },
     {
       "id": "dd-e-L1-W3-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3977,7 +3977,7 @@
     },
     {
       "id": "dd-e-L1-W3-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -3995,7 +3995,7 @@
     },
     {
       "id": "dd-e-L1-W3-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4013,7 +4013,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4031,7 +4031,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-left-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4049,7 +4049,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-right-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4067,7 +4067,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-head",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4085,7 +4085,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4103,7 +4103,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4121,7 +4121,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4139,7 +4139,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4157,7 +4157,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4175,7 +4175,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4193,7 +4193,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4211,7 +4211,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4229,7 +4229,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4247,7 +4247,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4265,7 +4265,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4283,7 +4283,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4301,7 +4301,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4319,7 +4319,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4337,7 +4337,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4355,7 +4355,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-0-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4373,7 +4373,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-back",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4391,7 +4391,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-left-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4409,7 +4409,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-right-return",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4427,7 +4427,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-head",
-      "material": "bz06_sand_plaster.001",
+      "material": "bz06_sand_plaster",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4445,7 +4445,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4463,7 +4463,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4481,7 +4481,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4499,7 +4499,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-frame-jamb",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4517,7 +4517,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-frame-jamb.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4535,7 +4535,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-frame-bottom",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4553,7 +4553,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-frame-head",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4571,7 +4571,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-panel",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4589,7 +4589,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-stile",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4607,7 +4607,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-stile.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4625,7 +4625,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-rail",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4643,7 +4643,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-rail.001",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4661,7 +4661,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-leaf-rail.002",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4679,7 +4679,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4697,7 +4697,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4715,7 +4715,7 @@
     },
     {
       "id": "dd-e-GROUND-ROOM-2-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -4733,7 +4733,7 @@
     },
     {
       "id": "dd-w-field",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4751,7 +4751,7 @@
     },
     {
       "id": "dd-w-field.001",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4769,7 +4769,7 @@
     },
     {
       "id": "dd-w-field.002",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4787,7 +4787,7 @@
     },
     {
       "id": "dd-w-field.003",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4805,7 +4805,7 @@
     },
     {
       "id": "dd-w-field.004",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4823,7 +4823,7 @@
     },
     {
       "id": "dd-w-field.005",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4841,7 +4841,7 @@
     },
     {
       "id": "dd-w-field.006",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4859,7 +4859,7 @@
     },
     {
       "id": "dd-w-field.007",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4877,7 +4877,7 @@
     },
     {
       "id": "dd-w-field.008",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4895,7 +4895,7 @@
     },
     {
       "id": "dd-w-field.009",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4913,7 +4913,7 @@
     },
     {
       "id": "dd-w-field.010",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4931,7 +4931,7 @@
     },
     {
       "id": "dd-w-field.011",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4949,7 +4949,7 @@
     },
     {
       "id": "dd-w-field.012",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4967,7 +4967,7 @@
     },
     {
       "id": "dd-w-field.013",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4985,7 +4985,7 @@
     },
     {
       "id": "dd-w-field.014",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5003,7 +5003,7 @@
     },
     {
       "id": "dd-w-field.015",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5021,7 +5021,7 @@
     },
     {
       "id": "dd-w-field.016",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5039,7 +5039,7 @@
     },
     {
       "id": "dd-w-field.017",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5057,7 +5057,7 @@
     },
     {
       "id": "dd-w-field.018",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5075,7 +5075,7 @@
     },
     {
       "id": "dd-w-field.019",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5093,7 +5093,7 @@
     },
     {
       "id": "dd-w-field.020",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5111,7 +5111,7 @@
     },
     {
       "id": "dd-w-field.021",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5129,7 +5129,7 @@
     },
     {
       "id": "dd-w-field.022",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5147,7 +5147,7 @@
     },
     {
       "id": "dd-w-field.023",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5165,7 +5165,7 @@
     },
     {
       "id": "dd-w-field.024",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5183,7 +5183,7 @@
     },
     {
       "id": "dd-w-field.025",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5201,7 +5201,7 @@
     },
     {
       "id": "dd-w-field.026",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5219,7 +5219,7 @@
     },
     {
       "id": "dd-w-field.027",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5237,7 +5237,7 @@
     },
     {
       "id": "dd-w-field.028",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5255,7 +5255,7 @@
     },
     {
       "id": "dd-w-field.029",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5273,7 +5273,7 @@
     },
     {
       "id": "dd-w-field.030",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5291,7 +5291,7 @@
     },
     {
       "id": "dd-w-field.031",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5309,7 +5309,7 @@
     },
     {
       "id": "dd-w-field.032",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5327,7 +5327,7 @@
     },
     {
       "id": "dd-w-field.033",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5345,7 +5345,7 @@
     },
     {
       "id": "dd-w-field.034",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5363,7 +5363,7 @@
     },
     {
       "id": "dd-w-field.035",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5381,7 +5381,7 @@
     },
     {
       "id": "dd-w-field.036",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5399,7 +5399,7 @@
     },
     {
       "id": "dd-w-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5417,7 +5417,7 @@
     },
     {
       "id": "dd-w-base-closure",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5435,7 +5435,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5453,7 +5453,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-chamber-ceiling",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5471,7 +5471,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-left-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5489,7 +5489,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-right-return-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5507,7 +5507,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-right-return-front",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5525,7 +5525,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-right-return-head",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5543,7 +5543,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-closed-staff-leaf",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5561,7 +5561,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-jamb",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5579,7 +5579,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-jamb.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5597,7 +5597,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5615,7 +5615,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -5633,7 +5633,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -5651,7 +5651,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-staff-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -5669,7 +5669,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5687,7 +5687,7 @@
     },
     {
       "id": "DD_WORKS_RECESS-deck",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5705,7 +5705,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5723,7 +5723,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-left-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5741,7 +5741,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-right-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5759,7 +5759,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5777,7 +5777,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-threshold",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5795,7 +5795,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-frame-jamb",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5813,7 +5813,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-frame-jamb.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5831,7 +5831,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-frame-bottom",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5849,7 +5849,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-frame-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5867,7 +5867,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-panel",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5885,7 +5885,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-stile",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5903,7 +5903,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-stile.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5921,7 +5921,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5939,7 +5939,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5957,7 +5957,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -5975,7 +5975,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -5993,7 +5993,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6011,7 +6011,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6029,7 +6029,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-panel.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6047,7 +6047,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-stile.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6065,7 +6065,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-stile.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6083,7 +6083,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6101,7 +6101,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6119,7 +6119,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-leaf-rail.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6137,7 +6137,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6155,7 +6155,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6173,7 +6173,7 @@
     },
     {
       "id": "dd-w-STAFF-DOOR-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6191,7 +6191,7 @@
     },
     {
       "id": "dd-w-L1-W1-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6209,7 +6209,7 @@
     },
     {
       "id": "dd-w-L1-W1-left-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6227,7 +6227,7 @@
     },
     {
       "id": "dd-w-L1-W1-right-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6245,7 +6245,7 @@
     },
     {
       "id": "dd-w-L1-W1-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6263,7 +6263,7 @@
     },
     {
       "id": "dd-w-L1-W1-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6281,7 +6281,7 @@
     },
     {
       "id": "dd-w-L1-W1-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6299,7 +6299,7 @@
     },
     {
       "id": "dd-w-L1-W1-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6317,7 +6317,7 @@
     },
     {
       "id": "dd-w-L1-W1-frame-jamb",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6335,7 +6335,7 @@
     },
     {
       "id": "dd-w-L1-W1-frame-jamb.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6353,7 +6353,7 @@
     },
     {
       "id": "dd-w-L1-W1-frame-bottom",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6371,7 +6371,7 @@
     },
     {
       "id": "dd-w-L1-W1-frame-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6389,7 +6389,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-panel",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6407,7 +6407,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-stile",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6425,7 +6425,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-stile.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6443,7 +6443,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6461,7 +6461,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6479,7 +6479,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6497,7 +6497,7 @@
     },
     {
       "id": "dd-w-L1-W1-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6515,7 +6515,7 @@
     },
     {
       "id": "dd-w-L1-W1-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6533,7 +6533,7 @@
     },
     {
       "id": "dd-w-L1-W1-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6551,7 +6551,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-panel.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6569,7 +6569,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-stile.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6587,7 +6587,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-stile.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6605,7 +6605,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6623,7 +6623,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6641,7 +6641,7 @@
     },
     {
       "id": "dd-w-L1-W1-leaf-rail.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6659,7 +6659,7 @@
     },
     {
       "id": "dd-w-L1-W1-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6677,7 +6677,7 @@
     },
     {
       "id": "dd-w-L1-W1-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6695,7 +6695,7 @@
     },
     {
       "id": "dd-w-L1-W1-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -6713,7 +6713,7 @@
     },
     {
       "id": "dd-w-L1-W2-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6731,7 +6731,7 @@
     },
     {
       "id": "dd-w-L1-W2-left-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6749,7 +6749,7 @@
     },
     {
       "id": "dd-w-L1-W2-right-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6767,7 +6767,7 @@
     },
     {
       "id": "dd-w-L1-W2-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6785,7 +6785,7 @@
     },
     {
       "id": "dd-w-L1-W2-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6803,7 +6803,7 @@
     },
     {
       "id": "dd-w-L1-W2-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6821,7 +6821,7 @@
     },
     {
       "id": "dd-w-L1-W2-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6839,7 +6839,7 @@
     },
     {
       "id": "dd-w-L1-W2-frame-jamb",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6857,7 +6857,7 @@
     },
     {
       "id": "dd-w-L1-W2-frame-jamb.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6875,7 +6875,7 @@
     },
     {
       "id": "dd-w-L1-W2-frame-bottom",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6893,7 +6893,7 @@
     },
     {
       "id": "dd-w-L1-W2-frame-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6911,7 +6911,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-panel",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6929,7 +6929,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-stile",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6947,7 +6947,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-stile.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6965,7 +6965,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -6983,7 +6983,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7001,7 +7001,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7019,7 +7019,7 @@
     },
     {
       "id": "dd-w-L1-W2-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7037,7 +7037,7 @@
     },
     {
       "id": "dd-w-L1-W2-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7055,7 +7055,7 @@
     },
     {
       "id": "dd-w-L1-W2-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7073,7 +7073,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-panel.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7091,7 +7091,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-stile.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7109,7 +7109,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-stile.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7127,7 +7127,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7145,7 +7145,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7163,7 +7163,7 @@
     },
     {
       "id": "dd-w-L1-W2-leaf-rail.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7181,7 +7181,7 @@
     },
     {
       "id": "dd-w-L1-W2-hinge.002",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7199,7 +7199,7 @@
     },
     {
       "id": "dd-w-L1-W2-hinge.003",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7217,7 +7217,7 @@
     },
     {
       "id": "dd-w-L1-W2-latch.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7235,7 +7235,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-back",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7253,7 +7253,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-left-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7271,7 +7271,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-right-return",
-      "material": "bz06_service_stone.001",
+      "material": "bz06_service_stone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7289,7 +7289,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7307,7 +7307,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-sill",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7325,7 +7325,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-sill-drip",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7343,7 +7343,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-sill-drip.001",
-      "material": "bz06_monolithic_stone_trim.001",
+      "material": "bz06_monolithic_stone_trim",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7361,7 +7361,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-frame-jamb",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7379,7 +7379,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-frame-jamb.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7397,7 +7397,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-frame-bottom",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7415,7 +7415,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-frame-head",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7433,7 +7433,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7451,7 +7451,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7469,7 +7469,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7487,7 +7487,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7505,7 +7505,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7523,7 +7523,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7541,7 +7541,7 @@
     },
     {
       "id": "dd-w-LOFT-VENT-louver.006",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -7559,7 +7559,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-left-post",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7577,7 +7577,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-right-post",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7595,7 +7595,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-drying-rail",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7613,7 +7613,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-1-field",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7631,7 +7631,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-1-bound-edge",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7649,7 +7649,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-1",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7667,7 +7667,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-1.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7685,7 +7685,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-2-field",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7703,7 +7703,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-2-bound-edge",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7721,7 +7721,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-2",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7739,7 +7739,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-2.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7757,7 +7757,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-3-field",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7775,7 +7775,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sample-3-bound-edge",
-      "material": "bz06_fine_linen.001",
+      "material": "bz06_fine_linen",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7793,7 +7793,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-3",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7811,7 +7811,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-cloth-tie-sample-3.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7829,7 +7829,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-top",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7847,7 +7847,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-leg",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7865,7 +7865,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-leg.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7883,7 +7883,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-leg.002",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7901,7 +7901,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-leg.003",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7919,7 +7919,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-apron-long",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7937,7 +7937,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-apron-long.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7955,7 +7955,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-apron-end",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7973,7 +7973,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-folding-bench-apron-end.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -7991,7 +7991,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-stile",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8009,7 +8009,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-stile.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8027,7 +8027,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-rail",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8045,7 +8045,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-rail.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8063,7 +8063,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8081,7 +8081,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8099,7 +8099,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.002",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8117,7 +8117,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.003",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8135,7 +8135,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.004",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8153,7 +8153,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.005",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8171,7 +8171,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.006",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8189,7 +8189,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.007",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8207,7 +8207,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.008",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8225,7 +8225,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.009",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8243,7 +8243,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.010",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8261,7 +8261,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.011",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8279,7 +8279,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-vertical-lattice.012",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8297,7 +8297,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-horizontal-lattice",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8315,7 +8315,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-horizontal-lattice.001",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8333,7 +8333,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-horizontal-lattice.002",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8351,7 +8351,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-horizontal-lattice.003",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8369,7 +8369,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-horizontal-lattice.004",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8387,7 +8387,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-hinge",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8405,7 +8405,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-hinge.001",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8423,7 +8423,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-closed-work-gate-locked-latch",
-      "material": "bz04_craft_dark_iron.001",
+      "material": "bz04_craft_dark_iron",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8441,7 +8441,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-sign",
-      "material": "ph_bz04_worn_planks.001",
+      "material": "ph_bz04_worn_planks",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8459,7 +8459,7 @@
     },
     {
       "id": "G_DD_WORKS_RECESS-label",
-      "material": "bz06_cream_woven_cloth.001",
+      "material": "bz06_cream_woven_cloth",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -8477,7 +8477,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-deck",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8495,7 +8495,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-joist",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8513,7 +8513,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-joist.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8531,7 +8531,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-brace",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8549,7 +8549,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-wall-plate",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8567,7 +8567,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-brace.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8585,7 +8585,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-wall-plate.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8603,7 +8603,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-post",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8621,7 +8621,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-post.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8639,7 +8639,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-rail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8657,7 +8657,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-rail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8675,7 +8675,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-rail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8693,7 +8693,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-rail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8711,7 +8711,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-rail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8729,7 +8729,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-rail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8747,7 +8747,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8765,7 +8765,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8783,7 +8783,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8801,7 +8801,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8819,7 +8819,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8837,7 +8837,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8855,7 +8855,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.006",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8873,7 +8873,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.007",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8891,7 +8891,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.008",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8909,7 +8909,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.009",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8927,7 +8927,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.010",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8945,7 +8945,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.011",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8963,7 +8963,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.012",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8981,7 +8981,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.013",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -8999,7 +8999,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.014",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9017,7 +9017,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-front-baluster.015",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9035,7 +9035,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9053,7 +9053,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9071,7 +9071,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9089,7 +9089,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9107,7 +9107,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9125,7 +9125,7 @@
     },
     {
       "id": "R4-DOGLEG-HOUSE-BALCONY-side-baluster.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -9140,21 +9140,1048 @@
         ]
       },
       "triangles": 44
+    },
+    {
+      "id": "life-dd-w-0-field",
+      "material": "bz06_fine_linen",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.14399999380111694,
+          -7.824999809265137,
+          3.25
+        ],
+        "max": [
+          0.1961197853088379,
+          -6.974999904632568,
+          4.949999809265137
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-dd-w-0-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -7.0,
+          3.25
+        ],
+        "max": [
+          0.20035016536712646,
+          -6.974999904632568,
+          4.949999809265137
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-dd-w-0-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -7.824999809265137,
+          3.25
+        ],
+        "max": [
+          0.19667302072048187,
+          -7.800000190734863,
+          4.949999809265137
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-dd-w-0-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -7.800000190734863,
+          3.251476287841797
+        ],
+        "max": [
+          0.15912997722625732,
+          -7.0,
+          3.290764808654785
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-dd-w-0-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -7.800000190734863,
+          4.925021648406982
+        ],
+        "max": [
+          0.15912997722625732,
+          -7.0,
+          4.949999809265137
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-dd-w-0-woven-lozenge",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.17995336651802063,
+          -7.501999855041504,
+          4.185266017913818
+        ],
+        "max": [
+          0.20591552555561066,
+          -7.297999858856201,
+          4.502254009246826
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-timber-rod",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.13899993896484375,
+          -7.884998321533203,
+          4.978999614715576
+        ],
+        "max": [
+          0.16100311279296875,
+          -6.915000915527344,
+          5.000999927520752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-bracket-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.0,
+          -6.953000068664551,
+          4.909999847412109
+        ],
+        "max": [
+          0.06599999964237213,
+          -6.927000045776367,
+          5.019999980926514
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-dd-w-0-rod-support-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.05135345458984375,
+          -6.946998596191406,
+          4.926025390625
+        ],
+        "max": [
+          0.15364837646484375,
+          -6.9329986572265625,
+          4.995974540710449
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-bracket-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.0,
+          -7.873000144958496,
+          4.909999847412109
+        ],
+        "max": [
+          0.06599999964237213,
+          -7.8470001220703125,
+          5.019999980926514
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-dd-w-0-rod-support-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.05135345458984375,
+          -7.867000579833984,
+          4.926025390625
+        ],
+        "max": [
+          0.15364837646484375,
+          -7.853000640869141,
+          4.995974540710449
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14271926879882812,
+          -7.038002014160156,
+          4.934784412384033
+        ],
+        "max": [
+          0.169281005859375,
+          -7.030998229980469,
+          4.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745330810546875,
+          -7.038002014160156,
+          4.987601280212402
+        ],
+        "max": [
+          0.168548583984375,
+          -7.030998229980469,
+          5.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -7.038002014160156,
+          4.987391471862793
+        ],
+        "max": [
+          0.15233612060546875,
+          -7.030998229980469,
+          5.009608268737793
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -7.038002014160156,
+          4.9351806640625
+        ],
+        "max": [
+          0.14740371704101562,
+          -7.030998229980469,
+          4.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14271926879882812,
+          -7.2675018310546875,
+          4.934784412384033
+        ],
+        "max": [
+          0.169281005859375,
+          -7.260498046875,
+          4.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745330810546875,
+          -7.2675018310546875,
+          4.987601280212402
+        ],
+        "max": [
+          0.168548583984375,
+          -7.260498046875,
+          5.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -7.2675018310546875,
+          4.987391471862793
+        ],
+        "max": [
+          0.15233612060546875,
+          -7.260498046875,
+          5.009608268737793
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -7.2675018310546875,
+          4.9351806640625
+        ],
+        "max": [
+          0.14740371704101562,
+          -7.260498046875,
+          4.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14271926879882812,
+          -7.539501190185547,
+          4.934784412384033
+        ],
+        "max": [
+          0.169281005859375,
+          -7.532497406005859,
+          4.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745330810546875,
+          -7.539501190185547,
+          4.987601280212402
+        ],
+        "max": [
+          0.168548583984375,
+          -7.532497406005859,
+          5.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -7.539501190185547,
+          4.987391471862793
+        ],
+        "max": [
+          0.15233612060546875,
+          -7.532497406005859,
+          5.009608268737793
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -7.539501190185547,
+          4.9351806640625
+        ],
+        "max": [
+          0.14740371704101562,
+          -7.532497406005859,
+          4.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14271926879882812,
+          -7.769001007080078,
+          4.934784412384033
+        ],
+        "max": [
+          0.169281005859375,
+          -7.761997222900391,
+          4.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745330810546875,
+          -7.769001007080078,
+          4.987601280212402
+        ],
+        "max": [
+          0.168548583984375,
+          -7.761997222900391,
+          5.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -7.769001007080078,
+          4.987391471862793
+        ],
+        "max": [
+          0.15233612060546875,
+          -7.761997222900391,
+          5.009608268737793
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -7.769001007080078,
+          4.9351806640625
+        ],
+        "max": [
+          0.14740371704101562,
+          -7.761997222900391,
+          4.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-w-0-lower-weight",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.13832855224609375,
+          -7.799503326416016,
+          3.264887809753418
+        ],
+        "max": [
+          0.15263748168945312,
+          -7.000495910644531,
+          3.2788877487182617
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-field",
+      "material": "bz04_levantine_rug_project_original",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          6.803880214691162,
+          -4.650000095367432,
+          3.0
+        ],
+        "max": [
+          6.855999946594238,
+          -3.549999952316284,
+          4.400000095367432
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-dd-e-1-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.8004021644592285,
+          -3.575000047683716,
+          3.0
+        ],
+        "max": [
+          6.848999977111816,
+          -3.549999952316284,
+          4.400000095367432
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-dd-e-1-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.8033270835876465,
+          -4.650000095367432,
+          3.0
+        ],
+        "max": [
+          6.848999977111816,
+          -4.625,
+          4.400000095367432
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-dd-e-1-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.840414047241211,
+          -4.625,
+          3.001141309738159
+        ],
+        "max": [
+          6.848999977111816,
+          -3.575000047683716,
+          3.0407142639160156
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-dd-e-1-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.840414047241211,
+          -4.625,
+          4.375020503997803
+        ],
+        "max": [
+          6.848999977111816,
+          -3.575000047683716,
+          4.400000095367432
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-dd-e-1-timber-rod",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.838996887207031,
+          -4.709999084472656,
+          4.428999900817871
+        ],
+        "max": [
+          6.861000061035156,
+          -3.490001678466797,
+          4.451000213623047
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-bracket-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.934000015258789,
+          -3.5280001163482666,
+          4.360000133514404
+        ],
+        "max": [
+          7.0,
+          -3.502000093460083,
+          4.46999979019165
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-dd-e-1-rod-support-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.846351623535156,
+          -3.5219993591308594,
+          4.376025199890137
+        ],
+        "max": [
+          6.948646545410156,
+          -3.5079994201660156,
+          4.445974826812744
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-bracket-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.934000015258789,
+          -4.697999954223633,
+          4.360000133514404
+        ],
+        "max": [
+          7.0,
+          -4.671999931335449,
+          4.46999979019165
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-dd-e-1-rod-support-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.846351623535156,
+          -4.6920013427734375,
+          4.376025199890137
+        ],
+        "max": [
+          6.948646545410156,
+          -4.678001403808594,
+          4.445974826812744
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.830718994140625,
+          -3.6305007934570312,
+          4.384784698486328
+        ],
+        "max": [
+          6.857280731201172,
+          -3.6234970092773438,
+          4.441215515136719
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.831451416015625,
+          -3.6305007934570312,
+          4.437601566314697
+        ],
+        "max": [
+          6.852546691894531,
+          -3.6234970092773438,
+          4.45939826965332
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.847663879394531,
+          -3.6305007934570312,
+          4.437391757965088
+        ],
+        "max": [
+          6.871334075927734,
+          -3.6234970092773438,
+          4.45960807800293
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.852596282958984,
+          -3.6305007934570312,
+          4.385180950164795
+        ],
+        "max": [
+          6.872402191162109,
+          -3.6234970092773438,
+          4.440819263458252
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.830718994140625,
+          -3.927501678466797,
+          4.384784698486328
+        ],
+        "max": [
+          6.857280731201172,
+          -3.9204978942871094,
+          4.441215515136719
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.831451416015625,
+          -3.927501678466797,
+          4.437601566314697
+        ],
+        "max": [
+          6.852546691894531,
+          -3.9204978942871094,
+          4.45939826965332
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.847663879394531,
+          -3.927501678466797,
+          4.437391757965088
+        ],
+        "max": [
+          6.871334075927734,
+          -3.9204978942871094,
+          4.45960807800293
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.852596282958984,
+          -3.927501678466797,
+          4.385180950164795
+        ],
+        "max": [
+          6.872402191162109,
+          -3.9204978942871094,
+          4.440819263458252
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.830718994140625,
+          -4.279502868652344,
+          4.384784698486328
+        ],
+        "max": [
+          6.857280731201172,
+          -4.272499084472656,
+          4.441215515136719
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.831451416015625,
+          -4.279502868652344,
+          4.437601566314697
+        ],
+        "max": [
+          6.852546691894531,
+          -4.272499084472656,
+          4.45939826965332
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.847663879394531,
+          -4.279502868652344,
+          4.437391757965088
+        ],
+        "max": [
+          6.871334075927734,
+          -4.272499084472656,
+          4.45960807800293
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.852596282958984,
+          -4.279502868652344,
+          4.385180950164795
+        ],
+        "max": [
+          6.872402191162109,
+          -4.272499084472656,
+          4.440819263458252
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.830718994140625,
+          -4.576503753662109,
+          4.384784698486328
+        ],
+        "max": [
+          6.857280731201172,
+          -4.569499969482422,
+          4.441215515136719
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.831451416015625,
+          -4.576503753662109,
+          4.437601566314697
+        ],
+        "max": [
+          6.852546691894531,
+          -4.569499969482422,
+          4.45939826965332
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.847663879394531,
+          -4.576503753662109,
+          4.437391757965088
+        ],
+        "max": [
+          6.871334075927734,
+          -4.569499969482422,
+          4.45960807800293
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.852596282958984,
+          -4.576503753662109,
+          4.385180950164795
+        ],
+        "max": [
+          6.872402191162109,
+          -4.569499969482422,
+          4.440819263458252
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-dd-e-1-lower-weight",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.847362518310547,
+          -4.61700439453125,
+          3.0112876892089844
+        ],
+        "max": [
+          6.861671447753906,
+          -3.582996368408203,
+          3.025287628173828
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-wear-dd-e-0-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.994999885559082,
+          -9.305444717407227,
+          3.756286859512329
+        ],
+        "max": [
+          6.997000217437744,
+          -8.683138847351074,
+          4.270893573760986
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-dd-e-0-broken-plaster-edge",
+      "material": "bz06_sand_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          6.988999843597412,
+          -9.33200454711914,
+          3.7333552837371826
+        ],
+        "max": [
+          6.997000217437744,
+          -8.655586242675781,
+          4.292710781097412
+        ]
+      },
+      "triangles": 112
     }
   ],
-  "sha256": "75189f8903a20576185a79bae8396d844b445993b387dcb8e7ba5b7aba03b77d",
-  "sourcePolygonTriangles": 9483,
+  "sha256": "0cea61a7388953903a4f7b863e3c778fb66b2402b5a0df47e526fbcb9c1f114a",
+  "sourcePolygonTriangles": 14347,
   "materials": [
-    "bz04_craft_dark_iron.001",
-    "bz04_craft_painted_timber.001",
-    "bz04_craft_warm_timber.001",
-    "bz06_cream_woven_cloth.001",
-    "bz06_dressed_sandstone.001",
-    "bz06_fine_linen.001",
-    "bz06_monolithic_stone_trim.001",
-    "bz06_sand_plaster.001",
-    "bz06_service_stone.001",
-    "ph_bz04_worn_planks.001"
+    "bz04_craft_dark_iron",
+    "bz04_craft_painted_timber",
+    "bz04_craft_warm_timber",
+    "bz04_levantine_rug_project_original",
+    "bz06_cream_woven_cloth",
+    "bz06_dressed_sandstone",
+    "bz06_fine_linen",
+    "bz06_monolithic_stone_trim",
+    "bz06_sand_plaster",
+    "bz06_service_stone",
+    "ph_bz04_worn_planks"
   ],
   "exportBudget": {
     "maxTriangles": 48000,
@@ -9166,10 +10193,10 @@
   "budget": {
     "status": "deferred",
     "counts": {
-      "maxTriangles": 9483,
-      "maxMaterials": 10,
-      "maxRenderedPrimitives": 11,
-      "maxShadowPrimitives": 6
+      "maxTriangles": 14347,
+      "maxMaterials": 11,
+      "maxRenderedPrimitives": 15,
+      "maxShadowPrimitives": 8
     },
     "targets": {
       "maxTriangles": 48000,
@@ -9177,6 +10204,10 @@
       "maxRenderedPrimitives": 12,
       "maxShadowPrimitives": 7
     },
-    "overTarget": []
+    "overTarget": [
+      "maxMaterials",
+      "maxRenderedPrimitives",
+      "maxShadowPrimitives"
+    ]
   }
 }

@@ -31,7 +31,7 @@ def reset(origin):
     bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
     ORIGIN=origin
     for key in list(bpy.context.scene.keys()):
-        if key.startswith("bz04"):del bpy.context.scene[key]
+        if key.startswith("bz04") or key == 'bazaarColorLifeApplied':del bpy.context.scene[key]
     # Export strips pack image nodes. Rebuild material graphs for the next asset.
     from facade_materials import _CACHE
     _CACHE.clear();MATS.clear()
@@ -948,6 +948,8 @@ def verify_b_shade_colors(payload,gltf):
 
 def export(path,bounds,tri_ceiling,primitive_ceiling,extras=None):
     path.parent.mkdir(parents=True,exist_ok=True)
+    from bazaar_finish import apply as apply_bazaar_finish
+    apply_bazaar_finish(globals(), path)
     meshes=[o for o in bpy.context.scene.objects if o.type=='MESH'];inventory=[];bpy.context.view_layer.update()
     for ob in meshes:
         prepare_mesh(ob)

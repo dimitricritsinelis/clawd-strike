@@ -1265,11 +1265,11 @@
         "min": [
           -6.619999885559082,
           5.300000190734863,
-          6.400000095367432
+          6.4019999504089355
         ],
         "max": [
           -6.599999904632568,
-          8.699999809265137,
+          8.5,
           7.730000019073486
         ]
       },
@@ -1456,6 +1456,34 @@
       "triangles": 12
     }
   ],
-  "sha256": "fb3201607f16ebd310ef373c7d04444e58fdcb64d684c64a352a682d0a86c980",
-  "sourcePolygonTriangles": 948
+  "sha256": "ed3ddf5086195eafe53c2154dcdb2326c0209741a687f13c3f544169e5e02251",
+  "sourcePolygonTriangles": 948,
+  "materials": [
+    "bz04_craft_dark_iron",
+    "bz06_cream_plaster",
+    "bz06_dressed_sandstone",
+    "bz06_faded_ochre",
+    "bz06_pale_lime",
+    "bz06_sand_plaster",
+    "bz06_service_stone",
+    "ph_bz04_stone_trim_sandstone"
+  ],
+  "exportBudget": {
+    "maxTriangles": 4924,
+    "maxRenderedPrimitives": 8
+  },
+  "budget": {
+    "status": "deferred",
+    "counts": {
+      "maxTriangles": 948,
+      "maxMaterials": 8,
+      "maxRenderedPrimitives": 8,
+      "maxShadowPrimitives": 6
+    },
+    "targets": {
+      "maxTriangles": 4924,
+      "maxRenderedPrimitives": 8
+    },
+    "overTarget": []
+  }
 }

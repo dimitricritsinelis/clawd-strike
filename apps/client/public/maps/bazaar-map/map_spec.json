@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "fa5731b253b0de7d73020ad37870528c7be180633d7a5229e8ca6c606b38438a",
+    "sha256": "887beafcc02c23fc4731d37c111fe6eeac66c9514e62099ff2daca8f324d0647",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",

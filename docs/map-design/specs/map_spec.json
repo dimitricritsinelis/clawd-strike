@@ -6173,156 +6173,12 @@
   },
   "authored_placements": [
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_TEXTILE_ARCADE",
-      "unit": "unit-textile-arcade",
-      "modelId": "bz04_roof_bundle_unit_textile_arcade",
-      "position": {
-        "x": 29.1,
-        "y": 57.5,
-        "z": 7.1
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_SPICE_STREET",
-      "unit": "unit-spice-street",
-      "modelId": "bz04_roof_bundle_unit_spice_street",
-      "position": {
-        "x": 27.6,
-        "y": 23,
-        "z": 7.2
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
       "id": "BZ04_ROOF_BUNDLE_UNIT_CARAVAN_COURT",
       "unit": "unit-caravan-court",
       "modelId": "bz04_roof_bundle_unit_caravan_court",
       "position": {
         "x": 7.5,
         "y": 38.75,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_TEA_TERRACE",
-      "unit": "unit-tea-terrace",
-      "modelId": "bz04_roof_bundle_unit_tea_terrace",
-      "position": {
-        "x": 10.6,
-        "y": 65.7,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_DOGLEG",
-      "unit": "unit-dyers-dogleg",
-      "modelId": "bz04_roof_bundle_unit_dyers_dogleg",
-      "position": {
-        "x": 48.8,
-        "y": 55,
-        "z": 7.1
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_COVERED_SOUK",
-      "unit": "unit-covered-souk",
-      "modelId": "bz04_roof_bundle_unit_covered_souk",
-      "position": {
-        "x": 48.8,
-        "y": 40.05,
-        "z": 5.4
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_FOUNTAIN_COURT",
-      "unit": "unit-fountain-court",
-      "modelId": "bz04_roof_bundle_unit_fountain_court",
-      "position": {
-        "x": 28,
-        "y": 40,
-        "z": 5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_EAST_UPPER",
-      "unit": "unit-link-east-upper",
-      "modelId": "bz04_roof_bundle_unit_link_east_upper",
-      "position": {
-        "x": 37.5,
-        "y": 66.7,
-        "z": 7
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_SOUTH",
-      "unit": "unit-service-south",
-      "modelId": "bz04_roof_bundle_unit_service_south",
-      "position": {
-        "x": 6.5,
-        "y": 19.7,
-        "z": 4.6
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST",
-      "unit": "unit-link-south-west",
-      "modelId": "bz04_roof_bundle_unit_link_south_west",
-      "position": {
-        "x": 12.35,
-        "y": 10.5,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_ALLEY",
-      "unit": "unit-dyers-alley",
-      "modelId": "bz04_roof_bundle_unit_dyers_alley",
-      "position": {
-        "x": 49.6,
-        "y": 20.7,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD",
-      "unit": "unit-spawn-a-courtyard",
-      "modelId": "bz04_roof_bundle_unit_spawn_a_courtyard",
-      "position": {
-        "x": 28.05,
-        "y": 5.3,
-        "z": 4.6
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST",
-      "unit": "unit-link-south-east",
-      "modelId": "bz04_roof_bundle_unit_link_south_east",
-      "position": {
-        "x": 43.65,
-        "y": 10.5,
         "z": 4.5
       },
       "yawDeg": 180,
@@ -6341,6 +6197,18 @@
       "role": "dressing"
     },
     {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_EAST",
+      "unit": "unit-link-south-east",
+      "modelId": "bz04_roof_bundle_unit_link_south_east",
+      "position": {
+        "x": 43.65,
+        "y": 10.5,
+        "z": 4.5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
       "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_NORTH_WEST",
       "unit": "unit-link-north-west",
       "modelId": "bz04_roof_bundle_unit_link_north_west",
@@ -6353,12 +6221,60 @@
       "role": "dressing"
     },
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_NORTH_COURT",
-      "unit": "unit-north-court",
-      "modelId": "bz04_roof_bundle_unit_north_court",
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_NORTH_EAST",
+      "unit": "unit-link-north-east",
+      "modelId": "bz04_roof_bundle_unit_link_north_east",
       "position": {
-        "x": 47.05,
-        "y": 72.8,
+        "x": 44.3,
+        "y": 81.35,
+        "z": 7
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPAWN_A_COURTYARD",
+      "unit": "unit-spawn-a-courtyard",
+      "modelId": "bz04_roof_bundle_unit_spawn_a_courtyard",
+      "position": {
+        "x": 28.05,
+        "y": 5.3,
+        "z": 4.6
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPICE_STREET",
+      "unit": "unit-spice-street",
+      "modelId": "bz04_roof_bundle_unit_spice_street",
+      "position": {
+        "x": 27.6,
+        "y": 23,
+        "z": 7.2
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_FOUNTAIN_COURT",
+      "unit": "unit-fountain-court",
+      "modelId": "bz04_roof_bundle_unit_fountain_court",
+      "position": {
+        "x": 28,
+        "y": 40,
+        "z": 5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEXTILE_ARCADE",
+      "unit": "unit-textile-arcade",
+      "modelId": "bz04_roof_bundle_unit_textile_arcade",
+      "position": {
+        "x": 29.1,
+        "y": 57.5,
         "z": 7.1
       },
       "yawDeg": 180,
@@ -6377,13 +6293,97 @@
       "role": "dressing"
     },
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_NORTH_EAST",
-      "unit": "unit-link-north-east",
-      "modelId": "bz04_roof_bundle_unit_link_north_east",
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEA_TERRACE",
+      "unit": "unit-tea-terrace",
+      "modelId": "bz04_roof_bundle_unit_tea_terrace",
       "position": {
-        "x": 44.3,
-        "y": 81.35,
+        "x": 10.6,
+        "y": 65.7,
+        "z": 4.5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_ALLEY",
+      "unit": "unit-dyers-alley",
+      "modelId": "bz04_roof_bundle_unit_dyers_alley",
+      "position": {
+        "x": 49.6,
+        "y": 20.7,
+        "z": 4.5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_COVERED_SOUK",
+      "unit": "unit-covered-souk",
+      "modelId": "bz04_roof_bundle_unit_covered_souk",
+      "position": {
+        "x": 48.8,
+        "y": 40.05,
+        "z": 5.4
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_NORTH_COURT",
+      "unit": "unit-north-court",
+      "modelId": "bz04_roof_bundle_unit_north_court",
+      "position": {
+        "x": 47.05,
+        "y": 72.8,
+        "z": 7.1
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_EAST_UPPER",
+      "unit": "unit-link-east-upper",
+      "modelId": "bz04_roof_bundle_unit_link_east_upper",
+      "position": {
+        "x": 37.5,
+        "y": 66.7,
         "z": 7
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST",
+      "unit": "unit-link-south-west",
+      "modelId": "bz04_roof_bundle_unit_link_south_west",
+      "position": {
+        "x": 12.35,
+        "y": 10.5,
+        "z": 4.5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_SOUTH",
+      "unit": "unit-service-south",
+      "modelId": "bz04_roof_bundle_unit_service_south",
+      "position": {
+        "x": 6.5,
+        "y": 19.7,
+        "z": 4.6
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_DOGLEG",
+      "unit": "unit-dyers-dogleg",
+      "modelId": "bz04_roof_bundle_unit_dyers_dogleg",
+      "position": {
+        "x": 48.8,
+        "y": 55,
+        "z": 7.1
       },
       "yawDeg": 180,
       "role": "dressing"
@@ -6488,6 +6488,12 @@
       "notes": "Fountain Court authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "north",
+        "east",
+        "west"
+      ],
+      "sectionModelId": "section_unit_textile_arcade",
       "id": "TEXTILE_ARCADE",
       "type": "main_lane_segment",
       "label": "Textile Arcade",
@@ -6503,13 +6509,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "covered_arcade",
       "clearWidthM": 6,
-      "notes": "Textile Arcade authored walkable footprint.",
-      "sectionModelId": "section_unit_textile_arcade",
-      "sectionFaces": [
-        "north",
-        "east",
-        "west"
-      ]
+      "notes": "Textile Arcade authored walkable footprint."
     },
     {
       "sectionFaces": [
@@ -6580,6 +6580,13 @@
       "notes": "Service South authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "north",
+        "east",
+        "south",
+        "west"
+      ],
+      "sectionModelId": "section_unit_caravan_court",
       "id": "CARAVAN_COURT",
       "type": "side_hall",
       "label": "Caravan Court",
@@ -6595,16 +6602,15 @@
       "floorMaterialId": "bz04_large_sandstone_blocks_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 4.5,
-      "notes": "Caravan Court authored walkable footprint.",
-      "sectionModelId": "section_unit_caravan_court",
+      "notes": "Caravan Court authored walkable footprint."
+    },
+    {
       "sectionFaces": [
         "north",
         "east",
-        "south",
         "west"
-      ]
-    },
-    {
+      ],
+      "sectionModelId": "section_unit_service_north",
       "id": "SERVICE_NORTH",
       "type": "side_hall",
       "label": "Service North",
@@ -6620,15 +6626,15 @@
       "floorMaterialId": "bz04_large_sandstone_blocks_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 4.5,
-      "notes": "Service North authored walkable footprint.",
-      "sectionModelId": "section_unit_service_north",
-      "sectionFaces": [
-        "north",
-        "east",
-        "west"
-      ]
+      "notes": "Service North authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "east",
+        "south",
+        "west"
+      ],
+      "sectionModelId": "section_unit_tea_ramp",
       "id": "TEA_RAMP",
       "type": "side_hall",
       "label": "Tea Terrace Ramp",
@@ -6644,13 +6650,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 4,
-      "notes": "Tea Terrace Ramp authored walkable footprint.",
-      "sectionModelId": "section_unit_tea_ramp",
-      "sectionFaces": [
-        "east",
-        "south",
-        "west"
-      ]
+      "notes": "Tea Terrace Ramp authored walkable footprint."
     },
     {
       "sectionFaces": [
@@ -6676,6 +6676,11 @@
       "notes": "Tea Terrace authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "east",
+        "west"
+      ],
+      "sectionModelId": "section_unit_tea_stairs",
       "id": "TEA_STAIRS",
       "type": "side_hall",
       "label": "Tea Terrace Stairs",
@@ -6691,14 +6696,14 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 4,
-      "notes": "Tea Terrace Stairs authored walkable footprint.",
-      "sectionModelId": "section_unit_tea_stairs",
-      "sectionFaces": [
-        "east",
-        "west"
-      ]
+      "notes": "Tea Terrace Stairs authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "north",
+        "west"
+      ],
+      "sectionModelId": "section_unit_tea_landing",
       "id": "TEA_LANDING",
       "type": "side_hall",
       "label": "Tea Terrace Landing",
@@ -6714,12 +6719,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 4.5,
-      "notes": "Four-and-a-half-meter landing opens the raised west route into Rug Gate without a back-room pinch or orphaned sealed pocket.",
-      "sectionModelId": "section_unit_tea_landing",
-      "sectionFaces": [
-        "north",
-        "west"
-      ]
+      "notes": "Four-and-a-half-meter landing opens the raised west route into Rug Gate without a back-room pinch or orphaned sealed pocket."
     },
     {
       "sectionFaces": [
@@ -6771,6 +6771,11 @@
       "notes": "Covered Dyers Souk authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "east",
+        "west"
+      ],
+      "sectionModelId": "section_unit_dyers_dogleg",
       "id": "DYERS_DOGLEG",
       "type": "side_hall",
       "label": "Dyers Dogleg",
@@ -6786,12 +6791,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "quiet_residential_cut_stone",
       "clearWidthM": 4.5,
-      "notes": "Dyers Dogleg authored walkable footprint.",
-      "sectionModelId": "section_unit_dyers_dogleg",
-      "sectionFaces": [
-        "east",
-        "west"
-      ]
+      "notes": "Dyers Dogleg authored walkable footprint."
     },
     {
       "sectionFaces": [
@@ -6819,6 +6819,11 @@
       "notes": "North Court authored walkable footprint."
     },
     {
+      "sectionFaces": [
+        "north",
+        "south"
+      ],
+      "sectionModelId": "section_unit_link_west_mid",
       "id": "LINK_WEST_MID",
       "type": "cut",
       "label": "West Mid Link",
@@ -6834,14 +6839,14 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_west_mid",
+      "notes": "Authored collision opening; keep fully traversable."
+    },
+    {
       "sectionFaces": [
         "north",
         "south"
-      ]
-    },
-    {
+      ],
+      "sectionModelId": "section_unit_link_east_mid",
       "id": "LINK_EAST_MID",
       "type": "cut",
       "label": "East Mid Link",
@@ -6857,14 +6862,14 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "covered_arcade",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_east_mid",
+      "notes": "Authored collision opening; keep fully traversable."
+    },
+    {
       "sectionFaces": [
         "north",
         "south"
-      ]
-    },
-    {
+      ],
+      "sectionModelId": "section_unit_link_west_upper",
       "id": "LINK_WEST_UPPER",
       "type": "cut",
       "label": "West Upper Link",
@@ -6880,12 +6885,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 4.5,
-      "notes": "Four-and-a-half-meter collision opening removes the tight upper-west hallway read while preserving the authored north-spawn separation; keep fully traversable.",
-      "sectionModelId": "section_unit_link_west_upper",
-      "sectionFaces": [
-        "north",
-        "south"
-      ]
+      "notes": "Four-and-a-half-meter collision opening removes the tight upper-west hallway read while preserving the authored north-spawn separation; keep fully traversable."
     },
     {
       "sectionFaces": [
@@ -6911,6 +6911,12 @@
       "notes": "Authored collision opening; keep fully traversable."
     },
     {
+      "sectionFaces": [
+        "north",
+        "south",
+        "west"
+      ],
+      "sectionModelId": "section_unit_link_south_west",
       "id": "LINK_SOUTH_WEST",
       "type": "connector",
       "label": "South West Link",
@@ -6926,15 +6932,15 @@
       "floorMaterialId": "bz04_large_sandstone_blocks_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_south_west",
-      "sectionFaces": [
-        "north",
-        "south",
-        "west"
-      ]
+      "notes": "Authored collision opening; keep fully traversable."
     },
     {
+      "sectionFaces": [
+        "north",
+        "east",
+        "south"
+      ],
+      "sectionModelId": "section_unit_link_south_east",
       "id": "LINK_SOUTH_EAST",
       "type": "connector",
       "label": "South East Link",
@@ -6950,15 +6956,16 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "service_storage",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_south_east",
+      "notes": "Authored collision opening; keep fully traversable."
+    },
+    {
       "sectionFaces": [
         "north",
         "east",
-        "south"
-      ]
-    },
-    {
+        "south",
+        "west"
+      ],
+      "sectionModelId": "section_unit_link_north_west",
       "id": "LINK_NORTH_WEST",
       "type": "connector",
       "label": "North West Link",
@@ -6974,16 +6981,16 @@
       "floorMaterialId": "bz04_large_sandstone_blocks_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_north_west",
+      "notes": "Authored collision opening; keep fully traversable."
+    },
+    {
       "sectionFaces": [
         "north",
         "east",
         "south",
         "west"
-      ]
-    },
-    {
+      ],
+      "sectionModelId": "section_unit_link_north_east",
       "id": "LINK_NORTH_EAST",
       "type": "connector",
       "label": "North East Link",
@@ -6999,14 +7006,7 @@
       "floorMaterialId": "bz04_court_limestone_flags_01",
       "facadeProfileId": "quiet_residential",
       "clearWidthM": 3.5,
-      "notes": "Authored collision opening; keep fully traversable.",
-      "sectionModelId": "section_unit_link_north_east",
-      "sectionFaces": [
-        "north",
-        "east",
-        "south",
-        "west"
-      ]
+      "notes": "Authored collision opening; keep fully traversable."
     }
   ],
   "anchors": [

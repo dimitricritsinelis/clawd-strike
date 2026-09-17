@@ -5,9 +5,9 @@
     "status": "PROPOSED"
   },
   "asset": "assets/source/unit-north-court/unit-north-court.glb",
-  "triangles": 17158,
-  "primitives": 17,
-  "castPrimitives": 9,
+  "triangles": 22498,
+  "primitives": 23,
+  "castPrimitives": 11,
   "actualBoundsGltf": {
     "min": [
       -3.5,
@@ -13697,7 +13697,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-panel",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13715,7 +13715,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-stile",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13733,7 +13733,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-stile.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13751,7 +13751,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13769,7 +13769,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13787,7 +13787,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13859,7 +13859,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-panel.001",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13877,7 +13877,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-stile.002",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13895,7 +13895,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-stile.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13913,7 +13913,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail.003",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13931,7 +13931,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail.004",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -13949,7 +13949,7 @@
     },
     {
       "id": "nc-ws-ENTRANCE-leaf-rail.005",
-      "material": "bz04_craft_warm_timber",
+      "material": "bz04_craft_painted_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -18608,16 +18608,1547 @@
         ]
       },
       "triangles": 328
+    },
+    {
+      "id": "life-nc-eh-0-field",
+      "material": "bz04_levantine_rug_project_original",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.803879737854004,
+          -5.125,
+          3.0
+        ],
+        "max": [
+          11.855999946594238,
+          -3.875,
+          4.300000190734863
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-nc-eh-0-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.800724983215332,
+          -3.9000000953674316,
+          3.0
+        ],
+        "max": [
+          11.848999977111816,
+          -3.875,
+          4.300000190734863
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-nc-eh-0-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.803326606750488,
+          -5.125,
+          3.0
+        ],
+        "max": [
+          11.848999977111816,
+          -5.099999904632568,
+          4.300000190734863
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-nc-eh-0-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.840215682983398,
+          -5.099999904632568,
+          3.001004695892334
+        ],
+        "max": [
+          11.848999977111816,
+          -3.9000000953674316,
+          3.0406923294067383
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-nc-eh-0-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.840215682983398,
+          -5.099999904632568,
+          4.27501916885376
+        ],
+        "max": [
+          11.848999977111816,
+          -3.9000000953674316,
+          4.300000190734863
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-nc-eh-0-timber-rod",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.838996887207031,
+          -5.18499755859375,
+          4.328999996185303
+        ],
+        "max": [
+          11.861000061035156,
+          -3.81500244140625,
+          4.3510003089904785
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-bracket-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.934000015258789,
+          -3.8529999256134033,
+          4.260000228881836
+        ],
+        "max": [
+          12.0,
+          -3.8269999027252197,
+          4.369999885559082
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-nc-eh-0-rod-support-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.846351623535156,
+          -3.8470001220703125,
+          4.276025295257568
+        ],
+        "max": [
+          11.948646545410156,
+          -3.8329925537109375,
+          4.345974922180176
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-bracket-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.934000015258789,
+          -5.172999858856201,
+          4.260000228881836
+        ],
+        "max": [
+          12.0,
+          -5.146999835968018,
+          4.369999885559082
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-nc-eh-0-rod-support-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.846351623535156,
+          -5.1670074462890625,
+          4.276025295257568
+        ],
+        "max": [
+          11.948646545410156,
+          -5.1529998779296875,
+          4.345974922180176
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -3.96600341796875,
+          4.284784317016602
+        ],
+        "max": [
+          11.857280731201172,
+          -3.9589996337890625,
+          4.34121561050415
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -3.96600341796875,
+          4.337601661682129
+        ],
+        "max": [
+          11.852546691894531,
+          -3.9589996337890625,
+          4.359398365020752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -3.96600341796875,
+          4.3373918533325195
+        ],
+        "max": [
+          11.871334075927734,
+          -3.9589996337890625,
+          4.359608173370361
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -3.96600341796875,
+          4.285180568695068
+        ],
+        "max": [
+          11.87240219116211,
+          -3.9589996337890625,
+          4.340819358825684
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -4.303504943847656,
+          4.284784317016602
+        ],
+        "max": [
+          11.857280731201172,
+          -4.296501159667969,
+          4.34121561050415
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -4.303504943847656,
+          4.337601661682129
+        ],
+        "max": [
+          11.852546691894531,
+          -4.296501159667969,
+          4.359398365020752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -4.303504943847656,
+          4.3373918533325195
+        ],
+        "max": [
+          11.871334075927734,
+          -4.296501159667969,
+          4.359608173370361
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -4.303504943847656,
+          4.285180568695068
+        ],
+        "max": [
+          11.87240219116211,
+          -4.296501159667969,
+          4.340819358825684
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -4.703498840332031,
+          4.284784317016602
+        ],
+        "max": [
+          11.857280731201172,
+          -4.696495056152344,
+          4.34121561050415
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -4.703498840332031,
+          4.337601661682129
+        ],
+        "max": [
+          11.852546691894531,
+          -4.696495056152344,
+          4.359398365020752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -4.703498840332031,
+          4.3373918533325195
+        ],
+        "max": [
+          11.871334075927734,
+          -4.696495056152344,
+          4.359608173370361
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -4.703498840332031,
+          4.285180568695068
+        ],
+        "max": [
+          11.87240219116211,
+          -4.696495056152344,
+          4.340819358825684
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -5.0410003662109375,
+          4.284784317016602
+        ],
+        "max": [
+          11.857280731201172,
+          -5.03399658203125,
+          4.34121561050415
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -5.0410003662109375,
+          4.337601661682129
+        ],
+        "max": [
+          11.852546691894531,
+          -5.03399658203125,
+          4.359398365020752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -5.0410003662109375,
+          4.3373918533325195
+        ],
+        "max": [
+          11.871334075927734,
+          -5.03399658203125,
+          4.359608173370361
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -5.0410003662109375,
+          4.285180568695068
+        ],
+        "max": [
+          11.87240219116211,
+          -5.03399658203125,
+          4.340819358825684
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-eh-0-lower-weight",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847362518310547,
+          -5.087501525878906,
+          3.010087728500366
+        ],
+        "max": [
+          11.861671447753906,
+          -3.9124984741210938,
+          3.02408766746521
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-field",
+      "material": "bz06_fine_linen",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          11.803879737854004,
+          -14.600000381469727,
+          3.0999999046325684
+        ],
+        "max": [
+          11.855999946594238,
+          -13.600000381469727,
+          5.099999904632568
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-nc-ey-1-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.800140380859375,
+          -13.625,
+          3.0999999046325684
+        ],
+        "max": [
+          11.848999977111816,
+          -13.600000381469727,
+          5.099999904632568
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-nc-ey-1-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.803326606750488,
+          -14.600000381469727,
+          3.0999999046325684
+        ],
+        "max": [
+          11.848999977111816,
+          -14.574999809265137,
+          5.099999904632568
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-nc-ey-1-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.84118938446045,
+          -14.574999809265137,
+          3.101255416870117
+        ],
+        "max": [
+          11.848999977111816,
+          -13.625,
+          3.1407999992370605
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-nc-ey-1-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.84118938446045,
+          -14.574999809265137,
+          5.075015544891357
+        ],
+        "max": [
+          11.848999977111816,
+          -13.625,
+          5.099999904632568
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-nc-ey-1-woven-lozenge",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.794084548950195,
+          -14.220000267028809,
+          4.227039813995361
+        ],
+        "max": [
+          11.820046424865723,
+          -13.979999542236328,
+          4.544479846954346
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-timber-rod",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.838996887207031,
+          -14.660003662109375,
+          5.128999710083008
+        ],
+        "max": [
+          11.861000061035156,
+          -13.540000915527344,
+          5.151000022888184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-bracket-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.934000015258789,
+          -13.57800006866455,
+          5.059999942779541
+        ],
+        "max": [
+          12.0,
+          -13.552000045776367,
+          5.170000076293945
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-nc-ey-1-rod-support-0",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.846351623535156,
+          -13.572006225585938,
+          5.076025009155273
+        ],
+        "max": [
+          11.948646545410156,
+          -13.557998657226562,
+          5.145974636077881
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-bracket-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.934000015258789,
+          -14.64799976348877,
+          5.059999942779541
+        ],
+        "max": [
+          12.0,
+          -14.621999740600586,
+          5.170000076293945
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-nc-ey-1-rod-support-1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.846351623535156,
+          -14.642005920410156,
+          5.076025009155273
+        ],
+        "max": [
+          11.948646545410156,
+          -14.627998352050781,
+          5.145974636077881
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -13.673500061035156,
+          5.084784507751465
+        ],
+        "max": [
+          11.857280731201172,
+          -13.666496276855469,
+          5.1412153244018555
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -13.673500061035156,
+          5.137601375579834
+        ],
+        "max": [
+          11.852546691894531,
+          -13.666496276855469,
+          5.159398555755615
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -13.673500061035156,
+          5.137391567230225
+        ],
+        "max": [
+          11.871334075927734,
+          -13.666496276855469,
+          5.159608364105225
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -13.673500061035156,
+          5.085180759429932
+        ],
+        "max": [
+          11.87240219116211,
+          -13.666496276855469,
+          5.140819072723389
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -13.943504333496094,
+          5.084784507751465
+        ],
+        "max": [
+          11.857280731201172,
+          -13.936500549316406,
+          5.1412153244018555
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -13.943504333496094,
+          5.137601375579834
+        ],
+        "max": [
+          11.852546691894531,
+          -13.936500549316406,
+          5.159398555755615
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -13.943504333496094,
+          5.137391567230225
+        ],
+        "max": [
+          11.871334075927734,
+          -13.936500549316406,
+          5.159608364105225
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -13.943504333496094,
+          5.085180759429932
+        ],
+        "max": [
+          11.87240219116211,
+          -13.936500549316406,
+          5.140819072723389
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -14.263504028320312,
+          5.084784507751465
+        ],
+        "max": [
+          11.857280731201172,
+          -14.256500244140625,
+          5.1412153244018555
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -14.263504028320312,
+          5.137601375579834
+        ],
+        "max": [
+          11.852546691894531,
+          -14.256500244140625,
+          5.159398555755615
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -14.263504028320312,
+          5.137391567230225
+        ],
+        "max": [
+          11.871334075927734,
+          -14.256500244140625,
+          5.159608364105225
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -14.263504028320312,
+          5.085180759429932
+        ],
+        "max": [
+          11.87240219116211,
+          -14.256500244140625,
+          5.140819072723389
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.830718994140625,
+          -14.533500671386719,
+          5.084784507751465
+        ],
+        "max": [
+          11.857280731201172,
+          -14.526496887207031,
+          5.1412153244018555
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.831451416015625,
+          -14.533500671386719,
+          5.137601375579834
+        ],
+        "max": [
+          11.852546691894531,
+          -14.526496887207031,
+          5.159398555755615
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847663879394531,
+          -14.533500671386719,
+          5.137391567230225
+        ],
+        "max": [
+          11.871334075927734,
+          -14.526496887207031,
+          5.159608364105225
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.852596282958984,
+          -14.533500671386719,
+          5.085180759429932
+        ],
+        "max": [
+          11.87240219116211,
+          -14.526496887207031,
+          5.140819072723389
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-nc-ey-1-lower-weight",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.847362518310547,
+          -14.569999694824219,
+          3.118487596511841
+        ],
+        "max": [
+          11.861671447753906,
+          -13.629997253417969,
+          3.1324875354766846
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-wear-nc-eh-0-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.994999885559082,
+          -3.4040985107421875,
+          0.5966078042984009
+        ],
+        "max": [
+          11.996999740600586,
+          -2.9064624309539795,
+          1.1947436332702637
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-nc-eh-0-broken-plaster-edge",
+      "material": "bz06_sand_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.98900032043457,
+          -3.426194190979004,
+          0.5702258944511414
+        ],
+        "max": [
+          11.996999740600586,
+          -2.8852853775024414,
+          1.220373511314392
+        ]
+      },
+      "triangles": 112
+    },
+    {
+      "id": "life-wear-nc-ey-1-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.994999885559082,
+          -14.89652156829834,
+          3.4673967361450195
+        ],
+        "max": [
+          11.996999740600586,
+          -14.259860038757324,
+          3.9641788005828857
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-nc-ey-1-broken-plaster-edge",
+      "material": "bz06_cream_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          11.98900032043457,
+          -14.922306060791016,
+          3.4454312324523926
+        ],
+        "max": [
+          11.996999740600586,
+          -14.2302827835083,
+          3.9854118824005127
+        ]
+      },
+      "triangles": 112
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W10",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -1.1699999570846558,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -1.0820000171661377,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W10",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.0789999961853027,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.0609999895095825,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W11",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -1.281999945640564,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -1.194000005722046,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W11",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.190999984741211,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.1729999780654907,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W12",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -1.3940000534057617,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -1.305999994277954,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W12",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.3029999732971191,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.284999966621399,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W13",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -1.50600004196167,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -1.4179999828338623,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W13",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.4149999618530273,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.3969999551773071,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W14",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -1.6180000305175781,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -1.5299999713897705,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W14",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.5269999504089355,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.5089999437332153,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-rail-nc-ws-L1-W1",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.6480000019073486,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2240000069141388,
+          -1.0520000457763672,
+          6.800000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-rail-nc-ws-L1-W1.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.6480000019073486,
+          7.159999847412109
+        ],
+        "max": [
+          -0.2240000069141388,
+          -1.0520000457763672,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-edge-nc-ws-L1-W1",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -1.6390000581741333,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -1.621000051498413,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W20",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -3.4700000286102295,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -3.381999969482422,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W20",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.378999948501587,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.3610000610351562,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W21",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -3.5820000171661377,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -3.49399995803833,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W21",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.490999937057495,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.4730000495910645,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W22",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -3.694000005722046,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -3.6059999465942383,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W22",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.6029999256134033,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.5850000381469727,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W23",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -3.805999994277954,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -3.7179999351501465,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W23",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.7149999141693115,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.697000026702881,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-nc-ws-L1-W24",
+      "material": "bz04_fixed_glass",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.24799999594688416,
+          -3.9179999828338623,
+          6.800000190734863
+        ],
+        "max": [
+          -0.23999999463558197,
+          -3.8299999237060547,
+          7.159999847412109
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-mullion-nc-ws-L1-W24",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.8269999027252197,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.809000015258789,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-rail-nc-ws-L1-W2",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.947999954223633,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2240000069141388,
+          -3.3519999980926514,
+          6.800000190734863
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-rail-nc-ws-L1-W2.001",
+      "material": "bz04_craft_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.947999954223633,
+          7.159999847412109
+        ],
+        "max": [
+          -0.2240000069141388,
+          -3.3519999980926514,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-glass-edge-nc-ws-L1-W2",
+      "material": "bz04_craft_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          -0.2529999911785126,
+          -3.938999891281128,
+          6.775000095367432
+        ],
+        "max": [
+          -0.2290000021457672,
+          -3.9210000038146973,
+          7.184999942779541
+        ]
+      },
+      "triangles": 12
     }
   ],
-  "sha256": "16fd8854b34496fad11dae8758bedc17d6533fa381e2342c4d1759e2be8c025f",
-  "sourcePolygonTriangles": 17188,
+  "sha256": "2da4c846c4329317be01b59248824551ae6c0c04a60b1c49217b4ab43c8e319e",
+  "sourcePolygonTriangles": 22528,
   "materials": [
     "bz04_craft_ceramic",
     "bz04_craft_dark_iron",
     "bz04_craft_painted_timber",
     "bz04_craft_warm_timber",
     "bz04_fixed_glass",
+    "bz04_levantine_rug_project_original",
     "bz06_cream_plaster",
     "bz06_cream_woven_cloth",
     "bz06_dressed_sandstone",
@@ -18640,10 +20171,10 @@
   "budget": {
     "status": "deferred",
     "counts": {
-      "maxTriangles": 17158,
-      "maxMaterials": 16,
-      "maxRenderedPrimitives": 17,
-      "maxShadowPrimitives": 9
+      "maxTriangles": 22498,
+      "maxMaterials": 17,
+      "maxRenderedPrimitives": 23,
+      "maxShadowPrimitives": 11
     },
     "targets": {
       "maxTriangles": 48000,

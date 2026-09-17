@@ -50,6 +50,5 @@
   "sharedExportBudgetOverride": {
     "maxShadowPrimitives": 13,
     "reason": "Spawn A-only background finish coexists with unchanged background owners, requiring13shadow groups instead of planning10. This is a phased per-area primitive allowance authorized by the user;38600triangles/20total primitives and whole-map performance limits remain unchanged."
-  },
-  "dependencyReceivers": []
+  }
 }

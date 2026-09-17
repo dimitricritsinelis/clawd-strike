@@ -35,7 +35,7 @@
   "objects": [
     {
       "id": "LM01-pier",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -53,7 +53,7 @@
     },
     {
       "id": "LM01-pier.001",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -71,7 +71,7 @@
     },
     {
       "id": "LM01-ring-0",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -89,7 +89,7 @@
     },
     {
       "id": "LM01-ring-1",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -107,7 +107,7 @@
     },
     {
       "id": "LM01-ring-2",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -125,7 +125,7 @@
     },
     {
       "id": "LM01-ring-3",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -143,7 +143,7 @@
     },
     {
       "id": "LM01-ring-4",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -161,7 +161,7 @@
     },
     {
       "id": "LM01-ring-5",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -179,7 +179,7 @@
     },
     {
       "id": "LM01-ring-6",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -197,7 +197,7 @@
     },
     {
       "id": "LM01-ring-7",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -215,7 +215,7 @@
     },
     {
       "id": "LM01-ring-8",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -233,7 +233,7 @@
     },
     {
       "id": "LM01-ring-9",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -251,7 +251,7 @@
     },
     {
       "id": "LM01-ring-10",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -269,7 +269,7 @@
     },
     {
       "id": "LM01-ring-11",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -287,7 +287,7 @@
     },
     {
       "id": "LM01-ring-12",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -305,7 +305,7 @@
     },
     {
       "id": "LM01-ring-13",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -323,7 +323,7 @@
     },
     {
       "id": "LM01-ring-14",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -341,7 +341,7 @@
     },
     {
       "id": "LM01-ring-15",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -359,7 +359,7 @@
     },
     {
       "id": "LM01-ring-16",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -377,7 +377,7 @@
     },
     {
       "id": "LM01-ring-17",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -395,7 +395,7 @@
     },
     {
       "id": "LM01-ring-18",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -413,7 +413,7 @@
     },
     {
       "id": "LM01-ring-19",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -431,7 +431,7 @@
     },
     {
       "id": "LM01-ring-20",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -449,7 +449,7 @@
     },
     {
       "id": "LM01-ring-21",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -467,7 +467,7 @@
     },
     {
       "id": "LM01-ring-22",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -485,7 +485,7 @@
     },
     {
       "id": "LM01-ring-23",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -503,7 +503,7 @@
     },
     {
       "id": "LM01-ring-24",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -521,7 +521,7 @@
     },
     {
       "id": "LM01-ring-25",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -539,7 +539,7 @@
     },
     {
       "id": "LM01-ring-26",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -557,7 +557,7 @@
     },
     {
       "id": "LM01-ring-27",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -575,7 +575,7 @@
     },
     {
       "id": "LM01-ring-28",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -593,7 +593,7 @@
     },
     {
       "id": "LM01-ring-29",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -611,7 +611,7 @@
     },
     {
       "id": "LM01-ring-30",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -629,7 +629,7 @@
     },
     {
       "id": "LM01-ring-31",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -647,7 +647,7 @@
     },
     {
       "id": "LM01-ring-32",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -665,7 +665,7 @@
     },
     {
       "id": "LM01-ring-33",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -683,7 +683,7 @@
     },
     {
       "id": "LM01-ring-34",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -701,7 +701,7 @@
     },
     {
       "id": "LM01-ring-35",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -719,7 +719,7 @@
     },
     {
       "id": "LM01-ring-36",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -737,7 +737,7 @@
     },
     {
       "id": "LM01-ring-37",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -755,7 +755,7 @@
     },
     {
       "id": "LM01-ring-38",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -773,7 +773,7 @@
     },
     {
       "id": "LM01-ring-39",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -791,7 +791,7 @@
     },
     {
       "id": "LM01-ring-40",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -809,7 +809,7 @@
     },
     {
       "id": "LM01-ring-41",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -827,7 +827,7 @@
     },
     {
       "id": "LM01-ring-42",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -845,7 +845,7 @@
     },
     {
       "id": "LM01-ring-43",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -863,7 +863,7 @@
     },
     {
       "id": "LM01-ring-44",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -881,7 +881,7 @@
     },
     {
       "id": "LM01-ring-45",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -899,7 +899,7 @@
     },
     {
       "id": "LM01-ring-46",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -917,7 +917,7 @@
     },
     {
       "id": "LM01-ring-47",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -935,7 +935,7 @@
     },
     {
       "id": "LM01-ring-48",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -953,7 +953,7 @@
     },
     {
       "id": "LM01-ring-49",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -971,7 +971,7 @@
     },
     {
       "id": "LM01-ring-50",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -989,7 +989,7 @@
     },
     {
       "id": "LM01-ring-51",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1007,7 +1007,7 @@
     },
     {
       "id": "LM01-ring-52",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1025,7 +1025,7 @@
     },
     {
       "id": "LM01-ring-53",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1043,7 +1043,7 @@
     },
     {
       "id": "LM01-ring-54",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1061,7 +1061,7 @@
     },
     {
       "id": "LM01-ring-55",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1079,7 +1079,7 @@
     },
     {
       "id": "LM01-ring-56",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1097,7 +1097,7 @@
     },
     {
       "id": "LM01-ring-57",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1115,7 +1115,7 @@
     },
     {
       "id": "LM01-ring-58",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1133,7 +1133,7 @@
     },
     {
       "id": "LM01-ring-59",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1151,7 +1151,7 @@
     },
     {
       "id": "LM01-ring-60",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1169,7 +1169,7 @@
     },
     {
       "id": "LM01-ring-61",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1187,7 +1187,7 @@
     },
     {
       "id": "LM01-ring-62",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1205,7 +1205,7 @@
     },
     {
       "id": "LM01-ring-63",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1223,7 +1223,7 @@
     },
     {
       "id": "LM01-spandrel-0",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1241,7 +1241,7 @@
     },
     {
       "id": "LM01-spandrel-1",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1259,7 +1259,7 @@
     },
     {
       "id": "LM01-spandrel-2",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1277,7 +1277,7 @@
     },
     {
       "id": "LM01-spandrel-3",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1295,7 +1295,7 @@
     },
     {
       "id": "LM01-spandrel-4",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1313,7 +1313,7 @@
     },
     {
       "id": "LM01-spandrel-5",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1331,7 +1331,7 @@
     },
     {
       "id": "LM01-spandrel-6",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1349,7 +1349,7 @@
     },
     {
       "id": "LM01-spandrel-7",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1367,7 +1367,7 @@
     },
     {
       "id": "LM01-spandrel-8",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1385,7 +1385,7 @@
     },
     {
       "id": "LM01-spandrel-9",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1403,7 +1403,7 @@
     },
     {
       "id": "LM01-spandrel-10",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1421,7 +1421,7 @@
     },
     {
       "id": "LM01-spandrel-11",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1439,7 +1439,7 @@
     },
     {
       "id": "LM01-spandrel-12",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1457,7 +1457,7 @@
     },
     {
       "id": "LM01-spandrel-13",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1475,7 +1475,7 @@
     },
     {
       "id": "LM01-spandrel-14",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1493,7 +1493,7 @@
     },
     {
       "id": "LM01-spandrel-15",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1511,7 +1511,7 @@
     },
     {
       "id": "LM01-spandrel-16",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1529,7 +1529,7 @@
     },
     {
       "id": "LM01-spandrel-17",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1547,7 +1547,7 @@
     },
     {
       "id": "LM01-spandrel-18",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1565,7 +1565,7 @@
     },
     {
       "id": "LM01-spandrel-19",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1583,7 +1583,7 @@
     },
     {
       "id": "LM01-spandrel-20",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1601,7 +1601,7 @@
     },
     {
       "id": "LM01-spandrel-21",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1619,7 +1619,7 @@
     },
     {
       "id": "LM01-spandrel-22",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1637,7 +1637,7 @@
     },
     {
       "id": "LM01-spandrel-23",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1655,7 +1655,7 @@
     },
     {
       "id": "LM01-spandrel-24",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1673,7 +1673,7 @@
     },
     {
       "id": "LM01-spandrel-25",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1691,7 +1691,7 @@
     },
     {
       "id": "LM01-spandrel-26",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1709,7 +1709,7 @@
     },
     {
       "id": "LM01-spandrel-27",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1727,7 +1727,7 @@
     },
     {
       "id": "LM01-spandrel-28",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1745,7 +1745,7 @@
     },
     {
       "id": "LM01-spandrel-29",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1763,7 +1763,7 @@
     },
     {
       "id": "LM01-spandrel-30",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1781,7 +1781,7 @@
     },
     {
       "id": "LM01-spandrel-31",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1799,7 +1799,7 @@
     },
     {
       "id": "LM01-spandrel-32",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1817,7 +1817,7 @@
     },
     {
       "id": "LM01-spandrel-33",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1835,7 +1835,7 @@
     },
     {
       "id": "LM01-spandrel-34",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1853,7 +1853,7 @@
     },
     {
       "id": "LM01-spandrel-35",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1871,7 +1871,7 @@
     },
     {
       "id": "LM01-spandrel-36",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1889,7 +1889,7 @@
     },
     {
       "id": "LM01-spandrel-37",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1907,7 +1907,7 @@
     },
     {
       "id": "LM01-spandrel-38",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1925,7 +1925,7 @@
     },
     {
       "id": "LM01-spandrel-39",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1943,7 +1943,7 @@
     },
     {
       "id": "LM01-spandrel-40",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1961,7 +1961,7 @@
     },
     {
       "id": "LM01-spandrel-41",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1979,7 +1979,7 @@
     },
     {
       "id": "LM01-spandrel-42",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1997,7 +1997,7 @@
     },
     {
       "id": "LM01-spandrel-43",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2015,7 +2015,7 @@
     },
     {
       "id": "LM01-spandrel-44",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2033,7 +2033,7 @@
     },
     {
       "id": "LM01-spandrel-45",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2051,7 +2051,7 @@
     },
     {
       "id": "LM01-spandrel-46",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2069,7 +2069,7 @@
     },
     {
       "id": "LM01-spandrel-47",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2087,7 +2087,7 @@
     },
     {
       "id": "LM01-spandrel-48",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2105,7 +2105,7 @@
     },
     {
       "id": "LM01-spandrel-49",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2123,7 +2123,7 @@
     },
     {
       "id": "LM01-spandrel-50",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2141,7 +2141,7 @@
     },
     {
       "id": "LM01-spandrel-51",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2159,7 +2159,7 @@
     },
     {
       "id": "LM01-spandrel-52",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2177,7 +2177,7 @@
     },
     {
       "id": "LM01-spandrel-53",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2195,7 +2195,7 @@
     },
     {
       "id": "LM01-spandrel-54",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2213,7 +2213,7 @@
     },
     {
       "id": "LM01-spandrel-55",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2231,7 +2231,7 @@
     },
     {
       "id": "LM01-spandrel-56",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2249,7 +2249,7 @@
     },
     {
       "id": "LM01-spandrel-57",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2267,7 +2267,7 @@
     },
     {
       "id": "LM01-spandrel-58",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2285,7 +2285,7 @@
     },
     {
       "id": "LM01-spandrel-59",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2303,7 +2303,7 @@
     },
     {
       "id": "LM01-spandrel-60",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2321,7 +2321,7 @@
     },
     {
       "id": "LM01-spandrel-61",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2339,7 +2339,7 @@
     },
     {
       "id": "LM01-spandrel-62",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2357,7 +2357,7 @@
     },
     {
       "id": "LM01-spandrel-63",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2375,7 +2375,7 @@
     },
     {
       "id": "LM01-spandrel-64",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2393,7 +2393,7 @@
     },
     {
       "id": "LM01-spandrel-65",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2411,7 +2411,7 @@
     },
     {
       "id": "LM01-shoulder",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2429,7 +2429,7 @@
     },
     {
       "id": "LM01-shoulder.001",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2447,7 +2447,7 @@
     },
     {
       "id": "LM01-end",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2465,7 +2465,7 @@
     },
     {
       "id": "LM01-end.001",
-      "material": "bz06_dressed_sandstone.001",
+      "material": "bz06_dressed_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2483,7 +2483,7 @@
     },
     {
       "id": "LM01-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2501,7 +2501,7 @@
     },
     {
       "id": "LM01-inlay",
-      "material": "bz04_craft_painted_timber.001",
+      "material": "bz04_craft_painted_timber",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2519,7 +2519,7 @@
     },
     {
       "id": "LM01-title",
-      "material": "bz06_cream_woven_cloth.002",
+      "material": "bz06_cream_woven_cloth",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -2536,13 +2536,13 @@
       "triangles": 364
     }
   ],
-  "sha256": "04e4d3e87d1869f0853964a9ea2aa5e73bb0b1cac2ec4c984e4c17a0179bb0ac",
+  "sha256": "b441cab2aff1141609a2fd4f23c1610d2dfec9951b7b9936af65cdd41d469506",
   "sourcePolygonTriangles": 1276,
   "materials": [
-    "bz04_craft_painted_timber.001",
-    "bz06_cream_woven_cloth.002",
-    "bz06_dressed_sandstone.001",
-    "ph_bz04_stone_trim_sandstone.001"
+    "bz04_craft_painted_timber",
+    "bz06_cream_woven_cloth",
+    "bz06_dressed_sandstone",
+    "ph_bz04_stone_trim_sandstone"
   ],
   "exportBudget": {
     "maxTriangles": 5000,

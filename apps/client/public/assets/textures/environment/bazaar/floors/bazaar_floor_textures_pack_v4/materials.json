@@ -268,7 +268,7 @@
     {
       "id": "bz04_large_sandstone_blocks_01",
       "tileSizeM": 2.6,
-      "tintHex": "#ffffff",
+      "tintHex": "#d4b68f",
       "albedoBoost": 1,
       "albedoGamma": 1,
       "dustStrength": 0,
@@ -448,7 +448,7 @@
     {
       "id": "bz04_court_limestone_flags_01",
       "tileSizeM": 2.4,
-      "tintHex": "#ffffff",
+      "tintHex": "#d8c4a5",
       "albedoBoost": 1,
       "albedoGamma": 1,
       "dustStrength": 0,

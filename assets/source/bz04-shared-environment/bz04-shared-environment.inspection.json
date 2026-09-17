@@ -1,7 +1,7 @@
 {
   "inputSha256": null,
   "designRevision": {
-    "id": "R7 fountain court facade-centered upper openings",
+    "id": "R7 spawn a courtyard facade-centered upper openings",
     "status": "PROPOSED"
   },
   "asset": "assets/source/bz04-shared-environment/bz04-shared-environment.glb",
@@ -35,7 +35,7 @@
   "objects": [
     {
       "id": "BG-01-front",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -53,7 +53,7 @@
     },
     {
       "id": "BG-01-front.001",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -71,7 +71,7 @@
     },
     {
       "id": "BG-01-front.002",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -89,7 +89,7 @@
     },
     {
       "id": "BG-01-front.003",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -107,7 +107,7 @@
     },
     {
       "id": "BG-01-front.004",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -125,7 +125,7 @@
     },
     {
       "id": "BG-01-front.005",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -143,7 +143,7 @@
     },
     {
       "id": "BG-01-front.006",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -161,7 +161,7 @@
     },
     {
       "id": "BG-01-front.007",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -179,7 +179,7 @@
     },
     {
       "id": "BG-01-front.008",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -197,7 +197,7 @@
     },
     {
       "id": "BG-01-front.009",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -215,7 +215,7 @@
     },
     {
       "id": "BG-01-front.010",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -233,7 +233,7 @@
     },
     {
       "id": "BG-01-front.011",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -251,7 +251,7 @@
     },
     {
       "id": "BG-01-front.012",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -269,7 +269,7 @@
     },
     {
       "id": "BG-01-front.013",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -287,7 +287,7 @@
     },
     {
       "id": "BG-01-front.014",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -305,7 +305,7 @@
     },
     {
       "id": "BG-01-front.015",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -323,7 +323,7 @@
     },
     {
       "id": "BG-01-front.016",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -341,7 +341,7 @@
     },
     {
       "id": "BG-01-front.017",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -359,7 +359,7 @@
     },
     {
       "id": "BG-01-front.018",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -377,7 +377,7 @@
     },
     {
       "id": "BG-01-front.019",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -395,7 +395,7 @@
     },
     {
       "id": "BG-01-front.020",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -413,7 +413,7 @@
     },
     {
       "id": "BG-01-side",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -431,7 +431,7 @@
     },
     {
       "id": "BG-01-side.001",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -449,7 +449,7 @@
     },
     {
       "id": "BG-01-back",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -467,7 +467,7 @@
     },
     {
       "id": "BG-01-roof-receiver",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -485,7 +485,7 @@
     },
     {
       "id": "BG-01-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -503,7 +503,7 @@
     },
     {
       "id": "BG-01-parapet",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -521,7 +521,7 @@
     },
     {
       "id": "BG-01-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -539,7 +539,7 @@
     },
     {
       "id": "BG-01-parapet.001",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -557,7 +557,7 @@
     },
     {
       "id": "BG-01-cap.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -575,7 +575,7 @@
     },
     {
       "id": "BG-01-parapet.002",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -593,7 +593,7 @@
     },
     {
       "id": "BG-01-cap.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -611,7 +611,7 @@
     },
     {
       "id": "BG-01-parapet.003",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -629,7 +629,7 @@
     },
     {
       "id": "BG-01-cap.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -647,7 +647,7 @@
     },
     {
       "id": "BG-01-window-back",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -665,7 +665,7 @@
     },
     {
       "id": "BG-01-closed-window",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -683,7 +683,7 @@
     },
     {
       "id": "BG-01-midrail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -701,7 +701,7 @@
     },
     {
       "id": "BG-01-frame",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -719,7 +719,7 @@
     },
     {
       "id": "BG-01-frame.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -737,7 +737,7 @@
     },
     {
       "id": "BG-01-frame.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -755,7 +755,7 @@
     },
     {
       "id": "BG-01-frame.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -773,7 +773,7 @@
     },
     {
       "id": "BG-01-window-back.001",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -791,7 +791,7 @@
     },
     {
       "id": "BG-01-closed-window.001",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -809,7 +809,7 @@
     },
     {
       "id": "BG-01-midrail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -827,7 +827,7 @@
     },
     {
       "id": "BG-01-frame.004",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -845,7 +845,7 @@
     },
     {
       "id": "BG-01-frame.005",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -863,7 +863,7 @@
     },
     {
       "id": "BG-01-frame.006",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -881,7 +881,7 @@
     },
     {
       "id": "BG-01-frame.007",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -899,7 +899,7 @@
     },
     {
       "id": "BG-01-window-back.002",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -917,7 +917,7 @@
     },
     {
       "id": "BG-01-closed-window.002",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -935,7 +935,7 @@
     },
     {
       "id": "BG-01-midrail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -953,7 +953,7 @@
     },
     {
       "id": "BG-01-frame.008",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -971,7 +971,7 @@
     },
     {
       "id": "BG-01-frame.009",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -989,7 +989,7 @@
     },
     {
       "id": "BG-01-frame.010",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1007,7 +1007,7 @@
     },
     {
       "id": "BG-01-frame.011",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1025,7 +1025,7 @@
     },
     {
       "id": "BG-01-window-back.003",
-      "material": "bz06_sand_plaster",
+      "material": "bz06_sand_plaster.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1043,7 +1043,7 @@
     },
     {
       "id": "BG-01-closed-window.003",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1061,7 +1061,7 @@
     },
     {
       "id": "BG-01-midrail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1079,7 +1079,7 @@
     },
     {
       "id": "BG-01-frame.012",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1097,7 +1097,7 @@
     },
     {
       "id": "BG-01-frame.013",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1115,7 +1115,7 @@
     },
     {
       "id": "BG-01-frame.014",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1133,7 +1133,7 @@
     },
     {
       "id": "BG-01-frame.015",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1151,7 +1151,7 @@
     },
     {
       "id": "BG-02-front",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1169,7 +1169,7 @@
     },
     {
       "id": "BG-02-front.001",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1187,7 +1187,7 @@
     },
     {
       "id": "BG-02-front.002",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1205,7 +1205,7 @@
     },
     {
       "id": "BG-02-front.003",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1223,7 +1223,7 @@
     },
     {
       "id": "BG-02-front.004",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1241,7 +1241,7 @@
     },
     {
       "id": "BG-02-front.005",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1259,7 +1259,7 @@
     },
     {
       "id": "BG-02-front.006",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1277,7 +1277,7 @@
     },
     {
       "id": "BG-02-front.007",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1295,7 +1295,7 @@
     },
     {
       "id": "BG-02-front.008",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1313,7 +1313,7 @@
     },
     {
       "id": "BG-02-front.009",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1331,7 +1331,7 @@
     },
     {
       "id": "BG-02-front.010",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1349,7 +1349,7 @@
     },
     {
       "id": "BG-02-front.011",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1367,7 +1367,7 @@
     },
     {
       "id": "BG-02-front.012",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1385,7 +1385,7 @@
     },
     {
       "id": "BG-02-front.013",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1403,7 +1403,7 @@
     },
     {
       "id": "BG-02-front.014",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1421,7 +1421,7 @@
     },
     {
       "id": "BG-02-front.015",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1439,7 +1439,7 @@
     },
     {
       "id": "BG-02-front.016",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1457,7 +1457,7 @@
     },
     {
       "id": "BG-02-front.017",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1475,7 +1475,7 @@
     },
     {
       "id": "BG-02-front.018",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1493,7 +1493,7 @@
     },
     {
       "id": "BG-02-front.019",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1511,7 +1511,7 @@
     },
     {
       "id": "BG-02-front.020",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1529,7 +1529,7 @@
     },
     {
       "id": "BG-02-front.021",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1547,7 +1547,7 @@
     },
     {
       "id": "BG-02-front.022",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1565,7 +1565,7 @@
     },
     {
       "id": "BG-02-front.023",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1583,7 +1583,7 @@
     },
     {
       "id": "BG-02-front.024",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1601,7 +1601,7 @@
     },
     {
       "id": "BG-02-front.025",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1619,7 +1619,7 @@
     },
     {
       "id": "BG-02-front.026",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1637,7 +1637,7 @@
     },
     {
       "id": "BG-02-front.027",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1655,7 +1655,7 @@
     },
     {
       "id": "BG-02-front.028",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1673,7 +1673,7 @@
     },
     {
       "id": "BG-02-side",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1691,7 +1691,7 @@
     },
     {
       "id": "BG-02-side.001",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1709,7 +1709,7 @@
     },
     {
       "id": "BG-02-back",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1727,7 +1727,7 @@
     },
     {
       "id": "BG-02-roof-receiver",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1745,7 +1745,7 @@
     },
     {
       "id": "BG-02-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1763,7 +1763,7 @@
     },
     {
       "id": "BG-02-parapet",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1781,7 +1781,7 @@
     },
     {
       "id": "BG-02-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1799,7 +1799,7 @@
     },
     {
       "id": "BG-02-parapet.001",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1817,7 +1817,7 @@
     },
     {
       "id": "BG-02-cap.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1835,7 +1835,7 @@
     },
     {
       "id": "BG-02-parapet.002",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1853,7 +1853,7 @@
     },
     {
       "id": "BG-02-cap.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1871,7 +1871,7 @@
     },
     {
       "id": "BG-02-parapet.003",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1889,7 +1889,7 @@
     },
     {
       "id": "BG-02-cap.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1907,7 +1907,7 @@
     },
     {
       "id": "BG-02-window-back",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1925,7 +1925,7 @@
     },
     {
       "id": "BG-02-closed-window",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1943,7 +1943,7 @@
     },
     {
       "id": "BG-02-midrail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1961,7 +1961,7 @@
     },
     {
       "id": "BG-02-frame",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1979,7 +1979,7 @@
     },
     {
       "id": "BG-02-frame.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -1997,7 +1997,7 @@
     },
     {
       "id": "BG-02-frame.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2015,7 +2015,7 @@
     },
     {
       "id": "BG-02-frame.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2033,7 +2033,7 @@
     },
     {
       "id": "BG-02-window-back.001",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2051,7 +2051,7 @@
     },
     {
       "id": "BG-02-closed-window.001",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2069,7 +2069,7 @@
     },
     {
       "id": "BG-02-midrail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2087,7 +2087,7 @@
     },
     {
       "id": "BG-02-frame.004",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2105,7 +2105,7 @@
     },
     {
       "id": "BG-02-frame.005",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2123,7 +2123,7 @@
     },
     {
       "id": "BG-02-frame.006",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2141,7 +2141,7 @@
     },
     {
       "id": "BG-02-frame.007",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2159,7 +2159,7 @@
     },
     {
       "id": "BG-02-window-back.002",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2177,7 +2177,7 @@
     },
     {
       "id": "BG-02-closed-window.002",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2195,7 +2195,7 @@
     },
     {
       "id": "BG-02-midrail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2213,7 +2213,7 @@
     },
     {
       "id": "BG-02-frame.008",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2231,7 +2231,7 @@
     },
     {
       "id": "BG-02-frame.009",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2249,7 +2249,7 @@
     },
     {
       "id": "BG-02-frame.010",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2267,7 +2267,7 @@
     },
     {
       "id": "BG-02-frame.011",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2285,7 +2285,7 @@
     },
     {
       "id": "BG-02-window-back.003",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2303,7 +2303,7 @@
     },
     {
       "id": "BG-02-closed-window.003",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2321,7 +2321,7 @@
     },
     {
       "id": "BG-02-midrail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2339,7 +2339,7 @@
     },
     {
       "id": "BG-02-frame.012",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2357,7 +2357,7 @@
     },
     {
       "id": "BG-02-frame.013",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2375,7 +2375,7 @@
     },
     {
       "id": "BG-02-frame.014",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2393,7 +2393,7 @@
     },
     {
       "id": "BG-02-frame.015",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2411,7 +2411,7 @@
     },
     {
       "id": "BG-02-window-back.004",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2429,7 +2429,7 @@
     },
     {
       "id": "BG-02-closed-window.004",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2447,7 +2447,7 @@
     },
     {
       "id": "BG-02-midrail.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2465,7 +2465,7 @@
     },
     {
       "id": "BG-02-frame.016",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2483,7 +2483,7 @@
     },
     {
       "id": "BG-02-frame.017",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2501,7 +2501,7 @@
     },
     {
       "id": "BG-02-frame.018",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2519,7 +2519,7 @@
     },
     {
       "id": "BG-02-frame.019",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2537,7 +2537,7 @@
     },
     {
       "id": "BG-02-window-back.005",
-      "material": "bz06_pale_lime",
+      "material": "bz06_pale_lime.005",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2555,7 +2555,7 @@
     },
     {
       "id": "BG-02-closed-window.005",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2573,7 +2573,7 @@
     },
     {
       "id": "BG-02-midrail.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2591,7 +2591,7 @@
     },
     {
       "id": "BG-02-frame.020",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2609,7 +2609,7 @@
     },
     {
       "id": "BG-02-frame.021",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2627,7 +2627,7 @@
     },
     {
       "id": "BG-02-frame.022",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2645,7 +2645,7 @@
     },
     {
       "id": "BG-02-frame.023",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2663,7 +2663,7 @@
     },
     {
       "id": "BG-03-front",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2681,7 +2681,7 @@
     },
     {
       "id": "BG-03-front.001",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2699,7 +2699,7 @@
     },
     {
       "id": "BG-03-front.002",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2717,7 +2717,7 @@
     },
     {
       "id": "BG-03-front.003",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2735,7 +2735,7 @@
     },
     {
       "id": "BG-03-front.004",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2753,7 +2753,7 @@
     },
     {
       "id": "BG-03-front.005",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2771,7 +2771,7 @@
     },
     {
       "id": "BG-03-front.006",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2789,7 +2789,7 @@
     },
     {
       "id": "BG-03-front.007",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2807,7 +2807,7 @@
     },
     {
       "id": "BG-03-front.008",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2825,7 +2825,7 @@
     },
     {
       "id": "BG-03-front.009",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2843,7 +2843,7 @@
     },
     {
       "id": "BG-03-front.010",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2861,7 +2861,7 @@
     },
     {
       "id": "BG-03-front.011",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2879,7 +2879,7 @@
     },
     {
       "id": "BG-03-front.012",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2897,7 +2897,7 @@
     },
     {
       "id": "BG-03-front.013",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2915,7 +2915,7 @@
     },
     {
       "id": "BG-03-front.014",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2933,7 +2933,7 @@
     },
     {
       "id": "BG-03-front.015",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2951,7 +2951,7 @@
     },
     {
       "id": "BG-03-front.016",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2969,7 +2969,7 @@
     },
     {
       "id": "BG-03-front.017",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -2987,7 +2987,7 @@
     },
     {
       "id": "BG-03-front.018",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3005,7 +3005,7 @@
     },
     {
       "id": "BG-03-front.019",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3023,7 +3023,7 @@
     },
     {
       "id": "BG-03-front.020",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3041,7 +3041,7 @@
     },
     {
       "id": "BG-03-front.021",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3059,7 +3059,7 @@
     },
     {
       "id": "BG-03-front.022",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3077,7 +3077,7 @@
     },
     {
       "id": "BG-03-front.023",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3095,7 +3095,7 @@
     },
     {
       "id": "BG-03-front.024",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3113,7 +3113,7 @@
     },
     {
       "id": "BG-03-front.025",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3131,7 +3131,7 @@
     },
     {
       "id": "BG-03-front.026",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3149,7 +3149,7 @@
     },
     {
       "id": "BG-03-front.027",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3167,7 +3167,7 @@
     },
     {
       "id": "BG-03-front.028",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3185,7 +3185,7 @@
     },
     {
       "id": "BG-03-side",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3203,7 +3203,7 @@
     },
     {
       "id": "BG-03-side.001",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3221,7 +3221,7 @@
     },
     {
       "id": "BG-03-back",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3239,7 +3239,7 @@
     },
     {
       "id": "BG-03-roof-receiver",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3257,7 +3257,7 @@
     },
     {
       "id": "BG-03-slab",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3275,7 +3275,7 @@
     },
     {
       "id": "BG-03-parapet",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3293,7 +3293,7 @@
     },
     {
       "id": "BG-03-cap",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3311,7 +3311,7 @@
     },
     {
       "id": "BG-03-parapet.001",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3329,7 +3329,7 @@
     },
     {
       "id": "BG-03-cap.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3347,7 +3347,7 @@
     },
     {
       "id": "BG-03-parapet.002",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3365,7 +3365,7 @@
     },
     {
       "id": "BG-03-cap.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3383,7 +3383,7 @@
     },
     {
       "id": "BG-03-parapet.003",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3401,7 +3401,7 @@
     },
     {
       "id": "BG-03-cap.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3419,7 +3419,7 @@
     },
     {
       "id": "BG-03-window-back",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3437,7 +3437,7 @@
     },
     {
       "id": "BG-03-closed-window",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3455,7 +3455,7 @@
     },
     {
       "id": "BG-03-midrail",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3473,7 +3473,7 @@
     },
     {
       "id": "BG-03-frame",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3491,7 +3491,7 @@
     },
     {
       "id": "BG-03-frame.001",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3509,7 +3509,7 @@
     },
     {
       "id": "BG-03-frame.002",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3527,7 +3527,7 @@
     },
     {
       "id": "BG-03-frame.003",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3545,7 +3545,7 @@
     },
     {
       "id": "BG-03-window-back.001",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3563,7 +3563,7 @@
     },
     {
       "id": "BG-03-closed-window.001",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3581,7 +3581,7 @@
     },
     {
       "id": "BG-03-midrail.001",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3599,7 +3599,7 @@
     },
     {
       "id": "BG-03-frame.004",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3617,7 +3617,7 @@
     },
     {
       "id": "BG-03-frame.005",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3635,7 +3635,7 @@
     },
     {
       "id": "BG-03-frame.006",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3653,7 +3653,7 @@
     },
     {
       "id": "BG-03-frame.007",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3671,7 +3671,7 @@
     },
     {
       "id": "BG-03-window-back.002",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3689,7 +3689,7 @@
     },
     {
       "id": "BG-03-closed-window.002",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3707,7 +3707,7 @@
     },
     {
       "id": "BG-03-midrail.002",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3725,7 +3725,7 @@
     },
     {
       "id": "BG-03-frame.008",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3743,7 +3743,7 @@
     },
     {
       "id": "BG-03-frame.009",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3761,7 +3761,7 @@
     },
     {
       "id": "BG-03-frame.010",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3779,7 +3779,7 @@
     },
     {
       "id": "BG-03-frame.011",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3797,7 +3797,7 @@
     },
     {
       "id": "BG-03-window-back.003",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3815,7 +3815,7 @@
     },
     {
       "id": "BG-03-closed-window.003",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3833,7 +3833,7 @@
     },
     {
       "id": "BG-03-midrail.003",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3851,7 +3851,7 @@
     },
     {
       "id": "BG-03-frame.012",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3869,7 +3869,7 @@
     },
     {
       "id": "BG-03-frame.013",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3887,7 +3887,7 @@
     },
     {
       "id": "BG-03-frame.014",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3905,7 +3905,7 @@
     },
     {
       "id": "BG-03-frame.015",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3923,7 +3923,7 @@
     },
     {
       "id": "BG-03-window-back.004",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3941,7 +3941,7 @@
     },
     {
       "id": "BG-03-closed-window.004",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3959,7 +3959,7 @@
     },
     {
       "id": "BG-03-midrail.004",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3977,7 +3977,7 @@
     },
     {
       "id": "BG-03-frame.016",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -3995,7 +3995,7 @@
     },
     {
       "id": "BG-03-frame.017",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4013,7 +4013,7 @@
     },
     {
       "id": "BG-03-frame.018",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4031,7 +4031,7 @@
     },
     {
       "id": "BG-03-frame.019",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4049,7 +4049,7 @@
     },
     {
       "id": "BG-03-window-back.005",
-      "material": "bz06_cream_plaster",
+      "material": "bz06_cream_plaster.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4067,7 +4067,7 @@
     },
     {
       "id": "BG-03-closed-window.005",
-      "material": "ph_bz04_dark_wood.002",
+      "material": "ph_bz04_dark_wood.001",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4085,7 +4085,7 @@
     },
     {
       "id": "BG-03-midrail.005",
-      "material": "bz04_craft_warm_timber.001",
+      "material": "bz04_craft_warm_timber.010",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4103,7 +4103,7 @@
     },
     {
       "id": "BG-03-frame.020",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4121,7 +4121,7 @@
     },
     {
       "id": "BG-03-frame.021",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4139,7 +4139,7 @@
     },
     {
       "id": "BG-03-frame.022",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -4157,7 +4157,7 @@
     },
     {
       "id": "BG-03-frame.023",
-      "material": "ph_bz04_stone_trim_sandstone.001",
+      "material": "ph_bz04_stone_trim_sandstone.004",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -21077,7 +21077,7 @@
     },
     {
       "id": "BG-GROUND",
-      "material": "bz06_rough_service_paving.001",
+      "material": "bz06_rough_service_paving",
       "shadow": "receive",
       "bounds": {
         "min": [
@@ -21094,11 +21094,10 @@
       "triangles": 4558
     }
   ],
-  "sha256": "e63296cd8d96891a706c9d650052fa7b62598498c0fdfa7c994a71a44527ed9d",
+  "sha256": "c4a2f85479c433ad0ca8dff92c90a159b33111d2e383877ab9f024588e2308b8",
   "sourcePolygonTriangles": 14586,
   "materials": [
     "bz04_craft_warm_timber",
-    "bz04_craft_warm_timber.001",
     "bz04_craft_warm_timber.002",
     "bz04_craft_warm_timber.003",
     "bz04_craft_warm_timber.004",
@@ -21107,24 +21106,25 @@
     "bz04_craft_warm_timber.007",
     "bz04_craft_warm_timber.008",
     "bz04_craft_warm_timber.009",
-    "bz06_cream_plaster",
+    "bz04_craft_warm_timber.010",
     "bz06_cream_plaster.001",
     "bz06_cream_plaster.002",
     "bz06_cream_plaster.003",
-    "bz06_pale_lime",
+    "bz06_cream_plaster.004",
     "bz06_pale_lime.001",
     "bz06_pale_lime.002",
     "bz06_pale_lime.003",
     "bz06_pale_lime.004",
-    "bz06_rough_service_paving.001",
-    "bz06_sand_plaster",
+    "bz06_pale_lime.005",
+    "bz06_rough_service_paving",
     "bz06_sand_plaster.001",
     "bz06_sand_plaster.002",
     "bz06_sand_plaster.003",
     "bz06_sand_plaster.004",
+    "bz06_sand_plaster.005",
     "bz06_service_stone",
     "ph_bz04_dark_wood",
-    "ph_bz04_dark_wood.002",
+    "ph_bz04_dark_wood.001",
     "ph_bz04_dark_wood.003",
     "ph_bz04_dark_wood.004",
     "ph_bz04_dark_wood.005",
@@ -21134,9 +21134,9 @@
     "ph_bz04_dark_wood.009",
     "ph_bz04_dark_wood.010",
     "ph_bz04_stone_trim_sandstone",
-    "ph_bz04_stone_trim_sandstone.001",
     "ph_bz04_stone_trim_sandstone.002",
     "ph_bz04_stone_trim_sandstone.003",
+    "ph_bz04_stone_trim_sandstone.004",
     "ph_bz04_stone_trim_sandstone.005",
     "ph_bz04_stone_trim_sandstone.006",
     "ph_bz04_stone_trim_sandstone.007",
@@ -21151,7 +21151,7 @@
     "owner": "shared-environment",
     "status": "older-issue-installed; R6 selected finishes not installed",
     "scope": "Existing B-04 shared background/ground geometry is installed. Reuse its geometry when the frozen area phase permits. The complete-map target has15 background material assignments and the selected backlot ground recipe; update this shared owner only when explicitly included in the area task. Do not rebuild foreground neighbors or recolor the old shared model silently.",
-    "maxShadowPrimitives": 10,
+    "maxShadowPrimitives": 13,
     "retireIds": [
       "BACKGROUND_SHELL_000",
       "BACKGROUND_SHELL_001",
@@ -21290,7 +21290,7 @@
     "targets": {
       "maxTriangles": 38600,
       "maxRenderedPrimitives": 20,
-      "maxShadowPrimitives": 10
+      "maxShadowPrimitives": 13
     },
     "overTarget": [
       "maxRenderedPrimitives",

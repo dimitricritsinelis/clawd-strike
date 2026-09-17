@@ -5,9 +5,9 @@
     "status": "PROPOSED"
   },
   "asset": "assets/source/unit-spawn-b-courtyard/unit-spawn-b-courtyard.glb",
-  "triangles": 65955,
-  "primitives": 24,
-  "castPrimitives": 11,
+  "triangles": 72315,
+  "primitives": 28,
+  "castPrimitives": 12,
   "actualBoundsGltf": {
     "min": [
       -3.680000066757202,
@@ -30257,7 +30257,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30275,7 +30275,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.001",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30293,7 +30293,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.002",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30311,7 +30311,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.003",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30329,7 +30329,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.004",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30437,7 +30437,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.005",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30455,7 +30455,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.006",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30473,7 +30473,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.007",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30491,7 +30491,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.008",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -30509,7 +30509,7 @@
     },
     {
       "id": "B_E_STORE-DOOR-leaf-board.009",
-      "material": "bz05_b_warm_timber",
+      "material": "bz05_b_teal_timber",
       "shadow": "cast",
       "bounds": {
         "min": [
@@ -56354,10 +56354,1108 @@
         ]
       },
       "triangles": 608
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-field",
+      "material": "bz04_levantine_rug_project_original",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          18.75,
+          -13.855999946594238,
+          3.3499999046325684
+        ],
+        "max": [
+          19.649999618530273,
+          -13.803879737854004,
+          5.949999809265137
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.75,
+          -13.848999977111816,
+          3.3499999046325684
+        ],
+        "max": [
+          18.774999618530273,
+          -13.79982852935791,
+          5.949999809265137
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.625,
+          -13.848999977111816,
+          3.3499999046325684
+        ],
+        "max": [
+          19.649999618530273,
+          -13.803326606750488,
+          5.949999809265137
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.774999618530273,
+          -13.848999977111816,
+          3.3513944149017334
+        ],
+        "max": [
+          19.625,
+          -13.841607093811035,
+          3.3908462524414062
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.774999618530273,
+          -13.848999977111816,
+          5.925013542175293
+        ],
+        "max": [
+          19.625,
+          -13.841607093811035,
+          5.949999809265137
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-timber-rod",
+      "material": "bz05_b_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.689998626708984,
+          -13.861000061035156,
+          5.978999614715576
+        ],
+        "max": [
+          19.709999084472656,
+          -13.838996887207031,
+          6.000999927520752
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-bracket-0",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.70199966430664,
+          -14.0,
+          5.909999847412109
+        ],
+        "max": [
+          18.72800064086914,
+          -13.934000015258789,
+          6.019999980926514
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-rod-support-0",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.70800018310547,
+          -13.948646545410156,
+          5.926025390625
+        ],
+        "max": [
+          18.722000122070312,
+          -13.846351623535156,
+          5.995974540710449
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-bracket-1",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.672000885009766,
+          -14.0,
+          5.909999847412109
+        ],
+        "max": [
+          19.697999954223633,
+          -13.934000015258789,
+          6.019999980926514
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-rod-support-1",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.678001403808594,
+          -13.948646545410156,
+          5.926025390625
+        ],
+        "max": [
+          19.692001342773438,
+          -13.846351623535156,
+          5.995974540710449
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.809497833251953,
+          -13.857276916503906,
+          5.934784412384033
+        ],
+        "max": [
+          18.81650161743164,
+          -13.830718994140625,
+          5.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.809497833251953,
+          -13.852546691894531,
+          5.987601280212402
+        ],
+        "max": [
+          18.81650161743164,
+          -13.831451416015625,
+          6.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.809497833251953,
+          -13.871337890625,
+          5.987390995025635
+        ],
+        "max": [
+          18.81650161743164,
+          -13.847663879394531,
+          6.009608745574951
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.809497833251953,
+          -13.872406005859375,
+          5.9351806640625
+        ],
+        "max": [
+          18.81650161743164,
+          -13.85260009765625,
+          5.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.05249786376953,
+          -13.857276916503906,
+          5.934784412384033
+        ],
+        "max": [
+          19.05950164794922,
+          -13.830718994140625,
+          5.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.05249786376953,
+          -13.852546691894531,
+          5.987601280212402
+        ],
+        "max": [
+          19.05950164794922,
+          -13.831451416015625,
+          6.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.05249786376953,
+          -13.871337890625,
+          5.987390995025635
+        ],
+        "max": [
+          19.05950164794922,
+          -13.847663879394531,
+          6.009608745574951
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.05249786376953,
+          -13.872406005859375,
+          5.9351806640625
+        ],
+        "max": [
+          19.05950164794922,
+          -13.85260009765625,
+          5.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.340499877929688,
+          -13.857276916503906,
+          5.934784412384033
+        ],
+        "max": [
+          19.347503662109375,
+          -13.830718994140625,
+          5.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.340499877929688,
+          -13.852546691894531,
+          5.987601280212402
+        ],
+        "max": [
+          19.347503662109375,
+          -13.831451416015625,
+          6.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.340499877929688,
+          -13.871337890625,
+          5.987390995025635
+        ],
+        "max": [
+          19.347503662109375,
+          -13.847663879394531,
+          6.009608745574951
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.340499877929688,
+          -13.872406005859375,
+          5.9351806640625
+        ],
+        "max": [
+          19.347503662109375,
+          -13.85260009765625,
+          5.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.583499908447266,
+          -13.857276916503906,
+          5.934784412384033
+        ],
+        "max": [
+          19.590503692626953,
+          -13.830718994140625,
+          5.991215229034424
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.583499908447266,
+          -13.852546691894531,
+          5.987601280212402
+        ],
+        "max": [
+          19.590503692626953,
+          -13.831451416015625,
+          6.009398460388184
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.583499908447266,
+          -13.871337890625,
+          5.987390995025635
+        ],
+        "max": [
+          19.590503692626953,
+          -13.847663879394531,
+          6.009608745574951
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          19.583499908447266,
+          -13.872406005859375,
+          5.9351806640625
+        ],
+        "max": [
+          19.590503692626953,
+          -13.85260009765625,
+          5.990818977355957
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_N_TEXTILE-0-lower-weight",
+      "material": "bz05_b_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          18.776996612548828,
+          -13.861671447753906,
+          3.375687599182129
+        ],
+        "max": [
+          19.623004913330078,
+          -13.847358703613281,
+          3.3896875381469727
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-field",
+      "material": "bz04_levantine_rug_project_original",
+      "shadow": "cast",
+      "bounds": {
+        "min": [
+          0.14399999380111694,
+          -6.0,
+          3.25
+        ],
+        "max": [
+          0.1961197853088379,
+          -5.199999809265137,
+          5.5
+        ]
+      },
+      "triangles": 1424
+    },
+    {
+      "id": "life-B_W_HOUSE-1-left-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -5.224999904632568,
+          3.25
+        ],
+        "max": [
+          0.2005470097064972,
+          -5.199999809265137,
+          5.5
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-B_W_HOUSE-1-right-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -6.0,
+          3.25
+        ],
+        "max": [
+          0.19667302072048187,
+          -5.974999904632568,
+          5.5
+        ]
+      },
+      "triangles": 164
+    },
+    {
+      "id": "life-B_W_HOUSE-1-lower-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -5.974999904632568,
+          3.25156831741333
+        ],
+        "max": [
+          0.1586095541715622,
+          -5.224999904632568,
+          3.2908222675323486
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-B_W_HOUSE-1-upper-hem",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1509999930858612,
+          -5.974999904632568,
+          5.475017547607422
+        ],
+        "max": [
+          0.1586095541715622,
+          -5.224999904632568,
+          5.5
+        ]
+      },
+      "triangles": 132
+    },
+    {
+      "id": "life-B_W_HOUSE-1-timber-rod",
+      "material": "bz05_b_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.13899993896484375,
+          -6.05999755859375,
+          5.5289998054504395
+        ],
+        "max": [
+          0.16099929809570312,
+          -5.1399993896484375,
+          5.551000118255615
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-bracket-0",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.0,
+          -5.177999973297119,
+          5.460000038146973
+        ],
+        "max": [
+          0.06599999964237213,
+          -5.1519999504089355,
+          5.570000171661377
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-B_W_HOUSE-1-rod-support-0",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.05135345458984375,
+          -5.172004699707031,
+          5.476025581359863
+        ],
+        "max": [
+          0.15364646911621094,
+          -5.157997131347656,
+          5.545974254608154
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-bracket-1",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.0,
+          -6.047999858856201,
+          5.460000038146973
+        ],
+        "max": [
+          0.06599999964237213,
+          -6.021999835968018,
+          5.570000171661377
+        ]
+      },
+      "triangles": 44
+    },
+    {
+      "id": "life-B_W_HOUSE-1-rod-support-1",
+      "material": "bz05_b_dark_iron",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.05135345458984375,
+          -6.0420074462890625,
+          5.476025581359863
+        ],
+        "max": [
+          0.15364646911621094,
+          -6.0279998779296875,
+          5.545974254608154
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-0-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1427173614501953,
+          -5.259498596191406,
+          5.4847846031188965
+        ],
+        "max": [
+          0.1692829132080078,
+          -5.252494812011719,
+          5.541215419769287
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-0-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745140075683594,
+          -5.259498596191406,
+          5.537600994110107
+        ],
+        "max": [
+          0.168548583984375,
+          -5.252494812011719,
+          5.559399127960205
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-0-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -5.259498596191406,
+          5.537391662597656
+        ],
+        "max": [
+          0.15233421325683594,
+          -5.252494812011719,
+          5.559608459472656
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-0-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -5.259498596191406,
+          5.485180854797363
+        ],
+        "max": [
+          0.1474018096923828,
+          -5.252494812011719,
+          5.54081916809082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-1-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1427173614501953,
+          -5.475502014160156,
+          5.4847846031188965
+        ],
+        "max": [
+          0.1692829132080078,
+          -5.468498229980469,
+          5.541215419769287
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-1-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745140075683594,
+          -5.475502014160156,
+          5.537600994110107
+        ],
+        "max": [
+          0.168548583984375,
+          -5.468498229980469,
+          5.559399127960205
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-1-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -5.475502014160156,
+          5.537391662597656
+        ],
+        "max": [
+          0.15233421325683594,
+          -5.468498229980469,
+          5.559608459472656
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-1-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -5.475502014160156,
+          5.485180854797363
+        ],
+        "max": [
+          0.1474018096923828,
+          -5.468498229980469,
+          5.54081916809082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-2-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1427173614501953,
+          -5.731498718261719,
+          5.4847846031188965
+        ],
+        "max": [
+          0.1692829132080078,
+          -5.724494934082031,
+          5.541215419769287
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-2-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745140075683594,
+          -5.731498718261719,
+          5.537600994110107
+        ],
+        "max": [
+          0.168548583984375,
+          -5.724494934082031,
+          5.559399127960205
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-2-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -5.731498718261719,
+          5.537391662597656
+        ],
+        "max": [
+          0.15233421325683594,
+          -5.724494934082031,
+          5.559608459472656
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-2-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -5.731498718261719,
+          5.485180854797363
+        ],
+        "max": [
+          0.1474018096923828,
+          -5.724494934082031,
+          5.54081916809082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-3-0",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.1427173614501953,
+          -5.947502136230469,
+          5.4847846031188965
+        ],
+        "max": [
+          0.1692829132080078,
+          -5.940498352050781,
+          5.541215419769287
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-3-1",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.14745140075683594,
+          -5.947502136230469,
+          5.537600994110107
+        ],
+        "max": [
+          0.168548583984375,
+          -5.940498352050781,
+          5.559399127960205
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-3-2",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12866592407226562,
+          -5.947502136230469,
+          5.537391662597656
+        ],
+        "max": [
+          0.15233421325683594,
+          -5.940498352050781,
+          5.559608459472656
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-tie-3-3",
+      "material": "bz06_fine_linen",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.12759780883789062,
+          -5.947502136230469,
+          5.485180854797363
+        ],
+        "max": [
+          0.1474018096923828,
+          -5.940498352050781,
+          5.54081916809082
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-B_W_HOUSE-1-lower-weight",
+      "material": "bz05_b_warm_timber",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.13833045959472656,
+          -5.9759979248046875,
+          3.2714877128601074
+        ],
+        "max": [
+          0.1526355743408203,
+          -5.2239990234375,
+          3.285487651824951
+        ]
+      },
+      "triangles": 12
+    },
+    {
+      "id": "life-wear-B_N_POTTER-0-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.23124293982982635,
+          -13.996999740600586,
+          0.46355241537094116
+        ],
+        "max": [
+          0.644336462020874,
+          -13.994999885559082,
+          0.9670705795288086
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-B_N_POTTER-0-broken-plaster-edge",
+      "material": "bz06_cream_plaster",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.21222059428691864,
+          -13.996999740600586,
+          0.4429917633533478
+        ],
+        "max": [
+          0.6612352728843689,
+          -13.98900032043457,
+          0.9902940988540649
+        ]
+      },
+      "triangles": 112
+    },
+    {
+      "id": "life-wear-B_E_PACKER-1-exposed-stone",
+      "material": "bz06_service_stone",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          21.9950008392334,
+          -10.792022705078125,
+          0.9867603182792664
+        ],
+        "max": [
+          21.996999740600586,
+          -10.386512756347656,
+          1.4585933685302734
+        ]
+      },
+      "triangles": 52
+    },
+    {
+      "id": "life-wear-B_E_PACKER-1-broken-plaster-edge",
+      "material": "bz06_pale_lime",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          21.98900032043457,
+          -10.808720588684082,
+          0.9660438299179077
+        ],
+        "max": [
+          21.996999740600586,
+          -10.367948532104492,
+          1.4789059162139893
+        ]
+      },
+      "triangles": 112
+    },
+    {
+      "id": "life-stock-B_N_POTTER-jar-0",
+      "material": "bz05_b_ceramic",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          0.8255000114440918,
+          -13.954000473022461,
+          0.0
+        ],
+        "max": [
+          1.0635000467300415,
+          -13.715999603271484,
+          0.36000001430511475
+        ]
+      },
+      "triangles": 448
+    },
+    {
+      "id": "life-stock-B_N_POTTER-jar-1",
+      "material": "bz05_b_ceramic",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          1.1085000038146973,
+          -13.960000038146973,
+          0.0
+        ],
+        "max": [
+          1.3585000038146973,
+          -13.710000038146973,
+          0.5400000214576721
+        ]
+      },
+      "triangles": 448
+    },
+    {
+      "id": "life-stock-B_N_POTTER-jar-2",
+      "material": "bz05_b_ceramic",
+      "shadow": "receive",
+      "bounds": {
+        "min": [
+          1.3949999809265137,
+          -13.945500373840332,
+          0.0
+        ],
+        "max": [
+          1.6160000562667847,
+          -13.724499702453613,
+          0.2800000011920929
+        ]
+      },
+      "triangles": 448
     }
   ],
-  "sha256": "168654d95c2793ef8b245f4292ea3a3028a1cd0b418afb67b6738242e1c6fb92",
-  "sourcePolygonTriangles": 65997,
+  "sha256": "6cfa30e4c16823491623966bdd01cc5b89cc551da448f56a99715eb6aeb4af7d",
+  "sourcePolygonTriangles": 72357,
   "materials": [
     "bz04_brass_project_original",
     "bz04_fixed_glass",
@@ -56391,10 +57489,10 @@
   "budget": {
     "status": "deferred",
     "counts": {
-      "maxTriangles": 65955,
+      "maxTriangles": 72315,
       "maxMaterials": 21,
-      "maxRenderedPrimitives": 24,
-      "maxShadowPrimitives": 11
+      "maxRenderedPrimitives": 28,
+      "maxShadowPrimitives": 12
     },
     "targets": {
       "maxTriangles": 64000,

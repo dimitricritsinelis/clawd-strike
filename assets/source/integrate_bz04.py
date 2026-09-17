@@ -179,7 +179,8 @@ def install_floor(handoff):
             raise ValueError('Derived floor texture changed')
         shutil.copy2(source,target)
         for maps in row['textures'].values():maps['albedo']='./bz06-derived/'+target.name
-        row.update(tintHex='#ffffff',albedoBoost=1,albedoGamma=1,dustStrength=0)
+        pigments=runpy.run_path(str(ROOT/'assets/source/bazaar_finish.py'))['FLOOR_PIGMENTS']
+        row.update(tintHex=pigments.get(mid,'#ffffff'),albedoBoost=1,albedoGamma=1,dustStrength=0)
     manifest_path.write_text(json.dumps(manifest,indent=2)+'\n')
 
 
