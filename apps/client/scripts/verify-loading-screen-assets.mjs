@@ -156,10 +156,10 @@ async function main() {
     `Primary loading-screen audio budget exceeded: ${primaryAudioBytes} > ${PRIMARY_AUDIO_BUDGET_BYTES}`,
   );
 
-  console.log(`[verify:loading-screen-assets] modern-images-bytes ${modernImageBytes}`);
-  console.log(`[verify:loading-screen-assets] first-paint-bytes ${firstPaintBytes}`);
-  console.log(`[verify:loading-screen-assets] primary-audio-bytes ${primaryAudioBytes}`);
-  console.log("[verify:loading-screen-assets] pass");
+  console.log(`[assets:loading-screen:verify] modern-images-bytes ${modernImageBytes}`);
+  console.log(`[assets:loading-screen:verify] first-paint-bytes ${firstPaintBytes}`);
+  console.log(`[assets:loading-screen:verify] primary-audio-bytes ${primaryAudioBytes}`);
+  console.log("[assets:loading-screen:verify] pass");
 }
 
 await main();

@@ -1,6 +1,6 @@
 # Playbook
 
-This playbook describes the legacy exported snapshot. The [README](../README.md#current-contract-gap) explains its gaps against the canonical public contract. It is not the workflow for building or verifying the game map.
+This playbook describes the legacy exported snapshot. The [README](../README.md#current-contract-gap) explains its gaps against the canonical public contract.
 
 ## Legacy inspection workflow
 

@@ -2140,7 +2140,7 @@
     },
     "authored_placements": {
       "type": "array",
-      "description": "Free render-only GLBs placed by area packages (scripts/apply-facade-package.mjs placements). Design metres, base-centre origin, yawDeg as anchors[].yawDeg.",
+      "description": "Free render-only GLBs placed by area packages (scripts/assets/apply-facade-package.mjs placements). Design metres, base-centre origin, yawDeg as anchors[].yawDeg.",
       "items": {
         "type": "object",
         "additionalProperties": false,

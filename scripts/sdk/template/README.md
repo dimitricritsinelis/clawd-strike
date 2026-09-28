@@ -2,7 +2,7 @@
 
 This is the **legacy SDK snapshot produced by the game repo exporter**. The canonical public contract is served at [{{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}]({{PUBLIC_AGENT_CANONICAL_SKILLS_URL}}); that contract wins when this snapshot differs.
 
-This snapshot supplies browser-control helpers and an older learning example. It does not implement the complete current `agentic-gameplay-v1` workflow. Updating that runtime is a separate SDK task, not a prerequisite for Three.js map or Blender asset work.
+This snapshot supplies browser-control helpers and an older learning example. It does not implement the complete current `agentic-gameplay-v1` workflow.
 
 ## What this snapshot implements
 
@@ -48,4 +48,4 @@ The legacy learning example uses `output/self-improving-runner/` by default:
 - `latest-session-summary.json`: the latest written session summary.
 - `candidate-summaries/*.json`: summaries keyed by candidate ID, subject to replacement on ID reuse.
 
-Review [the playbook](docs/PLAYBOOK.md), [implemented tuning parameters](docs/TUNING_GUIDE.md), and [troubleshooting](docs/troubleshooting.md). Saved files prove persistence only to the extent their actual contents and identity history support it; they do not certify canonical learning or map quality.
+Review [the playbook](docs/PLAYBOOK.md), [implemented tuning parameters](docs/TUNING_GUIDE.md), and [troubleshooting](docs/troubleshooting.md). Saved files prove persistence only to the extent their actual contents and identity history support it; they do not certify canonical learning.

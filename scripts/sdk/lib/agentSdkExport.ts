@@ -14,14 +14,14 @@ import {
   PUBLIC_AGENT_NAME_MAX_LENGTH,
   PUBLIC_AGENT_STABLE_SELECTORS,
   PUBLIC_AGENT_SUPPORTED_GLOBALS,
-} from "../../apps/shared/publicAgentContract";
+} from "../../../apps/shared/publicAgentContract";
 
 const execFile = promisify(execFileCallback);
 
 const EXPORT_MANIFEST_PATH = ".clawd-strike-agent-export.json";
 const DEFAULT_TARGET_DIRNAME = PUBLIC_AGENT_COMPANION_REPO_NAME;
-const DEFAULT_REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-const DEFAULT_TEMPLATE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "agent-sdk-template");
+const DEFAULT_REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..");
+const DEFAULT_TEMPLATE_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../template");
 const SOURCE_SKILLS_PATH = "apps/client/public/skills.md";
 const CLIENT_PACKAGE_PATH = "apps/client/package.json";
 const ROOT_PACKAGE_PATH = "package.json";

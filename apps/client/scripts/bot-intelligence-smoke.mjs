@@ -42,7 +42,7 @@ const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) =
   band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
 ));
 if (!WAVE_ONE_PRESSURE) {
-  throw new Error("[bot:smoke] Gameplay tuning has no wave-one pressure band");
+  throw new Error("[smoke:bots] Gameplay tuning has no wave-one pressure band");
 }
 const SEARCH_START_S = WAVE_ONE_PRESSURE.searchStartS;
 const FULL_PRESSURE_S = WAVE_ONE_PRESSURE.fullPressureS;
@@ -82,7 +82,7 @@ function timestampId() {
 }
 
 function fail(message) {
-  throw new Error(`[bot:smoke] ${message}`);
+  throw new Error(`[smoke:bots] ${message}`);
 }
 
 function summarizeState(state) {
@@ -1106,7 +1106,7 @@ try {
     fail(`assertions failed: ${failed}`);
   }
 
-  console.log(`[bot:smoke] pass | output=${outputDir}`);
+  console.log(`[smoke:bots] pass | output=${outputDir}`);
 } catch (error) {
   summary.passed = false;
   summary.finishedAt = new Date().toISOString();

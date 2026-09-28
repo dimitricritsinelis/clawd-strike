@@ -8,7 +8,7 @@ import * as XLSX from "xlsx";
 import {
   normalizePgConnectionString,
   resolvePgConnectionSelection,
-} from "../../server/highScoreStoreImpl.js";
+} from "../../../server/highScoreStoreImpl.js";
 
 type RelationKind = "BASE TABLE" | "VIEW";
 

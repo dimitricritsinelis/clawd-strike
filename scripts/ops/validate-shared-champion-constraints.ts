@@ -1,7 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
-
-import { validateSharedChampionConstraints } from "../server/highScoreStoreImpl.js";
+import { validateSharedChampionConstraints } from "../../server/highScoreStoreImpl.js";
+import { loadEnv } from "./lib/envFile.js";
 
 type CliOptions = {
   envFile: string | null;
@@ -10,7 +8,7 @@ type CliOptions = {
 
 function printUsage(): void {
   console.log(`Usage:
-  pnpm validate:shared-champion-constraints -- [--env-file .env.production.local] [--json]
+  pnpm db:validate-constraints -- [--env-file .env.production.local] [--json]
 
 Options:
   --env-file <path>  Load environment variables from a local env file before validating constraints.
@@ -57,30 +55,9 @@ function parseArgs(argv: readonly string[]): CliOptions {
   return options;
 }
 
-function loadEnvFile(filePath: string, env: NodeJS.ProcessEnv): void {
-  const absolutePath = path.resolve(filePath);
-  const raw = fs.readFileSync(absolutePath, "utf8");
-  for (const line of raw.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (trimmed.length === 0 || trimmed.startsWith("#")) continue;
-    const separatorIndex = trimmed.indexOf("=");
-    if (separatorIndex <= 0) continue;
-
-    const key = trimmed.slice(0, separatorIndex).trim();
-    const value = trimmed.slice(separatorIndex + 1).replace(/^"(.*)"$/, "$1");
-    env[key] = value;
-  }
-}
-
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
-  const env = {
-    ...process.env,
-  } as NodeJS.ProcessEnv;
-
-  if (options.envFile) {
-    loadEnvFile(options.envFile, env);
-  }
+  const env = loadEnv(options.envFile);
 
   const report = await validateSharedChampionConstraints({ env });
   if (options.json) {
@@ -101,8 +78,8 @@ async function main(): Promise<void> {
 main().catch((error) => {
   console.error(
     error instanceof Error
-      ? `[validate:shared-champion-constraints] ${error.message}`
-      : "[validate:shared-champion-constraints] failed",
+      ? `[db:validate-constraints] ${error.message}`
+      : "[db:validate-constraints] failed",
   );
   process.exitCode = 1;
 });

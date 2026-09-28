@@ -3,55 +3,51 @@ name: CI
 on:
   pull_request:
   push:
+    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.28.2
+      # Reads the pnpm version from packageManager in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright Browsers
+      - name: Install Playwright Chromium
         run: pnpm --filter @clawd-strike/client exec playwright install chromium
 
-      - name: Generate runtime maps
-        run: pnpm --filter @clawd-strike/client gen:maps
-
-      - name: Verify runtime maps are up to date
-        run: git diff --exit-code -- apps/client/public/maps
+      - name: Runtime maps are up to date
+        run: pnpm check:maps
 
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Map Tooling Tests
-        run: pnpm test:map-tooling
+      - name: Unit, tooling and server tests
+        run: pnpm test
 
-      - name: QA Tooling Tests
-        run: pnpm test:qa-tooling
-
-      - name: Map Runtime Tests
-        run: pnpm test:map-runtime
-
-      - name: Server Tests
-        run: pnpm test:server
-
-      - name: Game Smoke
-        run: pnpm smoke:game
+      - name: Game smoke
+        run: pnpm test:e2e:smoke
 
       - name: Build
         run: pnpm build

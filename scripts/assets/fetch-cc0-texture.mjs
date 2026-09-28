@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Fetch Poly Haven CC0 PBR textures into the bazaar wall pack and record provenance.
 //
-//   node scripts/fetch-cc0-texture.mjs <polyhaven-id>... [--res 1k,2k]
+//   node scripts/assets/fetch-cc0-texture.mjs <polyhaven-id>... [--res 1k,2k]
 //
 // Writes <pack>/<id>/<id>_{diff,nor_gl,arm}_<res>.jpg, appends the family to
 // sources.json (source, license, md5 per map) and a material `ph_<id>` to
@@ -12,7 +12,7 @@ import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PACK = path.join(ROOT, "apps/client/public/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5");
 const MAPS = { albedo: [["Diffuse", "Color"], "diff"], normal: [["nor_gl"], "nor_gl"], arm: [["arm"], "arm"] };
 
@@ -21,7 +21,7 @@ const resIndex = args.indexOf("--res");
 const resolutions = (resIndex >= 0 ? args[resIndex + 1] : "1k,2k").split(",");
 const ids = args.filter((arg, index) => !arg.startsWith("--") && args[index - 1] !== "--res");
 if (ids.length === 0) {
-  console.error("usage: node scripts/fetch-cc0-texture.mjs <polyhaven-id>... [--res 1k,2k]");
+  console.error("usage: node scripts/assets/fetch-cc0-texture.mjs <polyhaven-id>... [--res 1k,2k]");
   process.exit(2);
 }
 

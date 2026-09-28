@@ -1,20 +1,19 @@
 #!/usr/bin/env node
 // Fetch Poly Haven CC0 models into the bazaar prop pack and record provenance.
 //
-//   node scripts/fetch-cc0-model.mjs <polyhaven-id>... [--res 1k]
+//   node scripts/assets/fetch-cc0-model.mjs <polyhaven-id>... [--res 1k]
 //
 // Writes <pack>/<id>/<id>_<res>.gltf with its .bin and textures/ exactly as Poly
 // Haven lays them out, then registers `ph_<id>` in models.json (url, source,
 // license, md5 per file) in the same shape as the existing entries. A registered
 // prop is used by adding its id to a pool in MODEL_POOLS_BY_KIND
-// (apps/client/src/runtime/map/buildProps.ts) or by importing its gltf in a unit
-// build.py.
+// (apps/client/src/runtime/map/buildProps.ts).
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const PACK = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/props");
 
 const args = process.argv.slice(2);
@@ -22,7 +21,7 @@ const resIndex = args.indexOf("--res");
 const res = resIndex >= 0 ? args[resIndex + 1] : "1k";
 const ids = args.filter((arg, index) => !arg.startsWith("--") && args[index - 1] !== "--res");
 if (ids.length === 0) {
-  console.error("usage: node scripts/fetch-cc0-model.mjs <polyhaven-id>... [--res 1k]");
+  console.error("usage: node scripts/assets/fetch-cc0-model.mjs <polyhaven-id>... [--res 1k]");
   process.exit(2);
 }
 

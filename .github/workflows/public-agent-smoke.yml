@@ -1,31 +1,58 @@
 name: Public Agent Smoke
 
+# Runs the no-context public agent smoke and the skills.md contract check
+# against production. Not a PR gate: it depends on the live deployment.
 on:
+  schedule:
+    - cron: "17 7 * * *"
   workflow_dispatch:
-  pull_request:
-  push:
-    branches:
-      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-agent-smoke
+  cancel-in-progress: false
 
 jobs:
-  smoke-no-context:
+  smoke-public:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    env:
+      BASE_URL: https://clawd-strike.vercel.app/
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+
+      # Reads the pnpm version from packageManager in package.json.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v7
         with:
-          version: 10.28.2
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
+          node-version-file: .nvmrc
           cache: pnpm
-      - run: pnpm install --no-frozen-lockfile
-        # playwright is a devDependency of @clawd-strike/client, not of the
-        # workspace root, so `pnpm exec` here resolves nothing and the job dies
-        # with `Command "playwright" not found`. ci.yml already scopes this
-        # correctly with --filter.
+
+      - run: pnpm install --frozen-lockfile
+
+      # playwright is a devDependency of @clawd-strike/client, not of the
+      # workspace root, so it must be run through the client filter.
       - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
-      - run: pnpm smoke:no-context
+
+      - name: Public agent smoke
+        run: pnpm smoke:public
+
+      # Vite copies public/skills.md into dist unchanged, so compare the source
+      # file directly instead of building.
+      - name: Deployed skills.md matches the repo
+        if: ${{ !cancelled() }}
+        run: pnpm verify:skills
         env:
-          BASE_URL: https://clawd-strike.vercel.app/
+          LOCAL_SKILLS_PATH: public/skills.md
+
+      - name: Upload diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: public-agent-smoke-${{ github.run_id }}
+          path: artifacts/playwright/no-context-agent-smoke/
+          if-no-files-found: ignore
+          retention-days: 14

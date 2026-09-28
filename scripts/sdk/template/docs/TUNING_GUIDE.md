@@ -37,4 +37,4 @@ This describes current code, not the canonical promotion policy. It can reward s
 - Preserve the actual policy, cadence, completed-attempt count, and observed hit/kill evidence with each result.
 - Change one or two implemented parameters at a time when inspecting the legacy policy.
 - Treat zero-hit runs as acquisition failures; longer survival alone does not resolve them.
-- A canonical learning run needs a compatible SDK implementation. Do not change game balance, public observations, validation, or map geometry to compensate for this snapshot's controller limitations.
+- A canonical learning run needs a compatible SDK implementation. Do not change game balance, public observations, or validation to compensate for this snapshot's controller limitations.

@@ -1,6 +1,4 @@
-import fs from "node:fs";
-import path from "node:path";
-
+import { loadEnv } from "./lib/envFile.js";
 import { exportPostgresAudit } from "./lib/postgresAuditExport.js";
 
 type CliOptions = {
@@ -10,7 +8,7 @@ type CliOptions = {
 
 function printUsage(): void {
   console.log(`Usage:
-  pnpm export:postgres-audit -- [--env-file .env.production.local] [--out /Users/dimitri/Desktop/clawd-strike-postgres-audit-2026-03-08.xlsx]
+  pnpm db:export -- [--env-file .env.production.local] [--out /Users/dimitri/Desktop/clawd-strike-postgres-audit-2026-03-08.xlsx]
 
 Options:
   --env-file <path>  Load environment variables from a local env file before exporting.
@@ -65,30 +63,9 @@ function parseArgs(argv: readonly string[]): CliOptions {
   return options;
 }
 
-function loadEnvFile(filePath: string, env: NodeJS.ProcessEnv): void {
-  const absolutePath = path.resolve(filePath);
-  const raw = fs.readFileSync(absolutePath, "utf8");
-  for (const line of raw.split(/\r?\n/)) {
-    const trimmed = line.trim();
-    if (trimmed.length === 0 || trimmed.startsWith("#")) continue;
-    const separatorIndex = trimmed.indexOf("=");
-    if (separatorIndex <= 0) continue;
-
-    const key = trimmed.slice(0, separatorIndex).trim();
-    const value = trimmed.slice(separatorIndex + 1).replace(/^"(.*)"$/, "$1");
-    env[key] = value;
-  }
-}
-
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
-  const env = {
-    ...process.env,
-  } as NodeJS.ProcessEnv;
-
-  if (options.envFile) {
-    loadEnvFile(options.envFile, env);
-  }
+  const env = loadEnv(options.envFile);
 
   const result = await exportPostgresAudit({
     env,
@@ -101,8 +78,8 @@ async function main(): Promise<void> {
 main().catch((error) => {
   console.error(
     error instanceof Error
-      ? `[export:postgres-audit] ${error.message}`
-      : "[export:postgres-audit] failed",
+      ? `[db:export] ${error.message}`
+      : "[db:export] failed",
   );
   process.exitCode = 1;
 });

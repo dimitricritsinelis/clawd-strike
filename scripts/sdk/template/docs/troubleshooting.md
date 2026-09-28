@@ -32,4 +32,4 @@ Hidden tabs may be throttled. The SDK helper uses `advanceTime` when available a
 
 ## The selected policy still has no hits or kills
 
-Review completed attempts and public hit/kill evidence. The legacy comparator can select longer survival without acquisition progress. Record that limitation instead of calling the selection a canonical bootstrap success. Any SDK runtime migration is separate from map or Blender asset development.
+Review completed attempts and public hit/kill evidence. The legacy comparator can select longer survival without acquisition progress. Record that limitation instead of calling the selection a canonical bootstrap success.

@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
-import { MAP_SOURCE } from "../apps/client/scripts/lib/mapPaths.mjs";
+import { MAP_SOURCE } from "../../apps/client/scripts/lib/mapPaths.mjs";
 
 function glb(label) {
   const json = Buffer.from(JSON.stringify({ asset: { version: "2.0", generator: label }, materials: [] }));
@@ -67,14 +67,14 @@ function fixture(t, kind = "section") {
   write(manifest, JSON.stringify({ models: [{ id: "other-unit", url: "other/file.glb" }] }, null, 2) + "\n");
   write(source, glb("first"));
   write(packageFile, JSON.stringify(pkg));
-  write("scripts/placeholder", "");
-  copyFileSync(new URL("./apply-facade-package.mjs", import.meta.url), path.join(root, "scripts/apply-facade-package.mjs"));
-  mkdirSync(path.join(root, "scripts/lib"), { recursive: true });
-  copyFileSync(new URL("./lib/glbTextures.mjs", import.meta.url), path.join(root, "scripts/lib/glbTextures.mjs"));
+  write("scripts/assets/placeholder", "");
+  copyFileSync(new URL("./apply-facade-package.mjs", import.meta.url), path.join(root, "scripts/assets/apply-facade-package.mjs"));
+  mkdirSync(path.join(root, "scripts/assets/lib"), { recursive: true });
+  copyFileSync(new URL("./lib/glbTextures.mjs", import.meta.url), path.join(root, "scripts/assets/lib/glbTextures.mjs"));
   mkdirSync(path.join(root, "apps/client/scripts/lib"), { recursive: true });
-  copyFileSync(new URL("../apps/client/scripts/lib/mapPaths.mjs", import.meta.url), path.join(root, "apps/client/scripts/lib/mapPaths.mjs"));
+  copyFileSync(new URL("../../apps/client/scripts/lib/mapPaths.mjs", import.meta.url), path.join(root, "apps/client/scripts/lib/mapPaths.mjs"));
   const run = (action, succeeds = true) => {
-    const result = spawnSync(process.execPath, [path.join(root, "scripts/apply-facade-package.mjs"), action, "unit-test"], { encoding: "utf8" });
+    const result = spawnSync(process.execPath, [path.join(root, "scripts/assets/apply-facade-package.mjs"), action, "unit-test"], { encoding: "utf8" });
     assert.equal(result.status === 0, succeeds, result.stderr || result.stdout);
     return result;
   };

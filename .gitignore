@@ -1,12 +1,7 @@
 # Dependencies and build output
 node_modules/
 dist/
-.vite/
-**/.cache/
-*.tsbuildinfo
-coverage/
 **/test-results/
-**/playwright-report/
 
 # Local evidence and scratch space. Captures, review renders and logs go here,
 # never into the repository.
@@ -27,11 +22,9 @@ artifacts/
 * [0-9]
 * [0-9].*
 
-# Python bytecode and Blender backups, logs and temporary export folders
+# Python bytecode, Blender backups and interrupted temporary export folders
 __pycache__/
 *.blend[0-9]
-assets/source/**/render.log
-assets/source/**/worker.log
 .b04-export-*/
 
 # Blender build outputs. The build scripts, package.json and receiver JSON in

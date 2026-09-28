@@ -5,5 +5,3 @@ apps/client/public/maps/** linguist-generated=true
 *.gltf -text
 apps/client/assets-src/maps/** text eol=lf
 apps/client/public/maps/** text eol=lf
-
-*.pdf binary

@@ -4,7 +4,6 @@
 .claude
 .codex
 .env*
-.DS_Store
 artifacts
 output
 tmp

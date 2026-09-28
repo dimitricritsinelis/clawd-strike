@@ -1212,7 +1212,7 @@ function getRuntimeModelCatalog() {
 }
 const runtimeModelMaterialIds = new Map();
 
-/** Free render-only GLBs placed by area packages (scripts/apply-facade-package.mjs `placements`). */
+/** Free render-only GLBs placed by area packages (scripts/assets/apply-facade-package.mjs `placements`). */
 function deriveAuthoredPlacements(spec) {
   const source = requireArrayWhenPresent(spec, "authored_placements");
   if (typeof source === "undefined" || source.length === 0) return undefined;

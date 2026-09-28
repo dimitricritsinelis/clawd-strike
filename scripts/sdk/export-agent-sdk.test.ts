@@ -10,11 +10,11 @@ import {
   PUBLIC_AGENT_CANONICAL_SKILLS_URL,
   PUBLIC_AGENT_COMPANION_REPO_NAME,
   PUBLIC_AGENT_COMPANION_REPO_URL,
-} from "../apps/shared/publicAgentContract";
+} from "../../apps/shared/publicAgentContract";
 import { exportAgentSdkRepo } from "./lib/agentSdkExport";
 
 const execFile = promisify(execFileCallback);
-const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SKILLS_SOURCE_PATH = path.join(REPO_ROOT, "apps/client/public/skills.md");
 const EXPECTED_MANAGED_PATHS = [
   ".github/workflows/public-agent-smoke.yml",

@@ -5,12 +5,13 @@ import { fileURLToPath } from "node:url";
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const clientRoot = path.resolve(scriptDir, "..");
-// src/shared holds cross-surface helpers (host/client detection) used by both
-// the runtime and the loading screen; its tests must run too or they silently
-// never execute.
+// Every *.test.ts under these roots runs; a test outside them never executes.
+// src/shared holds cross-surface helpers (host/client detection) used by the
+// runtime and the loading screen; apps/shared holds client/server contracts.
 const testRoots = [
   path.join(clientRoot, "src/runtime"),
   path.join(clientRoot, "src/shared"),
+  path.resolve(clientRoot, "../shared"),
 ];
 
 async function collectTests(directory) {
@@ -30,7 +31,7 @@ const testFiles = collected
   .sort();
 
 if (testFiles.length === 0) {
-  throw new Error("No runtime TypeScript tests were found.");
+  throw new Error("No unit tests were found.");
 }
 
 const child = spawn(
@@ -50,7 +51,7 @@ child.on("error", (error) => {
 
 child.on("exit", (code, signal) => {
   if (signal) {
-    console.error(`Runtime test process exited from signal ${signal}.`);
+    console.error(`Unit test process exited from signal ${signal}.`);
     process.exitCode = 1;
     return;
   }

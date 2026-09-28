@@ -2,9 +2,9 @@
 // Integrate or revert one area's facade package. This script is the only writer
 // of map_spec.json and the facades manifest; area builds hand over a package.
 //
-//   node scripts/apply-facade-package.mjs apply  <unit>   reads assets/source/<unit>/package.json
-//   node scripts/apply-facade-package.mjs revert <unit>   restores the files from before its latest apply
-//   node scripts/apply-facade-package.mjs pack-textures   moves images still embedded in installed GLBs into
+//   node scripts/assets/apply-facade-package.mjs apply  <unit>   reads assets/source/<unit>/package.json
+//   node scripts/assets/apply-facade-package.mjs revert <unit>   restores the files from before its latest apply
+//   node scripts/assets/apply-facade-package.mjs pack-textures   moves images still embedded in installed GLBs into
 //                                                         the shared textures/ directory (no checkpoint; lossless)
 //
 // Installed GLBs reference their images from facades/textures/<sha256>.<ext>, one file per distinct image, so a
@@ -23,9 +23,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, w
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { externalizeGlbImages } from "./lib/glbTextures.mjs";
-import { MAP_SOURCE } from "../apps/client/scripts/lib/mapPaths.mjs";
+import { MAP_SOURCE } from "../../apps/client/scripts/lib/mapPaths.mjs";
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const SPEC = path.join(ROOT, MAP_SOURCE.spec);
 const FACADES = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/facades");
 const MANIFEST = path.join(FACADES, "models.json");
@@ -34,7 +34,7 @@ const TEXTURE_DIR = "textures";
 const TEXTURE_URI_PREFIX = `../${TEXTURE_DIR}/`;
 const [action, unit] = process.argv.slice(2);
 if (action !== "pack-textures" && (!["apply", "revert"].includes(action) || !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(unit ?? ""))) {
-  console.error("usage: node scripts/apply-facade-package.mjs apply|revert <unit> | pack-textures");
+  console.error("usage: node scripts/assets/apply-facade-package.mjs apply|revert <unit> | pack-textures");
   process.exit(2);
 }
 const checkpoint = path.join(ROOT, "artifacts/facade-packages", `${unit}.json`);
