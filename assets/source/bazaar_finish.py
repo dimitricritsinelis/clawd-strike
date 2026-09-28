@@ -20,7 +20,7 @@ PIGMENTS = {
 }
 
 FLOOR_PIGMENTS = {
-    'bz04_court_limestone_flags_01': '#d8c4a5',
+    'bz04_court_limestone_flags_01': '#ffffff',
     'bz04_large_sandstone_blocks_01': '#d4b68f',
 }
 
@@ -82,9 +82,6 @@ REPAIRS = {
     'unit-rug-gate': [('R_W_MERCHANT', 71.50, .60, .60, .75)],
     'unit-spawn-b-courtyard': [('B_N_POTTER', 17.45, .40, .50, .60), ('B_E_PACKER', 88.6, .95, .50, .55)],
     'unit-service-south': [('ss-e', 19.75, .48, .50, .82), ('ss-w', 12.2, .60, 1.10, .64)],
-    'unit-caravan-court': [('cc-es-part-2', 32.65, .85, .72, .65), ('cc-s', 12.1, .65, .8, .8)],
-    'unit-service-north': [('sn-w', 53.65, .45, .55, .92), ('sn-w', 65.5, .65, .80, .58)],
-    'unit-tea-ramp': [('tr-e', 49.0, .85, .64, .75)],
     'unit-tea-terrace': [('tt-e', 63.65, 4.62, .42, .65)],
     'unit-dyers-alley': [('DA_E_WORK', 16.4, .65, .64, .7), ('da-house', 28.5, .65, .70, .55)],
     'unit-covered-souk': [('cs-e', 32.65, .55, .72, .7), ('cs-ws', 32.6, .7, .64, .65)],

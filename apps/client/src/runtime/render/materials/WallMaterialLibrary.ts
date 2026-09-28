@@ -354,7 +354,7 @@ export class WallMaterialLibrary {
         resolvedQuality: resolution.quality,
         urls: [maps.albedo, maps.normal, maps.arm].map((url) => this.resolveTextureUrl(url)),
       });
-      enqueueTexture(maps.albedo, SRGBColorSpace, 8);
+      enqueueTexture(maps.albedo, SRGBColorSpace, 16);
       // Normal and ARM sample at the same anisotropy as albedo. They were left at
       // 1 while albedo ran at 8, which meant every receding surface - the walls
       // down a street, the whole ground plane - had its relief blurred flat by
@@ -363,8 +363,8 @@ export class WallMaterialLibrary {
       // the 19 area primary cameras, typically by 30-50%. Raising these lifts it
       // on every camera at no tonal cost (Fountain Court +8.2%, Spawn-A +6.3%,
       // canopy +2.8%, mean luminance unchanged to the integer everywhere).
-      enqueueTexture(maps.normal, NoColorSpace, 8);
-      enqueueTexture(maps.arm, NoColorSpace, 8);
+      enqueueTexture(maps.normal, NoColorSpace, 16);
+      enqueueTexture(maps.arm, NoColorSpace, 16);
     }
 
     await Promise.all(preloadTasks);
@@ -390,6 +390,18 @@ export class WallMaterialLibrary {
     return material;
   }
 
+  /** Loads (or reuses) a material's albedo/normal/ARM textures without creating a material. */
+  loadTextureSet(materialId: string, quality: WallTextureQuality): Promise<{ albedo: Texture; normal: Texture; arm: Texture }> {
+    const entry = this.materialsById.get(materialId);
+    if (!entry) return Promise.reject(new Error(`Wall material '${materialId}' not found`));
+    const maps = resolveWallTextureSetForQuality(entry.textures, quality).textures;
+    return Promise.all([
+      this.loadTexture(maps.albedo, SRGBColorSpace, 16),
+      this.loadTexture(maps.normal, NoColorSpace, 16),
+      this.loadTexture(maps.arm, NoColorSpace, 16),
+    ]).then(([albedo, normal, arm]) => ({ albedo, normal, arm }));
+  }
+
   private resolveTextureUrl(relativeOrAbsoluteUrl: string): string {
     return new URL(relativeOrAbsoluteUrl, this.baseDirUrl).toString();
   }
@@ -401,9 +413,9 @@ export class WallMaterialLibrary {
   ): Promise<void> {
     try {
       const [albedoTex, normalTex, armTex] = await Promise.all([
-        this.loadTexture(maps.albedo, SRGBColorSpace, 8),
-        this.loadTexture(maps.normal, NoColorSpace, 1),
-        this.loadTexture(maps.arm, NoColorSpace, 1),
+        this.loadTexture(maps.albedo, SRGBColorSpace, 16),
+        this.loadTexture(maps.normal, NoColorSpace, 16),
+        this.loadTexture(maps.arm, NoColorSpace, 16),
       ]);
 
       this.assignMaps(material, entry, albedoTex, normalTex, armTex);
@@ -450,7 +462,7 @@ export class WallMaterialLibrary {
     material.needsUpdate = true;
   }
 
-  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 8): Promise<Texture> {
+  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 16): Promise<Texture> {
     const resolvedUrl = this.resolveTextureUrl(url);
     let promise = WallMaterialLibrary.textureCache.get(resolvedUrl);
     if (!promise) {

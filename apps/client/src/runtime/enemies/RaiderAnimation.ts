@@ -12,6 +12,90 @@ const RUN_STRIDE_M = 2;
 const STRAFE_WALK_STRIDE_M = .6;
 const STRAFE_RUN_STRIDE_M = 1.2;
 
+const DEG = Math.PI / 180;
+
+// Hit flinch: an additive chest rotation (rig) or root tilt (non-rigged
+// fallback), driven by an underdamped spring so it snaps and settles in ~0.1 s.
+export const FLINCH_OMEGA = 30;
+export const FLINCH_ZETA = .5;
+/** Lean along the bullet's travel direction (the chest pitches away from the shooter). */
+export const FLINCH_PITCH_RAD = 6 * DEG;
+/** Twist about the vertical axis, turning the chest away from the shooter. */
+export const FLINCH_YAW_RAD = 4 * DEG;
+/** Head thrown back along the shot on a killing headshot. */
+export const HEADSHOT_HEAD_SNAP_RAD = 15 * DEG;
+const FLINCH_MAX = 1.5;
+
+const FLINCH_DAMPED_OMEGA = FLINCH_OMEGA * Math.sqrt(1 - FLINCH_ZETA * FLINCH_ZETA);
+/** Time of the first peak after a velocity kick from rest. */
+export const FLINCH_PEAK_S = Math.atan2(FLINCH_DAMPED_OMEGA, FLINCH_ZETA * FLINCH_OMEGA) / FLINCH_DAMPED_OMEGA;
+// Kick velocity that makes the first peak exactly 1 (full pitch/yaw amplitude).
+const FLINCH_KICK_VELOCITY = FLINCH_DAMPED_OMEGA
+  / (Math.exp(-FLINCH_ZETA * FLINCH_OMEGA * FLINCH_PEAK_S) * Math.sin(FLINCH_DAMPED_OMEGA * FLINCH_PEAK_S));
+
+/**
+ * Normalized flinch amount (1 = full 6 deg lean / 4 deg twist at the first
+ * peak). Stepped analytically, so it is exact and stable at any frame rate.
+ */
+export class FlinchSpring {
+  value = 0;
+  velocity = 0;
+
+  kick(): void {
+    this.velocity += FLINCH_KICK_VELOCITY;
+  }
+
+  step(deltaSeconds: number): void {
+    if (!Number.isFinite(deltaSeconds) || deltaSeconds <= 0) return;
+    if (this.value === 0 && this.velocity === 0) return;
+    const w = FLINCH_OMEGA;
+    const zw = FLINCH_ZETA * w;
+    const wd = FLINCH_DAMPED_OMEGA;
+    const decay = Math.exp(-zw * deltaSeconds);
+    const c = Math.cos(wd * deltaSeconds);
+    const s = Math.sin(wd * deltaSeconds);
+    const x = this.value;
+    const v = this.velocity;
+    this.value = decay * (x * c + ((v + zw * x) / wd) * s);
+    this.velocity = decay * (v * c - ((zw * v + w * w * x) / wd) * s);
+    if (Math.abs(this.value) < 1e-5 && Math.abs(this.velocity) < 1e-3) this.value = this.velocity = 0;
+  }
+
+  /** Clamped so rapid follow-up kicks cannot fold the torso. */
+  amount(): number {
+    return Math.max(-FLINCH_MAX, Math.min(FLINCH_MAX, this.value));
+  }
+
+  reset(): void {
+    this.value = this.velocity = 0;
+  }
+}
+
+/**
+ * World-space reaction frame for a bullet travelling along (dirX, dirZ) into a
+ * character facing `yaw` (forward = (-sin yaw, 0, -cos yaw)). The lean axis
+ * is up x dir, so a positive rotation tips the body along the shot, away from
+ * the shooter. The twist sign turns the chest away from the shooter; a
+ * head-on shot uses the entry point's lateral offset, else `fallbackTwist`.
+ * Returns null when the direction has no horizontal component.
+ */
+export function resolveHitReactionFrame(
+  yaw: number, dirX: number, dirZ: number, fallbackTwist: 1 | -1,
+  hitOffsetX = 0, hitOffsetZ = 0,
+): { leanAxisX: number; leanAxisZ: number; twistSign: 1 | -1 } | null {
+  const length = Math.hypot(dirX, dirZ);
+  if (!(length > 1e-6)) return null;
+  const dx = dirX / length;
+  const dz = dirZ / length;
+  const forwardX = -Math.sin(yaw);
+  const forwardZ = -Math.cos(yaw);
+  const turn = forwardZ * dx - forwardX * dz;
+  const torque = hitOffsetZ * dx - hitOffsetX * dz;
+  const twistSign: 1 | -1 = Math.abs(turn) > .1 ? (turn > 0 ? 1 : -1)
+    : Math.abs(torque) > 1e-4 ? (torque > 0 ? 1 : -1) : fallbackTwist;
+  return { leanAxisX: dz, leanAxisZ: -dx, twistSign };
+}
+
 /** Movement is measured after collision and overlap resolution, in metres. */
 export class RaiderMotion {
   phase = 0;
@@ -100,6 +184,14 @@ export class RaiderAnimation {
   private readonly legs: Leg[];
   private readonly chest: Bone;
   private readonly pelvis: Bone;
+  private readonly head: Bone | null;
+  private readonly flinch = new FlinchSpring();
+  private readonly flinchLeanAxis = new Vector3(1, 0, 0);
+  private flinchTwistSign: 1 | -1 = 1;
+  /** Dead: no further sampling, IK or procedural motion; the last pose holds. */
+  private frozen = false;
+  private readonly headRestRotation = new Quaternion();
+  private headSnapped = false;
   private readonly sampledPelvisPosition = new Vector3();
   private readonly directionWeights = { Forward: 1, Backward: 0, Left: 0, Right: 0 };
   private runBlend = 0;
@@ -144,6 +236,8 @@ export class RaiderAnimation {
     };
     this.chest = bone("Chest");
     this.pelvis = bone("Pelvis");
+    const head = model.getObjectByName("Head");
+    this.head = head instanceof Bone ? head : null;
     this.sampledPelvisPosition.copy(this.pelvis.position);
     this.high = model.getObjectByName("Raider_High")!;
     this.low = model.getObjectByName("Raider_Low")!;
@@ -190,6 +284,13 @@ export class RaiderAnimation {
   }
 
   reset(): void {
+    this.frozen = false;
+    this.shadow.visible = true;
+    this.flinch.reset();
+    // The head is not in the sampled set, and the mixer skips unchanged
+    // writes, so undo a death snap explicitly before sampling.
+    if (this.head && this.headSnapped) this.head.quaternion.copy(this.headRestRotation);
+    this.headSnapped = false;
     this.motion.reset();
     this.shotAge = 1;
     for (const leg of this.legs) { leg.planted = leg.rollingPlant = false; leg.releaseOffset.set(0, 0, 0); }
@@ -198,8 +299,48 @@ export class RaiderAnimation {
 
   shoot(): void { this.shotAge = 0; }
 
+  /** Flinch along a world lean axis (see resolveHitReactionFrame). */
+  hit(leanAxisX: number, leanAxisZ: number, twistSign: 1 | -1): void {
+    if (this.frozen) return;
+    this.flinchLeanAxis.set(leanAxisX, 0, leanAxisZ);
+    if (this.flinchLeanAxis.lengthSq() < 1e-12) return;
+    this.flinchLeanAxis.normalize();
+    this.flinchTwistSign = twistSign;
+    this.flinch.kick();
+  }
+
+  /**
+   * Death: stop sampling the mixer (the pose freezes where the killing shot
+   * found it; the root fall is the visual's job). A headshot snaps the head
+   * back 15 deg about the world lean axis. Actions are not stopped, because
+   * deactivating a mixer binding restores the bind pose.
+   */
+  die(leanAxisX: number, leanAxisZ: number, headshot: boolean): void {
+    if (this.frozen) return;
+    this.frozen = true;
+    // The contact shadow is a child of the model, so the root fall would tip
+    // it on edge at the feet; update() no longer runs to re-ground it.
+    this.shadow.visible = false;
+    if (!headshot || !this.head) return;
+    this.axis.set(leanAxisX, 0, leanAxisZ);
+    if (this.axis.lengthSq() < 1e-12) return;
+    this.axis.normalize();
+    this.headRestRotation.copy(this.head.quaternion);
+    this.headSnapped = true;
+    this.head.getWorldQuaternion(this.worldRotation).invert();
+    this.axis.applyQuaternion(this.worldRotation);
+    this.head.rotateOnAxis(this.axis, HEADSHOT_HEAD_SNAP_RAD);
+    this.head.updateWorldMatrix(false, true);
+  }
+
+  isFrozen(): boolean { return this.frozen; }
+
+  /** Current normalized flinch amount (tests and debug). */
+  getFlinchAmount(): number { return this.flinch.amount(); }
+
   update(position: Vector3, yaw: number, dt: number, grounded: boolean,
     surfaces?: TraversalSurfaceResolver, viewerDistanceM = 0): void {
+    if (this.frozen) return;
     const wasIdle = this.motion.moveWeight < .01;
     if (!this.motion.update(position, yaw, dt, grounded)) return;
     // Hysteresis avoids silhouette flicker while crossing the 12 m LOD boundary.
@@ -219,6 +360,16 @@ export class RaiderAnimation {
     this.chest.getWorldQuaternion(this.worldRotation).invert();
     this.axis.applyQuaternion(this.worldRotation);
     this.chest.rotateOnAxis(this.axis, recoil);
+    // Hit flinch, additive on top of the sampled clip and recoil.
+    this.flinch.step(Math.min(dt, .1));
+    const flinch = this.flinch.amount();
+    if (flinch !== 0) {
+      this.chest.getWorldQuaternion(this.worldRotation).invert();
+      this.axis.copy(this.flinchLeanAxis).applyQuaternion(this.worldRotation);
+      this.chest.rotateOnAxis(this.axis, flinch * FLINCH_PITCH_RAD);
+      this.axis.copy(UP).applyQuaternion(this.worldRotation);
+      this.chest.rotateOnAxis(this.axis, flinch * FLINCH_YAW_RAD * this.flinchTwistSign);
+    }
     this.chest.updateWorldMatrix(false, true);
     this.model.getWorldQuaternion(this.worldRotation);
     this.forward.set(1, 0, 0).applyQuaternion(this.worldRotation);

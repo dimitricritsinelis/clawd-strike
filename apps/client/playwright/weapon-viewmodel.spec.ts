@@ -1,7 +1,135 @@
 import { expect, test } from "@playwright/test";
 import type { Bone, Object3D, Skeleton, SkinnedMesh } from "three";
 
-test("Blender AK grips the magazine through reload and restores its approved idle on cancellation", async ({ page }) => {
+/**
+ * Installs window.__gloveProbe in the page. It counts glove vertices inside
+ * the rifle and magazine meshes with the generalized winding number, which
+ * stays reliable on those meshes' open and non-manifold edges (the magazine's
+ * open top, the receiver's overlapping parts) where ray parity or a convex
+ * hull does not. Distant triangle cells use the far-field dipole term. Each
+ * inside vertex reports its depth: the distance to the nearest surface.
+ */
+async function installGloveProbe(): Promise<void> {
+  const threeUrl = "/node_modules/.vite/deps/three.js";
+  const { Triangle, Vector3 } = await import(threeUrl);
+  const CELL = .02;
+  type Cell = { tris: number[]; n: number[]; c: number[]; r: number; min: number[]; max: number[] };
+  type Solid = { mesh: import("three").Mesh; tri: Float64Array; cells: Cell[]; min: number[]; max: number[] };
+  const solids = (root: import("three").Object3D): Solid[] => {
+    const list: Solid[] = [];
+    root.traverse((object) => {
+      const mesh = object as import("three").Mesh;
+      if (!mesh.isMesh || (mesh as import("three").SkinnedMesh).isSkinnedMesh) return;
+      const position = mesh.geometry.getAttribute("position"), index = mesh.geometry.getIndex();
+      const count = index?.count ?? position.count;
+      const tri = new Float64Array(count * 3);
+      for (let i = 0; i < count; i++) {
+        const v = index ? index.getX(i) : i;
+        tri[i * 3] = position.getX(v); tri[i * 3 + 1] = position.getY(v); tri[i * 3 + 2] = position.getZ(v);
+      }
+      const byCell = new Map<string, number[]>();
+      const min = [Infinity, Infinity, Infinity], max = [-Infinity, -Infinity, -Infinity];
+      for (let t = 0; t < tri.length; t += 9) {
+        const key = [0, 1, 2].map((axis) => Math.floor((tri[t + axis]! + tri[t + 3 + axis]! + tri[t + 6 + axis]!) / 3 / CELL)).join();
+        (byCell.get(key) ?? byCell.set(key, []).get(key)!).push(t);
+        for (let k = 0; k < 9; k++) { min[k % 3] = Math.min(min[k % 3]!, tri[t + k]!); max[k % 3] = Math.max(max[k % 3]!, tri[t + k]!); }
+      }
+      const cells = [...byCell.values()].map((tris) => {
+        const n = [0, 0, 0], c = [0, 0, 0], lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+        let area = 0;
+        for (const t of tris) {
+          const e1 = [0, 1, 2].map((axis) => tri[t + 3 + axis]! - tri[t + axis]!), e2 = [0, 1, 2].map((axis) => tri[t + 6 + axis]! - tri[t + axis]!);
+          const cross = [e1[1]! * e2[2]! - e1[2]! * e2[1]!, e1[2]! * e2[0]! - e1[0]! * e2[2]!, e1[0]! * e2[1]! - e1[1]! * e2[0]!];
+          const a = Math.hypot(cross[0]!, cross[1]!, cross[2]!) / 2;
+          for (let axis = 0; axis < 3; axis++) {
+            n[axis] = n[axis]! + cross[axis]! / 2;
+            c[axis] = c[axis]! + a * (tri[t + axis]! + tri[t + 3 + axis]! + tri[t + 6 + axis]!) / 3;
+            for (const k of [0, 3, 6]) { lo[axis] = Math.min(lo[axis]!, tri[t + k + axis]!); hi[axis] = Math.max(hi[axis]!, tri[t + k + axis]!); }
+          }
+          area += a;
+        }
+        const center = area > 0 ? c.map((v) => v / area) : lo.map((v, axis) => (v + hi[axis]!) / 2);
+        let r = 0;
+        for (const t of tris) for (const k of [0, 3, 6]) r = Math.max(r, Math.hypot(tri[t + k]! - center[0]!, tri[t + k + 1]! - center[1]!, tri[t + k + 2]! - center[2]!));
+        return { tris, n, c: center, r, min: lo, max: hi };
+      });
+      list.push({ mesh, tri, cells, min, max });
+    });
+    return list;
+  };
+  const solidAngle = (tri: Float64Array, t: number, x: number, y: number, z: number) => {
+    const ax = tri[t]! - x, ay = tri[t + 1]! - y, az = tri[t + 2]! - z;
+    const bx = tri[t + 3]! - x, by = tri[t + 4]! - y, bz = tri[t + 5]! - z;
+    const cx = tri[t + 6]! - x, cy = tri[t + 7]! - y, cz = tri[t + 8]! - z;
+    const la = Math.hypot(ax, ay, az), lb = Math.hypot(bx, by, bz), lc = Math.hypot(cx, cy, cz);
+    const det = ax * (by * cz - bz * cy) - ay * (bx * cz - bz * cx) + az * (bx * cy - by * cx);
+    const div = la * lb * lc + (ax * bx + ay * by + az * bz) * lc + (ax * cx + ay * cy + az * cz) * lb + (bx * cx + by * cy + bz * cz) * la;
+    return 2 * Math.atan2(det, div);
+  };
+  const winding = (solid: Solid, x: number, y: number, z: number) => {
+    let omega = 0;
+    for (const cell of solid.cells) {
+      const dx = cell.c[0]! - x, dy = cell.c[1]! - y, dz = cell.c[2]! - z, d = Math.hypot(dx, dy, dz);
+      if (d > 3 * cell.r) omega += (cell.n[0]! * dx + cell.n[1]! * dy + cell.n[2]! * dz) / (d * d * d);
+      else for (const t of cell.tris) omega += solidAngle(solid.tri, t, x, y, z);
+    }
+    return omega / (4 * Math.PI);
+  };
+  const triangle = new Triangle(), closest = new Vector3();
+  const depthOf = (solid: Solid, point: import("three").Vector3) => {
+    const order = solid.cells.map((cell) => {
+      const gap = [0, 1, 2].map((axis) => Math.max(cell.min[axis]! - point.getComponent(axis), 0, point.getComponent(axis) - cell.max[axis]!));
+      return { cell, bound: Math.hypot(gap[0]!, gap[1]!, gap[2]!) };
+    }).sort((a, b) => a.bound - b.bound);
+    let best = Infinity;
+    for (const { cell, bound } of order) {
+      if (bound >= best) break;
+      for (const t of cell.tris) {
+        triangle.a.fromArray(solid.tri, t); triangle.b.fromArray(solid.tri, t + 3); triangle.c.fromArray(solid.tri, t + 6);
+        best = Math.min(best, triangle.closestPointToPoint(point, closest).distanceTo(point));
+      }
+    }
+    return best;
+  };
+  /** Glove vertices inside the shown solids: how many, the deepest (m) and where. */
+  const penetration = (list: Solid[], gloves: import("three").SkinnedMesh[]) => {
+    let count = 0, depth = 0, where = "";
+    const point = new Vector3(), scale = new Vector3();
+    for (const solid of list) {
+      if (!solid.mesh.visible || solid.mesh.getWorldScale(scale).x < .01) continue;
+      const inverse = solid.mesh.matrixWorld.clone().invert();
+      for (const glove of gloves) {
+        const vertices = glove.geometry.getAttribute("position").count;
+        for (let i = 0; i < vertices; i++) {
+          glove.getVertexPosition(i, point).applyMatrix4(glove.matrixWorld).applyMatrix4(inverse);
+          if (point.x < solid.min[0]! || point.y < solid.min[1]! || point.z < solid.min[2]!
+            || point.x > solid.max[0]! || point.y > solid.max[1]! || point.z > solid.max[2]!) continue;
+          if (Math.abs(winding(solid, point.x, point.y, point.z)) < .5) continue;
+          count++;
+          const d = depthOf(solid, point);
+          if (d > depth) { depth = d; where = `${glove.name}#${i} in ${solid.mesh.name}`; }
+        }
+      }
+    }
+    return { count, depth, where };
+  };
+  /** Distance (solid-local units, i.e. rig metres) from a world point to the nearest shown solid's surface. */
+  const nearest = (list: Solid[], world: import("three").Vector3) => {
+    let best = Infinity;
+    const scale = new Vector3();
+    for (const solid of list) {
+      if (!solid.mesh.visible || solid.mesh.getWorldScale(scale).x < .01) continue;
+      best = Math.min(best, depthOf(solid, world.clone().applyMatrix4(solid.mesh.matrixWorld.clone().invert())));
+    }
+    return best;
+  };
+  (window as unknown as { __gloveProbe: unknown }).__gloveProbe = { solids, penetration, nearest };
+}
+
+/** Glove vertices may sit this far inside a magazine: cloth resting on its ribs, not a finger through it. */
+const SHALLOW_CONTACT_M = .001;
+
+test("AK viewmodel: ready grip, firing, and the magazine-only reload on the shared marks", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("**/weapon-viewmodel-test", (route) => route.fulfill({
@@ -11,45 +139,32 @@ test("Blender AK grips the magazine through reload and restores its approved idl
   const result = await page.evaluate(async () => {
     const moduleUrl = "/src/runtime/weapons/Ak47AnimatedViewModel.ts";
     const { createAk47ViewModel } = await import(moduleUrl);
+    const marksUrl = "/src/runtime/weapons/ak47ReloadMarks.ts";
+    const { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } = await import(marksUrl);
     const threeUrl = "/node_modules/.vite/deps/three.js";
-    const { Triangle, Euler, Raycaster, Vector2, Vector3 } = await import(threeUrl);
-    const convexUrl = "/node_modules/three/examples/jsm/geometries/ConvexGeometry.js";
-    const { ConvexGeometry } = await import(convexUrl);
-    const vm = createAk47ViewModel({ vmDebug: false, search: "?weapon=next" });
+    const { Triangle, Vector3 } = await import(threeUrl);
+    const provenance = await (await fetch("/assets/models/weapons/ak47-next/provenance.json")).json();
+    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
     await vm.load();
     vm.setAspect(16 / 9);
     const camera = vm.viewModelCamera.clone(false);
     camera.rotation.set(0, 0, 0);
     vm.updateFromMainCamera(camera, 1 / 60);
     const scene = vm.viewModelScene;
-    // Sample the see-through wedge from the reported viewport. These rays
-    // must hit the rendered glove, not contact markers or the rifle behind it.
-    vm.setAspect(1971 / 1123);
-    const gloveSurfaces = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].map((name) => scene.getObjectByName(name));
-    const ray = new Raycaster();
-    for (const [x, y] of [[1299, 777], [1306, 782], [1316, 786]]) {
-      ray.setFromCamera(new Vector2(x / 1971 * 2 - 1, 1 - y / 1123 * 2), vm.viewModelCamera);
-      if (ray.intersectObjects(gloveSurfaces, false).length === 0) {
-        throw new Error(`Visible gap in the thumb-to-palm glove web at ${x}, ${y}`);
-      }
-    }
-    vm.setAspect(16 / 9);
-    const bolt = scene.getObjectByName("Bolt");
-    const magazine = scene.getObjectByName("Magazine");
-    const hand = scene.getObjectByName("SupportHand");
-    const flash = scene.getObjectByName("MuzzleFlame");
-    const pose = scene.getObjectByName("AK47_AnimatedPose");
-    const rig = scene.getObjectByName("AK47_Rig");
-    const effects = scene.getObjectByName("AK47_Effects") as Object3D;
+    const get = (name: string) => scene.getObjectByName(name) as Object3D;
+    const bolt = get("Bolt"), magazine = get("Magazine"), spare = get("MagazineSpare"), hand = get("SupportHand");
+    const flash = get("MuzzleFlame"), pose = get("AK47_AnimatedPose"), rig = get("AK47_Rig");
+    const world = (object: Object3D) => object.getWorldPosition(new Vector3());
+    const worldScale = (object: Object3D) => object.getWorldScale(new Vector3()).x;
     const packageScale = {
       weapon: pose.scale.toArray(),
-      rig: rig.getWorldScale(rig.position.clone()).toArray(),
-      effects: effects.getWorldScale(effects.position.clone()).toArray(),
-      muzzle: flash.parent.getWorldScale(flash.position.clone()).toArray(),
+      rig: rig.getWorldScale(new Vector3()).toArray(),
+      muzzle: flash.parent!.getWorldScale(new Vector3()).toArray(),
     };
-    const gloveMaterial = (scene.getObjectByName("L_GloveAndForearm") as SkinnedMesh).material as import("three").MeshStandardMaterial;
-    const handPosition = () => rig.worldToLocal(hand.getWorldPosition(hand.position.clone())).toArray();
-    const handInMagazine = () => magazine.worldToLocal(hand.getWorldPosition(hand.position.clone())).toArray();
+    type Action = { getClip(): { name: string; duration: number }; getEffectiveWeight(): number };
+    const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
+    const clip = { name: reloadAction.getClip().name, duration: reloadAction.getClip().duration };
+    const gloveMaterial = (get("L_GloveAndForearm") as SkinnedMesh).material as import("three").MeshStandardMaterial;
     const surfaceGap = (root: Object3D, point: import("three").Vector3): number => {
       let gap = Infinity;
       root.traverse((object: Object3D) => {
@@ -68,25 +183,20 @@ test("Blender AK grips the magazine through reload and restores its approved idl
       });
       return gap;
     };
-    const rest = { bolt: bolt.position.x, magazine: magazine.position.toArray(), hand: handPosition() };
-    const contactPosition = (name: string) => {
-      const object = scene.getObjectByName(name) as Object3D;
-      return rig.worldToLocal(object.getWorldPosition(object.position.clone()));
-    };
-    const elbow = scene.getObjectByName("L_forearm") as Object3D;
-    const handScreen = hand.getWorldPosition(hand.position.clone()).project(vm.viewModelCamera);
-    const elbowScreen = elbow.getWorldPosition(elbow.position.clone()).project(vm.viewModelCamera);
+    const rigLocal = (object: Object3D) => rig.worldToLocal(world(object));
+    const rest = { bolt: bolt.position.x, magazine: magazine.position.toArray(), magazineScale: worldScale(magazine), hand: rigLocal(hand).toArray(), spareScale: worldScale(spare) };
+    const elbow = get("L_forearm");
+    const handScreen = world(hand).project(vm.viewModelCamera), elbowScreen = world(elbow).project(vm.viewModelCamera);
     // In the exported rig, negative Z is the rifle's left side; positive Z is right.
     const readyGrip = {
-      thumbSide: contactPosition("GripContact_thumb").z,
-      fingerSides: ["index", "middle", "ring", "pinky"].map((finger) => contactPosition("GripContact_f_" + finger).z),
-      // The wrist stays on the near side while the knuckles cross underneath
-      // the wood to the far side. Fingertip contact alone allowed a side pinch.
-      palmAcrossGun: contactPosition("L_f_middle01").z - contactPosition("SupportHand").z,
-      palmHeight: (contactPosition("L_f_middle01").y + contactPosition("SupportHand").y) / 2,
+      thumbSide: rigLocal(get("GripContact_thumb")).z,
+      fingerSides: ["index", "middle", "ring", "pinky"].map((finger) => rigLocal(get("GripContact_f_" + finger)).z),
+      palmAcrossGun: rigLocal(get("L_f_middle01")).z - rigLocal(hand).z,
+      palmHeight: (rigLocal(get("L_f_middle01")).y + rigLocal(hand).y) / 2,
       armSlope: Math.abs((handScreen.x - elbowScreen.x) * vm.viewModelCamera.aspect / (handScreen.y - elbowScreen.y)),
       elbowBelowHand: elbowScreen.y < handScreen.y,
     };
+    const foreEndFingerGaps = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"].map((finger) => surfaceGap(rig, world(get("GripContact_" + finger))));
     vm.triggerShotFx();
     vm.updateFromMainCamera(camera, .1);
     const fired = { bolt: bolt.position.x, flash: flash.visible, rise: pose.rotation.x };
@@ -101,281 +211,157 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     }
     vm.updateFromMainCamera(camera, .1);
     const flashEnded = !flash.visible;
-    vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: .5 });
-    vm.updateFromMainCamera(camera, 0);
-    const reload = { magazine: magazine.position.toArray(), hand: handPosition(), contactAo: gloveMaterial.aoMapIntensity };
-    vm.setAmmoState({ mag: 12, reserve: 90, reloading: false, reloadT01: 0 });
-    vm.updateFromMainCamera(camera, 0);
-    const cancelled = { magazine: magazine.position.toArray(), hand: handPosition(), contactAo: gloveMaterial.aoMapIntensity };
-    // The visible magazine is an open assembly. Its convex envelope provides
-    // capped contact planes and a well-defined inside for this grip region.
-    const magazineSurface = scene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
-    const surfacePositions = magazineSurface.geometry.getAttribute("position");
-    const proxy = new ConvexGeometry(Array.from({ length: surfacePositions.count }, (_, i) =>
-      magazine.worldToLocal(new Vector3().fromBufferAttribute(surfacePositions, i).applyMatrix4(magazineSurface.matrixWorld))));
-    const proxyPositions = proxy.getAttribute("position");
-    const triangles: { triangle: import("three").Triangle; normal: import("three").Vector3 }[] = [];
-    const edges = new Map<string, number>();
-    let proxyVolume = 0;
-    for (let i = 0; i < proxyPositions.count; i += 3) {
-      const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(proxyPositions, i + corner));
-      const triangle = new Triangle(...points);
-      triangles.push({ triangle, normal: triangle.getNormal(new Vector3()) });
-      proxyVolume += points[0]!.dot(points[1]!.clone().cross(points[2]!)) / 6;
-      const keys = points.map((point) => point.toArray().map((value: number) => Math.round(value / 1e-7)).join(","));
-      for (let corner = 0; corner < 3; corner++) {
-        const key = [keys[corner], keys[(corner + 1) % 3]].sort().join("/");
-        edges.set(key, (edges.get(key) ?? 0) + 1);
+    vm.reset();
+    const marks = AK47_RELOAD_MARKS as Record<string, number>;
+    const duration = AK47_RELOAD_DURATION_S as number;
+    const reloadState = (seconds: number, reloading = true) => ({ mag: 12, reserve: 90, reloading, reloadT01: Math.min(1, Math.max(0, seconds / duration)) });
+    // Start a reload and advance two render frames before sampling, and assert
+    // the Reload action carries full weight, so samples show the clip itself
+    // (the runtime switches from Idle at once; an older runtime faded in over
+    // 0.12 s, which frames sampled with dt 0 never passed).
+    let sampled = -Infinity;
+    const blendIn = (seconds: number) => {
+      vm.setAmmoState(reloadState(seconds));
+      vm.updateFromMainCamera(camera, .1);
+      vm.updateFromMainCamera(camera, .1);
+      sampled = seconds;
+    };
+    // The runtime detects a restart only by a new reloadSerial; these
+    // snapshots carry none, so scrubbing reloadT01 back never restarts. An
+    // earlier sample still starts a fresh, fully blended reload (vm.reset())
+    // so every sample begins from the same state.
+    const at = (seconds: number) => {
+      if (seconds < sampled) {
+        vm.reset();
+        blendIn(seconds);
+        return;
       }
-    }
-    if (proxyVolume <= 0 || [...edges.values()].some((count) => count !== 2)) throw new Error("Magazine contact proxy must be a closed, outward-facing solid");
-    const nearFace = triangles.filter(({ normal }) => normal.z < -.8);
-    if (nearFace.length === 0) throw new Error("Magazine contact proxy has no near broad face");
-    const contact: number[][] = [];
-    const reloadContact = { maxAnchorGap: 0, maxRotationDriftDeg: 0, maxFingerGap: 0, minFingerGap: Infinity, minPalmUpAlignment: 1, thumbOnNearFace: true, minThumbUpAlignment: 1, wrappedGrip: true };
-    const thumbPad = { maxGap: 0, minNormalAlignment: 1, maxMeshMismatch: 0, maxDrift: 0 };
-    const padPositions = new Map<string, import("three").Vector3>();
-    let gripRotation: import("three").Quaternion | null = null;
-    const contactProgress = [...Array.from({ length: 87 }, (_, frame) => (32 + frame) / 147), .22, .30, .42, .55, .70, .79];
-    for (const progress of contactProgress) {
-      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: progress });
+      vm.setAmmoState(reloadState(seconds));
       vm.updateFromMainCamera(camera, 0);
-      contact.push(handInMagazine());
-      const anchor = scene.getObjectByName("MagazineGripAnchor") as Object3D;
-      reloadContact.maxAnchorGap = Math.max(reloadContact.maxAnchorGap,
-        hand.getWorldPosition(hand.position.clone()).distanceTo(anchor.getWorldPosition(anchor.position.clone())));
-      const relativeRotation = magazine.getWorldQuaternion(magazine.quaternion.clone()).invert().multiply(hand.getWorldQuaternion(hand.quaternion.clone()));
-      gripRotation ??= relativeRotation.clone();
-      reloadContact.maxRotationDriftDeg = Math.max(reloadContact.maxRotationDriftDeg, relativeRotation.angleTo(gripRotation) * 180 / Math.PI);
-      const wristInMagazine = magazine.worldToLocal(hand.getWorldPosition(hand.position.clone()));
-      const knuckle = scene.getObjectByName("L_f_middle01") as Object3D;
-      const palmUp = magazine.worldToLocal(knuckle.getWorldPosition(knuckle.position.clone())).sub(wristInMagazine).normalize();
-      reloadContact.minPalmUpAlignment = Math.min(reloadContact.minPalmUpAlignment, palmUp.y);
-      for (const finger of ["f_index", "f_middle", "f_ring", "f_pinky"]) {
-        const marker = scene.getObjectByName("GripContact_" + finger) as Object3D;
-        const position = marker.getWorldPosition(marker.position.clone());
-        const gap = surfaceGap(magazine, position);
-        reloadContact.maxFingerGap = Math.max(reloadContact.maxFingerGap, gap);
-        if (finger !== 'f_index') reloadContact.minFingerGap = Math.min(reloadContact.minFingerGap, gap);
-        const pointInMagazine = magazine.worldToLocal(position);
-        // Magazine thickness varies across the ribs. Check the actual surface
-        // clearance and side rather than imposing the old grip's fixed width.
-        reloadContact.wrappedGrip &&= pointInMagazine.z > .005;
-      }
-      const thumbBone = scene.getObjectByName("L_thumb03") as Bone;
-      const thumbMcp = scene.getObjectByName("L_thumb02") as Bone;
-      const thumbDirection = magazine.worldToLocal(thumbBone.getWorldPosition(new Vector3()))
-        .sub(magazine.worldToLocal(thumbMcp.getWorldPosition(new Vector3()))).normalize();
-      reloadContact.minThumbUpAlignment = Math.min(reloadContact.minThumbUpAlignment, thumbDirection.y);
-      for (const name of ["ThumbPadContact", "ThumbPadContact1", "ThumbPadContact2"]) {
-        const marker = scene.getObjectByName(name) as Object3D;
-        const glove = scene.getObjectByName(marker.userData.sourceMesh.replaceAll(" ", "_")) as SkinnedMesh;
-        const meshPositions = glove.geometry.getAttribute("position");
-        const worldPoint = marker.getWorldPosition(marker.position.clone());
-        const localPoint = magazine.worldToLocal(worldPoint.clone());
-        reloadContact.thumbOnNearFace &&= localPoint.z < 0;
-        let nearGap = Infinity;
-        const nearNormal = new Vector3(), nearest = new Vector3();
-        for (const surface of nearFace) {
-          const gap = surface.triangle.closestPointToPoint(localPoint, nearest).distanceTo(localPoint);
-          if (gap < nearGap) { nearGap = gap; nearNormal.copy(surface.normal); }
-        }
-        thumbPad.maxGap = Math.max(thumbPad.maxGap, nearGap);
-        const previous = padPositions.get(name);
-        if (previous) thumbPad.maxDrift = Math.max(thumbPad.maxDrift, previous.distanceTo(localPoint));
-        else padPositions.set(name, localPoint.clone());
-        const normal = worldPoint.clone().fromArray(marker.userData.padNormalLocal)
-          .applyQuaternion(thumbBone.getWorldQuaternion(thumbBone.quaternion.clone())).normalize();
-        const intoSurface = nearNormal.negate().applyQuaternion(magazine.getWorldQuaternion(magazine.quaternion.clone()));
-        thumbPad.minNormalAlignment = Math.min(thumbPad.minNormalAlignment, normal.dot(intoSurface));
-        // These markers must lie on the rendered skin, not merely be convenient
-        // empty nodes that touch the gun while the visible thumb floats away.
-        if (!previous) {
-          let nearest = Infinity;
-          const vertex = worldPoint.clone();
-          for (let i = 0; i < meshPositions.count; i++) {
-            glove.getVertexPosition(i, vertex).applyMatrix4(glove.matrixWorld);
-            nearest = Math.min(nearest, vertex.distanceTo(worldPoint));
-          }
-          thumbPad.maxMeshMismatch = Math.max(thumbPad.maxMeshMismatch, nearest);
-        }
-      }
+      sampled = seconds;
+    };
+    const relative = (holder: Object3D) => {
+      const inverse = holder.matrixWorld.clone().invert();
+      const matrix = inverse.multiply(hand.matrixWorld);
+      return { position: new Vector3().setFromMatrixPosition(matrix), quaternion: hand.quaternion.clone().setFromRotationMatrix(matrix) };
+    };
+    blendIn(0);
+    const reloadWeight = reloadAction.getEffectiveWeight();
+    const start = { hand: rigLocal(hand).toArray(), magazine: magazine.position.toArray(), magazineScale: worldScale(magazine), spareScale: worldScale(spare), bolt: bolt.position.x };
+    at(duration);
+    const end = { hand: rigLocal(hand).toArray(), magazine: magazine.position.toArray(), magazineScale: worldScale(magazine), spareScale: worldScale(spare), bolt: bolt.position.x };
+    // The hand carries each magazine rigidly while it holds it: the old one
+    // from just after the paddle press until just before it is let go, the
+    // fresh one from when it comes into view until the latch. During the press
+    // (grip to release + 0.025 s) the magazine is still latched and the hand
+    // shifts a few millimetres on it while the thumb pushes the paddle; that
+    // stretch is bounded separately and more loosely.
+    const windows = {
+      press: [marks.grip! + .02, marks.release! + .025],
+      old: [marks.release! + .025, marks.drop! - .02],
+      spare: [marks.newMagazineInView!, marks.latch! - .01],
+    };
+    const hold = { pressMaxDrift: 0, oldMaxDrift: 0, oldMaxRotationDeg: 0, oldMinScale: Infinity, spareMaxDrift: 0, spareMaxRotationDeg: 0, spareMinScale: Infinity };
+    let reference: ReturnType<typeof relative> | null = null;
+    for (let t = windows.press[0]!; t <= windows.press[1]! + 1e-9; t += 1 / 120) {
+      at(t);
+      const r = relative(magazine);
+      reference ??= r;
+      hold.pressMaxDrift = Math.max(hold.pressMaxDrift, r.position.distanceTo(reference.position));
     }
-    const fingerSurfaceClearance = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].flatMap((name) => ["f_index", "f_middle", "f_ring", "f_pinky", "thumb"].map((finger) => {
-      const mesh = scene.getObjectByName(name) as SkinnedMesh;
-      const positions = mesh.geometry.getAttribute("position"), indices = mesh.geometry.getAttribute("skinIndex"), weights = mesh.geometry.getAttribute("skinWeight");
-      const indexBones = new Set(mesh.skeleton.bones.map((bone, i) => bone.name.startsWith("L_" + finger) ? i : -1));
-      let minimum = Infinity, minSurfaceGap = Infinity, checked = 0;
-      const point = new Vector3(), nearest = new Vector3();
-      for (let i = 0; i < positions.count; i++) {
-        let influence = 0;
-        for (let c = 0; c < 4; c++) if (indexBones.has(indices.getComponent(i, c))) influence += weights.getComponent(i, c);
-        if (influence < (finger === "f_index" ? .2 : .8)) continue;
-        mesh.getVertexPosition(i, point).applyMatrix4(mesh.matrixWorld);
-        magazine.worldToLocal(point);
-        let distance = Infinity, signedClearance = -Infinity;
-        for (const surface of triangles) {
-          surface.triangle.closestPointToPoint(point, nearest);
-          const candidate = nearest.distanceToSquared(point);
-          distance = Math.min(distance, candidate);
-          signedClearance = Math.max(signedClearance, point.clone().sub(surface.triangle.a).dot(surface.normal));
-        }
-        minimum = Math.min(minimum, signedClearance);
-        minSurfaceGap = Math.min(minSurfaceGap, Math.sqrt(distance));
-        checked++;
-      }
-      return { name: `${name}/${finger}`, minimum, minSurfaceGap, checked };
-    }));
-    const cancellations: number[][] = [];
-    for (const progress of [.05, .14, .22, .40, .55, .79, .90, .99]) {
-      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: progress });
-      vm.updateFromMainCamera(camera, 0);
-      vm.setAmmoState({ mag: 12, reserve: 90, reloading: false, reloadT01: 0 });
-      vm.updateFromMainCamera(camera, 0);
-      cancellations.push(handPosition());
+    reference = null;
+    for (let t = windows.old[0]!; t <= windows.old[1]! + 1e-9; t += 1 / 120) {
+      at(t);
+      const r = relative(magazine);
+      reference ??= r;
+      hold.oldMaxDrift = Math.max(hold.oldMaxDrift, r.position.distanceTo(reference.position));
+      hold.oldMaxRotationDeg = Math.max(hold.oldMaxRotationDeg, r.quaternion.angleTo(reference.quaternion) * 180 / Math.PI);
+      hold.oldMinScale = Math.min(hold.oldMinScale, worldScale(magazine));
     }
-    // Check fore-end contact against rigid weapon surfaces, never the hand itself.
-    const foreEndFingerGaps = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"].map((finger) => {
-      const marker = scene.getObjectByName("GripContact_" + finger);
-      const point = marker.getWorldPosition(marker.position.clone());
-      return surfaceGap(rig, point);
-    });
-    const skins = new Map<string, number>();
+    reference = null;
+    for (let t = windows.spare[0]!; t <= windows.spare[1]! + 1e-9; t += 1 / 120) {
+      at(t);
+      const r = relative(spare);
+      reference ??= r;
+      hold.spareMaxDrift = Math.max(hold.spareMaxDrift, r.position.distanceTo(reference.position));
+      hold.spareMaxRotationDeg = Math.max(hold.spareMaxRotationDeg, r.quaternion.angleTo(reference.quaternion) * 180 / Math.PI);
+      hold.spareMinScale = Math.min(hold.spareMinScale, worldScale(spare));
+    }
+    let maxArmStepDeg = 0, maxDigitDisplacement = 0, maxBoltTravel = 0;
+    // From the hook to the end one magazine is always at full size: the swap
+    // at the latch must not blink at any sampled time between frames.
+    let minSeatedScale = Infinity;
+    const wrists = { maxScaleError: 0, maxShear: 0 };
     const skeletons: Skeleton[] = [];
     scene.traverse((object: Object3D) => {
       const mesh = object as SkinnedMesh;
-      if (mesh.isSkinnedMesh) {
-        const id = mesh.skeleton.bones.map((bone) => bone.uuid).join();
-        if (!skins.has(id)) skeletons.push(mesh.skeleton);
-        skins.set(id, mesh.skeleton.bones.length);
-      }
+      if (mesh.isSkinnedMesh && !skeletons.includes(mesh.skeleton)) skeletons.push(mesh.skeleton);
     });
-    const wrists = { maxBendDeg: 0, maxRelativeRotationDeg: 0, maxScaleError: 0, maxShear: 0 };
-    const rightGlove = scene.getObjectByName("R_GloveAndForearm") as SkinnedMesh;
-    const rightSkeleton = rightGlove.skeleton;
-    const bindPosition = (name: string) => {
-      const bone = scene.getObjectByName(name) as Bone;
-      return bone.position.clone().setFromMatrixPosition(rightSkeleton.boneInverses[rightSkeleton.bones.indexOf(bone)]!.clone().invert());
-    };
-    const rightPads = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"].flatMap((finger) =>
-      [0, 1, 2].map((i) => scene.getObjectByName(`RightPad_${finger}_${i}`) as Object3D));
-    const rightPositions = rightGlove.geometry.getAttribute("position");
-    const rightGrip = {
-      thumbOnRadialSide: bindPosition("R_thumb01").x > bindPosition("GripHand").x + .015,
-      indexOnRadialSide: bindPosition("R_f_index01").x > bindPosition("R_f_pinky01").x + .05,
-      maxPadGap: 0, maxSkinMismatch: 0, maxDrift: 0,
-      maxTriggerGap: 0, maxGripPadSide: -Infinity,
-    };
-    const rightPadRest = rightPads.map((marker) => contactPosition(marker.name));
-    for (const marker of rightPads) {
-      const point = marker.getWorldPosition(marker.position.clone());
-      if (marker.name.startsWith("RightPad_f_index_")) {
-        rightGrip.maxTriggerGap = Math.max(rightGrip.maxTriggerGap, surfaceGap(scene.getObjectByName("Trigger_Surfaces"), point));
-      } else {
-        rightGrip.maxPadGap = Math.max(rightGrip.maxPadGap, surfaceGap(scene.getObjectByName("AK47_Rig_Surfaces"), point));
-        if (!marker.name.startsWith("RightPad_thumb_")) {
-          rightGrip.maxGripPadSide = Math.max(rightGrip.maxGripPadSide, contactPosition(marker.name).z);
-        }
-      }
-      let nearest = Infinity;
-      const vertex = point.clone();
-      for (let i = 0; i < rightPositions.count; i++) {
-        rightGlove.applyBoneTransform(i, vertex.fromBufferAttribute(rightPositions, i)).applyMatrix4(rightGlove.matrixWorld);
-        nearest = Math.min(nearest, vertex.distanceTo(point));
-      }
-      rightGrip.maxSkinMismatch = Math.max(rightGrip.maxSkinMismatch, nearest);
-    }
-    const thumbFlexion = { minMcpDeg: Infinity, maxMcpDeg: -Infinity, minIpDeg: Infinity, maxIpDeg: -Infinity, maxOffAxisDeg: 0 };
-    const thumbOpening = { maxFreeMcpDeg: 0, maxFreeIpDeg: 0, maxClosingReverseStepDeg: 0 };
     const digitRest = skeletons.flatMap((skeleton) => skeleton.bones.flatMap((bone, index) => {
       if (!/^L_(?:f_|thumb)/.test(bone.name)) return [];
       const parent = skeleton.bones.indexOf(bone.parent as Bone);
-      if (parent < 0) throw new Error("Digit bone has no skeletal parent: " + bone.name);
       const local = skeleton.boneInverses[parent]!.clone().multiply(skeleton.boneInverses[index]!.clone().invert());
       return [{ bone, position: new Vector3().setFromMatrixPosition(local) }];
     }));
-    let maxDigitDisplacement = 0;
-    const previousClosingFlexion = new Map<string, number>();
-    const previousArmRotations = new Map<string, import("three").Quaternion>();
-    let maxArmStepDeg = 0;
-    for (let frame = 0; frame <= 147; frame++) {
-      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: frame / 147 });
-      vm.updateFromMainCamera(camera, 0);
-      rightPads.forEach((marker, i) => {
-        rightGrip.maxDrift = Math.max(rightGrip.maxDrift, contactPosition(marker.name).distanceTo(rightPadRest[i]!));
-      });
+    const armBones = ["L_upper_arm", "L_forearm", "L_forearm001", "SupportHand"].filter((name) => scene.getObjectByName(name));
+    const previous = new Map<string, import("three").Quaternion>();
+    for (let frame = 0; frame <= Math.round(duration * 120); frame++) {
+      at(frame / 120);
+      maxBoltTravel = Math.max(maxBoltTravel, Math.abs(bolt.position.x - rest.bolt));
       for (const { bone, position } of digitRest) maxDigitDisplacement = Math.max(maxDigitDisplacement, bone.position.distanceTo(position));
-      for (const [name, joint] of [["L_thumb02", "Mcp"], ["L_thumb03", "Ip"]] as const) {
-        const bone = scene.getObjectByName(name) as Bone;
-        const skeleton = skeletons.find((skin) => skin.bones.includes(bone))!;
-        const parentIndex = skeleton.bones.indexOf(bone.parent as Bone);
-        const boneIndex = skeleton.bones.indexOf(bone);
-        const restLocal = skeleton.boneInverses[parentIndex]!.clone().multiply(skeleton.boneInverses[boneIndex]!.clone().invert());
-        const restRotation = bone.quaternion.clone().setFromRotationMatrix(restLocal);
-        const rotation = restRotation.invert().multiply(bone.quaternion);
-        const angles = new Euler().setFromQuaternion(rotation, "XYZ");
-        if (!Number.isFinite(bone.userData.restFlexionDeg) || JSON.stringify(bone.userData.flexAxisLocal) !== "[1,0,0]") {
-          throw new Error("Thumb requires authored restFlexionDeg and local +X flexion: " + name);
-        }
-        const flexion = bone.userData.restFlexionDeg + angles.x * 180 / Math.PI;
-        thumbFlexion[`min${joint}Deg`] = Math.min(thumbFlexion[`min${joint}Deg`], flexion);
-        thumbFlexion[`max${joint}Deg`] = Math.max(thumbFlexion[`max${joint}Deg`], flexion);
-        thumbFlexion.maxOffAxisDeg = Math.max(thumbFlexion.maxOffAxisDeg, Math.hypot(angles.y, angles.z) * 180 / Math.PI);
-        if ((frame >= 11 && frame <= 23) || (frame >= 125 && frame <= 136)) {
-          thumbOpening[`maxFree${joint}Deg`] = Math.max(thumbOpening[`maxFree${joint}Deg`], flexion);
-        }
-        if (frame >= 23 && frame <= 32) {
-          const previous = previousClosingFlexion.get(joint);
-          if (previous !== undefined) thumbOpening.maxClosingReverseStepDeg = Math.max(thumbOpening.maxClosingReverseStepDeg, previous - flexion);
-          previousClosingFlexion.set(joint, flexion);
-        }
-      }
-      for (const name of ["L_upper_arm", "L_forearm", "SupportHand"]) {
-        const bone = scene.getObjectByName(name) as Object3D;
+      for (const name of armBones) {
+        const bone = get(name);
         const rotation = rig.getWorldQuaternion(rig.quaternion.clone()).invert().multiply(bone.getWorldQuaternion(bone.quaternion.clone()));
-        const previous = previousArmRotations.get(name);
-        if (previous) maxArmStepDeg = Math.max(maxArmStepDeg, rotation.angleTo(previous) * 180 / Math.PI);
-        previousArmRotations.set(name, rotation);
+        const last = previous.get(name);
+        if (last) maxArmStepDeg = Math.max(maxArmStepDeg, rotation.angleTo(last) * 180 / Math.PI);
+        previous.set(name, rotation);
       }
-      for (const [side, handName] of [["L", "SupportHand"], ["R", "GripHand"]]) {
-        const wrist = scene.getObjectByName(handName) as Bone;
-        const forearm = scene.getObjectByName(side + "_forearm") as Bone;
-        const distal = scene.getObjectByName(side + "_forearm001") as Bone;
-        const knuckle = scene.getObjectByName(side + "_f_middle01") as Bone;
-        const position = (object: Object3D) => object.getWorldPosition(object.position.clone());
-        const armDirection = position(wrist).sub(position(forearm)).normalize();
-        const palmDirection = position(knuckle).sub(position(wrist)).normalize();
-        wrists.maxBendDeg = Math.max(wrists.maxBendDeg, armDirection.angleTo(palmDirection) * 180 / Math.PI);
+      for (const handName of ["SupportHand", "GripHand"]) {
+        const wrist = get(handName) as Bone;
         const skeleton = skeletons.find((skin) => skin.bones.includes(wrist))!;
-        // Check skeletal deformation inside the rig, excluding the intentional
-        // uniform scale of the complete first-person package.
-        const deformation = (bone: Bone) => rig.matrixWorld.clone().invert().multiply(bone.matrixWorld).multiply(skeleton.boneInverses[skeleton.bones.indexOf(bone)]!);
-        const handMatrix = deformation(wrist);
-        const handRotation = wrist.quaternion.clone().setFromRotationMatrix(handMatrix);
-        const armRotation = distal.quaternion.clone().setFromRotationMatrix(deformation(distal));
-        wrists.maxRelativeRotationDeg = Math.max(wrists.maxRelativeRotationDeg, handRotation.angleTo(armRotation) * 180 / Math.PI);
-        const axes = [0, 1, 2].map((column) => wrist.position.clone().setFromMatrixColumn(handMatrix, column));
+        const matrix = rig.matrixWorld.clone().invert().multiply(wrist.matrixWorld).multiply(skeleton.boneInverses[skeleton.bones.indexOf(wrist)]!);
+        const axes = [0, 1, 2].map((column) => new Vector3().setFromMatrixColumn(matrix, column));
         wrists.maxScaleError = Math.max(wrists.maxScaleError, ...axes.map((axis) => Math.abs(axis.length() - 1)));
         wrists.maxShear = Math.max(wrists.maxShear, Math.abs(axes[0]!.dot(axes[1]!)), Math.abs(axes[0]!.dot(axes[2]!)), Math.abs(axes[1]!.dot(axes[2]!)));
       }
     }
+    for (let t = marks.hook!; t <= duration + 1e-9; t += 1 / 240) {
+      at(t);
+      minSeatedScale = Math.min(minSeatedScale, Math.max(worldScale(magazine), worldScale(spare)));
+    }
+    // A magazine is either shown at full size or hidden, at any time the game
+    // samples, not only on the clip's keys: a linearly interpolated scale key
+    // draws a half-size magazine for a frame and puts the glove inside it.
+    const partialScale: string[] = [];
+    at(0);
+    for (let frame = 0; frame <= Math.round(duration * 240); frame++) {
+      at(frame / 240);
+      for (const object of [magazine, spare]) {
+        const scale = worldScale(object);
+        if (scale > .001 && scale < .899) partialScale.push(`${object.name} ${scale.toFixed(3)} at ${(frame / 240).toFixed(4)} s`);
+      }
+    }
+    at(marks.drop! + .1);
+    const midSwap = { oldScale: worldScale(magazine), spareScale: worldScale(spare), contactAo: (gloveMaterial.userData.contactOcclusion as { value: number }).value };
+    const afterLatch = [marks.latch! + .03, marks.gripOpens!, marks.handOnHandguard!].map((t) => {
+      at(t);
+      return { t, magazine: magazine.position.toArray(), magazineScale: worldScale(magazine), spareScale: worldScale(spare) };
+    });
+    // Cancelling and restarting are covered frame by frame in the cancel/restart test below.
     vm.reset();
+    const casings = () => scene.children.filter((child: { geometry?: { type: string }; visible: boolean }) => child.geometry?.type === "LatheGeometry" && child.visible);
     const sequence = () => {
       vm.updateFromMainCamera(camera, 1 / 60);
       vm.triggerShotFx();
       vm.updateFromMainCamera(camera, 1 / 60);
-      return effects.children.filter((child: { geometry?: { type: string }; visible: boolean }) =>
-        child.geometry?.type === "CylinderGeometry" && child.visible,
-      ).map((child: { position: { toArray(): number[] }; rotation: { toArray(): unknown[] } }) => ({ position: child.position.toArray(), rotation: child.rotation.toArray() }));
+      return casings().map((child: { position: { toArray(): number[] } }) => child.position.toArray());
     };
     const firstSequence = sequence();
-    const ejectedCase = effects.children.find((child: { geometry?: { type: string }; visible: boolean }) =>
-      child.geometry?.type === "CylinderGeometry" && child.visible,
-    );
+    const ejectedCase = casings()[0];
     const caseStart = ejectedCase.position.clone();
-    for (let frame = 0; frame < 5; frame++) vm.updateFromMainCamera(camera, .1);
+    for (let frame = 0; frame < 3; frame++) vm.updateFromMainCamera(camera, .1);
     const caseTravel = ejectedCase.position.clone().sub(caseStart).toArray();
-    vm.updateFromMainCamera(camera, .1);
+    for (let frame = 0; frame < 8; frame++) vm.updateFromMainCamera(camera, .1);
     const caseExpired = !ejectedCase.visible;
     vm.reset();
     const resetSequence = sequence();
@@ -390,16 +376,17 @@ test("Blender AK grips the magazine through reload and restores its approved idl
     vm.setFrameInput(0, true, 0, 0);
     vm.updateFromMainCamera(camera, 1 / 60);
     const afterCameraKick = pose.rotation.toArray();
+    camera.rotation.set(0, 0, 0);
     vm.reset();
     vm.triggerShotFx();
     vm.setAmmoState({ mag: 0, reserve: 90, reloading: true, reloadT01: 0 });
     vm.updateFromMainCamera(camera, 1 / 60);
     const finalRound = { bolt: bolt.position.x, flash: flash.visible };
-    const socketParent = flash.parent.name;
-    const hasRightHand = Boolean(scene.getObjectByName("R_Armature") || scene.getObjectByName("GripHand"));
+    const socketParent = flash.parent!.name;
     const texturedMaterials = new Set<string>();
     const detailTextures: { material: string; size: number; anisotropy: number }[] = [];
     let handContactOcclusion = false;
+    const persistentOcclusion: string[] = [];
     scene.traverse((object: Object3D) => {
       const mesh = object as SkinnedMesh;
       if (!mesh.isSkinnedMesh) return;
@@ -408,172 +395,152 @@ test("Blender AK grips the magazine through reload and restores its approved idl
         if (pbr.map && pbr.normalMap && pbr.roughnessMap) {
           texturedMaterials.add(pbr.name);
           for (const texture of [pbr.map, pbr.normalMap, pbr.roughnessMap]) {
-            detailTextures.push({ material: pbr.name, size: Math.min(texture.image.width, texture.image.height), anisotropy: texture.anisotropy });
-            const uv = mesh.geometry.getAttribute(texture.channel === 0 ? "uv" : "uv" + texture.channel);
-            if (!uv || uv.count !== mesh.geometry.getAttribute("position").count) throw new Error("Missing detail UVs: " + mesh.name);
+            const image = texture.image as { width: number; height: number };
+            detailTextures.push({ material: pbr.name, size: Math.min(image.width, image.height), anisotropy: texture.anisotropy });
           }
         }
-        if (pbr.name === "Urban Breacher glove" && pbr.aoMap) handContactOcclusion = true;
+        if (pbr.name === "Urban Breacher glove" && pbr.aoMap && pbr.userData.contactOcclusion) handContactOcclusion = true;
+        if (pbr.aoMap && pbr.aoMapIntensity === 1 && !persistentOcclusion.includes(pbr.name)) persistentOcclusion.push(pbr.name);
       }
     });
-    const construction = ["Raised_tan_wrist_closure", "Raised_tan_closure_pull_tab", "Palm_heel_suede_overlay", "Tailored_ripstop_sleeve"].map((name) => {
-      const object = scene.getObjectByName(name) as SkinnedMesh;
-      return { name, skinned: Boolean(object?.isSkinnedMesh), castsShadow: object?.castShadow, receivesShadow: object?.receiveShadow };
-    });
-    // The reinforcement must reach the actual contact points of every digit,
-    // not only have vertices weighted to the hand somewhere near the palm.
-    const reinforcement = scene.getObjectByName("Palm_heel_suede_overlay") as SkinnedMesh;
-    const paddedPositions = reinforcement.geometry.getAttribute("position");
-    const fingertipPaddingGaps = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"].map((finger) => {
-      const marker = scene.getObjectByName("GripContact_" + finger) as Object3D;
-      const contact = marker.getWorldPosition(marker.position.clone());
-      const vertex = contact.clone();
-      let gap = Infinity;
-      for (let i = 0; i < paddedPositions.count; i++) {
-        vertex.fromBufferAttribute(paddedPositions, i);
-        reinforcement.getVertexPosition(i, vertex).applyMatrix4(reinforcement.matrixWorld);
-        gap = Math.min(gap, vertex.distanceTo(contact));
-      }
-      return gap;
-    });
+    const triangleCount = (predicate: (mesh: SkinnedMesh) => boolean) => {
+      let count = 0;
+      scene.traverse((object: Object3D) => {
+        const mesh = object as SkinnedMesh;
+        if (!mesh.isMesh || !predicate(mesh)) return;
+        count += (mesh.geometry.getIndex()?.count ?? mesh.geometry.getAttribute("position").count) / 3;
+      });
+      return count;
+    };
+    const armTriangles = triangleCount((mesh) => Boolean(mesh.isSkinnedMesh));
     vm.dispose();
     const legacy = createAk47ViewModel({ vmDebug: false, search: "?weapon=legacy" });
     await legacy.load();
     const legacyLoaded = legacy.getAlignmentSnapshot().loaded;
     const legacyName = legacy.constructor.name;
     legacy.dispose();
-    proxy.dispose();
-    return { maxDigitDisplacement, fingerSurfaceClearance, rightGrip, packageScale, hasRightHand, texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, construction, fingertipPaddingGaps, rest, readyGrip, fired, frozen, paused, lowFpsBolt, flashEnded, reload, cancelled, contact, reloadContact, thumbPad, cancellations, maxArmStepDeg, foreEndFingerGaps, skins: [...skins.values()], wrists, thumbFlexion, thumbOpening, beforeCameraKick, afterCameraKick, finalRound, firstSequence, caseTravel, caseExpired, resetSequence, socketParent, legacyLoaded, legacyName };
+    return {
+      packageScale, marks, duration, clip, provenance: { animations: provenance.animations, clips: provenance.reload?.clips, audioMarks: provenance.reload?.audioMarks },
+      rest, readyGrip, foreEndFingerGaps, fired, frozen, paused, lowFpsBolt, flashEnded, reloadWeight, start, end, windows, hold,
+      maxBoltTravel, minSeatedScale, partialScale, midSwap, afterLatch, armBones, maxArmStepDeg, maxDigitDisplacement, wrists,
+      firstSequence, caseTravel, caseExpired, resetSequence, beforeCameraKick, afterCameraKick, finalRound, socketParent,
+      texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, persistentOcclusion: persistentOcclusion.sort(), armTriangles, legacyLoaded, legacyName,
+    };
   });
-  expect(result.fired.bolt).toBeLessThan(result.rest.bolt - .01);
-  expect(result.fired.rise).toBeGreaterThan(.005);
-  expect(result.fired.flash).toBe(true);
-  for (const scale of Object.values(result.packageScale)) {
-    scale.forEach((axis) => expect(axis).toBeCloseTo(.90, 6));
-  }
+  console.info("Viewmodel reload:", JSON.stringify({
+    clip: result.clip, hold: result.hold, midSwap: result.midSwap, afterLatch: result.afterLatch, minSeatedScale: result.minSeatedScale,
+    maxBoltTravel: result.maxBoltTravel, armBones: result.armBones, armStep: result.maxArmStepDeg, wrists: result.wrists, armTriangles: result.armTriangles,
+  }));
+  for (const scale of Object.values(result.packageScale)) scale.forEach((axis: number) => expect(axis).toBeCloseTo(.90, 6));
+  // One magazine-only "Reload" clip, authored to the shared timeline.
+  expect(result.clip.name).toBe("Reload");
+  expect(result.clip.duration).toBeCloseTo(result.duration, 3);
+  expect(result.marks.end).toBeCloseTo(result.duration, 6);
+  expect(result.provenance.animations).toEqual(["Idle", "Fire", "Reload"]);
+  expect(result.provenance.clips).toEqual({ Reload: result.duration });
+  expect(result.provenance.audioMarks).toEqual(result.marks);
+  // Idle support grip on the handguard (unchanged from the approved ready pose).
   expect(result.readyGrip.thumbSide).toBeLessThan(-.015);
   expect(result.readyGrip.fingerSides.every((side: number) => side > .005)).toBe(true);
   expect(result.readyGrip.palmAcrossGun, "palm must cup from near side to far side").toBeGreaterThan(.04);
   expect(result.readyGrip.palmHeight, "palm must support the underside of the wood").toBeLessThan(.039);
-  // The reference forearm approaches diagonally from below; forcing a nearly
-  // vertical arm encouraged the rejected side-pinching pose.
   expect(result.readyGrip.armSlope).toBeLessThan(1);
   expect(result.readyGrip.elbowBelowHand).toBe(true);
+  expect(result.foreEndFingerGaps.every((gap: number) => gap < .015), JSON.stringify(result.foreEndFingerGaps)).toBe(true);
+  // Firing.
+  expect(result.fired.bolt).toBeLessThan(result.rest.bolt - .01);
+  expect(result.fired.rise).toBeGreaterThan(.005);
+  expect(result.fired.flash).toBe(true);
   expect(result.socketParent).toBe("MuzzleSocket");
   expect(result.frozen).toEqual(result.paused);
-  expect(result.lowFpsBolt.every((x) => x < -.01)).toBe(true);
+  expect(result.lowFpsBolt.every((x: number) => x < -.01)).toBe(true);
   expect(result.flashEnded).toBe(true);
-  expect(result.reload.magazine).not.toEqual(result.rest.magazine);
-  expect(result.reload.contactAo).toBe(0);
-  expect(result.cancelled.contactAo).toBe(1);
-  expect(Math.hypot(...result.reload.hand.map((value: number, i: number) => value - result.rest.hand[i]!))).toBeGreaterThan(.2);
-  result.cancelled.magazine.forEach((value: number, i: number) => expect(value).toBeCloseTo(result.rest.magazine[i], 6));
-  result.cancelled.hand.forEach((value: number, i: number) => expect(value).toBeCloseTo(result.rest.hand[i], 6));
-  for (const pose of result.contact.slice(1)) {
-    pose.forEach((value: number, i: number) => expect(Math.abs(value - result.contact[0]![i]!)).toBeLessThan(.002));
-  }
-  expect(result.reloadContact.maxAnchorGap).toBeLessThan(.001);
-  expect(result.reloadContact.maxRotationDriftDeg).toBeLessThan(.25);
-  // Finger centers have different pad thicknesses. Validate the rendered
-  // surfaces below rather than forcing every center into a 10mm shell.
-  expect(result.reloadContact.minFingerGap, "finger center markers retain pad thickness outside the surface").toBeGreaterThan(.005);
-  expect(result.reloadContact.minPalmUpAlignment, "palm rises from below along the magazine").toBeGreaterThan(.85);
-  expect(result.reloadContact.thumbOnNearFace, "thumb lies along the near broad face").toBe(true);
-  expect(result.reloadContact.minThumbUpAlignment, "thumb points toward the magazine well").toBeGreaterThan(.8);
-  for (const surface of result.fingerSurfaceClearance) {
-    expect(surface.checked, surface.name).toBeGreaterThan(500);
-    expect(surface.minimum, `${surface.name} must not enter the magazine`).toBeGreaterThanOrEqual(-.00005);
-    // The outer suede pads contact the metal; the glove underneath stays
-    // separated by the padding thickness.
-    if (surface.name.startsWith("Palm_heel_suede_overlay/")) {
-      expect(surface.minSurfaceGap, `${surface.name} must retain visible pad contact`).toBeLessThan(.0015);
-    }
-  }
-  console.info("Finger surface clearance:", result.fingerSurfaceClearance);
-  console.info("Reload contact:", result.reloadContact, "Thumb hinges:", result.thumbFlexion);
-  expect(result.reloadContact.wrappedGrip, "four fingers wrap onto the far broad face").toBe(true);
-  console.info("Visible thumb pad contact:", result.thumbPad);
-  expect(result.thumbPad.maxGap, "three outer padding points must lie within 1 mm of the near broad face").toBeLessThanOrEqual(.001);
-  expect(result.thumbPad.minNormalAlignment, "thumb pad must face into the magazine").toBeGreaterThan(.94);
-  expect(result.thumbPad.maxMeshMismatch, "contact samples must coincide with rendered skin").toBeLessThan(.0001);
-  expect(result.thumbPad.maxDrift, "thumb pad must not slide during the hold").toBeLessThan(.001);
-  expect(result.maxArmStepDeg).toBeLessThan(10);
-  expect(result.maxDigitDisplacement, "digit joints must not translate from their bind positions").toBeLessThan(.000001);
-  console.info("Thumb hinge regression:", result.thumbFlexion);
-  expect(result.thumbFlexion.minMcpDeg, "thumb MCP must not bend backward").toBeGreaterThanOrEqual(-.01);
-  expect(result.thumbFlexion.minIpDeg, "thumb IP must not bend backward").toBeGreaterThanOrEqual(-.01);
-  expect(result.thumbFlexion.maxMcpDeg, "closed thumb stays within its authored forward curl").toBeLessThanOrEqual(75);
-  expect(result.thumbFlexion.maxIpDeg).toBeLessThanOrEqual(65.05);
-  expect(result.thumbFlexion.maxOffAxisDeg, "thumb hinges must not twist sideways").toBeLessThan(.1);
-  console.info("Unloaded thumb transition:", result.thumbOpening);
-  expect(result.thumbOpening.maxFreeMcpDeg, "free thumb must straighten before grasping").toBeLessThan(6);
-  expect(result.thumbOpening.maxFreeIpDeg, "free thumb tip must remain nearly straight").toBeLessThan(4);
-  expect(result.thumbOpening.maxClosingReverseStepDeg, "closing must flex forward into contact").toBeLessThan(.02);
-  for (const pose of result.cancellations) pose.forEach((value: number, i: number) => expect(value).toBeCloseTo(result.rest.hand[i], 6));
-  expect(result.foreEndFingerGaps.every((gap: number) => gap < .015), JSON.stringify(result.foreEndFingerGaps)).toBe(true);
-  expect(result.skins).toHaveLength(2);
-  expect(result.hasRightHand).toBe(true);
-  console.info("Right-hand anatomy and grip:", result.rightGrip);
-  expect(result.rightGrip.thumbOnRadialSide).toBe(true);
-  expect(result.rightGrip.indexOnRadialSide).toBe(true);
-  expect(result.rightGrip.maxPadGap).toBeLessThan(.003);
-  expect(result.rightGrip.maxSkinMismatch).toBeLessThan(.0001);
-  expect(result.rightGrip.maxDrift).toBeLessThan(.00001);
-  expect(result.rightGrip.maxTriggerGap, "rendered index pads rest against the trigger").toBeLessThan(.003);
-  expect(result.rightGrip.maxGripPadSide, "three fingers wrap onto the left side of the grip").toBeLessThan(-.012);
-  expect(result.texturedMaterials).toEqual(["Graphite suede reinforcement", "Khaki ripstop sleeve", "Navy rolled binding", "Right Urban Breacher glove", "Saddle leather closure", "Urban Breacher glove"]);
-  expect(result.handContactOcclusion).toBe(true);
-  expect(result.fingertipPaddingGaps.every((gap: number) => gap < .012), JSON.stringify(result.fingertipPaddingGaps)).toBe(true);
-  for (const texture of result.detailTextures) {
-    // Runtime textures use the approved 2K packaging budget for GitHub.
-    expect(texture.size, texture.material).toBe(2048);
-    expect(texture.anisotropy, texture.material).toBe(16);
-  }
-  for (const object of result.construction) {
-    expect(object.skinned, object.name).toBe(true);
-    expect(object.castsShadow, object.name).toBe(true);
-    expect(object.receivesShadow, object.name).toBe(true);
-  }
-  expect(result.skins.every((count: number) => count >= 20)).toBe(true);
-  console.info("Wrist pose regression:", result.wrists);
-  expect(result.wrists.maxBendDeg, JSON.stringify(result.wrists)).toBeLessThan(30);
-  expect(result.wrists.maxRelativeRotationDeg).toBeLessThan(30);
-  expect(result.wrists.maxScaleError).toBeLessThan(.001);
-  expect(result.wrists.maxShear).toBeLessThan(.001);
-  expect(result.afterCameraKick).toEqual(result.beforeCameraKick);
   expect(result.finalRound.bolt).toBeLessThan(-.01);
   expect(result.finalRound.flash).toBe(true);
+  // The reload is fully blended in, then starts and ends exactly on the idle
+  // pose with the magazine seated and the spare hidden.
+  expect(result.reloadWeight).toBe(1);
+  for (const [key, ends] of Object.entries({ start: result.start, end: result.end })) {
+    ends.hand.forEach((value: number, i: number) => expect(value, `${key} hand`).toBeCloseTo(result.rest.hand[i]!, 4));
+    ends.magazine.forEach((value: number, i: number) => expect(value, `${key} magazine`).toBeCloseTo(result.rest.magazine[i]!, 5));
+    expect(ends.magazineScale, `${key} magazine visible`).toBeCloseTo(result.rest.magazineScale, 3);
+    expect(ends.spareScale, `${key} spare hidden`).toBeLessThan(.001);
+    expect(ends.bolt, `${key} bolt`).toBeCloseTo(result.rest.bolt, 5);
+  }
+  expect(result.rest.magazineScale).toBeCloseTo(.9, 3);
+  expect(result.rest.spareScale).toBeLessThan(.001);
+  // Magazine change only: the bolt never moves during the reload.
+  expect(result.maxBoltTravel, "no charging-handle rack").toBeLessThan(.0001);
+  // Each magazine is carried rigidly by the support hand, and is visible while held.
+  expect(result.hold.pressMaxDrift, "hand slides on the latched magazine during the paddle press").toBeLessThan(.005);
+  expect(result.hold.oldMaxDrift, "old magazine drifts in the hand").toBeLessThan(.001);
+  expect(result.hold.oldMaxRotationDeg).toBeLessThan(.5);
+  expect(result.hold.oldMinScale).toBeCloseTo(.9, 3);
+  expect(result.hold.spareMaxDrift, "fresh magazine drifts in the hand").toBeLessThan(.001);
+  expect(result.hold.spareMaxRotationDeg).toBeLessThan(.5);
+  expect(result.hold.spareMinScale).toBeCloseTo(.9, 3);
+  expect(result.minSeatedScale, "a magazine is always shown from the hook onward").toBeCloseTo(.9, 3);
+  expect(result.partialScale, "magazines are shown at full size or hidden, never in between").toEqual([]);
+  expect(result.midSwap.oldScale, "the dropped magazine is gone mid-reload").toBeLessThan(.001);
+  expect(result.midSwap.spareScale, "the fresh magazine is in hand mid-reload").toBeCloseTo(.9, 3);
+  expect(result.midSwap.contactAo).toBe(0);
+  for (const sample of result.afterLatch) {
+    sample.magazine.forEach((value: number, i: number) => expect(value, `seated at ${sample.t}`).toBeCloseTo(result.rest.magazine[i]!, 5));
+    expect(sample.magazineScale, `seated magazine shown at ${sample.t}`).toBeCloseTo(.9, 3);
+    expect(sample.spareScale, `spare hidden at ${sample.t}`).toBeLessThan(.001);
+  }
+  expect(result.armBones).toContain("SupportHand");
+  expect(result.maxArmStepDeg, "no arm bone jumps between 120 Hz frames").toBeLessThan(10);
+  expect(result.maxDigitDisplacement, "digit joints must not translate from their bind positions").toBeLessThan(.000001);
+  expect(result.wrists.maxScaleError).toBeLessThan(.001);
+  expect(result.wrists.maxShear).toBeLessThan(.001);
+  // Spent cases: one per shot, thrown right, falling, gone within a second.
   expect(result.firstSequence).toHaveLength(1);
   expect(result.caseTravel[0], "spent case ejects to the right").toBeGreaterThan(.1);
   expect(result.caseTravel[1], "spent case falls under gravity").toBeLessThan(0);
   expect(result.caseExpired).toBe(true);
   expect(result.resetSequence).toEqual(result.firstSequence);
+  expect(result.afterCameraKick).toEqual(result.beforeCameraKick);
+  expect(result.texturedMaterials).toEqual(["Graphite suede reinforcement", "Khaki ripstop sleeve", "Moulded knuckle guard", "Navy rolled binding", "Right Urban Breacher glove", "Saddle leather closure", "Urban Breacher glove"]);
+  expect(result.handContactOcclusion).toBe(true);
+  // Baked occlusion stays on for both gloves, their trims and the sleeve; only the contact term fades.
+  expect(result.persistentOcclusion).toEqual(result.texturedMaterials);
+  for (const texture of result.detailTextures) {
+    expect(texture.size, texture.material).toBe(2048);
+    expect(texture.anisotropy, texture.material).toBe(16);
+  }
+  expect(result.armTriangles, "arm budget").toBeLessThan(130000);
   expect(result.legacyLoaded).toBe(true);
   expect(result.legacyName).toBe("Ak47ViewModel");
   expect(errors).toEqual([]);
 });
 
-test("reload glove fingers do not intersect one another", async ({ page }) => {
+test("reload glove fingers do not intersect one another or sink into the magazines", async ({ page }) => {
+  test.setTimeout(240_000);
   await page.route("**/reload-finger-test", (route) => route.fulfill({ contentType: "text/html", body: "<body></body>" }));
   await page.goto("/reload-finger-test");
-  const samples = await page.evaluate(async () => {
+  await page.evaluate(installGloveProbe);
+  const result = await page.evaluate(async () => {
     const moduleUrl = "/src/runtime/weapons/Ak47AnimatedViewModel.ts";
     const { createAk47ViewModel } = await import(moduleUrl);
+    const marksUrl = "/src/runtime/weapons/ak47ReloadMarks.ts";
+    const { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } = await import(marksUrl);
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { Box3, PerspectiveCamera, Ray, Triangle, Vector3 } = await import(threeUrl);
-    const convexUrl = "/node_modules/three/examples/jsm/geometries/ConvexGeometry.js";
-    const { ConvexGeometry } = await import(convexUrl);
+    type Probe = { solids(root: Object3D): unknown[]; penetration(solids: unknown[], gloves: SkinnedMesh[]): { count: number; depth: number; where: string } };
+    const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
     const vm = createAk47ViewModel({ vmDebug: false, search: "" });
     await vm.load();
     const camera = new PerspectiveCamera();
-    const magazineSurface = vm.viewModelScene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
-    const magazinePositions = magazineSurface.geometry.getAttribute("position");
-    const proxy = new ConvexGeometry(Array.from({ length: magazinePositions.count }, (_, i) =>
-      new Vector3().fromBufferAttribute(magazinePositions, i)));
-    const proxyPositions = proxy.getAttribute("position");
+    const scene = vm.viewModelScene;
+    type Action = { getEffectiveWeight(): number };
+    const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
+    const marks = AK47_RELOAD_MARKS as Record<string, number>;
+    const duration = AK47_RELOAD_DURATION_S as number;
+    const magazines = [...probe.solids(scene.getObjectByName("Magazine")!), ...probe.solids(scene.getObjectByName("MagazineSpare")!)];
     const fingers = ["thumb", "f_index", "f_middle", "f_ring", "f_pinky"];
     const surfaces = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].map((name) => {
-      const mesh = vm.viewModelScene.getObjectByName(name) as SkinnedMesh;
+      const mesh = scene.getObjectByName(name) as SkinnedMesh;
       const positions = mesh.geometry.getAttribute("position");
       const indices = mesh.geometry.getAttribute("skinIndex"), weights = mesh.geometry.getAttribute("skinWeight");
       // Only triangles belonging wholly to one digit count. This excludes the
@@ -586,21 +553,35 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
         return influence > .8;
       }));
       const allTriangles: { indices: number[]; thumbRelated: boolean }[] = [];
-      const thumbVertices = Array.from({ length: positions.count }, (_, vertex) => {
+      // The glTF export splits vertices along UV and normal seams, so
+      // neighbours across a seam share a position but no index. Weld by bind
+      // position before deciding adjacency: unwelded, those seam neighbours
+      // counted as 17-28 thumb/palm "crossings" at every sample and 27 at idle,
+      // all of which vanish once welded.
+      const firstAt = new Map<string, number>();
+      const weld = Array.from({ length: positions.count }, (_, vertex) => {
+        const key = `${positions.getX(vertex)},${positions.getY(vertex)},${positions.getZ(vertex)}`;
+        if (!firstAt.has(key)) firstAt.set(key, vertex);
+        return firstAt.get(key)!;
+      });
+      const thumbVertices = Array.from({ length: positions.count }, () => false);
+      for (let vertex = 0; vertex < positions.count; vertex++) {
         let influence = 0;
         for (let c = 0; c < 4; c++) if (mesh.skeleton.bones[indices.getComponent(vertex, c)]!.name.startsWith("L_thumb")) influence += weights.getComponent(vertex, c);
-        return influence > .01;
-      });
+        if (influence > .01) thumbVertices[weld[vertex]!] = true;
+      }
       const triangles: number[][][] = fingers.map(() => []);
       const index = mesh.geometry.getIndex();
       for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
         const vertices = [0, 1, 2].map((corner) => index ? index.getX(i + corner) : i + corner);
-        allTriangles.push({ indices: vertices, thumbRelated: vertices.some((vertex) => thumbVertices[vertex]) });
+        const welded = vertices.map((vertex) => weld[vertex]!);
+        allTriangles.push({ indices: welded, thumbRelated: welded.some((vertex) => thumbVertices[vertex]) });
         const finger = digit[vertices[0]!]!;
         if (finger >= 0 && vertices.every((vertex) => digit[vertex] === finger)) triangles[finger]!.push(vertices);
       }
       return { mesh, positions, triangles, allTriangles };
     });
+    const gloves = surfaces.map(({ mesh }) => mesh);
     const ray = new Ray(), hit = new Vector3(), direction = new Vector3();
     const crosses = (a: import("three").Triangle, b: import("three").Triangle) => {
       for (const [start, end] of [[a.a, a.b], [a.b, a.c], [a.c, a.a]]) {
@@ -613,38 +594,30 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
       }
       return false;
     };
-    const samples: { progress: number; triangles: number[]; intersections: Record<string, number> }[] = [];
-    for (const progress of [.08, .12, .16, .18, .22, .5, .79, .83, .87, .92]) {
-      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: progress });
-      vm.updateFromMainCamera(camera, 0);
-      const digits = fingers.map((_, finger) => surfaces.flatMap(({ mesh, positions, triangles }) => triangles[finger]!.map((indices) => {
+    const cells = (bounds: import("three").Box3) => {
+      const keys: string[] = [];
+      for (let x = Math.floor(bounds.min.x / .01); x <= Math.floor(bounds.max.x / .01); x++)
+        for (let y = Math.floor(bounds.min.y / .01); y <= Math.floor(bounds.max.y / .01); y++)
+          for (let z = Math.floor(bounds.min.z / .01); z <= Math.floor(bounds.max.z / .01); z++) keys.push(`${x},${y},${z}`);
+      return keys;
+    };
+    // Every beat of the clip: the reach, the grip and release on the old
+    // magazine, its rock-out and carry, the fresh magazine in hand, the hook,
+    // the latch and seat tap, the grip opening and the return.
+    const times = [.12, marks.grip!, marks.release!, .374, marks.rockedOut!, marks.drop! - .02, marks.newMagazineInView! + .02, .85,
+      marks.hook!, marks.latch!, marks.latch! + .03, marks.gripOpens!, 1.28, marks.handOnHandguard!, 1.55].map((t) => +t.toFixed(3));
+    const samples: { seconds: number; weight: number; triangles: number[]; intersections: Record<string, number>; magazine: { count: number; depth: number; where: string } }[] = [];
+    for (const seconds of times) {
+      // Start a fresh reload at this time and advance two render frames; the
+      // weight assertion below proves the glove is in the clip's pose.
+      vm.reset();
+      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: seconds / duration });
+      vm.updateFromMainCamera(camera, .1);
+      vm.updateFromMainCamera(camera, .1);
+      const digits = fingers.map((_, finger) => surfaces.flatMap(({ mesh, triangles }) => triangles[finger]!.map((indices) => {
         const points = indices.map((index) => mesh.getVertexPosition(index, new Vector3()).applyMatrix4(mesh.matrixWorld));
         return { triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) };
       })));
-      const names = [...fingers];
-      if (progress >= .22 && progress <= .79) {
-        const magazine = vm.viewModelScene.getObjectByName("Magazine_Surfaces") as SkinnedMesh;
-        const positions = magazine.geometry.getAttribute("position"), index = magazine.geometry.getIndex();
-        const triangles = [];
-        for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
-          const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(positions, index ? index.getX(i + corner) : i + corner).applyMatrix4(magazine.matrixWorld));
-          triangles.push({ triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) });
-        }
-        // Preserve crossings against visible triangles and add the closed caps.
-        for (let i = 0; i < proxyPositions.count; i += 3) {
-          const points = [0, 1, 2].map((corner) => new Vector3().fromBufferAttribute(proxyPositions, i + corner).applyMatrix4(magazine.matrixWorld));
-          triangles.push({ triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) });
-        }
-        names.push("magazine");
-        digits.push(triangles);
-      }
-      const cells = (bounds: import("three").Box3) => {
-        const keys: string[] = [];
-        for (let x = Math.floor(bounds.min.x / .01); x <= Math.floor(bounds.max.x / .01); x++)
-          for (let y = Math.floor(bounds.min.y / .01); y <= Math.floor(bounds.max.y / .01); y++)
-            for (let z = Math.floor(bounds.min.z / .01); z <= Math.floor(bounds.max.z / .01); z++) keys.push(`${x},${y},${z}`);
-        return keys;
-      };
       const grids = digits.map((digit) => {
         const grid = new Map<string, typeof digit>();
         for (const triangle of digit) for (const key of cells(triangle.bounds)) {
@@ -655,7 +628,7 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
         return grid;
       });
       const intersections: Record<string, number> = {};
-      for (let first = 0; first < names.length; first++) for (let second = first + 1; second < names.length; second++) {
+      for (let first = 0; first < fingers.length; first++) for (let second = first + 1; second < fingers.length; second++) {
         let count = 0;
         for (const a of digits[first]!) {
           const candidates = new Set(cells(a.bounds).flatMap((key) => grids[second]!.get(key) ?? []));
@@ -663,43 +636,326 @@ test("reload glove fingers do not intersect one another", async ({ page }) => {
             if (a.bounds.intersectsBox(b.bounds) && (crosses(a.triangle, b.triangle) || crosses(b.triangle, a.triangle))) count++;
           }
         }
-        if (count) intersections[`${names[first]}/${names[second]}`] = count;
+        if (count) intersections[`${fingers[first]}/${fingers[second]}`] = count;
       }
       // A whole-digit check misses the thumb folding through its own base or
       // the palm. Check the continuous glove body against itself as well.
-      if (progress === .22 || progress === .83) {
-        const { mesh, positions, allTriangles } = surfaces[0]!;
-        const vertices = Array.from({ length: positions.count }, (_, index) => mesh.getVertexPosition(index, new Vector3()).applyMatrix4(mesh.matrixWorld));
-        const bodyTriangles = allTriangles.map((item, id) => {
-          const points = item.indices.map((index) => vertices[index]!);
-          return { ...item, id, triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) };
-        });
-        const grid = new Map<string, typeof bodyTriangles>();
-        for (const triangle of bodyTriangles) for (const key of cells(triangle.bounds)) {
-          const bucket = grid.get(key) ?? [];
-          bucket.push(triangle); grid.set(key, bucket);
-        }
-        let count = 0;
-        for (const a of bodyTriangles) {
-          if (!a.thumbRelated) continue;
-          const candidates = new Set(cells(a.bounds).flatMap((key) => grid.get(key) ?? []));
-          for (const b of candidates) {
-            if ((b.thumbRelated && b.id <= a.id) || a.indices.some((index) => b.indices.includes(index))) continue;
-            if (a.bounds.intersectsBox(b.bounds) && (crosses(a.triangle, b.triangle) || crosses(b.triangle, a.triangle))) count++;
-          }
-        }
-        if (count) intersections["thumb/palm self-intersection"] = count;
+      const { mesh, positions, allTriangles } = surfaces[0]!;
+      const vertices = Array.from({ length: positions.count }, (_, index) => mesh.getVertexPosition(index, new Vector3()).applyMatrix4(mesh.matrixWorld));
+      const bodyTriangles = allTriangles.map((item, id) => {
+        const points = item.indices.map((index) => vertices[index]!);
+        return { ...item, id, triangle: new Triangle(...points), bounds: new Box3().setFromPoints(points) };
+      });
+      const grid = new Map<string, typeof bodyTriangles>();
+      for (const triangle of bodyTriangles) for (const key of cells(triangle.bounds)) {
+        const bucket = grid.get(key) ?? [];
+        bucket.push(triangle); grid.set(key, bucket);
       }
-      samples.push({ progress, triangles: digits.map((digit) => digit.length), intersections });
+      let count = 0;
+      for (const a of bodyTriangles) {
+        if (!a.thumbRelated) continue;
+        const candidates = new Set(cells(a.bounds).flatMap((key) => grid.get(key) ?? []));
+        for (const b of candidates) {
+          if ((b.thumbRelated && b.id <= a.id) || a.indices.some((index) => b.indices.includes(index))) continue;
+          if (a.bounds.intersectsBox(b.bounds) && (crosses(a.triangle, b.triangle) || crosses(b.triangle, a.triangle))) count++;
+        }
+      }
+      if (count) intersections["thumb/palm self-intersection"] = count;
+      // Against the magazines, surface crossings alone cannot tell cloth
+      // grazing a rib from a finger through the body, so measure how deep any
+      // glove vertex sits inside the old or fresh magazine while it is shown.
+      samples.push({ seconds, weight: reloadAction.getEffectiveWeight(), triangles: digits.map((digit) => digit.length), intersections, magazine: probe.penetration(magazines, gloves) });
     }
-    proxy.dispose();
+    // The beat samples above missed a glove inside a magazine between beats
+    // (the let-go just after the drop, the latch-to-hide frame). Scan every
+    // 1/240 s from the grip until the grip opens: the clip is keyed at 120 Hz
+    // and the game samples between keys.
+    const between: { seconds: number; weight: number; count: number; depth: number; where: string }[] = [];
+    for (let frame = Math.round(marks.grip! * 240); frame <= Math.round((marks.gripOpens! + .04) * 240); frame++) {
+      const seconds = frame / 240;
+      vm.reset();
+      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: seconds / duration });
+      vm.updateFromMainCamera(camera, .1);
+      vm.updateFromMainCamera(camera, .1);
+      between.push({ seconds: +seconds.toFixed(4), weight: reloadAction.getEffectiveWeight(), ...probe.penetration(magazines, gloves) });
+    }
     vm.dispose();
-    return samples;
+    return { samples, between };
   });
-  console.info("Reload finger surface intersections:", JSON.stringify(samples));
+  const { samples, between } = result;
+  console.info("Reload finger surface intersections:", JSON.stringify(samples.map(({ seconds, intersections, magazine }) => ({
+    seconds, intersections, magazine: { count: magazine.count, depthMm: +(magazine.depth * 1000).toFixed(2), where: magazine.where },
+  }))));
   for (const sample of samples) {
-    sample.triangles.slice(0, 5).forEach((count) => expect(count).toBeGreaterThan(100));
-    expect(sample.intersections, `Crossing glove surfaces at reload ${sample.progress}`).toEqual({});
+    expect(sample.weight, `reload fully blended in at ${sample.seconds} s`).toBe(1);
+    sample.triangles.forEach((count) => expect(count).toBeGreaterThan(100));
+    expect.soft(sample.intersections, `Crossing glove surfaces at reload ${sample.seconds} s`).toEqual({});
+    expect.soft(sample.magazine.depth, `glove inside a magazine at ${sample.seconds} s: ${sample.magazine.count} vertices, deepest ${sample.magazine.where}`).toBeLessThanOrEqual(SHALLOW_CONTACT_M);
+  }
+  const deep = between.filter((frame) => frame.depth > SHALLOW_CONTACT_M);
+  console.info("Reload glove inside a magazine, 240 Hz scan:", JSON.stringify(deep.map((frame) => `${frame.seconds} s: ${frame.count} vertices, ${(frame.depth * 1000).toFixed(2)} mm at ${frame.where}`)));
+  expect(between.every((frame) => frame.weight === 1)).toBe(true);
+  expect.soft(deep.map((frame) => frame.seconds), "frames with the glove deeper than 1 mm inside a shown magazine").toEqual([]);
+});
+
+/**
+ * Thumb flexion hinge of L_thumb.02/.03 in bone space, from the hand calibration
+ * (assets/source/ak47/hand_pose.py THUMB_HINGE): perpendicular to the thumb's
+ * suede pad. Bending about bone +X instead tips the thumb sideways out of the
+ * palm plane, which is how the shipped rig bent it.
+ */
+const THUMB_HINGE = [.32, 0, -.948] as const;
+/**
+ * Held-grip thumb thresholds. Bone-space angles are segment angles about
+ * THUMB_HINGE; distances are magazine-local (rig metres). The screen checks use
+ * the game's own viewmodel camera at 960x540.
+ *
+ * padSideMinShare replaces the all-vertex distalPadMinShare 0.2, which a pad
+ * cannot reach within the 1 mm depth limit: a pad laid square on a flat face
+ * brings 6.9-9.0% of all distal vertices within 2 mm (0.5-1 mm deep), 15-20% at
+ * the best orientation, and a thumb touching with its side scores more (10-15%)
+ * than a pad does. Of the suede-facing vertices the same square pad brings
+ * 19.9-26.1% within 2 mm, and a pad laid along its curve 43-56%; a side or nail
+ * contact scores near 0.
+ */
+const HELD_THUMB = {
+  ipMinDeg: 30, mcpMinDeg: 15, sideBendMaxDeg: 15, distalPadMaxM: .002, padSideMinShare: .2, proximalMaxM: .003, tipBehindRearMaxM: .002,
+  screenIpMinDeg: 35, screenMcpMinDeg: 20, ringMagazineMinShare: .8,
+};
+
+test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the magazine, tip not past its rear edge", async ({ page }) => {
+  // The top acceptance criterion. Contact distances alone passed (0.45 mm pad)
+  // while the thumb lay straight along the near face and ran past the rear
+  // edge toward the trigger guard as a flat lobe: a mitten, not a grip.
+  test.setTimeout(240_000);
+  await page.route("**/reload-thumb-test", (route) => route.fulfill({ contentType: "text/html", body: "<body></body>" }));
+  await page.goto("/reload-thumb-test");
+  await page.evaluate(installGloveProbe);
+  const result = await page.evaluate(async ({ hingeArray }) => {
+    const moduleUrl = "/src/runtime/weapons/Ak47AnimatedViewModel.ts";
+    const { createAk47ViewModel } = await import(moduleUrl);
+    const marksUrl = "/src/runtime/weapons/ak47ReloadMarks.ts";
+    const { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } = await import(marksUrl);
+    const threeUrl = "/node_modules/.vite/deps/three.js";
+    const { MeshBasicMaterial, PerspectiveCamera, Quaternion, Vector3, WebGLRenderer } = await import(threeUrl);
+    type V3 = import("three").Vector3;
+    type Probe = { solids(root: Object3D): unknown[]; nearest(solids: unknown[], world: V3): number };
+    const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
+    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    await vm.load();
+    const camera = new PerspectiveCamera();
+    const scene = vm.viewModelScene;
+    type Action = { getEffectiveWeight(): number };
+    const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
+    const marks = AK47_RELOAD_MARKS as Record<string, number>;
+    const duration = AK47_RELOAD_DURATION_S as number;
+    const glove = scene.getObjectByName("L_GloveAndForearm") as SkinnedMesh;
+    const overlay = scene.getObjectByName("Palm_heel_suede_overlay") as SkinnedMesh;
+    const skeleton = glove.skeleton;
+    const thumb = ["L_thumb01", "L_thumb02", "L_thumb03"].map((name) => skeleton.bones.find((bone) => bone.name === name)!);
+    const HINGE = new Vector3(...hingeArray).normalize(), AXIS = new Vector3(0, 1, 0);
+    const deg = (radians: number) => radians * 180 / Math.PI;
+    const bindOf = (bone: Bone) => {
+      const position = new Vector3(), rotation = new Quaternion(), scale = new Vector3();
+      skeleton.boneInverses[skeleton.bones.indexOf(bone)]!.clone().invert().decompose(position, rotation, scale);
+      return { position, rotation };
+    };
+    const bind = thumb.map(bindOf);
+    const weightTo = (mesh: SkinnedMesh, vertex: number, name: string) => {
+      const indices = mesh.geometry.getAttribute("skinIndex"), weights = mesh.geometry.getAttribute("skinWeight");
+      let weight = 0;
+      for (let c = 0; c < 4; c++) if (mesh.skeleton.bones[indices.getComponent(vertex, c)]!.name === name) weight += weights.getComponent(vertex, c);
+      return weight;
+    };
+    const skinned = (name: string) => [glove, overlay].flatMap((mesh) => Array.from({ length: mesh.geometry.getAttribute("position").count }, (_, vertex) => vertex)
+      .filter((vertex) => weightTo(mesh, vertex, name) > .5).map((vertex) => ({ mesh, vertex })));
+    const distal = skinned("L_thumb03"), proximal = skinned("L_thumb02");
+    const bindPoint = ({ mesh, vertex }: { mesh: SkinnedMesh; vertex: number }) => new Vector3().fromBufferAttribute(mesh.geometry.getAttribute("position"), vertex).applyMatrix4(mesh.bindMatrix);
+    // Axis conventions, checked on the bind pose so a re-export that changes
+    // bone axes fails here rather than silently measuring the wrong bend:
+    // bone +Y runs along each phalanx, and THUMB_HINGE x +Y is the pad side
+    // (where the suede overlay sits on the distal phalanx).
+    const alongBone = deg(new Vector3(0, 1, 0).applyQuaternion(bind[1]!.rotation).angleTo(bind[2]!.position.clone().sub(bind[1]!.position)));
+    const centroid = (list: typeof distal) => list.reduce((sum, item) => sum.add(bindPoint(item)), new Vector3()).divideScalar(list.length);
+    const pad = centroid(distal.filter(({ mesh }) => mesh === overlay)).sub(centroid(distal.filter(({ mesh }) => mesh === glove)))
+      .applyQuaternion(bind[2]!.rotation.clone().invert());
+    pad.y = 0;
+    const padOffHingeSideDeg = deg(pad.angleTo(new Vector3().crossVectors(HINGE, AXIS)));
+    // Pad-side (suede-facing) distal vertices: bind normal within 60 degrees of
+    // the measured pad direction in L_thumb.03 space.
+    const padDirection = pad.clone().normalize(), unbind = bind[2]!.rotation.clone().invert();
+    const padSide = distal.map(({ mesh, vertex }) => new Vector3().fromBufferAttribute(mesh.geometry.getAttribute("normal"), vertex)
+      .transformDirection(mesh.bindMatrix).applyQuaternion(unbind).dot(padDirection) > .5);
+    // The thumb tip: the glove vertex on the distal phalanx farthest along it.
+    const distalAxis = AXIS.clone().applyQuaternion(bind[2]!.rotation);
+    const tip = distal.filter(({ mesh }) => mesh === glove)
+      .reduce((a, b) => bindPoint(b).sub(bind[2]!.position).dot(distalAxis) > bindPoint(a).sub(bind[2]!.position).dot(distalAxis) ? b : a);
+    // Signed bend from segment a to segment b about hinge h, and b's tilt out of the hinge plane.
+    const bend = (a: V3, b: V3, h: V3) => {
+      const pa = a.clone().projectOnPlane(h).normalize(), pb = b.clone().projectOnPlane(h).normalize();
+      return { flex: deg(Math.atan2(new Vector3().crossVectors(pa, pb).dot(h), pa.dot(pb))), side: deg(Math.asin(Math.max(-1, Math.min(1, b.dot(h))))) };
+    };
+    const shells = [
+      { root: scene.getObjectByName("Magazine")!, surfaces: scene.getObjectByName("Magazine_Surfaces") as import("three").Mesh },
+      { root: scene.getObjectByName("MagazineSpare")!, surfaces: scene.getObjectByName("MagazineSpare_Surfaces") as import("three").Mesh },
+    ].map((shell) => {
+      const position = shell.surfaces.geometry.getAttribute("position");
+      const vertices = Array.from({ length: position.count }, (_, i) => new Vector3().fromBufferAttribute(position, i));
+      return { ...shell, solids: probe.solids(shell.root), vertices, low: Math.min(...vertices.map((v) => v.y)), high: Math.max(...vertices.map((v) => v.y)) };
+    });
+    const shown = (object: Object3D) => object.getWorldScale(new Vector3()).x > .01;
+    // Game-camera ID pass: magazines green, left-hand vertices red, everything
+    // else blue, background black. Bone-space bends passed while the player saw
+    // a thumb bent into depth (a lobe) and a thumb/index "OK ring" pinching air
+    // with daylight inside it, so the grip is also judged as the player sees it.
+    const W = 960, H = 540, pixels = new Uint8Array(W * H * 4);
+    const renderer = new WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
+    document.body.appendChild(renderer.domElement);
+    renderer.setSize(W, H);
+    vm.setAspect(W / H);
+    scene.traverse((object: Object3D) => {
+      if ((object as { isSprite?: boolean }).isSprite || (object as { isPoints?: boolean }).isPoints) { object.visible = false; return; }
+      const mesh = object as SkinnedMesh;
+      if (!mesh.isMesh) return;
+      let magazine = false;
+      for (let o: Object3D | null = mesh; o; o = o.parent) if (o.name === "Magazine" || o.name === "MagazineSpare") magazine = true;
+      // The left glove and its trims are the meshes skinned to the left skeleton
+      // (SupportHand and the L_ bones); the right hand has its own skin.
+      const leftHand = mesh.isSkinnedMesh && mesh.skeleton.bones.some((bone) => bone.name === "L_thumb01");
+      mesh.material = new MeshBasicMaterial({ color: magazine ? 0x00ff00 : leftHand ? 0xff0000 : 0x0000ff });
+    });
+    const boneNamed = (name: string) => skeleton.bones.find((bone) => bone.name === name)!;
+    const thumbChain = [...thumb, scene.getObjectByName("GripContact_thumb")!];
+    const indexChain = [scene.getObjectByName("GripContact_f_index")!, ...["L_f_index03", "L_f_index02", "L_f_index01"].map(boneNamed)];
+    // Pixel coordinates with y up, matching readPixels rows.
+    const toScreen = (object: Object3D) => {
+      const ndc = object.getWorldPosition(new Vector3()).project(vm.viewModelCamera);
+      return [(ndc.x + 1) / 2 * W, (ndc.y + 1) / 2 * H] as [number, number];
+    };
+    // Turn angle at b between screen segments a-b and b-c; null when any point
+    // is out of frame (the thumb has left the view, nothing to judge).
+    const screenTurn = (a: number[], b: number[], c: number[]) => {
+      if ([a, b, c].some((p) => p[0]! < 0 || p[0]! > W || p[1]! < 0 || p[1]! > H)) return null;
+      const u = [b[0]! - a[0]!, b[1]! - a[1]!], v = [c[0]! - b[0]!, c[1]! - b[1]!];
+      return deg(Math.acos(Math.max(-1, Math.min(1, (u[0]! * v[0]! + u[1]! * v[1]!) / (Math.hypot(u[0]!, u[1]!) * Math.hypot(v[0]!, v[1]!))))));
+    };
+    const insidePolygon = (x: number, y: number, polygon: number[][]) => {
+      let odd = false;
+      for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const [xi, yi] = polygon[i]!, [xj, yj] = polygon[j]!;
+        if ((yi! > y) !== (yj! > y) && x < (xj! - xi!) * (y - yi!) / (yj! - yi!) + xi!) odd = !odd;
+      }
+      return odd;
+    };
+    const gameView = () => {
+      renderer.render(scene, vm.viewModelCamera);
+      renderer.getContext().readPixels(0, 0, W, H, renderer.getContext().RGBA, renderer.getContext().UNSIGNED_BYTE, pixels);
+      const thumbScreen = thumbChain.map(toScreen), indexScreen = indexChain.map(toScreen);
+      // The ring: thumb from its CMC to its tip, across to the index tip, down
+      // the index to its MCP and back across the thumb-index web.
+      const ring = [...thumbScreen, ...indexScreen];
+      const xs = ring.map((p) => p[0]!), ys = ring.map((p) => p[1]!);
+      const count = { magazine: 0, hand: 0, other: 0, background: 0 };
+      for (let y = Math.max(0, Math.floor(Math.min(...ys))); y < Math.min(H, Math.ceil(Math.max(...ys))); y++) {
+        for (let x = Math.max(0, Math.floor(Math.min(...xs))); x < Math.min(W, Math.ceil(Math.max(...xs))); x++) {
+          if (!insidePolygon(x + .5, y + .5, ring)) continue;
+          const i = (y * W + x) * 4, red = pixels[i]!, green = pixels[i + 1]!, blue = pixels[i + 2]!;
+          if (green > 200 && red < 50) count.magazine++;
+          else if (red > 200 && green < 50) count.hand++;
+          else if (blue > 200) count.other++;
+          else count.background++;
+        }
+      }
+      // Of the ring's interior not covered by the hand itself, the share that
+      // is magazine. Daylight (background) or rifle inside the ring lowers it.
+      const seen = count.magazine + count.other + count.background;
+      return {
+        screenMcpDeg: screenTurn(thumbScreen[0]!, thumbScreen[1]!, thumbScreen[2]!),
+        screenIpDeg: screenTurn(thumbScreen[1]!, thumbScreen[2]!, thumbScreen[3]!),
+        ring: count, ringMagazineShare: seen >= 50 ? count.magazine / seen : 1,
+        ringScreen: ring.map((p) => [Math.round(p[0]!), Math.round(H - p[1]!)]),
+      };
+    };
+    // Held windows: the old magazine from just after the paddle press (the tip
+    // is allowed behind the rear edge on the paddle, about 0.26-0.33 s) until
+    // just before it is let go; the fresh one from when it enters view until
+    // the grip opens after the seat tap.
+    const windows = { old: [marks.release! + .04, marks.drop! - .02], fresh: [marks.newMagazineInView!, marks.gripOpens!] };
+    const times = Object.values(windows).flatMap(([from, to]) => {
+      const list: number[] = [];
+      for (let t = from!; t <= to! + 1e-9; t += 1 / 60) list.push(+t.toFixed(4));
+      return list;
+    });
+    const world = ({ mesh, vertex }: { mesh: SkinnedMesh; vertex: number }) => mesh.getVertexPosition(vertex, new Vector3()).applyMatrix4(mesh.matrixWorld);
+    const samples = times.map((seconds) => {
+      vm.reset();
+      vm.setAmmoState({ mag: 12, reserve: 90, reloading: true, reloadT01: seconds / duration });
+      vm.updateFromMainCamera(camera, .1);
+      vm.updateFromMainCamera(camera, .1);
+      const head = thumb.map((bone) => bone.getWorldPosition(new Vector3()));
+      const turn = thumb.map((bone) => bone.getWorldQuaternion(new Quaternion()));
+      const metacarpal = head[1]!.clone().sub(head[0]!).normalize(), proximalAxis = head[2]!.clone().sub(head[1]!).normalize();
+      const distalWorld = AXIS.clone().applyQuaternion(turn[2]!);
+      const mcp = bend(metacarpal, proximalAxis, HINGE.clone().applyQuaternion(turn[1]!));
+      // The IP bend is measured in the proximal phalanx's hinge frame, so a
+      // sideways (bone +X) bend shows up as side-bend rather than flexion.
+      const ip = bend(proximalAxis, distalWorld, HINGE.clone().applyQuaternion(turn[1]!));
+      const tipWorld = world(tip);
+      const held = shells.filter((shell) => shown(shell.root))
+        .map((shell) => ({ shell, gap: probe.nearest(shell.solids, tipWorld) }))
+        .sort((a, b) => a.gap - b.gap)[0]!.shell;
+      const distalGaps = distal.map((item) => probe.nearest(held.solids, world(item)));
+      const proximalGap = Math.min(...proximal.map((item) => probe.nearest(held.solids, world(item))));
+      // Rear edge: the magazine's rearmost point (magazine-local -x) in a
+      // 4 mm band at the tip's height, clamped to the magazine's height.
+      const tipLocal = held.surfaces.worldToLocal(tipWorld.clone());
+      const height = Math.min(held.high, Math.max(held.low, tipLocal.y));
+      const rear = Math.min(...held.vertices.filter((v) => Math.abs(v.y - height) < .004).map((v) => v.x));
+      const padGaps = distalGaps.filter((_, i) => padSide[i]);
+      return {
+        seconds, weight: reloadAction.getEffectiveWeight(), magazine: held.root.name,
+        mcpDeg: mcp.flex, mcpSideDeg: Math.abs(mcp.side - bend(proximalAxis, metacarpal, HINGE.clone().applyQuaternion(turn[1]!)).side), ipDeg: ip.flex, ipSideDeg: Math.abs(ip.side),
+        distalMin: Math.min(...distalGaps), distalShare: distalGaps.filter((gap) => gap <= .002).length / distalGaps.length,
+        padSideShare: padGaps.filter((gap) => gap <= .002).length / padGaps.length,
+        proximalMin: proximalGap, tipBehindRear: rear - tipLocal.x,
+        ...gameView(),
+      };
+    });
+    vm.dispose();
+    renderer.dispose();
+    return { alongBone, padOffHingeSideDeg, distalCount: distal.length, padSideCount: padSide.filter(Boolean).length, proximalCount: proximal.length, samples };
+  }, { hingeArray: [...THUMB_HINGE] as [number, number, number] });
+  const r = (value: number, digits = 1) => +value.toFixed(digits);
+  console.info("Reload held thumb:", JSON.stringify({
+    alongBoneDeg: r(result.alongBone, 3), padOffHingeSideDeg: r(result.padOffHingeSideDeg), distal: result.distalCount, padSide: result.padSideCount, proximal: result.proximalCount,
+    samples: result.samples.map((s) => `${s.seconds} ${s.magazine}: mcp ${r(s.mcpDeg)} (side ${r(s.mcpSideDeg)}) ip ${r(s.ipDeg)} (side ${r(s.ipSideDeg)}) distal ${r(s.distalMin * 1000, 2)} mm, ${r(s.distalShare * 100)}% <= 2 mm, pad side ${r(s.padSideShare * 100)}%; proximal ${r(s.proximalMin * 1000, 2)} mm; tip ${r(s.tipBehindRear * 1000)} mm behind rear edge; screen mcp ${s.screenMcpDeg === null ? "out of frame" : r(s.screenMcpDeg)} ip ${s.screenIpDeg === null ? "out of frame" : r(s.screenIpDeg)}; ring magazine ${r(s.ringMagazineShare * 100)}% ${JSON.stringify(s.ring)}`),
+  }));
+  console.info("Reload held thumb ring, top-left pixels (thumb CMC, MCP, IP, tip, index tip, DIP, PIP, MCP):", JSON.stringify(result.samples.map((s) => [s.seconds, s.ringScreen])));
+  // Bone axes as calibrated: +Y along the phalanx, and the hinge's pad side on
+  // the suede pad (measured 30 degrees off on the September 26 GLB; a flipped
+  // or swapped axis is 90-180).
+  expect(result.alongBone, "L_thumb.02 +Y runs to L_thumb.03").toBeLessThan(1);
+  expect(result.padOffHingeSideDeg, "THUMB_HINGE x +Y points at the distal suede pad").toBeLessThan(45);
+  expect(result.distalCount).toBeGreaterThan(100);
+  expect(result.proximalCount).toBeGreaterThan(100);
+  expect(result.padSideCount, "suede-facing distal vertices").toBeGreaterThan(100);
+  // The screen checks skip samples where the thumb has left the frame (the old
+  // magazine is carried out of the bottom-left before the let-go); they must
+  // still judge most of the hold.
+  expect(result.samples.filter((s) => s.screenIpDeg !== null && s.screenMcpDeg !== null).length, "held samples with the thumb in frame").toBeGreaterThan(result.samples.length / 2);
+  for (const s of result.samples) {
+    const at = `${s.seconds} s (${s.magazine})`;
+    expect(s.weight, `reload fully blended in at ${at}`).toBe(1);
+    expect.soft(s.ipDeg, `thumb IP bend at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.ipMinDeg);
+    expect.soft(s.mcpDeg, `thumb MCP bend at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.mcpMinDeg);
+    expect.soft(Math.max(s.ipSideDeg, s.mcpSideDeg), `thumb side-bend at ${at}`).toBeLessThanOrEqual(HELD_THUMB.sideBendMaxDeg);
+    expect.soft(s.distalMin, `distal thumb pad gap to the magazine at ${at}`).toBeLessThanOrEqual(HELD_THUMB.distalPadMaxM);
+    expect.soft(s.padSideShare, `share of suede-facing distal thumb vertices within 2 mm of the magazine at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.padSideMinShare);
+    expect.soft(s.proximalMin, `proximal thumb gap to the magazine at ${at}`).toBeLessThanOrEqual(HELD_THUMB.proximalMaxM);
+    expect.soft(s.tipBehindRear, `thumb tip behind the magazine's rear edge at ${at}`).toBeLessThanOrEqual(HELD_THUMB.tipBehindRearMaxM);
+    if (s.screenIpDeg !== null) expect.soft(s.screenIpDeg, `game-camera thumb IP bend (L_thumb02-03 to L_thumb03-tip) at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.screenIpMinDeg);
+    if (s.screenMcpDeg !== null) expect.soft(s.screenMcpDeg, `game-camera thumb MCP bend (L_thumb01-02 to L_thumb02-03) at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.screenMcpMinDeg);
+    expect.soft(s.ringMagazineShare, `game-camera thumb/index ring interior (not hand) that is magazine at ${at}: ${JSON.stringify(s.ring)}`).toBeGreaterThanOrEqual(HELD_THUMB.ringMagazineMinShare);
   }
 });
 
@@ -713,6 +969,8 @@ test("reload framing exposes the trigger and its contacting index finger", async
     const { WebGLRenderer, PerspectiveCamera, BufferAttribute, MeshBasicMaterial } = await import(threeUrl);
     const vm = createAk47ViewModel({ vmDebug: false, search: "" });
     await vm.load();
+    type Action = { getEffectiveWeight(): number };
+    const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
     const rig = vm.viewModelScene.getObjectByName("AK47_Rig");
     // Render object IDs through the actual depth buffer. Contact markers alone
     // passed while the player's view hid almost all of the trigger and index.
@@ -734,14 +992,18 @@ test("reload framing exposes the trigger and its contacting index finger", async
     const renderer = new WebGLRenderer({ antialias: false, preserveDrawingBuffer: true });
     document.body.appendChild(renderer.domElement);
     const camera = new PerspectiveCamera();
-    const samples: { aspect: number; progress: number; triggerPixels: number; indexPixels: number }[] = [];
+    const samples: { aspect: number; progress: number; weight: number; triggerPixels: number; indexPixels: number }[] = [];
     for (const height of [540, 600]) {
       renderer.setSize(960, height);
       vm.setAspect(960 / height);
       const gl = renderer.getContext(), pixels = new Uint8Array(960 * height * 4);
       for (const progress of [.16, .35, .5, .7, .8]) {
+        // Start a fresh reload here and advance two render frames; the weight
+        // assertion below proves the frame shows the clip, not the idle pose.
+        vm.reset();
         vm.setAmmoState({ mag: 21, reserve: 90, reloading: true, reloadT01: progress });
-        vm.updateFromMainCamera(camera, 0);
+        vm.updateFromMainCamera(camera, .1);
+        vm.updateFromMainCamera(camera, .1);
         renderer.render(vm.viewModelScene, vm.viewModelCamera);
         gl.readPixels(0, 0, 960, height, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
         let triggerPixels = 0, indexPixels = 0;
@@ -749,7 +1011,7 @@ test("reload framing exposes the trigger and its contacting index finger", async
           if (pixels[i]! > 200 && pixels[i + 1]! < 50) triggerPixels++;
           if (pixels[i + 1]! > 200 && pixels[i]! < 50) indexPixels++;
         }
-        samples.push({ aspect: 960 / height, progress, triggerPixels, indexPixels });
+        samples.push({ aspect: 960 / height, progress, weight: reloadAction.getEffectiveWeight(), triggerPixels, indexPixels });
       }
     }
     vm.dispose();
@@ -757,7 +1019,230 @@ test("reload framing exposes the trigger and its contacting index finger", async
     return samples;
   });
   for (const sample of samples) {
+    expect(sample.weight, JSON.stringify(sample)).toBe(1);
     expect(sample.triggerPixels, JSON.stringify(sample)).toBeGreaterThan(500);
     expect(sample.indexPixels, JSON.stringify(sample)).toBeGreaterThan(300);
   }
+});
+
+test("reload cancel and restart play the hand home along the clip: no joint blend, no snap, no sweep through the rifle or magazines", async ({ page }) => {
+  // Runtime contract (Ak47AnimatedViewModel): the viewmodel never cross-fades
+  // joints between Idle and Reload, because a per-joint blend between the
+  // magazine grip and the handguard grip swept the glove up to 16 mm into the
+  // rifle and 11 mm into the held magazine. A stopped or restarted reload plays
+  // the clip itself home instead: backwards before the release mark, forwards
+  // from it; a restart then plays up to the new reload's time.
+  test.setTimeout(300_000);
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.route("**/reload-fade-test", (route) => route.fulfill({ contentType: "text/html", body: "<body></body>" }));
+  await page.goto("/reload-fade-test");
+  await page.evaluate(installGloveProbe);
+  const result = await page.evaluate(async () => {
+    const moduleUrl = "/src/runtime/weapons/Ak47AnimatedViewModel.ts";
+    const { createAk47ViewModel } = await import(moduleUrl);
+    const marksUrl = "/src/runtime/weapons/ak47ReloadMarks.ts";
+    const { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } = await import(marksUrl);
+    const threeUrl = "/node_modules/.vite/deps/three.js";
+    const { Box3, Frustum, Matrix4, Quaternion, Vector3 } = await import(threeUrl);
+    type Probe = { solids(root: Object3D): unknown[]; penetration(solids: unknown[], gloves: SkinnedMesh[]): { count: number; depth: number; where: string } };
+    const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
+    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    await vm.load();
+    vm.setAspect(16 / 9);
+    /** Whether a shown magazine is inside the 16:9 view (for the log only; hidden penetration still fails). */
+    const inView = (object: Object3D) => {
+      const view = vm.viewModelCamera;
+      view.updateMatrixWorld();
+      const frustum = new Frustum().setFromProjectionMatrix(new Matrix4().multiplyMatrices(view.projectionMatrix, view.matrixWorldInverse));
+      return worldScale(object) > .01 && frustum.intersectsBox(new Box3().setFromObject(object));
+    };
+    const camera = vm.viewModelCamera.clone(false);
+    camera.rotation.set(0, 0, 0);
+    const scene = vm.viewModelScene;
+    const get = (name: string) => scene.getObjectByName(name) as Object3D;
+    const rig = get("AK47_Rig"), hand = get("SupportHand"), magazine = get("Magazine"), spare = get("MagazineSpare"), bolt = get("Bolt");
+    type Action = { getEffectiveWeight(): number; time: number };
+    const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
+    const gloveMaterial = (get("L_GloveAndForearm") as SkinnedMesh).material as import("three").MeshStandardMaterial;
+    const duration = AK47_RELOAD_DURATION_S as number;
+    const release = (AK47_RELOAD_MARKS as Record<string, number>).release!;
+    // Ak47Weapon bumps reloadSerial at every reload start; a new serial while
+    // the previous reload is still shown is what marks a restart.
+    const reloadState = (seconds: number, reloading = true, reloadSerial = 1) => ({
+      mag: 12, reserve: 90, reloading, reloadT01: Math.min(1, Math.max(0, seconds / duration)), reloadSerial,
+    });
+    const worldScale = (object: Object3D) => object.getWorldScale(new Vector3()).x;
+    const gloves = ["L_GloveAndForearm", "Palm_heel_suede_overlay"].map((name) => get(name) as SkinnedMesh);
+    const magazines = [...probe.solids(magazine), ...probe.solids(spare)];
+    const rifle = [...probe.solids(get("AK47_Rig_Surfaces")), ...probe.solids(get("Bolt_Surfaces"))];
+    // Every left-arm bone and both magazines, in rifle space.
+    const tracked: Object3D[] = [];
+    get("L_Armature").traverse((object: Object3D) => { if ((object as Bone).isBone) tracked.push(object); });
+    tracked.push(magazine, spare);
+    const pose = () => {
+      const inverse = rig.matrixWorld.clone().invert();
+      return tracked.map((object) => {
+        const position = new Vector3(), rotation = new Quaternion(), scale = new Vector3();
+        inverse.clone().multiply(object.matrixWorld).decompose(position, rotation, scale);
+        return { position, rotation, shown: object === magazine || object === spare ? worldScale(object) > .01 : true };
+      });
+    };
+    type Pose = ReturnType<typeof pose>;
+    const FRAME = 1 / 120;
+    /** The largest move of any tracked object between two poses. */
+    const jump = (a: Pose, b: Pose) => a.reduce((worst, from, i) => {
+      const to = b[i]!;
+      if (!from.shown || !to.shown) return worst;
+      const mm = from.position.distanceTo(to.position) * 1000, deg = from.rotation.angleTo(to.rotation) * 180 / Math.PI;
+      return mm > worst.mm || deg > worst.deg ? { mm: Math.max(mm, worst.mm), deg: Math.max(deg, worst.deg), object: tracked[i]!.name } : worst;
+    }, { mm: 0, deg: 0, object: "" });
+    type Frame = { frame: number; time: number; weight: number; pose: Pose };
+    const sample = (frame: number): Frame => ({ frame, time: reloadAction.time, weight: reloadAction.getEffectiveWeight(), pose: pose() });
+    /**
+     * Frame-to-frame checks. While the Reload clip is shown the pose is the
+     * clip at action.time, and the clip starts and ends on the Idle pose
+     * (checked below), so Idle counts as clip time 0, which is also the end.
+     * Clip time may then only move at the return or catch-up rate; any faster
+     * jump is a snap unless every tracked object stays within 1 mm and 0.5
+     * degrees.
+     */
+    const apart = (a: number, b: number) => Math.min(Math.abs(a - b), a + duration - b, duration - a + b);
+    const audit = (frames: Frame[], maxRate: number) => {
+      let blended = 0, fastest = 0, snap = { mm: 0, deg: 0, object: "", frame: -1 };
+      for (let i = 1; i < frames.length; i++) {
+        const a = frames[i - 1]!, b = frames[i]!;
+        if (b.weight !== 0 && b.weight !== 1) blended++;
+        const dt = apart(a.weight === 1 ? a.time : 0, b.weight === 1 ? b.time : 0);
+        if (dt <= maxRate * FRAME + 1e-6) { fastest = Math.max(fastest, dt / FRAME); continue; }
+        const step = jump(a.pose, b.pose);
+        if (step.mm > snap.mm || step.deg > snap.deg) snap = { ...step, frame: b.frame };
+      }
+      return { blended, fastest, snap };
+    };
+    const blendIn = (seconds: number) => {
+      vm.reset();
+      vm.setAmmoState(reloadState(seconds));
+      vm.updateFromMainCamera(camera, .1);
+      vm.updateFromMainCamera(camera, .1);
+    };
+    const rigLocal = (object: Object3D) => rig.worldToLocal(object.getWorldPosition(new Vector3()));
+    vm.reset();
+    vm.updateFromMainCamera(camera, 1 / 60);
+    const rest = { hand: rigLocal(hand).toArray(), magazine: magazine.position.toArray(), bolt: bolt.position.x };
+    const idleRifle = probe.penetration(rifle, gloves);
+    const idle = pose();
+    // Both ends of the clip are the Idle pose, digits included.
+    const ends = [0, duration].map((t) => {
+      blendIn(t);
+      return { t, weight: reloadAction.getEffectiveWeight(), ...jump(idle, pose()) };
+    });
+    // Cancel from every phase at 120 Hz until the Idle action is back. Where
+    // the hand holds or works a magazine, measure penetration on every third
+    // frame of the way home.
+    const penetrationAt = [.374, .5, .66, .9, 1.13];
+    const MAX_FRAMES = 240;
+    const cancels = [.1, .27, .374, .5, .66, .9, 1.05, 1.13, 1.3, 1.55].map((t) => {
+      blendIn(t);
+      const frames = [sample(0)];
+      const reachedRifle = probe.penetration(rifle, gloves);
+      const inside: { frame: number; time: number; inView: boolean[]; magazine: { count: number; depth: number; where: string }; rifle: { count: number; depth: number; where: string } }[] = [];
+      let home = -1;
+      for (let frame = 1; frame <= MAX_FRAMES && home < 0; frame++) {
+        vm.setAmmoState(reloadState(t, false));
+        vm.updateFromMainCamera(camera, FRAME);
+        frames.push(sample(frame));
+        if (reloadAction.getEffectiveWeight() === 0) home = frame;
+        else if (penetrationAt.includes(t) && frame % 3 === 1) inside.push({ frame, time: reloadAction.time, inView: [inView(magazine), inView(spare)], magazine: probe.penetration(magazines, gloves), rifle: probe.penetration(rifle, gloves) });
+      }
+      const direction = frames.slice(1).filter((f) => f.weight === 1).map((f, i, list) => Math.sign(f.time - (i ? list[i - 1]!.time : t)));
+      return {
+        t, homeS: home * FRAME, audit: audit(frames, 3), backward: direction.filter((d) => d < 0).length, forward: direction.filter((d) => d > 0).length,
+        expectForward: t >= release, reachedRifle, inside,
+        after: { hand: rigLocal(hand).toArray(), magazine: magazine.position.toArray(), magazineScale: worldScale(magazine), spareScale: worldScale(spare), bolt: bolt.position.x, ao: (gloveMaterial.userData.contactOcclusion as { value: number }).value },
+      };
+    });
+    // A restart while the old reload is still shown: on the same frame (the
+    // last round fired before the latch starts a new reload at once) and
+    // three frames into a cancel. The new reload runs on real time from 0.
+    const restarts = [.1, .5, 1.13].flatMap((t) => [0, 3].map((cancelFrames) => {
+      blendIn(t);
+      const frames = [sample(0)];
+      for (let frame = 1; frame <= cancelFrames; frame++) {
+        vm.setAmmoState(reloadState(t, false));
+        vm.updateFromMainCamera(camera, FRAME);
+        frames.push(sample(frame));
+      }
+      let caughtUp = -1, target = 0;
+      for (let frame = 0; frame < MAX_FRAMES && caughtUp < 0; frame++) {
+        target = frame * FRAME;
+        vm.setAmmoState(reloadState(target, true, 2));
+        vm.updateFromMainCamera(camera, FRAME);
+        frames.push(sample(cancelFrames + 1 + frame));
+        if (frame > 0 && reloadAction.getEffectiveWeight() === 1 && Math.abs(reloadAction.time - target) < 1e-6) caughtUp = frame;
+      }
+      const reached = pose(), time = reloadAction.time, weight = reloadAction.getEffectiveWeight();
+      blendIn(target);
+      const reference = pose();
+      const offTrack = reached.reduce((max, b, i) => Math.max(max, b.position.distanceTo(reference[i]!.position)), 0);
+      return { t, cancelFrames, caughtUpS: caughtUp * FRAME, audit: audit(frames, 4), weight, time, target, offTrack };
+    }));
+    vm.dispose();
+    return { rest, idleRifle, ends, cancels, restarts };
+  });
+  const mm = (value: number) => +(value * 1000).toFixed(2);
+  console.info("Reload cancel/restart:", JSON.stringify({
+    idleRifle: { count: result.idleRifle.count, depthMm: mm(result.idleRifle.depth) },
+    cancels: result.cancels.map(({ t, homeS, audit, backward, forward, reachedRifle, inside }) => ({
+      t, homeS: +homeS.toFixed(3), audit, backward, forward, reachedRifle: { count: reachedRifle.count, depthMm: mm(reachedRifle.depth) },
+      worstMagazineMm: mm(Math.max(0, ...inside.map((f) => f.magazine.depth))), worstRifleMm: mm(Math.max(0, ...inside.map((f) => f.rifle.depth))),
+    })),
+    restarts: result.restarts,
+  }));
+  for (const end of result.ends) {
+    expect(end.weight, `clip at ${end.t} s shown`).toBe(1);
+    expect(end.mm, `clip at ${end.t} s is the Idle pose: ${JSON.stringify(end)}`).toBeLessThan(.1);
+    expect(end.deg, `clip at ${end.t} s is the Idle pose: ${JSON.stringify(end)}`).toBeLessThan(.1);
+  }
+  for (const { t, homeS, audit, backward, forward, expectForward, reachedRifle, inside, after } of result.cancels) {
+    const label = `cancel at ${t} s`;
+    expect(homeS, `${label}: the hand is home within 0.6 s`).toBeGreaterThan(0);
+    expect(homeS, `${label}: the hand is home within 0.6 s`).toBeLessThanOrEqual(.6);
+    expect.soft(audit.blended, `${label}: frames with Idle and Reload blended`).toBe(0);
+    expect.soft(audit.fastest, `${label}: clip rate`).toBeLessThanOrEqual(3 + 1e-3);
+    expect.soft(audit.snap.mm, `${label}: snap ${JSON.stringify(audit.snap)}`).toBeLessThanOrEqual(1);
+    expect.soft(audit.snap.deg, `${label}: snap ${JSON.stringify(audit.snap)}`).toBeLessThanOrEqual(.5);
+    // Before the release the reach is undone; from it the clip plays on.
+    expect.soft(expectForward ? backward : forward, `${label}: the clip plays ${expectForward ? "forwards" : "backwards"} only`).toBe(0);
+    // Once home the idle is back exactly.
+    after.hand.forEach((value: number, i: number) => expect(value, `hand after ${label}`).toBeCloseTo(result.rest.hand[i]!, 4));
+    after.magazine.forEach((value: number, i: number) => expect(value, `magazine after ${label}`).toBeCloseTo(result.rest.magazine[i]!, 5));
+    expect(after.magazineScale, `magazine shown after ${label}`).toBeCloseTo(.9, 3);
+    expect(after.spareScale, `spare hidden after ${label}`).toBeLessThan(.001);
+    expect(after.bolt, `bolt after ${label}`).toBeCloseTo(result.rest.bolt, 5);
+    expect(after.ao, `contact occlusion after ${label}`).toBe(1);
+    if (!inside.length) continue;
+    // The way home is the authored clip: no deeper than cloth contact into a
+    // magazine, nor deeper into the rifle than either end pose already rests.
+    const rifleDepth = Math.max(reachedRifle.depth, result.idleRifle.depth) + SHALLOW_CONTACT_M;
+    const inMagazine = inside.reduce((a, b) => b.magazine.depth > a.magazine.depth ? b : a);
+    const inRifle = inside.reduce((a, b) => b.rifle.depth > a.rifle.depth ? b : a);
+    expect.soft(inMagazine.magazine.depth, `${label}, frame ${inMagazine.frame} (clip ${inMagazine.time.toFixed(3)} s, old/fresh magazine in view ${inMagazine.inView}): ${inMagazine.magazine.count} glove vertices in a magazine, deepest ${mm(inMagazine.magazine.depth)} mm at ${inMagazine.magazine.where}`)
+      .toBeLessThanOrEqual(SHALLOW_CONTACT_M);
+    expect.soft(inRifle.rifle.depth, `${label}, frame ${inRifle.frame} (clip ${inRifle.time.toFixed(3)} s): glove ${mm(inRifle.rifle.depth)} mm into the rifle at ${inRifle.rifle.where} (end poses ${mm(reachedRifle.depth)} and ${mm(result.idleRifle.depth)} mm)`)
+      .toBeLessThanOrEqual(rifleDepth);
+  }
+  for (const restart of result.restarts) {
+    const label = `restart from ${restart.t} s after ${restart.cancelFrames} cancel frames`;
+    expect(restart.caughtUpS, `${label}: caught up with the new reload`).toBeGreaterThan(0);
+    expect.soft(restart.audit.blended, `${label}: frames with Idle and Reload blended`).toBe(0);
+    expect.soft(restart.audit.fastest, `${label}: clip rate`).toBeLessThanOrEqual(4 + 1e-3);
+    expect.soft(restart.audit.snap.mm, `${label}: snap ${JSON.stringify(restart.audit.snap)}`).toBeLessThanOrEqual(1);
+    expect.soft(restart.audit.snap.deg, `${label}: snap ${JSON.stringify(restart.audit.snap)}`).toBeLessThanOrEqual(.5);
+    // The new reload ends up shown on its own timeline, matching a fresh one.
+    expect(restart.weight, label).toBe(1);
+    expect(restart.time, label).toBeCloseTo(restart.target, 5);
+    expect(restart.offTrack, label).toBeLessThan(.0001);
+  }
+  expect(errors).toEqual([]);
 });

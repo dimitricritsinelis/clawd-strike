@@ -14,6 +14,37 @@ function glb(label) {
   return Buffer.concat([header, padded]);
 }
 
+/** GLB with one triangle and the given embedded PNG payloads (fake bytes are fine: nothing decodes them). */
+function glbWithImages(label, payloads) {
+  const positions = Buffer.from(new Float32Array([0, 0, 0, 1, 0, 0, 0, 1, 0]).buffer);
+  const parts = [positions];
+  const bufferViews = [{ buffer: 0, byteOffset: 0, byteLength: positions.length }];
+  let offset = positions.length;
+  for (const payload of payloads) {
+    const pad = (4 - (offset % 4)) % 4;
+    if (pad) parts.push(Buffer.alloc(pad));
+    offset += pad;
+    parts.push(payload);
+    bufferViews.push({ buffer: 0, byteOffset: offset, byteLength: payload.length });
+    offset += payload.length;
+  }
+  const bin = Buffer.concat(parts);
+  const binPadded = Buffer.concat([bin, Buffer.alloc((4 - (bin.length % 4)) % 4)]);
+  const json = Buffer.from(JSON.stringify({
+    asset: { version: "2.0", generator: label },
+    buffers: [{ byteLength: bin.length }],
+    bufferViews,
+    accessors: [{ bufferView: 0, componentType: 5126, count: 3, type: "VEC3", min: [0, 0, 0], max: [1, 1, 0] }],
+    images: payloads.map((_, index) => ({ bufferView: index + 1, mimeType: "image/png" })),
+    materials: [],
+  }));
+  const jsonPadded = Buffer.concat([json, Buffer.alloc((4 - (json.length % 4)) % 4, 32)]);
+  const header = Buffer.alloc(12);
+  [0x46546c67, 2, 12 + 8 + jsonPadded.length + 8 + binPadded.length].forEach((value, i) => header.writeUInt32LE(value, i * 4));
+  const chunk = (length, type) => { const b = Buffer.alloc(8); b.writeUInt32LE(length, 0); b.writeUInt32LE(type, 4); return b; };
+  return Buffer.concat([header, chunk(jsonPadded.length, 0x4e4f534a), jsonPadded, chunk(binPadded.length, 0x004e4942), binPadded]);
+}
+
 function fixture(t, kind = "section") {
   const root = mkdtempSync(path.join(os.tmpdir(), "facade-undo-test-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
@@ -37,6 +68,8 @@ function fixture(t, kind = "section") {
   write(packageFile, JSON.stringify(pkg));
   write("scripts/placeholder", "");
   copyFileSync(new URL("./apply-facade-package.mjs", import.meta.url), path.join(root, "scripts/apply-facade-package.mjs"));
+  mkdirSync(path.join(root, "scripts/lib"), { recursive: true });
+  copyFileSync(new URL("./lib/glbTextures.mjs", import.meta.url), path.join(root, "scripts/lib/glbTextures.mjs"));
   const run = (action, succeeds = true) => {
     const result = spawnSync(process.execPath, [path.join(root, "scripts/apply-facade-package.mjs"), action, "unit-test"], { encoding: "utf8" });
     assert.equal(result.status === 0, succeeds, result.stderr || result.stdout);
@@ -136,4 +169,32 @@ test("placements: a package without placements drops the unit's earlier ones onl
   f.write(f.packageFile, JSON.stringify(f.pkg));
   f.run("apply");
   assert.deepEqual(JSON.parse(f.read(f.spec).toString()).authored_placements, []);
+});
+
+test("embedded images install once as shared textures and are removed when unused", (t) => {
+  const f = fixture(t);
+  const shared = Buffer.from("shared-image-bytes");
+  const extra = Buffer.from("second-image-bytes");
+  f.write(f.source, glbWithImages("with images", [shared, extra, shared]));
+  f.run("apply");
+  const manifest = JSON.parse(f.read(f.manifest));
+  const entry = manifest.models.find((model) => model.id === "model-test");
+  const textures = Object.keys(entry.md5).filter((file) => file.startsWith("textures/"));
+  assert.equal(textures.length, 2, "duplicate images collapse to one shared file");
+  for (const file of textures) assert.ok(existsSync(path.join(path.dirname(path.join(f.root, f.manifest)), file)));
+  const installed = f.read(f.model);
+  const json = JSON.parse(installed.subarray(20, 20 + installed.readUInt32LE(12)).toString());
+  assert.ok(json.images.every((image) => image.bufferView === undefined && image.uri.startsWith("../textures/")));
+  assert.ok(installed.length < f.read(f.source).length, "image bytes leave the GLB");
+
+  f.write(f.source, glbWithImages("fewer images", [shared]));
+  f.run("apply");
+  const after = JSON.parse(f.read(f.manifest)).models.find((model) => model.id === "model-test");
+  const remaining = Object.keys(after.md5).filter((file) => file.startsWith("textures/"));
+  assert.equal(remaining.length, 1);
+  const removed = textures.find((file) => !remaining.includes(file));
+  const texturePath = (file) => path.join(path.dirname(path.join(f.root, f.manifest)), file);
+  assert.equal(existsSync(texturePath(removed)), false, "unreferenced shared textures are deleted");
+  f.run("revert");
+  assert.ok(existsSync(texturePath(removed)), "revert restores the textures its apply removed");
 });

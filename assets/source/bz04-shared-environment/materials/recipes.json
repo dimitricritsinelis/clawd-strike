@@ -132,7 +132,7 @@
       "normal": "assets/source/bz04-shared-environment/materials/bz06_rough_service_paving-normal.png",
       "arm": "assets/source/bz04-shared-environment/materials/bz06_rough_service_paving-arm.png"
     },
-    "sourceRecipeSha256": "e2931f7ee7435a40913fd73b805f0eef8d67a76b45f72e3fec217bb4a5899925",
+    "sourceRecipeSha256": "4455fd117cad5b3db07f18ac5551b7729be8201e9a85a5e52f5ff40ca5f26c79",
     "sha256": {
       "albedo": "6b3a5644b46a26f468b2e362ae6daff7cae811730005dae78e70d0f5b6105cba",
       "normal": "98c86efae6cf454b1dfb22af817a368971242804adc7ffa5966903892f19a277",
@@ -146,11 +146,11 @@
       "normal": "assets/source/bz04-shared-environment/materials/bz06_quiet_flags-normal.png",
       "arm": "assets/source/bz04-shared-environment/materials/bz06_quiet_flags-arm.png"
     },
-    "sourceRecipeSha256": "75ff6989322b29d2255d7db2b247ea844cfcf777caec0f10d8b9f30d12750cf5",
+    "sourceRecipeSha256": "7aee955d4966c2f5ab589a5a6bbdea2b5168cf641e7c3cebf4714b2a648faf95",
     "sha256": {
-      "albedo": "f3c99ab95789859b8ca81e83d3300e464e9f43c3cb1665e5d74015002f6bd249",
-      "normal": "68844f1aeb3ff7d11f8e217d6b8c842879d17aaa044b53647e7b997ff5e9c83d",
-      "arm": "a80996c04cda1c34fdbc1d1ef10419874f350ad5e580f12b5919293e971d1837"
+      "albedo": "354e7149be8fed42a2c57b776a7728a88923f44c9b30ac59dc2b1a41478ba41e",
+      "normal": "540ec826f19608a45425bd649d5ddd624efe43ac61780ed00f4517b77075f62c",
+      "arm": "2fa445146f83e9fd9bbdb8a9e98edcc80b3acf8ca1f636140709bbe342730757"
     }
   },
   "ph_bz04_fine_linen": {

@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "docs/map-design/specs/map_spec.json",
-    "sha256": "887beafcc02c23fc4731d37c111fe6eeac66c9514e62099ff2daca8f324d0647",
+    "sha256": "c5ddf1617b748dbda646abf58734a7f0d568fbf40a35c67993187dd21d172c3e",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -9419,8 +9419,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9442,8 +9441,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9464,8 +9462,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9484,9 +9481,7 @@
         "east",
         "west"
       ],
-      "materialIds": [
-        "ph_bz04_worn_planks"
-      ]
+      "materialIds": []
     },
     {
       "zoneId": "FOUNTAIN_COURT",
@@ -9507,7 +9502,6 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_dark_wood",
         "ph_bz04_stone_trim_sandstone"
       ]
     },
@@ -9692,9 +9686,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_dark_wood",
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9715,8 +9707,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9780,8 +9771,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9803,9 +9793,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_dark_wood",
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9825,8 +9813,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9907,8 +9894,7 @@
         "west"
       ],
       "materialIds": [
-        "ph_bz04_stone_trim_sandstone",
-        "ph_bz04_worn_planks"
+        "ph_bz04_stone_trim_sandstone"
       ]
     },
     {
@@ -9928,9 +9914,7 @@
         "east",
         "west"
       ],
-      "materialIds": [
-        "ph_bz04_worn_planks"
-      ]
+      "materialIds": []
     }
   ],
   "authoredPlacements": [

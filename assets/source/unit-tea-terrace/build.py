@@ -117,9 +117,9 @@ def shells(area):
             'unit-tea-ramp':None,'unit-service-north':None,'unit-textile-arcade':None,
             'unit-tea-landing':None if area['zone']=='TEA_LANDING' else {'tl-w'}})
         interfaces['install'](G,source,additional_units=additional)
-        from integrate_bz04 import load_handoff
-        spine=load_handoff(ROOT/'artifacts/bazaar-r7-whole-map/unit-service-north/handoff.json')['areas'][0]
-        link=load_handoff(ROOT/'artifacts/bazaar-r7-whole-map/unit-link-north-west/handoff.json')['areas'][0]
+        extract=runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']
+        spine=extract('unit-service-north')['areas'][0]
+        link=extract('unit-link-north-west')['areas'][0]
         link_face,link_wall=next((f,p) for f in link['faces'] for p in f['parcels'] if p['id']=='lnw-s')
         shared_part=G.part;_,low,high=rug['shop_cavity']()
         def stairs_part(face,plane,name,lo,hi,mid,shadow='cast',bevel=0):
@@ -240,7 +240,7 @@ def activity(group):
                 for ob in set(bpy.context.scene.objects)-before:G.paint_object(ob,item['stockColorSrgb'],True)
         elif kind=='arabian-coffee-pot':coffeepot(name,face,plane,lo,hi,mid)
         elif kind=='open-ceramic-cup':
-            rim=.015/((hi[0]-lo[0])/2)
+            rim=.004/((hi[0]-lo[0])/2)
             turned(name,face,plane,lo,hi,mid,[(0,0),(.72,0),(.78,.10),(1,.94),(1,1),(1-rim,1),(.68-rim,.15),(0,.15)],item['stockColorSrgb'])
         elif kind=='lidded-tea-canister':
             turned(name,face,plane,lo,hi,mid,[(0,0),(.9,0),(1,.04),(1,.84),(.93,.88),(1,.91),(1,.97),(.88,1),(0,1)],item['stockColorSrgb'])
@@ -251,6 +251,347 @@ def activity(group):
                 G.part(face,plane,name+'-wall-plate',(x-.025,lo[1],lo[2]),(x+.025,lo[1]+.02,hi[2]-.04),G.IRON,'receive')
         else:raise ValueError(('unsupported Tea part',kind))
     S.activity(dict(group,instanceLayout={'parts':[]}))
+
+
+def grade_handrail(area,rail,prefix,wall_surface=0):
+    """A real wall-mounted rail; stairs can recess it behind the clear-volume plane."""
+    face=rail['receiverFace'];plane=rail['wallPlaneM'];low,high=rail['alongM'];wood=[]
+    def point(along,out):return G.coords(face,plane,along,out,floor_at(area,along)+rail['heightAboveFloorM'])
+    for name,p,q in [('run',point(low,rail['projectionM']),point(high,rail['projectionM'])),
+                     ('south-return',point(low,wall_surface-.05),point(low,rail['projectionM'])),
+                     ('north-return',point(high,rail['projectionM']),point(high,wall_surface-.05))]:
+        ob=G.member(prefix+'-'+name,p,q,rail['widthM'],G.WOOD);wood.append(ob)
+        bevel=ob.modifiers.new('Rounded hand-worn rail','BEVEL');bevel.width=.012;bevel.segments=3
+    for along in rail['bracketStationsM']:
+        height=floor_at(area,along)+rail['heightAboveFloorM']
+        G.part(face,plane,prefix+'-wall-plate',(along-.035,wall_surface-.05,height-.16),(along+.035,wall_surface+.008,height+.012),G.IRON,'cast',.004)
+        G.member(prefix+'-bracket',G.coords(face,plane,along,wall_surface+.003,height-.11),
+            G.coords(face,plane,along,rail['projectionM'],height-rail['widthM']/2),.024,G.IRON)
+    return wood
+
+
+def ramp_art_finish(area):
+    """Finish the Ramp's existing rear facade and add its supported grade rail."""
+    from mathutils import Matrix, Vector
+    from bazaar_finish import apply
+    apply(G.__dict__,G.OUT/'unit-tea-ramp.glb')
+    recipe=area['artDirectionFinish']
+    assert recipe['id']=='TEA-RAMP-P3'
+    spec=importlib.util.spec_from_file_location('tea_ramp_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz16_tea_ramp_')
+
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for item in colors.data:item.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if any(ob.name.startswith(prefix) for prefix in recipe['retireFinishPrefixes']):
+            G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(key in source for key in ('plaster','beige')):finish(ob,'plaster')
+        elif any(key in source for key in ('timber','wood','plank','pine')):finish(ob,'timber',.95+.05*(sum(ob.name.encode())%7)/6)
+
+    windows=[o for f in area['faces'] for parcel in f['parcels'] for o in parcel['openings']]
+    joinery=recipe['joinery']
+    for o in windows:
+        depth=-o['depthM']+.04
+        for ob in list(G.bpy.context.scene.objects):
+            if not ob.name.startswith(o['id']+'-'):continue
+            is_frame='-frame-' in ob.name
+            if not is_frame and not any(key in ob.name for key in ('-leaf-stile','-leaf-rail')):continue
+            advance=joinery['frameAdvanceM'] if is_frame else joinery['leafAdvanceM']
+            for v in ob.data.vertices:
+                out=o['receiverPlaneM']-(v.co.x+G.ORIGIN[0])
+                if abs(out-depth)<1e-5:v.co.x-=advance
+            ob.data.update()
+            tools.member_uv(ob)
+            bevel=ob.modifiers.new('Eased shutter joinery','BEVEL');bevel.width=joinery['arrisM'];bevel.segments=2
+        # The closing batten belongs to the left leaf; the right leaf can swing.
+        finish(G.part('east',o['receiverPlaneM'],o['id']+'-P3-meeting-batten',
+            (o['alongM']-.019,depth+.012,o['sillM']+.08),
+            (o['alongM']+.019,depth+.040,o['headM']-.08),G.WOOD,'cast',.003),'timber')
+
+    working=recipe['workingWindow'];o=next(o for o in windows if o['id']==working['opening'])
+    depth=-o['depthM']+.04;hinge=o['alongM']+o['widthM']/2-.083
+    pivot=Vector(G.local(G.coords('east',o['receiverPlaneM'],hinge,depth+.032,0)))
+    rotation=Matrix.Rotation(math.radians(working['rightLeafAngleDeg']),3,'Z')
+    for ob in G.bpy.context.scene.objects:
+        if not ob.name.startswith(o['id']+'-') or not any(key in ob.name for key in ('-leaf-','-latch')):continue
+        along=sum(G.ORIGIN[1]-v.co.y for v in ob.data.vertices)/len(ob.data.vertices)
+        if along<=o['alongM']:continue
+        for vertex in ob.data.vertices:vertex.co=pivot+rotation@(vertex.co-pivot)
+        ob.data.update()
+        # Keep pre-rotation member UVs attached to the timber as the leaf swings.
+    finish(G.bpy.data.objects[o['id']+'-back'],'timber',working['backingFactor'])
+    for z in (o['sillM']+.26,o['headM']-.36):
+        G.part('east',o['receiverPlaneM'],o['id']+'-P3-hinge-plate',
+            (hinge-.045,depth+.002,z),(hinge+.018,depth+.034,z+.1),G.IRON,'cast',.003)
+        pin=G.member(o['id']+'-P3-hinge-pin',G.coords('east',o['receiverPlaneM'],hinge,depth+.032,z-.007),
+            G.coords('east',o['receiverPlaneM'],hinge,depth+.032,z+.107),.018,G.IRON)
+        bevel=pin.modifiers.new('Rounded hinge pin','BEVEL');bevel.width=.006;bevel.segments=2
+
+    for ob in grade_handrail(area,recipe['handrail'],'P3-TR-handrail'):finish(ob,'timber')
+    return tools
+
+
+def ramp_finish_fixture(area):
+    """Check actual grade/clearance and the retained opaque working-window back."""
+    from mathutils import Vector
+    recipe=area['artDirectionFinish'];rail=recipe['handrail'];origin=area['sectionOriginDesign']
+    objects=[ob for ob in G.bpy.context.scene.objects if ob.type=='MESH']
+    for ob in objects:G.prepare_mesh(ob)
+    for ob in objects:
+        if not ob.name.startswith('P3-TR-handrail-'):continue
+        for vertex in ob.data.vertices:
+            x,y,z=vertex.co.x+origin['x'],origin['y']-vertex.co.y,vertex.co.z+origin['z']
+            assert 10.949<=x<=11.18 and 48.5<=y<=55.5,('Handrail enters route or end mouth',ob.name,x,y)
+            assert .80<=z-floor_at(area,y)<=1.055,('Handrail loses grade contact',ob.name,y,z)
+            if ob.name in {'P3-TR-handrail-run','P3-TR-handrail-south-return','P3-TR-handrail-north-return'}:
+                assert abs(z-floor_at(area,y)-rail['heightAboveFloorM'])<=rail['widthM'],('Rail no longer follows actual grade',ob.name,y,z)
+    assert sum(ob.name.startswith('P3-TR-handrail-wall-plate') for ob in objects)==len(rail['bracketStationsM'])
+    assert sum(ob.name.startswith('P3-TR-handrail-bracket') for ob in objects)==len(rail['bracketStationsM'])
+    for o in (o for f in area['faces'] for p in f['parcels'] for o in p['openings']):
+        panels=[ob for ob in objects if ob.name.startswith(o['id']+'-leaf-panel')]
+        assert len(panels)==2 and all(ob.data.materials[0].name=='bz16_tea_ramp_timber' for ob in panels)
+        assert abs(min(v.co.z+origin['z'] for ob in panels for v in ob.data.vertices)-(o['sillM']+.08))<1e-5
+        assert abs(max(v.co.z+origin['z'] for ob in panels for v in ob.data.vertices)-(o['headM']-.08))<1e-5
+    o=next(o for f in area['faces'] for p in f['parcels'] for o in p['openings'] if o['id']==recipe['workingWindow']['opening'])
+    back=G.bpy.data.objects[o['id']+'-back'];point=Vector(G.local(G.coords('east',o['receiverPlaneM'],o['alongM']+.08,.3,(o['sillM']+o['headM'])/2)))
+    assert back.ray_cast(point,Vector((1,0,0)),distance=1)[0],'Working window lost its opaque back'
+    assert sum(ob.name.startswith(o['id']+'-P3-hinge-pin') for ob in objects)==2
+    print('PASS Ramp art: supported 1 m grade rail outside x13..17 route and both mouths; three paired shutters keep datums; ajar leaf retains opaque back and two hinges',flush=True)
+
+
+def stairs_art_finish(area):
+    """Keep the broad descent open while completing its retaining wall and vents."""
+    from bazaar_finish import apply
+    apply(G.__dict__,G.OUT/'unit-tea-stairs.glb');recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('tea_stairs_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz18_tea_stairs_')
+    def finish(ob,family):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for item in colors.data:item.color=(1,1,1,1)
+        ob.data.color_attributes.active_color=colors
+        if family=='timber':tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(k in source for k in ('plaster','beige')):finish(ob,'plaster')
+        elif any(k in source for k in ('timber','wood','plank','pine')):finish(ob,'timber')
+    for o in (o for f in area['faces'] for p in f['parcels'] for o in p['openings']):
+        front=-o['depthM']+.04
+        for ob in G.bpy.context.scene.objects:
+            if not ob.name.startswith(o['id']+'-frame-'):continue
+            for v in ob.data.vertices:
+                if abs(o['receiverPlaneM']-(v.co.x+G.ORIGIN[0])-front)<1e-5:v.co.x-=recipe['ventFrameAdvanceM']
+            ob.data.update();tools.member_uv(ob)
+            bevel=ob.modifiers.new('Eased stock-room vent frame','BEVEL');bevel.width=.003;bevel.segments=2
+    for ob in grade_handrail(area,recipe['handrail'],'P3-TS-handrail',-recipe['retainingRecessM']):finish(ob,'timber')
+    return tools
+
+
+def stairs_finish_fixture(area):
+    from mathutils import Vector
+    recipe=area['artDirectionFinish'];rail=recipe['handrail'];origin=area['sectionOriginDesign']
+    for ob in G.bpy.context.scene.objects:
+        if ob.type=='MESH':G.prepare_mesh(ob)
+        if not ob.name.startswith('P3-TS-handrail'):continue
+        for v in ob.data.vertices:
+            x,y,z=v.co.x+origin['x'],origin['y']-v.co.y,v.co.z+origin['z']
+            assert x<11 and 66.4<y<71.6,('Rail obstructs full-width stair route',ob.name,x,y)
+            assert .94<z-floor_at(area,y)<1.2,('Rail lost its nosing pitch',ob.name,y,z)
+    fields=[ob for ob in G.bpy.context.scene.objects if ob.name.startswith('ts-w-field')]
+    point=Vector(G.local((11.1,69,2.2)));hits=[]
+    for ob in fields:
+        hit,where,normal,index=ob.ray_cast(point,Vector((-1,0,0)),distance=.4)
+        if hit:hits.append(where.x+origin['x'])
+    assert hits and abs(max(hits)-(11-recipe['retainingRecessM']))<1e-5,'Rail pocket is not recessed behind the full clear width'
+    print('PASS Stairs art: entire handrail behind x11 clear plane; real recessed receiver and retained nosing pitch',flush=True)
+
+
+def landing_art_finish(area):
+    """Finish the empty turn as a repaired enclosure, with no new frontage."""
+    from bazaar_finish import apply
+    apply(G.__dict__,G.OUT/'unit-tea-landing.glb')
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('tea_landing_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    materials=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz19_tea_landing_')
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        material=ob.data.materials[0]
+        source=material.get('bz04SourceMaterial',material.name)
+        if 'plastered_wall' not in source:continue
+        ob.data.materials.clear();ob.data.materials.append(materials['sand'])
+        colors=ob.data.color_attributes.get('COLOR_0')
+        if colors:
+            for item in colors.data:item.color=(1,1,1,1)
+        G.world_uv(ob,float(materials['sand']['tileSizeM']))
+    stone=G.mat('ph_bz04_trim_sanded_01').copy();stone.name='bz19_landing_dressed_coping'
+    G.MATS[stone.name]=stone
+    bottom,top=recipe['copingCourseZM'];gap=recipe['copingJointM']
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            left,right=parcel['interval'];count=round((right-left)/.8)
+            for index in range(count):
+                lo=left+(right-left)*index/count;hi=left+(right-left)*(index+1)/count
+                # Only the upper cornice projects: the complete 2.2 m clear turn stays empty.
+                ob=G.part(face['face'],face['wallPlaneM'],'P3-TL-'+parcel['id']+'-coping',
+                          (lo+gap/2,.001,bottom),(hi-gap/2,.045,top),stone.name,'cast',.008)
+                G.paint_object(ob,('#b6aa91','#bfb29a','#afa38b')[index%3]);G.world_uv(ob,.6)
+    return tools
+
+
+def landing_finish_fixture(area):
+    """Keep both mouth intervals and the complete landing clear after finishing."""
+    from mathutils import Vector
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        G.prepare_mesh(ob)
+        for v in ob.data.vertices:
+            x,y,z=v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]
+            assert not (11.001<x<18.999 and 72.001<y<76.499 and z<2.2),('Landing clear turn obstruction',ob.name,x,y,z)
+    for prefix,start,direction,expected,axis in (
+        ('tl-w-field',(11.1,74,2),(-1,0,0),10.86,0),
+        ('tl-n-field',(18,76.3,2),(0,-1,0),76.6,1)):
+        hits=[]
+        for ob in G.bpy.context.scene.objects:
+            if not ob.name.startswith(prefix):continue
+            hit,point,normal,index=ob.ray_cast(Vector(G.local(start)),Vector(direction),distance=.5)
+            if hit:hits.append(point.x+G.ORIGIN[0] if axis==0 else G.ORIGIN[1]-point.y)
+        assert hits and abs(hits[0]-expected)<1e-5,('Landing recess missing',prefix,hits)
+    print('PASS Landing finish: 140 mm retaining recess, 100 mm lime field; all low geometry outside the full clear turn',flush=True)
+
+
+def terrace_art_finish(area):
+    """Complete the tea service, shaded seat and upper household gallery."""
+    from bazaar_finish import apply
+    apply(G.__dict__,G.OUT/'unit-tea-terrace.glb');recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('tea_terrace_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz17_tea_terrace_')
+    spec=importlib.util.spec_from_file_location('tea_counter_craft',ROOT/'assets/source/unit-textile-arcade/build.py')
+    craft=importlib.util.module_from_spec(spec);spec.loader.exec_module(craft);craft.G=G;craft.S.G=G
+    group=area['activityGroups'][0];counter=next(p for p in group['instanceLayout']['parts'] if p['kind']=='grounded-counter-carcass')
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.name.startswith(group['id']+'-'+counter['id']):G.bpy.data.objects.remove(ob,do_unlink=True)
+    one=dict(group,instanceLayout={'parts':[counter]});one.pop('sign',None);craft.activity(one)
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for item in colors.data:item.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    brass=G.mat('bz04_brass_project_original').copy();brass.name='bz17_tea_brass'
+    shader=brass.node_tree.nodes['Principled BSDF'];shader.inputs['Roughness'].default_value=.35;shader.inputs['Metallic'].default_value=.8;G.MATS[brass.name]=brass
+    ceramic=G.mat('bz04_ceramic_project_original').copy();ceramic.name='bz17_tea_porcelain'
+    shader=ceramic.node_tree.nodes['Principled BSDF'];shader.inputs['Roughness'].default_value=.28;G.MATS[ceramic.name]=ceramic
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        # The original 15 mm deep, 7.5 mm half-joints alias as black dashes.
+        # Fill their existing geometry flush, preserving the ownership and finish change.
+        joint=recipe['filledPartyJoint']
+        if ob.name.startswith(('tt-e-field','tt-rug-return-field','tt-e-party-joint','tt-rug-return-party-joint')):
+            along=[G.ORIGIN[1]-v.co.y for v in ob.data.vertices]
+            if min(along)<=joint['alongM']+.01 and max(along)>=joint['alongM']-.01:
+                if 'party-joint' in ob.name:
+                    G.bpy.data.objects.remove(ob,do_unlink=True);continue
+                for v in ob.data.vertices:
+                    if abs(v.co.x+G.ORIGIN[0]-19.015)<1e-5:v.co.x=19+joint['depthM']-G.ORIGIN[0]
+                ob.data.update()
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if ob.name.startswith('G_tt-shop-tea-pot-'):
+            ob.data.materials.clear();ob.data.materials.append(brass);ob['bz04Shadow']='cast'
+        elif ob.name.startswith(('G_tt-shop-cup-','G_tt-shop-tea-stock-')):
+            ob.data.materials.clear();ob.data.materials.append(ceramic)
+            color='#ded7c6' if '-cup-' in ob.name else '#788879' if 'stock-2-' in ob.name else '#ba9b71'
+            G.paint_object(ob,color);ob['bz04Shadow']='cast'
+        elif any(k in source for k in ('plaster','beige')):finish(ob,'sand' if ob.name.startswith('tt-rug-return') else 'plaster')
+        elif any(k in source for k in ('timber','wood','plank','pine')):
+            family='worktop' if '-top-board' in ob.name else 'painted_timber' if ob.name.startswith('tt-e-STAFF-DOOR') else 'timber'
+            finish(ob,family,.96+.04*(sum(ob.name.encode())%5)/4)
+    def timber(name,lo,hi,family='timber'):
+        return finish(G.part('east',19,'P3-TT-'+name,lo,hi,G.WOOD,'cast',.005),family)
+    door=next(o for f in area['faces'] for p in f['parcels'] for o in p['openings'] if o['id']=='tt-e-STAFF-DOOR')
+    c=-door['depthM']+.04;a=door['alongM']
+    timber('staff-meeting-batten',(a-.025,c-.008,door['sillM']+.08),(a+.025,c+.03,door['headM']-.08),'painted_timber')
+    gallery=recipe['gallery'];o=next(o for f in area['faces'] for p in f['parcels'] for o in p['openings'] if o['id']==gallery['opening'])
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.name.startswith(o['id']+'-') and any(k in ob.name for k in ('-frame-','-leaf-','-hinge','-latch')):G.bpy.data.objects.remove(ob,do_unlink=True)
+    finish(G.bpy.data.objects[o['id']+'-back'],'aged_timber',.42)
+    L,R=o['alongM']-o['widthM']/2+.075,o['alongM']+o['widthM']/2-.075;out=gallery['railOutM'];bottom=o['sillM'];top=gallery['railTopM']
+    timber('gallery-floor',(L,gallery['floorOutM'][0],bottom),(R,gallery['floorOutM'][1],bottom+.05),'aged_timber')
+    for x in (L,L+(R-L)/3-.035,L+2*(R-L)/3-.035,R-.07):timber('gallery-post',(x,out-.04,bottom),(x+.07,out+.04,o['headM']-.055))
+    for z in (bottom+.13,top-.075):timber('gallery-rail',(L,out-.055,z),(R,out+.055,z+.075),'worktop')
+    for i in range(20):
+        x=L+.12+i*(R-L-.24)/19
+        timber('gallery-spindle',(x-.0175,out-.022,bottom+.2),(x+.0175,out+.022,top-.075))
+    timber('gallery-head',(L,out-.055,o['headM']-.065),(R,out+.055,o['headM']))
+    for a in (L,R-.09):timber('gallery-head-knee',(a,out-.04,o['headM']-.28),(a+.09,out+.04,o['headM']-.055))
+    L,R=gallery['benchAlongM'];back,front=gallery['benchOutM'];seat=gallery['benchTopM']
+    for x in (L+.1,(L+R)/2-.04,R-.18):timber('gallery-bench-leg',(x,back+.02,bottom+.05),(x+.08,front-.02,seat-.05))
+    timber('gallery-bench-seat',(L,back,seat-.05),(R,front,seat),'aged_timber')
+    for x in (L+.08,R-.14):timber('gallery-bench-upright',(x,back,bottom+.05),(x+.06,back+.04,seat+.42))
+    for z in (seat+.12,seat+.32):timber('gallery-bench-back',(L,back,z),(R,back+.045,z+.075))
+    # Backrest uprights bear on the existing lower seat frame, behind the cushion.
+    seat=recipe['seatBack'];L,R=seat['alongM'];back,front=seat['outM'];top=seat['topZM']
+    for x in (L,R-.055):timber('seat-back-upright',(x,back,1.72),(x+.055,front,top))
+    for z in (2.09,2.25,top-.06):timber('seat-back-slat',(L,back,z),(R,front,z+.06),'timber')
+    for index,(L,R) in enumerate(((59.97,60.37),(60.78,61.18))):
+        S.soft_cloth('P3-TT-back-cushion-'+str(index),'east',19,(L,-.39,1.95),(R,-.27,2.21),G.WOOD,False)
+    for ob in G.bpy.context.scene.objects:
+        if ob.name.startswith('P3-TT-back-cushion'):
+            finish(ob,'cloth',.73)
+    tray=recipe['servingTray'];L,R=tray['alongM'];back,front=tray['outM'];z,Z=tray['zM']
+    G.part('east',19,'P3-TT-serving-tray',(L,back,z),(R,front,z+.005),brass.name,'receive',.004)
+    for low,high in [((L,back,z+.005),(R,back+.012,Z)),((L,front-.012,z+.005),(R,front,Z)),((L,back+.012,z+.005),(L+.012,front-.012,Z)),((R-.012,back+.012,z+.005),(R,front-.012,Z))]:G.part('east',19,'P3-TT-tray-rim',low,high,brass.name,'receive',.004)
+    return tools
+
+
+def terrace_finish_fixture(area):
+    """Check the gallery, serving surface and lower seat without altering route authority."""
+    for ob in G.bpy.context.scene.objects:
+        if ob.type=='MESH':G.prepare_mesh(ob)
+    clear=area['clearRouteRegion']
+    for ob in G.bpy.context.scene.objects:
+        if not ob.name.startswith('P3-TT-'):continue
+        for v in ob.data.vertices:
+            x,y,z=v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]
+            assert not (clear['x']<x<clear['x']+clear['w'] and clear['y']<y<clear['y']+clear['h'] and 1.441<z<3.6),('Tea finish obstructs route',ob.name)
+    for ob in G.bpy.context.scene.objects:
+        if ob.name.startswith('G_tt-shop-cup-1-'):
+            assert abs(min(v.co.z+G.ORIGIN[2] for v in ob.data.vertices)-2.345)<1e-5,'Served cup is not seated on the tray'
+    joint=area['artDirectionFinish']['filledPartyJoint'];joint_fields=[]
+    for ob in G.bpy.context.scene.objects:
+        if not ob.name.startswith(('tt-e-field','tt-rug-return-field')):continue
+        along=[G.ORIGIN[1]-v.co.y for v in ob.data.vertices]
+        if min(along)>=joint['alongM']-.01 and max(along)<=joint['alongM']+.01:joint_fields.append(ob)
+    assert joint_fields and all(abs(v.co.x+G.ORIGIN[0]-19)<1e-5 for ob in joint_fields for v in ob.data.vertices),'Filled ownership joint is not flush'
+    assert not any(ob.name.startswith('TT-SITTING-GALLERY-leaf-') for ob in G.bpy.context.scene.objects)
+    back=G.bpy.data.objects['TT-SITTING-GALLERY-back']
+    assert min(v.co.x+G.ORIGIN[0] for v in back.data.vertices)>=20.05-1e-5
+    assert len([ob for ob in G.bpy.context.scene.objects if ob.name.startswith('P3-TT-gallery-spindle')])==20
+    assert len([ob for ob in G.bpy.context.scene.objects if ob.name.startswith('P3-TT-seat-back-upright')])==2
+    print('PASS Terrace art: opaque recessed gallery, supported rails/benches and serving tray remain outside the protected passage',flush=True)
 
 
 def terrace_fixture(area):
@@ -320,6 +661,7 @@ def build(saved,unit,fixture=False):
             assert abs(min(v.co.z for v in deck.data.vertices))<1e-7
             assert abs(max(v.co.z for v in deck.data.vertices)-.04)<1e-7
             terrace_fixture(area)
+            terrace_art_finish(area);terrace_finish_fixture(area)
 
         if area['floor']['kind']=='ramp':
             for ob in bpy.context.scene.objects:
@@ -347,6 +689,8 @@ def build(saved,unit,fixture=False):
                     low=min(v.co.z+origin['z'] for ob in bpy.context.scene.objects if ob.name.startswith(name+'-field') for v in ob.data.vertices if abs(origin['y']-v.co.y-y)<1e-5)
                     assert abs(low-floor_at(area,y))<1e-5,(name,y,low)
             print('PASS Ramp: three paired shutters retain absolute datums; both walls meet 0..1.4 m grade; south closure starts at4.5 m; internal west skins absent',flush=True)
+            ramp_art_finish(area)
+            ramp_finish_fixture(area)
         if area['zone']=='TEA_STAIRS':
             assert area['floor']['step_count']==10 and not area['activityGroups'] and not area['fixtures']
             for ob in bpy.context.scene.objects:G.prepare_mesh(ob)
@@ -363,6 +707,7 @@ def build(saved,unit,fixture=False):
                 assert abs(max(v.co.z+origin['z'] for ob in frame for v in ob.data.vertices)-o['headM'])<1e-5
             assert len([ob for ob in bpy.context.scene.objects if ob.name.startswith('ts-w-pier-reveal')])==2
             print('PASS Stairs: ten tread intervals, both 1.4..0 m grade contacts, two fixed-datum louvers and only real end-pier reveals',flush=True)
+            stairs_art_finish(area);stairs_finish_fixture(area)
         if area['zone']=='TEA_LANDING':
             parcels=[(f,p) for f in area['faces'] for p in f['parcels']]
             assert len(parcels)==2 and not area['activityGroups'] and not area['fixtures']
@@ -377,15 +722,23 @@ def build(saved,unit,fixture=False):
                 assert any('-pier-reveal' in ob.name for ob in objects)
             assert not bpy.data.objects.get('tl-n-back') and not bpy.data.objects.get('tl-n-end-closure')
             print('PASS Landing: exactly two BC-01 returns, bounded solid intervals, no openings or dressing, internal north skins omitted',flush=True)
+            landing_art_finish(area);landing_finish_fixture(area)
         S.validate_objects(area)
         print('PASS Tea geometry fixture',unit,'absolute asymmetric frame, graded foot or1.4m deck, explicit bounded part assemblies')
     else:
-        S.validate_objects(area)
-        # Preserve Landing's accepted embedded PBR regardless of whether
-        # Blender assigns a numeric suffix to a pack-material name.
+        tools={'unit-tea-ramp':ramp_art_finish,'unit-tea-terrace':terrace_art_finish,'unit-tea-stairs':stairs_art_finish,'unit-tea-landing':landing_art_finish}[unit](area);S.validate_objects(area)
+        prepare=G.prepare_mesh
+        for ob in G.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'])
+        G.prepare_mesh=lambda ob:None
+        # Keep the Landing export's existing embedded-material policy.
         if unit=='unit-tea-landing':G._strip_pack_images=lambda:None
-        G.export(G.OUT/(unit+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
-                 {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        try:
+            G.export(G.OUT/(unit+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+                     {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
+
 
 
 def main(unit='unit-tea-terrace'):

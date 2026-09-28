@@ -6,7 +6,7 @@
   "license": "Existing project Tripo character; rifle derivative CC-BY-NC-4.0; new rig and motion Project-Original",
   "dependencies": [
     {
-      "file": "art-source/characters/enemy_raider/model_source_4k.glb",
+      "file": "assets/source/enemy-raider/donor/model_source_4k.glb",
       "source": "Existing repository Tripo export",
       "license": "Existing project asset; no new external acquisition",
       "md5": "d1d134b5700a6de5f412aa0d1072b41f"

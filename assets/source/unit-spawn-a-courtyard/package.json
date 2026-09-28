@@ -36,7 +36,7 @@
       "yawDeg": 180
     }
   ],
-  "inputSha256": "6679acb94b92512bda162359059f89c92631779e2f3897db007a0980d40747b8",
+  "inputSha256": "d8d56a2f2f0b895119b8360128b7c808ae3cf7a65bee53f20047fd2b396df3e6",
   "exportBudgetOverride": {
     "maxMaterials": 15,
     "maxRenderedPrimitives": 17,

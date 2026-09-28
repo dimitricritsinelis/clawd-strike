@@ -1,0 +1,171 @@
+{
+ "magazine": {
+  "theta": 0,
+  "offset": [
+   0,
+   0,
+   0
+  ]
+ },
+ "hand_in_mag": {
+  "matrix": [
+   [
+    0.6751829400387419,
+    0.6032537792047742,
+    -0.42451487059441956,
+    -0.06267929796754619
+   ],
+   [
+    -0.123864705902595,
+    -0.4746057570146766,
+    -0.8714395618975473,
+    0.08118576998717568
+   ],
+   [
+    -0.7271764105857006,
+    0.6409635350655154,
+    -0.24572385843465397,
+    -0.1435821257494522
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ]
+ },
+ "anatomy": {
+  "index": {
+   "mcp": 8.0,
+   "mcp_abduct": -6.0,
+   "pip": 35.6,
+   "dip": 25.1
+  },
+  "middle": {
+   "mcp": 18.5,
+   "mcp_abduct": -6.0,
+   "pip": 73.8,
+   "dip": 48.4
+  },
+  "ring": {
+   "mcp": 18.1,
+   "mcp_abduct": -5.8,
+   "pip": 83.8,
+   "dip": 37.2
+  },
+  "pinky": {
+   "mcp": 17.5,
+   "mcp_abduct": 4.6,
+   "pip": 66.0,
+   "dip": 38.6
+  },
+  "thumb": {
+   "cmc_flex": -20.0,
+   "cmc_abduct": 42.1,
+   "cmc_rot": 10.0,
+   "mcp": 20.0,
+   "ip": 30.8
+  }
+ },
+ "arm": {
+  "forearm_roll_deg": 151.3,
+  "forearm_roll_split": 0.25,
+  "pole_offset": [
+   0,
+   0.05,
+   -0.15
+  ]
+ },
+ "_meta": {
+  "concept": "B power grip (refined)",
+  "arm_note": "The wrist cannot twist. The bake/IK must put the hand roll into the forearm: rotate L_forearm.001 by (1-split)*forearm_roll_deg and L_forearm by split*forearm_roll_deg about their local +Y (render.py applies this; 'auto' solves it so wrist twist = 0). pole_offset (m, rig space) is added to the reload bake's elbow pole for that phase.",
+  "description": "Removal hold-and-release key (magazine seated, theta 0): palm high on the near face, index hooked under the receiver on the front edge, middle/ring/pinky wrapped over the front edge onto the far face, thumb reaching behind the magazine with its distal pad on the rear face of the paddle tab (pad faces +X), pinching the paddle against the finger wrap across the magazine depth.",
+  "press_beat": "Author 3-4 frames before this key with the same hand_in_mag and the thumb 6-8 deg less MCP/IP flexion (pad ~2 mm behind the paddle); this key is the pressed state. Hold it while the magazine rocks to theta about -0.15 (hand rolls with the magazine: hand_in_mag is magazine-relative), then release the thumb and pull down/back-left.",
+  "rock_pivot_warning": "pose_and_render rocks theta about LUG=(0.066,0,0.056), but the magazine top front edge is at x ~0.008; the real front lug pivot should be near (0.008,0,0.058). Check the bake's pivot before relying on theta.",
+  "measured": {
+   "wrist_flex_deg": -47.5,
+   "wrist_radial(-)/ulnar(+)_dev_deg": 19.7,
+   "wrist_twist_deg": -0.0,
+   "palm_vs_elbowflex_angle_deg": 22.2,
+   "digits": {
+    "f_ring": {
+     "inside": 3,
+     "max_inside_depth_mm": 0.21,
+     "contact_2mm": 71
+    },
+    "f_index": {
+     "inside": 3,
+     "max_inside_depth_mm": 0.44,
+     "contact_2mm": 57
+    },
+    "thumb": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    },
+    "f_pinky": {
+     "inside": 2,
+     "max_inside_depth_mm": 0.26,
+     "contact_2mm": 76
+    },
+    "f_middle": {
+     "inside": 2,
+     "max_inside_depth_mm": 0.03,
+     "contact_2mm": 46
+    }
+   },
+   "rifle_contact": {
+    "L_thumb.03:paddle": {
+     "n": 14,
+     "max_inside_mm": 0.0,
+     "centroid": [
+      -0.0701,
+      0.0,
+      0.0001
+     ]
+    },
+    "L_thumb.03:guard": {
+     "n": 5,
+     "max_inside_mm": 0.0,
+     "centroid": [
+      -0.0848,
+      -0.0044,
+      0.0039
+     ]
+    },
+    "L_f_index.03:receiver": {
+     "n": 6,
+     "max_inside_mm": 0.0,
+     "centroid": [
+      0.0105,
+      -0.0132,
+      0.0428
+     ]
+    }
+   },
+   "thumb_pad_dir_rig": [
+    0.923,
+    0.106,
+    -0.37
+   ],
+   "thumb03_head_tail_rig": [
+    [
+     -0.0817,
+     0.0139,
+     -0.009
+    ],
+    [
+     -0.0749,
+     -0.0056,
+     0.0023
+    ]
+   ],
+   "wristErrorMm": 0.043
+  },
+  "elbow": "Uses pole_offset (0, 0.05, -0.15) for this phase (elbow drop, like insert). Hand re-pitched ~10 deg (fit with a wrist term) so the wrist is less extended; the pole alone cannot reduce wrist extension because the shoulder and elbow angle are fixed (elbow only swings on a circle).",
+  "thumb_fix": "Thumb pad core presses the rear face of the exposed paddle tab low (contact centroid z ~0.000, tab spans z -0.002..0.011) with the distal pad facing +X (bone pad dir 0.923, 0.106, -0.370); the tip stays ~3 mm below the trigger-guard ears and the nail clears the guard front by >= 1.78 mm. The paddle-to-guard gap at that height (~13 mm) is about one gloved thumb thickness, so a 2 mm+ nail clearance cannot be combined with pad contact.",
+  "previous_version": "fix2/backup/remove.json",
+  "fix2": "Thumb re-coupled and re-split (fix2/): CMC extension -20 now pairs with cmc_rot 10 (was 44.9, pronation ceiling); MCP 20 / IP 30.8 (was 0.3 / 63.4, IP-only hook). Pad-core contact on the paddle tab (mean 23 deg from the pad, closest 0.17 mm, no penetration), tip kept below the trigger-guard ears (distal-thumb z max 0.0082 vs ear underside 0.0113, no 'other' contacts), nail side >= 1.78 mm from the guard front. Finger MCP cascade now index 8 < middle 18.5 ~ ring 18.1 ~ pinky 17.5 (was 8.1/42.5/50.9/13.3); ring/pinky mcp_abduct -5.8/+4.6 (was -10/-9.5). Fitted with fix2/fit4.py (cascade, CMC-coupling cmc_rot <= cmc_flex + 30, pad-core and tip-ceiling terms), config fix2/cfg_zw4.json."
+ }
+}

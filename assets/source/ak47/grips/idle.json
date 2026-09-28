@@ -1,0 +1,52 @@
+{
+ "anatomy": {
+  "index": {
+   "mcp": 50,
+   "mcp_abduct": 17.6,
+   "pip": 36,
+   "dip": 18.8
+  },
+  "middle": {
+   "mcp": 32,
+   "mcp_abduct": -0.4,
+   "pip": 92,
+   "dip": 48
+  },
+  "ring": {
+   "mcp": 50,
+   "mcp_abduct": 4.1,
+   "pip": 84,
+   "dip": 42.2
+  },
+  "pinky": {
+   "mcp": 68,
+   "mcp_abduct": 19.0,
+   "pip": 52,
+   "dip": 24.8
+  },
+  "thumb": {
+   "cmc_flex": -8.5,
+   "cmc_abduct": 20.2,
+   "cmc_rot": 37.0,
+   "mcp": 2.2,
+   "ip": 0.8
+  }
+ },
+ "placement": {
+  "offset_along_palm_normal_m": 0.00705,
+  "roll_about_hand_y_deg": -6.0,
+  "pitch_about_hand_x_deg": 0.0,
+  "pivot_hand_local": [
+   0.0,
+   0.06,
+   0.015
+  ]
+ },
+ "_meta": {
+  "concept": "Idle support grip on the handguard, re-authored through hand_pose.digit_quaternions",
+  "placement": "The approved Idle_LeftHand_B hand sat with its palm heel 6.9 mm inside the handguard wood. viewmodel_v2 lifts SupportHand off the wood: roll about the hand's long axis (+Y) by roll_about_hand_y_deg around pivot_hand_local (palm centre), then translate by offset_along_palm_normal_m against the palm normal. The arm chain turns about the shoulder so the wrist follows; SupportHand takes the new orientation exactly. Searched (fit over roll/pitch/offset) for the most palm contact within 2.5 mm with every palm vertex at least 0.6 mm outside the wood.",
+  "why": "The shipped idle flexed the thumb MCP/IP about bone +X, a sideways bend (residual 24.5 deg at L_thumb.02, 13.3 at L_thumb.03), abducted the pinky 25.5 deg (limit 20) and put the palm heel inside the wood.",
+  "fit": "Digits re-fitted against the rifle surfaces at the new placement: every digit vertex at least 0.5 mm outside, distal pads about 0.8 mm off the wood, contact on the pad rather than the side (middle 75% pad), ring/pinky DIP about 0.5 x PIP, thumb pad lying along the near side of the handguard (distal and proximal pads within 2.1 mm) with the CMC off its extension limit and pronated, not supinated. Residual side-bend/twist is 0 by construction.",
+  "pinky": "Pinky mcp_abduct clamped to 19 deg (was 20.0000005, at the hand_pose.validate limit)."
+ }
+}

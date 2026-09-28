@@ -520,7 +520,14 @@ test("shared merchant stalls seed complete counter, shelf, header, and canopy si
     return color.getHexString();
   }));
   assert.ok(rugColors.size >= 4, "stall rugs collapsed back to one repeated signature");
-  assert.deepEqual(result.colliders, noStallBaseline.colliders, "stall finish changed gameplay collision");
+  // Compiled dressing retires the procedural boxes; only authored fits remain
+  // and soft-visual stalls add nothing.
+  const authoredFits = new Set(["DYE_E_SHOP_2-shop", "DYE_W_SHOP_1-shop", "DYE_W_SHOP_2-shop"]);
+  assert.deepEqual(
+    result.colliders,
+    noStallBaseline.colliders.filter((collider) => authoredFits.has(collider.id)),
+    "stall finish changed gameplay collision",
+  );
 });
 
 test("legacy Dyers wet-workstations are grounded seeded PBR prefabs without gameplay collision", async () => {
@@ -791,20 +798,35 @@ test("B4 lane dressing stays collisionless and renders its authored textured rug
   );
 });
 
-test("cover goods preserve the authored hard collider while adding sacks and a flexible PBR tarp", async () => {
+test("cover goods collide exactly where their crates and sack render, with a sack and flexible PBR tarp", async () => {
   const result = await buildCoverGoodsResult();
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  assert.equal(result.colliders.length, 1, "cover-goods collider count changed");
-  const collider = result.colliders[0]!;
-  assert.deepEqual(
-    {
-      width: Number((collider.max.x - collider.min.x).toFixed(2)),
-      height: Number((collider.max.y - collider.min.y).toFixed(2)),
-      depth: Number((collider.max.z - collider.min.z).toFixed(2)),
-    },
-    { width: 1.04, height: 1.15, depth: 0.96 },
-    "rotated cover collider bounds changed",
-  );
+  // Three crates and one sack; the old envelope stood 1.15 m tall around goods
+  // that top out near 0.6 m and stopped shots at empty air.
+  assert.equal(result.colliders.length, 4, "cover-goods collider count changed");
+  const pieces: Box3[] = [];
+  const matrix = new Matrix4();
+  for (const name of ["v3-cover-crate-horizontal-slat", "v3-cover-crate-painted-vertical-slat", "v3-cover-crate-diagonal-braced"]) {
+    const crates = mesh(root, name);
+    crates.geometry.computeBoundingBox();
+    for (let index = 0; index < crates.count; index += 1) {
+      crates.getMatrixAt(index, matrix);
+      pieces.push(crates.geometry.boundingBox!.clone().applyMatrix4(matrix));
+    }
+  }
+  root.updateMatrixWorld(true);
+  const sack = root.getObjectByName("market-stall-goods-cc0_spice_sack");
+  assert.ok(sack, "cover sack is missing");
+  pieces.push(new Box3().setFromObject(sack, true));
+  const colliderBoxes = result.colliders.map((collider) => new Box3(
+    new Vector3(collider.min.x, collider.min.y, collider.min.z),
+    new Vector3(collider.max.x, collider.max.y, collider.max.z),
+  ));
+  const same = (a: Box3, b: Box3) => a.min.distanceTo(b.min) < 1e-6 && a.max.distanceTo(b.max) < 1e-6;
+  assert.ok(colliderBoxes.every((box) => pieces.some((piece) => same(box, piece))), "a cover collider does not match a rendered piece");
+  assert.ok(pieces.every((piece) => colliderBoxes.some((box) => same(box, piece))), "a rendered cover piece lost its collider");
+  assert.ok(Math.max(...colliderBoxes.map((box) => box.max.y)) < 0.7, "cover collider rises above the rendered goods");
+  assert.ok(result.colliders.every((collider) => collider.kind === "prop" && collider.id.startsWith("COVER_SPICE_01-cover-")));
   const tarp = mesh(root, "v3-cover-goods-draped-tarp");
   assert.equal(tarp.count, 1);
   const tarpMaterial = tarp.material as MeshStandardMaterial;
@@ -825,6 +847,13 @@ test("cover-goods layouts vary deterministically and every tarp intersects a sup
   ];
   assert.equal(tarp.count, 8);
   assert.ok(crateMeshes.every((crate) => crate.count === tarp.count));
+  const piecesByAnchor = new Map<string, number>();
+  for (const collider of result.colliders.filter((entry) => /-cover-\d+$/.test(entry.id))) {
+    const anchorId = collider.id.replace(/-cover-\d+$/, "");
+    piecesByAnchor.set(anchorId, (piecesByAnchor.get(anchorId) ?? 0) + 1);
+  }
+  assert.ok([...piecesByAnchor.values()].every((count) => count === 4), `a cover cluster became partially solid: ${JSON.stringify([...piecesByAnchor])}`);
+  assert.equal(piecesByAnchor.has("COVER_TEXTILE_01"), false, "the lane-clearance rule no longer holds the textile cover open");
 
   const tarpTints = new Set<string>();
   for (let index = 0; index < tarp.count; index += 1) {
@@ -1042,7 +1071,7 @@ test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spou
   assert.equal(stoneMaterial.aoMap, stoneMaterial.roughnessMap);
   assert.ok(stoneMaterial.normalMap.name.endsWith("white_sandstone_blocks_02_nor_gl_1k.jpg"));
   assert.ok(stoneMaterial.roughnessMap.name.endsWith("white_sandstone_blocks_02_arm_1k.jpg"));
-  assert.ok(Math.abs(stoneMaterial.normalScale.x - 0.68) <= 0.001);
+  assert.ok(Math.abs(stoneMaterial.normalScale.x - 0.38) <= 0.001);
   assert.ok(stoneMaterial.roughness >= 0.88 && stoneMaterial.roughness <= 0.93, "fountain stone lost its dry worn finish");
   assert.ok(stoneMaterial.color.r >= stoneMaterial.color.g, "fountain stone lost its pale limestone separation");
 

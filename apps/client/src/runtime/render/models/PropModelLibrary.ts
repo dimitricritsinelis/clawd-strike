@@ -1,6 +1,7 @@
 import { Group } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { disposeObjectRoot } from "../../utils/disposeObjectRoot";
+import { createSharedTextureLoadingManager } from "./sharedGltfTextures";
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -154,7 +155,9 @@ export class PropModelLibrary {
         throw new Error(`Required registered prop models are missing: ${missingIds.sort().join(", ")}`);
       }
     }
-    const loader = new GLTFLoader();
+    // Image URIs resolve through one cache shared by every library, so a finish
+    // used by many facade GLBs is fetched, decoded and uploaded once.
+    const loader = new GLTFLoader(createSharedTextureLoadingManager());
     const templatesById = new Map<string, Group>();
 
     let nextEntryIndex = 0;
@@ -206,6 +209,13 @@ export class PropModelLibrary {
             };
             if (pbrMaterial.isMeshStandardMaterial !== true || !pbrMaterial.userData) continue;
             pbrMaterial.userData.propModelId = entry.id;
+            // GLTFLoader leaves embedded textures at anisotropy 1, which blurs every
+            // receding facade and paving plane long before its mip level should.
+            // Three clamps this to the device limit at upload.
+            for (const slot of ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"] as const) {
+              const texture = (material as Partial<Record<typeof slot, { anisotropy: number } | null>>)[slot];
+              if (texture) texture.anisotropy = 16;
+            }
             if (!albedoCorrection || !pbrMaterial.color) continue;
             // Templates are instanced, so each material is corrected once.
             if (correctedMaterials.has(pbrMaterial)) continue;

@@ -359,10 +359,35 @@ def portal_detail(face,plane,o,top):
             inner=[(cx,z-mh/2+iw),(cx+mw/2-iw,z),(cx,z+mh/2-iw),(cx-mw/2+iw,z)]
             verts=[coords(face,plane,x,out,Z) for points,out in [(corners,front),(diamond,front),(inner,front-inc)] for x,Z in points]
             faces=[(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)]+[(4+i,4+(i+1)%4,8+(i+1)%4,8+i) for i in range(4)]+[(8,9,10,11)]
-            mesh(name+'-lozenge-incision',verts,faces,material)
+            if face in {'east','south'}:faces=[tuple(reversed(f)) for f in faces]
+            ob=mesh(name+'-lozenge-incision',verts,faces,material)
+            ob['bz04PreserveWinding']=True
             part(face,plane,name+'-carving-receiver',(cx-width/2,front-.024,cell_bottom),(cx+width/2,front-inc-.001,cell_top),material)
             bottom=cell_top;z+=pitch
         if bottom<top[0][1]:part(face,plane,name+'-portal-jamb',(cx-width/2,front-.024,bottom),(cx+width/2,front,top[0][1]),material)
+
+
+def close_arch_shoulders(face, plane, o, trim):
+    if o.get('headShape','rectangular') == 'rectangular':
+        return
+    prefix=o['id']+'-spring-closure'
+    if any(ob.name==prefix or ob.name.startswith(prefix+'.') for ob in bpy.context.scene.objects):
+        return
+    top = arch_points(o)
+    width = max(.10,o.get('trimWidthM',.1))
+    outer = offset_top(top,width)
+    front = o.get('frontProjectionM',.08)
+    if o.get('architecturalDetail',{}).get('profile') == 'carved-timber-portal':
+        front -= .025
+    # The normal-offset curve rises above its jamb spring. Close the small
+    # quadrilateral below that endpoint, within the existing surround mask.
+    for endpoint,arc,edge in [(outer[0],top[0],top[0][0]-width),
+                              (outer[-1],top[-1],top[-1][0]+width)]:
+        if endpoint[1] > arc[1]+1e-7:
+            poly=[(edge,arc[1]),arc,endpoint,(edge,endpoint[1])]
+            prism_profile(o['id']+'-spring-closure',face,plane,poly,
+                            min(-.02,front-.01),front,o.get('surroundMaterialId',trim))
+
 
 
 def shaped_opening(face,plane,o,trim,back):
@@ -376,7 +401,9 @@ def shaped_opening(face,plane,o,trim,back):
         prism_profile(name+'-arch-surround',face,plane,[p,q,Q,P],min(-.02,receiver_front-.01),receiver_front,trim)
         ceiling=s+h+j+.02
         prism_profile(name+'-spandrel',face,plane,[P,Q,(Q[0],ceiling),(P[0],ceiling)],-.02,0,back)
-        mesh(name+'-barrel',[coords(face,plane,x,out,z) for out in [-dep,0] for x,z in [p,q]],[(0,1,3,2)],reveal)
+        winding=(2,3,1,0) if face in {'east','south'} else (0,1,3,2)
+        ob=mesh(name+'-barrel',[coords(face,plane,x,out,z) for out in [-dep,0] for x,z in [p,q]],[winding],reveal)
+        ob['bz04PreserveWinding']=True
     for L,H in [(l-j,l),(r,r+j)]:b('jamb',(L,-dep,s),(H,receiver_front,top[0][1]),reveal,bevel=.012 if o.get('finishFamily')=='domestic' else .008)
     for edge,limit in [(outer[0],l-j),(outer[-1],r+j)]:
         x0,x1=sorted([edge[0],limit])
@@ -386,6 +413,7 @@ def shaped_opening(face,plane,o,trim,back):
     b('sill',(l-j,-dep,max(-.02,s-.06)),(r+j,front,max(.001,s)),sill)
     closure(face,plane,o,top)
     portal_detail(face,plane,o,top)
+    close_arch_shoulders(face,plane,o,trim)
 
 def star_screen(name,face,plane,lo,hi,out,mid):
     from mathutils.geometry import delaunay_2d_cdt
@@ -510,7 +538,7 @@ def facade_feature(f):
         b('deck',(l,-.18,3.26),(r,.75,3.4))
         for x in [a-.9,a+.9]:
             b('joist',(x-.07,-.18,3.12),(x+.07,.75,3.26))
-            beam('knee',(x,-.02,3.155),(x,.55,3.225),.07)
+            beam('knee',(x,-.02,2.83),(x,.55,3.145),.105)
         for x in [a-1.27,a+1.27]:
             for out in [0,.71]:b('corner-post',(x-.04,out-.04,3.4),(x+.04,out+.04,6.05))
         b('middle-post',(a-.04,.67,3.4),(a+.04,.75,4.45))
@@ -629,8 +657,116 @@ def receiver_owned_end_caps():
                         bm.to_mesh(ob.data);bm.free()
 
 
+
+def courtyard_art_finish():
+    """The B-only art pass leaves shared geometry helpers and other units intact."""
+    import importlib.util
+    from types import SimpleNamespace
+    from mathutils import Matrix
+    from bazaar_finish import apply
+    apply(globals(),OUT/'unit-spawn-b-courtyard.glb')
+    recipe=A['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('bazaar_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(globals(),recipe['materials'],prefix='bz12_b_')
+    spec=importlib.util.spec_from_file_location('b_counter_craft',ROOT/'assets/source/unit-textile-arcade/build.py')
+    craft=importlib.util.module_from_spec(spec);spec.loader.exec_module(craft);craft.G=SimpleNamespace(**globals());craft.S.G=craft.G
+    for group in A['activityGroups']:
+        counters=[p for p in group['instanceLayout']['parts'] if p['kind']=='grounded-counter-carcass']
+        for counter in counters:
+            for ob in list(bpy.context.scene.objects):
+                if ob.name.startswith(group['id']+'-'+counter['id']):bpy.data.objects.remove(ob,do_unlink=True)
+            one=dict(group,instanceLayout={'parts':[counter]});one.pop('sign',None);craft.activity(one)
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for c in colors.data:c.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','painted_timber','aged_timber','worktop'} and 'B-STAR' not in ob.name:tools.member_uv(ob)
+        else:world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    for ob in list(bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(k in source for k in ('plaster','beige')):
+            finish(ob,'red' if ob.name.startswith('B_N_HOUSE') else 'sand' if ob.name.startswith(('B_E_','B_W_HOUSE')) else 'plaster')
+        elif any(k in source for k in ('timber','wood','plank','pine')):
+            family='painted_timber' if 'teal' in source or ob.name.startswith('B_E_PACK') else 'worktop' if '-top-board' in ob.name else 'timber'
+            finish(ob,family,.93+.07*(sum(ob.name.encode())%7)/6)
+    for ob in bpy.context.scene.objects:
+        if ob.type=='MESH' and ob.name.startswith('B_N_HOUSE_DOOR-') and any(k in ob.name for k in ('jamb','lozenge','carving-receiver')) and ob.data.materials[0]==private['timber']:
+            tools.member_uv(ob,grain_axis=2)
+    gallery=recipe['teaGallery'];op=next(o for p in PARCELS.values() for o in p['openings'] if o['id']==gallery['opening'])
+    count=op['lightCount'];width=(op['widthM']-(count-1)*op['mullionM'])/count
+    for ob in list(bpy.context.scene.objects):
+        if not ob.name.startswith(op['id']+'-'):continue
+        if '-vertical-slat' in ob.name:bpy.data.objects.remove(ob,do_unlink=True)
+        elif ob.name.endswith('-back'):finish(ob,'sand',.72)
+    for i in range(count):
+        L=op['alongM']-op['widthM']/2+i*(width+op['mullionM'])+.055;R=L+width-.11;bottom=op['sillM']+.07;top=gallery['railTopZM'];out=gallery['frontOutM']
+        for z in [bottom,top-.06]:finish(part('west',17,'P3-B-tea-privacy-rail',(L,out-.06,z),(R,out,z+.06),WOOD,'cast',.005),'timber')
+        n=max(2,int((R-L)/.13))
+        for j in range(n+1):
+            x=L+(R-L-.035)*j/n
+            finish(part('west',17,'P3-B-tea-baluster',(x,out-.045,bottom+.06),(x+.035,out-.01,top-.06),WOOD,'cast',.003),'timber')
+    # The sitting gallery has an actual inner floor and furniture, backed by
+    # the existing building. Its upper-level room remains wholly nonplayable.
+    seat_center=op['alongM']-op['widthM']/2+width/2
+    L,R=seat_center-.5,seat_center+.5;back=-gallery['interiorDepthM']+.07;front=back+.48;floor=op['sillM']
+    finish(part('west',17,'P3-B-gallery-bench-seat',(L,back,floor+.39),(R,front,floor+.435),WOOD,'cast',.012),'timber')
+    for x in [L+.04,R-.09]:
+        for out in [back+.025,front-.07]:finish(part('west',17,'P3-B-gallery-bench-leg',(x,out,floor),(x+.05,out+.05,floor+.39),WOOD,'cast',.005),'timber')
+    before=set(bpy.context.scene.objects)
+    craft.S.soft_cloth('P3-B-gallery-cushion','west',17,(L+.04,back+.02,floor+.435),(R-.04,front-.02,floor+.49),'ph_bz04_hessian_230',False)
+    for ob in set(bpy.context.scene.objects)-before:paint_object(ob,gallery['cushionColor'],True)
+    center=op['alongM'];out=-gallery['interiorDepthM']+.045
+    finish(part('west',17,'P3-B-gallery-inner-door',(center-.31,out-.015,floor),(center+.31,out,floor+1.58),WOOD,'receive',.006),'timber',.75)
+    for x in [center-.345,center+.31]:finish(part('west',17,'P3-B-gallery-inner-jamb',(x,out-.02,floor),(x+.035,out+.035,floor+1.64),WOOD,'cast',.004),'timber')
+    finish(part('west',17,'P3-B-gallery-inner-head',(center-.345,out-.02,floor+1.58),(center+.345,out+.035,floor+1.64),WOOD,'cast',.004),'timber')
+    part('west',17,'P3-B-gallery-inner-latch',(center+.20,out,floor+.78),(center+.26,out+.025,floor+.805),IRON,'receive',.003)
+    # Scanned objects replace named stock, uniformly fitted into the current
+    # recess boxes. Source model files stay untouched and provenance travels.
+    props=ROOT/'apps/client/public/assets/models/environment/bazaar/props'
+    manifest=json.loads((props/'models.json').read_text())
+    for placement in recipe['stockModels']:
+        group=next(g for g in A['activityGroups'] if g['id']==placement['group'])
+        item=next(p for p in group['instanceLayout']['parts'] if p['id']==placement['part'])
+        prefix=group['id']+'-'+item['id']
+        for ob in list(bpy.context.scene.objects):
+            if ob.name.startswith(prefix):bpy.data.objects.remove(ob,do_unlink=True)
+        model=next(m for m in manifest['models'] if m['id']==placement['model'])
+        for relative,digest in model['md5'].items():
+            path=(props/relative).resolve();assert path.is_relative_to(props.resolve())
+            assert hashlib.md5(path.read_bytes()).hexdigest()==digest,('changed stock source',relative)
+        before=set(bpy.context.scene.objects);bpy.ops.import_scene.gltf(filepath=str(props/model['url']))
+        imported=set(bpy.context.scene.objects)-before;objects=sorted((o for o in imported if o.type=='MESH'),key=lambda o:o.name)
+        assert objects,model['id']
+        matrices={o:o.matrix_world.copy() for o in objects};points=[matrices[o]@v.co for o in objects for v in o.data.vertices]
+        low=[min(p[i] for p in points) for i in range(3)];high=[max(p[i] for p in points) for i in range(3)]
+        box=item['localBox'];size=[box['max'][i]-box['min'][i] for i in range(3)];scale=min(size[i]/(high[i]-low[i]) for i in range(3))
+        opening_spec=next(o for o in PARCELS[group['receiverParcel']]['openings'] if o['id']==group['receiverOpening'])
+        face=group['receiverFace'];plane=next(f['wallPlaneM'] for f in A['faces'] if f['face']==face)
+        for index,ob in enumerate(objects):
+            for v in ob.data.vertices:
+                p=matrices[ob]@v.co
+                along=opening_spec['alongM']+(box['min'][0]+box['max'][0])/2+(p.x-(low[0]+high[0])/2)*scale
+                out=(box['min'][1]+box['max'][1])/2+(p.y-(low[1]+high[1])/2)*scale
+                z=group['bbox']['min'][2]+box['min'][2]+(p.z-low[2])*scale
+                world=coords(face,plane,along,out,z)
+                assert all(group['bbox']['min'][i]-.001<=world[i]<=group['bbox']['max'][i]+.001 for i in range(3)),('stock leaves recess',model['id'],world)
+                v.co=local(world)
+            ob.parent=None;ob.matrix_world=Matrix.Identity(4);ob.name=prefix+'-scan-'+str(index);ob['bz04Shadow']='cast'
+            ob['sourceModelId']=model['id'];ob['sourceFilesMd5']=json.dumps(model['md5'],sort_keys=True);ob['sourceLicense']=model['license']
+            for material in ob.data.materials:
+                material.name='bz12_stock_'+material.name;material['sourceModelId']=model['id'];material['sourceLicense']=model['license']
+        for ob in imported-set(objects):bpy.data.objects.remove(ob,do_unlink=True)
+    return tools
+
+
 def courtyard():
-    global part
+    global part, prepare_mesh
     reset((17,78,0))
     from types import SimpleNamespace
     interfaces=runpy.run_path(str(ROOT/'assets/source/unit-fountain-court/receiver-interfaces.py'))
@@ -721,7 +857,24 @@ def courtyard():
     for g in A['activityGroups']:activity(g)
     for f in A['fixtures']:awning(f)
     part=original_part
-    export(OUT/'unit-spawn-b-courtyard.glb',A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],23)
+    tools=courtyard_art_finish();prepare=prepare_mesh
+    for ob in bpy.context.scene.objects:
+        if ob.type=='MESH':prepare(ob)
+    # Preserve the authored three-color shade/hem contract through contact bake.
+    shade_colors={}
+    for ob in bpy.context.scene.objects:
+        if ob.type=='MESH' and ob.name.startswith('SHADE_') and '-cloth' in ob.name:
+            color=ob.data.color_attributes['COLOR_0']
+            shade_colors[ob.name]=[tuple(color.data[l.vertex_index if color.domain=='POINT' else l.index].color) for l in ob.data.loops]
+    # The tall named inset needs interior samples; four dark reveal corners
+    # must not tint its whole face with contact occlusion.
+    recipe=A['artDirectionFinish'];tools.bake_contact_occlusion(globals(),recipe['contactRadiusM'],recipe['contactStrength'],subdivision_prefixes=('B_N_POTTER_SHOP','B_N_TEXTILE_SHOP','B_W_TEA_SHOP','B_W_TEA_GALLERY','B-WEST-ABUTMENT-FIELD'))
+    for name,values in shade_colors.items():
+        color=bpy.data.objects[name].data.color_attributes['COLOR_0'];assert len(color.data)==len(values)
+        for c,v in zip(color.data,values):c.color=v
+    prepare_mesh=lambda ob:None
+    try:export(OUT/'unit-spawn-b-courtyard.glb',A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],23)
+    finally:prepare_mesh=prepare
 
 
 def lathe(name,face,plane,lo,hi,mid,kind):
@@ -897,7 +1050,10 @@ def prepare_mesh(ob):
     bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=1e-7)
     if '-field' not in ob.name and 'B-STAR' not in ob.name:
         bmesh.ops.dissolve_limit(bm,angle_limit=1e-5,verts=list(bm.verts),edges=list(bm.edges),delimit={'UV'})
-    if '-field' not in ob.name:bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
+    # Open patches have a receiver-defined front, not a volume whose outside
+    # can be inferred. Recalculation can flip separate patches unpredictably.
+    if '-field' not in ob.name and not ob.get('bz04PreserveWinding'):
+        bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces))
     bm.to_mesh(ob.data);bm.free()
     if not ob.data.color_attributes.get('COLOR_0'):
         c=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
@@ -1179,12 +1335,68 @@ def self_test():
     ob=bpy.data.objects['B-STAR-probe-front'];prepare_mesh(ob);bpy.context.view_layer.update()
     for x,z,expected in [(0,0,False),(.16,0,True),(.19,.19,False)]:
         assert ob.ray_cast(Vector((x,1,z)),Vector((0,-1,0)))[0] is expected,('star opening',x,z)
+    spring_checks=0
     for shape in ['pointed','segmental']:
-        o={'id':'probe-'+shape,'alongM':0,'widthM':1.35,'sillM':0,'heightM':2.85,'depthM':.42,'headShape':shape,'kind':'door','closure':'closed double leaves','closureMaterialId':WOOD,'frontProjectionM':0}
-        reset((0,0,0));shaped_opening('north',0,o,TRIM,'ph_bz04_painted_plaster_warm')
-        for ob in list(bpy.context.scene.objects):prepare_mesh(ob)
-        assert min(v.co.z for ob in bpy.context.scene.objects for v in ob.data.vertices)>=-.02001,'door below section base'
-        assert max(arch_points(o),key=lambda p:p[1])[1]<=2.85001
+        o={'id':'probe-'+shape,'alongM':0,'widthM':1.35,'sillM':0,'heightM':2.85,'depthM':.42,'headShape':shape,'kind':'door','closure':'closed double leaves','closureMaterialId':WOOD,'frontProjectionM':.09}
+        for face in ['north','south','east','west']:
+            reset((0,0,0));shaped_opening(face,0,o,TRIM,'ph_bz04_painted_plaster_warm')
+            objects=list(bpy.context.scene.objects)
+            for ob in objects:prepare_mesh(ob)
+            assert min(v.co.z for ob in objects for v in ob.data.vertices)>=-.02001,'door below section base'
+            assert max(arch_points(o),key=lambda p:p[1])[1]<=2.85001
+            top=arch_points(o);width=max(.1,o.get('trimWidthM',.1));outer=offset_top(top,width)
+            for arc,endpoint,edge in ((top[0],outer[0],top[0][0]-width),(top[-1],outer[-1],top[-1][0]+width)):
+                assert endpoint[1]>arc[1]+1e-6,'Spring fixture must probe a raised offset'
+                for t in (.25,.5,.75):
+                    z=arc[1]+(endpoint[1]-arc[1])*t
+                    along=(edge+arc[0]+(endpoint[0]-arc[0])*t)/2
+                    target=Vector(local(coords(face,0,along,o['frontProjectionM'],z)))
+                    start=Vector(local(coords(face,0,along,o['frontProjectionM']+.02,z)));hits=[]
+                    for ob in objects:
+                        hit,point,normal,index=ob.ray_cast(start,(target-start).normalized(),distance=.04)
+                        if hit and (point-target).length<1e-5:hits.append(ob)
+                    assert hits,(shape,face,'Open shared arch spring',along,z)
+                    assert all(ob.data.materials[0]==mat(TRIM) for ob in hits),(shape,face,'Spring material mismatch')
+                    spring_checks+=1
+            before={(ob.name,len(ob.data.vertices),len(ob.data.polygons)) for ob in objects}
+            close_arch_shoulders(face,0,o,TRIM);close_arch_shoulders(face,0,o,TRIM)
+            assert before=={(ob.name,len(ob.data.vertices),len(ob.data.polygons)) for ob in bpy.context.scene.objects},'Repeated shoulder helper duplicated geometry'
+    print('PASS shared arch springs:',spring_checks,'rays across pointed/segmental openings on four faces; repeat calls preserve geometry',flush=True)
+    # Check authored open surfaces after the exact cleanup used before AO.
+    portal=next(o for f in A['faces'] for p in f['parcels'] for o in p['openings'] if o['id']=='B_N_HOUSE_DOOR')
+    portal=dict(portal,alongM=0)
+    normal_checks=0
+    for face in ['north','south','east','west']:
+        reset((0,0,0));shaped_opening(face,0,portal,TRIM,'ph_bz04_painted_plaster_warm')
+        outward=Vector(local(coords(face,0,0,1,0)))-Vector(local(coords(face,0,0,0,0)))
+        along=Vector(local(coords(face,0,1,0,0)))-Vector(local(coords(face,0,0,0,0)))
+        barrels=[ob for ob in bpy.context.scene.objects if '-barrel' in ob.name]
+        for ob,(p,q) in zip(barrels,zip(arch_points(portal),arch_points(portal)[1:])):
+            expected=(along*(q[1]-p[1])-Vector((0,0,q[0]-p[0]))).normalized()
+            for _ in range(2):prepare_mesh(ob)
+            assert all(poly.normal.dot(expected)>.999 for poly in ob.data.polygons),(face,ob.name,'intrados normal')
+            normal_checks+=len(ob.data.polygons)
+        for ob in [ob for ob in bpy.context.scene.objects if '-lozenge-incision' in ob.name]:
+            for _ in range(2):prepare_mesh(ob)
+            assert all(poly.normal.dot(outward)>.1 for poly in ob.data.polygons),(face,ob.name,'incision points into receiver')
+            normal_checks+=len(ob.data.polygons)
+    # B and Rug remove coplanar band footprints, splitting closed jamb fronts
+    # into open islands. Every remaining front must retain its authored side.
+    for face in ['north','west']:
+        reset((0,0,0));courtyard_opening(face,0,portal,TRIM,'ph_bz04_painted_plaster_warm')
+        surface=Vector(local(coords(face,0,0,portal.get('frontProjectionM',.08),0)))
+        outward=Vector(local(coords(face,0,0,1,0)))-Vector(local(coords(face,0,0,0,0)))
+        checked=0
+        for ob in bpy.context.scene.objects:
+            if not any(k in ob.name for k in ('portal-jamb','lozenge-incision')):continue
+            for _ in range(2):prepare_mesh(ob)
+            for poly in ob.data.polygons:
+                if all(abs((ob.data.vertices[i].co-surface).dot(outward))<1e-6 for i in poly.vertices):
+                    assert poly.normal.dot(outward)>.999,(face,ob.name,'clipped jamb front reversed')
+                    checked+=1
+        assert checked>20,(face,'clipped-front fixture missing')
+        normal_checks+=checked
+    print('PASS receiver-facing open patch normals:',normal_checks,'polygons across four receiver faces and both installed clipped portals',flush=True)
     reset((0,0,0));paint=mat('bz04_teal_timber_project_original');shader=paint.node_tree.nodes['Principled BSDF']
     assert not shader.inputs['Base Color'].is_linked and tuple(shader.inputs['Base Color'].default_value)==(1,1,1,1),'opaque paint requires a white untextured base'
     assert shader.inputs['Metallic'].default_value==0
@@ -1202,7 +1414,8 @@ def self_test():
             detail=spec['architecturalDetail'];carving=detail['carving'];front=spec['frontProjectionM']
             for sign in (-1,1):
                 along=sign*(spec['widthM']/2+detail['surroundWidthM']/2)
-                for z,expected_depth in ((.205,carving['incisionDepthM']),(.275,0)):
+                center=spec['sillM']+.18+carving['moduleHeightM']/2
+                for z,expected_depth in ((center,carving['incisionDepthM']),(center+carving['modulePitchM']/2,0)):
                     surface=Vector(local(coords('north',0,along,front,z)));start=surface+Vector((0,.02,0));hits=[]
                     for ob in bpy.context.scene.objects:
                         hit,point,normal,index=ob.ray_cast(start,Vector((0,-1,0)),distance=.08)

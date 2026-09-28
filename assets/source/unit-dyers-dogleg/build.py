@@ -26,7 +26,7 @@ def validate(saved,current=None):
     assert area['zone']=='DYERS_DOGLEG' and area['designRevision']['id'].startswith('R7')
     assert set(caps['openingProfiles'])<={'rectangular','segmental'} and not caps['openingCraftProfiles']
     assert set(caps['featureKinds'])=={'supported-shallow-balcony'}
-    assert set(caps['partKinds'])<={'timber-member','hanging-cloth','grounded-timber-bench','locked-timber-lattice-gate'}
+    assert set(caps['partKinds'])<={'timber-member','hanging-cloth','grounded-timber-bench','locked-timber-lattice-gate','folded-cloth'}
     assert not caps['glazingPatterns'] and not caps['landscapeKinds'] and not area['fixtures']
     assert set(caps['craftRecipes'])<={'CF-CLOTH','CF-ENVELOPE','CF-FLOOR','CF-FURNITURE','CF-JOINT','CF-OPEN','CF-R4-BALCONY','CF-R4-PORTAL','CF-TIMBER'}
     return area
@@ -41,7 +41,8 @@ def balcony(f):
     face,plane,name,mid=f['receiverFace'],f['wallPlaneM'],f['id'],f['materialId']
     def part(label,lo,hi):return G.part(face,plane,name+'-'+label,lo,hi,mid,bevel=.003)
     deck=f['deck'];l,r=deck['alongBoundsM'];out,front=deck['outM']
-    part('deck',(l,out,deck['bottomZM']),(r,front,deck['topZM']))
+    for i in range(12):
+        part('deck-plank',(l+(r-l)*i/12+.002,out,deck['bottomZM']),(l+(r-l)*(i+1)/12-.002,front,deck['topZM']))
     joists=f['joists'];w,h=joists['sectionM']
     for along in joists['alongAxesM']:
         part('joist',(along-w/2,joists['outM'][0],joists['zM'][0]),(along+w/2,joists['outM'][1],joists['zM'][1]))
@@ -120,13 +121,142 @@ def shells(area):
         bm.to_mesh(ob.data);bm.free()
 
 
+def cloth_relief(area):
+    import bmesh
+    recipe=area['artDirectionFinish'];relief=recipe['clothRelief']
+    group=area['activityGroups'][0];deck=group['bbox']['min'][2]
+    panels=[]
+    for item in group['instanceLayout']['parts']:
+        if item['kind']!='hanging-cloth':continue
+        lo,hi=item['localBox']['min'],item['localBox']['max']
+        panels.append((group['id']+'-'+item['id'],52.2+lo[0],52.2+hi[0],deck+lo[2],deck+hi[2],False))
+    linen=recipe['balconyLinen']
+    panels.append(('R4-DOGLEG-HOUSE-BALCONY-linen',*linen['alongM'],min(p[1] for p in linen['pathOutZM']),max(p[1] for p in linen['pathOutZM']),True))
+    for prefix,left,right,bottom,top,is_linen in panels:
+        for ob in list(G.bpy.context.scene.objects):
+            if not ob.name.startswith(prefix):continue
+            bm=bmesh.new();bm.from_mesh(ob.data)
+            bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=1e-6)
+            across=[e for e in bm.edges if abs(e.verts[0].co.y-e.verts[1].co.y)>.06 and abs(e.verts[0].co.z-e.verts[1].co.z)<1e-6]
+            bmesh.ops.subdivide_edges(bm,edges=across,cuts=15,use_grid_fill=True)
+            bm.to_mesh(ob.data);bm.free()
+            for v in ob.data.vertices:
+                t=(G.ORIGIN[1]-v.co.y-left)/(right-left)
+                drop=max(0,min(1,(top-v.co.z)/.22))
+                wave=math.sin(t*math.pi*6+.35)
+                delta=-relief['linenPleatDepthM']*(.5+.5*wave)*drop if is_linen else relief['dryingPleatAmplitudeM']*wave*drop
+                v.co.x+=(-1 if is_linen else 1)*delta
+                hem=max(0,1-(v.co.z-bottom)/.20)
+                v.co.z+=relief['hemRiseM']*(.5+.5*math.sin(t*math.pi*3+.3))*hem
+            ob.data.update();ob['doglegPleatedCloth']=True
+            # Deformation must fit the original group and corrected balcony boxes.
+            if not is_linen:
+                bounds=next(item['localBox'] for item in group['instanceLayout']['parts'] if group['id']+'-'+item['id']==prefix)
+                assert all(bounds['min'][1]-1e-6<=v.co.x+G.ORIGIN[0]-46<=bounds['max'][1]+1e-6 for v in ob.data.vertices),'Drying pleat escapes scheduled depth'
+            assert len({round(v.co.y,5) for v in ob.data.vertices})>=16,'Cloth lacks cross-width subdivisions'
+
+
+def art_finish(area):
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    spec=importlib.util.spec_from_file_location('dogleg_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    recipe=area['artDirectionFinish'];assert recipe['id']=='DOGLEG-P3'
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz22_dogleg_')
+    def finish(ob,family,color=None):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT');rgba=(1,1,1,1)
+        if color:rgba=tuple(G._linear_channel(int(color[i:i+2],16))/private[family]['bz07TargetMeanLinear'][k] for k,i in enumerate((1,3,5)))+(1,)
+        assert all(0<=c<=1 for c in rgba),(ob.name,rgba)
+        for c in colors.data:c.color=rgba
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    owners={p['id']:p['id'] for f in area['faces'] for p in f['parcels']}
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for o in parcel['openings']:owners[o['id']]=parcel['id']
+    stock={g['id']+'-'+p['id']:p['stockColorSrgb'] for g in area['activityGroups'] for p in g['instanceLayout']['parts'] if p['kind'] in {'hanging-cloth','folded-cloth'}}
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if any(ob.name.startswith(prefix) for prefix in recipe['retireFinishPrefixes']):G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        source=ob.data.materials[0].get('bz04SourceMaterial',ob.data.materials[0].name)
+        name=ob.name.removeprefix('life-wear-');owner=next((owners[p] for p in sorted(owners,key=len,reverse=True) if name.startswith(p)),None)
+        color=next((v for p,v in stock.items() if ob.name.startswith(p)),None)
+        if color:finish(ob,'cloth',color)
+        elif owner=='dd-e' and any(k in source for k in ('plaster','beige')):finish(ob,'plaster')
+        elif any(k in source for k in ('wood','timber','plank','pine')):
+            family='painted_timber' if owner=='dd-e' and '-leaf-' in ob.name else 'worktop' if '-top-board' in ob.name else 'aged_timber' if ob.name.startswith('G_DD') else 'timber'
+            finish(ob,family)
+    # Rails and stiles stand proud of the closed panel; the original opaque back stays.
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for o in parcel['openings']:
+                for ob in list(G.bpy.context.scene.objects):
+                    if not ob.name.startswith(o['id']+'-'):continue
+                    if '-leaf-panel' in ob.name:tools.member_uv(ob,grain_axis=2)
+                    if not any(k in ob.name for k in ('-frame-','-leaf-stile','-leaf-rail','-louver')):continue
+                    direction=1 if face['face']=='west' else -1
+                    front=max(direction*v.co.x for v in ob.data.vertices)
+                    for v in ob.data.vertices:
+                        if abs(direction*v.co.x-front)<1e-6:v.co.x+=direction*.025
+                    ob.data.update();tools.member_uv(ob)
+                    bevel=ob.modifiers.new('Dressed joinery arris','BEVEL');bevel.width=.003;bevel.segments=2
+    # One linen length folds over the actual top rail, inside the balcony envelope.
+    linen=recipe['balconyLinen'];before=set(G.bpy.context.scene.objects)
+    G.cloth_path('R4-DOGLEG-HOUSE-BALCONY-linen','east',53,*linen['alongM'],linen['pathOutZM'],'ph_bz04_fine_linen',border=.018,color=linen['colorSrgb'],fringe=0)
+    for ob in set(G.bpy.context.scene.objects)-before:finish(ob,'cloth',linen['colorSrgb'])
+    cloth_relief(area)
+    # Real frame bearings tie the drying rail to its existing posts.
+    group=area['activityGroups'][0];a=52.2;deck=group['bbox']['min'][2]
+    for sign in (-1,1):
+        finish(G.member(group['id']+'-rail-brace',G.coords('west',46,a+sign*.825,-.265,deck+1.99),G.coords('west',46,a+sign*.57,-.265,deck+2.295),.035,G.WOOD),'aged_timber')
+    return tools
+
+
+def finish_fixture(area):
+    objects=list(G.bpy.context.scene.objects)
+    assert len([o for o in objects if o.name.startswith('R4-DOGLEG-HOUSE-BALCONY-deck-plank')])==12
+    assert len([o for o in objects if o.name.startswith('G_DD_WORKS_RECESS-rail-brace')])==2
+    assert len([o for o in objects if o.name.startswith('G_DD_WORKS_RECESS-folding-bench-leg')])==4
+    assert not any(o.name.startswith(('life-dd-e-','life-dd-w-','life-wear-dd-e')) for o in objects)
+    assert any(o.name.startswith('R4-DOGLEG-HOUSE-BALCONY-linen') for o in objects)
+    assert any(o.name.startswith('G_DD_WORKS_RECESS-folded-batch') for o in objects)
+    # Every plaster surface belonging to the house, including opening returns,
+    # uses the same calibrated receiver finish rather than rectangular patches.
+    for ob in objects:
+        if ob.name.startswith('dd-e') and ob.data.materials[0].get('bz07SourceMaterial')=='ph_painted_plaster_warm':
+            assert ob.data.materials[0].name=='bz22_dogleg_plaster'
+    from mathutils import Vector
+    linen=area['artDirectionFinish']['balconyLinen']
+    cloth=[o for o in objects if o.name.startswith('R4-DOGLEG-HOUSE-BALCONY-linen')]
+    assert all(G.ORIGIN[1]-v.co.y<54.25 for ob in cloth for v in ob.data.vertices),'Linen enters upper door service width'
+    rail=[o for o in objects if o.name.startswith('R4-DOGLEG-HOUSE-BALCONY-front-rail')]
+    along=sum(linen['alongM'])/2
+    start=Vector(G.local(G.coords('east',53,along,.515,4.67)))
+    hits=[o.ray_cast(start,Vector((0,0,-1)),distance=.04) for o in rail]
+    assert any(hit and abs(point.z-4.65)<1e-5 for hit,point,normal,index in hits),'Linen has no rail bearing'
+    assert any(abs(v.co.z-4.651)<1e-5 and abs((53-G.ORIGIN[0]-v.co.x)-.515)<.04 for ob in cloth for v in ob.data.vertices),'Cloth fold misses rail top'
+    print('PASS Dogleg P3: 12 deck planks, bounded rail linen, two drying braces, four bench legs, folded batch, retired wall textiles',flush=True)
+
+
 def build(saved,export=True):
     area=validate(saved);setup(saved);shells(area)
     for group in area['activityGroups']:DYE.activity(group)
     for feature in area['facadeFeatures']:balcony(feature)
+    tools=art_finish(area)
     verify_geometry(area)
+    finish_fixture(area)
     if export:
-        G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],{'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        for ob in list(G.bpy.context.scene.objects):G.prepare_mesh(ob)
+        recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'],subdivision_prefixes=('DD_WORKS_RECESS',))
+        prepare=G.prepare_mesh;G.prepare_mesh=lambda ob:None
+        try:
+            G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],{'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
 
 
 def input_fixture(saved):
@@ -149,13 +279,9 @@ def self_test(saved):
     openings=[o for f in area['faces'] for p in f['parcels'] for o in p['openings']]
     assert len(openings)==11 and sum(len(g['instanceLayout']['parts']) for g in area['activityGroups'])==8
     door=next(o for o in openings if o['id']=='dd-e-L1-W2')
-    assert door['finishPaintSrgb']=='#53799f' and door['finishMaterialProfile']=='opaqueTimber'
-    expected=tuple(G._linear_channel(int(door['finishPaintSrgb'][i:i+2],16)) for i in (1,3,5))
+    assert door['finishMaterialProfile']=='opaqueTimber'
     leaves=[ob for ob in G.bpy.context.scene.objects if ob.name.startswith(door['id']+'-leaf-panel')]
-    assert len(leaves)==2
-    for ob in leaves:
-        assert ob.data.materials[0]==G.mat('bz04_teal_timber_project_original')
-        assert all(max(abs(c.color[i]-expected[i]) for i in range(3))<1e-6 for c in ob.data.color_attributes['COLOR_0'].data)
+    assert len(leaves)==2 and all(ob.data.materials[0].name=='bz22_dogleg_painted_timber' for ob in leaves)
     group=area['activityGroups'][0]
     for item in group['instanceLayout']['parts']:
         if item['kind']=='hanging-cloth':assert len([ob for ob in G.bpy.context.scene.objects if ob.name.startswith(group['id']+'-cloth-tie-'+item['id'])])==2
@@ -165,7 +291,7 @@ def self_test(saved):
         hit,point,normal,index=ob.ray_cast(start,Vector((0,0,1)),distance=.4)
         if hit:hits.append((point.z,ob.name))
     assert sorted(hits)[0][1]=='DD_WORKS_RECESS-chamber-ceiling' and sum(abs(z-2.75)<1e-5 for z,name in hits)==1,'Duplicate west chamber ceiling'
-    print('PASS Dogleg: 11 openings, 8 bounded workfront parts, supported balcony, exact opaque indigo leaves, tied samples and single west chamber ceiling',flush=True)
+    print('PASS Dogleg: 11 openings, 8 bounded workfront parts, supported balcony, opaque textured blue leaves, tied samples and single west chamber ceiling',flush=True)
 
 
 if __name__=='__main__':

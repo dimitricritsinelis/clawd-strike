@@ -172,11 +172,28 @@ def install_floor(handoff):
     for key in ('tileSizeM','normalScale','roughness','albedoBoost','albedoGamma','dustStrength','tintHex'):
         if key in entry:row[key]=entry[key]
     if entry.get('baseColorRecipe'):
+        if mid=='bz04_court_limestone_flags_01':
+            source_row=next((m for m in manifest['materials'] if m['id']==entry.get('sourceMaterialId')),None)
+            if source_row is None or source_row is row:raise ValueError('Missing flagstone source material')
+            recipe=entry['baseColorRecipe']
+            for quality,maps in row['textures'].items():
+                source_maps=source_row['textures'].get(quality,{})
+                for channel in ('normal','arm'):
+                    relative=source_maps.get(channel)
+                    if not isinstance(relative,str) or not (manifest_path.parent/relative).is_file():
+                        raise ValueError(f'Missing flagstone source {quality} {channel}')
+                    if quality=='1k':
+                        source_path=(manifest_path.parent/relative).resolve()
+                        if source_path!=(ROOT/recipe['sourceFiles'][channel]).resolve() or hashlib.sha256(source_path.read_bytes()).hexdigest()!=recipe['sourceHashes'][channel]:
+                            raise ValueError('Flagstone source texture changed: '+channel)
+                    maps[channel]=relative
+            if 'aoIntensity' in entry:row['aoIntensity']=entry['aoIntensity']
         baked=json.loads((ROOT/'assets/source/bz04-shared-environment/materials/recipes.json').read_text())[mid]
-        folder=manifest_path.parent/'bz06-derived';folder.mkdir(exist_ok=True)
+        folder=manifest_path.parent/'bz06-derived'
         source=ROOT/baked['textures']['albedo'];target=folder/source.name
         if hashlib.sha256(source.read_bytes()).hexdigest()!=baked['sha256']['albedo']:
             raise ValueError('Derived floor texture changed')
+        folder.mkdir(exist_ok=True)
         shutil.copy2(source,target)
         for maps in row['textures'].values():maps['albedo']='./bz06-derived/'+target.name
         pigments=runpy.run_path(str(ROOT/'assets/source/bazaar_finish.py'))['FLOOR_PIGMENTS']

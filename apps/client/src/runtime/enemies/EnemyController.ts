@@ -444,6 +444,23 @@ function normalizeAngleRad(angle: number): number {
   return normalized;
 }
 
+/** Bullet that struck an enemy: travel direction and entry point (world). */
+export type EnemyShotImpact = Readonly<{
+  dirX: number;
+  dirY: number;
+  dirZ: number;
+  hitX: number;
+  hitY: number;
+  hitZ: number;
+}>;
+
+/** A hit the visual has not reacted to yet (render-only; never affects combat). */
+export type EnemyHitReaction = Readonly<{
+  headshot: boolean;
+  killed: boolean;
+  impact: EnemyShotImpact | null;
+}>;
+
 export class EnemyController {
   readonly id: EnemyId;
   readonly name: string;
@@ -458,6 +475,7 @@ export class EnemyController {
   private readonly team: EnemyTeam = "enemy";
   private dead = false;
   private lastHitWasHeadshot = false;
+  private pendingHitReaction: EnemyHitReaction | null = null;
 
   private assignedNodeId: string | null = null;
   private targetNodeId: string | null = null;
@@ -569,6 +587,7 @@ export class EnemyController {
     this.role = "rifler";
     this.dead = false;
     this.lastHitWasHeadshot = false;
+    this.pendingHitReaction = null;
     this.assignedNodeId = null;
     this.targetNodeId = null;
     this.debugReason = "spawn hold";
@@ -949,13 +968,23 @@ export class EnemyController {
     return this.aabb;
   }
 
-  applyDamage(amount: number, isHeadshot = false): void {
+  applyDamage(amount: number, isHeadshot = false, impact: EnemyShotImpact | null = null): void {
     if (this.dead) return;
     this.lastHitWasHeadshot = isHeadshot;
     this.health = Math.max(0, this.health - amount);
     if (this.health <= 0) {
       this.dead = true;
     }
+    // The latest hit in a frame drives the flinch/flash/fall; the killing hit
+    // always wins because nothing lands after death.
+    this.pendingHitReaction = { headshot: isHeadshot, killed: this.dead, impact };
+  }
+
+  /** Returns and clears the hit the visual has not reacted to yet. */
+  consumeHitReaction(): EnemyHitReaction | null {
+    const reaction = this.pendingHitReaction;
+    this.pendingHitReaction = null;
+    return reaction;
   }
 
   isDead(): boolean { return this.dead; }

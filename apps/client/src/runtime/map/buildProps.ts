@@ -1,3 +1,5 @@
+import { r8AppliesTo } from "./r8/buildR8Atmosphere";
+import { buildR8Clutter } from "./r8/buildR8Clutter";
 import {
   Box3,
   BoxGeometry,
@@ -1377,6 +1379,17 @@ function buildDressedGroup(
 type CompiledDressingBuild = {
   root: Group;
   renderedPlacements: RenderedPropPlacement[];
+  // Gameplay cover fitted to the rendered solid pieces, one box per piece, so
+  // bullets and movement stop where the player sees goods rather than at an
+  // envelope around them.
+  colliders: RuntimeColliderAabb[];
+};
+
+type CompiledCollisionPiece = {
+  placement: RuntimeDressingPlacement;
+  source:
+    | { kind: "instance"; batch: InstanceBatch; instance: InstanceSpec }
+    | { kind: "object"; object: Object3D };
 };
 
 function instanceSharedStaticModelMeshes(
@@ -2112,17 +2125,17 @@ function buildCompiledDressing(
       armTextureUrl: "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
       textureRepeat: [3.1, 2.7],
       roughness: 0.9,
-      normalScale: 0.68,
-      albedoBoost: 0.88,
-      emissiveIntensity: 0.015,
+      normalScale: 0.38,
+      albedoBoost: 0.82,
+      emissiveIntensity: 0,
       vertexColors: true,
     }),
-    fountainTile: createBatch("v3-fountain-glazed-tile-segments", 0xffffff, "fountainTile", createModularFountainTileGeometry, {
+    fountainTile: createBatch("v3-fountain-glazed-tile-segments", 0xffead0, "fountainTile", createModularFountainTileGeometry, {
       receiveShadow: true,
       textureGenerator: "glazed-fountain-tile",
       roughness: 0.24,
       albedoBoost: 1,
-      emissiveIntensity: 0.01,
+      emissiveIntensity: 0,
       vertexColors: true,
       doubleSided: true,
     }),
@@ -2601,7 +2614,7 @@ function buildCompiledDressing(
     size: { x: number; y: number; z: number },
     spanPitchRad = 0,
     orientationPitchRad = spanPitchRad,
-  ): void => {
+  ): InstanceSpec => {
     const cos = Math.cos(yawRad);
     const sin = Math.sin(yawRad);
     const pitchCos = Math.cos(spanPitchRad);
@@ -2621,7 +2634,14 @@ function buildCompiledDressing(
     if (local.tintHex !== undefined) instance.tintHex = local.tintHex;
     if (local.visualQa) instance.visualQa = local.visualQa;
     batch.instances.push(instance);
+    return instance;
   };
+
+  const collisionPieces: CompiledCollisionPiece[] = [];
+  // Only hard goods authored as gameplay cover block; rugs, baskets and pots in
+  // the same cluster stay walk-through.
+  const collidesAsCover = (placement: RuntimeDressingPlacement): boolean =>
+    placement.classification === "gameplay_cover" && placement.semanticClass === "cover";
 
   const addPrefabModel = (
     parent: Group,
@@ -2751,7 +2771,7 @@ function buildCompiledDressing(
       const crateBatches = [batches.coverCrateBraced, batches.coverCrateHorizontal, batches.coverCratePainted] as const;
       for (const [crateIndex, spec] of crateSpecs.entries()) {
         const crateBatch = crateBatches[(crateIndex + coverVariant) % crateBatches.length]!;
-        pushLocalInstance(
+        const crateInstance = pushLocalInstance(
           crateBatch,
           world,
           yawRad,
@@ -2778,6 +2798,9 @@ function buildCompiledDressing(
           },
           { x: spec.width, y: spec.height, z: spec.depth },
         );
+        if (collidesAsCover(placement)) {
+          collisionPieces.push({ placement, source: { kind: "instance", batch: crateBatch, instance: crateInstance } });
+        }
       }
       for (const sack of [
         {
@@ -2787,13 +2810,16 @@ function buildCompiledDressing(
           scale: 0.29 + coverVariant * 0.025,
         },
       ]) {
-        addPrefabModel(
+        const sackRoot = addPrefabModel(
           placementRoot,
           "cc0_spice_sack",
           { x: sack.x, y: 0, z: sack.z, yaw: sack.yaw },
           { x: width * sack.scale, y: height * sack.scale * 1.15, z: depth * sack.scale * 1.9 },
           placement.shadowPolicy,
         );
+        if (collidesAsCover(placement)) {
+          collisionPieces.push({ placement, source: { kind: "object", object: sackRoot } });
+        }
       }
       const tarpSupport = crateSpecs[2]!;
       const tarpScale = { x: width * 0.39, y: height * 0.32, z: depth * 0.55 };
@@ -2872,6 +2898,9 @@ function buildCompiledDressing(
         crateRoot.rotation.y = spec.yaw;
         crateRoot.add(model);
         placementRoot.add(crateRoot);
+        if (collidesAsCover(placement)) {
+          collisionPieces.push({ placement, source: { kind: "object", object: crateRoot } });
+        }
       }
       root.add(placementRoot);
       record(placement, "model", center);
@@ -2899,6 +2928,9 @@ function buildCompiledDressing(
       placementRoot.rotation.y = yawRad;
       placementRoot.add(model);
       root.add(placementRoot);
+      if (collidesAsCover(placement)) {
+        collisionPieces.push({ placement, source: { kind: "object", object: placementRoot } });
+      }
       record(placement, "model", center);
       continue;
     }
@@ -4007,9 +4039,11 @@ function buildCompiledDressing(
   }
 
   const dummy = new Object3D();
+  const geometryByBatch = new Map<InstanceBatch, BufferGeometry>();
   for (const batch of compiledBatches) {
     if (batch.instances.length === 0) continue;
     const geometry = ensureBatchVertexColors(batch.createGeometry(), batch.vertexColors);
+    geometryByBatch.set(batch, geometry);
     const textureMap = batch.textureUrl
       ? loadTiledTexture(batch.textureUrl, batch.textureRepeat)
       : batch.textureGenerator === "painted-wood-sign-a"
@@ -4102,7 +4136,7 @@ function buildCompiledDressing(
               1.0 - clamp(dot(normalize(vViewPosition), normal), 0.0, 1.0),
               3.0
             );
-            outgoingLight += vec3(0.34, 0.56, 0.58)
+            outgoingLight += vec3(0.38, 0.42, 0.40)
               * fountainFresnel
               * ${FOUNTAIN_WATER_MATERIAL_INPUTS.fresnelStrength.toFixed(2)};
             diffuseColor.a = mix(
@@ -4197,9 +4231,38 @@ function buildCompiledDressing(
     root.add(mesh);
   }
 
+  // Measure before shared-model instancing detaches the prefab objects.
+  root.updateMatrixWorld(true);
+  const colliders: RuntimeColliderAabb[] = [];
+  const pieceCountByAnchor = new Map<string, number>();
+  const pieceBounds = new Box3();
+  for (const piece of collisionPieces) {
+    if (piece.source.kind === "object") {
+      pieceBounds.setFromObject(piece.source.object, true);
+    } else {
+      const geometry = geometryByBatch.get(piece.source.batch)!;
+      if (!geometry.boundingBox) geometry.computeBoundingBox();
+      const { instance } = piece.source;
+      dummy.position.set(instance.x, instance.y, instance.z);
+      dummy.rotation.set(instance.pitchRad ?? 0, instance.yawRad, instance.rollRad ?? 0);
+      dummy.scale.set(instance.sx, instance.sy, instance.sz);
+      dummy.updateMatrix();
+      pieceBounds.copy(geometry.boundingBox!).applyMatrix4(dummy.matrix);
+    }
+    if (pieceBounds.isEmpty()) continue;
+    const index = (pieceCountByAnchor.get(piece.placement.anchorId) ?? 0) + 1;
+    pieceCountByAnchor.set(piece.placement.anchorId, index);
+    colliders.push({
+      id: `${piece.placement.anchorId}-cover-${index}`,
+      kind: "prop",
+      min: { x: pieceBounds.min.x, y: pieceBounds.min.y, z: pieceBounds.min.z },
+      max: { x: pieceBounds.max.x, y: pieceBounds.max.y, z: pieceBounds.max.z },
+    });
+  }
+
   instanceSharedStaticModelMeshes(root, renderedPlacements);
 
-  return { root, renderedPlacements };
+  return { root, renderedPlacements, colliders };
 }
 
 export function buildProps(options: BuildPropsOptions): PropsBuildResult {
@@ -4312,6 +4375,9 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
   };
 
   const colliders: RuntimeColliderAabb[] = [];
+  // Collision fitted to authored geometry rather than to this pass's own
+  // procedural boxes; these survive when compiled dressing replaces the visuals.
+  const authoredColliderIds = new Set<string>();
   const placements: PropPlacement[] = [];
   const classificationByAnchorId = new Map<string, string>();
   for (const cluster of options.blockout.dressingClusters ?? []) {
@@ -4552,6 +4618,7 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
           { x: base.x + (anchor.id === "DYE_E_SHOP_2" ? .33 : -.33), y: base.y + .14 + cabinetHeight * .5, z: base.z },
           { x: 1.48, y: cabinetHeight, z: .34 },
           designYawDegToWorldYawRad((anchor.yawDeg ?? 0) + 180));
+        authoredColliderIds.add(`${anchor.id}-shop`);
         continue;
       }
       if (anchor.id === "DYE_W_SHOP_2") {
@@ -4562,6 +4629,7 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
         placeCollidingBox(anchor.id, "shop", batches.shopfront,
           { ...base, y: base.y + anchor.heightM * .5 },
           { x: anchor.widthM, y: anchor.heightM, z: door.sizeM.depth + .04 }, baseYaw);
+        authoredColliderIds.add(`${anchor.id}-shop`);
         continue;
       }
       if (!shopfrontVisibility.has(anchor.id)) {
@@ -5464,6 +5532,26 @@ export function buildProps(options: BuildPropsOptions): PropsBuildResult {
   if (compiledDressing) {
     root.clear();
     root.add(compiledDressing.root);
+    // The procedural boxes above no longer have visuals, so they would be
+    // invisible walls. Keep the authored fits and collide with the rendered
+    // cover pieces instead, under the same route and clearance rules. A cluster
+    // is solid as a whole or not at all, so a lane never gets half a stack.
+    const rejectedAnchorIds = new Set<string>();
+    for (const collider of compiledDressing.colliders) {
+      stats.candidatesTotal += 1;
+      const reason = rejectReason(collider);
+      if (!reason) continue;
+      registerRejection(reason);
+      rejectedAnchorIds.add(collider.id.replace(/-cover-\d+$/, ""));
+    }
+    const fittedCover = compiledDressing.colliders
+      .filter((collider) => !rejectedAnchorIds.has(collider.id.replace(/-cover-\d+$/, "")));
+    colliders.splice(0, colliders.length, ...colliders.filter((collider) => authoredColliderIds.has(collider.id)), ...fittedCover);
+    stats.collidersPlaced = colliders.length;
+  }
+  // R8 wall-foot goods (render-only, generated by docs/map-design/construction/r8.py).
+  if (usesCompiledV3Dressing && options.propModels && r8AppliesTo(options.blockout.mapId)) {
+    root.add(buildR8Clutter(options.propModels));
   }
   const renderedPlacements = compiledDressing?.renderedPlacements ?? [];
   const renderedAnchorIds = compiledDressing

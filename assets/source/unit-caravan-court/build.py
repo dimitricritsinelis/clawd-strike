@@ -105,6 +105,91 @@ def opening(face,plane,o,trim,back):
         if vertex.co.x>join:vertex.co.x=join
 
 
+def art_finish(area):
+    """Art-direct the packing yard without changing its maneuvering space."""
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('caravan_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    materials=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz14_caravan_')
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(materials[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for color in colors.data:color.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(materials[family]['tileSizeM']))
+        return ob
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if '-leaf-board' in ob.name:
+            low=min(v.co.y for v in ob.data.vertices);high=max(v.co.y for v in ob.data.vertices)
+            for v in ob.data.vertices:v.co.y+=-.001 if abs(v.co.y-low)<1e-6 else .001 if abs(v.co.y-high)<1e-6 else 0
+        if any(key in source for key in ('plaster','beige')):finish(ob,'sand' if ob.name.startswith('cc-es-part-2') else 'plaster')
+        elif any(key in source for key in ('timber','wood','plank','pine')):
+            family='painted_timber' if ob.name.startswith('cc-w-STAFF-DOOR') else 'worktop' if 'worktop' in ob.name else 'aged_timber' if ob.name.startswith('G_CC_PACK') else 'timber'
+            finish(ob,family,.95+.05*(sum(ob.name.encode())%7)/6)
+        elif ob.name.startswith('G_CC_PACK_RECESS-wrapped-order'):
+            finish(ob,'cloth')
+    def timber(name,lo,hi,family='aged_timber'):
+        return finish(G.part('west',3,'P3-cc-'+name,lo,hi,G.WOOD,'cast',.006),family)
+    shutters=recipe['packingShutters'];bottom,top=shutters['zM'];back,front=shutters['outM']
+    for side,(L,R) in enumerate(shutters['intervalsM']):
+        for i in range(7):timber('shutter-board',(L+(R-L)*i/7,back,bottom),(L+(R-L)*(i+1)/7,front,top))
+        for z in (bottom+.1,1.35,top-.15):timber('shutter-batten',(L+.015,front,z),(R-.015,front+.035,z+.10),'timber')
+        for x in (L+.18,R-.18):
+            G.part('west',3,'P3-cc-shutter-hanger',(x-.025,.03,top-.13),(x+.025,.07,shutters['trackZM']+.04),G.IRON,'cast',.005)
+            G.ring('P3-cc-shutter-wheel','west',3,x,.073,shutters['trackZM'],.043)
+        G.ring('P3-cc-shutter-pull','west',3,(L+R)/2,front+.048,1.10,.065)
+    L,R=shutters['trackAlongM'];z=shutters['trackZM']
+    G.part('west',3,'P3-cc-shutter-track',(L,.015,z-.021),(R,.095,z+.021),G.IRON,'cast',.005)
+    for x in (L+.12,43.1,45.7,R-.12):G.part('west',3,'P3-cc-track-cleat',(x-.045,.001,z-.06),(x+.045,.04,z+.08),G.IRON,'cast',.004)
+    for x in (43.1,45.59):timber('packing-jamb',(x,-.27,.04),(x+.11,.025,2.75),'timber')
+    timber('packing-lintel',(43.1,-.27,2.62),(45.7,.05,2.75),'timber')
+    rack=recipe['backRack'];L,R=rack['alongM'];back,front=rack['outM']
+    for x in (L,R-.075):timber('rack-upright',(x,back,.04),(x+.075,back+.075,2.59),'timber')
+    for z in rack['shelfZM']:
+        timber('rack-shelf',(L,back,z-.055),(R,front,z),'worktop')
+        for x in (L+.02,R-.095):timber('rack-cleat',(x,back,z-.13),(x+.055,front,z-.055),'timber')
+        for i in range(3):
+            x=L+.10+i*.58
+            S.soft_cloth('P3-cc-packed-order','west',3,(x,back+.025,z),(x+.42,front-.015,z+.24),G.WOOD,True)
+    for ob in G.bpy.context.scene.objects:
+        if ob.name.startswith('P3-cc-packed-order'):finish(ob,'cloth',.84+.10*(sum(ob.name.encode())%3)/2)
+    # Delivery leaves carry diagonal structural bracing, unlike the nearby flat receiving panels.
+    o=next(o for o in G.PARCELS['cc-w']['openings'] if o['kind']=='door');c=-o['depthM']+.04;a=o['alongM']
+    timber('delivery-meeting',(a-.035,c-.005,.08),(a+.035,c+.046,o['headM']-.10),'painted_timber')
+    for sign in (-1,1):
+        L=a+sign*.12;R=a+sign*(o['widthM']/2-.16)
+        ob=G.member('P3-cc-delivery-brace',G.coords('west',3,R,c+.038,.52),G.coords('west',3,L,c+.038,2.28),.075,G.WOOD)
+        finish(ob,'painted_timber');G.ring('P3-cc-delivery-pull','west',3,a+sign*.18,c+.085,1.21,.073)
+        x=a+sign*.18
+        G.part('west',3,'P3-cc-pull-staple',(x-.016,c,1.27),(x+.016,c+.09,1.30),G.IRON,'receive',.004)
+    # The rear guildhall gets a dressed base and two engaged piers, aligned with its solid edges.
+    stone='bz14_caravan_dressed_stone';material=G.mat('ph_bz04_trim_sanded_01').copy();material.name=stone
+    if 'bz04UvRepeat' in material:del material['bz04UvRepeat']
+    material['tileSizeM']=.45;G.MATS[stone]=material
+    landing=recipe['deliveryLanding'];L,R=landing['alongM'];back,front=landing['outM']
+    for i in range(landing['columns']):
+        ob=G.part('west',3,'P3-cc-delivery-landing',(L+i*(R-L)/landing['columns']+.006,back,.001),(L+(i+1)*(R-L)/landing['columns']-.006,front,landing['topZM']),stone,'receive',.002)
+        G.paint_object(ob,'#b1a38a');G.world_uv(ob,.45)
+    base=recipe['guildhallBase'];L,R=base['alongM'];depth=base['projectionM']
+    def block(name,lo,hi,index):
+        ob=G.part('east',15,'P3-cc-'+name,lo,hi,stone,'cast',.009)
+        G.paint_object(ob,['#b6ac96','#bfb49f','#b2a994'][index%3]);G.world_uv(ob,.45)
+    for i in range(11):block('guild-plinth',(L+i*(R-L)/11+.004,.001,.015),(L+(i+1)*(R-L)/11-.004,depth,base['plinthTopM']),i)
+    for axis in base['pilasterAxesM']:
+        for i in range(8):
+            z=base['plinthTopM']+i*(base['pierTopM']-base['plinthTopM'])/8;Z=base['plinthTopM']+(i+1)*(base['pierTopM']-base['plinthTopM'])/8
+            block('guild-pier',(axis-base['pierWidthM']/2,.001,z+.004),(axis+base['pierWidthM']/2,depth*.72,Z-.004),i)
+    block('guild-base-cap',(L,.001,base['pierTopM']),(R,depth,base['pierTopM']+.14),0)
+    return tools
+
+
 def build(saved,export=True):
     area=validate_handoff(saved);geometry(saved);origin=area['sectionOriginDesign'];G.reset(tuple(origin[k] for k in ('x','y','z')))
     interfaces=runpy.run_path(str(ROOT/'assets/source/unit-fountain-court/receiver-interfaces.py'))
@@ -112,9 +197,16 @@ def build(saved,export=True):
     S.build_shells(area,opening)
     for group in area['activityGroups']:activity(group)
     if export:
-        S.validate_objects(area)
-        G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
-            {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        tools=art_finish(area);S.validate_objects(area)
+        prepare=G.prepare_mesh
+        for ob in G.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'],subdivision_prefixes=('CC_PACK_RECESS',))
+        G.prepare_mesh=lambda ob:None
+        try:
+            G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+                {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
 
 
 def self_test(saved):
@@ -164,6 +256,14 @@ def self_test(saved):
                 for v in ob.data.vertices:
                     world=(v.co.x+origin['x'],origin['y']-v.co.y,v.co.z+origin['z']);along=world[0] if f['face'] in {'north','south'} else world[1]
                     assert p['interval'][0]-.002<=along<=p['interval'][1]+.002,(p['id'],ob.name,along)
+    build(saved,False);art_finish(area);S.validate_objects(area)
+    for ob in G.bpy.context.scene.objects:
+        if ob.name.startswith('P3-cc-') and not ob.name.startswith('P3-cc-delivery-landing'):
+            for v in ob.data.vertices:
+                x,y,z=v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]
+                assert not (3.3<x<14.85 and 30<y<48 and z<2.2),('New Caravan geometry enters maneuvering area',ob.name,x,y,z)
+    assert all(max(v.co.z for v in ob.data.vertices)<=.00801 for ob in G.bpy.context.scene.objects if ob.name.startswith('P3-cc-delivery-landing'))
+    print('PASS Caravan additions remain at the warehouse/guildhall receivers',flush=True)
     print('PASS Caravan fixtures: seven finished packing parts fit their boxes; BC-01 clipped fields preserve route mouths',flush=True)
 
 

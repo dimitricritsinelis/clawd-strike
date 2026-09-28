@@ -41,6 +41,7 @@ export function bz04FloorTreatmentShader(value: unknown, materialId: string): st
     trafficRoughnessDelta: number;
     trafficAlbedoDelta: number;
     edgeDust: {widthM:number;maxAlpha:number;featherM:number};
+    surfaceFinish?: {region:{x:number;y:number;w:number;h:number};contrast:number;neutralLinear:[number,number,number];featherM:number};
     faces: {face:string;wallPlaneM:number;intervals:number[][];doors:{alongM:number;widthM:number}[]}[];
   };
   if (treatment.receiver !== materialId) return "";
@@ -73,6 +74,29 @@ export function bz04FloorTreatmentShader(value: unknown, materialId: string): st
   }
   statements.push(`float edgeDust=doorService?0.0:${number(dust.maxAlpha)}*(1.0-smoothstep(${number(dust.widthM-dust.featherM)},${number(dust.widthM)},edgeDistance));`,
     "diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.60,0.56,0.50),edgeDust);");
+  if (treatment.surfaceFinish !== undefined) {
+    const finish = treatment.surfaceFinish;
+    const bounds = finish?.region;
+    if (!finish || !bounds || ![bounds.x,bounds.y,bounds.w,bounds.h,bounds.x+bounds.w,bounds.y+bounds.h,finish.contrast,finish.featherM].every(Number.isFinite)
+      || bounds.w <= 0 || bounds.h <= 0 || finish.contrast < 0 || finish.contrast > 1
+      || finish.featherM <= 0 || finish.featherM > Math.min(bounds.w,bounds.h)/2
+      || !Array.isArray(finish.neutralLinear) || finish.neutralLinear.length !== 3
+      || !Array.from(finish.neutralLinear).every(channel => Number.isFinite(channel) && channel >= 0 && channel <= 1)) {
+      throw new Error("Invalid BZ04 floor surface finish");
+    }
+    // Shared flagstone owns its albedo. Older section metadata is still
+    // validated above, but cannot repaint individual zones of that material.
+    if (materialId !== "bz04_court_limestone_flags_01") {
+      // Preserve small positive feather widths instead of rounding them to zero.
+      const scalar = (v: number) => v.toExponential();
+      statements.push(
+        `float surfaceFinishDistance=min(min(bz.x-(${scalar(bounds.x)}),${scalar(bounds.x+bounds.w)}-bz.x),min(bz.y-(${scalar(bounds.y)}),${scalar(bounds.y+bounds.h)}-bz.y));`,
+        `float surfaceFinishWeight=smoothstep(0.0,${scalar(finish.featherM)},surfaceFinishDistance);`,
+        `vec3 surfaceFinishNeutral=vec3(${finish.neutralLinear.map(scalar).join(",")});`,
+        `diffuseColor.rgb=mix(diffuseColor.rgb,surfaceFinishNeutral+${scalar(finish.contrast)}*(diffuseColor.rgb-surfaceFinishNeutral),surfaceFinishWeight);`,
+      );
+    }
+  }
   return `{vec2 bz=vFloorWorldPos.xz;${statements.join('\n')}}`;
 }
 

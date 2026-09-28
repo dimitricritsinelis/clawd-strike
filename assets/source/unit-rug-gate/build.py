@@ -138,6 +138,8 @@ def clear_flat_band_overlaps(o,face,plane):
         uv=mesh.uv_layers.new()
         for index,value in enumerate(uvs):uv.data[index].uv=value
         ob.data=mesh
+        # Clipping leaves open front islands with known receiver-facing winding.
+        ob['bz04PreserveWinding']=True
 
 
 def shade(fixture):
@@ -249,33 +251,37 @@ def retained_portal():
 
 def mask_portal_inlay(ob,accent):
     """Remove only north-face masonry inside the exact flush inlay rectangle."""
+    from mathutils import Vector
     lo,hi=accent['bounds']['min'],accent['bounds']['max'];old=ob.data;polygons=[]
+    old_colors=old.color_attributes.get('COLOR_0')
     def clip(poly,axis,value,sign):
         result=[]
         for p,q in zip(poly,poly[1:]+poly[:1]):
             a=(p[0][axis]-value)*sign;b=(q[0][axis]-value)*sign
             if a>=-1e-8:result.append(p)
             if (a>=0)!=(b>=0):
-                t=a/(a-b);result.append((p[0].lerp(q[0],t),p[1].lerp(q[1],t)))
+                t=a/(a-b);result.append((p[0].lerp(q[0],t),p[1].lerp(q[1],t),p[2].lerp(q[2],t)))
         return result
     for polygon in old.polygons:
-        poly=[(old.vertices[old.loops[i].vertex_index].co.copy(),old.uv_layers.active.data[i].uv.copy()) for i in polygon.loop_indices]
-        if not all(abs(point.y-(G.ORIGIN[1]-hi[1]))<1e-6 for point,uv in poly):
+        poly=[(old.vertices[old.loops[i].vertex_index].co.copy(),old.uv_layers.active.data[i].uv.copy(),Vector(old_colors.data[i if old_colors.domain=='CORNER' else old.loops[i].vertex_index].color) if old_colors else Vector((1,1,1,1))) for i in polygon.loop_indices]
+        if not all(abs(point.y-(G.ORIGIN[1]-hi[1]))<1e-6 for point,uv,color in poly):
             polygons.append(poly);continue
         remaining=poly
         for axis,value,sign in [(0,lo[0]-G.ORIGIN[0],1),(0,hi[0]-G.ORIGIN[0],-1),(2,lo[2]-G.ORIGIN[2],1),(2,hi[2]-G.ORIGIN[2],-1)]:
             outside=clip(remaining,axis,value,-sign) if remaining else []
             if len(outside)>=3:polygons.append(outside)
             remaining=clip(remaining,axis,value,sign) if remaining else []
-    vertices=[];faces=[];uvs=[]
+    vertices=[];faces=[];uvs=[];pigments=[]
     for poly in polygons:
         faces.append(tuple(range(len(vertices),len(vertices)+len(poly))))
-        vertices.extend(tuple(point) for point,uv in poly);uvs.extend(tuple(uv) for point,uv in poly)
+        vertices.extend(tuple(point) for point,uv,color in poly);uvs.extend(tuple(uv) for point,uv,color in poly);pigments.extend(tuple(color) for point,uv,color in poly)
     mesh=G.bpy.data.meshes.new(ob.name+'-inlay-mask');mesh.from_pydata(vertices,[],faces);mesh.update()
     for material in old.materials:mesh.materials.append(material)
     uv=mesh.uv_layers.new()
     for index,value in enumerate(uvs):uv.data[index].uv=value
-    ob.data=mesh
+    colors=mesh.color_attributes.new('COLOR_0','FLOAT_COLOR','CORNER')
+    for index,value in enumerate(pigments):colors.data[index].color=value
+    mesh.color_attributes.active_color=colors;ob.data=mesh
 
 
 def portal_visibility_fixture(landmark):
@@ -316,7 +322,24 @@ def portal(saved, export=True):
         # Its extrusion now lies behind the approved outer face.
         return original_text(name,label,face,plane,along,-.0017,z,width,height)
     def mesh(name,*args,**kwargs):
-        ob=original_mesh(name,*args,**kwargs)
+        if name.startswith('LM01-ring-'):
+            points,faces,material=args;vertices=[];panels=[];tones=[]
+            joint=G.A['artDirectionFinish']['portalJointFraction']
+            for face in faces:
+                p,q,Q,P=[points[i] for i in face]
+                if abs(p[1]-q[1])+abs(p[1]-P[1])<1e-8:
+                    for L,R,tone in [(0,joint,.54),(joint,1-joint,1),(1-joint,1,.54)]:
+                        def mix(a,b,t):return tuple(a[i]+(b[i]-a[i])*t for i in range(3))
+                        panel=[mix(p,q,L),mix(p,q,R),mix(P,Q,R),mix(P,Q,L)]
+                        n=len(vertices);vertices.extend(panel);panels.append(tuple(range(n,n+4)));tones.append(tone)
+                else:
+                    n=len(vertices);vertices.extend((p,q,Q,P));panels.append(tuple(range(n,n+4)));tones.append(1)
+            ob=original_mesh(name+'-field',vertices,panels,material,**kwargs)
+            colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','CORNER')
+            for poly,tone in zip(ob.data.polygons,tones):
+                for index in poly.loop_indices:colors.data[index].color=(tone,tone,tone,1)
+            ob.data.color_attributes.active_color=colors
+        else:ob=original_mesh(name,*args,**kwargs)
         accent=G.A['landmarks'][0]['accent']
         if name=='LM01-inlay':
             # Seat the label on this 2 mm recessed face, entirely inside the
@@ -337,11 +360,118 @@ def portal(saved, export=True):
                 world=(G.ORIGIN[0]+vertex.co.x,G.ORIGIN[1]-vertex.co.y,G.ORIGIN[2]+vertex.co.z)
                 assert all(landmark['bbox']['min'][i]-.001<=world[i]<=landmark['bbox']['max'][i]+.001 for i in range(3)),('portal target bounds',ob.name,world)
         portal_visibility_fixture(landmark)
-        if export:return original_export(path,bounds,triangles,primitives,extras)
+        if export:
+            finish_portal(path);prepare=G.prepare_mesh;G.prepare_mesh=lambda ob:None
+            try:return original_export(path,bounds,triangles,primitives,extras)
+            finally:G.prepare_mesh=prepare
     G.text=inscription;G.mesh=mesh;G.export=verify_export
     G.gateway()
     G.text=original_text;G.mesh=original_mesh;G.export=original_export
     if export:return retained_portal()
+
+
+
+def finish_tools():
+    spec=importlib.util.spec_from_file_location('bazaar_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    return tools
+
+
+def finish_portal(path):
+    from bazaar_finish import apply
+    apply(G.__dict__,path)
+    recipe=G.A['artDirectionFinish'];copies={};protected={}
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        if ob.name in {'LM01-inlay','LM01-title'}:
+            colors=ob.data.color_attributes.get('COLOR_0')
+            protected[ob.name]=[tuple(colors.data[l.vertex_index if colors.domain=='POINT' else l.index].color) for l in ob.data.loops]
+            continue
+        ring=ob.name.startswith('LM01-ring-');original=G.mat('ph_bz04_trim_sanded_01') if ring else ob.data.materials[0]
+        key='radial_ring' if ring else original.name;repeat=.38 if ring else recipe['portalStoneRepeatM']
+        if key not in copies:
+            material=original.copy();material.name='bz11_gate_'+key
+            if 'bz04UvRepeat' in material:del material['bz04UvRepeat']
+            material['tileSizeM']=repeat
+            for node in material.node_tree.nodes:
+                if node.type=='NORMAL_MAP':node.inputs['Strength'].default_value=.28 if ring else recipe['portalNormalScale']
+            copies[key]=material
+        ob.data.materials[0]=copies[key];G.world_uv(ob,repeat)
+    finish_tools().bake_contact_occlusion(G.__dict__,.7,recipe['portalContactStrength'],subdivision_prefixes=('LM01-pier',))
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        colors=ob.data.color_attributes['COLOR_0']
+        if ob.name in protected:
+            for c,value in zip(colors.data,protected[ob.name]):c.color=value
+            continue
+        tone=.94+.06*(sum(ob.name.encode())%9)/8
+        tint=recipe['portalRingTintLinear'] if ob.name.startswith('LM01-ring-') else (1,1,1)
+        for loop in ob.data.loops:
+            height=ob.data.vertices[loop.vertex_index].co.z
+            contact=1-.12*max(0,1-height/.65)
+            value=colors.data[loop.index].color;colors.data[loop.index].color=tuple(v*tone*contact*tint[i] for i,v in enumerate(value[:3]))+(value[3],)
+
+
+def art_finish(area):
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    recipe=area['artDirectionFinish'];tools=finish_tools()
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz11_rug_')
+    # Reuse the checked counter joinery, leaving this gallery's carved portal,
+    # tied display rails, bound rugs and rolled ends in their existing places.
+    spec=importlib.util.spec_from_file_location('rug_counter_craft',ROOT/'assets/source/unit-textile-arcade/build.py')
+    textile=importlib.util.module_from_spec(spec);spec.loader.exec_module(textile);textile.G=G;textile.S.G=G
+    for group in area['activityGroups']:
+        counter=next(p for p in group['instanceLayout']['parts'] if p['kind']=='grounded-counter-carcass')
+        for ob in list(G.bpy.context.scene.objects):
+            if ob.name.startswith(group['id']+'-'+counter['id']):G.bpy.data.objects.remove(ob,do_unlink=True)
+        one=dict(group,instanceLayout={'parts':[counter]});one.pop('sign',None);textile.activity(one)
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for c in colors.data:c.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if any(ob.name.startswith(prefix) for prefix in recipe['retirePrefixes']):G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        mat=ob.data.materials[0];source=mat.get('bz04SourceMaterial',mat.name)
+        if any(key in source for key in ('plaster','beige')):finish(ob,'plaster')
+        elif any(key in source for key in ('timber','wood','plank','pine')):finish(ob,'worktop' if '-top-board' in ob.name else 'timber',.94+.06*(sum(ob.name.encode())%7)/6)
+        if ob.name.startswith('SHADE_R_W_SHOP-cloth'):
+            finish(ob,'cloth');mean=private['cloth']['bz07TargetMeanLinear'];color=recipe['canopyColor']
+            rgb=[G._linear_channel(int(color[i:i+2],16))/mean[k] for k,i in enumerate((1,3,5))]
+            for c in ob.data.color_attributes['COLOR_0'].data:c.color=(*rgb,1)
+    sliding=recipe['slidingWindow'];op=next(o for p in G.PARCELS.values() for o in p['openings'] if o['id']==sliding['opening'])
+    for ob in list(G.bpy.context.scene.objects):
+        if not ob.name.startswith(op['id']+'-'):continue
+        if any(k in ob.name for k in ('-hinge','-latch')):G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        if '-leaf-' not in ob.name:continue
+        along=sum(G.ORIGIN[1]-v.co.y for v in ob.data.vertices)/len(ob.data.vertices)
+        if along<op['alongM']:G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        for v in ob.data.vertices:
+            v.co.y-=sliding['travelM'];v.co.x+=op['depthM']-.04+sliding['frontOutM']
+        tools.member_uv(ob)
+    finish(G.bpy.data.objects[op['id']+'-back'],'plaster',.62)
+    left=op['alongM']-op['widthM']/2-.08;right=op['alongM']+op['widthM']/2+sliding['travelM']+.08
+    for z in [op['sillM']+.04,op['headM']+.03]:
+        G.part('west',21,'P3-R-slider-track',(left,.025,z),(right,.145,z+.04),G.IRON,'cast',.006)
+        for a in [left+.1,right-.1]:G.part('west',21,'P3-R-slider-seat',(a-.035,-.012,z-.06),(a+.035,.14,z+.055),G.IRON,'cast',.004)
+    for along in [op['alongM']+sliding['travelM']+.10,op['alongM']+op['widthM']/2+sliding['travelM']-.18]:
+        G.part('west',21,'P3-R-slider-hanger',(along-.025,.072,op['headM']-.11),(along+.025,.15,op['headM']+.075),G.IRON,'cast',.003)
+        G.ring('P3-R-slider-wheel','west',21,along,.13,op['headM']+.10,.029,G.IRON)
+    finish(G.part('west',21,'P3-R-inner-window-sill',(op['alongM']-op['widthM']/2,-op['depthM'],op['sillM']+.001),(op['alongM']+op['widthM']/2,-.05,op['sillM']+.055),G.WOOD,'receive',.006),'worktop',.75)
+    # One square-section rainwater conductor has a collector, continuous fall,
+    # wall straps and a low outlet into the building's base rather than the route.
+    pipe=recipe['rainPipe'];a=pipe['alongM'];out=pipe['frontOutM'];top=pipe['topZM'];bottom=pipe['bottomZM']
+    G.part('west',21,'P3-R-rain-conductor',(a-.035,out-.035,bottom),(a+.035,out+.035,top),G.IRON,'cast',.008)
+    G.part('west',21,'P3-R-rain-hopper',(a-.10,-.01,top-.13),(a+.10,out+.08,top+.08),G.IRON,'cast',.01)
+    for z in [1.0,3.1,5.2,7.3,9.4]:G.part('west',21,'P3-R-pipe-strap',(a-.055,-.01,z),(a+.055,out+.045,z+.025),G.IRON,'cast',.003)
+    return tools
 
 
 def build(saved):
@@ -403,8 +533,14 @@ def build(saved):
     for group in area['activityGroups']:G.activity(group)
     for fixture in area['fixtures']:shade(fixture)
     validate_parts(area)
-    portal=retained_portal()
-    G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],{'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+    portal=retained_portal();tools=art_finish(area);prepare=G.prepare_mesh
+    validate_parts(area)
+    for ob in G.bpy.context.scene.objects:
+        if ob.type=='MESH':prepare(ob)
+    recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'],subdivision_prefixes=(recipe['slidingWindow']['opening'],))
+    G.prepare_mesh=lambda ob:None
+    try:G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],{'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+    finally:G.prepare_mesh=prepare
     report=G.REPORT[-1];report['retainedPortal']=portal
     (OUT/(UNIT+'.inspection.json')).write_text(json.dumps(report,indent=2)+'\n')
 

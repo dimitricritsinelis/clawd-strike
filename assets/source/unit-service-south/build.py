@@ -53,6 +53,104 @@ def receiving_opening(face,plane,o,trim,back):
             weight.value=float(all(abs(G.ORIGIN[1]-ob.data.vertices[i].co.y-along)<1e-5 and abs(G.ORIGIN[0]+ob.data.vertices[i].co.x-front)<1e-5 for i in edge.vertices))
 
 
+def art_finish(area):
+    """Give the closed receiving warehouses physical joinery and useful services."""
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('service_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    materials=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz13_service_south_')
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(materials[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for color in colors.data:color.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','painted_timber','aged_timber'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(materials[family]['tileSizeM']))
+        return ob
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if '-leaf-board' in ob.name:
+            # Close the 2 mm open joints as tongue-and-groove boards. At oblique
+            # player views those subpixel slots aliased into a black dot grid.
+            low=min(v.co.y for v in ob.data.vertices);high=max(v.co.y for v in ob.data.vertices)
+            for v in ob.data.vertices:v.co.y+=-.001 if abs(v.co.y-low)<1e-6 else .001 if abs(v.co.y-high)<1e-6 else 0
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(key in source for key in ('plaster','beige')):
+            finish(ob,'plaster' if ob.name.startswith('ss-e') else 'sand')
+        elif any(key in source for key in ('timber','wood','plank','pine')):
+            family='painted_timber' if ob.name.startswith('ss-e-ENTRANCE') else 'aged_timber' if ob.name.startswith('ss-w-DELIVERY-2') else 'timber'
+            finish(ob,family,.93+.07*(sum(ob.name.encode())%9)/8)
+
+    j=recipe['doorJoinery']
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for o in parcel['openings']:
+                if o['kind']!='door':continue
+                f,plane=face['face'],face['wallPlaneM'];name=o['id'];c=-o['depthM']+.04
+                left=o['alongM']-o['widthM']/2+.085;right=o['alongM']+o['widthM']/2-.085;middle=o['alongM']
+                family='painted_timber' if f=='east' else 'aged_timber' if name.endswith('2') else 'timber'
+                def timber(label,lo,hi):return finish(G.part(f,plane,name+'-P3-'+label,lo,hi,G.WOOD,'cast',.004),family)
+                # A rebated meeting stile seals the old bright seam while preserving two leaves.
+                timber('meeting-stile',(middle-.028,c-.015,.085),(middle+.028,c+j['projectionFromLeafM'],o['headM']-.08))
+                for leaf,(L,R) in enumerate(((left,middle-.005),(middle+.005,right))):
+                    for x in (L,R-j['stileWidthM']):
+                        timber('stile',(x,c,.10),(x+j['stileWidthM'],c+j['projectionFromLeafM'],2.37))
+                    for z in (.12,1.12,2.27):
+                        timber('rail',(L,c,z),(R,c+j['projectionFromLeafM'],z+j['railHeightM']))
+                    timber('kick-board',(L,c+j['projectionFromLeafM'],.08),(R,c+.057,.08+j['kickBoardHeightM']))
+                    pull=middle+(-.14 if leaf==0 else .14)
+                    G.part(f,plane,name+'-P3-pull-plate',(pull-.038,c+.047,1.22),(pull+.038,c+.06,1.38),G.IRON,'receive',.008)
+                    G.ring(name+'-P3-pull',f,plane,pull,c+.081,1.27,.055)
+                    for x in (L+.05,R-.05):
+                        for z in (.47,o['heightM']-.33):
+                            G.part(f,plane,name+'-P3-strap-rivet',(x-.009,c+.012,z-.009),(x+.009,c+.025,z+.009),G.IRON,'receive',.003)
+                # Loading trolleys strike replaceable wall-mounted timber pads, clear of the apron.
+                for x in (left-.37,right+.37):
+                    finish(G.part(f,plane,name+'-P3-bumper',(x-j['bumperWidthM']/2,.002,.17),(x+j['bumperWidthM']/2,j['bumperProjectionM'],j['bumperTopM']),G.WOOD,'cast',.015),'timber')
+                    for z in (.32,.88):G.part(f,plane,name+'-P3-bumper-bolt',(x-.014,.1,z-.014),(x+.014,.112,z+.014),G.IRON,'receive',.004)
+    service=recipe['eastServices'];a=service['rainConductorAlongM'];z,Z=service['rainConductorZM'];w=service['rainConductorWidthM']
+    G.part('east',10,'P3-ss-rain-conductor',(a-w/2,.022,z),(a+w/2,.105,Z),G.IRON,'cast',.018)
+    for height in (.4,1.9,3.5,4.7):
+        G.part('east',10,'P3-ss-rain-clip',(a-.064,.001,height-.02),(a+.064,.12,height+.02),G.IRON,'cast',.005)
+    L,R=service['conduitAlongM'];height=service['conduitZM'];b=service['serviceBoxAlongM'];bottom,top=service['serviceBoxZM']
+    G.member('P3-ss-service-conduit',G.coords('east',10,L,.031,height),G.coords('east',10,R,.031,height),.026,G.IRON)
+    G.member('P3-ss-service-drop',G.coords('east',10,b,.031,top),G.coords('east',10,b,.031,height),.026,G.IRON)
+    G.part('east',10,'P3-ss-service-box',(b-.18,.002,bottom),(b+.18,.135,top),G.IRON,'cast',.015)
+    G.part('east',10,'P3-ss-service-lid',(b-.16,.135,bottom+.02),(b+.16,.147,top-.02),G.IRON,'receive',.005)
+    G.part('east',10,'P3-ss-loading-light-back',(L-.21,.001,height-.14),(L+.21,.06,height+.14),G.IRON,'cast',.015)
+    G.part('east',10,'P3-ss-loading-light-hood',(L-.24,.015,height+.10),(L+.24,.21,height+.15),G.IRON,'cast',.014)
+    lens=G.bpy.data.materials.new('bz13_service_opal_lens');lens.use_nodes=True
+    lens.node_tree.nodes['Principled BSDF'].inputs['Base Color'].default_value=(.57,.55,.45,1)
+    lens.node_tree.nodes['Principled BSDF'].inputs['Roughness'].default_value=.43
+    G.MATS[lens.name]=lens
+    G.part('east',10,'P3-ss-loading-light-lens',(L-.17,.06,height-.095),(L+.17,.12,height+.075),lens.name,'receive',.012)
+    for i in range(3):
+        x=L+(R-L)*i/2
+        G.part('east',10,'P3-ss-conduit-clip',(x-.017,.001,height-.027),(x+.017,.051,height+.027),G.IRON,'receive',.003)
+    # A flush dressed landing belongs only to the principal loading threshold.
+    stone='bz13_service_loading_stone';material=G.mat('ph_bz04_trim_sanded_01').copy();material.name=stone
+    if 'bz04UvRepeat' in material:del material['bz04UvRepeat']
+    material['tileSizeM']=.55;G.MATS[stone]=material
+    apron=recipe['loadingApron'];L,R=apron['alongM'];back,front=apron['outM']
+    for row in range(apron['rows']):
+        for column in range(apron['columns']):
+            x=L+(R-L)*column/apron['columns'];X=L+(R-L)*(column+1)/apron['columns']
+            o=back+(front-back)*row/apron['rows'];O=back+(front-back)*(row+1)/apron['rows']
+            ob=G.part('east',10,'P3-ss-loading-apron',(x+.003,o+.003,.001),(X-.003,O-.003,apron['topZM']),stone,'receive',.002)
+            G.paint_object(ob,['#bab3a2','#c0b9a8','#b4ae9e'][(row+column)%3])
+            G.world_uv(ob,.55)
+    drain=recipe['downpipeDrain'];L,R=drain['alongM'];back,front=drain['outM']
+    G.part('east',10,'P3-ss-drain-receiver',(L,back,.001),(R,front,.004),G.IRON,'receive')
+    for i in range(9):
+        x=L+.012+(R-L-.024)*i/8
+        G.part('east',10,'P3-ss-drain-bar',(x-.004,back,.004),(x+.004,front,drain['topZM']),stone,'receive')
+    return tools
+
+
 def build(saved,export=True):
     area=validate_handoff(saved);geometry(saved)
     origin=area['sectionOriginDesign'];G.reset(tuple(origin[k] for k in ('x','y','z')))
@@ -62,10 +160,10 @@ def build(saved,export=True):
     # The north/south receiver fronts close the end caps of the retained
     # exterior rear skin. Keep its exterior faces, remove only those caps.
     import bmesh
-    from integrate_bz04 import load_handoff
+    extract=runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']
     rear=[ob for ob in G.bpy.context.scene.objects if ob.name=='ss-e-back' or ob.name.startswith('ss-e-back.')]
     for unit,ident in [('unit-caravan-court','cc-s'),('unit-link-south-west','lsw-n')]:
-        receiver=load_handoff(ROOT/'artifacts/bazaar-r7-whole-map'/unit/'handoff.json')['areas'][0]
+        receiver=extract(unit)['areas'][0]
         face,parcel=next((f,p) for f in receiver['faces'] for p in f['parcels'] if p['id']==ident)
         for ob in rear:
             bm=bmesh.new();bm.from_mesh(ob.data);caps=[]
@@ -76,9 +174,16 @@ def build(saved,export=True):
             bm.to_mesh(ob.data);bm.free()
 
     if export:
-        S.validate_objects(area)
-        G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
-            {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        tools=art_finish(area);S.validate_objects(area)
+        prepare=G.prepare_mesh
+        for ob in G.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'])
+        G.prepare_mesh=lambda ob:None
+        try:
+            G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+                {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
 
 
 def self_test(saved):
@@ -116,6 +221,22 @@ def self_test(saved):
     assert {(o['kind'],o['headShape']) for f in area['faces'] for p in f['parcels'] for o in p['openings']}=={('door','rectangular'),('door','segmental'),('vent','rectangular')}
     assert not any(ob.name.startswith('ss-e-end-closure') for ob in objects),'Internal receiver skin retained'
     assert any(ob.name.startswith('ss-s-field') for ob in objects),'Closed south wall missing'
+    art_finish(area);S.validate_objects(area)
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            for opening in parcel['openings']:
+                if opening['kind']!='door':continue
+                intervals=sorted((min(G.ORIGIN[1]-v.co.y for v in ob.data.vertices),max(G.ORIGIN[1]-v.co.y for v in ob.data.vertices)) for ob in G.bpy.context.scene.objects if ob.name.startswith(opening['id']+'-leaf-board'))
+                for previous,current in zip(intervals,intervals[1:]):
+                    if abs((previous[1]+current[0])/2-opening['alongM'])<.03:continue
+                    assert abs(current[0]-previous[1])<1e-5,('Open subpixel leaf joint',opening['id'],previous,current)
+    print('PASS receiving leaf joints are closed; separate leaves retain their meeting stile',flush=True)
+    for o in G.bpy.context.scene.objects:
+        if o.name.startswith('P3-ss-') or '-P3-' in o.name:
+            for v in o.data.vertices:
+                x,y,z=v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]
+                assert not (4.25<x<8.75 and 10<y<30 and z<2.2),('Service finish enters route',o.name)
+    print('PASS P3 service hardware stays against receivers and outside the protected route',flush=True)
     print('PASS Service South fixtures: 3 double planked doors, four dark straps each, bounded thresholds, 5 louvers, exact field materials and receiver skins',flush=True)
 
 def verify_jamb_export(saved):

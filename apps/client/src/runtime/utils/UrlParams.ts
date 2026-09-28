@@ -11,6 +11,13 @@ export type RuntimeFloorMode = "blockout" | "pbr";
 export type RuntimeWallMode = "blockout" | "pbr";
 export type RuntimeFloorQuality = "1k" | "2k" | "4k";
 export type RuntimeLightingPreset = "golden" | "flat";
+/**
+ * Desktop graphics tier. "high" (default) renders at native resolution up to
+ * 2x, loads 2k surface textures and enables GTAO in live play; "standard"
+ * keeps the earlier 1.1x / 1k / AO-off-in-play budget for weaker machines.
+ * Mobile is capped separately by bootstrap regardless of tier.
+ */
+export type RuntimeQualityTier = "high" | "standard";
 export type RuntimePropVisualMode = "blockout" | "bazaar";
 export type RuntimePropChaosOptions = {
   profile: RuntimePropProfile;
@@ -53,6 +60,7 @@ export type RuntimeUrlParams = {
   unlimitedHealthExplicit: boolean | null;
   ao: boolean;
   post: boolean;
+  quality: RuntimeQualityTier;
 };
 
 function parseBooleanFlag(value: string | null): boolean {
@@ -162,6 +170,33 @@ export function sanitizeRuntimePlayerName(
   return sanitizeValidatedPlayerName(value);
 }
 
+function parseQualityTier(value: string | null): RuntimeQualityTier {
+  return value?.trim().toLowerCase() === "standard" ? "standard" : "high";
+}
+
+export function resolveQualityTier(search: string): RuntimeQualityTier {
+  return parseQualityTier(getParam(new URLSearchParams(search), "quality", "gfx"));
+}
+
+/** Desktop pixel-ratio cap for a tier; the renderer still clamps to the device DPR. */
+export function resolveDesktopMaxPixelRatio(search: string): number {
+  return resolveQualityTier(search) === "high" ? 2.0 : 1.1;
+}
+
+/**
+ * Dynamic resolution (render/DynamicResolution.ts) guards 60 fps in live
+ * high-tier play. Review shots, QA and agent runs keep a fixed resolution so
+ * their frames stay comparable. `dynres=0|1` overrides.
+ */
+export function resolveDynamicResolution(search: string): boolean {
+  const params = new URLSearchParams(search);
+  const explicit = getParam(params, "dynres");
+  if (explicit !== null) return parseBooleanFlag(explicit);
+  if (resolveQualityTier(search) !== "high") return false;
+  if (getParam(params, "shot") !== null || params.get("qa") === "1" || params.has("qaProfile")) return false;
+  return parseControlMode(getParam(params, "mode", "controlMode"), getParam(params, "autostart")) === "human";
+}
+
 export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const params = new URLSearchParams(search);
   const rawMapId = getParam(params, "map");
@@ -213,7 +248,8 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const wallMode = parseWallMode(rawWalls);
   const wallDetails = parseBooleanFlagWithDefault(rawWallDetails, true);
   const wallDetailDensity = parseDensityScale(rawWallDetailDensity);
-  const floorQuality = parseFloorQuality(rawFloorRes);
+  const quality = parseQualityTier(getParam(params, "quality", "gfx"));
+  const floorQuality = rawFloorRes === null && quality === "high" ? "2k" : parseFloorQuality(rawFloorRes);
   const lightingPreset = parseLightingPreset(rawLighting);
   const environmentLighting = parseBooleanFlagWithDefault(rawEnvironmentLighting, true);
   const propVisuals = parsePropVisualMode(rawProps);
@@ -225,16 +261,11 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   };
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
   const unlimitedHealthExplicit = rawUnlimitedHealth === null ? null : unlimitedHealth;
-  // GTAO re-renders the whole scene for its normal/depth buffer plus two heavy
-  // full-screen passes — far too expensive as a default for live gameplay.
-  // Authored-shot runs (review/capture cameras) keep it on by default so the
-  // tuned quality-bar look is unchanged; gameplay opts in via ?ao=1.
-  //
-  // Note this deliberately splits gameplay from authored shots: any performance
-  // measurement taken through a shot run is measuring GTAO-on and therefore is
-  // NOT representative of what players get. Performance gates that need to
-  // reflect live play must pass ?ao=0 explicitly.
-  const ao = parseBooleanFlagWithDefault(rawAo, shot !== null);
+  // GTAO is on for authored shots and for live play in the high tier. It reads
+  // the beauty pass's depth and runs on the CSS-pixel grid (SceneDepthGtaoPass),
+  // about 6 ms at 2x DPR on an M3 Pro. The standard tier opts in via ?ao=1, and
+  // performance gates that need an AO-free frame pass ?ao=0 explicitly.
+  const ao = parseBooleanFlagWithDefault(rawAo, shot !== null || quality === "high");
   const post = parseBooleanFlagWithDefault(rawPost, true);
 
   return {
@@ -265,5 +296,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     unlimitedHealthExplicit,
     ao,
     post,
+    quality,
   };
 }

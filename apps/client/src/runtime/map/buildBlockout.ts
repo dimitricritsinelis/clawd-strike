@@ -43,6 +43,8 @@ import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildV3Architecture, type V3ArchitectureBuildResult } from "./v3Architecture";
 import { planV3VisualWallSegments } from "./v3VisualWallSegments";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
+import { applyR8Weathering, createR8DetailSet } from "../render/materials/r8Weathering";
+import { buildR8Atmosphere, R8_DETAIL_MATERIAL_IDS, r8AppliesTo } from "./r8/buildR8Atmosphere";
 import { resolveWallShaderProfile } from "./wallShaderProfiles";
 import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 
@@ -3379,6 +3381,33 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
       // East wall
       { id: "cage-E", kind: "wall", min: { x: pbX + pbW, y: 0, z: pbZ }, max: { x: pbX + pbW + CAGE_T, y: CAGE_H, z: pbZ + pbD } },
     );
+  }
+
+  // R8 art direction: render-only street life and surface history on the
+  // finished golden-lighting build. No colliders are created here.
+  const r8 = r8AppliesTo(spec.mapId) && options.lightingPreset === "golden" && options.wallMode === "pbr";
+  if (r8 && options.facadeModels) {
+    root.add(buildR8Atmosphere({
+      seed: options.seed,
+      wallMaterials: options.wallMaterials,
+      wallQuality: wallTextureQuality,
+      palmQuality: wallTextureQuality,
+      floorTopY,
+    }));
+  }
+  if (r8) {
+    const detail = { plaster: createR8DetailSet(0.9), stone: createR8DetailSet(1.0) };
+    if (options.wallMaterials) {
+      for (const layer of ["plaster", "stone"] as const) {
+        options.wallMaterials.loadTextureSet(R8_DETAIL_MATERIAL_IDS[layer], wallTextureQuality)
+          .then((set) => {
+            detail[layer].normal.value = set.normal;
+            detail[layer].grunge.value = set.albedo;
+          })
+          .catch((error: unknown) => console.warn(`[r8] detail textures unavailable: ${String(error)}`));
+      }
+    }
+    applyR8Weathering(root, { traversalSurfaces, detail });
   }
 
   return { root, colliders, wallDetailStats: wallDetailPlacements.stats };

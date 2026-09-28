@@ -5,6 +5,7 @@ import {
   Matrix4,
   Mesh,
   PerspectiveCamera,
+  PointLight,
   Quaternion,
   Raycaster,
   Vector2,
@@ -12,6 +13,8 @@ import {
   type Object3D,
 } from "three";
 import { Game } from "./game/Game";
+import { createViewModelLighting } from "./weapons/viewModelLighting";
+import { DEFAULT_FIRE_INTERVAL_S } from "./weapons/Ak47FireController";
 import { resolveEnemyHitDamage } from "./combat/enemyHitZone";
 import { PerfHud } from "./debug/PerfHud";
 import { preloadEnemyVisualAssets, setEnemyVisualModelStreamingEnabled } from "./enemies/EnemyVisual";
@@ -35,6 +38,7 @@ import { resolveVisualSupport, type VisualSupportCandidate } from "./qa/visualSu
 import {
   QaAssetReadinessTracker,
   createQaAssetPlan,
+  compiledPrefabModelIds,
   preloadQaDirectTextures,
   qaDoorModelRequestId,
   qaFacadeModelRequestId,
@@ -71,7 +75,6 @@ import { MobileOrientationGuard } from "./ui/MobileOrientationGuard";
 import { MobileFullscreenHint } from "./ui/MobileFullscreenHint";
 import { BulletHoleManager } from "./effects/BulletHoleManager";
 import { BuffManager } from "./buffs/BuffManager";
-import { warmupOrbMaterials } from "./buffs/BuffOrb";
 import { BUFF_TYPES, type BuffType } from "./buffs/BuffTypes";
 import { BuffHud } from "./ui/BuffHud";
 import { BuffTextHud } from "./ui/BuffTextHud";
@@ -252,10 +255,8 @@ function requiredMobilePropModelIds(mapAssets: RuntimeMapAssets | null): Set<str
     if (placement.runtime.mode === "model") {
       ids.add(placement.runtime.id);
     }
-    // The authored cover composition is procedural as a layout, but its final
-    // representation is assembled from this registered CC0 crate model.
-    if (placement.runtime.id === "bazaar_cover_goods") {
-      ids.add("ph_wooden_crate_01");
+    for (const modelId of compiledPrefabModelIds(placement.runtime.id)) {
+      ids.add(modelId);
     }
   }
   return ids;
@@ -2330,7 +2331,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       anchorTypes: runtimeParams.anchorTypes,
     },
     onWeaponShot: (shot) => {
-      viewModel?.triggerShotFx();
+      viewModel?.triggerShotFx(shot);
       weaponAudio.playAk47Shot();
       game.reportPlayerGunshot();
       waveStats.shotsFired++;
@@ -2360,9 +2361,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
             damage,
             isHeadshot,
           });
-        } else if (shot.hit && shot.hitPoint && shot.hitNormal) {
-          // Bullet hit world surface (wall/floor/prop), not an enemy — spawn decal
-          bulletHoles?.spawn(shot.hitPoint, shot.hitNormal);
+        } else {
+          // Bullet hit the world, not an enemy: mark the visible surface it
+          // struck (colliders are only boxes around the art, and some floors
+          // and overhangs have none).
+          bulletHoles?.spawnFromShot(
+            camPos,
+            shotDir,
+            shot.hit && shot.hitPoint && shot.hitNormal
+              ? { distance: shot.travelDistance, point: shot.hitPoint, normal: shot.hitNormal }
+              : null,
+            shot.travelDistance,
+          );
         }
 
         // Check if bullet hit a buff orb (pick up by shooting)
@@ -2385,9 +2395,17 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   });
   game.setEnemyNameplatesVisible(!shotActive);
   game.setEnemyVisualsVisible(!shotActive);
+  // The shot briefly lights nearby walls and floor. It stays in the scene at
+  // zero so firing never changes the light count (and recompiles materials).
+  const muzzleWorldLight = new PointLight(0xffa04a, 0, 7, 2);
+  const muzzleWorldOffset = new Vector3();
+  const viewModelLighting = createViewModelLighting();
+  game.scene.add(muzzleWorldLight);
 
   // Bullet hole decals on world surfaces
-  bulletHoles = new BulletHoleManager(game.scene, runtimeParams.seed ?? 1);
+  bulletHoles = new BulletHoleManager(game.scene, runtimeParams.seed ?? 1, {
+    getSurfaceRoots: () => game.getBulletDecalSurfaceRoots(),
+  });
 
   // ── Buff system ─────────────────────────────────────────────────────────────
   const buffManager = new BuffManager(game.scene, {
@@ -2400,7 +2418,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   const resetAllBuffModifiers = (): void => {
     game.setPlayerSpeedMultiplier(1.0);
-    game.setWeaponFireInterval(1 / 8);
+    game.setWeaponFireInterval(DEFAULT_FIRE_INTERVAL_S);
     game.setWeaponReloadSpeed(1.0);
     game.setWeaponFreeReloads(false);
     game.setOvershield(0);
@@ -2445,7 +2463,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         game.setPlayerSpeedMultiplier(1.0);
         break;
       case "rapid_fire":
-        game.setWeaponFireInterval(1 / 8);
+        game.setWeaponFireInterval(DEFAULT_FIRE_INTERVAL_S);
         game.setWeaponReloadSpeed(1.0);
         break;
       case "unlimited_ammo":
@@ -2478,8 +2496,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       weaponAudio.playReloadStart(durationSeconds);
       pushPublicFeedback({ type: "reload-start" });
     },
-    onReloadEnd: () => {
-      weaponAudio.playReloadEnd();
+    onReloadEnd: (finishedEarly) => {
+      // An early finish (fire after the latch) drops the unstarted handguard
+      // return foley; the seat already sounding rings out.
+      weaponAudio.playReloadEnd(finishedEarly);
       pushPublicFeedback({ type: "reload-end" });
     },
     onReloadCancel: () => weaponAudio.stopReload(),
@@ -2741,7 +2761,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   bootTelemetry.hiddenWarmupRenderDone = false;
 
   // Pre-warm buff orb materials so shader variants compile during warmup (not on first orb spawn)
-  const disposeWarmupOrb = warmupOrbMaterials(game.scene, game.camera);
+  const disposeWarmupOrb = buffManager.warmupOrbRenderer(game.camera);
 
   // The staged overview frame already visits every map-visible shader. Running
   // compileAsync again from that camera asks Three to traverse the entire bazaar
@@ -3626,6 +3646,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     if (startCountdownS > 0 && !overlaySuspended) startCountdownS = Math.max(0, startCountdownS - dt);
     countdownHud.update(startCountdownS);
     const simulationSuspended = overlaySuspended || intermissionSuspended || game.getIsDead() || startCountdownS > 0;
+    // The weapon's reload timer only advances on simDt, so the scheduled reload
+    // foley has to hold and resume with it or it runs ahead of the hand.
+    weaponAudio.setReloadPaused(simulationSuspended);
 
     // Feed mobile touch input before game update
     if (touchInput) {
@@ -3764,6 +3787,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         footstepTimerS -= simDt;
         if (footstepTimerS <= 0) {
           footstepTimerS = speedMps > 4.5 ? 0.45 : 0.65;
+          viewModel?.onFootstep?.(footstepTimerS);
           const footstepVolumeMultiplier = playerCrouched
             ? gameplayTuning.enemy.perception.hearing.crouchRangeMultiplier
             : 1;
@@ -3829,13 +3853,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     if (!overviewCamera) {
       const ammoSnap = game.getAmmoSnapshot();
       ammoHud.update(ammoSnap);
-      const overshield = game.getOvershield();
-      const baseHealthCapacity = gameplayTuning.player.economy.maxHealth;
       healthHud.update({
-        health: currentHealth + overshield,
-        maxHealth: overshield > 0
-          ? baseHealthCapacity + gameplayTuning.buffs.shieldHealth
-          : baseHealthCapacity,
+        health: currentHealth,
+        maxHealth: gameplayTuning.player.economy.maxHealth,
+        overshield: game.getOvershield(),
       }, dt);
       mobileFlashUpdate?.(dt, currentHealth, ammoSnap.mag);
     }
@@ -3851,10 +3872,19 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
     // ── Buff system per-frame update ──────────────────────────────────────────
     // simDt: buff durations are gameplay state and must not burn down while paused.
-    buffManager.update(simDt, game.getPlayerPosition(), game.camera);
+    buffManager.update(simDt, game.getPlayerPosition());
+    // Iron Skin lasts until broken: once damage empties the shield, end it.
+    if (buffManager.isBuffActive("health_boost") && game.getOvershield() <= 0) {
+      buffManager.consumeBuff("health_boost");
+    }
     const activeBuffs = buffManager.getActiveBuffs();
     const rcActive = buffManager.isRallyingCryActive();
-    buffHud.update({ buffs: activeBuffs, rallyingCryActive: rcActive }, dt);
+    buffHud.update({
+      buffs: activeBuffs,
+      rallyingCryActive: rcActive,
+      rallyingCryBuffType: buffManager.getRallyingCryBuffType(),
+      shield: { remaining: game.getOvershield(), capacity: gameplayTuning.buffs.shieldHealth },
+    }, dt);
     buffTextHud.update(activeBuffs, rcActive);
     buffVignette.setRallyingCry(rcActive);
     buffVignette.update(dt);
@@ -3891,9 +3921,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     if (renderFrame && viewModel) {
       viewModel.setFrameInput(speedMps, grounded, swayMouseDeltaX, swayMouseDeltaY);
       viewModel.setAmmoState?.(game.getAmmoSnapshot());
+      viewModel.setWorldLighting?.(game.sampleViewModelLighting(viewModelLighting));
       swayMouseDeltaX = 0;
       swayMouseDeltaY = 0;
       viewModel.updateFromMainCamera(game.camera, simDt);
+      const flash = viewModel.getMuzzleFlash?.(muzzleWorldOffset) ?? 0;
+      muzzleWorldLight.intensity = flash * 10;
+      if (flash > 0) muzzleWorldLight.position.copy(game.camera.position).add(muzzleWorldOffset);
       const weaponDebug = viewModel.getAlignmentSnapshot();
       game.setWeaponDebugSnapshot(weaponDebug.loaded, weaponDebug.dot, weaponDebug.angleDeg);
     } else {

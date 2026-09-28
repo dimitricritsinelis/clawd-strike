@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { bz04CourtyardVisualSegments, bz04ReceiverFragments, bz04RoofFragments, bz04SectionVisualSegments, readBz04BoundaryCoverage } from "./bz04Trial";
+import { bz04FloorTreatmentShader, bz04CourtyardVisualSegments, bz04ReceiverFragments, bz04RoofFragments, bz04SectionVisualSegments, readBz04BoundaryCoverage } from "./bz04Trial";
 import { createV3BoundaryFinishTrim } from "./buildBlockout";
 import { buildAuthoredPlacements, validateBz04Bounds } from "./buildFacadeModels";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
@@ -122,4 +122,96 @@ test("checked receiver junction suppresses only the synthetic boundary terminal"
   assert.equal(terminal(build([{orientation:"horizontal",coord:10.2,start:3,end:10}])).count,2);
   assert.equal(terminal(build([{orientation:"horizontal",coord:10,start:3,end:9}])).count,2);
   assert.deepEqual(segment,{orientation:"vertical",coord:10,start:8,end:10,outward:-1});
+});
+
+
+const floorTreatment = {
+  receiver: "floor-fixture",
+  trafficRegion: {x:21,y:14,w:12,h:18},
+  trafficRoughnessDelta: -.025,
+  trafficAlbedoDelta: 0,
+  edgeDust: {widthM:.18,maxAlpha:.06,featherM:.06},
+  faces: [],
+};
+
+function sampleFloorShader(shader: string, x: number, y: number, input: number[]) {
+  const smoothstep = (low:number,high:number,value:number) => {
+    const t = Math.max(0,Math.min(1,(value-low)/(high-low)));
+    return t*t*(3-2*t);
+  };
+  return input.map((color,channel) => {
+    // Execute the emitted scalar expressions; GLSL vector operations apply per channel.
+    const body = shader.replace("vec2 bz=vFloorWorldPos.xz;", "")
+      .replace(/vec3\(([^)]*)\)/g, (_match,values:string) => `(${values.split(",")[channel]})`)
+      .replace(/\b(?:float|bool|vec3)\s+/g, "let ")
+      .replace(/diffuseColor\.rgb/g, "color");
+    return new Function("bz","color","roughnessFactor","min","max","smoothstep","mix", `${body};return color;`)(
+      {x,y},color,.8,Math.min,Math.max,smoothstep,(a:number,b:number,t:number)=>a+(b-a)*t,
+    ) as number;
+  });
+}
+
+test("floor surface finish stays inside its opted-in region with a smooth boundary", () => {
+  const surfaceFinish = {region:{x:21,y:14,w:12,h:18},contrast:.4,neutralLinear:[.3,.4,.5],featherM:1};
+  const shader = bz04FloorTreatmentShader({...floorTreatment,surfaceFinish}, "floor-fixture");
+  const input = [.8,.6,.2];
+  const expected = [.5,.48,.38];
+  const close = (actual:number[],target:number[]) => actual.forEach((value,i) => assert.ok(Math.abs(value-target[i]!)<1e-10));
+  close(sampleFloorShader(shader,27,23,input), expected);
+  for (const [x,y] of [[21,23],[33,23],[27,14],[27,32],[20.5,23],[33.5,23],[27,13.5],[27,32.5]]) {
+    close(sampleFloorShader(shader,x!,y!,input), input);
+  }
+  close(sampleFloorShader(shader,21.5,23,input), [.65,.54,.29]);
+  const nearEdge = sampleFloorShader(shader,21.001,23,input);
+  assert.ok(Math.abs(nearEdge[0]!-input[0]!)<.000001);
+  assert.equal(bz04FloorTreatmentShader({...floorTreatment,surfaceFinish}, "another-floor"), "");
+  const identity = bz04FloorTreatmentShader({...floorTreatment,surfaceFinish:{...surfaceFinish,contrast:1}}, "floor-fixture");
+  close(sampleFloorShader(identity,27,23,input), input);
+  const tinyFeather = bz04FloorTreatmentShader({...floorTreatment,surfaceFinish:{...surfaceFinish,featherM:1e-8}}, "floor-fixture");
+  close(sampleFloorShader(tinyFeather,27,23,input), expected);
+  const negativeOrigin = bz04FloorTreatmentShader({...floorTreatment,surfaceFinish:{...surfaceFinish,region:{x:-12,y:-18,w:12,h:18}}}, "floor-fixture");
+  close(sampleFloorShader(negativeOrigin,-6,-9,input), expected);
+});
+
+test("shared flagstone ignores old regional repaints while retaining traffic, edge dust and door exclusions", () => {
+  const materialId = "bz04_court_limestone_flags_01";
+  const treatment = {...floorTreatment, receiver:materialId, faces:[{
+    face:"north",wallPlaneM:32,intervals:[[21,33]],doors:[{alongM:27,widthM:1}],
+  }]};
+  const shared = bz04FloorTreatmentShader(treatment, materialId);
+  for (const [contrast,neutralLinear] of [[.36,[.49,.42,.32]],[.32,[.49,.42,.32]],[.55,[.34,.235,.125]],[.6,[.34,.235,.125]]] as const) {
+    const shader = bz04FloorTreatmentShader({...treatment,surfaceFinish:{
+      region:{x:21,y:14,w:12,h:18},contrast,neutralLinear:[...neutralLinear],featherM:1,
+    }}, materialId);
+    assert.equal(shader, shared);
+    assert.deepEqual(sampleFloorShader(shader,27,23,[.8,.6,.2]), [.8,.6,.2]);
+    assert.deepEqual(sampleFloorShader(shader,27,31.95,[.8,.6,.2]), [.8,.6,.2]);
+    const dusty = sampleFloorShader(shader,24,31.95,[.8,.6,.2]);
+    [.788,.5976,.218].forEach((value,i) => assert.ok(Math.abs(dusty[i]!-value)<1e-10));
+  }
+});
+
+test("legacy floor treatments emit the same roughness and edge dust shader without surface finish", () => {
+  const shader = bz04FloorTreatmentShader(floorTreatment, "floor-fixture");
+  assert.equal(shader, `{vec2 bz=vFloorWorldPos.xz;if (bz.x>=21.000000 && bz.x<=33.000000 && bz.y>=14.000000 && bz.y<=32.000000) roughnessFactor=max(0.04,roughnessFactor+-0.025000);
+float edgeDistance=100.0; bool doorService=false;
+float edgeDust=doorService?0.0:0.060000*(1.0-smoothstep(0.120000,0.180000,edgeDistance));
+diffuseColor.rgb=mix(diffuseColor.rgb,vec3(0.60,0.56,0.50),edgeDust);}`);
+  assert.deepEqual(sampleFloorShader(shader,27,23,[.8,.6,.2]), [.8,.6,.2]);
+});
+
+test("floor surface finish rejects malformed dimensions, contrast, neutral color and feather", () => {
+  const valid = {region:{x:21,y:14,w:12,h:18},contrast:.4,neutralLinear:[.3,.4,.5],featherM:1};
+  const malformed: unknown[] = [null,{}, {...valid,region:null},
+    ...["x","y","w","h"].flatMap(key => [NaN,Infinity,-Infinity].map(value => ({...valid,region:{...valid.region,[key]:value}}))),
+    ...[0,-1].flatMap(value => ["w","h"].map(key => ({...valid,region:{...valid.region,[key]:value}}))),
+    ...[NaN,Infinity,-.1,1.1,"0.4"].map(contrast => ({...valid,contrast})),
+    ...[NaN,Infinity,0,-1,6.1].map(featherM => ({...valid,featherM})),
+    ...[null,[],new Array(3),[.3,.4],[.3,.4,.5,.6],[NaN,.4,.5],[.3,Infinity,.5],[.3,.4,-.1],[.3,1.1,.5],["0.3",.4,.5]].map(neutralLinear => ({...valid,neutralLinear})),
+  ];
+  for (const surfaceFinish of malformed) {
+    for (const receiver of ["floor-fixture", "bz04_court_limestone_flags_01"]) {
+      assert.throws(() => bz04FloorTreatmentShader({...floorTreatment,receiver,surfaceFinish}, receiver), /Invalid BZ04 floor surface finish/);
+    }
+  }
 });

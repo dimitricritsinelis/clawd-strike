@@ -250,6 +250,68 @@ test("v3 stairs use the owning PBR floor material, world UVs, and crack-overlapp
   }
 });
 
+test("v3 riser UVs follow their tread row while preserving scale and stair geometry", () => {
+  for (const axis of ["x", "y"] as const) {
+    for (const descending of [false, true]) {
+      const rect = { x: 2, y: 4, w: axis === "x" ? 4 : 3, h: axis === "y" ? 4 : 3 };
+      const stairs = zone("STAIRS", rect, "large_sandstone_blocks_01", "SURFACE_STAIRS");
+      const surface: RuntimeTraversalSurface = {
+        id: "SURFACE_STAIRS", zoneId: "STAIRS", kind: "ramp", rect, axis,
+        startElevationM: descending ? 1.2 : 0.4,
+        endElevationM: descending ? 0.4 : 1.2,
+        visualStyle: "stairs", stepCount: 4,
+      };
+      const input = spec("3.0", [stairs], [surface]);
+      const savedInput = structuredClone(input);
+      const floor = build(input).getObjectByName("floor-large_sandstone_blocks_01") as Mesh;
+      const geometry = floor.geometry;
+      const positions = geometry.getAttribute("position");
+      const normals = geometry.getAttribute("normal");
+      const uv = geometry.getAttribute("uv");
+      const indices = Array.from(geometry.index!.array);
+      const sign = descending ? 1 : -1;
+      const axisStart = axis === "x" ? rect.x : rect.y;
+      let riser = 0;
+      for (let base = 0; base < positions.count; base += 4) {
+        if (Math.abs(normals.getY(base)) > 1e-6) continue;
+        const edge = axisStart + riser + (descending ? 1 : 0);
+        const low = descending ? 1 - riser * 0.2 : 0.4 + riser * 0.2;
+        for (let corner = 0; corner < 4; corner += 1) {
+          const index = base + corner;
+          assert.ok(Math.abs((axis === "x" ? positions.getX(index) : positions.getZ(index)) - edge) < 1e-5);
+          assert.ok(Math.abs(positions.getY(index) - (low + (corner >= 2 ? 0.203 : 0))) < 1e-5);
+          assert.deepEqual([normals.getX(index), normals.getY(index), normals.getZ(index)], axis === "x" ? [sign, 0, 0] : [0, 0, sign]);
+          const across = axis === "x" ? positions.getZ(index) : positions.getX(index);
+          assert.ok(Math.abs(uv.getX(index) - across / 2) < 1e-6, "riser U lost its world scale");
+        }
+        const centerV = (uv.getY(base) + uv.getY(base + 2)) / 2;
+        assert.ok(Math.abs(centerV - (axisStart + riser + 0.5) / 2) < 1e-6, "riser samples an elevation-based paving row instead of its own tread");
+        assert.ok(Math.abs(uv.getY(base + 2) - uv.getY(base) - 0.203 / 2) < 1e-6, "riser V lost its physical texel scale");
+        const forward = axis === "y" ? sign > 0 : sign < 0;
+        assert.deepEqual(indices.filter(index => index >= base && index < base + 4),
+          (forward ? [0, 1, 2, 0, 2, 3] : [0, 2, 1, 0, 3, 2]).map(index => base + index));
+        riser += 1;
+      }
+      assert.equal(riser, 4, "fixture must exercise all four risers");
+      assert.deepEqual(input, savedInput, "rendering mutated traversal authority");
+      // Raising the entire staircase changes only height, not paving registration.
+      const raised = build(spec("3.0", [stairs], [{ ...surface,
+        startElevationM: surface.startElevationM + 3, endElevationM: surface.endElevationM + 3,
+      }])).getObjectByName("floor-large_sandstone_blocks_01") as Mesh;
+      assert.deepEqual(raised.geometry.index!.array, geometry.index!.array);
+      assert.deepEqual(raised.geometry.getAttribute("normal").array, normals.array);
+      assert.deepEqual(raised.geometry.getAttribute("uv").array, uv.array);
+      const raisedPositions = raised.geometry.getAttribute("position");
+      assert.equal(raisedPositions.count, positions.count);
+      for (let index = 0; index < positions.count; index += 1) {
+        assert.equal(raisedPositions.getX(index), positions.getX(index));
+        assert.equal(raisedPositions.getZ(index), positions.getZ(index));
+        assert.ok(Math.abs(raisedPositions.getY(index) - positions.getY(index) - 3) < 1e-5);
+      }
+    }
+  }
+});
+
 test("v3 rejects unresolved floor authority instead of revealing a flat fallback", () => {
   const missingMaterial = zone("MISSING_MATERIAL", { x: 0, y: 0, w: 4, h: 4 }, undefined, "SURFACE");
   assert.throws(

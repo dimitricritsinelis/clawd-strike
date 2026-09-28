@@ -1,6 +1,5 @@
 import {
   ACESFilmicToneMapping,
-  DoubleSide,
   Object3D,
   PCFSoftShadowMap,
   PMREMGenerator,
@@ -12,16 +11,17 @@ import {
   type Vector3,
   WebGLRenderer,
   WebGLRenderTarget,
+  DepthTexture,
 } from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { resolveBlockoutPalette } from "./BlockoutMaterials";
-import type { RuntimeLightingPreset } from "../utils/UrlParams";
+import { SceneDepthGtaoPass } from "./SceneDepthGtaoPass";
+import { resolveDesktopMaxPixelRatio, resolveDynamicResolution, type RuntimeLightingPreset } from "../utils/UrlParams";
+import { DynamicResolution } from "./DynamicResolution";
 
-const MAX_PIXEL_RATIO = 1.10;
 
 // ── Ambient-occlusion tuning constants ──────────────────────────────
 // The bazaar's key light is a high south-west sun, so the east-facing
@@ -77,50 +77,31 @@ const AO_SAMPLES = 24;
 // 103 -> 104 against 101, tea terrace 109 -> 111 against 98). Occlusion is not
 // what is holding the shade down.
 const AO_BLEND_INTENSITY = 0.78;
-// Alpha-tested foliage renders opaque into the AO normal/depth buffer, so a
-// palm crown would occlude as a solid block. The sky dome is far-field and
-// contributes nothing but a spurious backface.
-const AO_EXCLUDED_BRANCHES = new Set([
-  "decorative-palms",
-  "desert-sky",
-]);
+// Lowest pixel ratio dynamic resolution may use: the standard tier's budget.
+const DYNAMIC_RESOLUTION_FLOOR = 1.1;
 
-type GtaoVisibilityInternals = {
-  scene: Scene;
-  _visibilityCache: Object3D[];
-  _overrideVisibility: () => void;
-};
+// Occlusion grid density in CSS pixels. At 2x DPR the horizon search runs on
+// the CSS grid (a quarter of the device pixels) and a depth-aware upsample
+// restores full-resolution silhouettes; at 1x or below it is full resolution.
+// Normals come from full-resolution depth either way.
+const AO_PIXEL_RATIO = 1;
+const AO_PIXEL_RATIO_DEBUG = (() => {
+  if (typeof window === "undefined" || !window.location) return null;
+  const raw = new URLSearchParams(window.location.search).get("aoGrid");
+  const value = raw === null ? Number.NaN : Number(raw);
+  return Number.isFinite(value) && value >= 0 ? value : null;
+})();
 
-function isExcludedFromAo(object: Object3D): boolean {
-  let current: Object3D | null = object;
-  while (current) {
-    if (AO_EXCLUDED_BRANCHES.has(current.name)) return true;
-    current = current.parent;
+/**
+ * The AO pass reads the beauty pass's depth, so both composer targets carry a
+ * depth texture (the composer ping-pongs them). Occluders are exactly what the
+ * player sees: alpha-tested palm fronds only where they are opaque, canopy
+ * cloth from below, and nothing that does not write depth.
+ */
+export function attachComposerDepth(composer: EffectComposer): void {
+  for (const target of [composer.renderTarget1, composer.renderTarget2]) {
+    if (!target.depthTexture) target.depthTexture = new DepthTexture(target.width, target.height);
   }
-  return false;
-}
-
-export function constrainAoOccluders(pass: GTAOPass): void {
-  // Cloth is visible from below in the beauty pass. Include that same
-  // surface in AO depth so background windows cannot occlude through it.
-  pass.normalMaterial.side = DoubleSide;
-  const internals = pass as unknown as GtaoVisibilityInternals;
-  internals._overrideVisibility = (): void => {
-    internals.scene.traverse((object) => {
-      const renderable = object as Object3D & {
-        isLine?: boolean;
-        isLine2?: boolean;
-        isMesh?: boolean;
-        isPoints?: boolean;
-      };
-      if (!object.visible) return;
-      const unsupportedPrimitive = renderable.isPoints || renderable.isLine || renderable.isLine2;
-      const excludedMesh = renderable.isMesh && isExcludedFromAo(object);
-      if (!unsupportedPrimitive && !excludedMesh) return;
-      object.visible = false;
-      internals._visibilityCache.push(object);
-    });
-  };
 }
 
 const GOLDEN_POST_SHADER = {
@@ -154,6 +135,15 @@ const GOLDEN_POST_SHADER = {
     // that is genuinely black rather than lifting the whole frame off zero.
     shadowLift: { value: 0.0 },
     vignetteStrength: { value: 0.012 },
+    // Luma-weighted unsharp mask over the 4-neighbourhood. Restores texel
+    // contrast lost to mip filtering and MSAA resolve without haloing edges:
+    // the gain is clamped to a fraction of local contrast.
+    sharpenStrength: { value: 0.32 },
+    // R8 grade, applied in linear light before tone mapping: a gentle contrast
+    // pivot around mid-grey and a small saturation lift so late-afternoon stone
+    // reads rich rather than washed. Deliberately mild; not a colour filter.
+    gradeContrast: { value: 1.07 },
+    gradeSaturation: { value: 1.08 },
   },
   vertexShader: `
     varying vec2 vUv;
@@ -169,6 +159,9 @@ const GOLDEN_POST_SHADER = {
     uniform float bloomThreshold;
     uniform float shadowLift;
     uniform float vignetteStrength;
+    uniform float sharpenStrength;
+    uniform float gradeContrast;
+    uniform float gradeSaturation;
     varying vec2 vUv;
 
     vec3 highlights(vec3 color) {
@@ -182,12 +175,26 @@ const GOLDEN_POST_SHADER = {
       float baseLuma = dot(base, vec3(0.2126, 0.7152, 0.0722));
       float toeMask = 1.0 - smoothstep(0.025, 0.07, baseLuma);
       base += vec3(0.82, 0.88, 0.92) * shadowLift * toeMask;
+      if (sharpenStrength > 0.0) {
+        vec3 n = texture2D(tDiffuse, vUv + vec2(0.0, texel.y)).rgb
+          + texture2D(tDiffuse, vUv - vec2(0.0, texel.y)).rgb
+          + texture2D(tDiffuse, vUv + vec2(texel.x, 0.0)).rgb
+          + texture2D(tDiffuse, vUv - vec2(texel.x, 0.0)).rgb;
+        vec3 detail = base - n * 0.25;
+        float limit = 0.25 * max(baseLuma, 0.02);
+        base = max(base + clamp(detail * sharpenStrength, vec3(-limit), vec3(limit)), vec3(0.0));
+      }
       vec3 bloom = highlights(texture2D(tDiffuse, vUv + vec2(texel.x * 2.0, 0.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv - vec2(texel.x * 2.0, 0.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv + vec2(0.0, texel.y * 2.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv - vec2(0.0, texel.y * 2.0)).rgb);
       bloom *= 0.25 * bloomStrength;
 
+      {
+        float gl = dot(base, vec3(0.2126, 0.7152, 0.0722));
+        base = mix(vec3(gl), base, gradeSaturation);
+        base = max(0.18 * pow(max(base, vec3(0.0)) / 0.18, vec3(gradeContrast)), vec3(0.0));
+      }
       vec2 centered = vUv * 2.0 - 1.0;
       float edge = smoothstep(0.35, 1.35, dot(centered, centered));
       float vignette = 1.0 - edge * vignetteStrength;
@@ -213,11 +220,8 @@ export type RendererPerfInfo = {
 
 type WebGLContextLike = WebGLRenderingContext | WebGL2RenderingContext;
 
-function tryCreateWebGLContext(canvas: HTMLCanvasElement): WebGLContextLike | null {
+function tryCreateWebGLContext(canvas: HTMLCanvasElement, needsAA: boolean): WebGLContextLike | null {
   try {
-    // Skip hardware MSAA when the native DPR is high enough that supersampling
-    // already suppresses aliasing.  Saves significant fill cost on high-DPI panels.
-    const needsAA = (window.devicePixelRatio || 1) < 1.5;
     const attributes: WebGLContextAttributes = {
       alpha: false,
       antialias: needsAA,
@@ -278,22 +282,30 @@ export class Renderer {
   private readonly renderer: WebGLRenderer | null;
   private composer: EffectComposer | null = null;
   private worldPass: RenderPass | null = null;
-  private aoPass: GTAOPass | null = null;
+  private aoPass: SceneDepthGtaoPass | null = null;
   private goldenPostPass: ShaderPass | null = null;
   private environmentTarget: WebGLRenderTarget | null = null;
   private width = 1;
   private height = 1;
   private readonly effectiveMaxPixelRatio: number;
+  private readonly dynamicResolution: DynamicResolution | null = null;
+  private lastPresentAtMs: number | null = null;
   constructor(private readonly mountEl: HTMLElement, options: RendererOptions) {
-    this.effectiveMaxPixelRatio = options.maxPixelRatio ?? MAX_PIXEL_RATIO;
+    this.effectiveMaxPixelRatio = options.maxPixelRatio ?? resolveDesktopMaxPixelRatio(window.location.search);
+    const fullPixelRatio = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio);
+    if (options.maxPixelRatio === undefined && fullPixelRatio > DYNAMIC_RESOLUTION_FLOOR
+      && resolveDynamicResolution(window.location.search)) {
+      this.dynamicResolution = new DynamicResolution({ maxPixelRatio: fullPixelRatio, minPixelRatio: DYNAMIC_RESOLUTION_FLOOR });
+    }
     const palette = resolveBlockoutPalette(options.highVis);
+    // Pixel-ratio caps determine actual supersampling, even on Retina displays.
+    const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
     const canvas = document.createElement("canvas");
-    const context = tryCreateWebGLContext(canvas);
+    const context = tryCreateWebGLContext(canvas, needsAA);
 
     let renderer: WebGLRenderer | null = null;
     if (context) {
       try {
-        const needsAA = (window.devicePixelRatio || 1) < 1.5;
         renderer = new WebGLRenderer({
           canvas,
           context,
@@ -354,7 +366,7 @@ export class Renderer {
       // full resolution. Gameplay materials should still keep transmission at 0.
       this.renderer.transmissionResolutionScale = 0.25;
       this.renderer.info.autoReset = false;
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.maxPixelRatio ?? MAX_PIXEL_RATIO));
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
       this.renderer.setClearColor(
         options.lightingPreset === "golden" ? 0xE6D7C2 : palette.background,
         1,
@@ -365,20 +377,22 @@ export class Renderer {
 
     // ── Golden-hour composer (world-only; viewmodel is rendered directly after) ──
     if (this.renderer && options.lightingPreset === "golden" && (options.ao || options.post)) {
-      const dpr = this.renderer.getPixelRatio();
       this.composer = new EffectComposer(this.renderer);
-      this.composer.setPixelRatio(dpr);
-      this.composer.setSize(this.width, this.height);
+      this.resize();
+      const dpr = this.renderer.getPixelRatio();
 
       // Placeholder scene/camera — swapped each frame before render
       this.worldPass = new RenderPass(new Scene(), new PerspectiveCamera());
       this.composer.addPass(this.worldPass);
 
       if (options.ao) {
-        // Full resolution: the occlusion this pass has to deliver is a
-        // 120 mm jamb reveal and a shutter sitting proud of its recess.
-        // Half-res smears both back into the wall plane.
-        this.aoPass = new GTAOPass(new Scene(), new PerspectiveCamera(), this.width, this.height);
+        // The occlusion this pass has to deliver is a 120 mm jamb reveal and a
+        // shutter sitting proud of its recess, about 12 CSS pixels at 10 m.
+        // Below the CSS grid it smears back into the wall plane, so the AO
+        // grid never drops under one sample per CSS pixel (AO_PIXEL_RATIO).
+        attachComposerDepth(this.composer);
+        this.aoPass = new SceneDepthGtaoPass(this.width, this.height);
+        this.aoPass.aoPixelRatio = AO_PIXEL_RATIO_DEBUG ?? AO_PIXEL_RATIO;
         this.aoPass.blendIntensity = AO_BLEND_INTENSITY;
         this.aoPass.updateGtaoMaterial({
           radius: AO_RADIUS_M,
@@ -389,7 +403,7 @@ export class Renderer {
           samples: AO_SAMPLES,
           screenSpaceRadius: false,
         });
-        constrainAoOccluders(this.aoPass);
+        this.aoPass.setDevicePixelRatio(dpr);
         this.composer.addPass(this.aoPass);
       }
 
@@ -420,7 +434,7 @@ export class Renderer {
   }
 
   getPixelRatioCap(): number {
-    return MAX_PIXEL_RATIO;
+    return this.effectiveMaxPixelRatio;
   }
 
   getCurrentPixelRatio(): number {
@@ -457,11 +471,33 @@ export class Renderer {
     this.width = nextWidth;
     this.height = nextHeight;
     if (this.renderer) {
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
+      const nativeDpr = window.devicePixelRatio || 1;
+      this.renderer.setPixelRatio(Math.min(nativeDpr, this.effectiveMaxPixelRatio, this.dynamicResolution?.pixelRatio ?? Infinity));
       this.renderer.setSize(nextWidth, nextHeight, false);
-      this.composer?.setSize(nextWidth, nextHeight);
-      this.aoPass?.setSize(nextWidth, nextHeight);
       const dpr = this.renderer.getPixelRatio();
+      if (this.composer) {
+        // Canvas MSAA does not cover composer targets. Both HDR color and
+        // depth attachments must support the selected low-DPR sample count.
+        const gl = this.renderer.getContext();
+        let samples = 0;
+        if (dpr < 1.5 && "getInternalformatParameter" in gl) {
+          const limit = Math.min(4, this.renderer.capabilities.maxSamples);
+          const colorSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA16F, gl.SAMPLES) as Int32Array | null;
+          const depthSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, gl.SAMPLES) as Int32Array | null;
+          for (const count of colorSamples ?? []) {
+            if (count > 1 && count <= limit && depthSamples?.includes(count)) samples = Math.max(samples, count);
+          }
+        }
+        for (const target of [this.composer.renderTarget1, this.composer.renderTarget2]) {
+          if (target.samples !== samples) {
+            target.dispose();
+            target.samples = samples;
+          }
+        }
+        this.aoPass?.setDevicePixelRatio(dpr);
+        this.composer.setPixelRatio(dpr);
+        this.composer.setSize(nextWidth, nextHeight);
+      }
       this.goldenPostPass?.uniforms["resolution"]!.value.set(nextWidth * dpr, nextHeight * dpr);
       return;
     }
@@ -486,6 +522,7 @@ export class Renderer {
   ): void {
     if (!this.renderer) return;
     this.renderer.info.reset();
+    this.updateDynamicResolution();
 
     if (this.composer && this.worldPass) {
       // Swap scene/camera into the passes for this frame
@@ -508,6 +545,15 @@ export class Renderer {
     this.renderer.clearDepth();
     this.renderer.render(viewModelScene, viewModelCamera);
     this.renderer.autoClear = prevAutoClear;
+  }
+
+  private updateDynamicResolution(): void {
+    if (!this.dynamicResolution) return;
+    const now = performance.now();
+    const interval = this.lastPresentAtMs === null ? 0 : now - this.lastPresentAtMs;
+    this.lastPresentAtMs = now;
+    if (document.visibilityState !== "visible") return;
+    if (this.dynamicResolution.sample(interval, now)) this.resize();
   }
 
   async compileSceneAsync(

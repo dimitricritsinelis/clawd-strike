@@ -37,7 +37,7 @@ def west_upper_shells(G,area):
     active=runpy.run_path(str(ROOT/'assets/source/unit-rug-gate/build-receivers.py'))['ADDITIONAL_UNITS']
     active.update({'unit-link-west-upper':None,'unit-tea-landing':None,'unit-tea-stairs':None,'unit-spawn-b-courtyard':None})
     interfaces['install'](G,area,additional_units=active)
-    tea=json.loads((ROOT/'artifacts/bazaar-r7-whole-map/unit-tea-stairs/handoff.json').read_text())
+    tea=runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']('unit-tea-stairs')
     assert S.digest(tea)==tea['inputSha256']
     floor=tea['areas'][0]['floor'];neighbor=next(p for f in tea['areas'][0]['faces'] for p in f['parcels'] if p['id']=='ts-e')
     assert floor['kind']=='ramp' and floor['axis']=='y'
@@ -95,15 +95,22 @@ def east_upper_shells(G,area):
     try:S.build_shells(area)
     finally:G.part=original
     from mathutils import Vector
-    for x in [37.2,37.5,37.8]:
+    for x in [37.05,37.5,37.95]:
         start=Vector(G.local((x,68,2)));hits=[]
         for ob in G.bpy.context.scene.objects:
             G.prepare_mesh(ob)
             hit,point,normal,index=ob.ray_cast(start,Vector((0,1,0)),distance=2)
             if hit:hits.append((point-start).length)
-        expected=1 if x==37.5 else 1.045
-        assert hits and abs(min(hits)-expected)<1e-5,'Boundary pier or 45 mm recessed field changed'
-    print('PASS Link East Upper: complete BC-01 field/pier, checked North reciprocal ends and prior owner interfaces')
+        expected=1.09 if x==37.5 else 1
+        assert hits and abs(min(hits)-expected)<1e-5,'Boundary end pier or 90 mm recessed field changed'
+    for z,expected in [(1.7,'ph_bz04_sandstone_blocks_05'),(4,'ph_bz04_plastered_wall')]:
+        start=Vector(G.local((35.5,68,z)));hits=[]
+        for ob in G.bpy.context.scene.objects:
+            if not ob.name.startswith('leu-s-'):continue
+            hit,point,normal,index=ob.ray_cast(start,Vector((0,1,0)),distance=2)
+            if hit:hits.append(((point-start).length,ob.data.materials[0].name))
+        assert hits and min(hits)[1]==G.mat(expected).name,('Textile return lost its stone lower storey or plaster upper field',z,hits)
+    print('PASS Link East Upper: measured end piers and 90 mm field, Textile storey continuity, checked North reciprocal ends and prior owner interfaces')
 
 
 def south_west_shells(G,area):
@@ -130,7 +137,13 @@ def south_west_shells(G,area):
             if hit:hits.append(((point-start).length,ob.data.materials[0].name))
         nearest=min(hits)
         assert abs(nearest[0]-1.045)<1e-5 and nearest[1]==G.mat(material).name,('Boundary field depth/material differs from frozen region',world,nearest)
-    print('PASS Link South West: three 45 mm BC-01 fields use frozen material regions, clear mouths and joined owner envelopes')
+    for world,expected in [((12,12,.15),'ph_bz04_sandstone_blocks_05'),((12,12,1.7),'ph_bz04_plastered_wall'),((15,9,1.7),'ph_bz04_sandstone_blocks_05'),((15,9,4),'ph_bz04_beige_wall_002')]:
+        start=Vector(G.local(world));direction=Vector((0,-1 if world[1]==12 else 1,0));hits=[]
+        for ob in G.bpy.context.scene.objects:
+            hit,point,normal,index=ob.ray_cast(start,direction,distance=2)
+            if hit:hits.append(((point-start).length,ob.data.materials[0].name))
+        assert hits and min(hits)[1]==G.mat(expected).name,('South West parent storey mismatch',world,hits)
+    print('PASS Link South West: three 45 mm boundary fields, measured service plinth and house ground storey, clear mouths and joined owner envelopes')
 
 
 def south_east_shells(G,area):
@@ -159,7 +172,13 @@ def south_east_shells(G,area):
             if hit:hits.append(((point-start).length,ob.data.materials[0].name))
         nearest=min(hits)
         assert abs(nearest[0]-1.045)<1e-5 and nearest[1]==G.mat(material).name,('Boundary field differs from frozen region',world,nearest)
-    print('PASS Link South East: three 45 mm BC-01 fields, exact material regions, Dyers rear ownership and open routes')
+    for world,expected in [((44,12,.15),'ph_bz04_sandstone_blocks_05'),((44,12,1.7),'ph_bz04_aged_plaster_ochre'),((40.5,9,.6),'ph_bz04_sandstone_blocks_05'),((40.5,9,1.7),'ph_bz04_plastered_wall')]:
+        start=Vector(G.local(world));direction=Vector((0,-1 if world[1]==12 else 1,0));hits=[]
+        for ob in G.bpy.context.scene.objects:
+            hit,point,normal,index=ob.ray_cast(start,direction,distance=2)
+            if hit:hits.append(((point-start).length,ob.data.materials[0].name))
+        assert hits and min(hits)[1]==G.mat(expected).name,('South East parent base mismatch',world,hits)
+    print('PASS Link South East: three 45 mm boundary fields, measured dye-work bases, Dyers rear ownership and open routes')
 
 
 def north_west_shells(G,area):
@@ -167,7 +186,7 @@ def north_west_shells(G,area):
     interfaces['install'](G,area,additional_units={'unit-link-north-west':None,'unit-spawn-b-courtyard':None,'unit-rug-gate':None,'unit-tea-landing':None,'unit-service-north':None})
     contacts={}
     for unit,ids in [('unit-service-north',{'sn-en','sn-n'}),('unit-tea-landing',{'tl-w'}),('unit-spawn-b-courtyard',{'B_S_WEST'})]:
-        saved=json.loads((ROOT/'artifacts/bazaar-r7-whole-map'/unit/'handoff.json').read_text());assert S.digest(saved)==saved['inputSha256']
+        saved=runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract'](unit);assert S.digest(saved)==saved['inputSha256']
         contacts.update({p['id']:p for f in saved['areas'][0]['faces'] for p in f['parcels'] if p['id'] in ids})
     original=G.part
     def part(face,plane,name,lo,hi,mid,shadow='cast',bevel=0):
@@ -197,7 +216,13 @@ def north_west_shells(G,area):
             if hit:hits.append(((point-start).length,ob.data.materials[0].name))
         nearest=min(hits)
         assert abs(nearest[0]-1.045)<1e-5 and nearest[1]==G.mat(material).name,('Boundary field differs from frozen region',world,nearest)
-    print('PASS Link North West: four measured BC-01 fields, exact parent-volume cuts and protected mouths')
+    for z,expected in [(.15,'ph_bz04_sandstone_blocks_05'),(1.7,'ph_bz04_beige_wall_002')]:
+        start=Vector(G.local((15,80,z)));hits=[]
+        for ob in G.bpy.context.scene.objects:
+            hit,point,normal,index=ob.ray_cast(start,Vector((0,-1,0)),distance=2)
+            if hit:hits.append(((point-start).length,ob.data.materials[0].name))
+        assert hits and min(hits)[1]==G.mat(expected).name,('North West guest-house base mismatch',z,hits)
+    print('PASS Link North West: four measured boundary fields, guest-house base, current exact parent-volume cuts and protected mouths')
 
 
 def north_east_shells(G,area):
@@ -223,7 +248,61 @@ def north_east_shells(G,area):
             if hit:hits.append(((point-start).length,ob.data.materials[0].name))
         nearest=min(hits)
         assert abs(nearest[0]-(1+depth))<1e-5 and nearest[1]==G.mat(mid).name,('Boundary field/pier differs from frozen region',x,nearest)
-    print('PASS Link North East: 45 mm plaster field, measured end piers and existing parent-owned side contacts')
+    for z,expected in [(1.7,'ph_bz04_sandstone_blocks_05'),(4,'ph_bz04_painted_plaster_warm')]:
+        start=Vector(G.local((45,80.5,z)));hits=[]
+        for ob in G.bpy.context.scene.objects:
+            hit,point,normal,index=ob.ray_cast(start,Vector((1,0,0)),distance=2)
+            if hit:hits.append(((point-start).length,ob.data.materials[0].name))
+        assert hits and min(hits)[1]==G.mat(expected).name,('North East compound storey mismatch',z,hits)
+    print('PASS Link North East: 45 mm plaster field, measured end piers, compound storey continuity and parent-owned contacts')
+
+
+def art_finish(G,area):
+    """Apply only the current link's authored parent finishes and local contact."""
+    from bazaar_finish import apply
+    apply(G.__dict__,G.OUT/(area['outputUnit']+'.glb'))
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('link_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    prefix='bz24_'+area['outputUnit'].replace('-','_')+'_'
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix=prefix)
+    owners=sorted((p['id'] for f in area['faces'] for p in f['parcels']),key=len,reverse=True)
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        source=ob.data.materials[0].get('bz04SourceMaterial',ob.data.materials[0].name)
+        if not any(word in source for word in ('plaster','beige')):continue
+        owner=next(p for p in owners if ob.name.startswith(p+'-'))
+        family=recipe['parcelFinishBindings'][owner]
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for color in colors.data:color.color=(1,1,1,1)
+        ob.data.color_attributes.active_color=colors
+        G.world_uv(ob,float(private[family]['tileSizeM']))
+    return tools
+
+
+def parent_return_fixture(G,area):
+    """Probe the actual stone base and inherited plaster on the finished returns."""
+    from mathutils import Vector
+    for face in area['faces']:
+        for parcel in face['parcels']:
+            family=area['artDirectionFinish']['parcelFinishBindings'].get(parcel['id'])
+            if not family:continue
+            along=sum(parcel['interval'])/2
+            for z,expected in ((.15,'ph_bz04_sandstone_blocks_05'),(.75,area['artDirectionFinish']['materials'][family]['source'])):
+                start=Vector(G.local(G.coords(face['face'],face['wallPlaneM'],along,.2,z)))
+                end=Vector(G.local(G.coords(face['face'],face['wallPlaneM'],along,0,z)));direction=(end-start).normalized();hits=[]
+                for ob in G.bpy.context.scene.objects:
+                    if not ob.name.startswith(parcel['id']+'-'):continue
+                    G.prepare_mesh(ob)
+                    hit,point,normal,index=ob.ray_cast(start,direction,distance=.5)
+                    if hit:
+                        material=ob.data.materials[0]
+                        hits.append(((point-start).length,material.get('bz07SourceMaterial',material.get('bz04SourceMaterial',material.name))))
+                assert hits and min(hits)[1]==expected,('Parent return finish mismatch',parcel['id'],z,hits)
+    print('PASS parent returns: actual 300 mm stone plinths and calibrated parent plaster receivers',flush=True)
 
 
 def build(saved,unit,fixture=False):
@@ -249,12 +328,21 @@ def build(saved,unit,fixture=False):
         for v in ob.data.vertices:
             along=v.co.x+origin['x'] if face in ['north','south'] else origin['y']-v.co.y
             assert p['interval'][0]-1e-5<=along<=p['interval'][1]+1e-5,(ob.name,'geometry crosses closed-span endpoint',along,p['interval'])
+    tools=art_finish(G,area) if area.get('artDirectionFinish') else None
     S.export_budget_fixture(area)
     if fixture:
+        if tools and unit in {'unit-link-west-mid','unit-link-east-mid','unit-link-west-upper'}:parent_return_fixture(G,area)
         print('PASS link fixture',unit,'all actual vertices remain within their owned closed spans; no phantom mouth closure')
     else:
-        G.export(G.OUT/(unit+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
-                 {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        prepare=G.prepare_mesh
+        if tools:
+            for ob in bpy.context.scene.objects:prepare(ob)
+            recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'])
+            G.prepare_mesh=lambda ob:None
+        try:
+            G.export(G.OUT/(unit+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+                     {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
 
 
 

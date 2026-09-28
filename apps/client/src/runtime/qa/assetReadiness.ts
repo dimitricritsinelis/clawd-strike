@@ -1,3 +1,5 @@
+import { R8_ATMOSPHERE, R8_DETAIL_MATERIAL_IDS, R8_PROP_MATERIAL_IDS, r8AppliesTo } from "../map/r8/buildR8Atmosphere";
+import { R8_CLUTTER_MODEL_IDS } from "../map/r8/buildR8Clutter";
 import type { RuntimeMapAssets } from "../map/types";
 
 export type QaAssetProfile = "qa" | "cell-review";
@@ -287,6 +289,7 @@ export function createQaAssetPlan(
     ? []
     : sortedUnique([
         ...QA_WALL_DIRECT_MATERIAL_IDS,
+        ...(r8AppliesTo(mapAssets.blockout.mapId) ? [...Object.values(R8_DETAIL_MATERIAL_IDS), ...R8_PROP_MATERIAL_IDS] : []),
         ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
           Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
         )),
@@ -306,6 +309,7 @@ export function createQaAssetPlan(
           placement.runtime.mode === "model" ? [placement.runtime.id] : []
         )),
         ...(mapAssets.blockout.dressingPlacements ?? []).flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
+        ...((mapAssets.blockout.dressingPlacements ?? []).length > 0 && r8AppliesTo(mapAssets.blockout.mapId) ? R8_CLUTTER_MODEL_IDS : []),
       ]);
   const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
   const facadeModelIds = sortedUnique(
@@ -313,7 +317,7 @@ export function createQaAssetPlan(
       placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []
     )),
   );
-  const hasDecorativePalms = mapAssets.anchors.anchors.some((anchor) => (
+  const hasDecorativePalms = (r8AppliesTo(mapAssets.blockout.mapId) && R8_ATMOSPHERE.palms.length > 0) || mapAssets.anchors.anchors.some((anchor) => (
     anchor.type.toLowerCase() === "decorative_palm"
   ));
   const textureTier = options.textureTier ?? "1k";

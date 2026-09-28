@@ -5,16 +5,18 @@ export type BuffDefinition = {
   name: string;
   durationS: number;
   iconPath: string;
+  /** Bright glass color of the dropped lantern orb (sRGB). */
   orbColor: number;
+  /** Deep glass color at the orb's silhouette (sRGB). */
   orbEmissive: number;
-  vignetteColor: string; // HUD/icon accent color
+  vignetteColor: string; // HUD/icon accent color, matches orbColor
 };
 
 /** Nominal per-kill chance before the dry-streak safeguard is applied. */
 export const BUFF_DROP_CHANCE = 0.15;
 /** A seventh would-be miss is converted into a drop, so every 10-kill wave drops at least once. */
 export const MAX_CONSECUTIVE_BUFF_NON_DROPS = 6;
-/** Rallying Cry now empowers one deterministic buff for longer than a normal pickup. */
+/** Rallying Cry grants its buffs for longer than a normal pickup. */
 export const RALLYING_CRY_DURATION_S = 15;
 
 export const BUFF_DEFINITIONS: Record<BuffType, BuffDefinition> = {
@@ -23,36 +25,36 @@ export const BUFF_DEFINITIONS: Record<BuffType, BuffDefinition> = {
     name: "Adrenaline Rush",
     durationS: 10,
     iconPath: "/assets/ui/buffs/speed_boost.png",
-    orbColor: 0x00ccff,
-    orbEmissive: 0x0088ff,
-    vignetteColor: "0, 204, 255",
+    orbColor: 0x3fd3c6, // turquoise glass
+    orbEmissive: 0x0b6f78,
+    vignetteColor: "63, 211, 198",
   },
   rapid_fire: {
     type: "rapid_fire",
     name: "Bloodlust",
     durationS: 10,
     iconPath: "/assets/ui/buffs/rapid_fire.png",
-    orbColor: 0xcc66ff,
-    orbEmissive: 0x9933cc,
-    vignetteColor: "204, 102, 255",
+    orbColor: 0xa968e8, // amethyst glass
+    orbEmissive: 0x4f2290,
+    vignetteColor: "169, 104, 232",
   },
   unlimited_ammo: {
     type: "unlimited_ammo",
     name: "Bottomless Mag",
     durationS: 10,
     iconPath: "/assets/ui/buffs/unlimited_ammo.png",
-    orbColor: 0xffcc00,
-    orbEmissive: 0xffaa00,
-    vignetteColor: "255, 204, 0",
+    orbColor: 0xffb330, // saffron glass
+    orbEmissive: 0xa9530a,
+    vignetteColor: "255, 179, 48",
   },
   health_boost: {
     type: "health_boost",
     name: "Iron Skin",
     durationS: 10,
     iconPath: "/assets/ui/buffs/health_boost.png",
-    orbColor: 0x44ff44,
-    orbEmissive: 0x22cc22,
-    vignetteColor: "68, 255, 68",
+    orbColor: 0x45d27f, // emerald glass
+    orbEmissive: 0x0f6b3d,
+    vignetteColor: "69, 210, 127",
   },
 };
 
@@ -72,4 +74,4 @@ export const ORB_BOB_FREQUENCY_HZ = 1.2;
 export const ORB_SPIN_RAD_PER_S = Math.PI;
 export const ORB_PICKUP_RADIUS_M = 1.0;
 export const ORB_LIFETIME_S = 15;
-export const ORB_SPAWN_HEIGHT_OFFSET_M = 0.6;
+export const ORB_SPAWN_HEIGHT_OFFSET_M = 1.0;

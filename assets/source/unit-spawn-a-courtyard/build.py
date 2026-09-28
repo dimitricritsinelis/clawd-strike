@@ -105,22 +105,7 @@ def field(face, plane, name, l, r, z, top, mid, out=0, floor_z=0):
 
 
 def close_arch_shoulders(face, plane, o, trim):
-    if o.get('headShape','rectangular') == 'rectangular':
-        return
-    top = G.arch_points(o)
-    width = max(.10,o.get('trimWidthM',.1))
-    outer = G.offset_top(top,width)
-    front = o.get('frontProjectionM',.08)
-    if o.get('architecturalDetail',{}).get('profile') == 'carved-timber-portal':
-        front -= .025
-    # The normal-offset curve rises above its jamb spring. Close the small
-    # quadrilateral below that endpoint, within the existing surround mask.
-    for endpoint,arc,edge in [(outer[0],top[0],top[0][0]-width),
-                              (outer[-1],top[-1],top[-1][0]+width)]:
-        if endpoint[1] > arc[1]+1e-7:
-            poly=[(edge,arc[1]),arc,endpoint,(edge,endpoint[1])]
-            G.prism_profile(o['id']+'-spring-closure',face,plane,poly,
-                            min(-.02,front-.01),front,o.get('surroundMaterialId',trim))
+    return G.close_arch_shoulders(face, plane, o, trim)
 
 
 def opening(face, plane, o, trim, back):
@@ -540,6 +525,139 @@ def remove_internal_spice_receiver_skins():
     print('RECEIVER SKINS removed',removed,'clipped A_NE_RETURN-back to',se['footprint'][2],east['interval'][1],flush=True)
 
 
+
+def remove_internal_link_receiver_skins():
+    """The installed south links own the two coincident north-facing ends."""
+    extract=runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']
+    for unit,receiver_id,parent_id in [('unit-link-south-west','lsw-s-part-2','A_W_NORTH'),('unit-link-south-east','lse-s','A_E_DRYING')]:
+        saved=extract(unit);assert digest(saved)==saved['inputSha256']
+        receiver=next(p for f in saved['areas'][0]['faces'] for p in f['parcels'] if p['id']==receiver_id)
+        parent=G.PARCELS[parent_id];assert receiver['buildingId']==parent['buildingId']
+        x,y,X,Y=receiver['footprint'];px,py,pX,pY=parent['footprint']
+        assert (x,X,Y)==(px,pX,pY) and receiver['wallTopM']==parent['wallTopM']
+        ob=G.bpy.data.objects.get(parent_id+'-end-closure.001');assert ob is not None
+        for v in ob.data.vertices:
+            wx,wy,wz=v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z+G.ORIGIN[2]
+            assert x-1e-6<=wx<=X+1e-6 and Y-.020001<=wy<=Y+1e-6 and receiver['floorElevationM']-1e-6<=wz<=receiver['wallTopM']+1e-6,('Link does not cover the complete parent end skin',parent_id,wx,wy,wz)
+        G.bpy.data.objects.remove(ob,do_unlink=True)
+        # The parent's 20 mm outer rear still closes the link's side. Stop
+        # its end behind the link front skin instead of leaving a coplanar strip.
+        back=G.bpy.data.objects.get(parent_id+'-back');assert back is not None
+        assert abs(max(G.ORIGIN[1]-v.co.y for v in back.data.vertices)-Y)<1e-6
+        assert y<Y-receiver['skinDepthM']
+        for v in back.data.vertices:
+            if G.ORIGIN[1]-v.co.y>Y-receiver['skinDepthM']:
+                v.co.y=G.ORIGIN[1]-(Y-receiver['skinDepthM'])
+        back.data.update();G.world_uv(back,float(back.data.materials[0].get('tileSizeM',2)))
+        assert max(G.ORIGIN[1]-v.co.y for v in back.data.vertices)<Y-.019
+        G.bpy.context.scene['bz04'+receiver_id+'InputSha256']=saved['inputSha256']
+    print('PASS Spawn A link interfaces: two covered north caps removed and rear edges seated behind link fronts; other exterior faces retained',flush=True)
+
+
+def art_finish(area):
+    """Build the civic gate court's own P3 composition, preserving every aperture."""
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('bazaar_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    materials=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz08_spawn_a_')
+
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(materials[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for color in colors.data:color.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','painted_timber','aged_timber','worktop'} and 'B-STAR' not in ob.name:tools.member_uv(ob)
+        else:G.world_uv(ob,float(materials[family]['tileSizeM']))
+        return ob
+
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if any(ob.name.startswith(prefix) for prefix in recipe['retirePrefixes']):
+            G.bpy.data.objects.remove(ob,do_unlink=True);continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(key in source for key in ('plaster','beige')):
+            finish(ob,'red' if ob.name.startswith('A_S_KEEPER') else 'sand' if ob.name.startswith('A_E_') else 'plaster')
+        elif any(key in source for key in ('timber','wood','plank','pine')):
+            family='painted_timber' if ob.name.startswith(('A_W_','A_E_','G_A_E_')) else 'timber'
+            finish(ob,family,.94+.06*(sum(ob.name.encode())%7)/6)
+        elif 'sandstone_blocks' in source:
+            old=ob.data.color_attributes.get('COLOR_0')
+            if old:
+                for c in old.data:c.color=(.90,.86,.75,1)
+
+    hood=recipe['gateHood'];L,R=hood['interval'];bottom,top=hood['zM'];depth=hood['projectionM']
+    # The sill recipe carries a long, narrow UV repeat. Pier blocks need a
+    # separate physical repeat, otherwise world_uv silently retains that stretch.
+    stone='bz08_spawn_a_dressed_stone'
+    material=G.mat('ph_bz04_trim_sanded_01').copy();material.name=stone
+    if 'bz04UvRepeat' in material:del material['bz04UvRepeat']
+    material['tileSizeM']=recipe['stoneRepeatM'];G.MATS[stone]=material
+    # Engaged piers flank the doorway without occupying its service apron.
+    for a in hood['pierAxesM']:
+        width=hood['pierWidthM'];front=hood['pierFrontM'];courses=10
+        for i in range(courses):
+            z=i*bottom/courses;Z=(i+1)*bottom/courses
+            ob=G.part('south',0,'P3-A-gate-pier',(a-width/2,.003,z+.006),(a+width/2,front,Z-.006),stone,'cast',.014)
+            tint(ob,['#d4c6aa','#c8bca2','#dbceb4'][i%3])
+            G.world_uv(ob,recipe['stoneRepeatM'])
+        G.part('south',0,'P3-A-gate-plinth',(a-width/2-.045,0,.0),(a+width/2+.045,front+.045,.2),stone,'cast',.018)
+        G.part('south',0,'P3-A-gate-capital',(a-width/2-.05,0,bottom-.20),(a+width/2+.05,front+.07,bottom),stone,'cast',.015)
+        finish(G.member('P3-A-hood-knee',G.coords('south',0,a,front,bottom-.57),G.coords('south',0,a,depth-.14,bottom+.035),.13,G.WOOD),'timber')
+    for a in hood['wallBracketAxesM']:
+        finish(G.part('south',0,'P3-A-hood-wall-seat',(a-.075,-.025,hood['corbelBottomZM']),(a+.075,.14,bottom+.12),G.WOOD,'cast',.009),'timber')
+        finish(G.member('P3-A-hood-wall-bracket',G.coords('south',0,a,.1,hood['corbelBottomZM']+.08),G.coords('south',0,a,depth-.14,bottom+.035),.10,G.WOOD),'timber')
+    finish(G.part('south',0,'P3-A-hood-wall-plate',(L,-.025,bottom),(R,.13,bottom+.17),G.WOOD,'cast',.015),'timber')
+    finish(G.part('south',0,'P3-A-hood-front-beam',(L,depth-.15,bottom),(R,depth,bottom+.18),G.WOOD,'cast',.018),'timber')
+    for i in range(12):
+        a=L+.12+i*(R-L-.24)/11
+        finish(G.part('south',0,'P3-A-hood-rafter',(a-.043,-.03,bottom+.12),(a+.043,depth+.04,top-.015),G.WOOD,'cast',.008),'timber')
+    # A boarded cap, front drip and a narrow copper flashing make a closed roof.
+    finish(G.part('south',0,'P3-A-hood-deck',(L-.06,-.03,top-.02),(R+.06,depth+.06,top+.035),G.WOOD,'cast',.009),'aged_timber')
+    G.part('south',0,'P3-A-hood-flashing',(L-.07,depth+.045,top-.055),(R+.07,depth+.075,top+.04),G.IRON,'cast',.006)
+    # The broad registry light has a substantial continuous stone sill and
+    # two concealed seats; it remains a sealed window, not a balcony.
+    old_sill=G.bpy.data.objects.get('A_S_GATE-L1-W2-sill')
+    if old_sill:G.bpy.data.objects.remove(old_sill,do_unlink=True)
+    G.part('south',0,'P3-A-registry-sill',(26.62,-.48,5.81),(29.38,.24,5.95),stone,'cast',.018)
+    for a in (26.88,29.12):G.part('south',0,'P3-A-registry-sill-seat',(a-.065,0,5.65),(a+.065,.15,5.82),stone,'cast',.01)
+
+    # The closed double door has a meeting stile and a dark solid back; the
+    # center joint must not show the bright plaster receiver behind its leaves.
+    finish(G.bpy.data.objects['A_S_GATE-PRINCIPAL-back'],'timber',.35)
+    finish(G.part('south',0,'P3-A-gate-meeting-stile',(27.978,-.204,.08),(28.022,-.185,2.7),G.WOOD,'cast',.003),'timber')
+    notice=recipe['registryNotice'];L,R=notice['interval'];z,Z=notice['zM'];out=notice['frontOutM']
+    finish(G.part('south',0,'P3-A-registry-board',(L,out-.055,z),(R,out,Z),G.WOOD,'receive',.008),'timber')
+    for l,r,bottom,top in [(L+.08,L+.51,z+.12,Z-.24),(L+.59,R-.07,z+.22,Z-.31)]:
+        ob=G.part('south',0,'P3-A-registry-paper',(l,out+.002,bottom),(r,out+.006,top),'ph_bz04_hessian_230','receive',.001)
+        finish(ob,'cloth');tint(ob,'#d8c6a1')
+        for row in range(6):
+            level=top-.12-row*.075
+            G.part('south',0,'P3-A-registry-ink',(l+.045,out+.0065,level),(r-.05-(row%3)*.025,out+.007,level+.007),G.IRON,'receive')
+    G.text('P3-A-registry-title','REGISTRY','south',0,(L+R)/2,out+.004,Z-.12,.8,.095)
+
+    # Shade belongs only to the dye work recess, with wall-mounted rafters.
+    shade=recipe['dyeShade'];L,R=shade['interval'];back=shade['ledgerZM'];front=shade['frontZM'];out=shade['projectionM']
+    finish(G.part('east',39,'P3-A-dye-ledger',(L,-.03,back-.06),(R,.07,back+.04),G.WOOD,'cast',.01),'aged_timber')
+    for a in (L+.08,R-.08):
+        finish(G.member('P3-A-dye-arm',G.coords('east',39,a,0,back),G.coords('east',39,a,out,front),.065,G.WOOD),'aged_timber')
+        finish(G.member('P3-A-dye-bracket',G.coords('east',39,a,0,back-.36),G.coords('east',39,a,.35,back-.1),.055,G.WOOD),'aged_timber')
+    vertices=[];faces=[]
+    for j in range(9):
+        v=j/8
+        for i in range(17):
+            u=i/16;vertices.append(G.coords('east',39,L+(R-L)*u,out*v,back+(front-back)*v-.07*math.sin(u*math.pi)*math.sin(v*math.pi)))
+    for j in range(8):
+        for i in range(16):q=j*17+i;faces.append((q,q+1,q+18,q+17))
+    ob=G.mesh('P3-A-dye-canvas',vertices,faces,'ph_bz04_hessian_230','cast',True)
+    mod=ob.modifiers.new('Woven canvas thickness','SOLIDIFY');mod.thickness=.008
+    finish(ob,'cloth');tint(ob,'#c6bba3')
+    return tools
+
+
 def build(saved):
     area = validate_handoff(saved)
     geometry(saved)
@@ -547,6 +665,7 @@ def build(saved):
     G.reset(tuple(origin[key] for key in ('x','y','z')))
     build_shells(area)
     remove_internal_spice_receiver_skins()
+    remove_internal_link_receiver_skins()
     for group in area['activityGroups']:
         activity(group)
     for fixture in area['fixtures']:
@@ -559,12 +678,21 @@ def build(saved):
     for ob in bpy.context.scene.objects:
         if ob.type == 'MESH' and ob.data.materials[0] in {G.mat('bz04_teal_timber_project_original'), G.mat('ph_bz04_trim_sanded_01')}:
             ob['bz04Shadow'] = 'receive'
+    tools=art_finish(area)
     validate_objects(area)
     from integrate_bz04 import export_budget
     budget = export_budget(area,OUT)
-    G.export(OUT / (UNIT+'.glb'), area['exportBoundsGltfLocal'], area['budget']['maxTriangles'],
-             area['budget']['maxRenderedPrimitives'], {'bz04InputSha256': saved['inputSha256'], 'bz04DesignRevision': area['designRevision']['id'],
-             'bz04DesignBudget': area['budget'], 'bz04ExportBudget': budget})
+    prepare=G.prepare_mesh
+    for ob in G.bpy.context.scene.objects:
+        if ob.type=='MESH':prepare(ob)
+    recipe=area['artDirectionFinish']
+    tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'])
+    G.prepare_mesh=lambda ob:None
+    try:
+        G.export(OUT / (UNIT+'.glb'), area['exportBoundsGltfLocal'], area['budget']['maxTriangles'],
+                 area['budget']['maxRenderedPrimitives'], {'bz04InputSha256': saved['inputSha256'], 'bz04DesignRevision': area['designRevision']['id'],
+                 'bz04DesignBudget': area['budget'], 'bz04ExportBudget': budget})
+    finally:G.prepare_mesh=prepare
     data = (OUT/(UNIT+'.glb')).read_bytes()
     gltf = json.loads(data[20:20+struct.unpack_from('<I',data,12)[0]])
     validate_export_budget(gltf,area,budget)

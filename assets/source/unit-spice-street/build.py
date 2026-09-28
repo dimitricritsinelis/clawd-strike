@@ -1,4 +1,4 @@
-"""Build the approved Spice Street section from a frozen R7 handoff.
+"""Build Spice Street, including the user-directed P2 art pilot, from a frozen handoff.
 
 Shared geometry/export primitives come from the courtyard builder. Roof bundles,
 floor bindings and legacy producer retirement are integrated by the whole-map owner.
@@ -118,11 +118,24 @@ def craft_part(g, item):
     def beam(s,l,r,width,m=mid):return B.member(name+s,B.coords(face,plane,*l),B.coords(face,plane,*r),width,m,'receive')
     def lathe(s,l,r,profile,m=mid,c=None,soft=False):return turned(name+s,face,plane,l,r,m,profile,c,soft)
     if kind=='grounded-counter-carcass':
-        box('-top',(x,y,Z-.045),hi)
-        n=math.ceil(w/.18)
-        for i in range(n):box('-front-board',(x+i*w/n+.001,Y-.035,z),(x+(i+1)*w/n-.001,Y,Z-.045))
-        for a in (x,X-.065):box('-side',(a,y,z),(a+.065,Y-.035,Z-.045))
-        for zz in (z+.08,Z-.12):box('-rear-rail',(x,y,zz),(X,y+.04,zz+.04))
+        frame=A['artDirectionPilot']['counter'];size=frame['frameM'];gap=frame['footGapM'];setback=frame['panelSetbackM'];overlap=frame['panelOverlapM']
+        for j in range(frame['topBoardCount']):
+            box('-top-board',(x,y+j*d/frame['topBoardCount']+.002,Z-.055),(X,y+(j+1)*d/frame['topBoardCount']-.002,Z))
+        for a in [x+.025,X-size-.025]:
+            for out in [y+.02,Y-size-.012]:box('-leg',(a,out,z),(a+size,out+size,Z-.055))
+        for zz in [z+gap,Z-.14]:box('-front-rail',(x,Y-.065,zz),(X,Y-.008,zz+size))
+        n=3 if g['id']=='G_S_W_SHOP_3' else 2
+        for j in range(1,n):
+            a=x+j*w/n-size/2;box('-mullion',(a,Y-.065,z+gap),(a+size,Y-.008,Z-.055))
+        for j in range(n):
+            left=x+.025+size-overlap if j==0 else x+j*w/n+size/2-overlap
+            right=X-.025-size+overlap if j==n-1 else x+(j+1)*w/n-size/2+overlap
+            count=max(1,math.ceil((right-left)/frame['boardWidthM']))
+            for i in range(count):
+                L=left+i*(right-left)/count;R=left+(i+1)*(right-left)/count
+                box('-panel-board',(L+.001,Y-.065-setback,z+gap+size),(R-.001,Y-.025-setback,Z-.14))
+        for a in [x+.02,X-.05]:box('-side-panel',(a,y+.10,z+gap+size),(a+.03,Y-.11,Z-.14))
+        for zz in [z+gap,Z-.14]:box('-rear-rail',(x,y+.015,zz),(X,y+.07,zz+.05))
     elif kind=='plank-shelf':
         box('-board',(x,y,Z-.04),hi)
         for a in (x+.12,X-.12):
@@ -131,10 +144,16 @@ def craft_part(g, item):
     elif kind in {'timber-member','plank-board'}:box('',lo,hi)
     elif kind=='stocked-spice-tray':
         box('-base',lo,(X,Y,z+.018))
-        for a,b in ((x,x+.025),(X-.025,X)):box('-rim',(a,y,z+.018),(b,Y,Z))
-        for a,b in ((y,y+.025),(Y-.025,Y)):box('-rim',(x+.025,a,z+.018),(X-.025,b,Z))
-        ob=box('-contained-stock',(x+.026,y+.026,z+.018),(X-.026,Y-.026,Z-.012))
-        paint(ob,color)
+        for a,b in ((x,x+.025),(X-.025,X)):box('-rim',(a,y,z+.018),(b,Y,min(Z,z+.07)))
+        for a,b in ((y,y+.025),(Y-.025,Y)):box('-rim',(x+.025,a,z+.018),(X-.025,b,min(Z,z+.07)))
+        if A.get('artDirectionPilot'):
+            food=B.mat('bz04_spice_stock');shader=food.node_tree.nodes['Principled BSDF']
+            shader.inputs['Base Color'].default_value=(1,1,1,1);shader.inputs['Roughness'].default_value=.98
+            lathe('-contained-stock',(x+.026,y+.026,z+.018),(X-.026,Y-.026,Z-.008),
+                  [(0,0),(1,0),(1,.18),(.70,.54),(.35,.83),(0,1)],'bz04_spice_stock',color,True)
+        else:
+            ob=box('-contained-stock',(x+.026,y+.026,z+.018),(X-.026,Y-.026,Z-.012))
+            paint(ob,color)
     elif kind=='carved-wood-scoop':
         lathe('-concave-bowl',lo,(x+w*.65,Y,Z),[(0,0),(.5,0),(.82,.25),(1,.9),(.85,.9),(.63,.35),(0,.22)])
         beam('-joined-handle',(x+w*.48,cy,z+h*.42),(X-.012,cy,z+h*.42),min(.024,h*.45))
@@ -157,7 +176,17 @@ def craft_part(g, item):
         rim=max(.018/(w/2),.018/(d/2))
         ob=lathe('-soft-mouth',lo,hi,[(0,0),(.60,0),(.92,.12),(1,.45),(.84,.84),(.72,.98),(.72,1),(.72-rim,1),(.72-rim,.93),(.5,.87),(0,.87)],soft=True)
         neutral=H['craftStandards']['materials']['cloth']['vertexPaintRecipe']['representativeNeutralGrainLinear']
-        paint(ob,'#dfcfab',neutral)
+        paint(ob,'#bca77e' if A.get('artDirectionPilot') else '#dfcfab',neutral)
+        vertices=[];faces=[]
+        for i in range(32):
+            angle=i*math.tau/32
+            for j in range(6):
+                tube=j*math.tau/6
+                vertices.append(B.coords(face,plane,cx+(w*.34+.009*math.cos(tube))*math.cos(angle),cy+(d*.34+.009*math.cos(tube))*math.sin(angle),Z-.014+.009*math.sin(tube)))
+        for i in range(32):
+            for j in range(6):faces.append((i*6+j,((i+1)%32)*6+j,((i+1)%32)*6+(j+1)%6,i*6+(j+1)%6))
+        cuff=B.mesh(name+'-rolled-mouth',vertices,faces,mid,'cast',True)
+        paint(cuff,'#bca77e',neutral)
         lathe('-contained-grain',(cx-w*.26,cy-d*.26,Z-.04),(cx+w*.26,cy+d*.26,Z-.025),[(0,0),(1,0),(1,.7),(0,1)],'bz04_ceramic_project_original','#c6af78')
     elif kind=='ceramic-mortar-with-seated-pestle':
         rim=.015/(w/2)
@@ -258,13 +287,360 @@ def envelope():
                 Z,T=p['envelopeDetail']['corniceZM']
                 B.part(face,plane,name+'-cornice-lower',(l,0,Z),(r,.10,Z+.08),mid)
                 B.part(face,plane,name+'-cornice-upper',(l,0,Z+.08),(r,.16,T),mid)
-            for o in p['openings']:B.opening(face,plane,o,p['trimMaterialId'],mid)
+            for o in p['openings']:
+                B.opening(face,plane,o,p['trimMaterialId'],mid)
+                if o['kind']=='shop' and A.get('artDirectionPilot'):
+                    assert face=='west' and plane==21
+                    # The shared builder emits a full-depth head and ceiling
+                    # on the same underside plane. Give the visible soffit
+                    # and shallow timber header disjoint ownership here.
+                    seam=-A['artDirectionPilot']['shopHeaderDepthM']
+                    head=B.bpy.data.objects[o['id']+'-head']
+                    ceiling=B.bpy.data.objects[o['id']+'-chamber-ceiling']
+                    for vertex in head.data.vertices:vertex.co.x=max(vertex.co.x,seam)
+                    for vertex in ceiling.data.vertices:vertex.co.x=min(vertex.co.x,seam)
+                    head.data.update();ceiling.data.update()
             neighbour=next((q for q in f['parcels'] if q['interval'][0]==r),None)
             if neighbour:B.part(face,plane,name+'-property-joint',(r-.0075,-.02,z),(r+.0075,-.015,min(top,neighbour['wallTopM'])),mid)
 
 
+def art_direction_pilot():
+    """Build the scoped P2 target with private materials and complete assemblies."""
+    pilot=A.get('artDirectionPilot')
+    if not pilot:return
+    if pilot['id']!='SPICE-P3':raise ValueError('Unsupported Spice art-direction issue')
+    from bazaar_finish import apply as apply_finish
+    apply_finish(B.__dict__, OUT/(UNIT+'.glb'))
+    spec=importlib.util.spec_from_file_location('spice_materials',OUT/'materials.py')
+    material_tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(material_tools)
+    private=material_tools.create_materials(B.__dict__,pilot['materials'])
+
+    def assign(ob,family,variation=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        tone=pilot['contactTone']
+        for vertex,color in zip(ob.data.vertices,colors.data):
+            value=variation
+            if family in {'plaster','sand','red'}:
+                value*=1-tone['baseStrength']*max(0,1-vertex.co.z/tone['baseHeightM'])
+                # Recess depth owns the cavity tone; it is baked into this
+                # section's vertices, not a global exposure or lighting change.
+                if ob.name.startswith(('S_W_SHOP_','G_S_W_SHOP_')):
+                    value*=max(tone['recessMinFactor'],1+min(0,vertex.co.x)*.14)
+            color.color=(value,value,value,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'} and 'B-STAR' not in ob.name:material_tools.member_uv(ob)
+        else:B.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+
+    def wood(ob):
+        # Stable minor member variation preserves one timber family without
+        # stamping the same shade on every plank and joint.
+        factor=.92+.08*(sum(ob.name.encode())%11)/10
+        family='timber'
+        if 'UPPER-SCREEN' in ob.name or 'UPPER-HOOD' in ob.name:family='aged_timber'
+        if ob.name.startswith(('G_S_W_SHOP_3','P2-G_S_W_SHOP_3','P3-HERBS')):family='painted_timber'
+        if '-top-board' in ob.name:family='worktop'
+        return assign(ob,family,factor)
+
+    def cloth(ob,color):
+        assign(ob,'cloth')
+        target=private['cloth']['bz07TargetMeanLinear']
+        rgba=[B._linear_channel(int(color[i:i+2],16))/target[k] for k,i in enumerate((1,3,5))]
+        assert all(0<=v<=1 for v in rgba),(ob.name,'cloth pigment exceeds calibrated neutral')
+        for vertex in ob.data.color_attributes['COLOR_0'].data:vertex.color=(*rgba,1)
+        return ob
+
+    for ob in list(B.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if pilot['retireCounterLabels'] and ob.name.startswith('G_S_W_SHOP_') and ob.name.endswith(('-label','-sign')):
+            B.bpy.data.objects.remove(ob,do_unlink=True);continue
+        if any(ob.name.startswith(prefix) for prefix in pilot['retireFinishPrefixes']):
+            B.bpy.data.objects.remove(ob,do_unlink=True);continue
+        if any(ob.name.startswith(opening+'-louver') for opening in pilot['galleryScreen']['servedOpenings']):
+            B.bpy.data.objects.remove(ob,do_unlink=True);continue
+        mid=ob.data.materials[0];source=mid.get('bz04SourceMaterial',mid.name)
+        if any(key in source for key in ('wood','timber','plank')) and not source.startswith('bz04_teal'):
+            wood(ob)
+        elif any(key in source for key in ('plaster','beige')):
+            parcel=next((p for p in pilot['parcelFinish'] if ob.name.startswith(p+'-')),None)
+            family=pilot['parcelFinish'].get(parcel,'plaster')
+            if ob.name.startswith(('S_W_SHOP_2','S_W_SHOP_3')):family='sand'
+            assign(ob,family)
+        elif any(key in source for key in ('sandstone_blocks','dressed_sandstone','service_stone')):
+            colors=ob.data.color_attributes.get('COLOR_0') or ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+            for color in colors.data:color.color=(*pilot['stonePigment'],1)
+        if ob.name in {opening+'-back' for opening in pilot['galleryScreen']['servedOpenings']}:
+            assign(ob,'timber',pilot['galleryScreen']['backingFactor'])
+        if '-cloth' in ob.name and ob.name.startswith(('SHADE_','CANOPY_')):
+            fixture=next(f for f in A['fixtures'] if ob.name.startswith(f['id']+'-cloth'))
+            cloth(ob,pilot['shadeColors'][fixture['id']])
+        elif 'soft-mouth' in ob.name or 'rolled-mouth' in ob.name:
+            cloth(ob,'#b5a17d')
+
+    # All three shops receive jambs, a joined header, and grain-oriented timber
+    # inside their existing recesses. The original opaque chamber remains.
+    for g in A['activityGroups']:
+        p=B.PARCELS[g['receiverParcel']];o=next(o for o in p['openings'] if o['id']==g['receiverOpening'])
+        l=o['alongM']-o['widthM']/2;r=o['alongM']+o['widthM']/2;top=o['headM']
+        for a in [l-.055,r-.035]:
+            wood(B.part('west',21,'P2-'+g['id']+'-jamb',(a,-.03,.04),(a+.09,.11,top),B.WOOD,'cast',.012))
+        wood(B.part('west',21,'P2-'+g['id']+'-lintel',(l-.07,-.025,top-.06),(r+.07,.15,top+.12),B.WOOD,'cast',.012))
+
+    valance=pilot['valance']
+    for f in A['fixtures']:
+        if f['kind']!='awning':continue
+        l,r=f['interval'];out=f['projectionM'];top=f['ledgerZ']-f['dropM'];verts=[];faces=[]
+        for i in range(33):
+            u=i/32;a=l+(r-l)*u
+            for z in [top-.008,top-valance['depthM']-valance['foldM']*math.sin(u*math.pi*5)**2]:
+                verts.append(B.coords('west',21,a,out+valance['foldM']*math.sin(u*math.pi*6),z))
+        count=len(verts);verts += [(x-valance['thicknessM'],y,z) for x,y,z in verts]
+        for i in range(32):
+            q=i*2;faces += [(q,q+2,q+3,q+1),(q+count+1,q+count+3,q+count+2,q+count)]
+            faces += [(q,q+count,q+count+2,q+2),(q+1,q+3,q+count+3,q+count+1)]
+        faces += [(0,1,count+1,count),(64,64+count,65+count,65)]
+        ob=B.mesh('P2-'+f['id']+'-valance',verts,faces,f['materialId']);cloth(ob,pilot['shadeColors'][f['id']])
+        width=valance['railWidthM'];rail_out=out-valance['foldM']-valance['thicknessM']-width/2-.008
+        wood(B.member('P2-'+f['id']+'-front-rail',B.coords('west',21,l,rail_out,top-.06),B.coords('west',21,r,rail_out,top-.06),width,B.WOOD))
+
+    # Lettering is on the front of the shade edge, where approach cameras can
+    # see it. Two supported chains also identify the spice shop perpendicular
+    # to the street; no sign post occupies the playable ground.
+    for fascia in pilot['fascias']:
+        f=next(f for f in A['fixtures'] if f['id']==fascia['fixture']);l,r=fascia['interval'];z=f['ledgerZ']-f['dropM']-.25;h=fascia['heightM'];out=f['projectionM']+.04
+        wood(B.part('west',21,fascia['id']+'-board',(l,out,z),(r,out+.045,z+h),B.WOOD,'cast',.009))
+        B.text(fascia['id']+'-lettering',fascia['text'],'west',21,(l+r)/2,out+.05,z+h*.5,min(r-l-.25,2.8),h*.51)
+    sign=pilot['projectingSign'];x,X=sign['xM'];y=sign['yM'];z,Z=sign['zM'];depth=sign['thicknessM'];arm=sign['armHeightM']
+    wood(B.box(sign['id']+'-board',(x,y-depth/2,z),(X,y+depth/2,Z),B.WOOD,'cast',.022))
+    B.member(sign['id']+'-iron-arm',(20.97,y,arm),(X+.08,y,arm),.042,B.IRON)
+    B.member(sign['id']+'-iron-brace',(21,y,arm-.35),(21.57,y,arm),.032,B.IRON)
+    for xx in [x+.12,X-.12]:B.member(sign['id']+'-suspension',(xx,y,Z),(xx,y,arm),.012,B.IRON)
+    for face,plane in [('north',y-depth/2-.002),('south',y+depth/2+.002)]:
+        B.text(sign['id']+'-'+face,sign['text'],face,plane,(x+X)/2,.001,(z+Z)/2,X-x-.14,.15)
+
+    # A single screened workroom frontage has useful depth and real support.
+    # It replaces P1's decorative rooftop railing and shades the two existing
+    # apertures without adding a room, balcony route or transparent wall.
+    screen=pilot['galleryScreen'];l,r=screen['interval'];z,Z=screen['zM'];out=screen['outM'];w=screen['frameM'];mid=(l+r)/2
+    for a in [l,mid-w/2,r-w]:
+        wood(B.part('west',21,screen['id']+'-post',(a,out-w,z),(a+w,out,Z),B.WOOD,'cast',.008))
+    for zz in [z,z+screen['bottomPanelHeightM'],Z-w]:
+        wood(B.part('west',21,screen['id']+'-rail',(l,out-w,zz),(r,out,zz+w),B.WOOD,'cast',.008))
+    wood(B.part('west',21,screen['id']+'-hood',(l-.09,-.06,Z),(r+.09,out+.17,Z+.14),B.WOOD,'cast',.015))
+    for a in [l+.12,mid,r-.12]:
+        # Shaped knee, housed into the wall and the lower rail.
+        profile=[(z-.32,-.02),(z-.26,.05),(z-.11,out-.15),(z+.05,out-.02),(z+.10,-.02)]
+        vertices=[B.coords('west',21,aa,o,h) for aa in [a-.065,a+.065] for h,o in profile]
+        n=len(profile);faces=[tuple(reversed(range(n))),tuple(range(n,2*n))]+[(i,(i+1)%n,(i+1)%n+n,i+n) for i in range(n)]
+        wood(B.mesh(screen['id']+'-corbel',vertices,faces,B.WOOD))
+    for j,(L,R) in enumerate([(l+w,mid-w/2),(mid+w/2,r-w)]):
+        before=set(B.bpy.context.scene.objects)
+        B.star_screen(screen['id']+'-B-STAR-side-'+str(j),'west',21,(L,z+w),(R,z+screen['bottomPanelHeightM']),out-w/2,B.WOOD)
+        for ob in set(B.bpy.context.scene.objects)-before:assign(ob,'timber')
+        for k in range(int((Z-z-screen['bottomPanelHeightM']-2*w)/screen['louverPitchM'])):
+            zz=z+screen['bottomPanelHeightM']+w+k*screen['louverPitchM'];h=screen['louverHeightM']
+            vertices=[B.coords('west',21,a,o,t) for a in [L,R] for o,t in [(out-.09,zz),(out,zz+h*.55),(out,zz+h),(out-.09,zz+h*.45)]]
+            wood(B.mesh(screen['id']+'-louver',vertices,[(0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)],B.WOOD))
+    for a in [l,r-w]:
+        for zz in [z,Z-w]:wood(B.part('west',21,screen['id']+'-wall-tie',(a,-.04,zz),(a+w,out-w,zz+w),B.WOOD,'cast',.006))
+
+    hood=pilot['hood'];opening=next(o for p in B.PARCELS.values() for o in p['openings'] if o['id']==hood['opening'])
+    l=opening['alongM']-opening['widthM']/2-hood['sideM'];r=opening['alongM']+opening['widthM']/2+hood['sideM'];z=opening['headM']+.18
+    wood(B.part('west',21,'P2-SPICE-UPPER-HOOD',(l,-.025,z),(r,hood['projectionM'],z+hood['heightM']),B.WOOD,'cast',.012))
+    for a in [l+.12,r-.12]:wood(B.member('P2-SPICE-UPPER-HOOD-knee',B.coords('west',21,a,0,z-hood['braceDropM']),B.coords('west',21,a,hood['projectionM']-.08,z-.02),.07,B.WOOD))
+    finish=pilot['finishPass']
+    for ob in list(B.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if '-cloth' in ob.name and ob.name.startswith(('SHADE_','CANOPY_')):
+            # Preserve the membrane and its clearance; sewn panels are pigment,
+            # not floating strips or a second coincident surface.
+            colors=ob.data.color_attributes['COLOR_0']
+            base=tuple(colors.data[0].color)
+            ob.data.color_attributes.remove(colors)
+            colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','CORNER')
+            for polygon in ob.data.polygons:
+                center=polygon.center
+                along=14-center.y
+                seam=abs((along/finish['clothSeamPitchM']+.5)%1-.5)*finish['clothSeamPitchM']
+                factor=.75 if seam<finish['clothHemM'] else .96+.04*math.sin(along*2.7)**2
+                for index in polygon.loop_indices:colors.data[index].color=tuple(v*factor for v in base[:3])+(1,)
+            ob.data.color_attributes.active_color=colors
+        if ob.name.startswith('G_S_W_SHOP_') and not any(k in ob.name for k in ('suspension','pestle')):
+            ob['bz04Shadow']='cast'
+
+    # Complete the apothecary's working fittings inside the existing chamber.
+    # A shallow drawer bank sits under its bottles; dried stock hangs from a
+    # supported rail above staff height. Neither enters the protected street.
+    g=next(g for g in A['activityGroups'] if g['id']=='G_S_W_SHOP_3')
+    opening=next(o for o in B.PARCELS[g['receiverParcel']]['openings'] if o['id']==g['receiverOpening'])
+    a=opening['alongM'];prefix='P3-HERBS'
+    for row in range(2):
+        for col in range(4):
+            L=a-1.12+col*.315;Z=.17+row*.23
+            wood(B.part('west',21,prefix+'-drawer',(L,-1.84,Z),(L+.299,-1.59,Z+.21),B.WOOD,'cast',.004))
+            B.part('west',21,prefix+'-drawer-pull',(L+.126,-1.591,Z+.091),(L+.173,-1.561,Z+.121),B.IRON,'cast',.005)
+    rail_z=finish['herbRailZM']
+    wood(B.part('west',21,prefix+'-drying-rail',(a+.34,-1.64,rail_z),(a+1.08,-1.6,rail_z+.035),B.WOOD,'cast',.004))
+    for L in (a+.36,a+1.05):B.member(prefix+'-rail-bracket',B.coords('west',21,L,-1.89,rail_z+.04),B.coords('west',21,L,-1.6,rail_z+.015),.022,B.IRON)
+    for j in range(finish['herbBundleCount']):
+        L=a+.41+j*.14;bottom=rail_z-.27-.07*(j%2)
+        B.member(prefix+'-tie',B.coords('west',21,L,-1.61,rail_z),B.coords('west',21,L,-1.61,bottom+.08),.008,B.WOOD)
+        for k in range(7):
+            theta=k*math.tau/7;u=.03*math.cos(theta);v=.022*math.sin(theta)
+            ob=turned(prefix+'-dried-leaves','west',21,(L+u-.026,-1.64+v,bottom),(L+u+.026,-1.585+v,bottom+.17),
+                'bz04_ceramic_project_original',[(0,0),(.65,.1),(1,.32),(.63,.68),(0,1)],['#777954','#8b8256','#6a7454'][j%3],True)
+            ob['bz04Shadow']='cast'
+    # Handwritten stock tabs attach to the existing shelves, not the wall.
+    for z in (.84,1.29,1.69):
+        for j,label in enumerate(('MINT','SAGE','TEA')):
+            L=a-1.0+j*.46
+            ob=B.part('west',21,prefix+'-stock-tab',(L,-1.675,z-.06),(L+.23,-1.663,z+.005),'ph_bz04_hessian_230','receive',.001)
+            cloth(ob,'#c4b58f')
+            B.text(prefix+'-stock-label',label,'west',21,L+.115,-1.66,z-.027,.18,.028)
+
+    # Reuse the installed textured sack at two uniform scales. Keep its UVs,
+    # cloth profile and grain surface; the original counter bears both loads.
+    from mathutils import Matrix
+    props=ROOT/'apps/client/public/assets/models/environment/bazaar/props'
+    stock=pilot['grainStock'];model=next(m for m in json.loads((props/'models.json').read_text())['models'] if m['id']==stock['model'])
+    assert model['license']=='CC0-1.0'
+    for relative,digest in model['md5'].items():
+        source=(props/relative).resolve();assert source.is_relative_to(props.resolve())
+        assert hashlib.md5(source.read_bytes()).hexdigest()==digest,('changed grain stock source',relative)
+    group=next(g for g in A['activityGroups'] if g['id']=='G_S_W_SHOP_2')
+    op=next(o for o in B.PARCELS[group['receiverParcel']]['openings'] if o['id']==group['receiverOpening'])
+    for pid in stock['parts']:
+        item=next(p for p in group['instanceLayout']['parts'] if p['id']==pid);prefix=group['id']+'-'+pid
+        for ob in list(B.bpy.context.scene.objects):
+            if ob.name.startswith(prefix):B.bpy.data.objects.remove(ob,do_unlink=True)
+        before=set(B.bpy.context.scene.objects);B.bpy.ops.import_scene.gltf(filepath=str(props/model['url']))
+        imported=set(B.bpy.context.scene.objects)-before;objects=sorted((o for o in imported if o.type=='MESH'),key=lambda o:o.name)
+        assert objects,model['id']
+        matrices={o:o.matrix_world.copy() for o in objects};points=[matrices[o]@v.co for o in objects for v in o.data.vertices]
+        low=[min(p[i] for p in points) for i in range(3)];high=[max(p[i] for p in points) for i in range(3)]
+        bounds=item['localBox'];size=[bounds['max'][i]-bounds['min'][i] for i in range(3)];scale=min(size[i]/(high[i]-low[i]) for i in range(3))
+        for index,ob in enumerate(objects):
+            for v in ob.data.vertices:
+                point=matrices[ob]@v.co
+                along=op['alongM']+sum(bounds[k][0] for k in ('min','max'))/2+(point.x-(low[0]+high[0])/2)*scale
+                out=sum(bounds[k][1] for k in ('min','max'))/2+(point.y-(low[1]+high[1])/2)*scale
+                z=group['bbox']['min'][2]+bounds['min'][2]+(point.z-low[2])*scale
+                v.co=B.local(B.coords('west',21,along,out,z))
+            ob.parent=None;ob.matrix_world=Matrix.Identity(4);ob.name=prefix+'-asset-'+str(index);ob['bz04Part']=prefix;ob['bz04Shadow']='cast'
+            ob['sourceModelId']=model['id'];ob['sourceFilesMd5']=json.dumps(model['md5'],sort_keys=True);ob['sourceLicense']=model['license']
+            for material in ob.data.materials:
+                material.name='bz07_grain_'+material.name;material['sourceModelId']=model['id'];material['sourceLicense']=model['license']
+        for ob in imported-set(objects):B.bpy.data.objects.remove(ob,do_unlink=True)
+
+    # Deep articulated stonework replaces the thin drawn outline at the bulk
+    # store. The original reveal and continuous backing remain behind the joints.
+    portal=next(o for o in B.PARCELS['S_E_MID']['openings'] if o['id']==finish['portalOpening'])
+    top=B.arch_points(portal);outer=B.offset_top(top,portal['trimWidthM']);front=portal['frontProjectionM']
+    for i,(p,q) in enumerate(zip(top,top[1:])):
+        P,Q=outer[i],outer[i+1];gap=.025
+        mix=lambda a,b,t:tuple(a[k]+(b[k]-a[k])*t for k in range(2))
+        shape=[mix(p,q,gap),mix(p,q,1-gap),mix(P,Q,1-gap),mix(P,Q,gap)]
+        ob=B.prism_profile('P3-bulk-voussoir','east',33,shape,front+.001,front+.025,portal['surroundMaterialId'])
+        bevel=ob.modifiers.new('Hand dressed stone edge','BEVEL');bevel.width=.008;bevel.segments=2
+        paint(ob,['#c4b89f','#cbbc9f','#bdae90'][i%3])
+    spring=top[0][1];n=6;l=portal['alongM']-portal['widthM']/2;r=portal['alongM']+portal['widthM']/2;w=portal['trimWidthM']
+    for L,R in [(l-w,l),(r,r+w)]:
+        for i in range(n):
+            ob=B.part('east',33,'P3-bulk-jamb-stone',(L,front+.001,i*spring/n+.009),(R,front+.025,(i+1)*spring/n-.009),portal['surroundMaterialId'],'cast',.009)
+            paint(ob,['#c4b89f','#bdae90','#cbbc9f'][(i+int(L))%3])
+
+    # The warehouse loading hatch now has a plausible means of lifting sacks.
+    jib=finish['warehouseHoist'];a=jib['alongM'];plane=jib['planeM'];top=jib['armZM'];out=jib['projectionM']
+    wood(B.part('east',plane,'P3-warehouse-jib-seat',(a-.105,-.035,jib['seatZM']),(a+.105,.13,top+.12),B.WOOD,'cast',.018))
+    wood(B.member('P3-warehouse-jib-arm',B.coords('east',plane,a,0,top),B.coords('east',plane,a,out,top),.12,B.WOOD))
+    wood(B.member('P3-warehouse-jib-knee',B.coords('east',plane,a,.08,jib['seatZM']+.08),B.coords('east',plane,a,out-.1,top-.035),.085,B.WOOD))
+    for z in [jib['seatZM']+.1,top-.15]:B.part('east',plane,'P3-warehouse-strap',(a-.125,.12,z),(a+.125,.142,z+.055),B.IRON,'cast',.005)
+    B.ring('P3-warehouse-pulley','east',plane,a,out-.07,top-.19,.095,B.IRON)
+    for along,drop in [(a-.08,2.95),(a+.08,6.18)]:
+        ob=B.member('P3-warehouse-rope',B.coords('east',plane,along,out-.07,top-.19),B.coords('east',plane,along,.07,drop),.016,'ph_bz04_hessian_230')
+        cloth(ob,'#a59876')
+    B.part('east',plane,'P3-warehouse-cleat',(a-.17,.03,2.91),(a+.17,.115,2.955),B.IRON,'cast',.012)
+
+    repair=finish['redRepair'];L,R=repair['interval'];z,Z=repair['zM']
+    profile=[(L,z),(R,z),(R,Z-.31),(R-.13,Z-.30),(R-.19,Z-.16),(L+.45,Z-.12),(L+.35,Z),(L+.15,Z-.035),(L,Z-.18)]
+    ob=B.prism_profile('P3-red-lime-repair','west',21,profile,.001,.008,B.PARCELS['S_W_MID']['materialId'],'receive')
+    assign(ob,'sand',.82)
+
+    B.bpy.context.scene['spiceArtDirectionPilot']=pilot['id']
+    print('SPICE-P3: differentiated joinery, worked shop fittings, sewn canvas and contact depth',flush=True)
+
+
+def pilot_self_test():
+    """Check P2 assemblies, UV direction, private material identity and clear space."""
+    construction(export=False)
+    pilot=A.get('artDirectionPilot')
+    if not pilot:return
+    objects=[o for o in B.bpy.context.scene.objects if o.type=='MESH']
+    for prefix in [f['id']+'-board' for f in pilot['fascias']]+[pilot['galleryScreen']['id']+'-post',pilot['projectingSign']['id']+'-board']:
+        assert any(o.name.startswith(prefix) for o in objects),('missing pilot assembly',prefix)
+    assert not any(any(o.name.startswith(p) for p in pilot['retireFinishPrefixes']) for o in objects)
+    for ob in objects:
+        B.prepare_mesh(ob)
+        if ob.name.startswith('P2-') and not '-G_S_W_SHOP_' in ob.name:
+            assert min(v.co.z for v in ob.data.vertices)>2.2,(ob.name,'new assembly below player clearance')
+        assert all(all(math.isfinite(c) for c in v.co) for v in ob.data.vertices),ob.name
+    for f in A['fixtures']:
+        if f['kind']!='awning':continue
+        cloth=next(o for o in objects if o.name=='P2-'+f['id']+'-valance')
+        rail=next(o for o in objects if o.name=='P2-'+f['id']+'-front-rail')
+        assert max(v.co.x for v in rail.data.vertices)<min(v.co.x for v in cloth.data.vertices),(f['id'],'rail pierces cloth')
+    for g in A['activityGroups']:
+        head=next(o for o in objects if o.name==g['receiverOpening']+'-head')
+        ceiling=next(o for o in objects if o.name==g['receiverOpening']+'-chamber-ceiling')
+        assert max(v.co.x for v in ceiling.data.vertices)<=min(v.co.x for v in head.data.vertices)+1e-6,(g['id'],'coplanar head/ceiling overlap')
+    board=next(o for o in objects if 'counter-panel-board' in o.name)
+    assert board.data.materials[0].name in {'bz07_spice_timber','bz07_spice_painted_timber'}
+    assert board.data.materials[0]['bz07SourceMaterial']=='ph_dark_wood'
+    # On the front of a vertical panel, U must vary with height, not width.
+    poly=next(p for p in board.data.polygons if abs(p.normal.x)>.99)
+    pairs=[(board.data.vertices[board.data.loops[i].vertex_index].co.z,board.data.uv_layers.active.data[i].uv.x) for i in poly.loop_indices]
+    assert all(abs((a[0]-b[0])/1.8-(a[1]-b[1]))<1e-5 for a in pairs for b in pairs)
+    # At mid-panel height, the front must be closed except for the authored
+    # 2 mm board seams. This catches panels ending short of their frame stiles.
+    for g in A['activityGroups']:
+        item=next(p for p in g['instanceLayout']['parts'] if p['kind']=='grounded-counter-carcass')
+        opening=next(o for o in B.PARCELS[g['receiverParcel']]['openings'] if o['id']==g['receiverOpening'])
+        low,high=item['localBox']['min'],item['localBox']['max'];height=g['bbox']['min'][2]+.45
+        cursor=opening['alongM']+low[0]+.025;end=opening['alongM']+high[0]-.025;intervals=[]
+        for ob in objects:
+            if not ob.name.startswith(g['id']+'-counter-'):continue
+            if max(v.co.x for v in ob.data.vertices)<high[1]-.16:continue
+            if not min(v.co.z for v in ob.data.vertices)<=height<=max(v.co.z for v in ob.data.vertices):continue
+            along=[14-v.co.y for v in ob.data.vertices];intervals.append((min(along),max(along)))
+        for left,right in sorted(intervals):
+            if right<=cursor:continue
+            assert left-cursor<=.0021,(g['id'],'unbacked panel gap',left-cursor)
+            cursor=max(cursor,right)
+        assert cursor>=end-.001,(g['id'],'open end joint')
+    grain=next(g for g in A['activityGroups'] if g['id']=='G_S_W_SHOP_2')
+    extents=[]
+    for pid in A['artDirectionPilot']['grainStock']['parts']+['grain-scoop']:
+        item=next(p for p in grain['instanceLayout']['parts'] if p['id']==pid);prefix=grain['id']+'-'+pid
+        selected=[ob for ob in objects if ob.name.startswith(prefix)];assert selected,prefix
+        vertices=[(14-v.co.y-23,v.co.x,v.co.z-.04) for ob in selected for v in ob.data.vertices]
+        low=[min(v[i] for v in vertices) for i in range(3)];high=[max(v[i] for v in vertices) for i in range(3)]
+        assert all(item['localBox']['min'][i]-.001<=low[i]<=high[i]<=item['localBox']['max'][i]+.001 for i in range(3)),(pid,low,high)
+        assert abs(low[2]-.9)<1e-5,(pid,'not seated on countertop',low[2])
+        assert low[1]>=-.55 and high[1]<=.15,(pid,'leaves countertop or enters staff strip')
+        if pid!='grain-scoop':
+            assert all(ob.get('sourceModelId')=='cc0_spice_sack' and ob.data.uv_layers.active is not None for ob in selected)
+            extents.append((low,high))
+    assert extents[1][0][0]-extents[0][1][0]>.1,'grain sacks intersect'
+    assert extents[0][1][2]-extents[1][1][2]>.05,'grain stock lost its varied height'
+    print('PASS grain stock: licensed UV assets, exact part bounds, countertop contact, separated varied sacks and supported scoop',flush=True)
+    print('PASS SPICE-P2 material/UV provenance, lattice area, panel coverage, soffit ownership, required assemblies, finite geometry and cloth/rail clearance',flush=True)
+
+
 def construction(export=True):
-    if A['zone']=='SPICE_STREET' and (not SOUTH_RECEIVERS or not SPAWN_A_RECEIVERS):raise ValueError('Spice export requires --receiver-handoff and --spawn-a-handoff for its approved end interfaces')
+    if export and A['zone']=='SPICE_STREET' and (not SOUTH_RECEIVERS or not SPAWN_A_RECEIVERS):raise ValueError('Spice export requires --receiver-handoff and --spawn-a-handoff for its approved end interfaces')
     B.reset((21,14,0));envelope()
     for g in A['activityGroups']:
         for item in g['instanceLayout']['parts']:craft_part(g,item)
@@ -279,10 +655,23 @@ def construction(export=True):
             for ob in set(B.bpy.context.scene.objects)-before:
                 if ob.type=='MESH' and ob.data.materials[0]==B.mat(f['materialId']):
                     paint(ob,f['stockColorSrgb'],H['craftStandards']['materials']['cloth']['vertexPaintRecipe']['representativeNeutralGrainLinear'])
+    art_direction_pilot()
     if export:
         budget_check()
-        B.export(OUT/(UNIT+'.glb'),A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],A['budget']['maxRenderedPrimitives'],
-            {'bz04InputSha256':H['inputSha256'],'bz04Unit':UNIT,'bz04SouthReceiverInputSha256':RECEIVER_INPUT_SHA,'bz04SpawnAReceiverInputSha256':SPAWN_A_INPUT_SHA})
+        # Bake after cleanup and preserve that sampling topology through export.
+        # The shared exporter remains unchanged for every other area.
+        spec=importlib.util.spec_from_file_location('spice_contact',OUT/'materials.py')
+        material_tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(material_tools)
+        prepare=B.prepare_mesh
+        for ob in B.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        finish=A['artDirectionPilot']['finishPass']
+        material_tools.bake_contact_occlusion(B.__dict__,finish['contactRadiusM'],finish['contactStrength'])
+        B.prepare_mesh=lambda ob:None
+        try:
+            B.export(OUT/(UNIT+'.glb'),A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],A['budget']['maxRenderedPrimitives'],
+                {'bz04InputSha256':H['inputSha256'],'bz04Unit':UNIT,'bz04SouthReceiverInputSha256':RECEIVER_INPUT_SHA,'bz04SpawnAReceiverInputSha256':SPAWN_A_INPUT_SHA})
+        finally:B.prepare_mesh=prepare
 
 
 def budget_check():
@@ -307,8 +696,9 @@ def self_test():
                     assert all(lo[i]-.001<=local[i]<=hi[i]+.001 for i in range(3)),(item['id'],ob.name,local,lo,hi)
     assert seen==SUPPORTED_PARTS
     B.reset((21,14,0));canopy(next(f for f in A['fixtures'] if f['kind']=='canopy'))
+    fixture=next(f for f in A['fixtures'] if f['kind']=='canopy')
     for ob in B.bpy.context.scene.objects:
-        assert min(v.co.z for v in ob.data.vertices)>=6.2919,ob.name
+        assert min(v.co.z for v in ob.data.vertices)>=fixture['bbox']['min'][2]-.001,ob.name
     print('PASS Spice fixtures: all 12 craft kinds fit their exact boxes; canopy sag/closed thickness/receivers',flush=True)
 
 
@@ -319,7 +709,9 @@ if __name__=='__main__':
         if 'check-inputs' in sys.argv:print('PASS Spice frozen input and capability validation')
         else:
             configure(saved)
-            if 'self-test' in sys.argv:self_test()
+            if 'self-test' in sys.argv:
+                self_test()
+                pilot_self_test()
             else:construction()
     except Exception:
         import traceback

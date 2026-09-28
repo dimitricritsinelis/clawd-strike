@@ -176,6 +176,70 @@ def plants(g):
     return created
 
 
+
+def art_finish():
+    from bazaar_finish import apply
+    apply(B.__dict__,OUT/(UNIT+'.glb'))
+    recipe=A['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('bazaar_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(B.__dict__,recipe['materials'],prefix='bz09_fountain_')
+    def finish(ob,family,factor=1):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for c in colors.data:c.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if family in {'timber','aged_timber','painted_timber','worktop'} and 'B-STAR' not in ob.name:tools.member_uv(ob)
+        else:B.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    for ob in list(B.bpy.context.scene.objects):
+        if ob.type!='MESH':continue
+        if ob.name.startswith('F_E_ARCH-fixed-slat'):
+            B.bpy.data.objects.remove(ob,do_unlink=True);continue
+        material=ob.data.materials[0];source=material.get('bz04SourceMaterial',material.name)
+        if any(key in source for key in ('plaster','beige')):
+            owner=ob.name.removeprefix('life-wear-')
+            family='house_plaster' if owner.startswith('F_E_HOUSE') else 'red' if ob.name.startswith('F_SW') else 'plaster' if ob.name.startswith('F_SE') else 'sand'
+            finish(ob,family)
+        elif any(key in source for key in ('wood','timber','plank')):
+            finish(ob,'timber',.93+.07*(sum(ob.name.encode())%7)/6)
+        if ob.name.startswith('F_W_HALL-PRINCIPAL') and ('outer-ring' in ob.name or '-bead' in ob.name):
+            # Existing ring profiles gain real depth; the aperture is unchanged.
+            for v in ob.data.vertices:
+                if abs(v.co.x)<.001:v.co.x+=recipe['guildhallPortalProjectionM']
+            bevel=ob.modifiers.new('Dressed portal edge','BEVEL');bevel.width=.009;bevel.segments=2
+    # Preserve a dark sealed receiver behind all lattice and closed door seams.
+    for name in ('F_E_ARCH-back','F_W_HALL-PRINCIPAL-back'):
+        finish(B.bpy.data.objects[name],'timber',.34)
+    op=next(o for f in A['faces'] for p in f['parcels'] for o in p['openings'] if o['id']==recipe['loggia']['opening'])
+    profile=op['closureProfile'];left=op['alongM']-op['widthM']/2+.08;right=op['alongM']+op['widthM']/2-.08
+    low=profile['dadoTopM']+.08;split=recipe['loggia']['screenCrownBaseZM'];out=profile['screenOutM']
+    B.star_screen('P3-F-loggia-B-STAR','east',36,(left,low),(right,split-.06),out-.015,B.WOOD)
+    finish(B.bpy.data.objects['P3-F-loggia-B-STAR'],'timber');B.bpy.data.objects['P3-F-loggia-B-STAR']['bz04Shadow']='cast'
+    finish(B.part('east',36,'P3-F-loggia-crown-bearing',(left,out-.045,split-.07),(right,out,split+.01),B.WOOD,'cast',.006),'timber')
+    top=B.offset_top(B.arch_points(op),-.11)
+    for i,(a,z) in enumerate(top[::2]):
+        if z<=split+.035:continue
+        finish(B.member('P3-F-loggia-crown-ray',B.coords('east',36,op['alongM'],out-.025,split+.01),B.coords('east',36,a,out-.025,z-.015),.033,B.WOOD),'timber')
+    # Glazed tiles sit on the existing solid dado. A small bevel separates each
+    # fired piece; the street-facing silhouette and fixed backing are retained.
+    tile_material='bz09_fountain_glazed_tile';mat=B.mat('bz04_ceramic_project_original').copy();mat.name=tile_material
+    shader=mat.node_tree.nodes['Principled BSDF'];shader.inputs['Base Color'].default_value=(1,1,1,1);shader.inputs['Roughness'].default_value=.42;shader.inputs['Metallic'].default_value=0
+    B.MATS[tile_material]=mat;pitch=recipe['loggia']['tileSizeM'];n=int((right-left)/pitch);width=(right-left)/n
+    for row in range(5):
+        z=.11+row*.18
+        for col in range(n):
+            l=left+col*width
+            ob=B.part('east',36,'P3-F-glazed-dado',(l+.004,out+.002,z),(l+width-.004,out+.018,z+.172),tile_material,'receive',.006)
+            B.paint_object(ob,recipe['loggia']['tilePalette'][(col+row*2)%3 if (col+row)%4==0 else row%2])
+    # A projecting dressed sill protects the tilework and gives the screen a
+    # readable seat, with no projecting furniture below the walkway limit.
+    B.part('east',36,'P3-F-loggia-dado-cap',(left-.035,out-.04,1.045),(right+.035,out+.055,1.1),'ph_bz04_trim_sanded_01','cast',.012)
+    return tools
+
+
 def construction(export=True):
     origin=A['sectionOriginDesign'];B.reset((origin['x'],origin['y'],origin['z']))
     interfaces=runpy.run_path(str(OUT/'receiver-interfaces.py'))
@@ -184,9 +248,16 @@ def construction(export=True):
     remove_south_internal_skins(next(face for face in A['faces'] if face['face']=='south'))
     for f in A['facadeFeatures']:inscription(f)
     for g in A['activityGroups']:plants(g)
+    tools=art_finish()
     if export:
         S.budget_check()
-        B.export(OUT/(UNIT+'.glb'),A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],A['budget']['maxRenderedPrimitives'],{'bz04InputSha256':H['inputSha256'],'bz04Unit':UNIT})
+        prepare=B.prepare_mesh
+        for ob in B.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        recipe=A['artDirectionFinish'];tools.bake_contact_occlusion(B.__dict__,recipe['contactRadiusM'],recipe['contactStrength'])
+        B.prepare_mesh=lambda ob:None
+        try:B.export(OUT/(UNIT+'.glb'),A['exportBoundsGltfLocal'],A['budget']['maxTriangles'],A['budget']['maxRenderedPrimitives'],{'bz04InputSha256':H['inputSha256'],'bz04Unit':UNIT})
+        finally:B.prepare_mesh=prepare
 
 
 def remove_south_internal_skins(south):

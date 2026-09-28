@@ -86,7 +86,7 @@ test("registry, profiles, nested records, and tuples are immutable", () => {
     (DESKTOP_HUMAN_GAMEPLAY_TUNING.flow as unknown as { intermissionDurationS: number })
       .intermissionDurationS = 0;
   }, TypeError);
-  assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.reactionTimeSByTier[0], 0.9);
+  assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.enemy.combat.reactionTimeSByTier[0], 0.8);
   assert.equal(DESKTOP_HUMAN_GAMEPLAY_TUNING.flow.intermissionDurationS, 5);
 });
 
@@ -94,27 +94,27 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
   const tuning = DESKTOP_HUMAN_GAMEPLAY_TUNING;
 
   assert.deepEqual(tuning.waves.tierProgression.waveBands, [
-    { minWave: 1, maxWaveInclusive: 2, tier: 0 },
-    { minWave: 3, maxWaveInclusive: 4, tier: 1 },
-    { minWave: 5, maxWaveInclusive: 6, tier: 2 },
-    { minWave: 7, maxWaveInclusive: 8, tier: 3 },
-    { minWave: 9, maxWaveInclusive: 10, tier: 4 },
-    { minWave: 11, maxWaveInclusive: null, tier: 5 },
+    { minWave: 1, maxWaveInclusive: 1, tier: 0 },
+    { minWave: 2, maxWaveInclusive: 2, tier: 1 },
+    { minWave: 3, maxWaveInclusive: 3, tier: 2 },
+    { minWave: 4, maxWaveInclusive: 5, tier: 3 },
+    { minWave: 6, maxWaveInclusive: 7, tier: 4 },
+    { minWave: 8, maxWaveInclusive: null, tier: 5 },
   ]);
-  assert.deepEqual(tuning.waves.tierProgression.elapsedTierBonusThresholdsS, [45, 100, 170]);
-  assert.deepEqual(tuning.waves.simultaneousAttackerLimitByTier, [2, 2, 2, 3, 3, 4]);
-  assert.deepEqual(tuning.waves.burstStartStaggerMsByTier, [600, 500, 400, 320, 250, 200]);
+  assert.deepEqual(tuning.waves.tierProgression.elapsedTierBonusThresholdsS, [30, 60, 100]);
+  assert.deepEqual(tuning.waves.simultaneousAttackerLimitByTier, [2, 2, 3, 3, 4, 5]);
+  assert.deepEqual(tuning.waves.burstStartStaggerMsByTier, [450, 400, 350, 300, 250, 200]);
   assert.deepEqual(tuning.waves.pressure.waveBands, [
-    { minWave: 1, maxWaveInclusive: 2, searchStartS: 30, fullPressureS: 75 },
-    { minWave: 3, maxWaveInclusive: 4, searchStartS: 25, fullPressureS: 60 },
-    { minWave: 5, maxWaveInclusive: 6, searchStartS: 20, fullPressureS: 50 },
-    { minWave: 7, maxWaveInclusive: null, searchStartS: 15, fullPressureS: 40 },
+    { minWave: 1, maxWaveInclusive: 2, searchStartS: 20, fullPressureS: 55 },
+    { minWave: 3, maxWaveInclusive: 4, searchStartS: 17, fullPressureS: 45 },
+    { minWave: 5, maxWaveInclusive: 6, searchStartS: 14, fullPressureS: 38 },
+    { minWave: 7, maxWaveInclusive: null, searchStartS: 12, fullPressureS: 32 },
   ]);
 
   assert.equal(tuning.enemy.combat.damagePerHit, 20);
   assert.equal(tuning.enemy.combat.spreadModel, "circular");
-  assert.deepEqual(tuning.enemy.combat.reactionTimeSByTier, [0.9, 0.8, 0.7, 0.6, 0.5, 0.4]);
-  assert.deepEqual(tuning.enemy.combat.spreadDegByTier, [19, 15, 11, 8.5, 7, 6.5]);
+  assert.deepEqual(tuning.enemy.combat.reactionTimeSByTier, [0.8, 0.65, 0.5, 0.4, 0.32, 0.26]);
+  assert.deepEqual(tuning.enemy.combat.spreadDegByTier, [11, 8.5, 6.5, 5, 4, 3.5]);
   assert.equal(tuning.enemy.combat.requiresAimAlignment, true);
   assert.equal(tuning.enemy.combat.requiresDirectSightToFire, true);
   assert.equal(tuning.enemy.combat.aimToleranceDeg, 8);
@@ -166,7 +166,8 @@ test("canonical shared baseline encodes the approved progressive difficulty", ()
   assert.equal(tuning.buffs.rapidReloadSpeedMultiplier, 1.35);
   assert.equal(tuning.buffs.freeReloads, true);
   assert.equal(tuning.buffs.shieldHealth, 30);
-  assert.deepEqual(tuning.buffs.perfectWave, { mode: "single-deterministic", durationS: 15 });
+  assert.equal(tuning.buffs.shieldPersistsUntilBroken, true);
+  assert.deepEqual(tuning.buffs.perfectWave, { mode: "all-four", durationS: 15 });
   assert.deepEqual(tuning.flow, {
     intermissionDurationS: 5,
     skipAvailableAfterS: 2,

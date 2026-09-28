@@ -1,6 +1,6 @@
 import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import type { WeaponAudio } from "../audio/WeaponAudio";
+import { computeListenerSpatial, type WeaponAudio } from "../audio/WeaponAudio";
 import type {
   RuntimeAnchorsSpec,
   RuntimeAuthoredSpawn,
@@ -27,13 +27,15 @@ import {
   type EnemyAabb,
   type EnemyDebugSnapshot,
   type EnemyDirective,
+  type EnemyHitReaction,
   type EnemyId,
   type EnemyPerceptionEvent,
   type EnemyRole,
   type EnemyState,
+  type EnemyShotImpact,
   type EnemyTarget,
 } from "./EnemyController";
-import { EnemyVisual } from "./EnemyVisual";
+import { EnemyVisual, type EnemyVisualHitReaction } from "./EnemyVisual";
 import {
   buildTacticalGraph,
   findZoneForPoint,
@@ -374,6 +376,27 @@ export function resolveEnemyDeathCallbackBatch(
   };
 }
 
+/**
+ * Render-only reaction for a hit: the bullet's own horizontal direction when
+ * the shooter supplied it, else the line from the player to the enemy (the
+ * only shooter that damages enemies). Null when there was no hit.
+ */
+export function resolveVisualHitReaction(
+  reaction: EnemyHitReaction | null,
+  enemyPos: Readonly<{ x: number; z: number }>,
+  playerPos: Readonly<{ x: number; z: number }>,
+): EnemyVisualHitReaction | null {
+  if (!reaction) return null;
+  const impact = reaction.impact;
+  if (impact && Math.hypot(impact.dirX, impact.dirZ) > 1e-6) {
+    return {
+      dirX: impact.dirX, dirZ: impact.dirZ, headshot: reaction.headshot,
+      hitX: impact.hitX, hitZ: impact.hitZ,
+    };
+  }
+  return { dirX: enemyPos.x - playerPos.x, dirZ: enemyPos.z - playerPos.z, headshot: reaction.headshot };
+}
+
 export type EnemyManagerDebugSnapshot = {
   waveNumber: number;
   waveElapsedS: number;
@@ -549,6 +572,8 @@ export class EnemyManager {
     const cameraPitch = Math.atan2(forward.y, Math.hypot(forward.x, forward.z));
     const scratch = createLineOfSightScratch();
     const blockers = this.controllers.filter((controller) => !controller.isDead()).map((controller) => controller.getAabb());
+    // A falling corpse stays rendered for its death fall; it must not occlude.
+    const deadVisuals = this.visuals.filter((_, index) => this.controllers[index]?.isDead());
     const targets: VisibleTarget[] = [];
     for (let index = 0; index < this.controllers.length; index += 1) {
       const controller = this.controllers[index]!;
@@ -569,7 +594,8 @@ export class EnemyManager {
         const hit = raycaster.intersectObjects(meshes, false).find((entry) => {
           const material = (entry.object as Mesh).material;
           const faceMaterial = Array.isArray(material) ? material[entry.face?.materialIndex ?? 0] : material;
-          return faceMaterial?.visible && faceMaterial.opacity > 0;
+          return faceMaterial?.visible && faceMaterial.opacity > 0
+            && !deadVisuals.some((dead) => dead.ownsRenderedObject(entry.object));
         });
         if (!hit || !visual.ownsRenderedObject(hit.object)) continue;
         const combatHit = this.checkRaycastHit(camera.position, direction, raycaster.far);
@@ -602,6 +628,8 @@ export class EnemyManager {
     for (const visual of this.visuals) visual.setRenderVisible(visible);
   }
   private weaponAudio: WeaponAudio | null = null;
+  /** Main camera used to pan enemy gunshots; null keeps them centred. */
+  private audioListener: { matrixWorld: { elements: ArrayLike<number> } } | null = null;
   private onEnemyKilled: EnemyKillCallback | null = null;
 
   private readonly deathFadeStarted = new Set<number>();
@@ -719,8 +747,9 @@ export class EnemyManager {
     this.queueSharedContactReports(event.enemyId, contact, pressureProfile);
   };
 
-  setAudio(audio: WeaponAudio): void {
+  setAudio(audio: WeaponAudio, listener: { matrixWorld: { elements: ArrayLike<number> } } | null = null): void {
     this.weaponAudio = audio;
+    this.audioListener = listener;
   }
 
   setKillCallback(cb: EnemyKillCallback): void {
@@ -2132,11 +2161,12 @@ export class EnemyManager {
       const controller = this.controllers[i]!;
       const visual = this.visuals[i]!;
       const pos = controller.getPosition();
+      const hitReaction = resolveVisualHitReaction(controller.consumeHitReaction(), pos, playerTarget.position);
 
       if (controller.isDead()) {
         if (newlyDeadIndexSet.has(i)) {
           this.deathFadeStarted.add(i);
-          visual.startDeathFade();
+          visual.startDeathFade(hitReaction);
           const deathPos = controller.getPosition();
           this.onEnemyKilled?.(
             controller.name,
@@ -2150,6 +2180,8 @@ export class EnemyManager {
         continue;
       }
 
+      if (hitReaction) visual.triggerHitReaction(hitReaction);
+
       visual.update(pos.x, pos.y, pos.z, controller.getYaw(), true,
         deltaSeconds, controller.isGrounded(), worldColliders.traversalSurfaces,
         distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z));
@@ -2157,9 +2189,14 @@ export class EnemyManager {
       if (controller.isFiring()) {
         visual.triggerShotFx();
         const distanceToPlayerM = distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z);
+        const spatial = this.audioListener
+          ? computeListenerSpatial(this.audioListener.matrixWorld.elements, pos.x, pos.y + ENEMY_EYE_HEIGHT_M, pos.z)
+          : null;
         this.weaponAudio?.playAk47ShotQuiet({
           sourceId: controller.id,
           distanceM: distanceToPlayerM,
+          pan: spatial?.pan ?? 0,
+          behind: spatial?.behind ?? 0,
         });
       }
       visual.updateFx(deltaSeconds);
@@ -3359,10 +3396,14 @@ export class EnemyManager {
     return { node: best, score: bestScore };
   }
 
-  applyDamageToEnemy(enemyId: string, damage: number, isHeadshot = false): void {
+  /**
+   * `impact` (bullet direction and entry point) only steers the render-side
+   * flinch and death fall; without it the player-to-enemy line is used.
+   */
+  applyDamageToEnemy(enemyId: string, damage: number, isHeadshot = false, impact: EnemyShotImpact | null = null): void {
     for (const controller of this.controllers) {
       if (controller.id === enemyId) {
-        controller.applyDamage(damage, isHeadshot);
+        controller.applyDamage(damage, isHeadshot, impact);
         return;
       }
     }

@@ -387,14 +387,20 @@ function appendStairRiserQuad(
 ): void {
   if (topY - bottomY <= EDGE_EPSILON_M) return;
   const baseIndex = batch.vertexCount;
+  // Register the riser with its own tread paving row, independently of elevation.
+  const stepRun = (surface.axis === "x" ? surface.rect.w : surface.rect.h) / (surface.stepCount ?? 10);
+  const centerV = (axisCoord - normalSign * stepRun * 0.5) / tileSizeM;
+  const halfHeightV = (topY - bottomY) / (2 * tileSizeM);
+  const bottomV = centerV - halfHeightV;
+  const topV = centerV + halfHeightV;
   if (surface.axis === "y") {
     const x0 = surface.rect.x;
     const x1 = surface.rect.x + surface.rect.w;
     const normal = { x: 0, y: 0, z: normalSign };
-    pushVertex(batch, x0, bottomY, axisCoord, x0 / tileSizeM, bottomY / tileSizeM, normal);
-    pushVertex(batch, x1, bottomY, axisCoord, x1 / tileSizeM, bottomY / tileSizeM, normal);
-    pushVertex(batch, x1, topY, axisCoord, x1 / tileSizeM, topY / tileSizeM, normal);
-    pushVertex(batch, x0, topY, axisCoord, x0 / tileSizeM, topY / tileSizeM, normal);
+    pushVertex(batch, x0, bottomY, axisCoord, x0 / tileSizeM, bottomV, normal);
+    pushVertex(batch, x1, bottomY, axisCoord, x1 / tileSizeM, bottomV, normal);
+    pushVertex(batch, x1, topY, axisCoord, x1 / tileSizeM, topV, normal);
+    pushVertex(batch, x0, topY, axisCoord, x0 / tileSizeM, topV, normal);
     if (normalSign > 0) {
       batch.indices.push(baseIndex, baseIndex + 1, baseIndex + 2, baseIndex, baseIndex + 2, baseIndex + 3);
     } else {
@@ -404,10 +410,10 @@ function appendStairRiserQuad(
     const z0 = surface.rect.y;
     const z1 = surface.rect.y + surface.rect.h;
     const normal = { x: normalSign, y: 0, z: 0 };
-    pushVertex(batch, axisCoord, bottomY, z0, z0 / tileSizeM, bottomY / tileSizeM, normal);
-    pushVertex(batch, axisCoord, bottomY, z1, z1 / tileSizeM, bottomY / tileSizeM, normal);
-    pushVertex(batch, axisCoord, topY, z1, z1 / tileSizeM, topY / tileSizeM, normal);
-    pushVertex(batch, axisCoord, topY, z0, z0 / tileSizeM, topY / tileSizeM, normal);
+    pushVertex(batch, axisCoord, bottomY, z0, z0 / tileSizeM, bottomV, normal);
+    pushVertex(batch, axisCoord, bottomY, z1, z1 / tileSizeM, bottomV, normal);
+    pushVertex(batch, axisCoord, topY, z1, z1 / tileSizeM, topV, normal);
+    pushVertex(batch, axisCoord, topY, z0, z0 / tileSizeM, topV, normal);
     if (normalSign < 0) {
       batch.indices.push(baseIndex, baseIndex + 1, baseIndex + 2, baseIndex, baseIndex + 2, baseIndex + 3);
     } else {

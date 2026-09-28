@@ -181,7 +181,7 @@ SOURCE = Path(__file__).resolve().parent
 ROOT = SOURCE.parents[2]
 OUT = ROOT / 'apps/client/public/assets/models/characters/enemy_raider_next'
 REVIEW = ROOT / 'artifacts/raider-review'
-DONOR = ROOT / 'art-source/characters/enemy_raider/model_source_4k.glb'
+DONOR = ROOT / 'assets/source/enemy-raider/donor/model_source_4k.glb'
 for folder in [OUT, REVIEW]:
     folder.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)

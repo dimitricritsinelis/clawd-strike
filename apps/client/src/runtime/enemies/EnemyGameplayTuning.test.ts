@@ -92,12 +92,13 @@ test("all profiles use the canonical wave and elapsed-time tier and pressure sch
 
   // Wave 1 ramps one tier per elapsed threshold and caps at maxTier.
   assert.equal(resolveEnemyTierForTuning(1, 0, baseline), 0);
-  assert.equal(resolveEnemyTierForTuning(1, 44.9, baseline), 0);
-  assert.equal(resolveEnemyTierForTuning(1, 45, baseline), 1);
-  assert.equal(resolveEnemyTierForTuning(1, 100, baseline), 2);
-  assert.equal(resolveEnemyTierForTuning(1, 170, baseline), 3);
+  assert.equal(resolveEnemyTierForTuning(1, 29.9, baseline), 0);
+  assert.equal(resolveEnemyTierForTuning(1, 30, baseline), 1);
+  assert.equal(resolveEnemyTierForTuning(1, 60, baseline), 2);
+  assert.equal(resolveEnemyTierForTuning(1, 100, baseline), 3);
   assert.equal(resolveEnemyTierForTuning(1, 3_600, baseline), 3);
-  assert.equal(resolveEnemyTierForTuning(9, 3_600, baseline), 5);
+  assert.equal(resolveEnemyTierForTuning(3, 3_600, baseline), 5);
+  assert.equal(resolveEnemyTierForTuning(8, 0, baseline), 5);
 
   for (const tuning of Object.values(GAMEPLAY_TUNINGS)) {
     for (const wave of sampledWaves) {

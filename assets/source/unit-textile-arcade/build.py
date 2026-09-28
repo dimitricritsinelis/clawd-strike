@@ -53,8 +53,29 @@ def opening(face, plane, o, trim, back):
         o = dict(o, trimWidthM=o['archRingM'])
     if o.get('finishMaterialProfile') == 'warmTimber':
         o = dict(o, closureMaterialId=G.WOOD)
-    if o['kind'] != 'shop' or o['headShape'] == 'rectangular':
+    if o['kind'] != 'shop':
         return G.opening(face, plane, o, trim, back)
+    if o['headShape'] == 'rectangular':
+        G.opening(face,plane,o,trim,back)
+        # The front header owns only the authored 280 mm mouth; the plaster
+        # ceiling closes the chamber behind it, without coplanar undersides.
+        assert face in {'east','west'}
+        cavity=o['shopfront']['cavity'];join=G.local(G.coords(face,plane,0,cavity['chamberFromOutM'],0))[0]
+        ceiling=G.bpy.data.objects[o['id']+'-chamber-ceiling'];head=G.bpy.data.objects[o['id']+'-head']
+        for vertex in ceiling.data.vertices:
+            if face=='east' and vertex.co.x<join or face=='west' and vertex.co.x>join:vertex.co.x=join
+        for vertex in head.data.vertices:
+            if face=='east' and vertex.co.x>join or face=='west' and vertex.co.x<join:vertex.co.x=join
+        from mathutils import Vector
+        for ob in (ceiling,head):ob.data.update();G.prepare_mesh(ob)
+        for out,expected in [(cavity['chamberFromOutM']-.1,ceiling),(cavity['chamberFromOutM']/2,head)]:
+            start=Vector(G.local(G.coords(face,plane,o['alongM'],out,o['headM']-.2)));hits=[]
+            for ob in (ceiling,head):
+                hit,point,normal,index=ob.ray_cast(start,Vector((0,0,1)),distance=.4)
+                if hit:hits.append((ob,point.z))
+            assert len(hits)==1 and hits[0][0]==expected and abs(hits[0][1]-o['headM'])<1e-5,('Overlapping or missing rectangular shop soffit',o['id'],out,hits)
+        print('PASS rectangular shop soffit: one intended ceiling on each side of the authored join',o['id'],flush=True)
+        return
     # Preserve the rectangular staff chamber and its actual side door behind
     # the specified 0.28 m shaped barrel, not an extruded arch through the stock.
     chamber = copy.deepcopy(o)
@@ -87,7 +108,9 @@ def opening(face, plane, o, trim, back):
         G.prism_profile(o['id']+'-arch-ring',face,plane,[p,q,Q,P],-.02,front,trim)
         fill=[P,Q,(Q[0],ceiling),(P[0],ceiling)]
         G.prism_profile(o['id']+'-spandrel',face,plane,fill,-.02,0,field_material(fill))
-        G.mesh(o['id']+'-front-barrel',[G.coords(face,plane,x,out,z) for out in [-barrel,0] for x,z in [p,q]],[(0,1,3,2)],reveal)
+        winding=(2,3,1,0) if face in {'east','south'} else (0,1,3,2)
+        ob=G.mesh(o['id']+'-front-barrel',[G.coords(face,plane,x,out,z) for out in [-barrel,0] for x,z in [p,q]],[winding],reveal)
+        ob['bz04PreserveWinding']=True
     l,r = top[0][0],top[-1][0]
     for L,H in [(l-width,l),(r,r+width)]:
         G.part(face,plane,o['id']+'-arch-jamb',(L,-barrel,o['sillM']),(H,front,top[0][1]),reveal)
@@ -95,6 +118,7 @@ def opening(face, plane, o, trim, back):
         x,X = sorted([edge[0],limit])
         if X-x > 1e-7:
             G.part(face,plane,o['id']+'-arch-shoulder',(x,-.02,edge[1]),(X,0,ceiling),field_material([(x,edge[1]),(X,ceiling)]))
+    S.close_arch_shoulders(face,plane,o,trim)
 
 
 def roll(name, face, plane, lo, hi, mid, upright=False, spiral=False, phase=(0,0)):
@@ -165,7 +189,19 @@ def activity(group):
         lo=[item['localBox']['min'][0]+along,item['localBox']['min'][1],item['localBox']['min'][2]+deck]
         hi=[item['localBox']['max'][0]+along,item['localBox']['max'][1],item['localBox']['max'][2]+deck]
         one=dict(group,instanceLayout={'parts':[item]});one.pop('sign',None)
-        if kind in {'grounded-counter-carcass','grounded-plank-chest'}:
+        if kind=='grounded-counter-carcass':
+            x,y,z=lo;X,Y,Z=hi;rail=.065
+            def part(suffix,low,high):return G.part(face,plane,name+suffix,low,high,mid,'cast',.006)
+            for j in range(3):part('-top-board',(x,y+j*(Y-y)/3+.002,Z-.05),(X,y+(j+1)*(Y-y)/3-.002,Z))
+            for a in (x+.02,X-rail-.02):
+                for out in (y+.02,Y-rail-.01):part('-leg',(a,out,z),(a+rail,out+rail,Z-.05))
+            for level in (z+.09,Z-.14):part('-front-rail',(x,Y-.065,level),(X,Y-.01,level+rail))
+            for j in range(3):
+                left=x+.07+j*(X-x-.14)/3;right=x+.07+(j+1)*(X-x-.14)/3
+                part('-panel',(left,Y-.08,z+.15),(right,Y-.035,Z-.14))
+                if j:part('-stile',(left-.032,Y-.065,z+.09),(left+.032,Y-.01,Z-.05))
+            for a in (x+.02,X-.045):part('-side',(a,y+.085,z+.15),(a+.025,Y-.095,Z-.14))
+        elif kind=='grounded-plank-chest':
             G.activity(one)
         elif kind in {'timber-member','locked-timber-lattice-gate','folded-cloth'}:
             S.activity(one)
@@ -337,12 +373,187 @@ def spandrel_fixture(area):
             direction=(front-start).normalized();hits=[]
             for ob in objects:
                 hit,point,normal,index=ob.ray_cast(start,direction,distance=.12)
-                if hit and (point-front).length<1e-4:hits.append(ob)
+                target_out=o.get('frontProjectionM',0) if '-arch-ring' in ob.name or '-arch-jamb' in ob.name else 0
+                target=Vector(G.local(G.coords(face['face'],face['wallPlaneM'],along,target_out,z)))
+                if hit and (point-target).length<1e-4:hits.append(ob)
             assert hits,('Open spandrel or mask-top seam',along,z)
             assert not any('chamber-ceiling' in ob.name for ob in hits),('Chamber ceiling reaches the facade',along,z)
             assert len({ob.data.materials[0].name for ob in hits})==1,('Competing facade materials',along,z,[ob.name for ob in hits])
             count+=1
+    spring=G.arch_points(o);outer=G.offset_top(spring,o['trimWidthM']);spring_rays=0
+    for side,(arc,endpoint,edge) in enumerate(((spring[0],outer[0],left),(spring[-1],outer[-1],right))):
+        assert endpoint[1]>arc[1]+1e-6,('Spring-gap fixture has no raised offset',side)
+        for height_fraction in (.25,.5,.75):
+            z=arc[1]+(endpoint[1]-arc[1])*height_fraction
+            inside=arc[0]+(endpoint[0]-arc[0])*height_fraction
+            for width_fraction in (.25,.5,.75):
+                along=edge+(inside-edge)*width_fraction
+                front=Vector(G.local(G.coords(face['face'],face['wallPlaneM'],along,o.get('frontProjectionM',0),z)))
+                start=Vector(G.local(G.coords(face['face'],face['wallPlaneM'],along,o.get('frontProjectionM',0)+.02,z)))
+                hits=[]
+                for ob in objects:
+                    hit,point,normal,index=ob.ray_cast(start,(front-start).normalized(),distance=.04)
+                    if hit and (point-front).length<1e-5:hits.append(ob)
+                assert hits,('Open raised arch spring',side,along,z,o.get('frontProjectionM',0))
+                assert all(ob.data.materials[0]==G.mat(o['surroundMaterialId']) for ob in hits),('Spring differs from arch finish',side)
+                spring_rays+=1
+    print('PASS raised arch springs:',spring_rays,'rays across both ends at authored front',o.get('frontProjectionM',0),flush=True)
     print('PASS spandrel interface:',count,'front rays across full mask, no gap or competing chamber ceiling',flush=True)
+
+
+
+def cutting_cloth(left,right,recipe,*,face="west",plane=24,name="P3-T-cutting-drape"):
+    """Closed heavy cloth with an actual underside seated on the .94 m top."""
+    border=.025;thickness=recipe['thicknessM'];bottom=recipe['bottomZM']
+    path=[(-.35,.95),(-.1,.95),(.12,.95),(.15,.95),(.166,.946),(.18,.935),(.19,.913),(.19,.89),(.19,.80),(.19,.65),(.19,.50),(.19,bottom+.03),(.19,bottom)]
+    xs=sorted(set([left,left+border,right-border,right]+[left+(right-left)*i/24 for i in range(25)]))
+    width=len(xs);rows=len(path);front=[];back=[];uv=[]
+    for i,x in enumerate(xs):
+        u=(x-left)/(right-left);points=[];length=0
+        for out,z in path:
+            drop=max(0,min(1,(.89-z)/.2))
+            out+=recipe['foldDepthM']*(.5+.5*math.sin(u*math.pi*6+.3))*drop
+            z+=recipe['hemRiseM']*(.5+.5*math.sin(u*math.pi*3+.4))*max(0,1-(z-bottom)/.15)
+            points.append((out,z))
+        for j,(out,z) in enumerate(points):
+            previous=points[max(0,j-1)];following=points[min(rows-1,j+1)]
+            do=following[0]-previous[0];dz=following[1]-previous[1];length_tangent=math.hypot(do,dz)
+            if j:length+=math.dist(points[j-1],points[j])
+            front.append(G.coords(face,plane,x,out,z))
+            back.append(G.coords(face,plane,x,out+thickness*dz/length_tangent,z-thickness*do/length_tangent))
+            uv.append(((x-left)/1.2,length/1.2))
+    count=len(front);faces=[];hems=[]
+    for i in range(width-1):
+        for j in range(rows-1):
+            q=i*rows+j;quad=(q,q+rows,q+rows+1,q+1)
+            edge=xs[i]<left+border-1e-6 or xs[i+1]>right-border+1e-6 or j==rows-2
+            faces.extend([quad,tuple(v+count for v in reversed(quad))]);hems.extend([edge,edge])
+    perimeter=[i*rows for i in range(width)]+[(width-1)*rows+j for j in range(1,rows)]+[i*rows+rows-1 for i in range(width-2,-1,-1)]+list(range(rows-2,0,-1))
+    for a,b in zip(perimeter,perimeter[1:]+perimeter[:1]):faces.append((a,b,b+count,a+count));hems.append(True)
+    ob=G.mesh(name,front+back,faces,'ph_bz04_hessian_230','cast',True)
+    for loop in ob.data.loops:ob.data.uv_layers.active.data[loop.index].uv=uv[loop.vertex_index%count]
+    return ob,hems
+
+
+def cutting_cloth_fixture(ob,group,recipe):
+    import bmesh
+    from mathutils import Vector
+    G.prepare_mesh(ob);bm=bmesh.new();bm.from_mesh(ob.data)
+    assert all(e.is_manifold for e in bm.edges),'Cutting cloth has an open or nonmanifold seam'
+    assert all(f.calc_area()>1e-10 for f in bm.faces),'Cutting cloth has a collapsed face'
+    bm.free()
+    for v in ob.data.vertices:
+        world=(v.co.x+G.ORIGIN[0],G.ORIGIN[1]-v.co.y,v.co.z)
+        assert all(group['bbox']['min'][i]-1e-6<=world[i]<=group['bbox']['max'][i]+1e-6 for i in range(3))
+        out=world[0]-24
+        assert out<=recipe['frontOutM']+1e-6 and world[2]>=recipe['bottomZM']-1e-6
+        assert not (-.55<out<.15-1e-5 and .86<world[2]<.94-1e-5),'Cloth penetrates the tabletop'
+    for along in [54.60,54.90,55.30]:
+        for z,direction in [(1.1,-1),(.93,1)]:
+            start=Vector(G.local(G.coords('west',24,along,-.2,z)))
+            hit,point,normal,index=ob.ray_cast(start,Vector((0,0,direction)),distance=.3)
+            assert hit and abs(point.z-(.95 if direction<0 else .94))<1e-5,'Cloth top or underside misses its support height'
+    print('PASS cutting cloth: closed separated skins, seated .94 m underside, bounded folds/hem and clear tabletop',flush=True)
+
+
+def art_finish(area):
+    from bazaar_finish import apply
+    apply(G.__dict__,OUT/(UNIT+'.glb'))
+    recipe=area['artDirectionFinish']
+    spec=importlib.util.spec_from_file_location('bazaar_finish_materials',ROOT/'assets/source/unit-spice-street/materials.py')
+    tools=importlib.util.module_from_spec(spec);spec.loader.exec_module(tools)
+    private=tools.create_materials(G.__dict__,recipe['materials'],prefix='bz10_textile_')
+    def finish(ob,family,factor=1,reproject=True):
+        ob.data.materials.clear();ob.data.materials.append(private[family])
+        old=ob.data.color_attributes.get('COLOR_0')
+        if old:ob.data.color_attributes.remove(old)
+        colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','POINT')
+        for c in colors.data:c.color=(factor,factor,factor,1)
+        ob.data.color_attributes.active_color=colors
+        if not reproject:return ob
+        if family in {'timber','aged_timber','painted_timber','worktop'}:tools.member_uv(ob)
+        else:G.world_uv(ob,float(private[family]['tileSizeM']))
+        return ob
+    def cloth(ob,color):
+        finish(ob,'cloth',reproject=False);mean=private['cloth']['bz07TargetMeanLinear']
+        rgba=[G._linear_channel(int(color[i:i+2],16))/mean[k] for k,i in enumerate((1,3,5))]
+        assert all(0<=v<=1 for v in rgba),(ob.name,color)
+        for c in ob.data.color_attributes['COLOR_0'].data:c.color=(*rgba,1)
+    for ob in G.bpy.context.scene.objects:
+        if ob.type!='MESH':continue
+        mat=ob.data.materials[0];source=mat.get('bz04SourceMaterial',mat.name)
+        if any(key in source for key in ('plaster','beige')):finish(ob,'sand' if ob.name.startswith(('T_E','T_N')) else 'plaster')
+        elif any(key in source for key in ('timber','wood','plank','pine')):
+            family='painted_timber' if ob.name.startswith('T_E_') else 'worktop' if '-top-board' in ob.name else 'timber'
+            finish(ob,family,.92+.08*(sum(ob.name.encode())%9)/8)
+        if ob.name.startswith('G_T_E_ARCH1-bolt-') and '-rolled-edge' not in ob.name:
+            index=int(ob.name.split('bolt-')[1].split('-')[0])-1;cloth(ob,recipe['boltColors'][index]);ob['bz04Shadow']='cast'
+        elif ob.name.startswith(('G_T_W_ARCH2-cloth','G_T_W_ARCH2-folded','G_T_W_ARCH3-bale')) and '-binding' not in ob.name:
+            index=2 if '-cloth-length' in ob.name else 1 if '-folded-stack' in ob.name else (int(ob.name.split('-bale-')[1][0])-1)%3
+            cloth(ob,recipe['foldColors'][index]);ob['bz04Shadow']='cast'
+        elif ob.name.startswith('CANOPY_TEXTILE-') and ob.name.endswith(('cloth','bound-hem')):
+            cloth(ob,recipe['canopyHemColor'] if ob.name.endswith('bound-hem') else recipe['canopyColor'])
+    # One rug hangs across the retail counter, with a supported turn over its
+    # top and a bound hanging edge. Stock and player clearance remain separate.
+    drape=recipe['heroDrape'];group=next(g for g in area['activityGroups'] if g['id']==drape['group'])
+    op=next(o for p in G.PARCELS.values() for o in p['openings'] if o['id']==group['receiverOpening'])
+    L,R=[op['alongM']+v for v in drape['alongOffsetM']]
+    G.cloth_path('P3-T-retail-drape','west',24,L,R,[(-.27,.957),(.13,.957),(drape['outM'],.92),(drape['outM'],drape['bottomZM']+.02),(.15,drape['bottomZM'])],
+        'bz04_levantine_rug_project_original',thickness=.008,border=.032,color=drape['borderColor'],fringe=.02)
+    cutting=recipe['cuttingDrape']
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.name.startswith(cutting['replaces']):G.bpy.data.objects.remove(ob,do_unlink=True)
+    group=next(g for g in area['activityGroups'] if g['id']==cutting['group'])
+    op=next(o for p in G.PARCELS.values() for o in p['openings'] if o['id']==group['receiverOpening'])
+    L,R=[op['alongM']+v for v in cutting['alongOffsetM']]
+    ob,hems=cutting_cloth(L,R,cutting);cloth(ob,cutting['color'])
+    base=tuple(ob.data.color_attributes['COLOR_0'].data[0].color);mean=private['cloth']['bz07TargetMeanLinear']
+    hem=tuple(G._linear_channel(int('#546c6b'[i:i+2],16))/mean[k] for k,i in enumerate((1,3,5)))+(1,)
+    ob.data.color_attributes.remove(ob.data.color_attributes['COLOR_0']);colors=ob.data.color_attributes.new('COLOR_0','FLOAT_COLOR','CORNER')
+    for poly,is_hem in zip(ob.data.polygons,hems):
+        for loop in poly.loop_indices:colors.data[loop].color=hem if is_hem else base
+    ob.data.color_attributes.active_color=colors;cutting_cloth_fixture(ob,group,cutting)
+    # Several folded lengths replace the single rigid stock block. Their flat
+    # undersides bear on the top and the preceding bundle within its old box.
+    item=next(p for p in group['instanceLayout']['parts'] if p['id']=='folded-stack');prefix=group['id']+'-folded-stack'
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.name.startswith(prefix):G.bpy.data.objects.remove(ob,do_unlink=True)
+    low,high=item['localBox']['min'],item['localBox']['max'];height=cutting['stackPieceHeightM']
+    for i,color in enumerate(recipe['foldColors']):
+        lo=(op['alongM']+low[0]+i*.012,low[1]+i*.008,group['bbox']['min'][2]+low[2]+i*height)
+        hi=(op['alongM']+high[0]-(2-i)*.012,high[1]-(2-i)*.008,lo[2]+height)
+        before=set(G.bpy.context.scene.objects);S.soft_cloth(prefix+'-piece-'+str(i),'west',24,lo,hi,'ph_bz04_hessian_230',True)
+        for ob in set(G.bpy.context.scene.objects)-before:cloth(ob,color);ob['bz04Shadow']='cast'
+
+    window=recipe['workingWindow'];op=next(o for p in G.PARCELS.values() for o in p['openings'] if o['id']==window['opening'])
+    for ob in list(G.bpy.context.scene.objects):
+        if ob.name.startswith(op['id']+'-') and any(k in ob.name for k in ('-leaf-','-hinge','-latch')):G.bpy.data.objects.remove(ob,do_unlink=True)
+    finish(G.bpy.data.objects[op['id']+'-back'],'timber',.25)
+    left=op['alongM']-op['widthM']/2+.08;right=op['alongM']+op['widthM']/2-.08
+    bottom=op['sillM']+.08;top=op['headM']-.08;depth=-op['depthM']+.04;width=(right-left)/2-.006
+    for side,(hinge,sign,angle_deg) in enumerate(zip((left,right),(1,-1),window['leafAnglesDeg'])):
+        angle=math.radians(angle_deg)
+        def leaf_part(name,u,U,z,Z,n=-.018,N=.018):
+            coordinates=[(u,n,z),(U,n,z),(U,N,z),(u,N,z),(u,n,Z),(U,n,Z),(U,N,Z),(u,N,Z)]
+            vertices=[G.coords('east',35,hinge+sign*(math.cos(angle)*a-math.sin(angle)*o),depth+math.sin(angle)*a+math.cos(angle)*o,h) for a,o,h in coordinates]
+            ob=G.mesh('P3-T-work-shutter-'+str(side)+'-'+name,vertices,[(0,3,2,1),(4,5,6,7),(0,1,5,4),(1,2,6,5),(2,3,7,6),(3,0,4,7)],G.WOOD)
+            finish(ob,'painted_timber');lengths=[U-u,N-n,Z-z];grain=max(range(3),key=lambda i:lengths[i])
+            for poly in ob.data.polygons:
+                normal=min(range(3),key=lambda i:max(coordinates[v][i] for v in poly.vertices)-min(coordinates[v][i] for v in poly.vertices))
+                ua=grain if grain!=normal else (normal+1)%3;va=next(i for i in range(3) if i not in {normal,ua})
+                for loop in poly.loop_indices:
+                    point=coordinates[ob.data.loops[loop].vertex_index];ob.data.uv_layers.active.data[loop].uv=(point[ua]/1.8,point[va]/1.8)
+            bevel=ob.modifiers.new('Shutter joinery arris','BEVEL');bevel.width=.004;bevel.segments=1
+        for u,U in [(0,.065),(width-.065,width)]:leaf_part('stile',u,U,bottom,top)
+        for z,Z in [(bottom,bottom+.075),(top-.075,top)]:leaf_part('rail',.065,width-.065,z,Z)
+        count=max(2,round((width-.13)/.15))
+        for i in range(count):
+            u=.065+i*(width-.13)/count;U=.065+(i+1)*(width-.13)/count
+            leaf_part('board',u+.001,U-.001,bottom+.075,top-.075,-.012,.009)
+        for z in [bottom+.15,top-.25]:
+            G.part('east',35,'P3-T-window-hinge',(hinge-.035,depth-.025,z),(hinge+.035,depth+.035,z+.10),G.IRON,'cast',.004)
+    finish(G.part('east',35,'P3-T-workroom-mullion',(op['alongM']-.028,depth-.055,bottom),(op['alongM']+.028,depth-.005,top),G.WOOD,'cast',.004),'timber')
+    return tools
 
 
 def build(saved, fixture=False):
@@ -370,8 +581,15 @@ def build(saved, fixture=False):
         print('PASS Textile fixture: all 43 scheduled parts bounded, 12 exposed warp threads, open woven basket, real furniture and supported canopy',stats)
         spandrel_fixture(area)
     else:
-        G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
-                 {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        tools=art_finish(area);prepare=G.prepare_mesh
+        for ob in G.bpy.context.scene.objects:
+            if ob.type=='MESH':prepare(ob)
+        recipe=area['artDirectionFinish'];tools.bake_contact_occlusion(G.__dict__,recipe['contactRadiusM'],recipe['contactStrength'],subdivision_prefixes=('T_E_ARCH','T_W_ARCH'))
+        G.prepare_mesh=lambda ob:None
+        try:
+            G.export(OUT/(UNIT+'.glb'),area['exportBoundsGltfLocal'],area['budget']['maxTriangles'],area['budget']['maxRenderedPrimitives'],
+                     {'bz04InputSha256':saved['inputSha256'],'bz04DesignRevision':area['designRevision']['id']})
+        finally:G.prepare_mesh=prepare
 
 
 if __name__=='__main__':

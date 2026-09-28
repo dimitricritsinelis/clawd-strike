@@ -7,59 +7,85 @@ import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 const DEG_TO_RAD = Math.PI / 180;
 const TAU = Math.PI * 2;
 
-const DEFAULT_FIRE_INTERVAL_S = 1 / 8; // 480 RPM (8 shots per second)
+export const DEFAULT_FIRE_INTERVAL_S = 0.1; // 600 RPM (10 shots per second)
 const MAX_RANGE_M = 200;
 const MAX_SHOTS_PER_UPDATE = 3;
+/**
+ * A shot is due when its remaining cooldown is at or below this. Absorbs the
+ * float error of repeatedly subtracting frame times (six 1/60 s frames do not
+ * sum to exactly 0.1), which would otherwise push a shot one frame late.
+ */
+const FIRE_TIME_EPSILON_S = 1e-6;
+/** A release after at least this many shots in the burst reports triggerReleased. */
+const TRIGGER_RELEASE_MIN_BURST = 2;
 
 const STATIONARY_SPEED_EPS_MPS = 0.16;
 const SPREAD_STATIONARY_DEG = 0.2;
-const SPREAD_MOVE_MIN_DEG = 1.4;
-const SPREAD_MOVE_MAX_DEG = 2.25;
-const SPREAD_AIR_MIN_DEG = 5.0;
-const SPREAD_AIR_MAX_DEG = 7.0;
+// D3 (arcade handling): moving and airborne spread softened from 1.4-2.25 and 5-7 deg.
+const SPREAD_MOVE_MIN_DEG = 0.6;
+const SPREAD_MOVE_MAX_DEG = 1.1;
+const SPREAD_AIR_MIN_DEG = 2.5;
+const SPREAD_AIR_MAX_DEG = 3.5;
 
-const BLOOM_PER_SHOT_DEG = 0.11;
-const BLOOM_MAX_DEG = 1.2;
+// D3: bloom softened from 0.11 per shot / 1.2 max.
+const BLOOM_PER_SHOT_DEG = 0.06;
+const BLOOM_MAX_DEG = 0.7;
+/** Time to recover from full bloom once recovery has started. */
 const BLOOM_RECOVERY_SECONDS = 0.34;
+/**
+ * Bloom only recovers once no shot has fired for this long, so click-spamming
+ * at the fire rate blooms like held fire instead of resetting between clicks.
+ */
+const BLOOM_RECOVERY_DELAY_S = 0.15;
 
 const RECOIL_RESET_DELAY_S = 0.3;
-const RECOIL_MAX_ACCUM_PITCH_DEG = 24;
-const RECOIL_MAX_ACCUM_YAW_DEG = 4;
+const RECOIL_MAX_ACCUM_PITCH_DEG = 15;
+const RECOIL_MAX_ACCUM_YAW_DEG = 3;
 
-// 30-shot spray pattern — full magazine, no wrap-around seam.
-// Phase 1 (shots 1-8):  build-up, rising vertical + mild left drift
-// Phase 2 (shots 9-16): peak recoil, strong left-then-right sway
-// Phase 3 (shots 17-24): partial recovery, settling right
-// Phase 4 (shots 25-30): late-spray, reduced vertical, random walk
-const RECOIL_VERTICAL_PATTERN_DEG = [
-  // Phase 1 — build-up
-  0.58, 0.64, 0.70, 0.76,
-  0.82, 0.88, 0.93, 0.96,
-  // Phase 2 — peak
-  0.96, 0.94, 0.91, 0.88,
-  0.86, 0.85, 0.84, 0.83,
-  // Phase 3 — settling
-  0.80, 0.77, 0.74, 0.72,
-  0.70, 0.68, 0.67, 0.66,
-  // Phase 4 — late spray
-  0.64, 0.62, 0.61, 0.60,
-  0.59, 0.58,
+// 30-shot aim-climb shape (WP-17, decision D2), scaled by
+// RECOIL_VERTICAL_PATTERN_SCALE. The render-only view punch and the viewmodel
+// carry the felt kick; this table is only where the crosshair goes.
+// Shots 1-8 build up, 9-10 peak, then the climb tapers through the magazine.
+const RECOIL_VERTICAL_PATTERN_SHAPE_DEG = [
+  0.30, 0.33, 0.36, 0.39, 0.42, 0.44, 0.46, 0.47,
+  0.47, 0.46, 0.45, 0.44, 0.43, 0.42, 0.41, 0.40,
+  0.39, 0.38, 0.37, 0.36, 0.35, 0.34, 0.33, 0.33,
+  0.32, 0.31, 0.31, 0.30, 0.30, 0.29,
 ] as const;
 
-const RECOIL_HORIZONTAL_PATTERN_DEG = [
-  // Phase 1 — center then left
+/**
+ * Playtest: "a little more recoil". 1.25x the WP-17 shape climbs 14.16 deg per
+ * magazine (the original was 22.7, WP-17 halved it to 11.33).
+ */
+const RECOIL_VERTICAL_PATTERN_SCALE = 1.25;
+
+/** WP-17: the horizontal sway keeps its shape at three quarters of its old size. */
+const RECOIL_HORIZONTAL_PATTERN_SCALE = 0.75;
+
+// Horizontal sway shape, scaled by RECOIL_HORIZONTAL_PATTERN_SCALE.
+// Phase 1 (shots 1-8):  center then left
+// Phase 2 (shots 9-16): strong left-to-right swing
+// Phase 3 (shots 17-24): right settle
+// Phase 4 (shots 25-30): tight random walk
+const RECOIL_HORIZONTAL_PATTERN_SHAPE_DEG = [
    0.00,  0.04, -0.06, -0.12,
   -0.16, -0.20, -0.18, -0.10,
-  // Phase 2 — strong left-to-right swing
    0.02,  0.14,  0.20,  0.18,
    0.10, -0.02, -0.14, -0.18,
-  // Phase 3 — right settle
   -0.12, -0.04,  0.06,  0.14,
    0.16,  0.10,  0.02, -0.06,
-  // Phase 4 — tight random walk
   -0.08, -0.04,  0.06,  0.10,
    0.06,  0.00,
 ] as const;
+
+/** Per-shot vertical aim kick (degrees, + is up) before jitter and caps. */
+export const AK47_RECOIL_VERTICAL_PATTERN_DEG: readonly number[] = Object.freeze(
+  RECOIL_VERTICAL_PATTERN_SHAPE_DEG.map((value) => value * RECOIL_VERTICAL_PATTERN_SCALE),
+);
+/** Per-shot horizontal aim kick (degrees) before jitter and caps. */
+export const AK47_RECOIL_HORIZONTAL_PATTERN_DEG: readonly number[] = Object.freeze(
+  RECOIL_HORIZONTAL_PATTERN_SHAPE_DEG.map((value) => value * RECOIL_HORIZONTAL_PATTERN_SCALE),
+);
 
 const RECOIL_VERTICAL_JITTER_DEG = 0.022;
 const RECOIL_HORIZONTAL_JITTER_DEG = 0.03;
@@ -97,6 +123,28 @@ export type Ak47ShotEvent = {
     z: number;
   };
   colliderId?: string;
+  /**
+   * The one first-shot rule every feel layer reads: the spray had fully reset
+   * (no shot for RECOIL_RESET_DELAY_S) when this round fired. It is the same
+   * condition that grants the first-shot accuracy bonus.
+   */
+  isFirstShot: boolean;
+  /** 0-based index of this round within the current trigger pull. */
+  burstIndex: number;
+  /**
+   * How late this round fired against its ideal cadence time (seconds, >= 0).
+   * Non-zero when a frame boundary or a hitch delayed it; use it to place the
+   * round's audio/visual onset back on the true rhythm.
+   */
+  lateS: number;
+  /** Rounds fired in the same update call as this one (1 unless the frame hitched). */
+  shotsThisFrame: number;
+  /**
+   * The horizontal aim kick actually applied for this round (degrees, after
+   * jitter and the yaw cap, + is the same sign as recoilYawRad). Viewmodel
+   * drift uses its sign so the gun moves the same way as the view.
+   */
+  patternYawDeg: number;
 };
 
 export type Ak47FireControllerOptions = {
@@ -124,6 +172,22 @@ export type Ak47FireUpdateResult = {
   bloomDeg: number;
   lastShotRecoilPitchDeg: number;
   lastShotRecoilYawDeg: number;
+  /**
+   * True on the frame the trigger goes up after a burst of at least two
+   * rounds (spray-end cues such as the release clack). Not raised by
+   * cancelTrigger (reload start, death, pause).
+   */
+  triggerReleased: boolean;
+  /**
+   * Rounds fired since the trigger was last pressed. On a triggerReleased
+   * frame this is the length of the burst that just ended.
+   */
+  burstLength: number;
+};
+
+type ShotFrameInfo = {
+  lateS: number;
+  shotsThisFrame: number;
 };
 
 function clamp(value: number, min: number, max: number): number {
@@ -139,6 +203,7 @@ export class Ak47FireController {
   private readonly basisRight = new Vector3();
   private readonly basisUp = new Vector3();
   private readonly shotDirection = new Vector3();
+  private readonly shotFrameInfo: ShotFrameInfo = { lateS: 0, shotsThisFrame: 0 };
 
   private readonly raycastHit: RaycastAabbHit = {
     distance: 0,
@@ -150,8 +215,13 @@ export class Ak47FireController {
 
   private fireIntervalS = DEFAULT_FIRE_INTERVAL_S;
   private fireHeldLastFrame = false;
+  /** Remaining cooldown until the next round may fire (negative when it is overdue). */
   private timeUntilNextShotS = 0;
+  /** Time since the last round's ideal cadence time (its fire frame minus its lateS). */
   private timeSinceLastShotS = Number.POSITIVE_INFINITY;
+  /** A press that arrived during the cooldown: exactly one round fires when the gate opens. */
+  private bufferedShot = false;
+  private burstShotCount = 0;
   private shotIndex = 0;
   private bloomDeg = 0;
   private accumulatedPitchDeg = 0;
@@ -177,19 +247,16 @@ export class Ak47FireController {
     this.fireIntervalS = DEFAULT_FIRE_INTERVAL_S;
     this.spreadRng.reset();
     this.recoilRng.reset();
-    this.fireHeldLastFrame = false;
-    this.timeUntilNextShotS = 0;
-    this.timeSinceLastShotS = Number.POSITIVE_INFINITY;
+    this.clearTriggerState();
     this.debugSpreadDeg = SPREAD_STATIONARY_DEG;
     this.debugLastShotRecoilPitchDeg = 0;
     this.debugLastShotRecoilYawDeg = 0;
     this.resetSprayState();
   }
 
+  /** Hard trigger reset (reload start, death, pause): drops any buffered round and reports no release. */
   cancelTrigger(): void {
-    this.fireHeldLastFrame = false;
-    this.timeUntilNextShotS = 0;
-    this.timeSinceLastShotS = Number.POSITIVE_INFINITY;
+    this.clearTriggerState();
     this.resetSprayState();
   }
 
@@ -203,10 +270,33 @@ export class Ak47FireController {
     let recoilPitchRad = 0;
     let recoilYawRad = 0;
     let shotsFired = 0;
+    let triggerReleased = false;
 
     if (!input.fireHeld) {
+      triggerReleased = this.fireHeldLastFrame && this.burstShotCount >= TRIGGER_RELEASE_MIN_BURST;
       this.fireHeldLastFrame = false;
-      this.recoverBloom(deltaSeconds);
+
+      // A click that landed during the cooldown still fires when the gate
+      // opens, even though the trigger is already up again.
+      let bufferedShotDue = false;
+      if (this.bufferedShot) {
+        this.timeUntilNextShotS -= deltaSeconds;
+        if (shotBudget <= 0) {
+          this.bufferedShot = false;
+        } else {
+          bufferedShotDue = this.timeUntilNextShotS <= FIRE_TIME_EPSILON_S;
+        }
+      }
+
+      this.recoverBloom(deltaSeconds, bufferedShotDue ? this.dueShotLateS() : 0);
+
+      if (bufferedShotDue) {
+        this.bufferedShot = false;
+        const recoil = this.fireDueShot(input, 1, onShot);
+        recoilPitchRad += recoil.pitchRad;
+        recoilYawRad += recoil.yawRad;
+        shotsFired = 1;
+      }
 
       if (this.timeSinceLastShotS >= RECOIL_RESET_DELAY_S) {
         this.resetSprayState();
@@ -214,37 +304,46 @@ export class Ak47FireController {
 
       this.debugSpreadDeg = this.computeSpreadDeg(input.grounded, input.speedMps);
 
-      return {
-        recoilPitchRad,
-        recoilYawRad,
-        shotsFired,
-        shotIndex: this.shotIndex,
-        spreadDeg: this.debugSpreadDeg,
-        bloomDeg: this.bloomDeg,
-        lastShotRecoilPitchDeg: this.debugLastShotRecoilPitchDeg,
-        lastShotRecoilYawDeg: this.debugLastShotRecoilYawDeg,
-      };
+      return this.buildResult(recoilPitchRad, recoilYawRad, shotsFired, triggerReleased);
     }
 
     if (!this.fireHeldLastFrame) {
+      // Fresh press. A click can never beat the fire rate: the cooldown left
+      // over from the previous round still applies, and a press during it
+      // queues exactly one round. The first press after idle fires at once
+      // because timeSinceLastShotS starts at +Infinity.
       if (this.timeSinceLastShotS >= RECOIL_RESET_DELAY_S) {
         this.resetSprayState();
       }
-      this.timeUntilNextShotS = 0;
+      this.burstShotCount = 0;
+      this.timeUntilNextShotS = Math.max(0, this.fireIntervalS - this.timeSinceLastShotS);
+      this.bufferedShot = this.timeUntilNextShotS > FIRE_TIME_EPSILON_S;
+    } else {
+      this.timeUntilNextShotS -= deltaSeconds;
     }
     this.fireHeldLastFrame = true;
 
-    this.timeUntilNextShotS -= deltaSeconds;
-
-    while (this.timeUntilNextShotS <= 0 && shotsFired < MAX_SHOTS_PER_UPDATE && shotsFired < shotBudget) {
-      this.timeUntilNextShotS += this.fireIntervalS;
-
-      const recoil = this.fireSingleShot(input, onShot);
+    const shotsThisFrame = this.countDueShots(shotBudget);
+    this.recoverBloom(deltaSeconds, shotsThisFrame > 0 ? this.dueShotLateS() : 0);
+    while (shotsFired < shotsThisFrame) {
+      const recoil = this.fireDueShot(input, shotsThisFrame, onShot);
       recoilPitchRad += recoil.pitchRad;
       recoilYawRad += recoil.yawRad;
       shotsFired += 1;
     }
+    if (shotsFired > 0) {
+      this.bufferedShot = false;
+    }
 
+    return this.buildResult(recoilPitchRad, recoilYawRad, shotsFired, triggerReleased);
+  }
+
+  private buildResult(
+    recoilPitchRad: number,
+    recoilYawRad: number,
+    shotsFired: number,
+    triggerReleased: boolean,
+  ): Ak47FireUpdateResult {
     return {
       recoilPitchRad,
       recoilYawRad,
@@ -254,52 +353,60 @@ export class Ak47FireController {
       bloomDeg: this.bloomDeg,
       lastShotRecoilPitchDeg: this.debugLastShotRecoilPitchDeg,
       lastShotRecoilYawDeg: this.debugLastShotRecoilYawDeg,
+      triggerReleased,
+      burstLength: this.burstShotCount,
     };
+  }
+
+  /** How many rounds the cadence owes this frame, limited by the per-frame cap and the budget. */
+  private countDueShots(shotBudget: number): number {
+    let count = 0;
+    let untilNext = this.timeUntilNextShotS;
+    while (untilNext <= FIRE_TIME_EPSILON_S && count < MAX_SHOTS_PER_UPDATE && count < shotBudget) {
+      untilNext += this.fireIntervalS;
+      count += 1;
+    }
+    return count;
+  }
+
+  /** How far the next round's cadence time lies before now (seconds, >= 0). */
+  private dueShotLateS(): number {
+    return Math.max(0, -this.timeUntilNextShotS);
+  }
+
+  /** Fires the round whose cadence time has arrived and schedules the next one. */
+  private fireDueShot(
+    input: Ak47FireUpdateInput,
+    shotsThisFrame: number,
+    onShot?: (shot: Ak47ShotEvent) => void,
+  ): { pitchRad: number; yawRad: number } {
+    const lateS = this.dueShotLateS();
+    this.timeUntilNextShotS += this.fireIntervalS;
+    this.shotFrameInfo.lateS = lateS;
+    this.shotFrameInfo.shotsThisFrame = shotsThisFrame;
+    return this.fireSingleShot(input, this.shotFrameInfo, onShot);
   }
 
   private fireSingleShot(
     input: Ak47FireUpdateInput,
+    frame: Readonly<ShotFrameInfo>,
     onShot?: (shot: Ak47ShotEvent) => void,
   ): { pitchRad: number; yawRad: number } {
+    const isFirstShot = this.isFirstShotReady();
+    const burstIndex = this.burstShotCount;
+
     this.debugSpreadDeg = this.computeSpreadDeg(input.grounded, input.speedMps);
     this.sampleSpreadDirection(input.forward, this.debugSpreadDeg, this.shotDirection);
 
     const hit = raycastFirstHit(input.world, input.origin, this.shotDirection, this.maxRangeM, this.raycastHit);
-    if (onShot) {
-      const direction = {
-        x: this.shotDirection.x,
-        y: this.shotDirection.y,
-        z: this.shotDirection.z,
-      };
-      if (hit) {
-        onShot({
-          hit: true,
-          direction,
-          travelDistance: this.raycastHit.distance,
-          hitPoint: {
-            x: this.raycastHit.point.x,
-            y: this.raycastHit.point.y,
-            z: this.raycastHit.point.z,
-          },
-          hitNormal: {
-            x: this.raycastHit.normal.x,
-            y: this.raycastHit.normal.y,
-            z: this.raycastHit.normal.z,
-          },
-          colliderId: this.raycastHit.colliderId,
-        });
-      } else {
-        // A bullet that reaches open sky still travels through the world and
-        // must remain able to hit an enemy along the way.
-        onShot({ hit: false, direction, travelDistance: this.maxRangeM });
-      }
-    }
 
-    this.timeSinceLastShotS = 0;
+    // Measured from the round's ideal cadence time so tap-fire keeps the same
+    // average rate as held fire instead of drifting a frame late per click.
+    this.timeSinceLastShotS = frame.lateS;
 
-    const patternIndex = this.shotIndex % RECOIL_VERTICAL_PATTERN_DEG.length;
-    const basePitchDeg = RECOIL_VERTICAL_PATTERN_DEG[patternIndex]!;
-    const baseYawDeg = RECOIL_HORIZONTAL_PATTERN_DEG[patternIndex]!;
+    const patternIndex = this.shotIndex % AK47_RECOIL_VERTICAL_PATTERN_DEG.length;
+    const basePitchDeg = AK47_RECOIL_VERTICAL_PATTERN_DEG[patternIndex]!;
+    const baseYawDeg = AK47_RECOIL_HORIZONTAL_PATTERN_DEG[patternIndex]!;
 
     const moveNorm = clamp(input.speedMps / RUN_SPEED_MPS, 0, 1);
 
@@ -326,16 +433,60 @@ export class Ak47FireController {
     this.accumulatedPitchDeg += pitchDeg;
     this.accumulatedYawDeg += yawDeg;
     this.shotIndex += 1;
+    this.burstShotCount += 1;
 
     this.bloomDeg = Math.min(BLOOM_MAX_DEG, this.bloomDeg + BLOOM_PER_SHOT_DEG);
 
     this.debugLastShotRecoilPitchDeg = pitchDeg;
     this.debugLastShotRecoilYawDeg = yawDeg;
 
+    if (onShot) {
+      const direction = {
+        x: this.shotDirection.x,
+        y: this.shotDirection.y,
+        z: this.shotDirection.z,
+      };
+      const feel = {
+        isFirstShot,
+        burstIndex,
+        lateS: frame.lateS,
+        shotsThisFrame: frame.shotsThisFrame,
+        patternYawDeg: yawDeg,
+      };
+      if (hit) {
+        onShot({
+          hit: true,
+          direction,
+          travelDistance: this.raycastHit.distance,
+          hitPoint: {
+            x: this.raycastHit.point.x,
+            y: this.raycastHit.point.y,
+            z: this.raycastHit.point.z,
+          },
+          hitNormal: {
+            x: this.raycastHit.normal.x,
+            y: this.raycastHit.normal.y,
+            z: this.raycastHit.normal.z,
+          },
+          colliderId: this.raycastHit.colliderId,
+          ...feel,
+        });
+      } else {
+        // A bullet that reaches open sky still travels through the world and
+        // must remain able to hit an enemy along the way.
+        onShot({ hit: false, direction, travelDistance: this.maxRangeM, ...feel });
+      }
+    }
+
     return {
       pitchRad: pitchDeg * DEG_TO_RAD,
       yawRad: yawDeg * DEG_TO_RAD,
     };
+  }
+
+  /** The spray has fully reset, so the next round is a clean first shot. */
+  private isFirstShotReady(): boolean {
+    return this.shotIndex === 0 && this.timeSinceLastShotS >= RECOIL_RESET_DELAY_S;
   }
 
   private computeSpreadDeg(grounded: boolean, speedMps: number): number {
@@ -352,21 +503,39 @@ export class Ak47FireController {
       baseSpreadDeg = SPREAD_MOVE_MIN_DEG + (SPREAD_MOVE_MAX_DEG - SPREAD_MOVE_MIN_DEG) * moveNorm;
     }
 
-    // First-shot accuracy bonus: if the spray has fully reset (shotIndex === 0)
-    // and the player is stationary and grounded, suppress bloom entirely and
-    // halve the base spread for a near-perfect first bullet.
-    const isFirstShot = this.shotIndex === 0 && this.timeSinceLastShotS >= RECOIL_RESET_DELAY_S;
-    if (isFirstShot && grounded && speed <= STATIONARY_SPEED_EPS_MPS) {
+    // First-shot accuracy bonus: if the spray has fully reset and the player
+    // is stationary and grounded, suppress bloom entirely and tighten the base
+    // spread for a near-perfect first bullet.
+    if (this.isFirstShotReady() && grounded && speed <= STATIONARY_SPEED_EPS_MPS) {
       return baseSpreadDeg * 0.4; // near-perfect accuracy for the first clean tap
     }
 
     return baseSpreadDeg + this.bloomDeg;
   }
 
-  private recoverBloom(deltaSeconds: number): void {
-    if (this.bloomDeg <= 0) return;
+  /**
+   * Recovers bloom for the idle part of this frame: time that lies past
+   * BLOOM_RECOVERY_DELAY_S after the last round's cadence time and before the
+   * cadence time of the first round fired this frame (firstShotLateS before
+   * now). Splitting the frame exactly keeps recovery independent of frame
+   * rate and of whether the trigger was up or down while idle.
+   */
+  private recoverBloom(deltaSeconds: number, firstShotLateS: number): void {
+    if (this.bloomDeg <= 0 || !Number.isFinite(this.timeSinceLastShotS)) return;
+    const idleEndS = this.timeSinceLastShotS - firstShotLateS;
+    const idleStartS = Math.max(this.timeSinceLastShotS - deltaSeconds, BLOOM_RECOVERY_DELAY_S);
+    const recoverSeconds = idleEndS - idleStartS;
+    if (recoverSeconds <= 0) return;
     const recoverPerSecond = BLOOM_MAX_DEG / BLOOM_RECOVERY_SECONDS;
-    this.bloomDeg = Math.max(0, this.bloomDeg - recoverPerSecond * deltaSeconds);
+    this.bloomDeg = Math.max(0, this.bloomDeg - recoverPerSecond * recoverSeconds);
+  }
+
+  private clearTriggerState(): void {
+    this.fireHeldLastFrame = false;
+    this.timeUntilNextShotS = 0;
+    this.timeSinceLastShotS = Number.POSITIVE_INFINITY;
+    this.bufferedShot = false;
+    this.burstShotCount = 0;
   }
 
   private resetSprayState(): void {

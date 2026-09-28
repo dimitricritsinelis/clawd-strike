@@ -1,5 +1,6 @@
 import type { PerspectiveCamera, Scene } from "three";
-import { BuffOrb, BuffOrbRenderer } from "./BuffOrb";
+import { BuffOrb } from "./BuffOrb";
+import { BuffOrbRenderer } from "./BuffOrbRenderer";
 import {
   type BuffType,
   type BuffDefinition,
@@ -18,6 +19,8 @@ import type { GameplayTuning } from "../tuning/gameplayTuning";
 type ActiveBuff = {
   remainingS: number;
   durationS: number;
+  /** Lasts until its effect is consumed (Iron Skin shield broken) instead of timing out. */
+  persistent: boolean;
 };
 
 export type BuffPickupResult = "activated" | "refreshed";
@@ -56,8 +59,10 @@ type PendingOrbSpawn = {
 
 export type ActiveBuffSnapshot = {
   type: BuffType;
+  /** Always 0 for persistent buffs, which have no timer. */
   remainingS: number;
   durationS: number;
+  persistent: boolean;
 };
 
 export type BuffPerfSnapshot = {
@@ -75,7 +80,6 @@ export type BuffWaveCarryoverSnapshot = {
 };
 
 export class BuffManager {
-  private readonly scene: Scene;
   private orbRenderer: BuffOrbRenderer | null = null;
   private activeBuffs = new Map<BuffType, ActiveBuff>();
   private droppedOrbs: BuffOrb[] = [];
@@ -114,9 +118,15 @@ export class BuffManager {
   private readonly orbLifetimeS: number;
   private readonly perfectWaveMode: "single-deterministic" | "all-four";
   private readonly perfectWaveDurationS: number;
+  private readonly persistentTypes: ReadonlySet<BuffType>;
 
   constructor(scene: Scene, options: BuffManagerOptions = {}) {
-    this.scene = scene;
+    // Built once and kept for the whole run so a drop or pickup never creates,
+    // compiles or disposes GPU resources. The renderer is visual-only; without a
+    // DOM (deterministic gameplay tests) the simulation runs without it.
+    if (typeof document !== "undefined") {
+      this.orbRenderer = new BuffOrbRenderer(scene);
+    }
     const tuning = options.tuning;
     this.dropChancePerKill = tuning?.dropChancePerKill ?? BUFF_DROP_CHANCE;
     this.pityMaxConsecutiveMisses = tuning?.pity.enabled === false
@@ -127,8 +137,11 @@ export class BuffManager {
     this.carrySelectionAcrossWaves = tuning?.selection.carryAcrossWaves ?? true;
     this.standardDurationS = tuning?.standardDurationS ?? 10;
     this.orbLifetimeS = tuning?.orbLifetimeS ?? ORB_LIFETIME_S;
-    this.perfectWaveMode = tuning?.perfectWave.mode ?? "single-deterministic";
+    this.perfectWaveMode = tuning?.perfectWave.mode ?? "all-four";
     this.perfectWaveDurationS = tuning?.perfectWave.durationS ?? RALLYING_CRY_DURATION_S;
+    this.persistentTypes = new Set<BuffType>(
+      (tuning?.shieldPersistsUntilBroken ?? true) ? ["health_boost"] : [],
+    );
     const rootRng = options.rng ?? new DeterministicRng(options.seed ?? 1);
     // Independent streams keep a pity-forced drop from perturbing type or Rally
     // selection. A given kill sequence therefore remains reproducible.
@@ -209,7 +222,7 @@ export class BuffManager {
     return this.previousWaveWasPerfectHeadshots;
   }
 
-  /** Compatibility/debug helper. Rallying Cry no longer calls this. */
+  /** Activates every buff; used by all-four Rallying Cry and debug tooling. */
   activateAllBuffs(durationOverrideS?: number): void {
     for (const type of BUFF_TYPES) {
       this.activateBuff(type, durationOverrideS);
@@ -217,9 +230,9 @@ export class BuffManager {
   }
 
   /**
-   * Activate Rallying Cry as one deterministic 15-second buff. Repeated calls
-   * while it is active refresh the same selection instead of accumulating all
-   * four effects through duplicate activation.
+   * Activate Rallying Cry: all four buffs for the perfect-wave duration, or one
+   * deterministic buff in "single-deterministic" mode. Repeated calls while it
+   * is active refresh the same selection instead of accumulating effects.
    */
   activateRallyingCry(): BuffType | null {
     if (this.perfectWaveMode === "all-four") {
@@ -311,7 +324,6 @@ export class BuffManager {
   update(
     deltaSeconds: number,
     playerPosition: { x: number; y: number; z: number },
-    camera: PerspectiveCamera,
   ): void {
     const updateStartedAt = performance.now();
     this.orbSpawnMs = 0;
@@ -326,19 +338,14 @@ export class BuffManager {
 
     if (this.pendingSpawns.length > 0) {
       const spawnStartedAt = performance.now();
-      const spawns = this.pendingSpawns.splice(0, this.pendingSpawns.length);
-      // The renderer is visual-only. Keeping simulation valid without a DOM
-      // lets deterministic gameplay tests exercise lifetime and pickup rules.
-      if (typeof document !== "undefined") {
-        this.ensureOrbRenderer();
-      }
-      for (const spawn of spawns) {
-        this.droppedOrbs.push(new BuffOrb(
+      for (const spawn of this.pendingSpawns) {
+        this.addOrb(new BuffOrb(
           spawn.position,
           spawn.definition,
           this.orbLifetimeS,
         ));
       }
+      this.pendingSpawns.length = 0;
       this.orbSpawnMs = performance.now() - spawnStartedAt;
     }
 
@@ -348,18 +355,18 @@ export class BuffManager {
       const alive = orb.update(simulationDt);
 
       if (!alive) {
-        // Orb expired
+        // Orb expired; the renderer has already shrunk it out.
+        this.orbRenderer?.remove(orb);
         this.droppedOrbs.splice(i, 1);
         continue;
       }
 
       // Walk-over pickup check
-      const orbPos = orb.getPosition();
-      const dx = playerPosition.x - orbPos.x;
-      const dz = playerPosition.z - orbPos.z;
+      const dx = playerPosition.x - orb.spawnX;
+      const dz = playerPosition.z - orb.spawnZ;
       const distSq = dx * dx + dz * dz;
       if (distSq < ORB_PICKUP_RADIUS_M * ORB_PICKUP_RADIUS_M) {
-        const dy = Math.abs(playerPosition.y - orbPos.y);
+        const dy = Math.abs(playerPosition.y - orb.spawnY);
         if (dy < 2.0) {
           this.collectOrbAtIndex(i);
           continue;
@@ -367,31 +374,16 @@ export class BuffManager {
       }
     }
 
-    this.orbRenderer?.update(this.droppedOrbs, camera, simulationDt);
+    this.orbRenderer?.update(simulationDt);
 
-    // Tick active buff timers
+    // Tick active buff timers. Persistent buffs end only through consumeBuff().
     for (const [type, buff] of this.activeBuffs) {
+      if (buff.persistent) continue;
       buff.remainingS -= simulationDt;
-      if (buff.remainingS <= 0) {
-        this.activeBuffs.delete(type);
-        this.onBuffExpired?.(type);
-        if (this.rallyingCryBuffType === type) {
-          this._rallyingCryActive = false;
-          this.rallyingCryBuffType = null;
-        }
-      }
-    }
-
-    if (this._rallyingCryActive) {
-      if (this.perfectWaveMode === "single-deterministic" && this.rallyingCryBuffType === null) {
-        this._rallyingCryActive = false;
-      } else if (this.perfectWaveMode === "all-four" && this.activeBuffs.size === 0) {
-        this._rallyingCryActive = false;
-      }
+      if (buff.remainingS <= 0) this.endBuff(type);
     }
 
     this.orbUpdateMs = performance.now() - updateStartedAt;
-    this.disposeOrbRendererIfIdle();
   }
 
   /**
@@ -427,6 +419,7 @@ export class BuffManager {
     if (index < 0 || index >= this.droppedOrbs.length) return null;
     const orb = this.droppedOrbs[index]!;
     const buffType = orb.getBuffType();
+    this.orbRenderer?.collect(orb);
     this.droppedOrbs.splice(index, 1);
     const pickupResult = this.activateBuff(buffType);
     this.onBuffPickedUp?.(buffType, pickupResult);
@@ -440,7 +433,12 @@ export class BuffManager {
   getActiveBuffs(): ActiveBuffSnapshot[] {
     const result: ActiveBuffSnapshot[] = [];
     for (const [type, buff] of this.activeBuffs) {
-      result.push({ type, remainingS: buff.remainingS, durationS: buff.durationS });
+      result.push({
+        type,
+        remainingS: buff.remainingS,
+        durationS: buff.durationS,
+        persistent: buff.persistent,
+      });
     }
     return result;
   }
@@ -460,7 +458,6 @@ export class BuffManager {
     this.orbRenderer?.clear();
     this.orbSpawnMs = 0;
     this.orbUpdateMs = 0;
-    this.disposeOrbRendererIfIdle();
   }
 
   clearAllBuffs(): void {
@@ -503,7 +500,6 @@ export class BuffManager {
     const normalizedZ = forwardLength > 0.001 ? forward.z / forwardLength : 1;
     const baseAngle = Math.atan2(normalizedZ, normalizedX);
     const orbsPerRing = 8;
-    this.ensureOrbRenderer();
 
     for (let index = 0; index < nextCount; index += 1) {
       const ring = Math.floor(index / orbsPerRing);
@@ -515,7 +511,7 @@ export class BuffManager {
         : baseAngle - span * 0.5 + (span * ringIndex) / Math.max(1, ringCount - 1);
       const distance = 3.4 + ring * 1.2;
       const type = BUFF_TYPES[index % BUFF_TYPES.length]!;
-      this.droppedOrbs.push(new BuffOrb(
+      this.addOrb(new BuffOrb(
         {
           x: origin.x + Math.cos(angle) * distance,
           y: origin.y,
@@ -533,7 +529,16 @@ export class BuffManager {
     return this.activateBuff(type);
   }
 
+  /** End a buff whose effect was used up, such as an Iron Skin shield shot off. */
+  consumeBuff(type: BuffType): void {
+    this.endBuff(type);
+  }
+
   debugDeactivateBuff(type: BuffType): void {
+    this.endBuff(type);
+  }
+
+  private endBuff(type: BuffType): void {
     if (!this.activeBuffs.has(type)) return;
     this.activeBuffs.delete(type);
     this.onBuffExpired?.(type);
@@ -541,20 +546,28 @@ export class BuffManager {
       this._rallyingCryActive = false;
       this.rallyingCryBuffType = null;
     }
+    // All-four Rallying Cry lasts while any of its timed buffs remain; a
+    // persistent shield outliving it does not keep the badge up.
+    if (
+      this._rallyingCryActive
+      && this.perfectWaveMode === "all-four"
+      && ![...this.activeBuffs.values()].some((buff) => !buff.persistent)
+    ) {
+      this._rallyingCryActive = false;
+    }
   }
 
-  private ensureOrbRenderer(): BuffOrbRenderer {
-    if (!this.orbRenderer) {
-      this.orbRenderer = new BuffOrbRenderer(this.scene);
-    }
-    return this.orbRenderer;
+  /**
+   * Shows an idle orb so boot-time shader compilation and the hidden warmup
+   * render cover the real orb programs. Call the returned function afterwards.
+   */
+  warmupOrbRenderer(camera: PerspectiveCamera): () => void {
+    return this.orbRenderer?.warmup(camera) ?? (() => {});
   }
 
-  private disposeOrbRendererIfIdle(): void {
-    if (this.orbRenderer && this.droppedOrbs.length === 0 && this.pendingSpawns.length === 0) {
-      this.orbRenderer.dispose();
-      this.orbRenderer = null;
-    }
+  private addOrb(orb: BuffOrb): void {
+    this.droppedOrbs.push(orb);
+    this.orbRenderer?.spawn(orb);
   }
 
   /**
@@ -585,7 +598,8 @@ export class BuffManager {
   }
 
   private activateBuff(type: BuffType, durationOverrideS?: number): BuffPickupResult {
-    const durationS = Math.max(0, durationOverrideS ?? this.standardDurationS);
+    const persistent = this.persistentTypes.has(type);
+    const durationS = persistent ? 0 : Math.max(0, durationOverrideS ?? this.standardDurationS);
     const existing = this.activeBuffs.get(type);
     if (existing) {
       // Refresh timer, then re-apply the effect. Refreshing the clock alone is
@@ -601,6 +615,7 @@ export class BuffManager {
     this.activeBuffs.set(type, {
       remainingS: durationS,
       durationS,
+      persistent,
     });
     this.onBuffActivated?.(type, "activated");
     return "activated";

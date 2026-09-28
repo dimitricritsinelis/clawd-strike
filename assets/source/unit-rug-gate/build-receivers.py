@@ -25,8 +25,7 @@ shared.ADDITIONAL_UNITS=ADDITIONAL_UNITS
 # The Link remains level at y=72; its hidden base meets the descending Tea
 # receiver only over that receiver's exact x=19..19.6 footprint.
 def shop_cavity():
-    load=shared.runpy.run_path(str(ROOT/'assets/source/integrate_bz04.py'))['load_handoff']
-    saved=load(ROOT/'artifacts/bazaar-r7-whole-map/unit-rug-gate/handoff.json')
+    saved=shared.runpy.run_path(str(ROOT/'docs/map-design/construction/handoff.py'))['extract']('unit-rug-gate')
     face,opening=next((f,o) for f in saved['areas'][0]['faces'] for p in f['parcels'] for o in p['openings'] if o['id']=='R_W_SHOP')
     cavity=opening['shopfront']['cavity']
     assert face['face']=='west' and cavity['frontProfile']=='rectangular' and cavity['chamberWidthM']==opening['widthM']

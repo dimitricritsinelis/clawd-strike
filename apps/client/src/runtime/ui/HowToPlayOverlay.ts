@@ -364,7 +364,7 @@ export class HowToPlayOverlay {
         color: "#ffd78d",
         textAlign: "center",
       });
-      durationEl.textContent = this.buffCopy.standardDurationLabel;
+      durationEl.textContent = this.buffCopy.durationLabels[buffType];
 
       // Effect
       const effectEl = document.createElement("div");

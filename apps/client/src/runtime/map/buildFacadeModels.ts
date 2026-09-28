@@ -16,6 +16,34 @@ export type PackMaterialBinding = {
 };
 
 /**
+ * High-tier relief: per-unit bz07 finishes embed their pack source's normal map
+ * untouched at 1k. When the 2k tier is active, bind the same photograph at 2k
+ * (already served by the wall pack) instead of re-baking every GLB. Albedo and
+ * ARM stay on their calibrated bakes. Clones keep glTF's flipY=false so the
+ * authored UVs map identically.
+ */
+function upgradeSourceNormal(material: MeshStandardMaterial, binding: PackMaterialBinding, done: WeakSet<object>): void {
+  const library = binding.wallMaterials;
+  const sourceId = material.userData.bz07SourceMaterial;
+  if (!library || binding.quality !== "2k" || done.has(material) || !material.normalMap || typeof sourceId !== "string") return;
+  if (!library.getMaterialIds().includes(sourceId)) return;
+  done.add(material);
+  const embedded = material.normalMap;
+  library.loadTextureSet(sourceId, "2k").then((set) => {
+    if (material.normalMap !== embedded) return;
+    const normal = set.normal.clone();
+    normal.flipY = embedded.flipY;
+    normal.wrapS = embedded.wrapS;
+    normal.wrapT = embedded.wrapT;
+    normal.channel = embedded.channel;
+    normal.needsUpdate = true;
+    material.normalMap = normal;
+  }).catch(() => undefined);
+}
+
+const upgradedNormals = new WeakSet<object>();
+
+/**
  * Authored GLBs ship without textures. A mesh material named after a wall-pack id
  * (`ph_*`, from assets/source/facade_materials.py) is swapped for the kit's own
  * material: same textures, tint, dirt band and macro variation as the kit walls,
@@ -71,7 +99,10 @@ function rebindPackMaterials(
         }
         return derived;
       }
-      if (!ids.has(id)) return material;
+      if (!ids.has(id)) {
+        if ((material as MeshStandardMaterial).isMeshStandardMaterial) upgradeSourceNormal(material as MeshStandardMaterial, binding, upgradedNormals);
+        return material;
+      }
       let replacement = cache.get(id);
       if (!replacement) {
         replacement = library.createStandardMaterial(id, binding.quality);

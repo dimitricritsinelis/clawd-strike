@@ -4,6 +4,12 @@
 //
 //   node scripts/apply-facade-package.mjs apply  <unit>   reads assets/source/<unit>/package.json
 //   node scripts/apply-facade-package.mjs revert <unit>   restores the files from before its latest apply
+//   node scripts/apply-facade-package.mjs pack-textures   moves images still embedded in installed GLBs into
+//                                                         the shared textures/ directory (no checkpoint; lossless)
+//
+// Installed GLBs reference their images from facades/textures/<sha256>.<ext>, one file per distinct image, so a
+// finish shared by many areas downloads and uploads to the GPU once. A model's md5 map lists its GLB and the shared
+// images it uses; images no model references any more are removed.
 //
 // package.json: { "models": [ { id, file, source, license } ],
 //                 "section": { "zoneId": "<ZONE_ID>", "modelId": "<model id>", "faces": ["north"] },  // faces the GLB owns; omit for all four
@@ -13,21 +19,84 @@
 // (0 = north). role is "dressing" (default) or "skyline"; both are render-only and never collide.
 // url and md5 are derived here from the built GLB.
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { externalizeGlbImages } from "./lib/glbTextures.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SPEC = path.join(ROOT, "docs/map-design/specs/map_spec.json");
 const FACADES = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/facades");
 const MANIFEST = path.join(FACADES, "models.json");
+const TEXTURE_DIR = "textures";
+// Every installed GLB sits one directory below the manifest.
+const TEXTURE_URI_PREFIX = `../${TEXTURE_DIR}/`;
 const [action, unit] = process.argv.slice(2);
-if (!["apply", "revert"].includes(action) || !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(unit ?? "")) {
-  console.error("usage: node scripts/apply-facade-package.mjs apply|revert <unit>");
+if (action !== "pack-textures" && (!["apply", "revert"].includes(action) || !/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(unit ?? ""))) {
+  console.error("usage: node scripts/apply-facade-package.mjs apply|revert <unit> | pack-textures");
   process.exit(2);
 }
 const checkpoint = path.join(ROOT, "artifacts/facade-packages", `${unit}.json`);
 const hash = (bytes) => bytes === null ? null : createHash("sha256").update(bytes).digest("hex");
+const md5 = (bytes) => createHash("md5").update(bytes).digest("hex");
+
+/** Pack one GLB for installation at `url`; returns its bytes and md5 map (GLB + shared images). */
+function packModel(url, bytes, writes) {
+  const packed = externalizeGlbImages(bytes, TEXTURE_URI_PREFIX);
+  const checksums = { [url]: md5(packed.glb) };
+  for (const [name, data] of packed.textures) {
+    const relative = `${TEXTURE_DIR}/${name}`;
+    const file = path.join(FACADES, relative);
+    const existing = readOptional(file);
+    const content = data ?? existing ?? writes.get(file);
+    if (!content) throw new Error(`${url} references missing shared texture ${relative}`);
+    if (!existing || !existing.equals(content)) writes.set(file, content);
+    checksums[relative] = md5(content);
+  }
+  return { glb: packed.glb, checksums };
+}
+
+/** Delete shared images that no manifest entry references. */
+function collectUnusedTextures(manifest, writes) {
+  const used = new Set();
+  for (const model of manifest.models) for (const file of Object.keys(model.md5 ?? {})) used.add(file);
+  const directory = path.join(FACADES, TEXTURE_DIR);
+  const present = new Set(existsSync(directory) ? readdirSync(directory).map((name) => `${TEXTURE_DIR}/${name}`) : []);
+  for (const [file, bytes] of writes) {
+    const relative = path.relative(FACADES, file).split(path.sep).join("/");
+    if (relative.startsWith(`${TEXTURE_DIR}/`) && bytes) present.add(relative);
+  }
+  for (const relative of present) {
+    if (!used.has(relative)) writes.set(path.join(FACADES, relative), null);
+  }
+}
+
+function packInstalledTextures() {
+  const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
+  const writes = new Map();
+  let packedCount = 0;
+  for (const model of manifest.models) {
+    const file = path.join(FACADES, model.url);
+    const bytes = readFileSync(file);
+    const { glb, checksums } = packModel(model.url, bytes, writes);
+    if (!glb.equals(bytes)) {
+      writes.set(file, glb);
+      packedCount += 1;
+    }
+    model.md5 = checksums;
+  }
+  collectUnusedTextures(manifest, writes);
+  writes.set(MANIFEST, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`));
+  for (const [file, bytes] of writes) {
+    if (bytes === null) rmSync(file, { force: true });
+    else {
+      mkdirSync(path.dirname(file), { recursive: true });
+      writeFileSync(file, bytes);
+    }
+  }
+  const textures = [...writes.keys()].filter((file) => file.includes(`${path.sep}${TEXTURE_DIR}${path.sep}`));
+  console.log(`pack-textures: packed ${packedCount} GLBs; ${textures.length} shared texture files written or removed`);
+}
 const readOptional = (file) => existsSync(file) ? readFileSync(file) : null;
 function restore(files) {
   for (const entry of files) {
@@ -38,6 +107,10 @@ function restore(files) {
       writeFileSync(file, Buffer.from(entry.before, "base64"));
     }
   }
+}
+if (action === "pack-textures") {
+  packInstalledTextures();
+  process.exit(0);
 }
 if (action === "revert") {
   if (!existsSync(checkpoint)) throw new Error(`No saved apply for ${unit}; no files changed.`);
@@ -140,9 +213,9 @@ for (const model of pkg.models) {
   const url = `${unit}/${path.basename(source)}`;
   const destination = path.join(FACADES, url);
   if (writes.has(destination)) throw new Error(`Duplicate output: ${url}`);
-  const bytes = readFileSync(source);
   const materialIds = glbPackMaterialIds(source);
-  writes.set(destination, bytes);
+  const { glb, checksums } = packModel(url, readFileSync(source), writes);
+  writes.set(destination, glb);
   manifest.models = manifest.models.filter((m) => m.id !== model.id);
   manifest.models.push({
     id: model.id,
@@ -151,7 +224,7 @@ for (const model of pkg.models) {
     variants: {},
     source: model.source ?? `repo://assets/source/${unit}/build.py`,
     license: model.license ?? "Project-Original",
-    md5: { [url]: createHash("md5").update(bytes).digest("hex") },
+    md5: checksums,
     materialIds,
   });
 }
@@ -193,6 +266,7 @@ if (pkg.placements) {
   setAuthoredPlacements([]); // A package without placements drops this unit's earlier ones.
 }
 JSON.parse(spec); // Validate all bindings and assets before saving or replacing any files.
+collectUnusedTextures(manifest, writes);
 writes.set(MANIFEST, Buffer.from(`${JSON.stringify(manifest, null, 2)}\n`));
 writes.set(SPEC, Buffer.from(spec));
 const files = [...writes].map(([file, bytes]) => ({
@@ -205,6 +279,10 @@ writeFileSync(`${checkpoint}.tmp`, JSON.stringify(files));
 renameSync(`${checkpoint}.tmp`, checkpoint);
 try {
   for (const [file, bytes] of writes) {
+    if (bytes === null) {
+      rmSync(file, { force: true });
+      continue;
+    }
     mkdirSync(path.dirname(file), { recursive: true });
     writeFileSync(file, bytes);
   }

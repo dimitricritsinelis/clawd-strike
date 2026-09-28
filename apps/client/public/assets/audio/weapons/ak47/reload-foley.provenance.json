@@ -1,0 +1,322 @@
+{
+ "file": "reload-foley.wav",
+ "bytes": 146634,
+ "md5": "f6831e2db35e4ecf03b04a2bec3b9192",
+ "format": "RIFF WAVE, PCM 16-bit, mono, 44100 Hz",
+ "licence": "CC0 1.0 Universal. Every recorded cut comes from a Freesound page marked Creative Commons 0; the synthesized layers are original to this project.",
+ "purpose": "AK-47 magazine-only reload foley (no charging handle, no bolt, no ground impact). Cut table: AK47_RELOAD_FOLEY_LAYOUT in apps/client/src/runtime/audio/ak47AudioDsp.ts; event timing and levels: AK47_RELOAD_AUDIO_TIMELINE in WeaponAudio.ts, driven by weapons/ak47ReloadMarks.ts.",
+ "sources": [
+  {
+   "id": "fs725403",
+   "title": "A rifle being moved around and handled w/ magazine removals by serøutōnin--deprivəd",
+   "author": "serøutōnin--deprivəd",
+   "page": "https://freesound.org/people/ser%C3%B8ut%C5%8Dnin--depriv%C9%99d/sounds/725403/",
+   "downloadUrl": "https://cdn.freesound.org/previews/725/725403_7157894-hq.mp3",
+   "downloadKind": "Freesound HQ preview MP3 (lossy, derived from the original)",
+   "downloadBytes": 664689,
+   "downloadMd5": "d90afabb27c8780a5da8fc9981091dbd",
+   "downloadSha256": "64bcf110ca8b0dac893045e06b621d302b57f328c7135961323dca0594516219",
+   "fetchedAt": "2026-09-26T07:17:16.289Z",
+   "licence": "CC0 1.0 Universal (Public Domain Dedication)",
+   "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "licenceTextOnPage": "Creative Commons 0: You can copy, modify, distribute and perform the sound, even for commercial purposes, all without the need of asking permission to the author.",
+   "decodedWavMd5": "095169c577935deee4e0cfa9fdbe7338",
+   "decodedWith": "afconvert -f WAVE -d LEI16 (macOS), then mono downmix"
+  },
+  {
+   "id": "fs104407",
+   "title": "Mag remove.wav by Nanashi",
+   "author": "Nanashi",
+   "page": "https://freesound.org/people/Nanashi/sounds/104407/",
+   "downloadUrl": "https://cdn.freesound.org/previews/104/104407_61794-hq.mp3",
+   "downloadKind": "Freesound HQ preview MP3 (lossy, derived from the original)",
+   "downloadBytes": 24371,
+   "downloadMd5": "7496e11a7c1175e743abb0fd260fe187",
+   "downloadSha256": "cd22e7ad25bab2d2e0dc3c4eee9e0d8c89356e0eb0ef3d39bb5fd20968ecb5cf",
+   "fetchedAt": "2026-09-26T07:17:27.227Z",
+   "licence": "CC0 1.0 Universal (Public Domain Dedication)",
+   "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "licenceTextOnPage": "Creative Commons 0: You can copy, modify, distribute and perform the sound, even for commercial purposes, all without the need of asking permission to the author.",
+   "decodedWavMd5": "81c34412f9600111cfffab1b6b6b32c2",
+   "decodedWith": "afconvert -f WAVE -d LEI16 (macOS), then mono downmix"
+  },
+  {
+   "id": "fs674742",
+   "title": "AK-47 Assault Rifle being unloaded and reloaded by serøutōnin--deprivəd",
+   "author": "serøutōnin--deprivəd",
+   "page": "https://freesound.org/people/ser%C3%B8ut%C5%8Dnin--depriv%C9%99d/sounds/674742/",
+   "downloadUrl": "https://cdn.freesound.org/previews/674/674742_7157894-hq.mp3",
+   "downloadKind": "Freesound HQ preview MP3 (lossy, derived from the original)",
+   "downloadBytes": 41955,
+   "downloadMd5": "fa747c1090bfe96b2df55fd49ac1a45e",
+   "downloadSha256": "d3608a1e6c00bcdfc5b7d3006fe19ce6bee9dc655f927b71def6f4dd67aa6964",
+   "fetchedAt": "2026-09-26T07:17:26.570Z",
+   "licence": "CC0 1.0 Universal (Public Domain Dedication)",
+   "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "licenceTextOnPage": "Creative Commons 0: You can copy, modify, distribute and perform the sound, even for commercial purposes, all without the need of asking permission to the author.",
+   "decodedWavMd5": "9a84f6b01855493dee5c9d40caae1385",
+   "decodedWith": "afconvert -f WAVE -d LEI16 (macOS), then mono downmix"
+  },
+  {
+   "id": "fs142892",
+   "title": "AK47 chambering.aif by ceremonialchapstick",
+   "author": "ceremonialchapstick",
+   "page": "https://freesound.org/people/ceremonialchapstick/sounds/142892/",
+   "downloadUrl": "https://cdn.freesound.org/previews/142/142892_2578302-hq.mp3",
+   "downloadKind": "Freesound HQ preview MP3 (lossy, derived from the original)",
+   "downloadBytes": 274582,
+   "downloadMd5": "c004e126acf3d840015e536b06a82d8e",
+   "downloadSha256": "1d2d31fcc8e3d798b5927f32a6aa6046714dfb01c5296fa14dfd2c2fd637b112",
+   "fetchedAt": "2026-09-26T07:17:07.608Z",
+   "licence": "CC0 1.0 Universal (Public Domain Dedication)",
+   "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "licenceTextOnPage": "Creative Commons 0: You can copy, modify, distribute and perform the sound, even for commercial purposes, all without the need of asking permission to the author.",
+   "decodedWavMd5": "1482cc8c896f04e7882be6342781d6e4",
+   "decodedWith": "afconvert -f WAVE -d LEI16 (macOS), then mono downmix"
+  },
+  {
+   "id": "fs719244",
+   "title": "A gun's magazine being hit once by serøutōnin--deprivəd",
+   "author": "serøutōnin--deprivəd",
+   "page": "https://freesound.org/people/ser%C3%B8ut%C5%8Dnin--depriv%C9%99d/sounds/719244/",
+   "downloadUrl": "https://cdn.freesound.org/previews/719/719244_7157894-hq.mp3",
+   "downloadKind": "Freesound HQ preview MP3 (lossy, derived from the original)",
+   "downloadBytes": 26876,
+   "downloadMd5": "1a03e327f0fd2be924986e921c0dbdd7",
+   "downloadSha256": "b94056daea3a531687c6eca7256ad77fb1faed4bcd7d029f1fc62f61720d2bab",
+   "fetchedAt": "2026-09-26T07:17:24.109Z",
+   "licence": "CC0 1.0 Universal (Public Domain Dedication)",
+   "licenceUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "licenceTextOnPage": "Creative Commons 0: You can copy, modify, distribute and perform the sound, even for commercial purposes, all without the need of asking permission to the author.",
+   "decodedWavMd5": "a8496a9f08da0809d2dd1badb331411a",
+   "decodedWith": "afconvert -f WAVE -d LEI16 (macOS), then mono downmix"
+  }
+ ],
+ "cuts": [
+  {
+   "id": "liftCloth",
+   "source": "fs725403",
+   "sourceWindowS": [
+    3.735,
+    3.955
+   ],
+   "highpassHz": 250,
+   "lowpassHz": 7000,
+   "fadeInS": 0.02,
+   "fadeOutS": 0.06,
+   "normaliseGainDb": 9.71,
+   "layout": {
+    "startS": 0.02,
+    "endS": 0.24,
+    "hitS": 0
+   }
+  },
+  {
+   "id": "releaseClick",
+   "source": "fs104407",
+   "sourceWindowS": [
+    0.2502,
+    0.3
+   ],
+   "highpassHz": 400,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.018,
+   "normaliseGainDb": 0.42,
+   "layout": {
+    "startS": 0.26,
+    "endS": 0.309773,
+    "hitS": 0.001995
+   }
+  },
+  {
+   "id": "slideOut",
+   "source": "fs674742",
+   "sourceWindowS": [
+    0.2091,
+    0.37
+   ],
+   "highpassHz": 200,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.04,
+   "normaliseGainDb": 3.58,
+   "layout": {
+    "startS": 0.329773,
+    "endS": 0.490635,
+    "hitS": 0.002812
+   }
+  },
+  {
+   "id": "grabCloth",
+   "source": "fs725403",
+   "sourceWindowS": [
+    4.015,
+    4.245
+   ],
+   "highpassHz": 250,
+   "lowpassHz": 7000,
+   "fadeInS": 0.015,
+   "fadeOutS": 0.07,
+   "normaliseGainDb": 22.89,
+   "layout": {
+    "startS": 0.510635,
+    "endS": 0.740635,
+    "hitS": 0
+   }
+  },
+  {
+   "id": "hookTick",
+   "source": "fs142892",
+   "sourceWindowS": [
+    4.6042,
+    4.64
+   ],
+   "highpassHz": 800,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.02,
+   "normaliseGainDb": 16.31,
+   "layout": {
+    "startS": 0.760635,
+    "endS": 0.796463,
+    "hitS": 0.002109
+   }
+  },
+  {
+   "id": "seatClickA",
+   "source": "fs142892",
+   "sourceWindowS": [
+    8.798,
+    8.825
+   ],
+   "highpassHz": 250,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.012,
+   "normaliseGainDb": 3.05,
+   "layout": {
+    "startS": 0.816463,
+    "endS": 0.843469,
+    "hitS": 0.000658
+   }
+  },
+  {
+   "id": "seatChunkA",
+   "source": "fs719244",
+   "sourceWindowS": [
+    0.597,
+    0.7
+   ],
+   "highpassHz": 90,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.05,
+   "normaliseGainDb": -1.7,
+   "layout": {
+    "startS": 0.863469,
+    "endS": 0.966463,
+    "hitS": 0.001746
+   }
+  },
+  {
+   "id": "seatClickB",
+   "source": "fs142892",
+   "sourceWindowS": [
+    9.9385,
+    9.9655
+   ],
+   "highpassHz": 250,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.012,
+   "normaliseGainDb": 12.74,
+   "layout": {
+    "startS": 0.986463,
+    "endS": 1.013469,
+    "hitS": 0.000499
+   }
+  },
+  {
+   "id": "seatChunkB",
+   "source": "fs725403",
+   "sourceWindowS": [
+    0.9683,
+    1.035
+   ],
+   "highpassHz": 90,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.03,
+   "normaliseGainDb": -0.7,
+   "layout": {
+    "startS": 1.033469,
+    "endS": 1.100159,
+    "hitS": 0.002562
+   }
+  },
+  {
+   "id": "settleRattle",
+   "source": "fs674742",
+   "sourceWindowS": [
+    1.1947,
+    1.36
+   ],
+   "highpassHz": 300,
+   "lowpassHz": null,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.05,
+   "normaliseGainDb": 15.71,
+   "layout": {
+    "startS": 1.120159,
+    "endS": 1.28542,
+    "hitS": 0.001973
+   }
+  },
+  {
+   "id": "readySlap",
+   "source": "fs725403",
+   "sourceWindowS": [
+    2.1434,
+    2.26
+   ],
+   "highpassHz": 120,
+   "lowpassHz": 12000,
+   "fadeInS": 0.0005,
+   "fadeOutS": 0.05,
+   "normaliseGainDb": 3.93,
+   "layout": {
+    "startS": 1.30542,
+    "endS": 1.422018,
+    "hitS": 0.001995
+   }
+  },
+  {
+   "id": "readyCloth",
+   "source": "fs725403",
+   "sourceWindowS": [
+    4.3,
+    4.5
+   ],
+   "highpassHz": 250,
+   "lowpassHz": 7000,
+   "fadeInS": 0.01,
+   "fadeOutS": 0.07,
+   "normaliseGainDb": 12.73,
+   "layout": {
+    "startS": 1.442018,
+    "endS": 1.642018,
+    "hitS": 0
+   }
+  }
+ ],
+ "processing": [
+  "Each source decoded to 16-bit WAV, downmixed to mono and linearly resampled to 44100 Hz (fs725403, fs719244, fs674742, fs104407 and fs142892 are 44.1 kHz already).",
+  "Transient cuts ('hitS' > 0) are re-aligned so the first sample at >= 35% of the window peak sits 2 ms after the cut start.",
+  "Filters run with 30 ms of real source context before the cut: 2x RBJ high-pass at highpassHz (12 dB/oct each), optional RBJ low-pass at lowpassHz.",
+  "Raised-cosine fade-in/out (fadeInS/fadeOutS), peak-normalised to 0.89 (normaliseGainDb), packed with 20 ms of silence between cuts.",
+  "Runtime (ak47AudioDsp.ts buildAk47MagSeat): the hero seat is seatClickA+seatChunkA or seatClickB+seatChunkB (2-variant round robin), with the chunk given an extra 40 ms exponential decay, plus synthesized layers: thump 260->170 Hz (12 ms sweep, tau 18 ms, 0.7x, +1.5 ms), band-passed noise knock 380 Hz Q1.2 (tau 11 ms, 0.55x) and a faint steel ring 2369/991/6029 Hz (tau 45 ms, 0.18x); normalised to 0.89.",
+  "Runtime: dropSwish is fully synthesized (band-passed noise swell, no impact). If this file fails to load, every event is synthesized instead."
+ ],
+ "rebuild": "Scratch builder build_sprite.mjs (session scratchpad rebuild/audio/). The cut table above is complete: re-running those windows, filters, fades and normalisation on the listed downloads reproduces this file; AK47_RELOAD_FOLEY_LAYOUT must then be updated from the new layout values."
+}

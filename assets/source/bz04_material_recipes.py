@@ -3,6 +3,7 @@ from pathlib import Path
 import argparse
 import hashlib
 import json
+import math
 import numpy as np
 from PIL import Image
 
@@ -33,6 +34,21 @@ def mirror_crop(pixels, crop, channel):
     return np.concatenate([top, bottom], axis=0)
 
 
+def bake_albedo(pixels, recipe):
+    """Apply the optional source curve in linear light before grain and paint."""
+    gamma = recipe.get('sourceGamma', 1)
+    if type(gamma) not in (int, float) or not math.isfinite(gamma) or gamma <= 0:
+        raise ValueError('sourceGamma must be a positive finite number')
+    source_linear = linear(pixels.astype(np.float64) / 255)
+    if gamma != 1:
+        source_linear = source_linear ** gamma
+    grain = recipe['grainMix']
+    if recipe['mode'] == 'neutral-grain-with-calibrated-vertex-paint':
+        gray = (1-grain) + grain * (source_linear @ np.array([.2126, .7152, .0722]))
+        return encoded(np.repeat(gray[:, :, None], 3, axis=2))
+    return encoded(np.array(recipe['paintLinear']) * ((1-grain) + grain*source_linear))
+
+
 def bake(design):
     OUTPUT.mkdir(parents=True, exist_ok=True)
     result = {}
@@ -55,13 +71,7 @@ def bake(design):
                     raise ValueError(f'Crop source dimensions changed: {relative}')
                 pixels = mirror_crop(pixels, crop['sourcePixelCropXYXY'], channel)
             if channel == 'albedo':
-                source_linear = linear(pixels.astype(np.float64) / 255)
-                grain = recipe['grainMix']
-                if mode == 'neutral-grain-with-calibrated-vertex-paint':
-                    gray = (1-grain) + grain * (source_linear @ np.array([.2126, .7152, .0722]))
-                    pixels = encoded(np.repeat(gray[:, :, None], 3, axis=2))
-                else:
-                    pixels = encoded(np.array(recipe['paintLinear']) * ((1-grain) + grain*source_linear))
+                pixels = bake_albedo(pixels, recipe)
             target = OUTPUT / f"{recipe['exportName']}-{channel}.png"
             Image.fromarray(pixels).save(target)
             maps[channel] = str(target.relative_to(ROOT))
@@ -89,6 +99,24 @@ def self_test():
         pass
     else:
         raise AssertionError('Out-of-range paint accepted')
+    ramp = np.array([[[0, 64, 128], [128, 192, 255]]], dtype=np.uint8)
+    recipe = {'mode':'bounded-linear-source-paint', 'grainMix':.8, 'paintLinear':[.7,.6,.4]}
+    legacy = encoded(np.array(recipe['paintLinear']) * (.2 + .8*linear(ramp.astype(np.float64)/255)))
+    assert np.array_equal(bake_albedo(ramp, recipe), legacy)
+    assert np.array_equal(bake_albedo(ramp, dict(recipe, sourceGamma=1)), legacy)
+    neutral = dict(recipe, mode='neutral-grain-with-calibrated-vertex-paint')
+    gray = .2 + .8*(linear(ramp.astype(np.float64)/255) @ np.array([.2126,.7152,.0722]))
+    assert np.array_equal(bake_albedo(ramp, neutral), encoded(np.repeat(gray[:,:,None], 3, axis=2)))
+    curved = bake_albedo(ramp, dict(recipe, grainMix=1, paintLinear=[1,1,1], sourceGamma=.62))
+    assert curved[0,0,0] == 0 and curved[0,1,2] == 255, 'Source curve added a constant lift or clipped white'
+    expected = encoded(linear(ramp.astype(np.float64)/255)**.62)
+    wrong_domain = np.rint((ramp.astype(np.float64)/255)**.62*255).astype(np.uint8)
+    assert np.array_equal(curved, expected) and not np.array_equal(curved, wrong_domain), 'Gamma was not applied after linear decoding'
+    for bad in (None, True, '0.62', 0, -1, float('nan'), float('inf')):
+        try:bake_albedo(ramp, dict(recipe, sourceGamma=bad))
+        except ValueError:pass
+        else:raise AssertionError(('Invalid sourceGamma accepted', bad))
+    print('PASS source-gamma fixtures: byte-identical default, linear-light curve, black/white endpoints, invalid-value rejection')
     print('PASS material fixtures: sRGB round trip, crop orientation, both normal mirrors, bounded paint')
 
 

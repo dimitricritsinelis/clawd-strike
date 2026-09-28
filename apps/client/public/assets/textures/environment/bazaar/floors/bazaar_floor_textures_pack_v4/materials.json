@@ -273,7 +273,7 @@
       "albedoGamma": 1,
       "dustStrength": 0,
       "roughness": 0.94,
-      "normalScale": 0.3,
+      "normalScale": 0.55,
       "aoIntensity": 0.45,
       "textures": {
         "1k": {
@@ -447,24 +447,24 @@
     },
     {
       "id": "bz04_court_limestone_flags_01",
-      "tileSizeM": 2.4,
-      "tintHex": "#d8c4a5",
+      "tileSizeM": 2.15,
+      "tintHex": "#ffffff",
       "albedoBoost": 1,
       "albedoGamma": 1,
       "dustStrength": 0,
       "roughness": 0.94,
-      "normalScale": 0.3,
-      "aoIntensity": 0.4,
+      "normalScale": 0.4,
+      "aoIntensity": 0.25,
       "textures": {
         "1k": {
           "albedo": "./bz06-derived/bz06_quiet_flags-albedo.png",
-          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
-          "arm": "./court_flagstone_01/court_flagstone_01_arm_1k.jpg"
+          "normal": "./red_sandstone_pavement/red_sandstone_pavement_nor_gl_1k.jpg",
+          "arm": "./red_sandstone_pavement/red_sandstone_pavement_arm_1k.jpg"
         },
         "2k": {
           "albedo": "./bz06-derived/bz06_quiet_flags-albedo.png",
-          "normal": "./court_flagstone_01/court_flagstone_01_nor_gl_2k.jpg",
-          "arm": "./court_flagstone_01/court_flagstone_01_arm_2k.jpg"
+          "normal": "./red_sandstone_pavement/red_sandstone_pavement_nor_gl_2k.jpg",
+          "arm": "./red_sandstone_pavement/red_sandstone_pavement_arm_2k.jpg"
         }
       }
     }

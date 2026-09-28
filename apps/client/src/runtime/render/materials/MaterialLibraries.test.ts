@@ -178,12 +178,18 @@ test("R7 Spice and Tea Ramp limestone flags remain distinct from Caravan service
   assert.ok(rampMaterial);
   assert.ok(caravanMaterial);
   assert.ok(northMaterial);
-  assert.equal(spiceMaterial.tileSizeM, 2.4);
-  assert.equal(spiceMaterial.tintHex, "#d8c4a5");
+  assert.equal(spiceMaterial.tileSizeM, 2.15);
+  assert.equal(spiceMaterial.tintHex, "#ffffff"); // Calibrated albedo is not tinted twice.
   assert.equal(spiceMaterial.albedoGamma, 1);
-  assert.equal(spiceMaterial.normalScale, 0.3);
-  assert.equal(spiceMaterial.aoIntensity, 0.4);
+  assert.equal(spiceMaterial.normalScale, 0.4);
+  assert.equal(spiceMaterial.aoIntensity, 0.25);
   assert.match(spiceMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
+  for (const quality of ["1k", "2k"] as const) {
+    assert.equal(spiceMaterial.textures[quality]?.normal,
+      `./red_sandstone_pavement/red_sandstone_pavement_nor_gl_${quality}.jpg`);
+    assert.equal(spiceMaterial.textures[quality]?.arm,
+      `./red_sandstone_pavement/red_sandstone_pavement_arm_${quality}.jpg`);
+  }
   assert.match(rampMaterial.textures["1k"]?.albedo ?? "", /bz06_quiet_flags-albedo/);
   assert.equal(spiceMaterial.tileSizeM, rampMaterial.tileSizeM);
   assert.equal(spiceMaterial.tintHex, rampMaterial.tintHex);

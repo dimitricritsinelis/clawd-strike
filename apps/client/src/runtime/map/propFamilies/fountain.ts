@@ -46,17 +46,17 @@ export const FOUNTAIN_WATER_MATERIAL_INPUTS = {
   transmission: 0,
   // Enough roughness that ripples break the reflection into moving highlights
   // instead of returning one uniform sheet of sky.
-  roughness: 0.24,
+  roughness: 0.28,
   metalness: 0,
   clearcoat: 0.32,
   clearcoatRoughness: 0.2,
   ior: 1.333,
   reflectivity: 0.55,
-  normalScale: 0.75,
+  normalScale: 0.42,
   thickness: 0.16,
   attenuationColor: 0x87857a,
   attenuationDistance: 1.25,
-  envMapIntensity: 0.22,
+  envMapIntensity: 0.18,
   specularIntensity: 0.5,
   specularColor: 0xdfe8e2,
   fresnelStrength: 0.42,
@@ -69,9 +69,9 @@ export function createFountainRippleNormalTexture(size = 96): DataTexture {
   const sampleHeight = (x: number, y: number): number => {
     const u = x / size;
     const v = y / size;
-    const broad = Math.sin((u * 2.1 + v * 0.7) * Math.PI * 2) * 0.42;
-    const crossed = Math.sin((u * -0.8 + v * 2.7) * Math.PI * 2 + 0.8) * 0.28;
-    const circular = Math.sin(Math.hypot(u - 0.5, v - 0.5) * Math.PI * 18) * 0.12;
+    const broad = Math.sin((u * 2 + v) * Math.PI * 2) * 0.32;
+    const crossed = Math.sin((-u + v * 3) * Math.PI * 2 + 0.8) * 0.22;
+    const circular = Math.sin(u * Math.PI * 8) * Math.cos(v * Math.PI * 8) * 0.06;
     return broad + crossed + circular;
   };
   for (let y = 0; y < size; y += 1) {
@@ -384,14 +384,21 @@ export function createModularFountainStoneGeometry(): BufferGeometry {
       + Math.sin(angle * 3 - y * 11) * 0.012;
     const baseWear = y < 0.13 ? 0.88 : y < 0.25 ? 0.95 : 1;
     const exposedWear = radius > 0.94 ? 0.965 : 1;
-    const wetInnerRim = (radius < 0.75 && y > 0.28) || (radius < 0.38 && y > 0.9)
-      ? 0.7
+    // Dampness belongs inside the basins; the pedestal and crown stay dry.
+    const lowerWet = radius > 0.63 && radius < 0.83 && y > 0.26 && y < 0.39;
+    const upperWet = radius > 0.24 && radius < 0.38 && y > 0.89 && y < 1.015;
+    const wetInnerRim = lowerWet || upperWet ? 0.68 : 1;
+    const coping = (radius > 0.82 && y > 0.34 && y < 0.43)
+      || (radius > 0.38 && y > 0.96 && y < 1.025);
+    const copingTone = coping ? 0.8 : 1;
+    const mineralEdge = (lowerWet || upperWet)
+      ? 1 + 0.055 * (0.5 + 0.5 * Math.sin(angle * 3 + y * 7))
       : 1;
     colors.setXYZ(
       index,
-      colors.getX(index) * baseWear * exposedWear * wetInnerRim * sectorWear,
-      colors.getY(index) * baseWear * exposedWear * wetInnerRim * sectorWear,
-      colors.getZ(index) * baseWear * exposedWear * wetInnerRim * sectorWear,
+      colors.getX(index) * baseWear * exposedWear * wetInnerRim * sectorWear * copingTone * mineralEdge,
+      colors.getY(index) * baseWear * exposedWear * wetInnerRim * sectorWear * copingTone * mineralEdge,
+      colors.getZ(index) * baseWear * exposedWear * wetInnerRim * sectorWear * copingTone * mineralEdge,
     );
   }
   colors.needsUpdate = true;
@@ -425,10 +432,10 @@ export function createModularFountainTileGeometry(): BufferGeometry {
   // toward blue it becomes the highest-chroma thing in the court the moment the
   // water above it is transparent enough to show it.
   const glazePalette = [
-    [0.14, 0.24, 0.23],
-    [0.21, 0.33, 0.29],
-    [0.45, 0.41, 0.29],
-    [0.16, 0.28, 0.26],
+    [0.38, 0.19, 0.12],
+    [0.46, 0.24, 0.16],
+    [0.55, 0.3, 0.18],
+    [0.4, 0.22, 0.16],
   ] as const;
   const basinFloor = toNonIndexedGeometry(new CircleGeometry(0.61, 32));
   basinFloor.rotateX(-Math.PI * 0.5);

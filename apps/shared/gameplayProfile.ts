@@ -37,24 +37,24 @@ export type GameplayProfileResolution =
 
 export const GAMEPLAY_BALANCE_SEASON = "preseason-2026-08";
 /** First 12 hex characters of SHA-256(JSON.stringify(DESKTOP_HUMAN_BALANCE_BASELINE)). */
-export const GAMEPLAY_BALANCE_BASELINE_FINGERPRINT = "f30c73c70dc0";
+export const GAMEPLAY_BALANCE_BASELINE_FINGERPRINT = "af90b61c3e89";
 export const MOBILE_AGENT_FALLBACK_PROFILE_ID = "desktop-agent" as const;
 
 const mobileHumanIdentity = Object.freeze({
   profileId: "mobile-human",
-  tuningRevision: `mobile-human-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r3`,
+  tuningRevision: `mobile-human-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r5`,
   balanceSeason: GAMEPLAY_BALANCE_SEASON,
 } satisfies GameplayProfileIdentity);
 
 const desktopHumanIdentity = Object.freeze({
   profileId: "desktop-human",
-  tuningRevision: `desktop-human-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r3`,
+  tuningRevision: `desktop-human-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r5`,
   balanceSeason: GAMEPLAY_BALANCE_SEASON,
 } satisfies GameplayProfileIdentity);
 
 const desktopAgentIdentity = Object.freeze({
   profileId: "desktop-agent",
-  tuningRevision: `desktop-agent-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r3`,
+  tuningRevision: `desktop-agent-baseline-${GAMEPLAY_BALANCE_BASELINE_FINGERPRINT}-r5`,
   balanceSeason: GAMEPLAY_BALANCE_SEASON,
 } satisfies GameplayProfileIdentity);
 
