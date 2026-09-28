@@ -5,7 +5,6 @@ const DEFAULT_FLOOR_QUALITY = "1k";
 
 export type RuntimeSpawnId = "A" | "B";
 export type RuntimeControlMode = "human" | "agent";
-export type RuntimePropProfile = "subtle" | "medium" | "high";
 export type RuntimeFloorMode = "blockout" | "pbr";
 export type RuntimeWallMode = "blockout" | "pbr";
 export type RuntimeFloorQuality = "1k" | "2k" | "4k";
@@ -17,13 +16,6 @@ export type RuntimeLightingPreset = "golden" | "flat";
  * Mobile is capped separately by bootstrap regardless of tier.
  */
 export type RuntimeQualityTier = "high" | "standard";
-export type RuntimePropVisualMode = "blockout" | "bazaar";
-export type RuntimePropChaosOptions = {
-  profile: RuntimePropProfile;
-  jitter: number | null;
-  cluster: number | null;
-  density: number | null;
-};
 
 export type RuntimeUrlParams = {
   mapId: string;

@@ -1,4 +1,4 @@
-import { BoxGeometry, BufferGeometry, Float32BufferAttribute } from "three";
+import { BoxGeometry, BufferGeometry, CylinderGeometry, Float32BufferAttribute } from "three";
 import { angledBoxPart, boxPart, mergeProceduralGeometry, tintGeometry } from "./propsCore";
 
 function coverTarpSurfaceY(u: number, v: number): number {
@@ -140,4 +140,12 @@ export function createCoverCrateGeometry(variant: 0 | 1 | 2): BufferGeometry {
   const geometry = mergeProceduralGeometry(parts);
   geometry.computeVertexNormals();
   return geometry;
+}
+
+export function createUnitRopeGeometry(axis: "x" | "y" | "z"): BufferGeometry {
+  const rope = new CylinderGeometry(0.5, 0.5, 1, 6, 1, false);
+  if (axis === "x") rope.rotateZ(Math.PI * 0.5);
+  else if (axis === "z") rope.rotateX(Math.PI * 0.5);
+  rope.computeVertexNormals();
+  return rope;
 }

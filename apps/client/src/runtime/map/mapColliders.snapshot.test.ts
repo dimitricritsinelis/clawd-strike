@@ -3,7 +3,7 @@
 // Builds, from the committed public map (public/maps/bazaar-map/map_spec.json),
 // everything Game.rebuildWorld() hands to the physics world and the spawners:
 //   - world colliders: buildBlockout() (boundary walls, perimeter cage) plus
-//     buildProps() (anchor-pass shop colliders and the compiled-dressing cover
+//     buildProps() (authored shop colliders and the compiled-dressing cover
 //     fitted to the prop GLB geometry), exactly as Game concatenates them;
 //   - the playable boundary and traversal surfaces WorldColliders receives;
 //   - player spawn poses (Game.selectSpawnPose) and the initial enemy spawn
@@ -123,10 +123,7 @@ async function buildSnapshot(): Promise<Snapshot> {
     blockout,
     anchors,
     seedOverride: null,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels,
-    highVis: false,
   });
   const colliders = [...builtBlockout.colliders, ...builtProps.colliders];
   const traversalSurfaces = blockout.traversalSurfaces ?? [];

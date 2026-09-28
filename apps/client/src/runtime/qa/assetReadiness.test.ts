@@ -121,8 +121,6 @@ test("retained prefab children preload after standalone dressing is retired", ()
   assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["ph_wooden_crate_01"]);
   map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_cover_goods"};
   assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack"]);
-  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_market_stall"};
-  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack","ph_brass_pot_01","ph_ceramic_pot","ph_wicker_basket_02","ph_wooden_crate_01"]);
 });
 
 test("mobile prop plan drops only the R8 wall-foot clutter models", () => {
@@ -356,34 +354,17 @@ test("QA facade requests remain pending between prop and door packs until the GL
   assert.match(bootstrapSource, /for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\.fail\(requestId, error\);/);
 });
 
-test("QA direct-texture inventory matches every static buildProps asset URL", () => {
-  const buildPropsSource = readFileSync(
-    new URL("../map/buildProps.ts", import.meta.url),
-    "utf8",
-  );
-  const declaredUrls = [...buildPropsSource.matchAll(
-    /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
-  )].map((match) => match[1]!);
+test("QA direct-texture inventory matches every static buildProps and propsCore asset URL", () => {
+  const declaredUrls = ["../map/buildProps.ts", "../map/propFamilies/propsCore.ts"].flatMap((path) => [
+    ...readFileSync(new URL(path, import.meta.url), "utf8").matchAll(
+      /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
+    ),
+  ].map((match) => match[1]!));
   assert.deepEqual(
     [...new Set(declaredUrls)].sort(),
     [...QA_RENDERER_DIRECT_TEXTURE_URLS].sort(),
-    "buildProps direct asset URLs changed without updating the QA asset plan",
+    "buildProps or propsCore direct asset URLs changed without updating the QA asset plan",
   );
-
-  const propsCoreSource = readFileSync(
-    new URL("../map/propFamilies/propsCore.ts", import.meta.url),
-    "utf8",
-  );
-  const propsCoreDeclaredUrls = [...propsCoreSource.matchAll(
-    /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
-  )].map((match) => match[1]!);
-  const plannedPropTextureUrls = new Set<string>(QA_RENDERER_DIRECT_TEXTURE_URLS);
-  for (const url of new Set(propsCoreDeclaredUrls)) {
-    assert.ok(
-      plannedPropTextureUrls.has(url),
-      `propsCore direct asset '${url}' is absent from the QA asset plan`,
-    );
-  }
 });
 
 test("QA direct-texture inventory covers palm loader declarations", () => {

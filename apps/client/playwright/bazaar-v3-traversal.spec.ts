@@ -42,7 +42,6 @@ test.describe(`Bazaar v3 ${TRAVERSAL_PROFILE} traversal`, () => {
                 qa: 1,
                 floors: "blockout",
                 walls: "blockout",
-                props: 0,
                 ao: 0,
                 unlimitedHealth: 1,
               }

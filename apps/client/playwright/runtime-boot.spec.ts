@@ -99,7 +99,6 @@ test("boots mobile bazaar final dressing with registered models", async ({ brows
       extraSearchParams: {
         floors: "pbr",
         walls: "pbr",
-        props: "bazaar",
         vm: 0,
         perf: 1,
       },

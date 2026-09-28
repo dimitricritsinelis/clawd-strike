@@ -19,7 +19,6 @@ test("completes the canonical main-lane smoke route without leaving bounds", asy
       qa: 1,
       floors: "blockout",
       walls: "blockout",
-      props: 0,
       ao: 0,
       unlimitedHealth: 1,
     },

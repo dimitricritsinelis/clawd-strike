@@ -8,7 +8,6 @@ export type QaAssetProfile = "qa" | "cell-review";
 function compiledPrefabModelIds(runtimeId: string): readonly string[] {
   if (runtimeId === "bazaar_spawn_cover") return ["ph_wooden_crate_01"];
   if (runtimeId === "bazaar_cover_goods") return ["cc0_spice_sack"];
-  if (runtimeId === "bazaar_market_stall") return ["ph_wooden_crate_01", "ph_wicker_basket_02", "cc0_spice_sack", "ph_brass_pot_01", "ph_ceramic_pot"];
   return [];
 }
 export type QaTextureTier = "1k" | "2k" | "4k";
@@ -125,28 +124,14 @@ export const QA_RENDERER_DIRECT_TEXTURE_URLS = [
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_arm_1k.jpg",
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_diff_1k.jpg",
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_nor_gl_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_arm_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/canopy_stripe_albedo_v1.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
-  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",

@@ -372,18 +372,11 @@ export class Game {
   private renderedPropPlacements: RenderedPropPlacement[] = [];
   private propStats: PropsBuildStats = {
     seed: 1,
-    profile: "subtle",
-    jitter: 0.28,
-    cluster: 0.45,
-    density: 0.55,
-    totalAnchors: 0,
     candidatesTotal: 0,
     collidersPlaced: 0,
     rejectedClearZone: 0,
     rejectedBounds: 0,
     rejectedGapRule: 0,
-    visualOnlyLandmarks: 0,
-    stallFillersPlaced: 0,
   };
   private wallDetailStats: WallDetailPlacementStats = {
     enabled: false,
@@ -1748,18 +1741,11 @@ export class Game {
     this.renderedPropPlacements = [];
     this.propStats = {
       seed: runtimeSeed,
-      profile: "medium",
-      jitter: 0.34,
-      cluster: 0.56,
-      density: MAP_PROPS_ENABLED ? 0.44 : 0,
-      totalAnchors: this.anchorsSpec?.anchors.length ?? 0,
       candidatesTotal: 0,
       collidersPlaced: 0,
       rejectedClearZone: 0,
       rejectedBounds: 0,
       rejectedGapRule: 0,
-      visualOnlyLandmarks: 0,
-      stallFillersPlaced: 0,
     };
 
     if (MAP_PROPS_ENABLED && this.anchorsSpec) {
@@ -1768,11 +1754,7 @@ export class Game {
         blockout: blockoutSpec,
         anchors: this.anchorsSpec,
         seedOverride: this.seedOverride,
-        // Bazaar visuals ignore the chaos options.
-        propChaos: { profile: "medium", jitter: null, cluster: null, density: null },
-        propVisuals: "bazaar",
         propModels: this.propModels,
-        highVis: false,
       });
       this.propsRoot = builtProps.root;
       applyStaticMaterialRenderBudget(builtProps.root);

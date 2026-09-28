@@ -692,34 +692,3 @@ export function createFountainCourtAccentGeometry(): BufferGeometry {
   };
   return geometry;
 }
-
-export function createCourtPlanterStoneGeometry(): BufferGeometry {
-  const foot = new CylinderGeometry(0.48, 0.52, 0.12, 12, 1, false);
-  foot.translate(0, -0.44, 0);
-  const body = new CylinderGeometry(0.43, 0.48, 0.65, 12, 2, true);
-  body.translate(0, -0.055, 0);
-  const rim = new TorusGeometry(0.43, 0.07, 8, 16);
-  rim.rotateX(Math.PI * 0.5);
-  rim.translate(0, 0.3, 0);
-  return mergeProceduralGeometry([foot, body, rim]);
-}
-
-export function createCourtPlanterSoilGeometry(): BufferGeometry {
-  const soil = new CylinderGeometry(0.37, 0.37, 0.055, 16, 1, false);
-  soil.translate(0, 0.285, 0);
-  return soil;
-}
-
-export function createCourtPlanterFoliageGeometry(): BufferGeometry {
-  const parts: BufferGeometry[] = [];
-  for (let index = 0; index < 7; index += 1) {
-    const angle = index * Math.PI * 2 / 7;
-    const leaf = new SphereGeometry(0.12, 8, 5);
-    leaf.scale(0.6, 1.4, 0.36);
-    leaf.rotateZ(Math.cos(angle) * 0.62);
-    leaf.rotateX(Math.sin(angle) * 0.62);
-    leaf.translate(Math.cos(angle) * 0.14, 0.34 + (index % 2) * 0.05, Math.sin(angle) * 0.14);
-    parts.push(leaf);
-  }
-  return mergeProceduralGeometry(parts);
-}

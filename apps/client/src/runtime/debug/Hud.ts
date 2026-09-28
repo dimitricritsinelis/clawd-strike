@@ -8,16 +8,11 @@ type HudSnapshot = {
   speedMps: number;
   propStats?: {
     seed: number;
-    profile: "subtle" | "medium" | "high";
-    jitter: number;
-    cluster: number;
-    density: number;
     candidatesTotal: number;
     collidersPlaced: number;
     rejectedClearZone: number;
     rejectedBounds: number;
     rejectedGapRule: number;
-    visualOnlyLandmarks: number;
   };
   weaponStats?: {
     loaded: boolean;
@@ -64,15 +59,11 @@ export class Hud {
     if (snapshot.propStats) {
       lines.push(`seed: ${snapshot.propStats.seed}`);
       lines.push(
-        `props profile: ${snapshot.propStats.profile} (j ${snapshot.propStats.jitter.toFixed(2)} c ${snapshot.propStats.cluster.toFixed(2)} d ${snapshot.propStats.density.toFixed(2)})`,
-      );
-      lines.push(
         `props placed/candidates: ${snapshot.propStats.collidersPlaced}/${snapshot.propStats.candidatesTotal}`,
       );
       lines.push(
         `rejects clear/bounds/gap: ${snapshot.propStats.rejectedClearZone}/${snapshot.propStats.rejectedBounds}/${snapshot.propStats.rejectedGapRule}`,
       );
-      lines.push(`visual-only landmarks: ${snapshot.propStats.visualOnlyLandmarks}`);
     }
 
     if (snapshot.weaponStats) {

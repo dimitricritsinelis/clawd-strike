@@ -1,6 +1,8 @@
 import { readFile } from "node:fs/promises";
 import assert from "node:assert/strict";
 import test from "node:test";
+import { BoxGeometry, Group, InstancedMesh, Mesh, MeshStandardMaterial } from "three";
+import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildProps } from "./buildProps";
 import { parseAnchorsSpec, parseBlockoutSpec, type RuntimeBlockoutZone, type RuntimeRect } from "./types";
 import {
@@ -78,30 +80,36 @@ test("v3 facade profiles resolve the authored facade-family palette and reject u
   );
 });
 
-test("procedural bazaar props remain deterministic, culled, and clear-zone safe without model assets", async () => {
+test("compiled bazaar props stay deterministic, culled, and clear-zone safe", async () => {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
   const anchors = parseAnchorsSpec(raw, specUrl.pathname);
-  // Exercise the fallback canopy after R7 retires its live render anchors.
-  anchors.anchors.push({id:"LEGACY_CANOPY_FIXTURE",type:"cloth_canopy_span",zone:"COVERED_SOUK",
-    pos:{x:42,y:40,z:5},endPos:{x:52,y:40,z:5},widthM:2.8});
+  // Every registered model resolves to a unit box. The real GLBs change prefab
+  // silhouettes, not the route and clearance rules checked here.
+  const propModels = {
+    hasModel: () => true,
+    instantiate: (id: string) => {
+      const root = new Group();
+      const model = new Mesh(new BoxGeometry(1, 1, 1).translate(0, 0.5, 0), new MeshStandardMaterial());
+      model.name = `model-${id}`;
+      root.add(model);
+      return root;
+    },
+  } as unknown as PropModelLibrary;
   const options = {
     mapId: blockout.mapId,
     blockout,
     anchors,
     seedOverride: 73,
-    propChaos: { profile: "high" as const, jitter: 0.7, cluster: 0.85, density: 1 },
-    propVisuals: "blockout" as const,
-    propModels: null,
-    highVis: false,
+    propModels,
   };
   const first = buildProps(options);
   const second = buildProps(options);
 
   assert.deepEqual(first.stats, second.stats);
   assert.deepEqual(first.colliders, second.colliders);
-  assert.ok(first.stats.collidersPlaced > 0, "procedural dressing produced no gameplay cover");
+  assert.ok(first.stats.collidersPlaced > 0, "compiled dressing produced no gameplay cover");
 
   const clearRects = blockout.zones
     .filter((candidate) => candidate.type === "clear_travel_zone")
@@ -130,35 +138,12 @@ test("procedural bazaar props remain deterministic, culled, and clear-zone safe 
   assert.ok(terraceCover, "tea terrace gameplay cover is missing");
   assert.ok(terraceCover.min.y >= 1.39, "tea terrace cover sank below its authored 1.4m surface");
 
-  const blockoutGroup = first.root.getObjectByName("map-props-blockout");
-  assert.ok(blockoutGroup, "procedural prop group is missing");
-  const batchNames = new Set(blockoutGroup!.children.map((child) => child.name));
-  assert.ok(batchNames.has("prop-shopfront"), "market stalls are missing");
-  assert.ok(batchNames.has("prop-canopy") || batchNames.has("prop-canopy-teal"), "cloth canopies are missing");
-  assert.equal(
-    batchNames.has("prop-threshold-rug"),
-    false,
-    "the removed unsupported route textile returned to the fallback prop layer",
-  );
-  assert.ok(batchNames.has("prop-landmark-cart"), "Caravan Court cart landmark is missing");
-  assert.ok(
-    [...batchNames].some((name) => name.startsWith("prop-stall-filler-")),
-    "crate, sack, and pottery filler clusters are missing",
-  );
-
-  for (const child of blockoutGroup!.children) {
-    const batch = child as typeof child & {
-      frustumCulled?: boolean;
-      boundingSphere?: unknown;
-      computeBoundingSphere?: () => void;
-    };
-    if (!batch.computeBoundingSphere) continue;
-    assert.equal(batch.frustumCulled, true, `${child.name} disabled frustum culling`);
-    assert.ok(batch.boundingSphere, `${child.name} lacks a computed instanced bound`);
+  const compiled = first.root.getObjectByName("map-props-v3-compiled");
+  assert.ok(compiled, "compiled prop group is missing");
+  const batches = compiled.children.filter((child): child is InstancedMesh => child instanceof InstancedMesh);
+  assert.ok(batches.length > 0, "compiled dressing drew no instanced batches");
+  for (const batch of batches) {
+    assert.equal(batch.frustumCulled, true, `${batch.name} disabled frustum culling`);
+    assert.ok(batch.boundingSphere, `${batch.name} lacks a computed instanced bound`);
   }
-
-  const shopfront = blockoutGroup!.getObjectByName("prop-shopfront") as typeof blockoutGroup & {
-    geometry?: { attributes?: { position?: { count: number } } };
-  };
-  assert.ok((shopfront.geometry?.attributes?.position?.count ?? 0) > 24, "shopfront fallback regressed to a plain cube");
 });

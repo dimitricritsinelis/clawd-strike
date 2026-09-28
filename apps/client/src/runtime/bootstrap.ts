@@ -727,10 +727,6 @@ export type RuntimeTextState = {
     canPlayAgain: boolean;
   };
   props: {
-    profile: "subtle" | "medium" | "high";
-    jitter: number;
-    cluster: number;
-    density: number;
     candidatesTotal: number;
     collidersPlaced: number;
     rejections: {
@@ -738,8 +734,6 @@ export type RuntimeTextState = {
       bounds: number;
       gapRule: number;
     };
-    visualOnlyLandmarks: number;
-    stallFillersPlaced: number;
   };
   weapon: {
     enabled: boolean;
@@ -3384,10 +3378,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         canPlayAgain: gameOverVisible,
       },
       props: {
-        profile: game.getPropsBuildStats().profile,
-        jitter: game.getPropsBuildStats().jitter,
-        cluster: game.getPropsBuildStats().cluster,
-        density: game.getPropsBuildStats().density,
         candidatesTotal: game.getPropsBuildStats().candidatesTotal,
         collidersPlaced: game.getPropsBuildStats().collidersPlaced,
         rejections: {
@@ -3395,8 +3385,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           bounds: game.getPropsBuildStats().rejectedBounds,
           gapRule: game.getPropsBuildStats().rejectedGapRule,
         },
-        visualOnlyLandmarks: game.getPropsBuildStats().visualOnlyLandmarks,
-        stallFillersPlaced: game.getPropsBuildStats().stallFillersPlaced,
       },
       weapon: {
         enabled: viewModelEnabled,

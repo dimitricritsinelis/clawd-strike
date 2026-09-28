@@ -18,55 +18,17 @@ import {
 import { PlayerController } from "../sim/PlayerController";
 import { WorldColliders } from "../sim/collision/WorldColliders";
 import { buildProps } from "./buildProps";
-import {
-  HERO_GATE_MAX_FIXTURE_GAP_M,
-  HERO_GATE_MIN_FIXTURE_GAP_M,
-  HERO_GATE_OUTER_RETURN_CLEARANCE_M,
-  HERO_GATE_REFERENCE_DEPTH_M,
-  HERO_GATE_REFERENCE_HEIGHT_M,
-  HERO_GATE_REFERENCE_WIDTH_M,
-  HERO_GATE_RETURN_PILLAR_WIDTH_M,
-  HERO_GATE_ROUTE_HALF_CLEARANCE_M,
-  resolveHeroGateDressingLayout,
-} from "./propFamilies/gateDressing";
 import { parseAnchorsSpec, parseBlockoutSpec, type RuntimeDressingPlacement } from "./types";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 
-const POLISH_MODULES = new Set([
-  "bazaar_market_stall",
-  "cc0_spice_sack",
-  "ph_brass_pot_01",
-  "bazaar_signboard",
-  "bazaar_laundry_line",
-  "bazaar_dyers_workstation",
-  "bazaar_cloth_canopy",
-  "bazaar_fountain_octagonal",
-  "bazaar_court_planter",
-  "bazaar_spice_goods",
-]);
-
-test("B18 north cabinet height changes only its authorized collider and the west canopy keeps its carrier", async () => {
+test("B18 north cabinet height changes only its authorized collider", async () => {
   const raw = JSON.parse(await readFile(new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url), "utf8"));
   const blockout = parseBlockoutSpec(raw);
   const anchors = parseAnchorsSpec(raw);
-  // The B18 counter, roof-access and textile-booth GLBs were never placed on
-  // the shipped map and are no longer published; the procedural canopy keeps
-  // the compiled dressing path active.
-  blockout.dressingPlacements = [
-    legacyPlacement("PLACE_DYERS_CANOPY_CANOPY_DYERS_01","bazaar_cloth_canopy",{width:4.4,depth:11.7,height:.18},
-      {x:47.15,y:45.36,z:5.9},{anchorId:"CANOPY_DYERS_01",classification:"overhead",semanticClass:"overhead",
-        spanSeats:{start:{x:41.3,y:45.36,z:5.9},end:{x:53,y:45.36,z:5.9}}}),
-  ];
+  blockout.dressingPlacements = [];
   const models = { hasModel: () => false } as unknown as PropModelLibrary;
-  const options = { mapId: blockout.mapId, blockout, anchors, seedOverride: null,
-    propChaos: { profile: "subtle" as const, jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar" as const, propModels: models, highVis: false };
+  const options = { mapId: blockout.mapId, blockout, anchors, seedOverride: null, propModels: models };
   const result = buildProps(options);
-  const carrier = result.root.getObjectByName("v3-dyers-west-canopy-carrier");
-  assert.ok(carrier, "west canopy lost its supported carrier");
-  const carrierBounds = new Box3().setFromObject(carrier);
-  assert.ok(carrierBounds.min.x < 41 && carrierBounds.max.x >= 41.39, "carrier no longer bears into masonry");
-  assert.ok(carrierBounds.min.y >= 4.379 && carrierBounds.max.y <= 6.021, "carrier enters the body envelope or leaves its roof datum");
   const beforeAnchors = { ...anchors, anchors: anchors.anchors.filter((entry) => !entry.id.startsWith("B18_")).map((entry) => entry.id === "DYE_E_SHOP_2" ? { ...entry, heightM: 3.2 } : entry) };
   const before = buildProps({ ...options, anchors: beforeAnchors });
   const retained = (colliders: typeof result.colliders) => colliders.filter((entry) => entry.id !== "DYE_E_SHOP_2-shop");
@@ -152,60 +114,27 @@ function legacyPlacement(id: string, moduleId: string, dimensionsM: RuntimeDress
     runtime:{mode:moduleId.startsWith("bazaar_")?"procedural":"model",id:moduleId}, ...overrides };
 }
 
-const legacyB4Placements = ["bazaar_ground_rug", "bazaar_market_cart"].flatMap(moduleId =>
-  Array.from({length:12},(_,index)=>legacyPlacement(`LEGACY_B4_${moduleId}_${index}`,moduleId,
-    moduleId === "bazaar_ground_rug" ? {width:2,depth:1.2,height:.04} : {width:1.2,depth:.75,height:.9},
-    {x:22,y:18+index,z:0})));
+const legacyB4Placements = Array.from({length:12},(_,index)=>legacyPlacement(`LEGACY_B4_bazaar_ground_rug_${index}`,
+  "bazaar_ground_rug",{width:2,depth:1.2,height:.04},{x:22,y:18+index,z:0}));
 
 async function buildPolishResult(placements?: RuntimeDressingPlacement[]) {
   const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
   const raw = JSON.parse(await readFile(specUrl, "utf8"));
   const blockout = parseBlockoutSpec(raw, specUrl.pathname);
   blockout.dressingPlacements = placements ?? (blockout.dressingPlacements ?? []).filter((placement) => (
-    POLISH_MODULES.has(placement.runtime.id)
-    && !placement.id.includes("PLACE_B4_")
-    && !placement.id.includes("PLACE_BPL")
+    placement.runtime.id === "bazaar_fountain_octagonal"
   ));
   return buildProps({
     mapId: blockout.mapId,
     blockout,
     anchors: parseAnchorsSpec(raw, specUrl.pathname),
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: 0 },
-    propVisuals: "bazaar",
     propModels: createPropModelFixture(),
-    highVis: false,
   });
 }
 
 async function buildPolishFixture() {
   return (await buildPolishResult()).root.getObjectByName("map-props-v3-compiled")!;
-}
-
-async function buildSharedStallResult(includeStalls = true) {
-  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
-  const raw = JSON.parse(await readFile(specUrl, "utf8"));
-  const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  blockout.dressingPlacements = includeStalls
-    ? Array.from({ length: 6 }, (_, index): RuntimeDressingPlacement => ({
-      id: `LEGACY_STALL_${index}`, clusterId: "LEGACY_STALL_FIXTURE", assetId: "ASSET_MARKET_STALL",
-      anchorId: `LEGACY_STALL_ANCHOR_${index}`, zoneId: "SPICE_STREET", districtId: "DISTRICT_SPICE",
-      classification: "soft_visual", position: { x: 27, y: 23 + index * 3, z: 0 }, yawDeg: 90,
-      scale: { x: 1, y: 1, z: 1 }, dimensionsM: { width: 2.2, depth: 1.35, height: 2.2 },
-      collisionClass: "none", shadowPolicy: "cast_receive", lodEligible: true, semanticClass: "furniture",
-      runtime: { mode: "procedural", id: "bazaar_market_stall" },
-    }))
-    : [];
-  return buildProps({
-    mapId: blockout.mapId,
-    blockout,
-    anchors: parseAnchorsSpec(raw, specUrl.pathname),
-    seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: 0 },
-    propVisuals: "bazaar",
-    propModels: createPropModelFixture(),
-    highVis: false,
-  });
 }
 
 const legacySanitationPlacements = [
@@ -225,10 +154,7 @@ async function buildDistrictSanitationResult() {
     blockout,
     anchors: { mapId: blockout.mapId, anchors: [] },
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels: createPropModelFixture(),
-    highVis: false,
   });
 }
 
@@ -250,10 +176,7 @@ async function buildSharedBrassPotResult() {
     blockout,
     anchors: parseAnchorsSpec(raw, specUrl.pathname),
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels: createSharedPropModelFixture(),
-    highVis: false,
   });
 }
 
@@ -268,10 +191,7 @@ async function buildB4DressingResult() {
     blockout,
     anchors,
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels: createPropModelFixture(),
-    highVis: false,
   });
 }
 
@@ -289,10 +209,7 @@ async function buildCoverGoodsResult(anchorId: string | null = "COVER_SPICE_01")
     blockout,
     anchors,
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels: createPropModelFixture(),
-    highVis: false,
   });
 }
 
@@ -310,46 +227,8 @@ async function buildSpiceCoverClusterResult() {
     blockout,
     anchors,
     seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
     propModels: createPropModelFixture(),
-    highVis: false,
   });
-}
-
-async function buildRugGateFixture() {
-  const specUrl = new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url);
-  const raw = JSON.parse(await readFile(specUrl, "utf8"));
-  const blockout = parseBlockoutSpec(raw, specUrl.pathname);
-  const current = (blockout.dressingPlacements ?? []).find((candidate) => (
-    candidate.id === "PLACE_RUG_ARCH_LMK_RUG_GATE_01"
-  ));
-  assert.ok(current, "authored Rug Gate placement is missing");
-  // Exercise the retained procedural family independently of the current
-  // map's BZ-04 model replacement. The exported replacement has triangle and
-  // actual-game clearance checks in the courtyard trial.
-  const placement = {
-    ...current,
-    assetId: "ASSET_HERO_ARCH",
-    dimensionsM: { width: 13, depth: 0.8, height: 6.8 },
-    runtime: { mode: "procedural" as const, id: "bazaar_rug_gate_arch" },
-  };
-  blockout.dressingPlacements = [placement];
-  const result = buildProps({
-    mapId: blockout.mapId,
-    blockout,
-    anchors: { mapId: blockout.mapId, anchors: [] },
-    seedOverride: 73,
-    propChaos: { profile: "subtle", jitter: null, cluster: null, density: null },
-    propVisuals: "bazaar",
-    propModels: null,
-    highVis: false,
-  });
-  return {
-    placement,
-    result,
-    root: result.root.getObjectByName("map-props-v3-compiled")!,
-  };
 }
 
 function mesh(root: Awaited<ReturnType<typeof buildPolishFixture>>, name: string): InstancedMesh {
@@ -387,166 +266,12 @@ function instanceBounds(target: InstancedMesh, index: number): Box3 {
   return target.geometry.boundingBox!.clone().applyMatrix4(matrix);
 }
 
-function texturePixel(texture: DataTexture, u: number, v: number): readonly number[] {
-  const image = texture.image as { data: Uint8Array; width: number; height: number };
-  const x = Math.min(image.width - 1, Math.max(0, Math.floor(u * image.width)));
-  const y = Math.min(image.height - 1, Math.max(0, Math.floor(v * image.height)));
-  const offset = (y * image.width + x) * 4;
-  return Array.from(image.data.slice(offset, offset + 3));
-}
-
-test("compiled merchant stall is a complete grounded prefab rather than a bare table", async () => {
-  const result = await buildSharedStallResult();
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  assert.equal(root.getObjectByName("v3-market-display"), undefined, "procedural table proxy is still rendered");
-
-  const placementId = "LEGACY_STALL_0";
-  const goods = root.getObjectByName(`v3-market-stall-prefab-${placementId}`);
-  assert.ok(goods instanceof Group, "market-stall goods composition is missing");
-  assert.equal(goods.getObjectByName("model-ph_wooden_table_01"), undefined, "bare table mapping still renders");
-  for (const modelId of ["ph_wooden_crate_01", "ph_wicker_basket_02", "ph_brass_pot_01", "ph_ceramic_pot"]) {
-    const model = goods.getObjectByName(`model-${modelId}`) as Mesh;
-    assert.ok(model?.isMesh, `${modelId} is missing from the stall goods composition`);
-    assert.equal(model.castShadow, true);
-    assert.equal(model.receiveShadow, true);
-  }
-  const structure = mesh(root, "v3-market-stall-timber-structure");
-  const canopy = mesh(root, "v3-market-stall-cloth-canopy");
-  const rug = mesh(root, "v3-market-stall-ground-rug");
-  const hangingGoods = mesh(root, "v3-market-stall-hanging-goods");
-  const backboard = mesh(root, "v3-market-stall-slatted-back");
-  const shelves = mesh(root, "v3-market-stall-display-shelves");
-  const header = mesh(root, "v3-market-stall-served-header");
-  const visibleShelfStock = mesh(root, "v3-spice-shallow-baskets");
-  const stallCount = result.renderedPlacements.filter(
-    (placement) => placement.moduleId === "bazaar_market_stall",
-  ).length;
-  assert.ok(stallCount > 0, "compiled authority contains no merchant stalls");
-  assert.equal(structure.count, stallCount);
-  assert.equal(canopy.count, stallCount);
-  assert.equal(rug.count, stallCount);
-  assert.equal(hangingGoods.count, stallCount);
-  assert.equal(backboard.count, stallCount);
-  assert.ok(shelves.count >= stallCount, "each stall needs a supported display shelf");
-  assert.ok(visibleShelfStock.count >= stallCount, "each stall needs visible generic storage/display mass");
-  assert.equal(header.count, stallCount);
-  const structureScale = instanceScale(structure, 0);
-  assert.ok(structureScale.x >= 1.5 && structureScale.x <= 3, "seeded counter/frame width left a human-scale served bay");
-  assert.ok(structureScale.y >= 1.8 && structureScale.y <= 2.4, "stall structure left its human-scale height range");
-  assert.ok(structureScale.z >= 1 && structureScale.z <= 1.6, "stall structure left its served-bay depth range");
-  assert.ok(instanceScale(canopy, 0).x > structureScale.x, "stall cloth does not overhang the timber frame");
-  assert.ok(instanceScale(rug, 0).z > structureScale.z, "stall ground rug does not fill the footprint");
-  assert.ok(new Box3().setFromObject(goods).min.y >= -0.001, "stall goods are not grounded or supported");
-
-  const telemetry = result.renderedPlacements.find((placement) => placement.placementId === placementId);
-  assert.equal(telemetry?.representation, "module");
-  assert.equal(telemetry?.moduleId, "bazaar_market_stall");
-  assert.equal(telemetry?.groundingGapM, 0);
-  assert.equal(telemetry?.shadowMode, "cast_receive");
-});
-
-test("shared merchant stalls seed complete counter, shelf, header, and canopy silhouettes", async () => {
-  const result = await buildSharedStallResult();
-  const noStallBaseline = await buildSharedStallResult(false);
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  const structures = mesh(root, "v3-market-stall-timber-structure");
-  const backboards = mesh(root, "v3-market-stall-slatted-back");
-  const shelves = mesh(root, "v3-market-stall-display-shelves");
-  const headers = mesh(root, "v3-market-stall-served-header");
-  const canopies = mesh(root, "v3-market-stall-cloth-canopy");
-
-  const stallCount = result.renderedPlacements.filter(
-    (placement) => placement.moduleId === "bazaar_market_stall",
-  ).length;
-  assert.ok(stallCount > 0, "authoritative shared-stall fixture is empty");
-  assert.equal(structures.count, stallCount);
-  assert.equal(backboards.count, structures.count, "every shared stall needs a finished rear display plane");
-  assert.ok(shelves.count >= structures.count, "every shared stall needs at least one supported shelf");
-  assert.equal(headers.count, structures.count, "every shared stall needs one centered served header");
-  assert.equal(canopies.count, structures.count);
-  const signatures = new Set(Array.from({ length: structures.count }, (_, index) => {
-    const structure = instanceScale(structures, index);
-    const header = instanceScale(headers, index);
-    const canopy = instanceScale(canopies, index);
-    return [structure.x, header.x, header.y, canopy.x, canopy.z].map((value) => value.toFixed(3)).join(":");
-  }));
-  assert.ok(
-    signatures.size >= Math.min(3, structures.count),
-    "shared stalls collapsed into one repeated silhouette",
-  );
-  const rugs = mesh(root, "v3-market-stall-ground-rug");
-  assert.equal(rugs.count, structures.count);
-  assert.ok(rugs.instanceColor, "stall rugs lost their per-served-bay textile identity");
-  const rugColors = new Set(Array.from({ length: rugs.count }, (_, index) => {
-    const color = new Color();
-    rugs.getColorAt(index, color);
-    return color.getHexString();
-  }));
-  assert.ok(rugColors.size >= 4, "stall rugs collapsed back to one repeated signature");
-  // Compiled dressing retires the procedural boxes; only authored fits remain
-  // and soft-visual stalls add nothing.
-  const authoredFits = new Set(["DYE_E_SHOP_2-shop", "DYE_W_SHOP_1-shop", "DYE_W_SHOP_2-shop"]);
-  assert.deepEqual(
-    result.colliders,
-    noStallBaseline.colliders.filter((collider) => authoredFits.has(collider.id)),
-    "stall finish changed gameplay collision",
-  );
-});
-
-test("legacy Dyers wet-workstations are grounded seeded PBR prefabs without gameplay collision", async () => {
-  const result = await buildPolishResult([0,1,2,5].map((id,index) => legacyPlacement(
-    `LEGACY_WORKSTATION_${id}`, "bazaar_dyers_workstation", {width:2.8,depth:1.45,height:2.2},
-    {x:46.6,y:20+index*4,z:0}, {districtId:"DISTRICT_DYERS"},
-  )));
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  const stone = mesh(root, "v3-dyers-workstation-stone-apron");
-  const indigoShell = mesh(root, "v3-dyers-workstation-indigo-basin-shell");
-  const madderShell = mesh(root, "v3-dyers-workstation-madder-basin-shell");
-  const timber = mesh(root, "v3-dyers-workstation-drying-rack");
-  const textiles = mesh(root, "v3-dyers-workstation-drying-textiles");
-  const indigo = mesh(root, "v3-dyers-workstation-indigo-bath");
-  const madder = mesh(root, "v3-dyers-workstation-madder-bath");
-  const drain = mesh(root, "v3-dyers-workstation-drainage-tools");
-  const wetApron = mesh(root, "v3-dyers-workstation-wet-contact-apron");
-
-  // Four explicit legacy instances retain the prefab propagation coverage
-  // after the map replaces its old workstation placements with R7 craft.
-  for (const target of [stone, indigoShell, madderShell, timber, textiles, indigo, madder, drain, wetApron]) {
-    assert.equal(target.count, 4, `${target.name} did not propagate across the four legacy workstation fixtures`);
-  }
-  for (const target of [stone, indigoShell, madderShell, timber, drain, wetApron]) {
-    const material = target.material as MeshStandardMaterial;
-    assert.ok(material.map, `${target.name} lost its real albedo texture`);
-    assert.ok(material.normalMap, `${target.name} lost its normal response`);
-    assert.ok(material.roughnessMap, `${target.name} lost its packed roughness response`);
-  }
-  assert.ok((textiles.material as MeshStandardMaterial).map, "wet-work textiles lost their real textile albedo");
-  assert.ok(textiles.instanceColor, "workstation textile variants lost deterministic tint variation");
-  const textileColors = new Set(Array.from({ length: textiles.count }, (_, index) => {
-    const color = new Color();
-    textiles.getColorAt(index, color);
-    return color.getHexString();
-  }));
-  // The five seeded tint variants deterministically collide on one pair of the
-  // four placement ids, so three distinct textile signatures is the authored
-  // outcome; fewer means propagated instances are cloning the canonical tint.
-  assert.equal(textileColors.size, 3, "the propagated workstations no longer carry seeded per-instance textile signatures");
-
-  const placements = result.renderedPlacements.filter((placement) => placement.moduleId === "bazaar_dyers_workstation");
-  assert.equal(placements.length, 4);
-  assert.ok(placements.every((placement) => placement.groundingGapM === 0));
-  assert.ok(placements.every((placement) => placement.materialMode === "pbr"));
-  assert.ok(result.colliders.every((collider) => !collider.id.includes("WORKSTATION")), "render-only workstation added gameplay collision");
-});
-
-test("legacy Spice display keeps CC0 sacks and brass pottery at human scale", async () => {
+test("model dressing keeps CC0 sacks and brass pottery grounded at human scale", async () => {
   const result = await buildPolishResult([
     legacyPlacement("LEGACY_SACK","cc0_spice_sack",{width:.43,depth:.43,height:.405},{x:23,y:20,z:0},{scale:{x:.8,y:.8,z:.8}}),
     legacyPlacement("LEGACY_POT","ph_brass_pot_01",{width:.302,depth:.302,height:.291},{x:24,y:20,z:0}),
-    legacyPlacement("LEGACY_SPICE_GOODS","bazaar_spice_goods",{width:1.4,depth:1,height:.6},{x:25,y:20,z:0}),
   ]);
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  assert.equal(root.getObjectByName("v3-spice-tied-sacks"), undefined, "procedural sack proxy is still rendered");
 
   const sackPlacements = result.renderedPlacements.filter((placement) => placement.moduleId === "cc0_spice_sack");
   assert.ok(sackPlacements.length > 0, "legacy fixture contains no explicit sack model");
@@ -573,18 +298,13 @@ test("legacy Spice display keeps CC0 sacks and brass pottery at human scale", as
     brassSupportY >= -0.001 && brassSupportY <= 1.1,
     `brass pot is neither grounded nor supported at human scale: ${brassSupportY}m`,
   );
+});
 
-  const baskets = mesh(root, "v3-spice-shallow-baskets");
-  assert.ok(baskets.count >= 3, "Spice composition lost its shallow basket cluster");
-  for (const name of ["v3-spice-mound-gold", "v3-spice-mound-rust", "v3-spice-mound-ochre"]) {
-    const powder = mesh(root, name);
-    assert.ok(powder.count > 0, `${name} lost all authored floor placements`);
-    for (let index = 0; index < powder.count; index += 1) {
-      const scale = instanceScale(powder, index);
-      assert.ok(scale.y <= 0.046, `${name} regressed to a cone at ${scale.y}m tall`);
-      assert.ok(scale.y / Math.min(scale.x, scale.z) <= 0.5, `${name} is not a shallow powder bed`);
-    }
-  }
+test("compiled dressing rejects procedural modules it no longer renders", async () => {
+  await assert.rejects(
+    buildPolishResult([legacyPlacement("RETIRED_STALL","bazaar_market_stall",{width:2.2,depth:1.35,height:2.2},{x:27,y:23,z:0})]),
+    /unsupported compiled dressing module 'bazaar_market_stall' for placement 'RETIRED_STALL'/,
+  );
 });
 
 test("repeated brass-pot batching preserves the authoritative cast-receive shadow policy", async () => {
@@ -698,29 +418,17 @@ test("legacy Caravan and Dyers model rendering excludes cart, cone-vat, and rack
   }
 });
 
-test("B4 lane dressing stays collisionless and renders its authored textured rug and cart families", async () => {
+test("B4 lane rugs stay collisionless and render as one textured, varied rug family", async () => {
   const result = await buildB4DressingResult();
   const root = result.root.getObjectByName("map-props-v3-compiled")!;
   assert.equal(result.colliders.length, 0, "B4 visual density introduced gameplay collision");
 
   const rugs = mesh(root, "v3-main-lane-ground-rugs");
-  const carts = mesh(root, "v3-main-lane-market-carts");
   const b4Placements = legacyB4Placements;
-  assert.equal(
-    rugs.count,
-    b4Placements.filter((placement) => placement.runtime.id === "bazaar_ground_rug").length,
-    "B4 rug rendering drifted from authoritative placements",
-  );
-  assert.equal(
-    carts.count,
-    b4Placements.filter((placement) => placement.runtime.id === "bazaar_market_cart").length,
-    "B4 cart rendering drifted from authoritative placements",
-  );
-  for (const module of [rugs, carts]) {
-    const material = module.material as MeshStandardMaterial;
-    assert.ok(material.map, `${module.name} lost its real texture map`);
-    assert.ok(material.roughness >= 0.5, `${module.name} lost its rough, shadow-readable surface response`);
-  }
+  assert.equal(rugs.count, b4Placements.length, "B4 rug rendering drifted from authoritative placements");
+  const material = rugs.material as MeshStandardMaterial;
+  assert.ok(material.map, `${rugs.name} lost its real texture map`);
+  assert.ok(material.roughness >= 0.5, `${rugs.name} lost its rough, shadow-readable surface response`);
 
   const countInstanceVariants = (module: InstancedMesh): { colors: number; proportions: number } => {
     const colors = new Set<string>();
@@ -740,13 +448,11 @@ test("B4 lane dressing stays collisionless and renders its authored textured rug
     return { colors: colors.size, proportions: proportions.size };
   };
   const rugVariants = countInstanceVariants(rugs);
-  const cartVariants = countInstanceVariants(carts);
   assert.ok(
     rugVariants.colors >= Math.min(2, rugs.count)
       && rugVariants.proportions >= Math.min(2, rugs.count),
     "rug repeats need color and aspect variation",
   );
-  assert.ok(cartVariants.colors >= 2 && cartVariants.proportions === 3, "cart repeats need color and silhouette variation");
 
   assert.equal(
     result.renderedPlacements.some((placement) => placement.assetId === "ASSET_DECORATIVE_CRATE"),
@@ -838,131 +544,6 @@ test("ground rugs receive cluster shadows without stacking a generic contact apr
   const rug = mesh(root, "v3-main-lane-ground-rugs");
   assert.equal(rug.count, 1);
   assert.equal(rug.receiveShadow, true, "rug must retain the real shadows and contacts from the goods above it");
-});
-
-test("merchant signs use painted fields with symmetric emblems instead of placeholder strokes", async () => {
-  const result = await buildPolishResult([0,1,2].map(index => legacyPlacement(`LEGACY_SIGN_${index}`,"bazaar_signboard",
-    {width:1.4,depth:.14,height:.8},{x:22,y:20+index*3,z:3},{semanticClass:"signage"})));
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  const first = mesh(root, "v3-sign-board-handpainted-a");
-  const second = mesh(root, "v3-sign-board-handpainted-b");
-  const third = mesh(root, "v3-sign-board-handpainted-c");
-  const firstTexture = (first.material as MeshStandardMaterial).map;
-  const secondTexture = (second.material as MeshStandardMaterial).map;
-  const thirdTexture = (third.material as MeshStandardMaterial).map;
-  assert.ok(firstTexture instanceof DataTexture);
-  assert.ok(secondTexture instanceof DataTexture);
-  assert.ok(thirdTexture instanceof DataTexture);
-
-  for (const texture of [firstTexture, secondTexture, thirdTexture]) {
-    const field = texturePixel(texture, 0.16, 0.5);
-    const center = texturePixel(texture, 0.5, 0.5);
-    const leftDiamond = texturePixel(texture, 0.25, 0.5);
-    const rightDiamond = texturePixel(texture, 0.75, 0.5);
-    const frame = texturePixel(texture, 0.015, 0.5);
-    const upperField = texturePixel(texture, 0.16, 0.22);
-    const lowerField = texturePixel(texture, 0.16, 0.78);
-    const innerFrame = texturePixel(texture, 0.062, 0.5);
-    assert.notDeepEqual(center, field, "central merchant emblem disappeared into the field");
-    assert.deepEqual(leftDiamond, rightDiamond, "merchant emblem lost its intentional symmetry");
-    assert.notDeepEqual(frame, field, "painted frame disappeared into the sign field");
-    assert.notDeepEqual(frame, innerFrame, "sign perimeter lost its coherent edge wear");
-    assert.notDeepEqual(upperField, lowerField, "sign field lost its broad sun-fade gradient");
-  }
-  assert.notDeepEqual(
-    texturePixel(firstTexture, 0.16, 0.5),
-    texturePixel(secondTexture, 0.16, 0.5),
-    "both merchant sign variants collapsed to one blank field",
-  );
-  assert.notDeepEqual(
-    texturePixel(secondTexture, 0.16, 0.5),
-    texturePixel(thirdTexture, 0.16, 0.5),
-    "third merchant sign field collapsed into an existing repeat",
-  );
-
-  const frame = mesh(root, "v3-sign-frame");
-  const rig = mesh(root, "v3-sign-forged-rod-ring-rig");
-  assert.equal(rig.count, frame.count, "each grammar-served board requires one complete hanging rig");
-  rig.geometry.computeBoundingBox();
-  const rigSize = rig.geometry.boundingBox!.getSize(new Vector3());
-  assert.ok(rigSize.y > 0.58, "sign rods and linked rings no longer reach the facade attachment");
-  assert.ok((rig.material as MeshStandardMaterial).metalness >= 0.45, "sign rig no longer reads as forged metal");
-});
-
-test("legacy laundry spans remain collisionless above head height and vary their textile layouts", async () => {
-  const result = await buildPolishResult(["B6_LAUNDRY_SPICE_01","L3R0_NORTH_DYERS_LINE","LAUNDRY_A","LAUNDRY_B","LAUNDRY_C","LAUNDRY_D"].map(
-    (id,index)=>legacyPlacement(id,"bazaar_laundry_line",{width:1.3,depth:11,height:.85},{x:29.5,y:20+index*3,z:6},
-      {classification:"overhead",semanticClass:"textile"})));
-
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  const ropes = mesh(root, "v3-overhead-laundry-rope");
-  const clothA = mesh(root, "v3-overhead-laundry-cloth-a");
-  const clothB = mesh(root, "v3-overhead-laundry-cloth-b");
-  const clothDyers = mesh(root, "v3-overhead-laundry-cloth-dyers");
-  const clipsA = mesh(root, "v3-overhead-laundry-clips-a");
-  const clipsB = mesh(root, "v3-overhead-laundry-clips-b");
-  const clipsDyers = mesh(root, "v3-overhead-laundry-clips-dyers");
-  const lanterns = mesh(root, "v3-overhead-laundry-lanterns");
-  const bundles = mesh(root, "v3-overhead-laundry-bundles");
-  const dropRopes = mesh(root, "v3-overhead-laundry-drop-ropes");
-  const placements = result.renderedPlacements.filter((placement) => placement.moduleId === "bazaar_laundry_line");
-  assert.equal(ropes.count, placements.length);
-  const ropeMatrix = new Matrix4();
-  const ropeScale = new Vector3();
-  ropes.getMatrixAt(0, ropeMatrix);
-  ropeMatrix.decompose(new Vector3(), new Quaternion(), ropeScale);
-  assert.ok(
-    ropeScale.y >= 0.38 / 0.34,
-    "catenary sag regressed to the labeled asset height instead of the authored world span",
-  );
-  assert.equal(
-    lanterns.count,
-    ropes.count - 1,
-    "only the SHOT_15 Spice closeup line may omit its detached lantern/drop assembly",
-  );
-  assert.equal(bundles.count, ropes.count, "each catenary span lost its camera-scale folded bundle");
-  assert.equal(dropRopes.count, lanterns.count, "hanging lanterns lost their visible suspension drops");
-  assert.equal(ropes.castShadow, true, "catenary rope stopped casting the overhead shadow cue");
-  assert.equal(lanterns.castShadow, true, "modeled overhead lantern stopped casting a shadow");
-  assert.equal(bundles.castShadow, true, "folded overhead textile stopped casting a shadow");
-  assert.equal(clothA.count + clothB.count + clothDyers.count, placements.length);
-  assert.ok(clothA.count > 0 && clothB.count > 0, "cross-facade laundry collapsed to one readable repeat");
-  assert.equal(clipsA.count, clothA.count, "laundry variant A lost its visible clothespins");
-  assert.equal(clipsB.count, clothB.count, "laundry variant B lost its visible clothespins");
-  assert.equal(clipsDyers.count, clothDyers.count, "dyers laundry lost its visible clothespins");
-  assert.ok(
-    (clipsA.material as MeshStandardMaterial).normalMap && (clipsB.material as MeshStandardMaterial).normalMap,
-    "laundry clips regressed to flat placeholder material",
-  );
-  const qaPlacementIds = [ropes, clothA, clothB, clothDyers]
-    .flatMap((batch) => (batch.userData.visualQaInstances ?? []) as Array<{ placementId?: string } | null>)
-    .filter((qa): qa is { placementId?: string } => qa !== null)
-    .map((qa) => qa.placementId)
-    .filter((placementId): placementId is string => typeof placementId === "string");
-  assert.equal(
-    qaPlacementIds.length,
-    placements.length,
-    "laundry submeshes emitted duplicate module-level QA records",
-  );
-  assert.equal(
-    new Set(qaPlacementIds).size,
-    placements.length,
-    "laundry placement ids are not unique across QA batches",
-  );
-  assert.ok(
-    result.colliders.every((collider) => !collider.id.includes("B6_LAUNDRY")),
-    "overhead laundry changed gameplay collision",
-  );
-  assert.ok(placements.length >= 3, "compiled map lost its repeated cross-facade laundry family");
-  assert.ok(placements.every((placement) => placement.center.y - placement.dimensionsM.height * 0.5 > 3.5));
-  const fixtureQa = (mesh(root, "v3-canopy-rings-brackets").userData.visualQaInstances ?? []) as Array<{
-    moduleId?: string;
-  } | null>;
-  assert.equal(
-    fixtureQa.filter((instance) => instance?.moduleId === "laundry_wall_ring").length,
-    placements.length * 4,
-    "laundry ropes lost the eye and wall ring at each of their two facade endpoints",
-  );
 });
 
 test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spouts, water, and an accent apron", async () => {
@@ -1146,315 +727,6 @@ test("fountain is a grounded tiered court centerpiece with PBR stone, tile, spou
 
   const qa = stone.userData.visualQaInstances as Array<{ dimensions?: { x: number; y: number; z: number } } | null>;
   assert.deepEqual(qa[0]?.dimensions, { x: 3, y: 1.32, z: 3 });
-
-  const planterFixture = await buildPolishResult([legacyPlacement("LEGACY_COURT_PLANTER","bazaar_court_planter",
-    {width:1.05,depth:1.05,height:1.2},{x:52,y:76.2,z:0},{semanticClass:"foliage"})]);
-  const planterStone = mesh(planterFixture.root.getObjectByName("map-props-v3-compiled")!, "v3-fountain-court-planter-stone");
-  assert.equal(planterStone.count, 1, "the explicit legacy planter did not render");
-  assert.ok((planterStone.material as MeshStandardMaterial).map instanceof DataTexture);
-});
-
-test("canopy support reaches the cloth edge with a forged bracket and preserves the draw budget", async () => {
-  const result = await buildPolishResult([
-    legacyPlacement("LEGACY_DYERS_CANOPY","bazaar_cloth_canopy",{width:4.4,depth:11.7,height:.18},{x:47.15,y:45.36,z:5.9},
-      {anchorId:"CANOPY_DYERS_01",zoneId:"COVERED_SOUK",districtId:"DISTRICT_DYERS",classification:"overhead",semanticClass:"overhead",
-        spanSeats:{start:{x:41.3,y:45.36,z:5.9},end:{x:53,y:45.36,z:5.9}}}),
-    legacyPlacement("LEGACY_CANOPY_B","bazaar_cloth_canopy",{width:2.2,depth:9.6,height:.18},{x:9,y:46.6,z:4.41},
-      {classification:"overhead",semanticClass:"overhead"}),
-    legacyPlacement("LEGACY_CANOPY_D","bazaar_cloth_canopy",{width:1.9,depth:6.8,height:.18},{x:15,y:62.4,z:5.7},
-      {classification:"overhead",semanticClass:"overhead"}),
-  ]);
-  const root = result.root.getObjectByName("map-props-v3-compiled")!;
-  const canopyCount = result.renderedPlacements.filter(p => p.moduleId === "bazaar_cloth_canopy").length;
-  assert.ok(canopyCount > 0);
-  const fixtures = mesh(root, "v3-canopy-rings-brackets");
-  fixtures.geometry.computeBoundingBox();
-  const fixtureSize = fixtures.geometry.boundingBox!.getSize(new Vector3());
-  assert.ok(fixtureSize.x >= 0.46 && fixtureSize.x <= 0.53, `fixture arm no longer bridges the wall-to-cloth gap: ${fixtureSize.x}m`);
-  assert.ok(fixtureSize.y >= 0.31 && fixtureSize.y <= 0.36, `fixture plate profile drifted: ${fixtureSize.y}m`);
-  assert.equal(fixtures.castShadow, false, "micro canopy fixtures regained per-instance shadow cost");
-  const fixtureMaterial = fixtures.material as MeshStandardMaterial;
-  assert.ok(fixtureMaterial.metalness >= 0.18, "canopy bracket no longer reads as forged metal");
-  const qaInstances = fixtures.userData.visualQaInstances as Array<{ shadowMode?: string } | null>;
-  assert.ok(qaInstances.every((instance) => instance?.shadowMode === "cast_only"));
-
-  // The span's longitudinal cordage is sampled into the cloth module so it can
-  // follow the catenary; this batch carries the straight ties a rigid instanced
-  // rope can still describe honestly: four wall corner ties per span, plus the
-  // three intermediate lashings per wall edge added so the attachment closeup
-  // shows cordage mid-span. Every retained span has 4 + 2 x 3 ties.
-  assert.equal(mesh(root, "v3-canopy-edge-ropes").count, canopyCount * 10, "corner ties and lashings are not batched with the canopy edge ropes");
-  const cloth = mesh(root, "v3-canopy-cloth");
-  const positions = cloth.geometry.getAttribute("position");
-  const minYNear = (z: number): number => {
-    let min = Number.POSITIVE_INFINITY;
-    for (let index = 0; index < positions.count; index += 1) {
-      if (Math.abs(positions.getX(index)) > 0.01 || Math.abs(positions.getZ(index) - z) > 0.035) continue;
-      min = Math.min(min, positions.getY(index));
-    }
-    return min;
-  };
-  assert.ok(minYNear(-0.333) < minYNear(-0.496) - 0.35, "cloth lost its second-axis panel tension");
-  const instanceColor = cloth.instanceColor;
-  assert.ok(instanceColor, "Dyers canopy lost its deterministic district tint");
-  assert.ok(
-    instanceColor.getY(0) > instanceColor.getX(0) && instanceColor.getZ(0) > instanceColor.getX(0),
-    "Dyers canopy no longer reads as blue-green cloth",
-  );
-  const centerlineZ = Array.from({ length: positions.count }, (_, index) => index)
-    .filter((index) => Math.abs(positions.getX(index)) <= 0.01)
-    .map((index) => positions.getZ(index));
-  // The sheet is one continuous surface, so the invariant is that a vertex row
-  // lands exactly on each authored batten station and the panels either side
-  // share it. A row that misses the station is a sliver of open sky.
-  for (const seamZ of [-1 / 6, 1 / 6]) {
-    const nearestOffset = Math.min(...centerlineZ.map((z) => Math.abs(z - seamZ)));
-    assert.ok(
-      nearestOffset <= 0.001,
-      `covered-souk cloth seam reopened to sky: no row on station ${seamZ.toFixed(4)} (nearest ${nearestOffset.toFixed(4)})`,
-    );
-  }
-  const hangRopes = mesh(root, "v3-canopy-hang-ropes");
-  assert.ok(hangRopes.count >= 24 && hangRopes.count % 2 === 0, "canopy and laundry supports lost their paired vertical load paths");
-  const trestles = mesh(root, "v3-canopy-wall-trestles");
-  const carrier = mesh(root, "v3-dyers-west-canopy-carrier");
-  assert.equal(carrier.count, 1, "Dyers west requires its window-clearing receiver");
-  assert.equal(trestles.count + carrier.count, canopyCount * 2, "each retained cloth span needs support on both served walls");
-  assert.ok((trestles.material as MeshStandardMaterial).map instanceof DataTexture, "canopy trestles regressed to flat timber");
-  assert.deepEqual(root.children.map((child) => child.name)
-    .filter((name) => name.startsWith("v3-canopy-") || name === "v3-dyers-west-canopy-carrier").sort(), [
-    "v3-canopy-cloth", "v3-canopy-cloth-plain", "v3-canopy-cloth-plain-alt",
-    "v3-canopy-edge-ropes", "v3-canopy-hang-ropes", "v3-canopy-rings-brackets",
-    "v3-canopy-scalloped-valance", "v3-canopy-scalloped-valance-plain", "v3-canopy-scalloped-valance-plain-alt",
-    "v3-canopy-wall-trestles", "v3-dyers-west-canopy-carrier",
-  ].sort(), "canopy draw families changed independently of the remaining legacy props");
-});
-
-test("Legacy Rug Gate stays collider-neutral and inside its exact authored telemetry envelope", async () => {
-  const { placement, result, root } = await buildRugGateFixture();
-  assert.equal(result.colliders.length, 0, "visual Rug Gate placement introduced gameplay collision");
-  assert.equal(root.children.length, 9, "Rug Gate draw families drifted from its open arch, tiled crown, four-batch textile kit and ground contact");
-  assert.equal(mesh(root, "v3-rug-gate-pillars").count, 2);
-  assert.equal(mesh(root, "v3-rug-gate-crown").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-crown-inlay").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-cool-textile-kit").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-cool-timber-kit").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-warm-textile-kit").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-warm-timber-kit").count, 1);
-  assert.equal(mesh(root, "v3-rug-gate-inner-frame").count, 1);
-  assert.equal(root.getObjectByName("v3-rug-gate-dark-recess"), undefined);
-  assert.equal(root.getObjectByName("v3-rug-gate-timber-leaves"), undefined);
-  assert.equal(root.getObjectByName("v3-rug-gate-ironwork"), undefined);
-
-  // Measured over the gate's own draw families. The ground-contact decal is a
-  // soft floor shadow rather than gate geometry, so it is deliberately outside
-  // the authored massing envelope this guard protects.
-  const bounds = new Box3();
-  for (const child of root.children) {
-    if (child.name === "v3-prop-ground-contact") continue;
-    bounds.expandByObject(child);
-  }
-  const size = bounds.getSize(new Vector3());
-  assert.ok(size.x <= placement.dimensionsM.width + 0.001, `gate exceeded authored width: ${size.x}m`);
-  assert.ok(size.y <= placement.dimensionsM.height + 0.001, `gate exceeded authored height: ${size.y}m`);
-  assert.ok(size.z <= placement.dimensionsM.depth + 0.001, `gate exceeded authored depth: ${size.z}m`);
-  assert.ok(Math.abs(bounds.min.y) <= 0.001, `threshold is not grounded: ${bounds.min.y}m`);
-
-  assert.deepEqual(result.renderedPlacements, [{
-    placementId: placement.id,
-    anchorId: placement.anchorId,
-    assetId: placement.assetId,
-    moduleId: "bazaar_rug_gate_arch",
-    semanticClass: "landmark",
-    representation: "module",
-    materialMode: "pbr",
-    center: { x: placement.position.x, y: placement.dimensionsM.height * 0.5, z: placement.position.y },
-    dimensionsM: placement.dimensionsM,
-    groundingGapM: 0,
-    shadowMode: "cast_receive",
-  }]);
-
-  const renderedTriangles = root.children.reduce((total, child) => {
-    const batch = child as InstancedMesh;
-    const triangles = (batch.geometry.index?.count ?? batch.geometry.getAttribute("position").count) / 3;
-    return total + triangles * batch.count;
-  }, 0);
-  // P6's authored tiled crown adds a separate glazed inlay surface and stone
-  // bezels. The fixed hero camera clearly kept that material separation, so
-  // the queue's pre-approved geometry waiver raises only this measured gate
-  // ceiling (5,118 triangles at acceptance), with final performance still
-  // required to remain below the 12.5 ms completion median.
-  assert.ok(renderedTriangles <= 5_200, `Rug Gate exceeded its focused triangle budget: ${renderedTriangles}`);
-});
-
-test("Legacy Rug Gate spans the lane with a pointed crown, wall-buried returns, and no fake floor threshold", async () => {
-  const { root } = await buildRugGateFixture();
-  const pillars = mesh(root, "v3-rug-gate-pillars");
-  const crown = mesh(root, "v3-rug-gate-crown");
-  const coolTextiles = mesh(root, "v3-rug-gate-cool-textile-kit");
-  const coolFrame = mesh(root, "v3-rug-gate-cool-timber-kit");
-  const warmTextiles = mesh(root, "v3-rug-gate-warm-textile-kit");
-  const warmFrame = mesh(root, "v3-rug-gate-warm-timber-kit");
-  const innerFrame = mesh(root, "v3-rug-gate-inner-frame");
-  pillars.geometry.computeBoundingBox();
-  crown.geometry.computeBoundingBox();
-
-  const pierBounds = [0, 1].map((index) => {
-    const matrix = new Matrix4();
-    pillars.getMatrixAt(index, matrix);
-    return pillars.geometry.boundingBox!.clone().applyMatrix4(matrix);
-  }).sort((left, right) => left.min.x - right.min.x);
-  const clearWidth = pierBounds[1]!.min.x - pierBounds[0]!.max.x;
-  assert.ok(clearWidth >= 12.4, `Rug Gate returns stopped tying into the lane walls: ${clearWidth}m clear`);
-
-  const positions = crown.geometry.getAttribute("position");
-  let apexY = Number.NEGATIVE_INFINITY;
-  for (let index = 0; index < positions.count; index += 1) apexY = Math.max(apexY, positions.getY(index));
-  const apexXs: number[] = [];
-  let crownMinY = Number.POSITIVE_INFINITY;
-  for (let index = 0; index < positions.count; index += 1) {
-    if (Math.abs(positions.getY(index) - apexY) <= 0.0001) apexXs.push(positions.getX(index));
-    crownMinY = Math.min(crownMinY, positions.getY(index));
-  }
-  assert.ok(apexXs.length > 0 && apexXs.every((x) => Math.abs(x) <= 0.051), "gate crown regressed to a round classical arch");
-  assert.ok(crownMinY > -0.1, `gate crown regained a cross-lane floor strip at ${crownMinY}`);
-  for (let index = 0; index < positions.count; index += 3) {
-    const xs = [positions.getX(index), positions.getX(index + 1), positions.getX(index + 2)];
-    const ys = [positions.getY(index), positions.getY(index + 1), positions.getY(index + 2)];
-    const spansOpening = Math.min(...xs) < -0.1 && Math.max(...xs) > 0.1;
-    const sitsOnLowerEdge = Math.max(...ys) < 0;
-    assert.ok(!(spansOpening && sitsOnLowerEdge), "gate crown regained a cross-opening horizontal bridge");
-  }
-
-  const pillarMaterial = pillars.material as MeshStandardMaterial;
-  const crownMaterial = crown.material as MeshStandardMaterial;
-  const inlay = mesh(root, "v3-rug-gate-crown-inlay");
-  const inlayMaterial = inlay.material as MeshStandardMaterial;
-  assert.ok(pillarMaterial.map, "pillar PBR sandstone was disconnected");
-  assert.ok(crownMaterial.map, "crown PBR sandstone was disconnected");
-  assert.ok(crownMaterial.roughness >= 0.85, "Rug Gate crown lost its weathered sandstone response");
-  assert.ok(inlayMaterial.map instanceof DataTexture, "Rug Gate inlay lost its deterministic glazed-tile surface");
-  assert.ok(inlayMaterial.roughness >= 0.5, "Rug Gate inlay regained a synthetic glossy decal response");
-  const pillarColors = uniqueVertexColors(pillars);
-  const crownColors = uniqueVertexColors(crown);
-  const coolTextileColors = uniqueVertexColors(coolTextiles);
-  const warmTextileColors = uniqueVertexColors(warmTextiles);
-  assert.ok(pillarColors.size >= 6, "tied pier masonry lost course separation");
-  assert.ok(crownColors.size >= 5, "finished coping, stone, and restrained tile accents collapsed together");
-  assert.ok(crownColors.has("0.84:0.76:0.62"), "gable slopes lost their datum-fitted coping stones");
-  assert.ok(crownColors.has("0.70:0.61:0.47"), "gable shoulders lost their eave and terminal arris finish");
-  assert.ok(!crownColors.has("0.12:0.36:0.38"), "pediment regained the disconnected teal tablet plane");
-  assert.ok(uniqueVertexColors(inlay).size >= 3, "Rug Gate mosaic collapsed to one flat teal accent");
-  crown.geometry.computeBoundingBox();
-  inlay.geometry.computeBoundingBox();
-  assert.ok(
-    crown.geometry.boundingBox!.max.z > inlay.geometry.boundingBox!.max.z
-      && crown.geometry.boundingBox!.min.z < inlay.geometry.boundingBox!.min.z,
-    "Rug Gate tile infill escaped its stone lips",
-  );
-  assert.ok(coolTextileColors.has("0.27:0.50:0.52"), "cool indigo gate textile is missing");
-  assert.ok(warmTextileColors.has("0.72:0.27:0.16"), "warm madder gate textile is missing");
-  assert.notEqual(
-    coolTextiles.geometry.getAttribute("position").count,
-    warmTextiles.geometry.getAttribute("position").count,
-    "gate textile variants regressed to tint-only clones",
-  );
-  for (const [side, targets] of [
-    [-1, [coolTextiles, coolFrame]],
-    [1, [warmTextiles, warmFrame]],
-  ] as const) {
-    for (const target of targets) {
-      const authoredPositions = target.geometry.getAttribute("position");
-      for (let index = 0; index < authoredPositions.count; index += 1) {
-        const xM = authoredPositions.getX(index) * HERO_GATE_REFERENCE_WIDTH_M;
-        const yM = authoredPositions.getY(index) * HERO_GATE_REFERENCE_HEIGHT_M;
-        const zM = authoredPositions.getZ(index) * HERO_GATE_REFERENCE_DEPTH_M;
-        assert.ok(
-          side === -1
-            ? xM <= -HERO_GATE_ROUTE_HALF_CLEARANCE_M + 1e-6 && xM >= -5.76 - 1e-6
-            : xM >= HERO_GATE_ROUTE_HALF_CLEARANCE_M - 1e-6 && xM <= 5.76 + 1e-6,
-          `${target.name} crosses the protected route or outer-return buffer at x=${xM.toFixed(3)}m`,
-        );
-        assert.ok(yM >= -0.001, `${target.name} falls below paving at y=${yM.toFixed(3)}m`);
-        assert.ok(Math.abs(zM) <= 0.4 + 1e-6, `${target.name} exceeds gate depth at z=${zM.toFixed(3)}m`);
-      }
-    }
-  }
-  for (const [name, target] of [
-    ["cool textile", coolTextiles],
-    ["cool frame", coolFrame],
-    ["warm textile", warmTextiles],
-    ["warm frame", warmFrame],
-  ] as const) {
-    target.geometry.computeBoundingBox();
-    const matrix = new Matrix4();
-    target.getMatrixAt(0, matrix);
-    const bounds = target.geometry.boundingBox!.clone().applyMatrix4(matrix);
-    assert.ok(Math.abs(bounds.min.y) <= 0.001, `${name} is not grounded: ${bounds.min.y}m`);
-  }
-  for (const frame of [coolFrame, warmFrame]) {
-    const material = frame.material as MeshStandardMaterial;
-    assert.ok(
-      material.map && material.normalMap && material.roughnessMap && material.aoMap,
-      `${frame.name} regressed from full PBR timber`,
-    );
-    assert.equal(material.userData.materialId, "ph_rough_pine_door");
-  }
-  for (const textiles of [coolTextiles, warmTextiles]) {
-    const material = textiles.material as MeshStandardMaterial;
-    assert.ok(material.map, `${textiles.name} lost its woven albedo`);
-    assert.equal(material.vertexColors, true);
-    assert.equal(material.side, 2, `${textiles.name} lost its two-sided textile response`);
-  }
-
-  const innerFrameMaterial = innerFrame.material as MeshStandardMaterial;
-  assert.ok(innerFrameMaterial.map && innerFrameMaterial.normalMap, "inner portal frame lost its finished stone transition");
-  assert.equal(root.getObjectByName("v3-rug-gate-dark-recess"), undefined, "open portal regained a fake recess");
-  assert.equal(root.getObjectByName("v3-rug-gate-timber-leaves"), undefined, "open portal regained timber doors");
-  assert.equal(root.getObjectByName("v3-rug-gate-ironwork"), undefined, "open portal regained gate ironwork");
-});
-
-test("Rug Gate dressing keeps exactly three measured, asymmetric masses per flank outside the route", () => {
-  const outerLimit = (
-    (HERO_GATE_REFERENCE_WIDTH_M - HERO_GATE_RETURN_PILLAR_WIDTH_M * 2) * 0.5
-    - HERO_GATE_OUTER_RETURN_CLEARANCE_M
-  );
-  const layouts = [
-    resolveHeroGateDressingLayout("cool-tall"),
-    resolveHeroGateDressingLayout("warm-low"),
-  ];
-  for (const layout of layouts) {
-    assert.equal(layout.masses.length, 3);
-    assert.deepEqual(
-      layout.masses.map((mass) => mass.kind),
-      ["threshold-textile", "rug-cradle", "textile-rack"],
-    );
-    const ordered = [...layout.masses].sort((left, right) => (
-      Math.abs(left.centerX) - Math.abs(right.centerX)
-    ));
-    const innerEdge = Math.abs(ordered[0]!.centerX) - ordered[0]!.width * 0.5;
-    const outerEdge = Math.abs(ordered[2]!.centerX) + ordered[2]!.width * 0.5;
-    assert.ok(innerEdge >= HERO_GATE_ROUTE_HALF_CLEARANCE_M, `${layout.variant} enters the protected route`);
-    assert.ok(outerEdge <= outerLimit + 1e-9, `${layout.variant} crowds the return arris`);
-    for (let index = 0; index < ordered.length - 1; index += 1) {
-      const inner = ordered[index]!;
-      const outer = ordered[index + 1]!;
-      const gap = (
-        Math.abs(outer.centerX) - outer.width * 0.5
-        - (Math.abs(inner.centerX) + inner.width * 0.5)
-      );
-      assert.ok(
-        gap >= HERO_GATE_MIN_FIXTURE_GAP_M - 1e-9
-        && gap <= HERO_GATE_MAX_FIXTURE_GAP_M + 1e-9,
-        `${layout.variant} fixture gap ${gap.toFixed(3)}m is outside the authored band`,
-      );
-    }
-  }
-  assert.notDeepEqual(
-    layouts[0]!.masses.map((mass) => [mass.width, mass.height, mass.depth]),
-    layouts[1]!.masses.map((mass) => [mass.width, mass.height, mass.depth]),
-    "gate flanks regressed to cloned dimensions",
-  );
 });
 
 test("approved dye cabinet colliders survive visual retirement with exact bounds and anchor height authority", async () => {
@@ -1468,7 +740,7 @@ test("approved dye cabinet colliders survive visual retirement with exact bounds
   ];
   const build=(placements:RuntimeDressingPlacement[], sourceAnchors=anchors) => buildProps({mapId:blockout.mapId,
     blockout:{...blockout,dressingPlacements:placements},anchors:sourceAnchors,seedOverride:73,
-    propChaos:{profile:"subtle",jitter:null,cluster:null,density:null},propVisuals:"bazaar",propModels:createPropModelFixture(),highVis:false});
+    propModels:createPropModelFixture()});
   const before=build(displays),after=build([]);
   assert.deepEqual(after.colliders,before.colliders);
   assert.equal(after.colliders.length,2);
@@ -1481,4 +753,20 @@ test("approved dye cabinet colliders survive visual retirement with exact bounds
   const taller=build([],{...anchors,anchors:anchors.anchors.map(a=>({...a,heightM:1.1}))});
   assert.ok(taller.colliders.every(c=>Math.abs(c.min.y-.14)<1e-10 && Math.abs(c.max.y-1.24)<1e-10));
   assert.throws(()=>build([],{...anchors,anchors:anchors.anchors.map(({heightM:_heightM,...a})=>a)}),/requires its authored solid height/);
+});
+
+test("central service-door collider takes its depth from the authored door", async () => {
+  const raw=JSON.parse(await readFile(new URL("../../../public/maps/bazaar-map/map_spec.json",import.meta.url),"utf8"));
+  const blockout=parseBlockoutSpec(raw);
+  const anchors=parseAnchorsSpec(raw);
+  anchors.anchors=anchors.anchors.filter(a=>a.id==="DYE_W_SHOP_2");
+  const build=(architecturePlacements=blockout.architecturePlacements ?? []) => buildProps({mapId:blockout.mapId,
+    blockout:{...blockout,architecturePlacements,dressingPlacements:[]},anchors,seedOverride:73,propModels:createPropModelFixture()});
+  const [door,...rest]=build().colliders;
+  assert.equal(rest.length,0);
+  assert.equal(door?.id,"DYE_W_SHOP_2-shop");
+  [door.min.x,door.min.y,door.min.z,door.max.x,door.max.y,door.max.z].forEach((value,i)=>
+    assert.ok(Math.abs(value-[40.87,0,44.64,41.13,2.845,46.08][i]!)<1e-10,`bound${i}: ${value}`));
+  assert.throws(()=>build((blockout.architecturePlacements ?? []).filter(p=>p.id!=="ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01")),
+    /requires its authored door and envelope/);
 });

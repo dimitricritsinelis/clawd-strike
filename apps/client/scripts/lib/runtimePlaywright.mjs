@@ -13,8 +13,6 @@ export const SHIP_QA_SEARCH_PARAMS = Object.freeze({
   qa: 1,
   floors: "pbr",
   walls: "pbr",
-  props: "bazaar",
-  "prop-profile": "medium",
   wallDetails: 1,
   floorRes: "1k",
   lighting: "golden",
