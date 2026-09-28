@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { compileMapSpec, deriveShotsRuntime, validateMapSpecAgainstSchema } from "./gen-map-runtime.mjs";
 import { normalizeCompositionWaiverRegistry } from "./lib/composition-waivers.mjs";
+import { expectedSignWidthM } from "./lib/facade-layout-grammar.mjs";
 
 const authoritativeCompositionWaiverDocument = JSON.parse(await readFile(
   new URL("../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
@@ -690,42 +691,130 @@ test("preserves the exact authored shot inventory and points compare at a real s
   );
 });
 
-test("compiles authored cloth spans at their true midpoint, span, width, and yaw", async () => {
-  const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
-  );
-  const first = compileMapSpec(source, authoritativeCompositionWaivers).dressingPlacements.find(
+function withProceduralDressing(spec, { anchors, asset, classification, placement }) {
+  spec.metadata.anchor_types.push(...new Set(anchors.map((anchor) => anchor.type)));
+  spec.anchors.push(...anchors);
+  spec.asset_registry.push({
+    source: { kind: "project_original", uri: `repo://procedural/${asset.runtime.id}` },
+    license: "Project-Original",
+    lodEligible: true,
+    transform: {
+      pivot: "base_center",
+      upAxis: "+y",
+      forwardAxis: "+z",
+      authoredScale: { x: 1, y: 1, z: 1 },
+    },
+    ...asset,
+  });
+  spec.dressing_clusters.push({
+    id: `CLUSTER_${placement.id}`,
+    zoneId: "ZONE_FLAT",
+    surfaceId: "SURFACE_FLAT",
+    districtId: "DISTRICT_SPICE",
+    classification,
+    anchors: anchors.map((anchor) => anchor.id),
+    assetIds: [asset.id],
+  });
+  spec.dressing_placements.push({
+    clusterId: `CLUSTER_${placement.id}`,
+    assetId: asset.id,
+    anchorIds: anchors.map((anchor) => anchor.id),
+    offsetM: { x: 0, y: 0, z: 0 },
+    yawOffsetDeg: 0,
+    ...placement,
+  });
+  return spec;
+}
+
+test("compiles authored cloth spans at their true midpoint, span, width, and yaw", () => {
+  // Both seats resolve through frontage anchors: FRONTAGE_SPICE_NORTH spans x 1..9
+  // on the y=10 north face, so along 0.25/0.75 with a 0.4m inset seat at (3|7, 9.6).
+  const source = withProceduralDressing(makeV3Spec(), {
+    anchors: [{
+      id: "CANOPY_SPICE_01",
+      type: "cloth_canopy_span",
+      zone: "ZONE_FLAT",
+      frontageId: "FRONTAGE_SPICE_NORTH",
+      along: 0.25,
+      inset_m: 0.4,
+      vertical_offset_m: 5.8,
+      end_frontage_id: "FRONTAGE_SPICE_NORTH",
+      end_along: 0.75,
+      end_inset_m: 0.4,
+      end_vertical_offset_m: 5.55,
+      width_m: 3.6,
+    }],
+    asset: {
+      id: "ASSET_CLOTH_CANOPY",
+      label: "Tensioned cloth canopy span",
+      dimensionsM: { width: 4, depth: 8, height: 0.18 },
+      collisionClass: "overhead",
+      shadowPolicy: "receive_only",
+      semanticClass: "overhead",
+      runtime: { mode: "procedural", id: "bazaar_cloth_canopy" },
+    },
+    classification: "overhead",
+    placement: { id: "PLACE_SPICE_CANOPIES", scale: { x: 1, y: 1, z: 1 } },
+  });
+  const first = compileMapSpec(source).dressingPlacements.find(
     (placement) => placement.anchorId === "CANOPY_SPICE_01",
   );
-  const second = compileMapSpec(source, authoritativeCompositionWaivers).dressingPlacements.find(
+  const second = compileMapSpec(structuredClone(source)).dressingPlacements.find(
     (placement) => placement.anchorId === "CANOPY_SPICE_01",
   );
 
   assert.ok(first);
   assert.equal(first.id, "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01");
   assert.equal(first.id, second?.id, "compiled placement identity must remain stable");
-  assert.ok(Math.abs(first.position.x - 27) < 1e-9);
-  assert.ok(Math.abs(first.position.y - 20.5808) < 1e-9);
+  assert.ok(Math.abs(first.position.x - 5) < 1e-9);
+  assert.ok(Math.abs(first.position.y - 9.6) < 1e-9);
   assert.ok(Math.abs(first.position.z - 5.675) < 1e-9);
-  assert.deepEqual(first.spanSeats, {
-    start: { x: 21, y: 20.5808, z: 5.8 },
-    end: { x: 33, y: 20.5808, z: 5.55 },
-  });
-  assert.ok(Math.abs(first.dimensionsM.depth - 12) < 1e-9);
+  assert.equal(first.spanSeats.start.z, 5.8);
+  assert.equal(first.spanSeats.end.z, 5.55);
+  for (const [seat, x] of [[first.spanSeats.start, 3], [first.spanSeats.end, 7]]) {
+    assert.ok(Math.abs(seat.x - x) < 1e-9 && Math.abs(seat.y - 9.6) < 1e-9, `seat ${JSON.stringify(seat)}`);
+  }
+  // The authored span and width replace the asset's 8m depth and 4m width.
+  assert.ok(Math.abs(first.dimensionsM.depth - 4) < 1e-9);
   assert.equal(first.dimensionsM.width, 3.6);
   assert.equal(first.dimensionsM.height, 0.18);
   assert.ok(Math.abs(first.yawDeg - 90) < 1e-9);
 });
 
-test("compiles signboard width from its served-opening anchor", async () => {
-  const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
-  );
-  const runtime = compileMapSpec(source, authoritativeCompositionWaivers);
-  for (const anchorId of ["SPICE_W_SIGN_1", "DYE_E_SIGN_2"]) {
-    const sourceAnchor = source.anchors.find((anchor) => anchor.id === anchorId);
-    const placement = runtime.dressingPlacements.find((candidate) => candidate.anchorId === anchorId);
-    assert.ok(sourceAnchor && placement);
+test("compiles signboard width from its served-opening anchor", () => {
+  // The generated merchant layout serves 2m shop_recess_market openings GROUND_01
+  // at along 0.2 and GROUND_02 at 0.8; each sign's width derives from its opening.
+  const signs = [["SPICE_W_SIGN_1", "GROUND_01", 0.2], ["DYE_E_SIGN_2", "GROUND_02", 0.8]]
+    .map(([id, servedBayId, along]) => ({
+      id,
+      type: "signage_anchor",
+      zone: "ZONE_FLAT",
+      frontageId: "FRONTAGE_SPICE_NORTH",
+      servedBayId,
+      along,
+      vertical_offset_m: 3.2,
+      inset_m: 0.12,
+      width_m: expectedSignWidthM(2),
+    }));
+  const source = withProceduralDressing(makeV3Spec(), {
+    anchors: signs,
+    asset: {
+      id: "ASSET_SIGNBOARD",
+      label: "Painted timber signboard",
+      dimensionsM: { width: 1.8, depth: 0.12, height: 0.38 },
+      collisionClass: "none",
+      shadowPolicy: "none",
+      semanticClass: "signage",
+      runtime: { mode: "procedural", id: "bazaar_signboard" },
+    },
+    classification: "soft_visual",
+    placement: { id: "PLACE_SPICE_SIGNS", scale: { x: 1, y: 1, z: 0.8 } },
+  });
+  const runtime = compileMapSpec(source);
+  for (const sourceAnchor of signs) {
+    const placement = runtime.dressingPlacements.find((candidate) => candidate.anchorId === sourceAnchor.id);
+    assert.ok(placement);
+    // The anchor's opening-derived width replaces the asset's 1.8m authored width.
     assert.equal(placement.dimensionsM.width, sourceAnchor.width_m);
   }
 });

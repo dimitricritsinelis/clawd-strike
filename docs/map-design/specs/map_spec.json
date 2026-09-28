@@ -6173,25 +6173,73 @@
   },
   "authored_placements": [
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_CARAVAN_COURT",
-      "unit": "unit-caravan-court",
-      "modelId": "bz04_roof_bundle_unit_caravan_court",
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEA_TERRACE",
+      "unit": "unit-tea-terrace",
+      "modelId": "bz04_roof_bundle_unit_tea_terrace",
       "position": {
-        "x": 7.5,
-        "y": 38.75,
+        "x": 10.6,
+        "y": 65.7,
         "z": 4.5
       },
       "yawDeg": 180,
       "role": "dressing"
     },
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_NORTH",
-      "unit": "unit-service-north",
-      "modelId": "bz04_roof_bundle_unit_service_north",
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_ALLEY",
+      "unit": "unit-dyers-alley",
+      "modelId": "bz04_roof_bundle_unit_dyers_alley",
       "position": {
-        "x": 5.2,
-        "y": 64.35,
-        "z": 4.6
+        "x": 49.6,
+        "y": 20.7,
+        "z": 4.5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_DOGLEG",
+      "unit": "unit-dyers-dogleg",
+      "modelId": "bz04_roof_bundle_unit_dyers_dogleg",
+      "position": {
+        "x": 48.8,
+        "y": 55,
+        "z": 7.1
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_FOUNTAIN_COURT",
+      "unit": "unit-fountain-court",
+      "modelId": "bz04_roof_bundle_unit_fountain_court",
+      "position": {
+        "x": 28,
+        "y": 40,
+        "z": 5
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_EAST_UPPER",
+      "unit": "unit-link-east-upper",
+      "modelId": "bz04_roof_bundle_unit_link_east_upper",
+      "position": {
+        "x": 37.5,
+        "y": 66.7,
+        "z": 7
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST",
+      "unit": "unit-link-south-west",
+      "modelId": "bz04_roof_bundle_unit_link_south_west",
+      "position": {
+        "x": 12.35,
+        "y": 10.5,
+        "z": 4.5
       },
       "yawDeg": 180,
       "role": "dressing"
@@ -6245,42 +6293,6 @@
       "role": "dressing"
     },
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_SPICE_STREET",
-      "unit": "unit-spice-street",
-      "modelId": "bz04_roof_bundle_unit_spice_street",
-      "position": {
-        "x": 27.6,
-        "y": 23,
-        "z": 7.2
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_FOUNTAIN_COURT",
-      "unit": "unit-fountain-court",
-      "modelId": "bz04_roof_bundle_unit_fountain_court",
-      "position": {
-        "x": 28,
-        "y": 40,
-        "z": 5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_TEXTILE_ARCADE",
-      "unit": "unit-textile-arcade",
-      "modelId": "bz04_roof_bundle_unit_textile_arcade",
-      "position": {
-        "x": 29.1,
-        "y": 57.5,
-        "z": 7.1
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
       "id": "BZ04_ROOF_BUNDLE_UNIT_RUG_GATE",
       "unit": "unit-rug-gate",
       "modelId": "bz04_roof_bundle_unit_rug_gate",
@@ -6288,78 +6300,6 @@
         "x": 28,
         "y": 71,
         "z": 9.9
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_TEA_TERRACE",
-      "unit": "unit-tea-terrace",
-      "modelId": "bz04_roof_bundle_unit_tea_terrace",
-      "position": {
-        "x": 10.6,
-        "y": 65.7,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_ALLEY",
-      "unit": "unit-dyers-alley",
-      "modelId": "bz04_roof_bundle_unit_dyers_alley",
-      "position": {
-        "x": 49.6,
-        "y": 20.7,
-        "z": 4.5
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_COVERED_SOUK",
-      "unit": "unit-covered-souk",
-      "modelId": "bz04_roof_bundle_unit_covered_souk",
-      "position": {
-        "x": 48.8,
-        "y": 40.05,
-        "z": 5.4
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_NORTH_COURT",
-      "unit": "unit-north-court",
-      "modelId": "bz04_roof_bundle_unit_north_court",
-      "position": {
-        "x": 47.05,
-        "y": 72.8,
-        "z": 7.1
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_EAST_UPPER",
-      "unit": "unit-link-east-upper",
-      "modelId": "bz04_roof_bundle_unit_link_east_upper",
-      "position": {
-        "x": 37.5,
-        "y": 66.7,
-        "z": 7
-      },
-      "yawDeg": 180,
-      "role": "dressing"
-    },
-    {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_SOUTH_WEST",
-      "unit": "unit-link-south-west",
-      "modelId": "bz04_roof_bundle_unit_link_south_west",
-      "position": {
-        "x": 12.35,
-        "y": 10.5,
-        "z": 4.5
       },
       "yawDeg": 180,
       "role": "dressing"
@@ -6377,13 +6317,49 @@
       "role": "dressing"
     },
     {
-      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_DOGLEG",
-      "unit": "unit-dyers-dogleg",
-      "modelId": "bz04_roof_bundle_unit_dyers_dogleg",
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SPICE_STREET",
+      "unit": "unit-spice-street",
+      "modelId": "bz04_roof_bundle_unit_spice_street",
       "position": {
-        "x": 48.8,
-        "y": 55,
+        "x": 27.6,
+        "y": 23,
+        "z": 7.2
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_TEXTILE_ARCADE",
+      "unit": "unit-textile-arcade",
+      "modelId": "bz04_roof_bundle_unit_textile_arcade",
+      "position": {
+        "x": 29.1,
+        "y": 57.5,
         "z": 7.1
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_NORTH",
+      "unit": "unit-service-north",
+      "modelId": "bz04_roof_bundle_unit_service_north",
+      "position": {
+        "x": 5.2,
+        "y": 64.35,
+        "z": 4.6
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_CARAVAN_COURT",
+      "unit": "unit-caravan-court",
+      "modelId": "bz04_roof_bundle_unit_caravan_court",
+      "position": {
+        "x": 7.5,
+        "y": 38.75,
+        "z": 4.5
       },
       "yawDeg": 180,
       "role": "dressing"
@@ -6411,6 +6387,30 @@
       },
       "yawDeg": 180,
       "role": "skyline"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_COVERED_SOUK",
+      "unit": "unit-covered-souk",
+      "modelId": "bz04_roof_bundle_unit_covered_souk",
+      "position": {
+        "x": 48.8,
+        "y": 40.05,
+        "z": 5.4
+      },
+      "yawDeg": 180,
+      "role": "dressing"
+    },
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_NORTH_COURT",
+      "unit": "unit-north-court",
+      "modelId": "bz04_roof_bundle_unit_north_court",
+      "position": {
+        "x": 47.05,
+        "y": 72.8,
+        "z": 7.1
+      },
+      "yawDeg": 180,
+      "role": "dressing"
     }
   ],
   "zones": [
@@ -6536,7 +6536,12 @@
       "notes": "Rug Gate authored walkable footprint."
     },
     {
-      "sectionFaces": ["north","east","south","west"],
+      "sectionFaces": [
+        "north",
+        "east",
+        "south",
+        "west"
+      ],
       "sectionModelId": "section_unit_spawn_b_courtyard",
       "id": "SPAWN_B_COURTYARD",
       "type": "spawn_plaza",

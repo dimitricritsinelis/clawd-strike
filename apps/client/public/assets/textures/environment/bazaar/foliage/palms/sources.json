@@ -39,9 +39,9 @@
     },
     {
       "id": "palm_frond_project_original",
-      "source": "repo://generated/bazaar/palm-frond",
+      "source": "repo://apps/client/public/assets/textures/environment/bazaar/foliage/palms/palm_frond_project_original/palm_frond_diff.png",
       "license": "Project-Original",
-      "notes": "Project-owned palm frond cutout generated for Clawd Strike and chroma-key extracted in-repo on 2026-07-10.",
+      "notes": "Project-owned palm frond cutout generated for Clawd Strike and chroma-key extracted in-repo on 2026-07-10. No generator is kept in the repository; this committed cutout is the master.",
       "md5": {
         "palm_frond_project_original/palm_frond_diff.png": "2a878d2df9a4bb2cccec86199c527f36"
       },

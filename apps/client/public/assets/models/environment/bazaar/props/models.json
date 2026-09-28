@@ -1420,7 +1420,7 @@
       "id": "spawn-b-bench",
       "url": "spawn_b/spawn-b-bench.glb",
       "scale": 1,
-      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original",
       "md5": {
         "spawn_b/spawn-b-bench.glb": "61c7e0ed4c0d5bf340cab4ec16d1f7d9"
@@ -1451,7 +1451,7 @@
       "id": "spawn-b-shade",
       "url": "spawn_b/spawn-b-shade.glb",
       "scale": 1,
-      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original",
       "md5": {
         "spawn_b/spawn-b-shade.glb": "45898d3512b73df5dcdaac628d798c5e"
@@ -1500,7 +1500,7 @@
       "id": "spawn-b-upper-room",
       "url": "spawn_b/spawn-b-upper-room.glb",
       "scale": 1,
-      "source": "assets/source/unit-spawn-b-courtyard/build.py",
+      "source": "repo://assets/source/unit-spawn-b-courtyard/build.py",
       "license": "Project-Original",
       "md5": {
         "spawn_b/spawn-b-upper-room.glb": "b9c8ff54bc594d533d7c0ff193e6219a"

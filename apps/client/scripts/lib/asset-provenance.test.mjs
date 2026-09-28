@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  existsSync,
   readdirSync,
   readFileSync,
   statSync,
@@ -32,17 +34,28 @@ function walkFiles(rootUrl, relative = "") {
   });
 }
 
+const REPO_ROOT = new URL("../../../../", import.meta.url);
+let trackedRepoFiles;
+
+// A repo:// source names a tracked file, or a directory of tracked files, that
+// is present in this checkout. Untracked files would pass locally and fail CI.
+function isTrackedRepoPath(path) {
+  trackedRepoFiles ??= execFileSync("git", ["ls-files", "-z"], { cwd: fileURLToPath(REPO_ROOT), encoding: "utf8" })
+    .split("\0")
+    .filter(Boolean);
+  return existsSync(join(fileURLToPath(REPO_ROOT), path))
+    && trackedRepoFiles.some((file) => file === path || file.startsWith(`${path}/`));
+}
+
 function assertSource(source, license, label) {
-  if (license === "Project-Original" && /^assets\/source\/[\w./-]+$/.test(source)) {
-    assert.ok(!source.split("/").includes(".."), `${label} source escapes the repository`);
-    assert.ok(statSync(new URL(`../../../../${source}`, import.meta.url)).isFile(), `${label} source must exist`);
-    return;
-  }
   assert.match(source, /^(https:\/\/|repo:\/\/)/, `${label} must declare an absolute or repo source`);
   assert.ok(
     license === "CC0" || license === "CC0-1.0" || license === "Project-Original",
     `${label} has unsupported license '${license}'`,
   );
+  if (source.startsWith("repo://")) {
+    assert.ok(isTrackedRepoPath(source.slice("repo://".length)), `${label} source '${source}' is not a tracked repository path`);
+  }
 }
 
 function assertChecksums(baseUrl, checksumByPath, label) {
@@ -187,7 +200,11 @@ function verifyMaterialPack(manifestUrl) {
           family.md5[family.originalResolution],
           `${familyId} lacks checksums for original resolution '${family.originalResolution}'`,
         );
-        const expected = family.md5[resolution]?.[channel];
+        // A family whose folder holds several files per channel keys checksums by file name.
+        const checksum = family.md5[resolution]?.[channel];
+        const expected = typeof checksum === "object"
+          ? checksum?.[normalizedPath.slice(familyId.length + 1)]
+          : checksum;
         assert.match(
           expected ?? "",
           /^[0-9a-f]{32}$/,
@@ -222,7 +239,7 @@ test("model quality aliases retain original hash coverage and CC0 derivative che
   try {
     writeFileSync(join(directory, "original.glb"), "fixture");
     const model = {
-      id: "fixture", url: "original.glb", source: "repo://assets/source/fixture/build.py",
+      id: "fixture", url: "original.glb", source: "repo://assets/source/unit-spawn-b-courtyard/build.py",
       license: "Project-Original", md5: { "original.glb": md5(new URL("original.glb", manifestUrl)) },
       variants: { "1k": { url: "original.glb" } },
     };
@@ -231,10 +248,12 @@ test("model quality aliases retain original hash coverage and CC0 derivative che
       return verifyModelPack(manifestUrl);
     };
     assert.doesNotThrow(() => verify(model));
-    assert.doesNotThrow(() => verify({ ...model, source: "assets/source/unit-spawn-b-courtyard/build.py" }));
-    assert.throws(() => verify({ ...model, source: "assets/source/../missing.py" }), /escapes the repository/);
-    assert.throws(() => verify({ ...model, source: "assets/source/nonexistent-provenance-fixture.py" }), /ENOENT/);
-    assert.throws(() => verify({ ...model, source: "assets/source/unit-spawn-b-courtyard/build.py", license: "CC0" }), /absolute or repo source/);
+    assert.doesNotThrow(() => verify({ ...model, source: "repo://assets/source/unit-spawn-b-courtyard" }));
+    assert.throws(() => verify({ ...model, source: "assets/source/unit-spawn-b-courtyard/build.py" }), /absolute or repo source/);
+    assert.throws(() => verify({ ...model, source: "repo://assets/source/../missing.py" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, source: "repo://assets/source/nonexistent-provenance-fixture.py" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, source: "repo://.git/HEAD" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, license: "CC-BY-4.0" }), /unsupported license/);
     assert.throws(() => verify({ ...model, md5: {} }), /absent from its MD5 map/);
     assert.throws(() => verify({ ...model, md5: { "original.glb": "0".repeat(32) } }), /MD5 drifted/);
     assert.throws(() => verify({ ...model, variants: { "1k": { url: "other.glb" } } }), /must declare an MD5 map/);

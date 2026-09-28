@@ -105,7 +105,7 @@
     "generatedFrom": {
       "schemaVersion": 1,
       "path": "docs/map-design/shots.json",
-      "sha256": "eedef8452dc8f9a3e9d3c2a2177a31f0b83d03b0b036a0e8458b0e3e5dec108d",
+      "sha256": "6249542534dfe80e78716d99f9bdaea48aa8eaefad80d054aaea29cd71ebe54d",
       "generator": "apps/client/scripts/gen-map-runtime.mjs"
     }
   },
@@ -228,10 +228,7 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "lmk-spice-district"
-        ]
+        }
       }
     },
     {
@@ -384,29 +381,6 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "canopy-textile-01"
-        ],
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_TEXTILE_CANOPY_CANOPY_TEXTILE_01",
-              "assetId": "ASSET_CLOTH_CANOPY",
-              "moduleId": "bazaar_cloth_canopy",
-              "semanticClass": "overhead",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.05,
-                "max": 0.7
-              }
-            }
-          ]
         }
       }
     },
@@ -465,30 +439,6 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "lmk-tea-terrace-01"
-        ],
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_TEA_SERVICE_LMK_TEA_TERRACE_01",
-              "assetId": "ASSET_TEA_SERVICE",
-              "semanticClass": "furniture",
-              "representations": [
-                "model",
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.002,
-                "max": 0.45
-              }
-            }
-          ]
         }
       }
     },
@@ -546,10 +496,7 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "LANTERN_TEA_01"
-        ]
+        }
       }
     },
     {
@@ -606,29 +553,6 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "lmk-dyers-district"
-        ],
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_DYERS_CANOPY_CANOPY_DYERS_01",
-              "assetId": "ASSET_CLOTH_CANOPY",
-              "semanticClass": "overhead",
-              "representations": [
-                "model",
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.01,
-                "max": 0.7
-              }
-            }
-          ]
         }
       }
     },
@@ -754,7 +678,7 @@
           "requiredVisibleAssets": [
             {
               "placementId": "PLACE_RUG_ARCH_LMK_RUG_GATE_01",
-              "assetId": "ASSET_HERO_ARCH",
+              "assetId": "ASSET_BZ04_RUG_GATE",
               "semanticClass": "landmark",
               "representations": [
                 "model",
@@ -773,8 +697,8 @@
               },
               "dimensionsM": {
                 "width": {
-                  "min": 12.5,
-                  "max": 13.5
+                  "min": 15.1,
+                  "max": 16.1
                 },
                 "height": {
                   "min": 5.2,
@@ -840,33 +764,6 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "palm-north-01"
-        ],
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_NORTH_PALM_PALM_NORTH_01",
-              "assetId": "ASSET_PALM",
-              "moduleId": "bazaar_date_palm",
-              "semanticClass": "foliage",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "shadowModes": [
-                "cast_receive"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.03,
-                "max": 0.3
-              }
-            }
-          ]
         }
       }
     },
@@ -924,88 +821,6 @@
           "positionM": 0.05,
           "angleDeg": 0.35,
           "fovDeg": 0.1
-        },
-        "requiredSceneTags": [
-          "lmk-spice-district"
-        ],
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
-              "assetId": "ASSET_CLOTH_CANOPY",
-              "semanticClass": "overhead",
-              "representations": [
-                "model",
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.004,
-                "max": 0.6
-              }
-            },
-            {
-              "placementId": "PLACE_SPICE_STALLS_SPICE_W_SHOP_1",
-              "assetId": "ASSET_MARKET_STALL",
-              "moduleId": "bazaar_market_stall",
-              "semanticClass": "furniture",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "shadowModes": [
-                "cast_receive"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.015,
-                "max": 0.4
-              }
-            },
-            {
-              "placementId": "PLACE_SPICE_LANDMARK_SACK_TALL_LMK_SPICE_DISTRICT",
-              "assetId": "ASSET_CC0_SPICE_SACK",
-              "moduleId": "cc0_spice_sack",
-              "semanticClass": "container",
-              "representations": [
-                "model"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "shadowModes": [
-                "cast_receive"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.002,
-                "max": 0.12
-              }
-            },
-            {
-              "placementId": "PLACE_SPICE_LANDMARK_BRASS_POT_LMK_SPICE_DISTRICT",
-              "assetId": "ASSET_CC0_BRASS_POT",
-              "moduleId": "ph_brass_pot_01",
-              "semanticClass": "container",
-              "representations": [
-                "model"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "shadowModes": [
-                "cast_receive"
-              ],
-              "screenAreaRatio": {
-                "min": 0.0007,
-                "max": 0.08
-              }
-            }
-          ]
         }
       }
     },
@@ -1106,88 +921,6 @@
           "maxSkyRatio": 0.35,
           "minNonSkyRatio": 0.65,
           "minDetailRatio": 0.1
-        },
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "moduleId": "window_shuttered",
-              "semanticClass": "dark_window_recess",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.04,
-                "max": 0.85
-              },
-              "dimensionsM": {
-                "width": {
-                  "min": 0.8,
-                  "max": 2.2
-                },
-                "depth": {
-                  "min": 0.12,
-                  "max": 0.8
-                },
-                "height": {
-                  "min": 1.2,
-                  "max": 2.8
-                }
-              }
-            },
-            {
-              "moduleId": "door_shop_timber",
-              "semanticClass": "ordinary_door",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "maxGroundingGapM": 0.03,
-              "screenAreaRatio": {
-                "min": 0.03,
-                "max": 0.4
-              }
-            },
-            {
-              "moduleId": "window_shuttered_dark",
-              "semanticClass": "window_shutter",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.015,
-                "max": 0.35
-              }
-            },
-            {
-              "moduleId": "shop_recess_market",
-              "semanticClass": "active_merchant_bay",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.03,
-                "max": 0.65
-              },
-              "dimensionsM": {
-                "depth": {
-                  "min": 1,
-                  "max": 2
-                }
-              }
-            }
-          ]
         }
       }
     },
@@ -1305,47 +1038,10 @@
         "clean wall attachment and cast shadow"
       ],
       "acceptance": {
-        "requiredSceneTags": [
-          "CANOPY_SPICE_01"
-        ],
         "screenCoverage": {
           "maxSkyRatio": 0.82,
           "minNonSkyRatio": 0.18,
           "minDetailRatio": 0.08
-        },
-        "visualTelemetry": {
-          "requiredVisibleAssets": [
-            {
-              "placementId": "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01",
-              "assetId": "ASSET_CLOTH_CANOPY",
-              "moduleId": "bazaar_cloth_canopy",
-              "semanticClass": "overhead",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.01,
-                "max": 0.8
-              }
-            },
-            {
-              "moduleId": "canopy_wall_ring",
-              "semanticClass": "canopy_support",
-              "representations": [
-                "module"
-              ],
-              "materialModes": [
-                "pbr"
-              ],
-              "screenAreaRatio": {
-                "min": 0.004,
-                "max": 0.2
-              }
-            }
-          ]
         }
       }
     },

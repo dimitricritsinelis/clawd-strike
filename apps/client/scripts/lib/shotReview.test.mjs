@@ -14,6 +14,7 @@ import {
 } from "./runtimePlaywright.mjs";
 import {
   aggregateShotReviews,
+  collectObservedSceneTags,
   parseHumanReviewPolicy,
   parseShotAcceptance,
   resolveShotDefinition,
@@ -253,7 +254,7 @@ test("selects the exact authored inventory and rejects synthetic compare substit
   assert.match(validateReviewShotInventory(unsupported).errors.join(" | "), /missing\/unsupported captureKind/);
 });
 
-test("authored closeup cameras frame the Spice door/window and canopy attachment without weakening acceptance", async () => {
+test("authored closeup cameras hold their framing and acceptance names only what the shipped map renders", async () => {
   const shotsUrl = new URL("../../../../docs/map-design/shots.json", import.meta.url);
   const shotsSpec = JSON.parse(await readFile(shotsUrl, "utf8"));
   const inventory = validateReviewShotInventory(shotsSpec);
@@ -262,11 +263,6 @@ test("authored closeup cameras frame the Spice door/window and canopy attachment
   assert.equal(inventory.closeupShotIds.length, 4);
 
   const byId = new Map(shotsSpec.shots.map((shot) => [shot.id, shot]));
-  const spice = byId.get("SHOT_11_SPICE_CANOPY");
-  assert.deepEqual(
-    spice.acceptance.visualTelemetry.requiredVisibleAssets.map((asset) => asset.assetId),
-    ["ASSET_CLOTH_CANOPY", "ASSET_MARKET_STALL", "ASSET_CC0_SPICE_SACK", "ASSET_CC0_BRASS_POT"],
-  );
   const facade = byId.get("SHOT_13_CLOSEUP_MERCHANT_FACADE");
   assert.equal(facade.expectedCameraZoneId, "SPICE_STREET");
   assert.deepEqual(facade.camera, {
@@ -274,15 +270,6 @@ test("authored closeup cameras frame the Spice door/window and canopy attachment
     lookAt: { x: 21.1, y: 21.8, z: 2.2 },
     fovDeg: 52,
   });
-  assert.deepEqual(
-    facade.acceptance.visualTelemetry.requiredVisibleAssets.map((asset) => [asset.moduleId, asset.screenAreaRatio.min]),
-    [
-      ["window_shuttered", 0.04],
-      ["door_shop_timber", 0.03],
-      ["window_shuttered_dark", 0.015],
-      ["shop_recess_market", 0.03],
-    ],
-  );
 
   const grounding = byId.get("SHOT_14_CLOSEUP_PROP_GROUNDING");
   assert.deepEqual(grounding.camera, {
@@ -299,10 +286,35 @@ test("authored closeup cameras frame the Spice door/window and canopy attachment
     lookAt: { x: 21.05, y: 20.2, z: 5.4 },
     fovDeg: 50,
   });
-  assert.deepEqual(
-    canopy.acceptance.visualTelemetry.requiredVisibleAssets.map((asset) => [asset.moduleId, asset.screenAreaRatio.min]),
-    [["bazaar_cloth_canopy", 0.01], ["canopy_wall_ring", 0.004]],
-  );
+
+  // Removing a requirement must be a deliberate edit of this list.
+  const requiredAssets = shotsSpec.shots.flatMap((shot) => (
+    parseShotAcceptance(shot).visualTelemetry.requiredVisibleAssets.map((asset) => ({ shotId: shot.id, ...asset }))
+  ));
+  assert.deepEqual(requiredAssets.map((asset) => [asset.shotId, asset.placementId, asset.assetId]), [
+    ["SHOT_03_FOUNTAIN_COURT", "PLACE_FOUNTAIN_LMK_FOUNTAIN_01", "ASSET_FOUNTAIN"],
+    ["SHOT_09_RUG_GATE", "PLACE_RUG_ARCH_LMK_RUG_GATE_01", "ASSET_BZ04_RUG_GATE"],
+    ["SHOT_14_CLOSEUP_PROP_GROUNDING", "PLACE_SPICE_COVER_CORE_COVER_SPICE_01", "ASSET_COVER_GOODS"],
+    ["SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL", "PLACE_FOUNTAIN_LMK_FOUNTAIN_01", "ASSET_FOUNTAIN"],
+  ]);
+
+  // Every required placement and scene tag must name something the shipped map renders.
+  const shippedMap = JSON.parse(await readFile(new URL("../../public/maps/bazaar-map/map_spec.json", import.meta.url), "utf8"));
+  const placementById = new Map(shippedMap.dressingPlacements.map((placement) => [placement.id, placement]));
+  for (const asset of requiredAssets) {
+    assert.equal(placementById.get(asset.placementId)?.assetId, asset.assetId, `${asset.shotId} requires '${asset.placementId}'`);
+  }
+  const renderedAnchorIds = new Set(shippedMap.dressingPlacements.map((placement) => placement.anchorId));
+  const renderedAnchors = shippedMap.anchors.filter((anchor) => renderedAnchorIds.has(anchor.id));
+  const observableTags = new Set(collectObservedSceneTags({
+    render: { visibleSceneTags: [...renderedAnchorIds] },
+    landmarks: { visible: renderedAnchors.filter((anchor) => /^(hero_)?landmark$/.test(anchor.type)) },
+  }));
+  for (const shot of shotsSpec.shots) {
+    for (const tag of parseShotAcceptance(shot).requiredSceneTags) {
+      assert.ok(observableTags.has(tag), `${shot.id} requires scene tag '${tag}' that no rendered anchor provides`);
+    }
+  }
 });
 
 test("rejects duplicate captured images, viewpoints, and authored inventory order", () => {

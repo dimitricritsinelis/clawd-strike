@@ -58,10 +58,10 @@
       }
     },
     "sand_drift_01": {
-      "source": "repo://generated/bazaar/floors/sand_drift_01",
+      "source": "repo://apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/sand_drift_01",
       "license": "Project-Original",
       "originalResolution": "2k",
-      "notes": "Project-authored tileable wind-rippled desert sand (albedo/nor_gl/arm) for the wall-base and corner accumulation layer.",
+      "notes": "Project-authored tileable wind-rippled desert sand (albedo/nor_gl/arm) for the wall-base and corner accumulation layer. No generator is kept in the repository; these committed maps are the masters.",
       "md5": {
         "1k": {
           "albedo": "2ceaba9013e8763e7ee91a54a53335ea",
@@ -76,10 +76,10 @@
       }
     },
     "court_flagstone_01": {
-      "source": "repo://generated/bazaar/floors/court_flagstone_01",
+      "source": "repo://apps/client/public/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01",
       "license": "Project-Original",
       "originalResolution": "2k",
-      "notes": "Project-authored tileable dressed-limestone flagstone (albedo/nor_gl/arm) laid in courses, for court paving. Serves the patterned_cobblestone material id.",
+      "notes": "Project-authored tileable dressed-limestone flagstone (albedo/nor_gl/arm) laid in courses, for court paving. Serves the patterned_cobblestone material id. No generator is kept in the repository; these committed maps are the masters.",
       "md5": {
         "1k": {
           "albedo": "53eb0148a7c9f715c1a0b224437cdd20",
@@ -90,6 +90,31 @@
           "albedo": "acad27c55f433ffe59a5d6515b375c91",
           "normal": "feb25573bca463167db440520f80e556",
           "arm": "ddbe3396f9ad989796ff4ed2c3903ee9"
+        }
+      }
+    },
+    "bz06-derived": {
+      "source": "repo://assets/source/bz04_material_recipes.py",
+      "license": "Project-Original",
+      "originalResolution": "1k",
+      "notes": "Project-derived 1024px albedo bakes of this pack's CC0 Poly Haven 1k diffuse maps: bz06_rough_service_paving from medieval_blocks_05, bz06_quiet_flags from red_sandstone_pavement. Baked by assets/source/bz04_material_recipes.py (inputs, recipe and output sha256 in assets/source/bz04-shared-environment/materials/recipes.json) and copied here by assets/source/integrate_bz04.py. Checksums are keyed by file name because this family holds two bakes.",
+      "md5": {
+        "1k": {
+          "albedo": {
+            "bz06_quiet_flags-albedo.png": "315ef5fe3d2886c83a4bd3178c4c2231",
+            "bz06_rough_service_paving-albedo.png": "7fc3f3bec921d7768da4adac982e8d6c"
+          }
+        },
+        "2k": {
+          "albedo": {
+            "bz06_quiet_flags-albedo.png": "315ef5fe3d2886c83a4bd3178c4c2231",
+            "bz06_rough_service_paving-albedo.png": "7fc3f3bec921d7768da4adac982e8d6c"
+          }
+        },
+        "4k": {
+          "albedo": {
+            "bz06_rough_service_paving-albedo.png": "7fc3f3bec921d7768da4adac982e8d6c"
+          }
         }
       }
     }
