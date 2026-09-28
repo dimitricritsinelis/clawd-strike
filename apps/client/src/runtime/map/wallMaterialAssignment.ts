@@ -1,9 +1,9 @@
-export type FacadeFamily = "merchant" | "residential" | "service" | "spawn";
-export type FacadeTrimTier = "restrained" | "accented" | "hero";
-export type BalconyStyle = "none" | "merchant_ledge" | "residential_parapet" | "hero_cantilever";
+type FacadeFamily = "merchant" | "residential" | "service" | "spawn";
+type FacadeTrimTier = "restrained" | "accented" | "hero";
+type BalconyStyle = "none" | "merchant_ledge" | "residential_parapet" | "hero_cantilever";
 export type FacadeFace = "north" | "south" | "east" | "west";
 
-export type FacadeMaterialSlots = {
+type FacadeMaterialSlots = {
   wall: string;
   trimHeavy: string;
   trimLight: string;

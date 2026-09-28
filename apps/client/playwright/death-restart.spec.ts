@@ -18,7 +18,7 @@ const MAX_DEATH_STEPS = Math.ceil(
   ((WAVE_ONE_PRESSURE.fullPressureS + 30) * 1_000) / COMBAT_STEP_MS,
 );
 
-function planarDistance(a, b) {
+function planarDistance(a: { x: number; z: number }, b: { x: number; z: number }): number {
   return Math.hypot(a.x - b.x, a.z - b.z);
 }
 

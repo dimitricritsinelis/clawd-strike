@@ -16,7 +16,7 @@ export type DecalSurfaceClass = "masonry" | "wood" | "metal" | "glass" | "soft";
 /** Atlas row order. Kept here (no three.js import) so the atlas worker stays small. */
 export const DECAL_SURFACE_CLASSES: readonly DecalSurfaceClass[] = ["masonry", "wood", "metal", "glass", "soft"];
 
-export const BULLET_HOLE_ATLAS_CELL_PX = 256;
+const BULLET_HOLE_ATLAS_CELL_PX = 256;
 export const BULLET_HOLE_ATLAS_VARIANTS = 4;
 export const BULLET_HOLE_ATLAS_ROWS = DECAL_SURFACE_CLASSES.length;
 

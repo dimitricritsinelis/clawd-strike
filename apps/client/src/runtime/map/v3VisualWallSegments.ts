@@ -10,7 +10,7 @@ import type { BoundarySegment } from "./buildBlockout";
 const PLANE_EPSILON_M = 1e-5;
 const MIN_VISUAL_SEGMENT_M = 1e-3;
 
-export type V3ArchitectureOwnedWallFrontage = {
+type V3ArchitectureOwnedWallFrontage = {
   placementId: string;
   frontageId: string;
   zoneId: string;

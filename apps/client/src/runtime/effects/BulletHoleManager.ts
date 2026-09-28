@@ -119,7 +119,7 @@ export function resolveDecalSizeM(u: number): number {
  * Linear tint multiplied into the neutral atlas colours so the exposed crater,
  * powder and fibres match the struck material.
  */
-export function resolveDecalTint(surface: DecalSurfaceClass, surfaceColor: Color, out: Color): Color {
+function resolveDecalTint(surface: DecalSurfaceClass, surfaceColor: Color, out: Color): Color {
   switch (surface) {
     case "masonry":
       // Freshly exposed plaster/stone is lighter than the weathered face.

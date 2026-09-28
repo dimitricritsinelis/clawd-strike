@@ -30,7 +30,7 @@ export type R8DetailSet = {
   grunge: { value: Texture };
   tileM: number;
 };
-export type R8DetailLayers = { plaster: R8DetailSet; stone: R8DetailSet };
+type R8DetailLayers = { plaster: R8DetailSet; stone: R8DetailSet };
 
 export type R8WeatheringOptions = {
   traversalSurfaces?: readonly RuntimeTraversalSurface[];

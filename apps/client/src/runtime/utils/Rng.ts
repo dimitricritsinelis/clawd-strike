@@ -4,7 +4,7 @@ function normalizeUint32(value: number): number {
   return value >>> 0;
 }
 
-export function deriveSeedFromString(input: string): number {
+function deriveSeedFromString(input: string): number {
   let hash = 0x811c9dc5;
   for (let i = 0; i < input.length; i += 1) {
     hash ^= input.charCodeAt(i);
@@ -20,7 +20,7 @@ export function deriveSubSeed(seed: number, tag: string): number {
   return hashed || 1;
 }
 
-export function normalizeSeed(seed: number): number {
+function normalizeSeed(seed: number): number {
   if (!Number.isFinite(seed)) return 1;
   return normalizeUint32(Math.trunc(seed));
 }

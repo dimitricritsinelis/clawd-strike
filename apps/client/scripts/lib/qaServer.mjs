@@ -9,12 +9,12 @@ import { MAP_SOURCE } from "./mapPaths.mjs";
 
 const execFileAsync = promisify(execFile);
 
-export const QA_READY_PATH = "/__qa/ready";
+const QA_READY_PATH = "/__qa/ready";
 export const QA_READINESS_SCHEMA_VERSION = 1;
-export const DEFAULT_SERVER_READY_TIMEOUT_MS = 60_000;
-export const EXTERNAL_QA_OPT_IN_ENV = "ALLOW_EXTERNAL_QA_SERVER";
+const DEFAULT_SERVER_READY_TIMEOUT_MS = 60_000;
+const EXTERNAL_QA_OPT_IN_ENV = "ALLOW_EXTERNAL_QA_SERVER";
 export const EXTERNAL_QA_RUN_TOKEN_ENV = "QA_EXTERNAL_RUN_TOKEN";
-export const GENERATED_PROVENANCE_SCHEMA_VERSION = 1;
+const GENERATED_PROVENANCE_SCHEMA_VERSION = 1;
 export const QA_GENERATOR_IDENTITY = "apps/client/scripts/gen-map-runtime.mjs";
 
 const FINGERPRINT_FILES = Object.freeze({
@@ -136,7 +136,7 @@ async function hashFile(workspaceRoot, relativePath) {
   }
 }
 
-export async function collectQaFingerprint(options = {}) {
+async function collectQaFingerprint(options = {}) {
   const root = path.resolve(options.root ?? process.cwd());
   const workspaceRoot = await gitValue(root, ["rev-parse", "--show-toplevel"], root);
   const [branch, commit, worktree, ...files] = await Promise.all([
@@ -239,7 +239,7 @@ export function validateGeneratedSourceFingerprint(fingerprint) {
   return { passed: errors.length === 0, errors };
 }
 
-export function assertGeneratedSourceFingerprint(fingerprint) {
+function assertGeneratedSourceFingerprint(fingerprint) {
   const validation = validateGeneratedSourceFingerprint(fingerprint);
   if (!validation.passed) {
     throw new Error(

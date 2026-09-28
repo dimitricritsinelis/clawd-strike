@@ -16,8 +16,8 @@ const DEG = Math.PI / 180;
 
 // Hit flinch: an additive chest rotation (rig) or root tilt (non-rigged
 // fallback), driven by an underdamped spring so it snaps and settles in ~0.1 s.
-export const FLINCH_OMEGA = 30;
-export const FLINCH_ZETA = .5;
+const FLINCH_OMEGA = 30;
+const FLINCH_ZETA = .5;
 /** Lean along the bullet's travel direction (the chest pitches away from the shooter). */
 export const FLINCH_PITCH_RAD = 6 * DEG;
 /** Twist about the vertical axis, turning the chest away from the shooter. */

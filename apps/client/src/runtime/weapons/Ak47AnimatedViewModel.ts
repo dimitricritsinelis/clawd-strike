@@ -12,7 +12,7 @@ import type { Ak47AmmoSnapshot } from "./Ak47Weapon";
 import { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } from "./ak47ReloadMarks";
 import type { ViewModelLighting } from "./viewModelLighting";
 
-export type WeaponAlignmentSnapshot = {
+type WeaponAlignmentSnapshot = {
   loaded: boolean;
   dot: number;
   angleDeg: number;
@@ -237,7 +237,7 @@ function casingGeometry(): LatheGeometry {
   return new LatheGeometry(profile, 12);
 }
 
-export class Ak47AnimatedViewModel implements WeaponViewModel {
+class Ak47AnimatedViewModel implements WeaponViewModel {
   readonly viewModelScene = new Scene();
   readonly viewModelCamera = new PerspectiveCamera(54, 1, .01, 10);
   private readonly weaponRoot = new Group();

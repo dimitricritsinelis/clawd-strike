@@ -17,7 +17,7 @@ type EdgeVignetteLayerOptions = EdgeVignetteBackgroundOptions & {
   zIndex: number;
 };
 
-export function buildEdgeVignetteBackground({
+function buildEdgeVignetteBackground({
   colorRgb,
   midAlpha,
   outerAlpha,

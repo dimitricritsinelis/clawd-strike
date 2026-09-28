@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -7,7 +7,7 @@ import {
   waitForRuntimeReady,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
-async function readWaveClock(page): Promise<number> {
+async function readWaveClock(page: Page): Promise<number> {
   const state = await readRuntimeState(page);
   const elapsed = state.bots?.waveElapsedS;
   expect(typeof elapsed).toBe("number");

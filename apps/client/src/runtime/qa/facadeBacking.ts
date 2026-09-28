@@ -1,4 +1,4 @@
-export type FacadeBackingDimensions = {
+type FacadeBackingDimensions = {
   width: number;
   depth: number;
   height: number;
@@ -13,7 +13,7 @@ export type FacadeBackingPlacement = {
   structurallyBacked?: boolean;
 };
 
-export type FacadeBackingFailureReason =
+type FacadeBackingFailureReason =
   | "not-explicitly-backed"
   | "missing-backing-id"
   | "missing-backing-placement"

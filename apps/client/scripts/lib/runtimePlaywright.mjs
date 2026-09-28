@@ -2,11 +2,6 @@ import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import sharp from "sharp";
-export {
-  TRAVERSAL_ROUTES,
-  resolveTraversalRoutes,
-} from "./traversalRoutes.mjs";
-import { TRAVERSAL_ROUTES } from "./traversalRoutes.mjs";
 
 export const DEFAULT_BASE_URL = "http://127.0.0.1:5174";
 export const SHIP_QA_SEARCH_PARAMS = Object.freeze({
@@ -19,44 +14,44 @@ export const SHIP_QA_SEARCH_PARAMS = Object.freeze({
 });
 export const DEFAULT_MAP_ID = "bazaar-map";
 export const DEFAULT_AGENT_NAME = "SmokeRunner";
-export const DEFAULT_HUMAN_NAME = "HumanProbe";
-export const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
+const DEFAULT_HUMAN_NAME = "HumanProbe";
+const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
 export const DEFAULT_RUNTIME_READY_TIMEOUT_MS = 90_000;
 // Software-rendered hosts (no GPU in headless Chromium) can exceed the default
 // on their first shader-compiling frame; QA_STATE_READ_TIMEOUT_MS raises the
 // budget without loosening it for provisioned machines.
-export const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
+const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
   const override = Number(process.env.QA_STATE_READ_TIMEOUT_MS);
   return Number.isFinite(override) && override >= 1_000 ? override : 9_000;
 })();
-export const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
-export const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
+const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
+const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
 // Same escape hatch as QA_STATE_READ_TIMEOUT_MS: software-rendered hosts can
 // exceed the asset budget while shaders compile on first paint.
-export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
+const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
   const override = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
   return Number.isFinite(override) && override >= 1_000 ? override : 20_000;
 })();
-export const DEFAULT_ROUTE_TICK_MS = 100;
-export const DEFAULT_WAYPOINT_TICK_MS = 200;
-export const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
+const DEFAULT_ROUTE_TICK_MS = 100;
+const DEFAULT_WAYPOINT_TICK_MS = 200;
+const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
 export const REQUIRED_CORE_SHOT_COUNT = 12;
 export const REQUIRED_CLOSEUP_SHOT_COUNT = 4;
-export const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
+const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
 export const DEFAULT_SHOT_CAMERA_TOLERANCE = Object.freeze({
   positionM: 0.02,
   angleDeg: 0.25,
   fovDeg: 0.05,
 });
-export const QA_CAPTURE_STATE_SCHEMA_VERSION = 1;
-export const RUNTIME_IDENTITY_SEARCH_PARAMS = Object.freeze([
+const QA_CAPTURE_STATE_SCHEMA_VERSION = 1;
+const RUNTIME_IDENTITY_SEARCH_PARAMS = Object.freeze([
   "map",
   "autostart",
   "name",
   "spawn",
   "shot",
 ]);
-export const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
+const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
   ...RUNTIME_IDENTITY_SEARCH_PARAMS,
   ...Object.keys(SHIP_QA_SEARCH_PARAMS),
   "qaProfile",
@@ -64,7 +59,7 @@ export const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
   "vm",
   "qaTargets",
 ]);
-export const SIGNOFF_CAPTURE_EXTRA_SEARCH_PARAMS = Object.freeze([
+const SIGNOFF_CAPTURE_EXTRA_SEARCH_PARAMS = Object.freeze([
   "qaAssetTimeoutMs",
 ]);
 
@@ -163,7 +158,7 @@ function captureProfileFromUrl(value) {
   }
 }
 
-export function assertSafeRuntimeSearchParams(extraSearchParams, options = {}) {
+function assertSafeRuntimeSearchParams(extraSearchParams, options = {}) {
   const protectedParams = new Set(options.protectedParams ?? RUNTIME_IDENTITY_SEARCH_PARAMS);
   const collisions = Object.entries(extraSearchParams ?? {})
     .filter(([key, value]) => protectedParams.has(key) && value !== null && value !== undefined && value !== false)
@@ -198,7 +193,7 @@ export function assertCaptureSearchParamsPolicy(extraSearchParams, options = {})
   }
 }
 
-export function assertAuthoredCaptureShotIds(shotIds, authoredShotIds) {
+function assertAuthoredCaptureShotIds(shotIds, authoredShotIds) {
   if (!Array.isArray(shotIds) || shotIds.length === 0) {
     throw new Error("[capture:shots] at least one authored shot id is required");
   }
@@ -322,7 +317,7 @@ export function evaluateRuntimeShotCameraPose(state, tolerance = {}) {
   };
 }
 
-export function assertRuntimeShotCameraPose(state, tolerance = {}) {
+function assertRuntimeShotCameraPose(state, tolerance = {}) {
   const result = evaluateRuntimeShotCameraPose(state, tolerance);
   if (!result.matches) {
     throw new Error(`[shot-camera] ${result.reason}`);
@@ -993,7 +988,7 @@ export async function readDocumentedAgentState(page) {
   return state;
 }
 
-export async function waitForDocumentedRuntimeReady(page, options = {}) {
+async function waitForDocumentedRuntimeReady(page, options = {}) {
   const {
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
   } = options;
@@ -1455,7 +1450,7 @@ export function validateQaCaptureState(state, options = {}) {
   return { passed: errors.length === 0, errors };
 }
 
-export async function readQaCaptureState(page, options = {}) {
+async function readQaCaptureState(page, options = {}) {
   return evaluateRuntimeState(
     page,
     () => window.__qa_capture_state?.() ?? null,

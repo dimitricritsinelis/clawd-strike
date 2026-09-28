@@ -9,7 +9,7 @@ import {
 
 // Normal automated runs take damage. Explicit localhost no-damage tests may
 // opt in without changing enemy behavior or the production combat profile.
-async function bootHumanRuntime(page, baseURL: string, extra: Record<string, unknown> = {}) {
+async function bootHumanRuntime(page: Page, baseURL: string, extra: Record<string, unknown> = {}) {
   await page.goto(
     buildRuntimeUrl(baseURL, {
       autostart: "human",
@@ -23,9 +23,9 @@ async function bootHumanRuntime(page, baseURL: string, extra: Record<string, unk
 
 async function engageEnemy(page: Page) {
   await page.evaluate(() => {
-    const state = JSON.parse(window.render_game_to_text());
+    const state = JSON.parse(window.render_game_to_text!());
     const position = state.bots.enemies.find((enemy: { health: number; position: { x: number; y: number; z: number } }) => enemy.health > 0).position;
-    window.__debug_set_player_pose({ ...position, x: position.x + (position.x > 32 ? -1.3 : 1.3), pitchDeg: 0 });
+    window.__debug_set_player_pose!({ ...position, x: position.x + (position.x > 32 ? -1.3 : 1.3), pitchDeg: 0 });
   });
 }
 

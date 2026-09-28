@@ -16,9 +16,9 @@ export const PLAYER_EYE_HEIGHT_M = 1.7;
 export const RUN_SPEED_MPS = 6.0;
 export const CROUCH_HEIGHT_M = 1.4;
 export const CROUCH_EYE_HEIGHT_M = 1.3;
-export const CROUCH_SPEED_MPS = 3.0;
-export const GRAVITY_MPS2 = 20.0;
-export const JUMP_VELOCITY_MPS = 6.35;
+const CROUCH_SPEED_MPS = 3.0;
+const GRAVITY_MPS2 = 20.0;
+const JUMP_VELOCITY_MPS = 6.35;
 const MIN_RUN_SPEED_MPS = 0;
 
 /** Coyote time: player can still jump for this many seconds after walking off a ledge. */
@@ -45,8 +45,8 @@ const BOUNDS_EPSILON_M = 0.001;
  * through the floor reaches this.
  */
 const OUT_OF_WORLD_Y_M = -25;
-export const MAX_AUTO_STEP_M = 0.35;
-export const GROUND_SNAP_DOWN_M = 0.45;
+const MAX_AUTO_STEP_M = 0.35;
+const GROUND_SNAP_DOWN_M = 0.45;
 const SURFACE_GROUND_EPSILON_M = 0.002;
 
 export class PlayerController {

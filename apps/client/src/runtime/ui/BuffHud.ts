@@ -5,7 +5,7 @@ import {
   RALLYING_CRY_ICON_PATH,
 } from "../buffs/BuffTypes";
 
-export type BuffHudEntry = {
+type BuffHudEntry = {
   type: BuffType;
   remainingS: number;
   durationS: number;

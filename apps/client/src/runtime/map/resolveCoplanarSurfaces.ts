@@ -265,7 +265,7 @@ function intersectConvex(subject: Polygon, clip: Polygon): Polygon {
 }
 
 /** Convex pieces of `subject` that lie outside the convex counter-clockwise `hole`. */
-export function subtractConvexPolygon(subject: Polygon, hole: Polygon): Polygon[] {
+function subtractConvexPolygon(subject: Polygon, hole: Polygon): Polygon[] {
   const pieces: Polygon[] = [];
   let rest: Polygon = subject;
   for (let i = 0; i < hole.length && rest.length >= 3; i += 1) {

@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import type { Bone, Vector3 as ThreeVector3 } from "three";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { advanceRuntime, buildRuntimeUrl, readRuntimeState, waitForRuntimeReady } from "../scripts/lib/runtimePlaywright.mjs";
@@ -426,7 +427,7 @@ test("raider bind knees match the mesh and boots face forward at both LODs", asy
       values.sort((a,b)=>a-b);
       const position = (values.length-1)*fraction;
       const low = Math.floor(position), blend = position-low;
-      return values[low]*(1-blend)+values[Math.ceil(position)]*blend;
+      return values[low]!*(1-blend)+values[Math.ceil(position)]!*blend;
     };
     for (const name of ['Raider_High','Raider_Low']) {
       const mesh = gltf.scene.getObjectByName(name);
@@ -434,11 +435,11 @@ test("raider bind knees match the mesh and boots face forward at both LODs", asy
       const indices = mesh.geometry.getAttribute('skinIndex');
       const weights = mesh.geometry.getAttribute('skinWeight');
       for (const side of ['R','L']) {
-        const kneeIndex = mesh.skeleton.bones.findIndex(bone=>bone.name==='Shin_'+side);
-        const footIndex = mesh.skeleton.bones.findIndex(bone=>bone.name==='Foot_'+side);
+        const kneeIndex = mesh.skeleton.bones.findIndex((bone: Bone)=>bone.name==='Shin_'+side);
+        const footIndex = mesh.skeleton.bones.findIndex((bone: Bone)=>bone.name==='Foot_'+side);
         const knee = new Vector3().setFromMatrixPosition(mesh.skeleton.boneInverses[kneeIndex].clone().invert());
         const foot = new Vector3().setFromMatrixPosition(mesh.skeleton.boneInverses[footIndex].clone().invert());
-        const slice = [], sole = [], points = [], sideWeights = [];
+        const slice: ThreeVector3[] = [], sole = [], points = [], sideWeights = [];
         for (let vertex=0;vertex<positions.count;vertex++) {
           let legWeight=0, footWeight=0;
           for(let component=0;component<4;component++) {
@@ -461,7 +462,7 @@ test("raider bind knees match the mesh and boots face forward at both LODs", asy
             const a=corners[edge],b=corners[(edge+1)%3];
             if((points[a].y-knee.y)*(points[b].y-knee.y)>=0)continue;
             const alpha=(knee.y-points[a].y)/(points[b].y-points[a].y);
-            if(sideWeights[a]*(1-alpha)+sideWeights[b]*alpha<.99)continue;
+            if(sideWeights[a]!*(1-alpha)+sideWeights[b]!*alpha<.99)continue;
             intersections.push(points[a].clone().lerp(points[b],alpha));
           }
           if(intersections.length!==2)continue;

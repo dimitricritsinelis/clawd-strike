@@ -12,7 +12,7 @@ export type Rect = {
   h: number;
 };
 
-export type MapZone = {
+type MapZone = {
   id: string;
   type: string;
   label: string;
@@ -23,7 +23,7 @@ export type MapZone = {
   clearWidthM?: number;
 };
 
-export type TraversalSurface = {
+type TraversalSurface = {
   id: string;
   zoneId: string;
   kind: "flat" | "ramp";
@@ -136,7 +136,7 @@ function projectNamedFields(value: unknown, names: ReadonlySet<string>): unknown
   return projected;
 }
 
-export function protectedDomainProjection(specInput: MapSpec): JsonRecord {
+function protectedDomainProjection(specInput: MapSpec): JsonRecord {
   const spec = validateMapSpec(specInput);
   const projection: JsonRecord = {};
   for (const key of PROTECTED_TOP_LEVEL_KEYS) projection[key] = spec[key] ?? null;
@@ -239,8 +239,8 @@ export function detectProtectedChanges(
 // no colliders, so any part the player could reach must hug a wall or sit
 // overhead, and a base near the ground must touch it. map:check enforces it.
 // ---------------------------------------------------------------------------
-export const RELIEF_MAX_HEIGHT_M = 2.2;
-export const WALL_BAND_M = 0.35;
+const RELIEF_MAX_HEIGHT_M = 2.2;
+const WALL_BAND_M = 0.35;
 const FLOAT_MAX_M = 0.5;
 const CONTACT_TOLERANCE_M = 0.05;
 const SINK_TOLERANCE_M = 0.1;

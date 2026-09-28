@@ -84,7 +84,7 @@ function fingerprintValue(namespace: string, value: string): string {
     .digest("hex");
 }
 
-export function extractClientIp(request: Request): string {
+function extractClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     const first = forwardedFor.split(",")[0]?.trim();
@@ -165,7 +165,7 @@ export function fingerprintClientIp(request: Request): string {
   return fingerprintValue("client-ip", extractClientIp(request));
 }
 
-export function fingerprintUserAgent(request: Request): string {
+function fingerprintUserAgent(request: Request): string {
   return fingerprintValue("user-agent", normalizeUserAgent(request));
 }
 
@@ -250,7 +250,7 @@ export function protectJsonWriteRequest(
   };
 }
 
-export function resolveStatsAdminToken(env: NodeJS.ProcessEnv = process.env): string | null {
+function resolveStatsAdminToken(env: NodeJS.ProcessEnv = process.env): string | null {
   const value = env.STATS_ADMIN_TOKEN?.trim() ?? "";
   if (value.length > 0) {
     return value;

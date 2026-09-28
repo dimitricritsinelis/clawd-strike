@@ -1,0 +1,20 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  // Blind spot: Playwright specs import runtime modules by dev-server URL
+  // ("/src/runtime/...") inside page.evaluate, which knip cannot resolve. Before
+  // deleting an export knip reports, grep apps/client/playwright for its name.
+  // Tag an export used only that way with a JSDoc `@public` line naming the
+  // spec, as AK47_RELOAD_AUDIO_TIMELINE in WeaponAudio.ts does.
+  "ignore": ["scripts/sdk/template/**"],
+  "workspaces": {
+    ".": {
+      "entry": ["api/**/*.ts", "server/*.test.ts", "scripts/**/*.test.{ts,mjs}", "apps/shared/*.test.ts"],
+      "project": ["api/**/*.ts", "server/**/*.ts", "scripts/**/*.{ts,mjs}", "apps/shared/**/*.ts"]
+    },
+    "apps/client": {
+      "entry": ["src/**/*.test.ts", "scripts/**/*.test.mjs", "playwright/**/*.spec.ts"],
+      "project": ["src/**/*.ts", "scripts/**/*.mjs", "playwright/**/*.ts"],
+      "playwright": false
+    }
+  }
+}

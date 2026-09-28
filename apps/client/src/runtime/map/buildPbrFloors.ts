@@ -18,7 +18,7 @@ const INCLUDED_ZONE_TYPES = new Set([
   "connector",
 ]);
 
-export type FloorMaterialId =
+type FloorMaterialId =
   | "large_sandstone_blocks_01"
   | "bz04_large_sandstone_blocks_01"
   | "spice_laid_stone_01"

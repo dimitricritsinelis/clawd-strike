@@ -36,7 +36,7 @@ function isDormantFacadeModule(module: V3ArchitectureModulePlacement): boolean {
     || DORMANT_FACADE_BAYS.has(module.id);
 }
 
-export type V3ArchitectureMaterialSlots = Record<MaterialSlot, string>;
+type V3ArchitectureMaterialSlots = Record<MaterialSlot, string>;
 
 export type V3MassingProfile = {
   id: string;
@@ -80,7 +80,7 @@ export type V3ArchitectureMassingPlacement = {
   };
 };
 
-export type V3ArchitectureModulePlacement = {
+type V3ArchitectureModulePlacement = {
   id: string;
   kind: "facade_module";
   frontageId: string;

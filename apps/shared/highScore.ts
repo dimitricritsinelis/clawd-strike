@@ -10,18 +10,18 @@ import {
 } from "./gameplayProfile.js";
 
 export const HIGH_SCORE_MAP_ID_MAX_LENGTH = 64;
-export const SITEWIDE_CHAMPION_SCOPE = "sitewide";
+const SITEWIDE_CHAMPION_SCOPE = "sitewide";
 export const SITEWIDE_CHAMPION_BOARD_KEY = "default";
 export const SHARED_CHAMPION_SCORE_RULESET = "wave-score-v4-k5-wi2-hs2x-b10";
-export const SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION = "profile-v1";
+const SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION = "profile-v1";
 export const SHARED_CHAMPION_WAVE_ENEMY_COUNT = 10;
 // Fastest legal cadence across every currently registered gameplay profile.
 // All three profiles currently share the Desktop Human 0.08 s Rapid Fire
 // baseline. A future faster profile must update this validation bound as part
 // of the same revisioned balance change.
 export const SHARED_CHAMPION_FIRE_INTERVAL_S = 0.08;
-export const SHARED_CHAMPION_KILL_SCORE = 5;
-export const SHARED_CHAMPION_WAVE_SCORE_INCREMENT = 2;
+const SHARED_CHAMPION_KILL_SCORE = 5;
+const SHARED_CHAMPION_WAVE_SCORE_INCREMENT = 2;
 export const SHARED_CHAMPION_RUN_TOKEN_TTL_MS = 30 * 60 * 1000;
 export const SHARED_CHAMPION_SCORE_WRITE_ENDPOINT = "/api/high-score";
 export const SHARED_CHAMPION_RUN_START_ENDPOINT = "/api/run/start";
@@ -121,7 +121,7 @@ export function isSharedChampionControlMode(value: unknown): value is SharedCham
   return value === "human" || value === "agent";
 }
 
-export function isSharedChampionRunDeathCause(value: unknown): value is SharedChampionRunDeathCause {
+function isSharedChampionRunDeathCause(value: unknown): value is SharedChampionRunDeathCause {
   return value === "enemy-fire" || value === "unknown";
 }
 
@@ -205,7 +205,7 @@ export function normalizeScore(value: unknown): number {
   return Math.max(0, Math.round(parsed));
 }
 
-export function normalizeRunCount(value: unknown): number {
+function normalizeRunCount(value: unknown): number {
   const parsed = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(parsed)) return 0;
   return Math.max(0, Math.floor(parsed));
@@ -217,11 +217,11 @@ function normalizeTenths(value: unknown): number {
   return Math.max(0, Math.round(parsed * 10) / 10);
 }
 
-export function normalizeRunSeconds(value: unknown): number {
+function normalizeRunSeconds(value: unknown): number {
   return normalizeTenths(value);
 }
 
-export function normalizeAccuracyPercent(value: unknown): number {
+function normalizeAccuracyPercent(value: unknown): number {
   return normalizeTenths(value);
 }
 
@@ -231,7 +231,7 @@ export function computeAccuracyPercent(shotsHit: number, shotsFired: number): nu
 }
 
 /** Base kill value for a 1-indexed wave number. */
-export function getWaveKillValue(wave: number): number {
+function getWaveKillValue(wave: number): number {
   return SHARED_CHAMPION_KILL_SCORE + (Math.max(1, wave) - 1) * SHARED_CHAMPION_WAVE_SCORE_INCREMENT;
 }
 

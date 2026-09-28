@@ -14,7 +14,7 @@ export type RuntimeFloorQuality = "1k" | "2k" | "4k";
  * keeps the earlier 1.1x / 1k / AO-off-in-play budget for weaker machines.
  * Mobile is capped separately by bootstrap regardless of tier.
  */
-export type RuntimeQualityTier = "high" | "standard";
+type RuntimeQualityTier = "high" | "standard";
 
 export type RuntimeUrlParams = {
   mapId: string;
@@ -104,7 +104,7 @@ function parseQualityTier(value: string | null): RuntimeQualityTier {
   return value?.trim().toLowerCase() === "standard" ? "standard" : "high";
 }
 
-export function resolveQualityTier(search: string): RuntimeQualityTier {
+function resolveQualityTier(search: string): RuntimeQualityTier {
   return parseQualityTier(getParam(new URLSearchParams(search), "quality", "gfx"));
 }
 

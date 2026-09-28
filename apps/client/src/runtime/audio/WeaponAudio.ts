@@ -20,7 +20,7 @@ const FALLBACK_NOISE_SECONDS = 0.22;
 const EVENT_NOISE_POOL_SIZE = 4;
 const KILL_DING_TRIM_START_S = 0.26;
 
-export const AK47_AUDIO_TUNING = {
+const AK47_AUDIO_TUNING = {
   player: {
     /** Fallback synthesized crack only; sample layers carry their own gains. */
     layerGainScale: 0.7,
@@ -81,7 +81,7 @@ export const AK47_AUDIO_TUNING = {
  * fixed in seconds (they shrink only once the reload is shorter than
  * microOffsetFullDurationS), "timeline" offsets scale with the reload.
  */
-export type Ak47ReloadAudioEvent = {
+type Ak47ReloadAudioEvent = {
   id: Ak47ReloadEventId;
   mark: Ak47ReloadMark;
   offsetS: number;
@@ -94,6 +94,8 @@ export type Ak47ReloadAudioEvent = {
  * Magazine-only reload. Every event hangs off a mark in ak47ReloadMarks.ts, the
  * same constant the clip and the viewmodel use. No charging handle, no bolt and
  * no ground impact for the dropped magazine. The seat is the loudest event.
+ *
+ * @public weapon-audio.spec.ts imports it through its dev-server URL.
  */
 export const AK47_RELOAD_AUDIO_TIMELINE: readonly Ak47ReloadAudioEvent[] = [
   { id: "liftCloth", mark: "leaveHandguard", offsetS: 0, offsetKind: "micro", levelDb: -20 },
@@ -119,12 +121,12 @@ export const AK47_RELOAD_AUDIO_TIMELINE: readonly Ak47ReloadAudioEvent[] = [
  *   latch + output latency, inside the seat-punch window.
  * Every other event is compensated and lands on its mark.
  */
-export function ak47ReloadEventLatencyS(mark: Ak47ReloadMark, latencyS: number): number {
+function ak47ReloadEventLatencyS(mark: Ak47ReloadMark, latencyS: number): number {
   return mark === "latch" || mark === "release" ? 0 : latencyS;
 }
 
 /** Hit times (seconds after reload start) of every reload event for a reload of `durationSeconds`. */
-export function ak47ReloadAudioSchedule(durationSeconds: number): { id: Ak47ReloadEventId; mark: Ak47ReloadMark; atS: number; levelDb: number }[] {
+function ak47ReloadAudioSchedule(durationSeconds: number): { id: Ak47ReloadEventId; mark: Ak47ReloadMark; atS: number; levelDb: number }[] {
   const scale = durationSeconds / AK47_RELOAD_DURATION_S;
   const microScale = Math.min(1, durationSeconds / AK47_AUDIO_TUNING.reload.microOffsetFullDurationS);
   return AK47_RELOAD_AUDIO_TIMELINE.map((event) => ({

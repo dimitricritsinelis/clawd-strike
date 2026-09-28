@@ -119,7 +119,7 @@ export const TRAVERSAL_ROUTES = Object.freeze([
 
 const ROUTES_BY_ID = new Map(TRAVERSAL_ROUTES.map((candidate) => [candidate.id, candidate]));
 export const CANONICAL_TRAVERSAL_ROUTE_COUNT = 12;
-export const TRAVERSAL_ROUTE_IDS = Object.freeze(TRAVERSAL_ROUTES.map((route) => route.id));
+const TRAVERSAL_ROUTE_IDS = Object.freeze(TRAVERSAL_ROUTES.map((route) => route.id));
 export const COMPLETION_ROUTE_IDS = Object.freeze([
   "main-a-to-b",
   "west-a-to-b",

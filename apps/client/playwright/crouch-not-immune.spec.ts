@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
   advanceRuntime,
@@ -23,7 +23,7 @@ const COMBAT_WINDOW_S = Math.ceil(WAVE_ONE_PRESSURE.fullPressureS + 30);
  * Enemies now aim at the target's live eye height. This drives a real runtime
  * with crouch held down for the whole fight and requires damage to land.
  */
-async function fightWhileCrouching(page, holdCrouch: boolean): Promise<number> {
+async function fightWhileCrouching(page: Page, holdCrouch: boolean): Promise<number> {
   let lowestHealth = 100;
 
   for (let tick = 0; tick < COMBAT_WINDOW_S; tick += 1) {

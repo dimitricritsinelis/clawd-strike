@@ -18,11 +18,11 @@ import {
   parseStoredPlayerName,
 } from "../apps/shared/playerName.js";
 
-export const STATS_ADMIN_DEFAULT_LIMIT = 50;
-export const STATS_ADMIN_MAX_LIMIT = 200;
+const STATS_ADMIN_DEFAULT_LIMIT = 50;
+const STATS_ADMIN_MAX_LIMIT = 200;
 const BUILD_ID_MAX_LENGTH = 128;
 
-export type SharedChampionStatsFilters = {
+type SharedChampionStatsFilters = {
   from: string | null;
   to: string | null;
   controlMode: SharedChampionControlMode | null;
@@ -33,7 +33,7 @@ export type SharedChampionStatsFilters = {
   balanceSeason: string | null;
 };
 
-export type SharedChampionStatsRunFilters = SharedChampionStatsFilters & {
+type SharedChampionStatsRunFilters = SharedChampionStatsFilters & {
   championUpdated: boolean | null;
   cursor: string | null;
   limit: number;
@@ -167,7 +167,7 @@ export type DerivedSharedChampionRunFields = {
   buildId: string | null;
 };
 
-export function normalizePlayerNameKey(value: string): string {
+function normalizePlayerNameKey(value: string): string {
   return normalizeValidatedPlayerName(value).toLowerCase();
 }
 
@@ -181,7 +181,7 @@ export function resolveBuildId(): string | null {
   return normalized.length > 0 ? normalized : null;
 }
 
-export function deriveWaveProgress(kills: number): {
+function deriveWaveProgress(kills: number): {
   wavesCleared: number;
   waveReached: number;
 } {
@@ -231,7 +231,7 @@ export function createRunCursor(input: { createdAt: string; runId: string }): st
   return Buffer.from(JSON.stringify(input), "utf8").toString("base64url");
 }
 
-export function parseRunCursor(value: string | null): { createdAt: string; runId: string } | null {
+function parseRunCursor(value: string | null): { createdAt: string; runId: string } | null {
   if (!value) return null;
   try {
     const parsed = JSON.parse(Buffer.from(value, "base64url").toString("utf8")) as Record<string, unknown>;

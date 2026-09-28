@@ -10,7 +10,7 @@ function compiledPrefabModelIds(runtimeId: string): readonly string[] {
   if (runtimeId === "bazaar_cover_goods") return ["cc0_spice_sack"];
   return [];
 }
-export type QaTextureTier = "1k" | "2k" | "4k";
+type QaTextureTier = "1k" | "2k" | "4k";
 
 export type QaResolvedTexture = {
   kind: "floor" | "wall";
@@ -38,7 +38,7 @@ export type QaAssetPlanOptions = {
   textureTier?: "1k" | "2k";
 };
 
-export type QaAssetFailure = {
+type QaAssetFailure = {
   id: string;
   message: string;
 };

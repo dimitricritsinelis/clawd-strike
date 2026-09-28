@@ -6,9 +6,9 @@
  * node measurement script and the browser build identical buffers.
  */
 
-export type Channels = Float32Array[];
+type Channels = Float32Array[];
 
-export type Ak47ShotVariantData = {
+type Ak47ShotVariantData = {
   /** Player close layer: crack + natural body + sub thump + mechanical click. */
   close: Channels;
   /** Enemy close layer: crack + body only, mono so StereoPanner stays equal-power. */
@@ -38,10 +38,10 @@ export type Ak47ReloadEventId =
   | "readyCloth";
 
 /** One reload event: round-robin variants, each with the offset of its transient. */
-export type Ak47ReloadEventClip = { variants: Float32Array[]; hitOffsetsS: number[] };
+type Ak47ReloadEventClip = { variants: Float32Array[]; hitOffsetsS: number[] };
 export type Ak47ReloadFoley = Record<Ak47ReloadEventId, Ak47ReloadEventClip>;
 
-export type Ak47DspStats = {
+type Ak47DspStats = {
   closeClippedSamples: number;
   tailClippedSamples: number;
   closeOnsetS: number;
@@ -54,7 +54,7 @@ export const AK47_DSP_PEAK = 0.89;
 type BiquadType = "lowpass" | "highpass" | "bandpass" | "highshelf" | "lowshelf";
 
 /** RBJ-cookbook biquad applied in place (direct form I). */
-export function biquadInPlace(
+function biquadInPlace(
   data: Float32Array,
   sampleRate: number,
   type: BiquadType,
@@ -128,7 +128,7 @@ function scaleInPlace(channels: readonly Float32Array[], gain: number): void {
  * through the unclipped neighbours. The reconstructed value keeps the run's
  * sign and never falls below the flattened sample. Returns the repaired count.
  */
-export function declipInPlace(data: Float32Array, relativeThreshold = 0.985): number {
+function declipInPlace(data: Float32Array, relativeThreshold = 0.985): number {
   let peak = 0;
   for (let i = 0; i < data.length; i += 1) peak = Math.max(peak, Math.abs(data[i]!));
   if (peak < 0.5) return 0;
@@ -243,7 +243,7 @@ type VariantRecipe = {
 };
 
 /** Five hand-set variations: pitch ±3.5%, crack cut/EQ tilt, tail start and layer gains. */
-export const AK47_SHOT_RECIPES: readonly VariantRecipe[] = [
+const AK47_SHOT_RECIPES: readonly VariantRecipe[] = [
   { crackOffsetS: 0, crackLengthS: 0.05, crackHighpassHz: 1400, crackTiltDb: 1.5, crackGain: 0.55, bodyLengthS: 1.6,
     subStartHz: 66, subEndHz: 47, subDecayS: 0.026, subGain: 0.42, mechDelayS: 0.014, mechGain: 0.13,
     tailStartS: 0.1, tailHaasS: 0.011, tailDelayS: 0.045, playbackRate: 1, tailPlaybackRate: 1, closeGain: 0.95, tailGain: 0.42 },
@@ -262,7 +262,7 @@ export const AK47_SHOT_RECIPES: readonly VariantRecipe[] = [
 ];
 
 /** Source window (seconds, in reload.mp3) used as the gunshot mechanism layer. */
-export const AK47_RELOAD_SOURCE_CUTS = {
+const AK47_RELOAD_SOURCE_CUTS = {
   /** Shortest clean metallic click (6 ms decay) in the magazine rock-out rattle. */
   shotMech: { from: 0.2255, to: 0.2505 },
 } as const;
@@ -309,7 +309,7 @@ function synthCloth(
  * faded and peak-normalised to 0.89. hitS is the transient inside the cut
  * (0 for cloth, which is aligned by its start).
  */
-export const AK47_RELOAD_FOLEY_LAYOUT = {
+const AK47_RELOAD_FOLEY_LAYOUT = {
   liftCloth: { startS: 0.02, endS: 0.24, hitS: 0 },
   releaseClick: { startS: 0.26, endS: 0.309773, hitS: 0.001995 },
   slideOut: { startS: 0.329773, endS: 0.490635, hitS: 0.002812 },
@@ -324,7 +324,7 @@ export const AK47_RELOAD_FOLEY_LAYOUT = {
   readyCloth: { startS: 1.442018, endS: 1.642018, hitS: 0 },
 } as const;
 
-export type Ak47ReloadFoleyCut = keyof typeof AK47_RELOAD_FOLEY_LAYOUT;
+type Ak47ReloadFoleyCut = keyof typeof AK47_RELOAD_FOLEY_LAYOUT;
 
 /**
  * Hero magazine seat ("ka-CHUNK"), layered on the recorded steel click (1.0):
@@ -332,7 +332,7 @@ export type Ak47ReloadFoleyCut = keyof typeof AK47_RELOAD_FOLEY_LAYOUT;
  * band-passed knock for the polymer/steel body and a faint steel ring. Thump
  * and knock stay short (tau <= 18 ms) so the body never reads as a kick drum.
  */
-export const AK47_SEAT_RECIPE = {
+const AK47_SEAT_RECIPE = {
   preRollS: 0.002,
   lengthS: 0.2,
   chunkGain: 1,
@@ -401,7 +401,7 @@ function synthSwish(sampleRate: number, seed: number): Float32Array {
 }
 
 /** Builds the hero seat from a click and an optional recorded chunk, aligned on their transients. */
-export function buildAk47MagSeat(click: TimedClip, chunk: TimedClip | null, sampleRate: number, seed: number): TimedClip {
+function buildAk47MagSeat(click: TimedClip, chunk: TimedClip | null, sampleRate: number, seed: number): TimedClip {
   const recipe = AK47_SEAT_RECIPE;
   const pre = Math.round(recipe.preRollS * sampleRate);
   const out = new Float32Array(Math.round(recipe.lengthS * sampleRate));

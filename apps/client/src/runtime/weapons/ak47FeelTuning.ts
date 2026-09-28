@@ -145,6 +145,6 @@ const viewPunch = {
 
 export const ak47FeelTuning = deepFreeze({ motion, viewPunch });
 
-export type Ak47FeelTuning = typeof ak47FeelTuning;
+type Ak47FeelTuning = typeof ak47FeelTuning;
 export type Ak47MotionTuning = Ak47FeelTuning["motion"];
 export type Ak47ViewPunchTuning = Ak47FeelTuning["viewPunch"];

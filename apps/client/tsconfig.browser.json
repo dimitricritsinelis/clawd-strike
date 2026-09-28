@@ -1,0 +1,13 @@
+{
+  // Browser code only: the game and loading screen that Vite bundles, plus the
+  // shared modules they import. Node types stay out so a Node-only API cannot
+  // typecheck here. Tests and the atlas worker are checked by tsconfig.json and
+  // tsconfig.worker.json.
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "types": ["vite/client"]
+  },
+  "include": ["src/**/*.ts", "../shared/**/*.ts"],
+  "exclude": ["src/**/*.test.ts", "src/**/*.worker.ts", "../shared/**/*.test.ts"]
+}

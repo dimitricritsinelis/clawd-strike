@@ -165,7 +165,7 @@ function appendSegmentFace(
   batch.vertexCount += 4;
 }
 
-export type SegmentFrame = {
+type SegmentFrame = {
   centerX: number;
   centerZ: number;
   inwardX: number;
@@ -177,7 +177,7 @@ function pointInRect2D(zone: RuntimeBlockoutZone, x: number, z: number): boolean
   return x >= rect.x && x <= rect.x + rect.w && z >= rect.y && z <= rect.y + rect.h;
 }
 
-export function toSegmentFrame(segment: BoundarySegment): SegmentFrame {
+function toSegmentFrame(segment: BoundarySegment): SegmentFrame {
   if (segment.orientation === "vertical") {
     return {
       centerX: segment.coord,
@@ -195,7 +195,7 @@ export function toSegmentFrame(segment: BoundarySegment): SegmentFrame {
   };
 }
 
-export function resolveSegmentZone(frame: SegmentFrame, zones: readonly RuntimeBlockoutZone[]): RuntimeBlockoutZone | null {
+function resolveSegmentZone(frame: SegmentFrame, zones: readonly RuntimeBlockoutZone[]): RuntimeBlockoutZone | null {
   const probeX = frame.centerX + frame.inwardX * 0.1;
   const probeZ = frame.centerZ + frame.inwardZ * 0.1;
   let winner: RuntimeBlockoutZone | null = null;

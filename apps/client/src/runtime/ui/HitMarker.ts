@@ -22,7 +22,7 @@ type HitMarkerPhaseTiming = Readonly<{
   fadeS: number;
 }>;
 
-export const HIT_MARKER_TIMING = Object.freeze({
+const HIT_MARKER_TIMING = Object.freeze({
   hit: Object.freeze({ startScale: 1.2, popS: 0.05, holdS: 0.05, fadeS: 0.15 }),
   kill: Object.freeze({ startScale: 1.6, popS: 0.1, holdS: 0.2, fadeS: 0.15 }),
   ringStartPx: 26,
@@ -42,7 +42,7 @@ export const HIT_MARKER_STYLE = Object.freeze({
   killThicknessPx: 3,
 });
 
-export type HitMarkerFrame = Readonly<{
+type HitMarkerFrame = Readonly<{
   opacity: number;
   scale: number;
   ringSizePx: number;
@@ -88,7 +88,7 @@ export function hitMarkerRingSizePx(mode: HitMarkerMode, elapsedS: number): numb
   return ringStartPx + (ringEndPx - ringStartPx) * easeOutQuad(t);
 }
 
-export function sampleHitMarker(mode: HitMarkerMode, elapsedS: number): HitMarkerFrame {
+function sampleHitMarker(mode: HitMarkerMode, elapsedS: number): HitMarkerFrame {
   return {
     opacity: hitMarkerOpacity(mode, elapsedS),
     scale: hitMarkerScale(mode, elapsedS),

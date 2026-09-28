@@ -44,6 +44,9 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      - name: Unused files, exports and dependencies
+        run: pnpm lint:unused
+
       - name: Unit, tooling and server tests
         run: pnpm test
 

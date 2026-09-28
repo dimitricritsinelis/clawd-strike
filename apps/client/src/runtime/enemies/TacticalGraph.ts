@@ -11,7 +11,7 @@ import { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
 
 export type TacticalLane = "west" | "main" | "east";
 
-export type TacticalNodeType =
+type TacticalNodeType =
   | "zone_center"
   | "spawn_cover"
   | "cover_cluster"

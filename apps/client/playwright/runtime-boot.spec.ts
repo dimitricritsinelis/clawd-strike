@@ -62,6 +62,8 @@ test("keeps reveal-stage camera framing stable through runtime activation", asyn
     return state?.revealPhase === "active" ? state : null;
   }, undefined, { timeout: 30_000 });
   const activeState = await activeHandle.jsonValue();
+  // waitForFunction only resolves on a truthy value.
+  if (!revealingState || !activeState) throw new Error("Framing state resolved empty");
 
   expect(revealingState.camera?.fovDeg).toBe(activeState.camera?.fovDeg);
   expect(revealingState.camera?.aspect).toBeCloseTo(activeState.camera?.aspect, 6);
@@ -74,8 +76,8 @@ test("keeps reveal-stage camera framing stable through runtime activation", asyn
     ?? null;
   expect(revealingLandmark).not.toBeNull();
   expect(activeLandmark).not.toBeNull();
-  expect(Math.abs(revealingLandmark.screenX - activeLandmark.screenX)).toBeLessThan(0.5);
-  expect(Math.abs(revealingLandmark.screenY - activeLandmark.screenY)).toBeLessThan(0.5);
+  expect(Math.abs(revealingLandmark!.screenX - activeLandmark!.screenX)).toBeLessThan(0.5);
+  expect(Math.abs(revealingLandmark!.screenY - activeLandmark!.screenY)).toBeLessThan(0.5);
 
   expect(recorder.counts().errorCount).toBe(0);
 });

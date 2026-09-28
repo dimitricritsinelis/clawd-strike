@@ -10,7 +10,7 @@
     "dev": "vite --host",
     "build": "vite build",
     "preview": "vite preview --host",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.browser.json && tsc -p tsconfig.worker.json && tsc -p playwright/tsconfig.json",
     "gen:maps": "node scripts/gen-map-runtime.mjs",
     "gen:maps:check": "node scripts/gen-map-runtime.mjs --check",
     "test:e2e:smoke": "node scripts/run-playwright-qa.mjs test playwright/runtime-boot.spec.ts playwright/agent-traversal.spec.ts playwright/death-restart.spec.ts playwright/desktop-human-profile.spec.ts",

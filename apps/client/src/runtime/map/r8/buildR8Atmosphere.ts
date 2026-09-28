@@ -193,7 +193,7 @@ export function tube(points: Vector3[], radius: number, radial = 5): BufferGeome
 }
 
 /** Quad strip with vertices supplied row by row (two rows). */
-export function ribbon(top: Vector3[], bottom: Vector3[]): BufferGeometry {
+function ribbon(top: Vector3[], bottom: Vector3[]): BufferGeometry {
   const positions: number[] = [];
   for (let i = 0; i < top.length - 1; i += 1) {
     const a = top[i]!, b = top[i + 1]!, c = bottom[i]!, d = bottom[i + 1]!;
@@ -627,7 +627,7 @@ function buildDecal(batches: Batches, d: Decal): void {
 export type R8MaterialFactory = ReturnType<typeof r8MaterialFactory>;
 
 /** Plain and pack-photographed material constructors shared by the R8 builders. */
-export function r8MaterialFactory(wallMaterials: WallMaterialLibrary | null, quality: WallTextureQuality, floorTopY: number) {
+function r8MaterialFactory(wallMaterials: WallMaterialLibrary | null, quality: WallTextureQuality, floorTopY: number) {
   const std = (name: string, color: string, roughness: number, metalness = 0, extra: Partial<MeshStandardMaterial> = {}): MeshStandardMaterial => {
     const m = new MeshStandardMaterial({ color: srgb(color), roughness, metalness, vertexColors: true });
     Object.assign(m, extra);

@@ -302,7 +302,8 @@ test("keeps name-entry hidden until the nameplate art is ready for both human an
       nameEntryVisible: "false",
     });
 
-    const pendingRelease = releaseNameplateRequest;
+    // Assigned inside the route handler, which control-flow analysis cannot see.
+    const pendingRelease = releaseNameplateRequest as (() => void) | null;
     if (!pendingRelease) {
       throw new Error("Expected the delayed nameplate request to be pending");
     }

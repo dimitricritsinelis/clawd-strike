@@ -704,7 +704,7 @@ function applyVisualTelemetryAcceptance(findings, state, telemetry) {
   }
 }
 
-export function collectShotFindings({ state, metrics, consoleCounts, shotDefinition, capture }) {
+function collectShotFindings({ state, metrics, consoleCounts, shotDefinition, capture }) {
   const findings = [];
   const acceptance = parseShotAcceptance(shotDefinition);
   const observedTags = collectObservedSceneTags(state);
@@ -794,7 +794,7 @@ export function collectShotFindings({ state, metrics, consoleCounts, shotDefinit
   return findings;
 }
 
-export function scoreShotReview(findings) {
+function scoreShotReview(findings) {
   let score = 100;
   for (const finding of findings) {
     score -= finding.severity === "error" ? 35 : 10;

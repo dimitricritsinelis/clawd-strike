@@ -803,7 +803,7 @@ type BackfillAcceptedFinishPayload = {
   championUpdated: boolean;
 };
 
-export type SharedChampionStorageDriftReport = {
+type SharedChampionStorageDriftReport = {
   hasDrift: boolean;
   championScore: number;
   championHolderName: string;
@@ -1727,7 +1727,7 @@ export function resolvePgConnectionSelection(
   );
 }
 
-export function resolveSharedChampionReconcileConnectionSelection(
+function resolveSharedChampionReconcileConnectionSelection(
   env: NodeJS.ProcessEnv = process.env,
 ): SharedChampionConnectionSelection {
   for (const envKey of SHARED_CHAMPION_RECONCILE_CONNECTION_ENV_KEYS) {

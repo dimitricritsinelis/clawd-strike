@@ -1,5 +1,5 @@
-export const ENEMY_HITBOX_HEIGHT_M = 1.8;
-export const ENEMY_LEG_THRESHOLD_RATIO = 0.25;
+const ENEMY_HITBOX_HEIGHT_M = 1.8;
+const ENEMY_LEG_THRESHOLD_RATIO = 0.25;
 /**
  * Head zone starts here, as a fraction of ENEMY_HITBOX_HEIGHT_M.
  *
@@ -8,9 +8,9 @@ export const ENEMY_LEG_THRESHOLD_RATIO = 0.25;
  * outright. 0.86 puts it at 1.548 m, just above the eye line, which is where a
  * head actually begins on a 1.8 m figure.
  */
-export const ENEMY_HEAD_THRESHOLD_RATIO = 0.86;
+const ENEMY_HEAD_THRESHOLD_RATIO = 0.86;
 
-export type EnemyHitZone = "legs" | "body" | "head";
+type EnemyHitZone = "legs" | "body" | "head";
 
 export type EnemyHitDamage = {
   zone: EnemyHitZone;

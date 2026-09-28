@@ -7,7 +7,7 @@ export type RuntimeRect = {
   h: number;
 };
 
-export type RuntimeVec3 = {
+type RuntimeVec3 = {
   x: number;
   y: number;
   z: number;
@@ -30,15 +30,15 @@ export type RuntimeBlockoutZone = {
   sectionFaces?: RuntimeFacadeFace[];
 };
 
-export type RuntimeMacroLane = "west" | "main" | "east";
+type RuntimeMacroLane = "west" | "main" | "east";
 
-export type RuntimeDistrict = {
+type RuntimeDistrict = {
   id: string;
   label: string;
   notes?: string;
 };
 
-export type RuntimeFlatTraversalSurface = {
+type RuntimeFlatTraversalSurface = {
   id: string;
   zoneId: string;
   kind: "flat";
@@ -60,7 +60,7 @@ export type RuntimeRampTraversalSurface = {
 
 export type RuntimeTraversalSurface = RuntimeFlatTraversalSurface | RuntimeRampTraversalSurface;
 
-export type RuntimeTacticalLane = {
+type RuntimeTacticalLane = {
   id: RuntimeMacroLane;
   label: string;
   zoneIds: string[];
@@ -97,7 +97,7 @@ export type RuntimeFrontage = {
   layout?: RuntimeFrontageLayout;
 };
 
-export type RuntimeFrontageBay = {
+type RuntimeFrontageBay = {
   id: string;
   moduleId: string;
   along: number;
@@ -108,9 +108,9 @@ export type RuntimeFrontageBay = {
 };
 
 /** Generated layouts come from the rhythm grammar; authored layouts are composed per frontage. */
-export type RuntimeFacadeLayoutSource = "generated" | "authored";
+type RuntimeFacadeLayoutSource = "generated" | "authored";
 
-export type RuntimeFrontageLayout = {
+type RuntimeFrontageLayout = {
   source: RuntimeFacadeLayoutSource;
   rhythm: "merchant" | "residential" | "residential_dense" | "service" | "arcade" | "hero" | "authored";
   storyCount: number;
@@ -121,7 +121,7 @@ export type RuntimeFrontageLayout = {
   signBandTopM: number;
 };
 
-export type RuntimeMassingProfile = {
+type RuntimeMassingProfile = {
   id: string;
   label: string;
   heightM: number;
@@ -132,12 +132,12 @@ export type RuntimeMassingProfile = {
   upperStorySetbackM: number;
 };
 
-export type RuntimeFacadeMaterialSlot = "wall" | "trim" | "roof" | "timber" | "metal" | "accent";
-export type RuntimeFacadeMaterialSlots = Record<RuntimeFacadeMaterialSlot, string>;
-export type RuntimeFacadeModuleKind = "shop_recess" | "door" | "window" | "vent" | "arch" | "column" | "blind_niche";
-export type RuntimeFacadeOpeningType = "none" | "recess" | "door_void" | "window_void" | "arch_void";
+type RuntimeFacadeMaterialSlot = "wall" | "trim" | "roof" | "timber" | "metal" | "accent";
+type RuntimeFacadeMaterialSlots = Record<RuntimeFacadeMaterialSlot, string>;
+type RuntimeFacadeModuleKind = "shop_recess" | "door" | "window" | "vent" | "arch" | "column" | "blind_niche";
+type RuntimeFacadeOpeningType = "none" | "recess" | "door_void" | "window_void" | "arch_void";
 
-export type RuntimeFacadeModule = {
+type RuntimeFacadeModule = {
   id: string;
   label: string;
   kind: RuntimeFacadeModuleKind;
@@ -179,7 +179,7 @@ export type RuntimeArchitectureMassingPlacement = {
   };
 };
 
-export type RuntimeArchitectureModulePlacement = {
+type RuntimeArchitectureModulePlacement = {
   id: string;
   kind: "facade_module";
   frontageId: string;
@@ -226,9 +226,9 @@ export type RuntimeAuthoredPlacement = {
   materialIds: string[];
 };
 
-export type RuntimeDressingClassification = "gameplay_cover" | "soft_visual" | "overhead";
+type RuntimeDressingClassification = "gameplay_cover" | "soft_visual" | "overhead";
 
-export type RuntimeAssetRegistryEntry = {
+type RuntimeAssetRegistryEntry = {
   id: string;
   label: string;
   source: {
@@ -258,7 +258,7 @@ export type RuntimeAssetRegistryEntry = {
   };
 };
 
-export type RuntimeDressingCluster = {
+type RuntimeDressingCluster = {
   id: string;
   zoneId: string;
   surfaceId?: string;
@@ -291,7 +291,7 @@ export type RuntimeDressingPlacement = {
   runtime: NonNullable<RuntimeAssetRegistryEntry["runtime"]>;
 };
 
-export type RuntimeWallPatch = {
+type RuntimeWallPatch = {
   orientation: "vertical" | "horizontal";
   coord: number;
   start: number;
@@ -337,11 +337,11 @@ export type RuntimeBlockoutSpec = {
   };
 };
 
-export type RuntimeWallDetailStyle = "bazaar";
+type RuntimeWallDetailStyle = "bazaar";
 
 export type RuntimeFacadeFace = "north" | "south" | "east" | "west";
 
-export type RuntimeWallDetailOptions = {
+type RuntimeWallDetailOptions = {
   enabled: boolean;
   seed?: number;
   style: RuntimeWallDetailStyle;
@@ -377,7 +377,7 @@ export type RuntimeAnchorsSpec = {
   anchors: RuntimeAnchor[];
 };
 
-export type RuntimeShot = {
+type RuntimeShot = {
   id: string;
   label: string;
   description: string;

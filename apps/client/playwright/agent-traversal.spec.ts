@@ -7,6 +7,7 @@ import {
 import { resolveTraversalRoutes } from "../scripts/lib/traversalRoutes.mjs";
 
 const [SMOKE_ROUTE] = resolveTraversalRoutes(["main-a-to-b"]);
+if (!SMOKE_ROUTE) throw new Error("Missing main-a-to-b traversal route");
 
 test("completes the canonical main-lane smoke route without leaving bounds", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);

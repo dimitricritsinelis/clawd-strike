@@ -220,7 +220,7 @@ function applyRadialFountainUv(geometry: BufferGeometry, tileSizeM: number): Buf
   return geometry;
 }
 
-export function createAnnularWedgeGeometry(
+function createAnnularWedgeGeometry(
   centerAngle: number,
   halfAngle: number,
   outerRadius: number,

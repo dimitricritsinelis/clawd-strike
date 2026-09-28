@@ -1,0 +1,13 @@
+{
+  // Playwright specs and playwright.config.ts. allowJs lets the specs pick up
+  // types inferred from the scripts/lib/*.mjs helpers they import; checkJs stays
+  // off so those helpers are not typechecked here.
+  "extends": "../../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": false,
+    "types": ["node"]
+  },
+  "include": ["./**/*.ts", "../playwright.config.ts", "../src/global.d.ts"]
+}

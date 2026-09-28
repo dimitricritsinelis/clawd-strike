@@ -27,16 +27,16 @@ const DRIFT_SPEED_MPS = 1.2;
 // Air drag on the dust drift so the longer-lived puff hangs near the wall
 // (about 0.33 m total travel) instead of sliding 0.7 m out over 0.6 s.
 const DUST_DRAG_PER_S = 3;
-export const START_SCALE = 0.08;
+const START_SCALE = 0.08;
 export const END_SCALE = 0.5;
 export const START_OPACITY = 0.55;
-export const DUST_OPACITY_EXPONENT = 1.5;
+const DUST_OPACITY_EXPONENT = 1.5;
 // About 15% darker than the old texture stops (210,195,168 / 200,185,155).
 const DUST_COLOR_HEX = 0xb3a68f;
 
 // One-frame muzzle-side "tick" of the bullet striking: off-white dust flash,
 // orange only when the collider is metal.
-export const FLASH_POOL_SIZE = 12;
+const FLASH_POOL_SIZE = 12;
 export const FLASH_SIZE_M = 0.06;
 export const FLASH_LIFETIME_S = 0.04;
 export const FLASH_DUST_HEX = 0xf2ede4;
@@ -45,7 +45,7 @@ const FLASH_OPACITY = 0.9;
 
 // Debris chips thrown off the surface.
 export const CHIPS_PER_IMPACT = 4;
-export const CHIP_POOL_SIZE = 48;
+const CHIP_POOL_SIZE = 48;
 export const CHIP_SIZE_M = 0.012;
 export const CHIP_SPEED_MIN_MPS = 1.5;
 export const CHIP_SPEED_MAX_MPS = 3;

@@ -133,14 +133,14 @@ function supportsFormat(format: ImageFormat): boolean {
   return webpSupport;
 }
 
-export function getLoadingScreenAssetCandidates(
+function getLoadingScreenAssetCandidates(
   key: LoadingScreenImageAssetKey,
   variant: DeviceVariant = getDeviceVariant(),
 ): AssetCandidate[] {
   return IMAGE_ASSETS[key][variant];
 }
 
-export function getLoadingScreenPreferredAssetCandidate(
+function getLoadingScreenPreferredAssetCandidate(
   key: LoadingScreenImageAssetKey,
   variant: DeviceVariant = getDeviceVariant(),
 ): AssetCandidate {
@@ -153,7 +153,7 @@ export function getLoadingScreenPreferredAssetCandidate(
   return preferred ?? lastCandidate;
 }
 
-export function getLoadingScreenPreferredAssetUrl(
+function getLoadingScreenPreferredAssetUrl(
   key: LoadingScreenImageAssetKey,
   variant: DeviceVariant = getDeviceVariant(),
 ): string {

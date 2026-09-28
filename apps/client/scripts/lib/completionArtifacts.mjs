@@ -14,7 +14,7 @@ export function renderPerformanceSummary(performance) {
   ];
 }
 
-export function renderCompletionReview(summary) {
+function renderCompletionReview(summary) {
   const lines = [
     "# Autonomous Completion Review",
     "",

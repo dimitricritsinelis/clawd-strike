@@ -3,6 +3,7 @@
 import type { AgentAction } from "./runtime/input/AgentAction";
 import type { BuffType } from "./runtime/buffs/BuffTypes";
 import type { QaCaptureState } from "./runtime/qa/assetReadiness";
+import type { RuntimeTextState } from "./runtime/bootstrap";
 
 declare global {
   interface Window {
@@ -46,13 +47,13 @@ declare global {
         fovDeg: number;
         aspect: number;
       };
-      landmarks: unknown;
+      landmarks: RuntimeTextState["landmarks"];
       revealing: {
         camera: {
           fovDeg: number;
           aspect: number;
         };
-        landmarks: unknown;
+        landmarks: RuntimeTextState["landmarks"];
       } | null;
     };
     advanceTime?: (ms: number) => Promise<void>;

@@ -17,9 +17,9 @@ export type DeepReadonly<T> =
       : T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
         : T;
 
-export type TierTuple<T> = readonly [T, T, T, T, T, T];
-export type CountRange = readonly [minimum: number, maximum: number];
-export type GameplayValidationStatus = "approved" | "experimental";
+type TierTuple<T> = readonly [T, T, T, T, T, T];
+type CountRange = readonly [minimum: number, maximum: number];
+type GameplayValidationStatus = "approved" | "experimental";
 
 export type GameplayTuning = DeepReadonly<{
   identity: GameplayProfileIdentity;
