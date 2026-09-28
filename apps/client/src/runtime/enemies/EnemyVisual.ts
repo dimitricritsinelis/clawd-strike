@@ -513,15 +513,6 @@ export class EnemyVisual {
     return !this.applyDeathPose();
   }
 
-  /** Seconds since the death fall started (tests and debug). */
-  getDeathElapsedS(): number {
-    return this.deathElapsedS;
-  }
-
-  isFadingOut(): boolean {
-    return this.fadingOut;
-  }
-
   triggerShotFx(): void {
     this.animation?.shoot();
     if (!this.muzzleFlash || !this.muzzleFlashMat) return;

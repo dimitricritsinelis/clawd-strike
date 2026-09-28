@@ -6,7 +6,7 @@ const DEG_TO_RAD = Math.PI / 180;
 type Axis = { offset: number; velocity: number };
 
 /**
- * Render-only camera view punch (WP-06). Each shot kicks an underdamped spring
+ * Render-only camera view punch. Each shot kicks an underdamped spring
  * per axis (pitch up, alternating roll, small random yaw) that peaks about
  * 26 ms later and has settled before the next 600 RPM round. Game adds the
  * offsets to the camera as its last rotation write of the frame; the next

@@ -53,13 +53,6 @@ export class FadeOverlay {
     this.onComplete = null;
   }
 
-  /** Set opacity immediately (0–1). */
-  setOpacity(value: number): void {
-    this.opacity = Math.max(0, Math.min(1, value));
-    this.animating = false;
-    this.root.style.opacity = this.opacity.toFixed(3);
-  }
-
   update(dt: number): void {
     if (!this.animating) return;
 
@@ -76,10 +69,6 @@ export class FadeOverlay {
       this.onComplete = null;
       cb?.();
     }
-  }
-
-  isAnimating(): boolean {
-    return this.animating;
   }
 
   dispose(): void {

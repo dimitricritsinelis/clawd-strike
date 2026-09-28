@@ -9,10 +9,6 @@ import {
   CHIP_SPEED_MIN_MPS,
   CHIPS_PER_IMPACT,
   END_SCALE,
-  ENEMY_PUFF_HEADSHOT_SCALE,
-  ENEMY_PUFF_HEX,
-  ENEMY_PUFF_LIFETIME_S,
-  ENEMY_PUFF_SIZE_M,
   FLASH_DUST_HEX,
   FLASH_LIFETIME_S,
   FLASH_METAL_HEX,
@@ -168,33 +164,4 @@ test("a sustained spray steals the oldest dust instead of dropping new impacts",
   assert.equal(dust.length, POOL_SIZE);
   assert.ok(dust.some((p) => p.x === impacts - 1), "the newest impact has dust");
   assert.ok(!dust.some((p) => p.x === 0), "the oldest impact was recycled");
-});
-
-test("enemy hit puff is neutral dust, 0.18 m for 0.2 s and 1.5x on headshots", () => {
-  const particles = new ImpactParticle(new Scene(), 4);
-  particles.emitEnemyHit({ x: 0, y: 1.2, z: 0 }, false, { x: 0, y: 0, z: -1 });
-  const body = particles.getActiveParticles("puff");
-  assert.ok(body.length >= 1);
-  const puff = new Color(ENEMY_PUFF_HEX);
-  for (const p of body) {
-    assert.equal(p.life, ENEMY_PUFF_LIFETIME_S);
-    closeTo(p.r, puff.r);
-    closeTo(p.g, puff.g);
-    closeTo(p.b, puff.b);
-    assert.ok(p.vz > 0, "the puff drifts back toward the shooter");
-  }
-  // Neutral: no dominant red channel (decision D8, no blood).
-  assert.ok(puff.r - puff.b < 0.1);
-  particles.update(0);
-  particles.update(ENEMY_PUFF_LIFETIME_S * 0.999);
-  for (const p of particles.getActiveParticles("puff")) closeTo(p.scale, ENEMY_PUFF_SIZE_M, 1e-3);
-  particles.update(0.01);
-  assert.equal(particles.getActiveParticles("puff").length, 0);
-
-  particles.emitEnemyHit({ x: 0, y: 1.6, z: 0 }, true);
-  particles.update(0);
-  particles.update(ENEMY_PUFF_LIFETIME_S * 0.999);
-  for (const p of particles.getActiveParticles("puff")) {
-    closeTo(p.scale, ENEMY_PUFF_SIZE_M * ENEMY_PUFF_HEADSHOT_SCALE, 1e-3);
-  }
 });

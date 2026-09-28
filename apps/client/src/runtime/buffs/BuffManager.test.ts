@@ -257,7 +257,8 @@ test("a wave-closing drop is banked and activates at the next active wave", () =
 
   manager.onNewWave();
   assert.deepEqual(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs, [drop.type]);
-  assert.equal(manager.beginActiveWave(), drop.type);
+  manager.reapplyActiveBuffEffects();
+  assert.equal(manager.activateBankedWaveClosingBuff(), drop.type);
   assert.equal(manager.isBuffActive(drop.type), true);
   assert.deepEqual(activations, [drop.type]);
   assert.deepEqual(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs, []);

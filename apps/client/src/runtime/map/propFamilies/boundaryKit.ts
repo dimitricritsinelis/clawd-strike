@@ -61,30 +61,12 @@ export const GROUND_DRESSING_MAX_Y_M = 0.46;
  */
 export const BAY_MODULE_M = 2.4;
 export const PIER_WIDTH_M = 0.6;
-/** Clear width of a bay between piers. */
-export const BAY_CLEAR_M = BAY_MODULE_M - PIER_WIDTH_M;
 
 /** Shared horizontal datums, in metres from the paving. */
 export const DATUM_PLINTH_TOP_M = 0.72;
 export const DATUM_STRING_BOTTOM_M = FREE_PROJECTION_Y_M;
 export const DATUM_STRING_TOP_M = 2.9;
 export const DATUM_SILL_M = 4.3;
-export const DATUM_IMPOST_M = 5.4;
-
-/**
- * Bay centres for a run of `widthM`, laid out symmetrically about its middle on
- * whole modules. Returns an empty list when the run is too short to carry a
- * bay, which is the correct answer: a short return should stay blank rather
- * than take a squeezed opening.
- */
-export function bayCenters(widthM: number, marginM = PIER_WIDTH_M): number[] {
-  const usable = widthM - marginM * 2;
-  const count = Math.floor((usable + PIER_WIDTH_M) / BAY_MODULE_M);
-  if (count < 1) return [];
-  const span = count * BAY_MODULE_M - PIER_WIDTH_M;
-  const start = -span * 0.5 + BAY_CLEAR_M * 0.5;
-  return Array.from({ length: count }, (_, index) => start + index * BAY_MODULE_M);
-}
 
 export type Tone = readonly [number, number, number];
 

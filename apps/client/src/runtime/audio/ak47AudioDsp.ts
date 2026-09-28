@@ -475,19 +475,6 @@ export function buildAk47ReloadFoley(sprite: Float32Array | null, sampleRate: nu
 
 export type Ak47ShotBuildResult = { variants: Ak47ShotVariantData[]; stats: Ak47DspStats };
 
-/** Synchronous build (node measurement scripts). */
-export function buildAk47ShotVariants(
-  closeInput: readonly Float32Array[],
-  tailInput: readonly Float32Array[],
-  reloadInput: readonly Float32Array[] | null,
-  sampleRate: number,
-): Ak47ShotBuildResult {
-  const steps = ak47ShotVariantSteps(closeInput, tailInput, reloadInput, sampleRate);
-  let step = steps.next();
-  while (!step.done) step = steps.next();
-  return step.value;
-}
-
 /**
  * The same build split into ~10 ms steps (one per variation) so the runtime
  * can yield to the frame loop between them.

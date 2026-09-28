@@ -465,18 +465,6 @@ export class BulletHoleManager {
     return fit;
   }
 
-  /**
-   * Enemy hit puff at the bullet's entry point (no decal): neutral dust/fabric
-   * colour, 0.18 m, 0.2 s, 1.5x on headshots. `direction` is the bullet's
-   * travel direction.
-   */
-  spawnEnemyHitPuff(
-    hitPoint: Vec3Like,
-    options?: { headshot?: boolean; direction?: Vec3Like | null },
-  ): void {
-    this.impactParticle.emitEnemyHit(hitPoint, options?.headshot ?? false, options?.direction ?? null);
-  }
-
   /** Live impact particles (tests and debug). */
   getImpactParticles(): ImpactParticle {
     return this.impactParticle;

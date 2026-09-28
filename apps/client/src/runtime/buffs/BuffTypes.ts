@@ -71,7 +71,6 @@ export const BUFF_TYPES: readonly BuffType[] = [
 export const ORB_RADIUS_M = 0.35;
 export const ORB_BOB_AMPLITUDE_M = 0.15;
 export const ORB_BOB_FREQUENCY_HZ = 1.2;
-export const ORB_SPIN_RAD_PER_S = Math.PI;
 export const ORB_PICKUP_RADIUS_M = 1.0;
 export const ORB_LIFETIME_S = 15;
 export const ORB_SPAWN_HEIGHT_OFFSET_M = 1.0;

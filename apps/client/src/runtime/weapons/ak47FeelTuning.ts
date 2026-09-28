@@ -1,7 +1,6 @@
 /**
  * AK-47 feel tuning: every feel constant, grouped by layer, so feel is signed
- * off by playing rather than by test bounds. Frozen by default; a dev tuning
- * panel works on a structuredClone and hands that to the layer it drives.
+ * off by playing rather than by test bounds. The exported object is deep-frozen.
  *
  * Units: metres, radians, seconds; springs are { frequency (rad/s), damping
  * ratio }. Damping must stay below 1 (the exact spring step is underdamped).
@@ -19,7 +18,7 @@ function deepFreeze<T extends object>(value: T): DeepReadonly<T> {
 const DEG = Math.PI / 180;
 
 const motion = {
-  /** Per-shot viewmodel kick (WP-05). */
+  /** Per-shot viewmodel kick. */
   kick: {
     /** Fallback first-shot rule when the caller passes no shot event; matches RECOIL_RESET_DELAY_S. */
     firstShotResetS: 0.3,
@@ -56,7 +55,7 @@ const motion = {
     /** Kick pitch lifts the gun (pivot toward the shoulder). */
     pitchToLift: 0.12,
   },
-  /** Held-fire layer: the gun digs into the shoulder and wanders, then settles on release (WP-05). */
+  /** Held-fire layer: the gun digs into the shoulder and wanders, then settles on release. */
   sustain: {
     /** The layer is live while the last shot is younger than this. */
     holdS: 0.14,
@@ -72,7 +71,7 @@ const motion = {
     rollPhase: 1,
     wanderSpring: { frequency: 12, damping: 0.9 },
   },
-  /** Look sway (WP-19): low-passed, tanh-shaped look rate into a weighty spring. */
+  /** Look sway: low-passed, tanh-shaped look rate into a weighty spring. */
   sway: {
     /** Low-pass on the shaped look target; frame-rate exact. */
     lookLagS: 0.025,
@@ -84,7 +83,7 @@ const motion = {
     yawToX: 0.19,
     yawToRoll: 0.45,
   },
-  /** Walk bob (WP-19). The bootstrap footstep timer is the cadence authority when it calls onFootstep. */
+  /** Walk bob. The bootstrap footstep timer is the cadence authority when it calls onFootstep. */
   bob: {
     x: 0.0036,
     y: 0.0033,
@@ -103,7 +102,7 @@ const motion = {
     movementSpring: { frequency: 10, damping: 0.85 },
     fullMoveSpeedMps: 5,
   },
-  /** Breathing: the base breath stays on while moving; the figure-8 fades out with movement (WP-24). */
+  /** Breathing: the base breath stays on while moving; the figure-8 fades out with movement. */
   breath: {
     hz: 0.28,
     y: 0.0018,
@@ -122,7 +121,7 @@ const motion = {
 };
 
 /**
- * Render-only camera view punch (WP-06): the whole view thumps on each shot and
+ * Render-only camera view punch: the whole view thumps on each shot and
  * settles before the next one. It never moves the aim, the shot ray or the
  * crosshair's truth. Peaks are in degrees.
  */

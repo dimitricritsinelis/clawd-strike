@@ -995,7 +995,6 @@ export class EnemyController {
   isReloading(): boolean { return this.reloading; }
   isGrounded(): boolean { return this.grounded; }
   getTeam(): EnemyTeam { return this.team; }
-  getRole(): EnemyRole { return this.role; }
   getPosition(): Readonly<MutablePosition> { return this.position; }
   getYaw(): number { return this.yaw; }
   isFiring(): boolean { return this.firingThisFrame; }

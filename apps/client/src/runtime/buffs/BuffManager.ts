@@ -303,12 +303,6 @@ export class BuffManager {
     return type;
   }
 
-  /** Convenience boundary API for future runtime wiring. */
-  beginActiveWave(): BuffType | null {
-    this.reapplyActiveBuffEffects();
-    return this.activateBankedWaveClosingBuff();
-  }
-
   getWaveCarryoverSnapshot(): BuffWaveCarryoverSnapshot {
     return {
       activeBuffs: this.getActiveBuffs(),

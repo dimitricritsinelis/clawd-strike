@@ -90,8 +90,3 @@ export function createSharedTextureLoadingManager(): LoadingManager {
   manager.addHandler(IMAGE_URI, sharedImageLoader as unknown as TextureLoader);
   return manager;
 }
-
-/** Test hook: distinct shared images currently cached. */
-export function sharedGltfImageCount(): number {
-  return sourcesByUrl.size;
-}

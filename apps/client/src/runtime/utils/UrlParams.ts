@@ -1,7 +1,6 @@
 import { sanitizeValidatedPlayerName } from "../../../../shared/playerName";
 
 const DEFAULT_MAP_ID = "bazaar-map";
-const DEFAULT_PROP_PROFILE = "medium";
 const DEFAULT_FLOOR_QUALITY = "1k";
 
 export type RuntimeSpawnId = "A" | "B";
@@ -34,21 +33,12 @@ export type RuntimeUrlParams = {
   spawn: RuntimeSpawnId;
   debug: boolean;
   perf: boolean;
-  highVis: boolean;
   vm: boolean;
-  anchors: boolean;
-  labels: boolean;
-  anchorTypes: string[];
   seed: number | null;
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
-  wallDetails: boolean;
-  wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
-  lightingPreset: RuntimeLightingPreset;
   environmentLighting: boolean;
-  propVisuals: RuntimePropVisualMode;
-  propChaos: RuntimePropChaosOptions;
   unlimitedHealth: boolean;
   /**
    * Whether the god-mode flag was named in the URL at all, and what it said.
@@ -73,18 +63,6 @@ function parseBooleanFlagWithDefault(value: string | null, fallback: boolean): b
   return parseBooleanFlag(value);
 }
 
-function parseAnchorTypes(value: string | null): string[] {
-  if (!value) return [];
-
-  const normalized = value
-    .split(",")
-    .map((item) => item.trim().toLowerCase())
-    .filter((item) => item.length > 0);
-
-  if (normalized.length === 0) return [];
-  return [...new Set(normalized)].sort((a, b) => a.localeCompare(b));
-}
-
 function parseSeed(value: string | null): number | null {
   if (!value) return null;
   const trimmed = value.trim();
@@ -92,28 +70,6 @@ function parseSeed(value: string | null): number | null {
   const parsed = Number.parseInt(trimmed, 10);
   if (!Number.isFinite(parsed)) return null;
   return parsed;
-}
-
-function parsePropProfile(value: string | null): RuntimePropProfile {
-  const normalized = value?.trim().toLowerCase();
-  if (normalized === "subtle" || normalized === "medium" || normalized === "high") {
-    return normalized;
-  }
-  return DEFAULT_PROP_PROFILE;
-}
-
-function parseUnitFloat(value: string | null): number | null {
-  if (!value) return null;
-  const parsed = Number.parseFloat(value.trim());
-  if (!Number.isFinite(parsed)) return null;
-  return Math.max(0, Math.min(1, parsed));
-}
-
-function parseDensityScale(value: string | null): number | null {
-  if (!value) return null;
-  const parsed = Number.parseFloat(value.trim());
-  if (!Number.isFinite(parsed)) return null;
-  return Math.max(0, Math.min(2, parsed));
 }
 
 function parseFloorMode(value: string | null): RuntimeFloorMode {
@@ -132,14 +88,6 @@ function parseFloorQuality(value: string | null): RuntimeFloorQuality {
     return normalized;
   }
   return DEFAULT_FLOOR_QUALITY;
-}
-
-function parseLightingPreset(value: string | null): RuntimeLightingPreset {
-  return value?.trim().toLowerCase() === "flat" ? "flat" : "golden";
-}
-
-function parsePropVisualMode(value: string | null): RuntimePropVisualMode {
-  return value?.trim().toLowerCase() === "blockout" ? "blockout" : "bazaar";
 }
 
 function getParam(params: URLSearchParams, ...keys: string[]): string | null {
@@ -200,24 +148,12 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const rawSpawn = getParam(params, "spawn");
   const rawDebug = getParam(params, "debug");
   const rawPerf = getParam(params, "perf");
-  const rawHighVis = getParam(params, "high-vis", "highvis");
   const rawVm = getParam(params, "vm");
-  const rawAnchors = getParam(params, "anchors");
-  const rawLabels = getParam(params, "labels");
-  const rawAnchorTypes = getParam(params, "anchor-types", "anchorTypes");
   const rawSeed = getParam(params, "seed");
   const rawFloors = getParam(params, "floors");
   const rawWalls = getParam(params, "walls");
   const rawFloorRes = getParam(params, "floorRes", "floor-res");
-  const rawLighting = getParam(params, "lighting");
   const rawEnvironmentLighting = getParam(params, "ibl", "environmentLighting", "environment-lighting");
-  const rawWallDetails = getParam(params, "wallDetails", "wall-details");
-  const rawWallDetailDensity = getParam(params, "wallDetailDensity", "wall-detail-density");
-  const rawProps = getParam(params, "props", "propVisuals", "prop-visuals");
-  const rawPropProfile = getParam(params, "prop-profile", "propProfile");
-  const rawPropJitter = getParam(params, "prop-jitter", "propJitter");
-  const rawPropCluster = getParam(params, "prop-cluster", "propCluster");
-  const rawPropDensity = getParam(params, "prop-density", "propDensity");
   const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god", "godMode");
   const rawAo = getParam(params, "ao");
   const rawPost = getParam(params, "post");
@@ -229,27 +165,13 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const spawn = rawSpawn?.trim().toUpperCase() === "B" ? "B" : "A";
   const debug = parseBooleanFlag(rawDebug);
   const perf = parseBooleanFlag(rawPerf);
-  const highVis = parseBooleanFlag(rawHighVis);
   const vm = parseBooleanFlagWithDefault(rawVm, true);
-  const anchors = parseBooleanFlag(rawAnchors);
-  const labels = parseBooleanFlag(rawLabels);
-  const anchorTypes = parseAnchorTypes(rawAnchorTypes);
   const seed = parseSeed(rawSeed);
   const floorMode = parseFloorMode(rawFloors);
   const wallMode = parseWallMode(rawWalls);
-  const wallDetails = parseBooleanFlagWithDefault(rawWallDetails, true);
-  const wallDetailDensity = parseDensityScale(rawWallDetailDensity);
   const quality = parseQualityTier(getParam(params, "quality", "gfx"));
   const floorQuality = rawFloorRes === null && quality === "high" ? "2k" : parseFloorQuality(rawFloorRes);
-  const lightingPreset = parseLightingPreset(rawLighting);
   const environmentLighting = parseBooleanFlagWithDefault(rawEnvironmentLighting, true);
-  const propVisuals = parsePropVisualMode(rawProps);
-  const propChaos: RuntimePropChaosOptions = {
-    profile: parsePropProfile(rawPropProfile),
-    jitter: parseUnitFloat(rawPropJitter),
-    cluster: parseUnitFloat(rawPropCluster),
-    density: parseUnitFloat(rawPropDensity),
-  };
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
   const unlimitedHealthExplicit = rawUnlimitedHealth === null ? null : unlimitedHealth;
   // GTAO is on for authored shots and for live play in the high tier. It reads
@@ -267,21 +189,12 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     spawn,
     debug,
     perf,
-    highVis,
     vm,
-    anchors,
-    labels,
-    anchorTypes,
     seed,
     floorMode,
     wallMode,
-    wallDetails,
-    wallDetailDensity,
     floorQuality,
-    lightingPreset,
     environmentLighting,
-    propVisuals,
-    propChaos,
     unlimitedHealth,
     unlimitedHealthExplicit,
     ao,

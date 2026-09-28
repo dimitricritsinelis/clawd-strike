@@ -16,7 +16,7 @@ import { DeterministicRng } from "../utils/Rng";
 /** Surface class reported by the caller; only metal changes the impact look. */
 export type ImpactSurface = "default" | "metal";
 
-export type ImpactParticleKind = "dust" | "flash" | "chip" | "puff";
+export type ImpactParticleKind = "dust" | "flash" | "chip";
 
 // Dust puff (world impacts). Normal blending so the puff reads as dust against
 // sunlit plaster instead of glowing like the old additive sprite.
@@ -52,17 +52,6 @@ export const CHIP_SPEED_MAX_MPS = 3;
 export const CHIP_LIFETIME_S = 0.5;
 export const CHIP_GRAVITY_MPS2 = 9.8;
 const CHIP_COLOR_HEX = 0x4d4538;
-
-// Enemy hit puff (decision D8: neutral dust/fabric, never blood). It shares
-// the dust pool so an enemy hit costs no extra draw call.
-export const ENEMY_PUFF_SIZE_M = 0.18;
-export const ENEMY_PUFF_LIFETIME_S = 0.2;
-export const ENEMY_PUFF_HEADSHOT_SCALE = 1.5;
-export const ENEMY_PUFF_HEX = 0x9a9284;
-const ENEMY_PUFF_PER_HIT = 2;
-const ENEMY_PUFF_START_FRACTION = 0.55;
-const ENEMY_PUFF_OPACITY = 0.7;
-const ENEMY_PUFF_DRIFT_MPS = 0.6;
 
 const CAPACITY = POOL_SIZE + FLASH_POOL_SIZE + CHIP_POOL_SIZE;
 
@@ -142,8 +131,8 @@ void main() {
 `;
 
 /**
- * Pooled world-impact particles: dust puffs, a one-frame impact flash, debris
- * chips and the enemy hit puff. Every particle lives in one instanced
+ * Pooled world-impact particles: dust puffs, a one-frame impact flash and
+ * debris chips. Every particle lives in one instanced
  * camera-facing quad mesh, so any number of simultaneous impacts costs a
  * single draw call (none at rest).
  */
@@ -248,37 +237,6 @@ export class ImpactParticle {
     this.writeBuffers();
   }
 
-  /**
-   * Enemy hit puff at the bullet's entry point. Neutral dust/fabric colour
-   * (no blood). `direction` is the bullet's travel direction; the puff drifts
-   * back toward the shooter so it stays visible in front of the body.
-   */
-  emitEnemyHit(position: Vec3Like, headshot = false, direction?: Vec3Like | null): void {
-    const rng = this.rng;
-    const size = ENEMY_PUFF_SIZE_M * (headshot ? ENEMY_PUFF_HEADSHOT_SCALE : 1);
-    let bx = 0;
-    let bz = 0;
-    if (direction) {
-      const length = Math.hypot(direction.x, direction.y, direction.z);
-      if (length > 1e-6) {
-        bx = -direction.x / length;
-        bz = -direction.z / length;
-      }
-    }
-    for (let n = 0; n < ENEMY_PUFF_PER_HIT; n++) {
-      const p = this.claim("puff");
-      this.place(p, position, ENEMY_PUFF_LIFETIME_S);
-      p.vx = (bx + (rng.next() - 0.5) * 0.6) * ENEMY_PUFF_DRIFT_MPS;
-      p.vy = (0.35 + rng.next() * 0.3) * ENEMY_PUFF_DRIFT_MPS;
-      p.vz = (bz + (rng.next() - 0.5) * 0.6) * ENEMY_PUFF_DRIFT_MPS;
-      p.startScale = size * ENEMY_PUFF_START_FRACTION;
-      p.endScale = size;
-      p.startOpacity = ENEMY_PUFF_OPACITY;
-      this.tint(p, ENEMY_PUFF_HEX);
-    }
-    this.writeBuffers();
-  }
-
   update(dt: number): void {
     if (this.activeCount === 0) return;
     const step = Number.isFinite(dt) && dt > 0 ? dt : 0;
@@ -334,21 +292,16 @@ export class ImpactParticle {
   }
 
   private claim(kind: ImpactParticleKind): Particle {
-    // Puffs share the dust slots; each other kind has its own slot range.
-    const poolKind = kind === "puff" ? "dust" : kind;
+    // Each kind has its own slot range.
     let oldest: Particle | null = null;
     for (let i = 0; i < CAPACITY; i++) {
       const p = this.particles[i]!;
       const slotKind = i < POOL_SIZE ? "dust" : i < POOL_SIZE + FLASH_POOL_SIZE ? "flash" : "chip";
-      if (slotKind !== poolKind) continue;
-      if (!p.active) {
-        p.kind = kind;
-        return p;
-      }
+      if (slotKind !== kind) continue;
+      if (!p.active) return p;
       if (!oldest || p.serial < oldest.serial) oldest = p;
     }
     // Pool full: steal the oldest so a sustained spray always shows its newest hit.
-    oldest!.kind = kind;
     return oldest!;
   }
 

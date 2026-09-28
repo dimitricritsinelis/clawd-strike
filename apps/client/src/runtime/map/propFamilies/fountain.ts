@@ -256,65 +256,6 @@ export function createAnnularWedgeGeometry(
   return geometry;
 }
 
-export function createBatteredFountainWallSegment(index: number): BufferGeometry {
-  const wear = FOUNTAIN_SEGMENT_WEAR[index]!;
-  const center = fountainSegmentCenterAngle(index);
-  const halfAngle = Math.PI * 0.125 - FOUNTAIN_JOINT_M / (2 * 1.02);
-  const start = center - halfAngle;
-  const end = center + halfAngle;
-  const bottomY = 0.055;
-  const topY = 0.335 + wear.topM;
-  const outerBottom = 1.025 + wear.radialM;
-  const outerTop = 0.968 + wear.radialM;
-  const innerBottom = 0.735;
-  const innerTop = 0.715;
-  const point = (radius: number, angle: number, y: number) => [
-    Math.cos(angle) * radius,
-    y,
-    Math.sin(angle) * radius,
-  ] as const;
-  const vertices = [
-    point(outerBottom, start, bottomY),
-    point(outerBottom, end, bottomY),
-    point(innerBottom, end, bottomY),
-    point(innerBottom, start, bottomY),
-    point(outerTop, start, topY),
-    point(outerTop, end, topY),
-    point(innerTop, end, topY),
-    point(innerTop, start, topY),
-  ];
-  const faceIndices = [
-    0, 3, 2, 0, 2, 1,
-    4, 5, 6, 4, 6, 7,
-    0, 1, 5, 0, 5, 4,
-    1, 2, 6, 1, 6, 5,
-    2, 3, 7, 2, 7, 6,
-    3, 0, 4, 3, 4, 7,
-  ];
-  const expandedPositions: number[] = [];
-  const expandedNormals: number[] = [];
-  for (let faceStart = 0; faceStart < faceIndices.length; faceStart += 6) {
-    const face = faceIndices.slice(faceStart, faceStart + 6);
-    const first = vertices[face[0]!]!;
-    const second = vertices[face[1]!]!;
-    const third = vertices[face[2]!]!;
-    const normal = new Vector3(
-      second[0] - first[0], second[1] - first[1], second[2] - first[2],
-    ).cross(new Vector3(
-      third[0] - first[0], third[1] - first[1], third[2] - first[2],
-    )).normalize();
-    for (const vertexIndex of face) {
-      expandedPositions.push(...vertices[vertexIndex]!);
-      expandedNormals.push(normal.x, normal.y, normal.z);
-    }
-  }
-  const geometry = new BufferGeometry();
-  geometry.setAttribute("position", new Float32BufferAttribute(expandedPositions, 3));
-  geometry.setAttribute("normal", new Float32BufferAttribute(expandedNormals, 3));
-  geometry.setAttribute("uv", new Float32BufferAttribute(new Float32Array(faceIndices.length * 2), 2));
-  return tintGeometry(geometry, wear.tint);
-}
-
 export function createModularFountainStoneGeometry(): BufferGeometry {
   // One coherent Levantine/Mediterranean lathe concept. The cross-sections
   // carry the carved ogee, bead and cavetto reads in silhouette; this is a

@@ -201,10 +201,6 @@ test("decals recycle after the pool fills and every hit fires impact particles",
   assert.equal(decalMesh(scene).count, MAX_DECALS);
   assert.equal(holes.getImpactParticles().getActiveParticles("flash").length, 12, "flash pool recycles");
 
-  holes.spawnEnemyHitPuff({ x: 0, y: 1.2, z: 3 }, { headshot: true, direction: { x: 0, y: 0, z: -1 } });
-  assert.equal(decalMesh(scene).count, MAX_DECALS, "enemy puffs never leave a wall decal");
-  assert.ok(holes.getImpactParticles().getActiveParticles("puff").length > 0);
-
   holes.clear();
   assert.equal(decalMesh(scene).count, 0);
   assert.equal(holes.getImpactParticles().getActiveParticles().length, 0);

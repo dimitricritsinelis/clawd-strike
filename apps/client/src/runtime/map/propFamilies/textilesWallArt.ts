@@ -120,26 +120,6 @@ export function createDrapePanelGeometry(variant: TextileVariant = 0): BufferGeo
   return mergeProceduralGeometry(parts);
 }
 
-/** Finished wall-art panel with a timber frame, recessed textile and motif. */
-export function createWallArtGeometry(variant: TextileVariant = 0): BufferGeometry {
-  const palette = paletteFor(variant);
-  const frame: TextileTone = variant % 2 === 0 ? [0.31, 0.2, 0.12] : [0.2, 0.24, 0.25];
-  const parts: BufferGeometry[] = [
-    tintGeometry(boxPart(0.76, 0.68, 0.3, 0, 0, -0.08), palette.field),
-    tintGeometry(boxPart(0.92, 0.09, 0.55, 0, 0.41, 0), frame),
-    tintGeometry(boxPart(0.92, 0.09, 0.55, 0, -0.41, 0), frame),
-    tintGeometry(boxPart(0.09, 0.73, 0.55, -0.415, 0, 0), frame),
-    tintGeometry(boxPart(0.09, 0.73, 0.55, 0.415, 0, 0), frame),
-  ];
-
-  const motifXs = variant % 2 === 0 ? [-0.2, 0, 0.2] : [-0.24, -0.08, 0.08, 0.24];
-  for (const x of motifXs) {
-    parts.push(tintGeometry(boxPart(0.075, 0.38, 0.34, x, 0, 0.12), palette.motif));
-  }
-  parts.push(tintGeometry(boxPart(0.52, 0.07, 0.36, 0, 0, 0.14), palette.thread));
-  return mergeProceduralGeometry(parts);
-}
-
 function laundryCatenaryY(localZ: number): number {
   const normalized = Math.max(-0.5, Math.min(0.5, localZ)) * 2;
   return -0.34 * (1 - normalized * normalized);

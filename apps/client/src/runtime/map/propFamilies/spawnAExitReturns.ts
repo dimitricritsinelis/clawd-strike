@@ -101,7 +101,6 @@ const STRING_BOTTOM_M = DATUM_STRING_BOTTOM_M;
 const STRING_TOP_M = 2.86;
 
 export const SPAWN_A_EXIT_RETURN_HEIGHT_M = 7.6;
-export const SPAWN_A_EXIT_RETURN_DEPTH_M = DEPTH_M;
 /**
  * Stopped clear of the Spice Gate's abutments, which reach x 20.6 and x 33.4.
  * At the full 4 m and 6 m these runs overlapped the portal's own masonry and

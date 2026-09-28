@@ -41,7 +41,6 @@ const OVERLAY_LOADING_BANNER = "Loading menu art...";
 const OVERLAY_FAILURE_BANNER = "Menu art unavailable";
 
 export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = {}): LoadingScreenHandle {
-  const isVirtualTime = typeof window.__vt_pending !== "undefined";
   const isInternalDebugSurface = import.meta.env.DEV || isLocalhostHostname(window.location.hostname);
   const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
     .test(window.location.search);
@@ -212,12 +211,6 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   previewLoadingBoard(runtimeUrlIsAgent ? "agent" : "human", true);
 
   void loadingAmbient.start();
-
-  if (isVirtualTime) {
-    window.advanceTime = async (_ms: number) => {
-      // Virtual-time harness: loading-screen mode intentionally has no simulation step.
-    };
-  }
 
   window.agent_apply_action = (_action: unknown) => {
     // Runtime-only API. Loading screen intentionally ignores agent actions.

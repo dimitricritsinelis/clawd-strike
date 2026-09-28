@@ -1,6 +1,5 @@
-import { AmbientLight, Color, DirectionalLight, DoubleSide, Fog, HemisphereLight, MeshStandardMaterial, Object3D, PerspectiveCamera, Scene, type Texture, Vector3 } from "three";
+import { AmbientLight, DirectionalLight, DoubleSide, Fog, HemisphereLight, MeshStandardMaterial, Object3D, PerspectiveCamera, Scene, type Texture, Vector3 } from "three";
 import { installDesertSky, type DesertSkyHandle } from "../render/DesertSky";
-import { AnchorsDebug, type AnchorsDebugState } from "../debug/AnchorsDebug";
 import { Hud } from "../debug/Hud";
 import {
   EnemyManager,
@@ -18,7 +17,6 @@ import {
 } from "../map/buildProps";
 import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
 import type { WallDetailPlacementStats } from "../map/wallDetailPlacer";
-import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
 import type { FloorMaterialLibrary } from "../render/materials/FloorMaterialLibrary";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
@@ -35,9 +33,6 @@ import type {
   RuntimeControlMode,
   RuntimeFloorMode,
   RuntimeFloorQuality,
-  RuntimeLightingPreset,
-  RuntimePropChaosOptions,
-  RuntimePropVisualMode,
   RuntimeSpawnId,
   RuntimeWallMode,
 } from "../utils/UrlParams";
@@ -264,32 +259,21 @@ type GameOptions = {
   controlMode: RuntimeControlMode;
   mapId: string;
   seedOverride: number | null;
-  propChaos: RuntimePropChaosOptions;
   freezeInput?: boolean;
   spawn?: RuntimeSpawnId;
   debug?: boolean;
-  highVis?: boolean;
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
-  wallDetails: boolean;
-  wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
-  lightingPreset: RuntimeLightingPreset;
   environmentLighting: boolean;
   createEnvironmentMap: (scene: Scene, position: Vector3) => Texture | null;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
-  propVisuals: RuntimePropVisualMode;
   propModels: PropModelLibrary | null;
   doorModels: PropModelLibrary | null;
   facadeModels?: PropModelLibrary | null;
   onTogglePerfHud?: () => void;
   mountEl?: HTMLElement;
-  anchorsDebug?: {
-    showMarkers: boolean;
-    showLabels: boolean;
-    anchorTypes: readonly string[];
-  };
   onWeaponShot?: (shot: WeaponShotPayload) => void;
   unlimitedHealth?: boolean;
   playerRunSpeedMps?: number;
@@ -367,27 +351,16 @@ export class Game {
   private spawn: RuntimeSpawnId = "A";
   private mapId = "bazaar-map";
   private seedOverride: number | null = null;
-  private highVis = false;
-  private lightingPreset: RuntimeLightingPreset = "golden";
   private environmentLighting = true;
   private createEnvironmentMap: ((scene: Scene, position: Vector3) => Texture | null) | null = null;
   private floorMode: RuntimeFloorMode = "blockout";
   private wallMode: RuntimeWallMode = "blockout";
-  private wallDetailsEnabled = true;
-  private wallDetailDensity: number | null = null;
   private floorQuality: RuntimeFloorQuality = "4k";
   private floorMaterials: FloorMaterialLibrary | null = null;
   private wallMaterials: WallMaterialLibrary | null = null;
-  private propVisuals: RuntimePropVisualMode = "blockout";
   private propModels: PropModelLibrary | null = null;
   private doorModels: PropModelLibrary | null = null;
   private facadeModels: PropModelLibrary | null = null;
-  private propChaos: RuntimePropChaosOptions = {
-    profile: "subtle",
-    jitter: null,
-    cluster: null,
-    density: null,
-  };
   private blockoutSpec: RuntimeBlockoutSpec | null = null;
   private anchorsSpec: RuntimeAnchorsSpec | null = null;
   private blockoutRoot: Object3D | null = null;
@@ -395,7 +368,6 @@ export class Game {
   private worldColliders: WorldColliders | null = null;
   private runtimeColliders: RuntimeColliderAabb[] = [];
   private propColliders: RuntimeColliderAabb[] = [];
-  private renderedLandmarkAnchorIds: string[] = [];
   private renderedAnchorIds: string[] = [];
   private renderedPropPlacements: RenderedPropPlacement[] = [];
   private propStats: PropsBuildStats = {
@@ -431,7 +403,6 @@ export class Game {
   private wasGrounded = true;
   private onLandingCallback: (() => void) | null = null;
   private hud: Hud | null = null;
-  private anchorsDebug: AnchorsDebug | null = null;
   private debugHotkeysEnabled = false;
   private onTogglePerfHud: (() => void) | null = null;
   private onWeaponShot: ((shot: WeaponShotPayload) => void) | null = null;
@@ -461,22 +432,10 @@ export class Game {
   private shakeYVel = 0;
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (this.debugHotkeysEnabled) {
-      if (event.code === "F5") {
-        this.onTogglePerfHud?.();
-        event.preventDefault();
-        return;
-      }
-      if (event.code === "F2" && this.anchorsDebug) {
-        this.anchorsDebug.toggleMarkers();
-        event.preventDefault();
-        return;
-      }
-      if (event.code === "F3" && this.anchorsDebug) {
-        this.anchorsDebug.toggleLabels();
-        event.preventDefault();
-        return;
-      }
+    if (this.debugHotkeysEnabled && event.code === "F5") {
+      this.onTogglePerfHud?.();
+      event.preventDefault();
+      return;
     }
 
     this.pressedKeys.add(event.code);
@@ -538,22 +497,16 @@ export class Game {
     this.controlMode = options.controlMode;
     this.mapId = options.mapId;
     this.seedOverride = options.seedOverride;
-    this.highVis = options.highVis ?? false;
-    this.lightingPreset = options.lightingPreset;
     this.environmentLighting = options.environmentLighting;
     this.createEnvironmentMap = options.createEnvironmentMap;
     this.floorMode = options.floorMode;
     this.wallMode = options.wallMode;
-    this.wallDetailsEnabled = options.wallDetails;
-    this.wallDetailDensity = options.wallDetailDensity;
     this.floorQuality = options.floorQuality;
     this.floorMaterials = options.floorMaterials;
     this.wallMaterials = options.wallMaterials;
-    this.propVisuals = options.propVisuals;
     this.propModels = options.propModels;
     this.doorModels = options.doorModels;
     this.facadeModels = options.facadeModels ?? null;
-    this.propChaos = options.propChaos;
     this.freezeInput = options.freezeInput ?? false;
     this.spawn = options.spawn ?? "A";
     this.debugHotkeysEnabled = options.debug ?? false;
@@ -577,26 +530,8 @@ export class Game {
     this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
 
     const mountEl = options.mountEl ?? document.querySelector<HTMLElement>("#runtime-root") ?? document.querySelector<HTMLElement>("#app");
-    const anchorsDebugOptions = options.anchorsDebug ?? {
-      showMarkers: false,
-      showLabels: false,
-      anchorTypes: [],
-    };
-
-    if (mountEl) {
-      this.anchorsDebug = new AnchorsDebug({
-        mountEl,
-        scene: this.scene,
-        showMarkers: anchorsDebugOptions.showMarkers,
-        showLabels: anchorsDebugOptions.showLabels,
-        anchorTypes: anchorsDebugOptions.anchorTypes,
-      });
-    }
-
-    if (options.debug) {
-      if (mountEl) {
-        this.hud = new Hud(mountEl);
-      }
+    if (options.debug && mountEl) {
+      this.hud = new Hud(mountEl);
     }
 
     window.addEventListener("keydown", this.onKeyDown);
@@ -611,10 +546,6 @@ export class Game {
   setAspect(aspect: number): void {
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
-  }
-
-  setViewportSize(width: number, height: number): void {
-    this.anchorsDebug?.setViewport(width, height);
   }
 
   setPointerLocked(locked: boolean): void {
@@ -671,28 +602,11 @@ export class Game {
     this.applyLockedCameraPose();
   }
 
-  setBlockoutSpec(spec: RuntimeBlockoutSpec): void {
-    this.blockoutSpec = spec;
-    this.applyMapLightingBounds(spec);
-    this.rebuildWorld();
-  }
-
-  setAnchorsSpec(spec: RuntimeAnchorsSpec): void {
-    this.anchorsSpec = spec;
-    this.anchorsDebug?.setAnchors(spec);
-    this.rebuildWorld();
-  }
-
-  /**
-   * Assigns both map specs with a single world rebuild. The split setters each
-   * trigger a full rebuild, which doubles boot-time map construction when both
-   * specs arrive together.
-   */
+  /** Assigns both map specs and builds the world once. */
   setMapSpecs(blockout: RuntimeBlockoutSpec, anchors: RuntimeAnchorsSpec): void {
     this.blockoutSpec = blockout;
     this.applyMapLightingBounds(blockout);
     this.anchorsSpec = anchors;
-    this.anchorsDebug?.setAnchors(anchors);
     this.rebuildWorld();
   }
 
@@ -717,10 +631,6 @@ export class Game {
 
   getPropsBuildStats(): PropsBuildStats {
     return this.propStats;
-  }
-
-  getRenderedLandmarkAnchorIds(): readonly string[] {
-    return this.renderedLandmarkAnchorIds;
   }
 
   getRenderedAnchorIds(): readonly string[] {
@@ -897,7 +807,6 @@ export class Game {
         this.camera.rotation.z += this.viewPunch.getRollRad();
       }
     }
-    this.anchorsDebug?.update(this.camera);
 
     if (this.hud) {
       const position = this.playerController.getPosition();
@@ -936,10 +845,6 @@ export class Game {
     this.resetInputState();
     this.hud?.dispose();
     this.hud = null;
-    if (this.anchorsDebug) {
-      this.anchorsDebug.dispose(this.scene);
-      this.anchorsDebug = null;
-    }
     this.enemyManager?.dispose(this.scene);
     this.enemyManager = null;
     this.desertSky?.dispose();
@@ -974,26 +879,6 @@ export class Game {
     return this.playerController.getLastCollisionState();
   }
 
-  getGameplayAuthoritySnapshot(): {
-    colliders: Array<{
-      id: string;
-      kind: string;
-      min: { x: number; y: number; z: number };
-      max: { x: number; y: number; z: number };
-    }>;
-  } {
-    return {
-      colliders: this.runtimeColliders
-        .map((collider) => ({
-          id: collider.id,
-          kind: collider.kind,
-          min: { x: collider.min.x, y: collider.min.y, z: collider.min.z },
-          max: { x: collider.max.x, y: collider.max.y, z: collider.max.z },
-        }))
-        .sort((left, right) => left.id.localeCompare(right.id) || left.kind.localeCompare(right.kind)),
-    };
-  }
-
   isPlayerWithinPlayableBounds(): boolean {
     return this.playerController.isWithinPlayableBounds();
   }
@@ -1007,20 +892,6 @@ export class Game {
       yaw: this.yaw * RAD_TO_DEG,
       pitch: this.pitch * RAD_TO_DEG,
     };
-  }
-
-  getAnchorsDebugState(): AnchorsDebugState {
-    if (!this.anchorsDebug) {
-      return {
-        markersVisible: false,
-        labelsVisible: false,
-        totalAnchors: 0,
-        filteredAnchors: 0,
-        shownLabels: 0,
-        filterTypes: [],
-      };
-    }
-    return this.anchorsDebug.getState();
   }
 
   setWeaponDebugSnapshot(loaded: boolean, dot: number, angleDeg: number): void {
@@ -1043,7 +914,7 @@ export class Game {
 
   /**
    * World light at the eye for the separately rendered viewmodel: sun, sky
-   * fill and whether map geometry shades the player. Null for the flat preset.
+   * fill and whether map geometry shades the player.
    */
   sampleViewModelLighting(out: ViewModelLighting): ViewModelLighting | null {
     const sun = this.sunLight;
@@ -1237,10 +1108,6 @@ export class Game {
     return this.isDead;
   }
 
-  getControlMode(): RuntimeControlMode {
-    return this.controlMode;
-  }
-
   isPointerLocked(): boolean {
     return this.pointerLocked;
   }
@@ -1325,21 +1192,6 @@ export class Game {
   }
 
   private setupLighting(): void {
-    if (this.lightingPreset === "flat") {
-      const palette = resolveBlockoutPalette(this.highVis);
-      this.scene.background = new Color(palette.background);
-      this.scene.fog = null;
-
-      const ambient = new AmbientLight(0xffffff, 1.05);
-      const hemi = new HemisphereLight(0xfafcff, 0xf0d7ad, 1.2);
-      hemi.position.set(0, 20, 0);
-      const key = new DirectionalLight(0xfff2d0, 0.7);
-      key.position.set(22, 34, 16);
-      key.castShadow = false;
-      this.scene.add(ambient, hemi, key);
-      return;
-    }
-
     // ── High desert daylight rig ───────────────────────────────────────
     // R8 art direction: late-afternoon
     // warm key from the south-south-west at ~34 degrees so it rakes down the
@@ -1870,18 +1722,18 @@ export class Game {
     this.clearProps();
 
     const builtBlockout = buildBlockout(blockoutSpec, {
-      highVis: this.highVis,
+      highVis: false,
       seed: runtimeSeed,
       floorMode: this.floorMode,
       wallMode: this.wallMode,
       floorQuality: this.floorQuality,
-      lightingPreset: this.lightingPreset,
+      lightingPreset: "golden",
       floorMaterials: this.floorMaterials,
       wallMaterials: this.wallMaterials,
       anchors: this.anchorsSpec,
       wallDetails: {
-        enabled: this.wallDetailsEnabled,
-        densityScale: this.wallDetailDensity,
+        enabled: true,
+        densityScale: null,
       },
       doorModels: this.doorModels,
       facadeModels: this.facadeModels,
@@ -1892,15 +1744,14 @@ export class Game {
     this.scene.add(builtBlockout.root);
 
     this.propColliders = [];
-    this.renderedLandmarkAnchorIds = [];
     this.renderedAnchorIds = [];
     this.renderedPropPlacements = [];
     this.propStats = {
       seed: runtimeSeed,
-      profile: this.propChaos.profile,
-      jitter: this.propChaos.jitter ?? 0.34,
-      cluster: this.propChaos.cluster ?? 0.56,
-      density: MAP_PROPS_ENABLED ? (this.propChaos.density ?? 0.44) : 0,
+      profile: "medium",
+      jitter: 0.34,
+      cluster: 0.56,
+      density: MAP_PROPS_ENABLED ? 0.44 : 0,
       totalAnchors: this.anchorsSpec?.anchors.length ?? 0,
       candidatesTotal: 0,
       collidersPlaced: 0,
@@ -1917,16 +1768,16 @@ export class Game {
         blockout: blockoutSpec,
         anchors: this.anchorsSpec,
         seedOverride: this.seedOverride,
-        propChaos: this.propChaos,
-        propVisuals: this.propVisuals,
+        // Bazaar visuals ignore the chaos options.
+        propChaos: { profile: "medium", jitter: null, cluster: null, density: null },
+        propVisuals: "bazaar",
         propModels: this.propModels,
-        highVis: this.highVis,
+        highVis: false,
       });
       this.propsRoot = builtProps.root;
       applyStaticMaterialRenderBudget(builtProps.root);
       this.propColliders = builtProps.colliders;
       this.propStats = builtProps.stats;
-      this.renderedLandmarkAnchorIds = builtProps.renderedLandmarkAnchorIds;
       this.renderedAnchorIds = builtProps.renderedAnchorIds;
       this.renderedPropPlacements = builtProps.renderedPlacements;
       this.scene.add(builtProps.root);

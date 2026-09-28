@@ -193,7 +193,7 @@ class Driver {
   }
 }
 
-// WP-00: one set of shot facts for audio, viewmodel, camera punch and flash.
+// One set of shot facts for audio, viewmodel, camera punch and flash.
 test("shot events carry isFirstShot, burstIndex and triggerReleased for burst, pause, tap", () => {
   const d = new Driver();
   const dt = 1 / 60;
@@ -263,7 +263,7 @@ test("cancelTrigger never reports a release and drops the burst", () => {
   assert.equal(after.burstLength, 0);
 });
 
-// WP-01: tap-fire cadence fix with a one-round input buffer.
+// Tap-fire cadence with a one-round input buffer.
 test("a click during the cooldown cannot beat the fire rate but is never eaten", () => {
   const d = new Driver();
   const dt = 1 / 60;
@@ -382,8 +382,8 @@ test("bloom waits 0.15 s after the last round, then recovers at the same rate at
   }
 });
 
-// WP-17 (decision D2) shape, raised to 1.25x after the playtest asked for a little more recoil.
-test("the aim-climb pattern is the WP-17 shape at 1.25x with the horizontal sway at 0.75x", () => {
+// The aim-climb shape, raised to 1.25x after the playtest asked for a little more recoil.
+test("the aim-climb pattern is the base shape at 1.25x with the horizontal sway at 0.75x", () => {
   const vertical = [
     0.30, 0.33, 0.36, 0.39, 0.42, 0.44, 0.46, 0.47, 0.47, 0.46, 0.45, 0.44, 0.43, 0.42, 0.41,
     0.40, 0.39, 0.38, 0.37, 0.36, 0.35, 0.34, 0.33, 0.33, 0.32, 0.31, 0.31, 0.30, 0.30, 0.29,

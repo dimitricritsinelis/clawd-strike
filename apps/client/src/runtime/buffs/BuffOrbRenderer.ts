@@ -710,11 +710,6 @@ export class BuffOrbRenderer {
     return this.capacity;
   }
 
-  /** Slots still drawing, including pickups whose burst is finishing. */
-  getLiveSlotCount(): number {
-    return this.liveSlots;
-  }
-
   spawn(orb: BuffOrb): void {
     if (orb.renderSlot >= 0) return;
     const slot = this.allocateSlot();

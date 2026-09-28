@@ -3,13 +3,9 @@
  * and drift upward before fading out.
  *
  * Numbers are 2D overlays positioned via CSS `left`/`top` (screen %).
- * Colors: white = body, gold = headshot, red (#ff5a4a) = kill total.
- * Size scales with damage amount, capped at 2.0 rem.
- *
- * Stacking: when a spawn carries an enemyId and that enemy's number was last
- * added to within 0.4 s, the damage is added to the existing number instead
- * of spawning a new one. The fade restarts and the number punches from 1.25x
- * to 1.0x over 80 ms. markKill()/markKillNear() turn the stacked total red.
+ * Colors: white = body, gold = headshot.
+ * Size scales with damage amount, capped at 2.0 rem. Each number punches from
+ * 1.25x to 1.0x over 80 ms when it spawns.
  */
 
 import { PerspectiveCamera, Vector3 } from "three";
@@ -20,22 +16,15 @@ type DamageEntry = {
   velY: number; // pixels per second, upward
   currentY: number;
   startX: number;
-  enemyId: string | null;
   total: number;
   isHeadshot: boolean;
-  isKill: boolean;
-  lastAddClockS: number;
   punchElapsedS: number;
   freshPunch: boolean;
-  worldX: number;
-  worldY: number;
-  worldZ: number;
 };
 
 export const DAMAGE_NUMBER_TUNING = Object.freeze({
   fadeS: 0.75,
   risePxPerS: 38,
-  stackWindowS: 0.4,
   punchStartScale: 1.25,
   punchS: 0.08,
   baseRem: 1.0,
@@ -43,8 +32,6 @@ export const DAMAGE_NUMBER_TUNING = Object.freeze({
   maxRem: 2.0,
   bodyColor: "#ffffff",
   headshotColor: "#ffd040",
-  killColor: "#ff5a4a",
-  killNearMaxDistanceM: 1.5,
 });
 
 // Kept for readability of the update loop.
@@ -61,7 +48,7 @@ export function damageNumberFontRem(total: number): number {
   return Math.min(maxRem, baseRem + Math.max(0, total) * remPerDamage);
 }
 
-/** Punch scale `elapsedS` after a spawn or merge: ease-out 1.25 -> 1.0 over 80 ms. */
+/** Punch scale `elapsedS` after a spawn: ease-out 1.25 -> 1.0 over 80 ms. */
 export function damageNumberPunchScale(elapsedS: number): number {
   const { punchStartScale, punchS } = DAMAGE_NUMBER_TUNING;
   const t = clamp01(elapsedS / punchS);
@@ -74,35 +61,20 @@ export function damageNumberOpacity(remainingS: number): number {
   return Math.pow(clamp01(remainingS / FADE_DURATION_S), 1.4);
 }
 
-/** True when a new hit on `enemyId` at `nowClockS` should merge into this stack. */
-export function canStackDamage(
-  stack: Readonly<{ enemyId: string | null; isKill: boolean; lastAddClockS: number; timerS: number }>,
-  enemyId: string | null | undefined,
-  nowClockS: number,
-): boolean {
-  if (enemyId === null || enemyId === undefined || enemyId === "") return false;
-  if (stack.enemyId !== enemyId || stack.isKill || stack.timerS <= 0) return false;
-  return nowClockS - stack.lastAddClockS <= DAMAGE_NUMBER_TUNING.stackWindowS + 1e-9;
-}
-
 export type DamageNumberSnapshot = Readonly<{
-  enemyId: string | null;
   total: number;
   isHeadshot: boolean;
-  isKill: boolean;
   timerS: number;
   scale: number;
   fontRem: number;
   color: string;
 }>;
 
-function colorFor(entry: Pick<DamageEntry, "isHeadshot" | "isKill">): string {
-  if (entry.isKill) return DAMAGE_NUMBER_TUNING.killColor;
+function colorFor(entry: Pick<DamageEntry, "isHeadshot">): string {
   return entry.isHeadshot ? DAMAGE_NUMBER_TUNING.headshotColor : DAMAGE_NUMBER_TUNING.bodyColor;
 }
 
-function shadowFor(entry: Pick<DamageEntry, "isHeadshot" | "isKill">): string {
-  if (entry.isKill) return "0 0 12px rgba(255,90,74,0.6), 0 1px 6px rgba(0,0,0,0.9)";
+function shadowFor(entry: Pick<DamageEntry, "isHeadshot">): string {
   return entry.isHeadshot
     ? "0 0 12px rgba(255,200,60,0.6), 0 1px 6px rgba(0,0,0,0.9)"
     : "0 1px 5px rgba(0,0,0,0.75)";
@@ -113,7 +85,6 @@ export class DamageNumbers {
   private readonly entries: DamageEntry[] = [];
   private readonly freeEls: HTMLDivElement[] = [];
   private readonly scratch = new Vector3();
-  private clockS = 0;
 
   constructor(mountEl: HTMLElement) {
     this.root = document.createElement("div");
@@ -135,36 +106,18 @@ export class DamageNumbers {
   }
 
   /**
-   * Spawn a floating damage number at a 3D world position, or add to the
-   * number already showing for the same enemy.
+   * Spawn a floating damage number at a 3D world position.
    * @param worldPos  3D position (enemy hit point)
    * @param camera    Main perspective camera (for projection)
    * @param damage    Damage value to display
    * @param isHeadshot True → gold colour + larger text; false → white
-   * @param enemyId   Optional enemy id; hits on the same enemy within 0.4 s stack
-   * @param isKill    Optional; true shows the (stacked) total as a red kill total
    */
   spawn(
     worldPos: { x: number; y: number; z: number },
     camera: PerspectiveCamera,
     damage: number,
     isHeadshot: boolean,
-    enemyId?: string | null,
-    isKill = false,
   ): void {
-    const stack = this.findStack(enemyId);
-    if (stack) {
-      stack.total += damage;
-      stack.isHeadshot = stack.isHeadshot || isHeadshot;
-      stack.isKill = stack.isKill || isKill;
-      stack.lastAddClockS = this.clockS;
-      stack.worldX = worldPos.x;
-      stack.worldY = worldPos.y;
-      stack.worldZ = worldPos.z;
-      this.restartPunch(stack);
-      return;
-    }
-
     // Project 3D position to NDC
     const v = this.scratch.set(worldPos.x, worldPos.y, worldPos.z);
     v.project(camera);
@@ -204,67 +157,18 @@ export class DamageNumbers {
       velY: RISE_SPEED_PX,
       currentY: startY,
       startX: screenX + jitterX,
-      enemyId: enemyId ? enemyId : null,
       total: damage,
       isHeadshot,
-      isKill,
-      lastAddClockS: this.clockS,
       punchElapsedS: 0,
       freshPunch: true,
-      worldX: worldPos.x,
-      worldY: worldPos.y,
-      worldZ: worldPos.z,
     };
     this.entries.push(entry);
     this.applyContent(entry);
   }
 
-  /**
-   * Turn the live number for `enemyId` into a red kill total (restarting its
-   * fade and punch). Returns false when no live number exists for that enemy.
-   */
-  markKill(enemyId: string): boolean {
-    let target: DamageEntry | null = null;
-    for (const entry of this.entries) {
-      if (entry.enemyId !== enemyId || entry.isKill || entry.timerS <= 0) continue;
-      if (!target || entry.lastAddClockS >= target.lastAddClockS) target = entry;
-    }
-    if (!target) return false;
-    this.applyKill(target);
-    return true;
-  }
-
-  /**
-   * Kill-total fallback for callers that only know where the enemy died:
-   * marks the live, not-yet-killed number whose last hit point is nearest to
-   * `worldPos` on the ground plane, within `maxDistanceM`. Returns false when
-   * nothing is close enough.
-   */
-  markKillNear(
-    worldPos: { x: number; y: number; z: number },
-    maxDistanceM: number = DAMAGE_NUMBER_TUNING.killNearMaxDistanceM,
-  ): boolean {
-    let target: DamageEntry | null = null;
-    let bestDistSq = maxDistanceM * maxDistanceM;
-    for (const entry of this.entries) {
-      if (entry.isKill || entry.timerS <= 0) continue;
-      const dx = entry.worldX - worldPos.x;
-      const dz = entry.worldZ - worldPos.z;
-      const distSq = dx * dx + dz * dz;
-      if (distSq < bestDistSq || (distSq === bestDistSq && target && entry.lastAddClockS > target.lastAddClockS)) {
-        bestDistSq = distSq;
-        target = entry;
-      }
-    }
-    if (!target) return false;
-    this.applyKill(target);
-    return true;
-  }
-
   /** Called every frame from bootstrap step(). */
   update(deltaSeconds: number): void {
     const dt = Math.max(0, deltaSeconds);
-    this.clockS += dt;
     for (let i = this.entries.length - 1; i >= 0; i--) {
       const entry = this.entries[i]!;
       entry.timerS -= dt;
@@ -283,7 +187,7 @@ export class DamageNumbers {
       // Rise
       entry.currentY -= entry.velY * dt;
 
-      // The frame that spawned or merged shows the full punch.
+      // The frame that spawned shows the full punch.
       if (entry.freshPunch) {
         entry.freshPunch = false;
       } else if (entry.punchElapsedS < DAMAGE_NUMBER_TUNING.punchS) {
@@ -299,10 +203,8 @@ export class DamageNumbers {
   /** Live numbers, for tests and debug readouts. */
   getSnapshot(): DamageNumberSnapshot[] {
     return this.entries.map((entry) => ({
-      enemyId: entry.enemyId,
       total: entry.total,
       isHeadshot: entry.isHeadshot,
-      isKill: entry.isKill,
       timerS: entry.timerS,
       scale: damageNumberPunchScale(entry.punchElapsedS),
       fontRem: damageNumberFontRem(entry.total),
@@ -330,32 +232,10 @@ export class DamageNumbers {
     this.root.remove();
   }
 
-  private findStack(enemyId: string | null | undefined): DamageEntry | null {
-    let found: DamageEntry | null = null;
-    for (const entry of this.entries) {
-      if (!canStackDamage(entry, enemyId, this.clockS)) continue;
-      if (!found || entry.lastAddClockS >= found.lastAddClockS) found = entry;
-    }
-    return found;
-  }
-
-  private applyKill(entry: DamageEntry): void {
-    entry.isKill = true;
-    this.restartPunch(entry);
-  }
-
-  private restartPunch(entry: DamageEntry): void {
-    entry.timerS = FADE_DURATION_S;
-    entry.punchElapsedS = 0;
-    entry.freshPunch = true;
-    this.applyContent(entry);
-  }
-
   private applyContent(entry: DamageEntry): void {
-    const emphasized = entry.isHeadshot || entry.isKill;
     Object.assign(entry.el.style, {
       fontSize: `${damageNumberFontRem(entry.total).toFixed(2)}rem`,
-      fontWeight: emphasized ? "800" : "700",
+      fontWeight: entry.isHeadshot ? "800" : "700",
       color: colorFor(entry),
       textShadow: shadowFor(entry),
       opacity: "1",

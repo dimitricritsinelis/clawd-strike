@@ -4,7 +4,6 @@ import { PerspectiveCamera } from "three";
 import {
   DAMAGE_NUMBER_TUNING,
   DamageNumbers,
-  canStackDamage,
   damageNumberFontRem,
   damageNumberOpacity,
   damageNumberPunchScale,
@@ -75,101 +74,25 @@ test("opacity fades from 1 to 0 over the fade window", () => {
   assert.ok(damageNumberOpacity(0.375) < 0.5);
 });
 
-test("stacking requires the same enemy within 0.4 s of the last add", () => {
-  const stack = { enemyId: "e1", isKill: false, lastAddClockS: 1, timerS: 0.5 };
-  assert.equal(canStackDamage(stack, "e1", 1.4), true);
-  assert.equal(canStackDamage(stack, "e1", 1.41), false);
-  assert.equal(canStackDamage(stack, "e2", 1.1), false);
-  assert.equal(canStackDamage(stack, undefined, 1.1), false);
-  assert.equal(canStackDamage({ ...stack, isKill: true }, "e1", 1.1), false);
-  assert.equal(canStackDamage({ ...stack, enemyId: null }, null, 1.1), false);
-});
-
-test("a 4-shot kill on one enemy shows one number ending at 100 in the kill colour", () => {
+test("every hit spawns its own number; the spawn frame holds the full punch, which settles after 80 ms", () => {
   withFakeDom(() => {
     const numbers = new DamageNumbers(createFakeElement() as unknown as HTMLElement);
     const camera = createCamera();
-    for (let shot = 0; shot < 4; shot += 1) {
-      numbers.spawn(HIT, camera, 25, false, "enemy-3");
-      const [only] = numbers.getSnapshot();
-      close(only!.scale, 1.25);
-      numbers.update(1 / 60);
-      numbers.update(0.1 - 1 / 60);
-    }
-    let snapshot = numbers.getSnapshot();
-    assert.equal(snapshot.length, 1);
-    assert.equal(snapshot[0]!.total, 100);
-    assert.equal(snapshot[0]!.isKill, false);
-
-    assert.equal(numbers.markKill("enemy-3"), true);
-    snapshot = numbers.getSnapshot();
-    assert.equal(snapshot[0]!.color, DAMAGE_NUMBER_TUNING.killColor);
-    close(snapshot[0]!.timerS, DAMAGE_NUMBER_TUNING.fadeS);
-    close(snapshot[0]!.scale, 1.25);
-
-    // A later hit on the killed enemy never merges into the kill total.
-    numbers.spawn(HIT, camera, 25, false, "enemy-3");
+    numbers.spawn(HIT, camera, 25, false);
+    numbers.spawn(HIT, camera, 100, true);
+    const [body, head] = numbers.getSnapshot();
     assert.equal(numbers.getSnapshot().length, 2);
-  });
-});
-
-test("merging restarts the fade and punch; the punch settles after 80 ms", () => {
-  withFakeDom(() => {
-    const numbers = new DamageNumbers(createFakeElement() as unknown as HTMLElement);
-    const camera = createCamera();
-    numbers.spawn(HIT, camera, 25, false, "a");
-    numbers.update(1 / 60);
-    numbers.update(0.3);
-    assert.ok(numbers.getSnapshot()[0]!.timerS < 0.5);
-    numbers.spawn(HIT, camera, 100, true, "a");
-    const merged = numbers.getSnapshot()[0]!;
-    assert.equal(merged.total, 125);
-    assert.equal(merged.isHeadshot, true);
-    close(merged.fontRem, 2.0);
-    close(merged.timerS, DAMAGE_NUMBER_TUNING.fadeS);
+    assert.equal(body!.total, 25);
+    assert.equal(body!.color, DAMAGE_NUMBER_TUNING.bodyColor);
+    assert.equal(head!.total, 100);
+    assert.equal(head!.isHeadshot, true);
+    assert.equal(head!.color, DAMAGE_NUMBER_TUNING.headshotColor);
+    close(head!.fontRem, damageNumberFontRem(100));
+    close(head!.timerS, DAMAGE_NUMBER_TUNING.fadeS);
+    close(head!.scale, 1.25);
     numbers.update(1 / 60); // spawn frame holds the full punch
-    close(numbers.getSnapshot()[0]!.scale, 1.25);
+    close(numbers.getSnapshot()[1]!.scale, 1.25);
     numbers.update(0.08);
-    close(numbers.getSnapshot()[0]!.scale, 1.0);
-  });
-});
-
-test("hits outside the window, on other enemies, or without an id spawn new numbers", () => {
-  withFakeDom(() => {
-    const numbers = new DamageNumbers(createFakeElement() as unknown as HTMLElement);
-    const camera = createCamera();
-    numbers.spawn(HIT, camera, 25, false, "a");
-    numbers.spawn(HIT, camera, 25, false, "b");
-    numbers.spawn(HIT, camera, 25, false);
-    numbers.spawn(HIT, camera, 25, false);
-    assert.equal(numbers.getSnapshot().length, 4);
-    numbers.update(0.41);
-    numbers.spawn(HIT, camera, 25, false, "a");
-    assert.equal(numbers.getSnapshot().length, 5);
-  });
-});
-
-test("markKillNear marks the nearest live number within range", () => {
-  withFakeDom(() => {
-    const numbers = new DamageNumbers(createFakeElement() as unknown as HTMLElement);
-    const camera = createCamera();
-    numbers.spawn({ x: -1, y: 1.4, z: -8 }, camera, 25, false, "left");
-    numbers.spawn({ x: 1, y: 1.4, z: -8 }, camera, 25, false, "right");
-    assert.equal(numbers.markKillNear({ x: 0, y: 0, z: -20 }), false);
-    assert.equal(numbers.markKillNear({ x: 0.8, y: 0, z: -8.1 }), true);
-    const byId = new Map(numbers.getSnapshot().map((entry) => [entry.enemyId, entry]));
-    assert.equal(byId.get("right")!.isKill, true);
-    assert.equal(byId.get("left")!.isKill, false);
-    assert.equal(numbers.markKill("missing"), false);
-  });
-});
-
-test("spawn with isKill shows a kill total immediately", () => {
-  withFakeDom(() => {
-    const numbers = new DamageNumbers(createFakeElement() as unknown as HTMLElement);
-    numbers.spawn(HIT, createCamera(), 100, true, "k", true);
-    const [entry] = numbers.getSnapshot();
-    assert.equal(entry!.color, DAMAGE_NUMBER_TUNING.killColor);
-    assert.equal(entry!.total, 100);
+    close(numbers.getSnapshot()[1]!.scale, 1.0);
   });
 });

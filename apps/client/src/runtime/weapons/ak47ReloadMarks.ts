@@ -35,8 +35,3 @@ export const AK47_RELOAD_MARKS = Object.freeze({
 });
 
 export type Ak47ReloadMark = keyof typeof AK47_RELOAD_MARKS;
-
-/** Normalised (0..1) position of a mark in the clip. */
-export function ak47ReloadMarkT01(mark: Ak47ReloadMark): number {
-  return AK47_RELOAD_MARKS[mark] / AK47_RELOAD_DURATION_S;
-}

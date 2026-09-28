@@ -19,8 +19,8 @@ export const RECOIL_RECOVERY_DELAY_S = 0.14;
 /**
  * Natural frequency of the critically damped return (rad/s). From rest the
  * remaining fraction is (1 + wt)e^(-wt): 50% at ~0.105 s, 5% at ~0.297 s and
- * 2% at ~0.364 s after the delay. Raised from 13 for a snappier settle
- * (WP-16); the delay stays 0.14 s so a held spray never recovers between shots.
+ * 2% at ~0.364 s after the delay. Raised from 13 for a snappier settle; the
+ * delay stays 0.14 s so a held spray never recovers between shots.
  */
 export const RECOIL_RECOVERY_OMEGA = 16;
 /** Offsets below this (radians, ~0.0006 deg) snap to zero so recovery terminates. */

@@ -121,7 +121,7 @@ test("after the spray the offset waits for the delay, then returns smoothly to z
     if (Number.isNaN(pitchAt300ms) && t >= RECOIL_RECOVERY_DELAY_S + 0.3) pitchAt300ms = harness.pitch;
     if (Number.isNaN(pitchAt370ms) && t >= RECOIL_RECOVERY_DELAY_S + 0.37) pitchAt370ms = harness.pitch;
   }
-  // WP-16 (omega 16): half the kick is back ~0.105 s after the delay, 95% by
+  // Omega 16: half the kick is back ~0.105 s after the delay, 95% by
   // ~0.297 s and 98% by ~0.364 s.
   assert.ok(pitchAt95ms > 0.5 * peak, `half recovery must not arrive before ~0.105 s, was ${pitchAt95ms / peak} at 0.095 s`);
   assert.ok(pitchAt115ms < 0.5 * peak, `half recovery should arrive by ~0.105 s, was ${pitchAt115ms / peak} at 0.115 s`);
@@ -227,12 +227,12 @@ test("reset drops pending recovery and the result is deterministic", () => {
   assert.equal(r.pitch, pitch, "a reset offset must not move the view");
 });
 
-test("recovery omega is the WP-16 value and the delay is unchanged", () => {
+test("recovery omega is 16 rad/s and the delay is unchanged", () => {
   assert.equal(RECOIL_RECOVERY_OMEGA, 16);
   assert.equal(RECOIL_RECOVERY_DELAY_S, 0.14);
 });
 
-// WP-16 verify: driven by the real fire-controller cadence (frame-quantised at
+// Driven by the real fire-controller cadence (frame-quantised at
 // 30/60/144 fps, so shot gaps are 97-104 ms rather than exactly 0.1 s), a held
 // 20-round spray must never recover between shots.
 test("a held 20-round spray from the fire controller never recovers between shots at 30/60/144 fps", () => {

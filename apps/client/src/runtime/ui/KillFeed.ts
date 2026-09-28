@@ -45,11 +45,6 @@ export class KillFeed {
     window.addEventListener("resize", this.resizeHandler);
   }
 
-  setAnchorElement(anchorEl: HTMLElement | null): void {
-    this.anchorEl = anchorEl;
-    this.updatePositionFromAnchor();
-  }
-
   prewarm(count = 1): void {
     const targetCount = Math.max(0, Math.ceil(count));
     while (this.freeEls.length < targetCount) {

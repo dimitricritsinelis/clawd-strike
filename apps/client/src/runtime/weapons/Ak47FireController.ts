@@ -42,7 +42,7 @@ const RECOIL_RESET_DELAY_S = 0.3;
 const RECOIL_MAX_ACCUM_PITCH_DEG = 15;
 const RECOIL_MAX_ACCUM_YAW_DEG = 3;
 
-// 30-shot aim-climb shape (WP-17, decision D2), scaled by
+// 30-shot aim-climb shape, scaled by
 // RECOIL_VERTICAL_PATTERN_SCALE. The render-only view punch and the viewmodel
 // carry the felt kick; this table is only where the crosshair goes.
 // Shots 1-8 build up, 9-10 peak, then the climb tapers through the magazine.
@@ -54,12 +54,12 @@ const RECOIL_VERTICAL_PATTERN_SHAPE_DEG = [
 ] as const;
 
 /**
- * Playtest: "a little more recoil". 1.25x the WP-17 shape climbs 14.16 deg per
- * magazine (the original was 22.7, WP-17 halved it to 11.33).
+ * Playtest: "a little more recoil". 1.25x the shape climbs 14.16 deg per
+ * magazine (the original pattern climbed 22.7; the shape halved it to 11.33).
  */
 const RECOIL_VERTICAL_PATTERN_SCALE = 1.25;
 
-/** WP-17: the horizontal sway keeps its shape at three quarters of its old size. */
+/** The horizontal sway keeps its shape at three quarters of its old size. */
 const RECOIL_HORIZONTAL_PATTERN_SCALE = 0.75;
 
 // Horizontal sway shape, scaled by RECOIL_HORIZONTAL_PATTERN_SCALE.

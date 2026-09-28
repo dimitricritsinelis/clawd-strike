@@ -1,5 +1,3 @@
-export const DEFAULT_WALL_MATERIAL_ID = "ph_whitewashed_brick";
-
 export type FacadeFamily = "merchant" | "residential" | "service" | "spawn" | "connector" | "side_hall" | "cut";
 export type FacadeTrimTier = "restrained" | "accented" | "hero";
 export type BalconyStyle = "none" | "merchant_ledge" | "residential_parapet" | "hero_cantilever";
@@ -10,12 +8,6 @@ export type FacadeMaterialSlots = {
   trimHeavy: string;
   trimLight: string;
   balcony: string | null;
-};
-
-export type WallMaterialCombo = {
-  wall: string;
-  trimHeavy: string;
-  trimLight: string;
 };
 
 export type FacadeSegmentFrame = {
@@ -482,49 +474,4 @@ export function resolveFacadeStyleForSegment(
   };
 }
 
-export function resolveWallComboForZone(zoneId: string | null): WallMaterialCombo | null {
-  if (!zoneId) return null;
-
-  const style =
-    zoneId === "SPAWN_A_COURTYARD" || zoneId === "SPAWN_B_GATE_PLAZA"
-      ? {
-          family: "spawn",
-          trimTier: "hero",
-          balconyStyle: "residential_parapet",
-          materials: SLOT_SPAWN,
-        }
-      : zoneId.startsWith("CONN_")
-        ? {
-            family: "connector",
-            trimTier: "restrained",
-            balconyStyle: "none",
-            materials: SLOT_CONNECTOR,
-          }
-        : zoneId.startsWith("CUT_")
-          ? {
-              family: "cut",
-              trimTier: "restrained",
-              balconyStyle: "none",
-              materials: SLOT_CUT,
-            }
-          : zoneId.startsWith("SH_")
-            ? LEGACY_DEFAULT_STYLE
-            : {
-                family: "merchant",
-                trimTier: "accented",
-                balconyStyle: "merchant_ledge",
-                materials: SLOT_MERCHANT_WARM,
-              };
-
-  return {
-    wall: style.materials.wall,
-    trimHeavy: style.materials.trimHeavy,
-    trimLight: style.materials.trimLight,
-  };
-}
-
-export function resolveWallMaterialIdForZone(zoneId: string | null): string {
-  if (!zoneId) return DEFAULT_WALL_MATERIAL_ID;
-  return resolveWallComboForZone(zoneId)?.wall ?? DEFAULT_WALL_MATERIAL_ID;
-}
 import type { RuntimeFacadeProfile } from "./types";

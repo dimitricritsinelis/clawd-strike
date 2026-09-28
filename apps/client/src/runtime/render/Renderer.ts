@@ -17,9 +17,8 @@ import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { resolveBlockoutPalette } from "./BlockoutMaterials";
 import { SceneDepthGtaoPass } from "./SceneDepthGtaoPass";
-import { resolveDesktopMaxPixelRatio, resolveDynamicResolution, type RuntimeLightingPreset } from "../utils/UrlParams";
+import { resolveDesktopMaxPixelRatio, resolveDynamicResolution } from "../utils/UrlParams";
 import { DynamicResolution } from "./DynamicResolution";
 
 
@@ -85,12 +84,6 @@ const DYNAMIC_RESOLUTION_FLOOR = 1.1;
 // restores full-resolution silhouettes; at 1x or below it is full resolution.
 // Normals come from full-resolution depth either way.
 const AO_PIXEL_RATIO = 1;
-const AO_PIXEL_RATIO_DEBUG = (() => {
-  if (typeof window === "undefined" || !window.location) return null;
-  const raw = new URLSearchParams(window.location.search).get("aoGrid");
-  const value = raw === null ? Number.NaN : Number(raw);
-  return Number.isFinite(value) && value >= 0 ? value : null;
-})();
 
 /**
  * The AO pass reads the beauty pass's depth, so both composer targets carry a
@@ -203,8 +196,6 @@ const GOLDEN_POST_SHADER = {
   `,
 };
 type RendererOptions = {
-  highVis: boolean;
-  lightingPreset: RuntimeLightingPreset;
   ao: boolean;
   post: boolean;
   maxPixelRatio?: number | undefined;
@@ -297,7 +288,6 @@ export class Renderer {
       && resolveDynamicResolution(window.location.search)) {
       this.dynamicResolution = new DynamicResolution({ maxPixelRatio: fullPixelRatio, minPixelRatio: DYNAMIC_RESOLUTION_FLOOR });
     }
-    const palette = resolveBlockoutPalette(options.highVis);
     // Pixel-ratio caps determine actual supersampling, even on Retina displays.
     const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
     const canvas = document.createElement("canvas");
@@ -367,16 +357,13 @@ export class Renderer {
       this.renderer.transmissionResolutionScale = 0.25;
       this.renderer.info.autoReset = false;
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
-      this.renderer.setClearColor(
-        options.lightingPreset === "golden" ? 0xE6D7C2 : palette.background,
-        1,
-      );
+      this.renderer.setClearColor(0xE6D7C2, 1);
     }
 
     this.resize();
 
     // ── Golden-hour composer (world-only; viewmodel is rendered directly after) ──
-    if (this.renderer && options.lightingPreset === "golden" && (options.ao || options.post)) {
+    if (this.renderer && (options.ao || options.post)) {
       this.composer = new EffectComposer(this.renderer);
       this.resize();
       const dpr = this.renderer.getPixelRatio();
@@ -392,7 +379,7 @@ export class Renderer {
         // grid never drops under one sample per CSS pixel (AO_PIXEL_RATIO).
         attachComposerDepth(this.composer);
         this.aoPass = new SceneDepthGtaoPass(this.width, this.height);
-        this.aoPass.aoPixelRatio = AO_PIXEL_RATIO_DEBUG ?? AO_PIXEL_RATIO;
+        this.aoPass.aoPixelRatio = AO_PIXEL_RATIO;
         this.aoPass.blendIntensity = AO_BLEND_INTENSITY;
         this.aoPass.updateGtaoMaterial({
           radius: AO_RADIUS_M,

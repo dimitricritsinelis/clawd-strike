@@ -1,6 +1,5 @@
 import {
   Box3,
-  Color,
   InstancedMesh,
   Matrix4,
   Mesh,
@@ -8,7 +7,6 @@ import {
   PointLight,
   Quaternion,
   Raycaster,
-  Vector2,
   Vector3,
   type Object3D,
 } from "three";
@@ -492,7 +490,6 @@ export type RuntimeTextState = {
     mapId: string;
     seed: number;
     spawn: "A" | "B";
-    highVis: boolean;
     colliderCount: number;
     wallDetails: {
       enabled: boolean;
@@ -728,14 +725,6 @@ export type RuntimeTextState = {
     finalScore: number;
     bestScore: number;
     canPlayAgain: boolean;
-  };
-  anchorsDebug: {
-    markersVisible: boolean;
-    labelsVisible: boolean;
-    totalAnchors: number;
-    filteredAnchors: number;
-    shownLabels: number;
-    filterTypes: readonly string[];
   };
   props: {
     profile: "subtle" | "medium" | "high";
@@ -1106,44 +1095,6 @@ function collectVisibleAnchorIds(
 
 function isRecordValue(value: unknown): value is Record<string, unknown> {
   return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function serializePickedColor(color: Color | undefined): {
-  hex: string;
-  linearRgb: { r: number; g: number; b: number };
-} | null {
-  if (!color) return null;
-  return {
-    hex: `#${color.getHexString()}`,
-    linearRgb: { r: color.r, g: color.g, b: color.b },
-  };
-}
-
-function serializePickedTexture(value: unknown): {
-  present: boolean;
-  name: string | null;
-  source: string | null;
-} {
-  if (!isRecordValue(value)) {
-    return { present: false, name: null, source: null };
-  }
-  const rawImage = isRecordValue(value.image)
-    ? value.image
-    : isRecordValue(value.source) && isRecordValue(value.source.data)
-      ? value.source.data
-      : null;
-  const source = rawImage
-    ? typeof rawImage.currentSrc === "string"
-      ? rawImage.currentSrc
-      : typeof rawImage.src === "string"
-        ? rawImage.src
-        : null
-    : null;
-  return {
-    present: true,
-    name: typeof value.name === "string" && value.name.length > 0 ? value.name : null,
-    source,
-  };
 }
 
 function canonicalArtifactTag(value: unknown): string | null {
@@ -1815,8 +1766,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     ? createQaAssetPlan(mapAssets, qaAssetProfile, {
         floorPbr: runtimeParams.floorMode === "pbr" && !performanceSafeFallback && !mobile,
         wallPbr: runtimeParams.wallMode === "pbr" && !performanceSafeFallback && !mobile,
-        wallDetails: runtimeParams.wallDetails,
-        bazaarProps: runtimeParams.propVisuals === "bazaar",
         doorModels: !mobile,
         textureTier: effectiveFloorQuality === "1k" ? "1k" : "2k",
       })
@@ -1848,8 +1797,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   );
 
   const renderer = new Renderer(runtimeRoot, {
-    highVis: runtimeParams.highVis,
-    lightingPreset: runtimeParams.lightingPreset,
     ao: (performanceSafeFallback || mobile || overviewShotAtBoot) ? false : runtimeParams.ao,
     post: (performanceSafeFallback || mobile || overviewShotAtBoot) ? false : runtimeParams.post,
     maxPixelRatio: mobile ? 1.0 : undefined,
@@ -2036,37 +1983,35 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   let propModels: PropModelLibrary | null = null;
   const qaPropRequestIds = qaAssetPlan?.propModelIds.map(qaPropModelRequestId) ?? [];
-  if (runtimeParams.propVisuals === "bazaar") {
-    try {
-      if (qaAssetTracker && qaAssetPlan) {
-        for (const requestId of qaPropRequestIds) qaAssetTracker.start(requestId);
-        propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
-          modelIds: new Set(qaAssetPlan.propModelIds),
-          concurrency: 4,
-          requestObserver: qaAssetTracker.observer,
-        });
-        for (const requestId of qaPropRequestIds) qaAssetTracker.complete(requestId);
-      } else {
-        // Mobile has never loaded the R8 wall-foot clutter models; buildR8Clutter
-        // skips records whose model is absent.
-        propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
-          modelIds: new Set(mapAssets ? plannedPropModelIds(mapAssets, !mobile) : []),
-        });
-      }
-    } catch (error) {
-      if (qaAssetTracker) {
-        for (const requestId of qaPropRequestIds) qaAssetTracker.fail(requestId, error);
-        qaAssetTracker.fail("prop-model-pack", error);
-        throw new Error(
-          `[qa-assets] prop model pack failed; capture is blocked: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-      appendWarning(
-        `Failed to load the CC0 bazaar prop pack. Final-mode map readiness will fail rather than render placeholders.\n${error instanceof Error ? error.message : String(error)}`,
+  try {
+    if (qaAssetTracker && qaAssetPlan) {
+      for (const requestId of qaPropRequestIds) qaAssetTracker.start(requestId);
+      propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
+        modelIds: new Set(qaAssetPlan.propModelIds),
+        concurrency: 4,
+        requestObserver: qaAssetTracker.observer,
+      });
+      for (const requestId of qaPropRequestIds) qaAssetTracker.complete(requestId);
+    } else {
+      // Mobile has never loaded the R8 wall-foot clutter models; buildR8Clutter
+      // skips records whose model is absent.
+      propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
+        modelIds: new Set(mapAssets ? plannedPropModelIds(mapAssets, !mobile) : []),
+      });
+    }
+  } catch (error) {
+    if (qaAssetTracker) {
+      for (const requestId of qaPropRequestIds) qaAssetTracker.fail(requestId, error);
+      qaAssetTracker.fail("prop-model-pack", error);
+      throw new Error(
+        `[qa-assets] prop model pack failed; capture is blocked: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
+    appendWarning(
+      `Failed to load the CC0 bazaar prop pack. Final-mode map readiness will fail rather than render placeholders.\n${error instanceof Error ? error.message : String(error)}`,
+    );
   }
 
   // Authored facade GLBs referenced by frontages' facadeModelId. Loaded on every
@@ -2240,31 +2185,20 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     controlMode: runtimeParams.controlMode,
     mapId: runtimeParams.mapId,
     seedOverride: runtimeParams.seed,
-    propChaos: runtimeParams.propChaos,
     floorMode: resolvedFloorMode,
     wallMode: resolvedWallMode,
-    wallDetails: runtimeParams.wallDetails,
-    wallDetailDensity: runtimeParams.wallDetailDensity,
     floorQuality: effectiveFloorQuality,
-    lightingPreset: runtimeParams.lightingPreset,
     environmentLighting: runtimeParams.environmentLighting,
     createEnvironmentMap: (scene, position) => renderer.createPmremEnvironment(scene, position),
     floorMaterials,
     wallMaterials,
-    propVisuals: runtimeParams.propVisuals,
     propModels,
     doorModels,
     facadeModels,
     freezeInput: inputFrozen,
     spawn: runtimeParams.spawn,
     debug: runtimeParams.debug,
-    highVis: runtimeParams.highVis,
     mountEl: runtimeRoot,
-    anchorsDebug: {
-      showMarkers: runtimeParams.anchors,
-      showLabels: runtimeParams.labels,
-      anchorTypes: runtimeParams.anchorTypes,
-    },
     onWeaponShot: (shot) => {
       viewModel?.triggerShotFx(shot);
       weaponAudio.playAk47Shot();
@@ -3325,7 +3259,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         mapId: runtimeParams.mapId,
         seed: game.getPropsBuildStats().seed,
         spawn: runtimeParams.spawn,
-        highVis: runtimeParams.highVis,
         colliderCount: game.getColliderCount(),
         wallDetails: {
           enabled: game.getWallDetailStats().enabled,
@@ -3429,8 +3362,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
           materialCount: wallMaterials?.getMaterialIds().length ?? 0,
         },
         props: {
-          requestedVisualMode: runtimeParams.propVisuals,
-          activeVisualMode: runtimeParams.propVisuals,
+          requestedVisualMode: "bazaar",
+          activeVisualMode: "bazaar",
           modelCount: propModels?.getModelCount() ?? 0,
         },
       },
@@ -3446,7 +3379,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         bestScore,
         canPlayAgain: gameOverVisible,
       },
-      anchorsDebug: game.getAnchorsDebugState(),
       props: {
         profile: game.getPropsBuildStats().profile,
         jitter: game.getPropsBuildStats().jitter,
@@ -3535,7 +3467,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   function syncViewportNow(): void {
     renderer.resize();
     game.setAspect(renderer.getAspect());
-    game.setViewportSize(renderer.getWidth(), renderer.getHeight());
     viewModel?.setAspect(renderer.getAspect());
   }
 
@@ -4134,33 +4065,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     pendingAgentActions.push(normalized);
   };
   window.agent_observe = () => JSON.stringify(publicObserveState());
-  window.__runtime_ready_state = () => ({
-    mapLoaded: Boolean(mapAssets),
-    revealPhase: bootTelemetry.revealPhase,
-    shotActive,
-    shotId,
-    qaCaptureReady: qaAssetTracker?.state().ready ?? true,
-    qaAssetPlanHash: qaAssetPlan?.hash ?? null,
-  });
-  window.__debug_scene_perf = () => collectScenePerfSnapshot(game.scene, viewModel?.viewModelScene ?? null);
-  window.__qa_gameplay_authority_state = () => game.getGameplayAuthoritySnapshot();
-  window.__debug_render_perf = () => ({
-    ...renderer.getPerfInfo(),
-    bootReadyMs: bootTelemetry.readyAtMs,
-    cpuFrameMedianMs: cpuFrameMedianMs(),
-    cpuFrameSampleCount: perfCpuFrameSamples.length,
-    scene: collectScenePerfSnapshot(game.scene, viewModel?.viewModelScene ?? null),
-  });
-  window.__qa_performance_state = () => ({
-    perf: {
-      ...renderer.getPerfInfo(),
-      fps: perfFps,
-      msPerFrame: perfMsPerFrame,
-      cpuFrameMedianMs: cpuFrameMedianMs(),
-      cpuFrameSampleCount: perfCpuFrameSamples.length,
-    },
-    boot: { readyAtMs: bootTelemetry.readyAtMs },
-  });
   window.render_game_to_text = () => {
     qaStateSerializationInProgress = true;
     try {
@@ -4178,28 +4082,57 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       renderFrame: !deterministicQa && (runtimeParams.controlMode !== "agent" || document.visibilityState === "visible"),
     });
   };
-  window.__qa_render_frame = () => {
-    if (!runtimeActive) return;
-    advanceSimulation(0, { renderFrame: true });
-  };
-  window.__qa_route_state = () => {
-    const playerPosition = game.getPlayerPosition();
-    const currentZone = findCurrentZone(
-      mapAssets?.blockout ?? null,
-      playerPosition.x,
-      playerPosition.y,
-      playerPosition.z,
-    );
-    return {
-      gameplay: { alive: !game.getIsDead() },
-      player: {
-        pos: playerPosition,
-        withinPlayableBounds: game.isPlayerWithinPlayableBounds(),
-        zoneId: currentZone?.id ?? null,
-        collision: game.getPlayerCollisionState(),
+  // QA and perf probes for local development, deterministic QA and automated
+  // clients (the Playwright harness); real players' browsers do not get them.
+  if (isInternalDebugSurface || deterministicQa || isAutomatedRuntime) {
+    window.__runtime_ready_state = () => ({
+      mapLoaded: Boolean(mapAssets),
+      revealPhase: bootTelemetry.revealPhase,
+      shotActive,
+      shotId,
+      qaCaptureReady: qaAssetTracker?.state().ready ?? true,
+      qaAssetPlanHash: qaAssetPlan?.hash ?? null,
+    });
+    window.__debug_render_perf = () => ({
+      ...renderer.getPerfInfo(),
+      bootReadyMs: bootTelemetry.readyAtMs,
+      cpuFrameMedianMs: cpuFrameMedianMs(),
+      cpuFrameSampleCount: perfCpuFrameSamples.length,
+      scene: collectScenePerfSnapshot(game.scene, viewModel?.viewModelScene ?? null),
+    });
+    window.__qa_performance_state = () => ({
+      perf: {
+        ...renderer.getPerfInfo(),
+        fps: perfFps,
+        msPerFrame: perfMsPerFrame,
+        cpuFrameMedianMs: cpuFrameMedianMs(),
+        cpuFrameSampleCount: perfCpuFrameSamples.length,
       },
+      boot: { readyAtMs: bootTelemetry.readyAtMs },
+    });
+    window.__qa_render_frame = () => {
+      if (!runtimeActive) return;
+      advanceSimulation(0, { renderFrame: true });
     };
-  };
+    window.__qa_route_state = () => {
+      const playerPosition = game.getPlayerPosition();
+      const currentZone = findCurrentZone(
+        mapAssets?.blockout ?? null,
+        playerPosition.x,
+        playerPosition.y,
+        playerPosition.z,
+      );
+      return {
+        gameplay: { alive: !game.getIsDead() },
+        player: {
+          pos: playerPosition,
+          withinPlayableBounds: game.isPlayerWithinPlayableBounds(),
+          zoneId: currentZone?.id ?? null,
+          collision: game.getPlayerCollisionState(),
+        },
+      };
+    };
+  }
   if (deterministicQa) {
     window.__qa_framing_state = () => {
       const current = readQaFramingSnapshot();
@@ -4308,95 +4241,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       const pitchRad = typeof payload.pitchDeg === "number" ? (payload.pitchDeg * Math.PI) / 180 : undefined;
       game.debugSetPlayerPose({ x: payload.x, y: payload.y, z: payload.z }, yawRad, pitchRad);
     };
-    window.__debug_pick_scene = (payload: { xPx: number; yPx: number }) => {
-      const viewportWidth = Math.max(1, window.innerWidth);
-      const viewportHeight = Math.max(1, window.innerHeight);
-      const pointer = new Vector2(
-        (payload.xPx / viewportWidth) * 2 - 1,
-        -(payload.yPx / viewportHeight) * 2 + 1,
-      );
-      const picker = new Raycaster();
-      picker.setFromCamera(pointer, game.camera);
-      return picker.intersectObject(game.scene, true).slice(0, 12).map((hit) => {
-        const object = hit.object;
-        const batchedId = (hit as typeof hit & { batchId?: number }).batchId;
-        const instanceId = typeof hit.instanceId === "number"
-          ? hit.instanceId
-          : typeof batchedId === "number"
-            ? batchedId
-            : null;
-        const mesh = object as Mesh;
-        const rawMaterials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        const materialIndex = typeof hit.face?.materialIndex === "number" ? hit.face.materialIndex : 0;
-        const pickedMaterial = rawMaterials[materialIndex] ?? rawMaterials[0] ?? null;
-        let instanceTint: Color | null = null;
-        if (object instanceof InstancedMesh && instanceId !== null && object.instanceColor) {
-          instanceTint = new Color();
-          object.getColorAt(instanceId, instanceTint);
-        }
-        const pickedColor = pickedMaterial && "color" in pickedMaterial && pickedMaterial.color instanceof Color
-          ? pickedMaterial.color
-          : null;
-        const effectiveColor = pickedColor
-          ? pickedColor.clone().multiply(instanceTint ?? new Color(1, 1, 1))
-          : instanceTint?.clone() ?? null;
-        const materials = rawMaterials.filter(Boolean).map((material, index) => {
-          const record = material as unknown as Record<string, unknown>;
-          const color = record.color instanceof Color ? record.color : undefined;
-          const emissive = record.emissive instanceof Color ? record.emissive : undefined;
-          return {
-            selected: material === pickedMaterial || index === materialIndex,
-            index,
-            type: material.type,
-            name: material.name || null,
-            color: serializePickedColor(color),
-            map: serializePickedTexture(record.map),
-            normalMap: serializePickedTexture(record.normalMap),
-            roughnessMap: serializePickedTexture(record.roughnessMap),
-            metalnessMap: serializePickedTexture(record.metalnessMap),
-            aoMap: serializePickedTexture(record.aoMap),
-            envMapSource: record.envMap ? "explicit" : game.scene.environment ? "scene" : "none",
-            envMapIntensity: typeof record.envMapIntensity === "number" ? record.envMapIntensity : null,
-            sceneEnvironmentIntensity: game.scene.environmentIntensity,
-            roughness: typeof record.roughness === "number" ? record.roughness : null,
-            metalness: typeof record.metalness === "number" ? record.metalness : null,
-            emissive: serializePickedColor(emissive),
-            emissiveIntensity: typeof record.emissiveIntensity === "number" ? record.emissiveIntensity : null,
-            vertexColors: typeof record.vertexColors === "boolean" ? record.vertexColors : null,
-            toneMapped: material.toneMapped,
-          };
-        });
-        const rawInstances = object.userData.visualQaInstances;
-        const rawQa = instanceId !== null && Array.isArray(rawInstances)
-          ? rawInstances[instanceId]
-          : object.userData.visualQa;
-        const qa = isRecordValue(rawQa) ? rawQa : null;
-        const parentNames: string[] = [];
-        let parent = object.parent;
-        while (parent && parentNames.length < 5) {
-          if (parent.name) parentNames.push(parent.name);
-          parent = parent.parent;
-        }
-        return {
-          distanceM: hit.distance,
-          point: { x: hit.point.x, y: hit.point.y, z: hit.point.z },
-          objectName: object.name,
-          parentNames,
-          instanceId,
-          placementId: typeof qa?.placementId === "string" ? qa.placementId : null,
-          moduleId: typeof qa?.moduleId === "string" ? qa.moduleId : null,
-          semanticClass: typeof qa?.semanticClass === "string" ? qa.semanticClass : null,
-          dimensions: isRecordValue(qa?.dimensions) ? qa.dimensions : null,
-          materialIndex,
-          materials,
-          tintChain: {
-            materialColor: serializePickedColor(pickedColor ?? undefined),
-            instanceColor: serializePickedColor(instanceTint ?? undefined),
-            effectiveColor: serializePickedColor(effectiveColor ?? undefined),
-          },
-        };
-      });
-    };
     window.__debug_reset_bot_knowledge = () => {
       game.resetBotKnowledgeForDebug();
     };
@@ -4420,8 +4264,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.agent_observe;
     delete window.render_game_to_text;
     delete window.__runtime_ready_state;
-    delete window.__debug_scene_perf;
-    delete window.__qa_gameplay_authority_state;
     delete window.__debug_render_perf;
     delete window.__qa_performance_state;
     delete window.advanceTime;
@@ -4436,7 +4278,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     delete window.__debug_set_buff_orbs;
     delete window.__debug_set_buff_vignette;
     delete window.__debug_set_player_pose;
-    delete window.__debug_pick_scene;
     delete window.__debug_reset_bot_knowledge;
     delete window.__debug_suppress_bot_intel_ms;
 

@@ -17,8 +17,7 @@
 //   - buildBlockout runs with blockout floors/walls and no door models, as the
 //     mobile boot does, and also without the facade library. Its collider
 //     producers read only the spec, but a future collider that depends on a
-//     render input would not be seen here. Compare with the live list from
-//     window.__qa_gameplay_authority_state() in a browser boot when in doubt;
+//     render input would not be seen here;
 //   - enemy visuals use the capsule fallback (render only).
 //
 // Regenerate after an intentional gameplay change, and review the JSON diff:

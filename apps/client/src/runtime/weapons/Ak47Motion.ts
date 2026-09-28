@@ -52,7 +52,7 @@ class Spring {
 }
 
 /**
- * Shot facts from the fire controller (WP-00 ShotFeelEvent subset). Every field is
+ * Shot facts from the fire controller (a subset of Ak47ShotEvent). Every field is
  * optional: without an event the motion applies the same first-shot rule itself.
  */
 export type Ak47MotionShot = {

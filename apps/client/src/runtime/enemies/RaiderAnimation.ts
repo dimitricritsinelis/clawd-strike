@@ -335,9 +335,6 @@ export class RaiderAnimation {
 
   isFrozen(): boolean { return this.frozen; }
 
-  /** Current normalized flinch amount (tests and debug). */
-  getFlinchAmount(): number { return this.flinch.amount(); }
-
   update(position: Vector3, yaw: number, dt: number, grounded: boolean,
     surfaces?: TraversalSurfaceResolver, viewerDistanceM = 0): void {
     if (this.frozen) return;
