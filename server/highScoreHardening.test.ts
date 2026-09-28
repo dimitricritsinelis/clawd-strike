@@ -1,12 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
+import { handleSharedChampionRequest } from "./highScoreApi.js";
 import { handleSharedChampionRunFinishRequest } from "./highScoreRunApi.js";
 import {
   MAX_HEADSHOTS_PER_WAVE_ENTRIES,
   normalizeSharedChampionRunSummary,
 } from "../apps/shared/highScore.js";
-import type { SharedChampionAuditEvent, SharedChampionStore } from "./highScoreStore.js";
+import type { SharedChampionAuditEvent, SharedChampionStore } from "./highScoreStoreImpl.js";
 
 function validSummary() {
   return {
@@ -34,9 +35,6 @@ function createRecordingStore(): {
     async getChampion() {
       counters.championReads += 1;
       return null;
-    },
-    async submitCandidate() {
-      throw new Error("unexpected submitCandidate");
     },
     async isRateLimited() {
       return false;
@@ -178,4 +176,34 @@ test("run-finish honours the shared database rate limiter", async () => {
   assert.equal(seenKeys.length, 1);
   assert.match(seenKeys[0]!, /^run-finish:/);
   assert.equal(recording.auditEvents.length, 0);
+});
+
+// Direct champion writes are retired. The POST branch only refuses, so it must
+// not read or write the database, while keeping its transport status codes.
+test("a direct high-score write is refused without touching the database", async () => {
+  const recording = createRecordingStore();
+  (recording.store as { isRateLimited: SharedChampionStore["isRateLimited"] }).isRateLimited =
+    async () => {
+      throw new Error("unexpected isRateLimited");
+    };
+  const post = (headers: Record<string, string>) => handleSharedChampionRequest(
+    new Request("https://example.test/api/high-score", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ playerName: "RawWrite", score: 500, controlMode: "agent" }),
+    }),
+    recording.store,
+  );
+
+  const refused = await post({ "content-type": "application/json" });
+  assert.equal(refused.status, 403);
+  assert.deepEqual(await refused.json(), { error: "Direct shared champion writes are internal-only." });
+  assert.equal((await post({ "content-type": "text/plain" })).status, 415);
+  assert.equal(
+    (await post({ "content-type": "application/json", "content-length": "2048" })).status,
+    413,
+  );
+
+  assert.deepEqual(recording.auditEvents, []);
+  assert.equal(recording.championReads, 0);
 });

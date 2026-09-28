@@ -418,8 +418,6 @@ export async function startQaServer(options = {}) {
 
   assertGeneratedSourceFingerprint(expectedFingerprint);
   process.env.VERCEL_ENV ??= "production";
-  process.env.SESSION_SECRET ??= "clawd-strike-playwright-session-secret-32chars";
-  process.env.SHARED_CHAMPION_ADMIN_TOKEN ??= "clawd-strike-playwright-shared-champion-admin-token";
   process.env.STATS_ADMIN_TOKEN ??= "clawd-strike-dev-stats-admin-token";
   process.env.PRIVACY_HASH_SECRET ??= "clawd-strike-playwright-privacy-secret-32chars";
 

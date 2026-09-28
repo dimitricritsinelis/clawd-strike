@@ -2,7 +2,6 @@ import { attachDatabasePool } from "@vercel/functions";
 import { Pool, type PoolClient, type PoolConfig } from "pg";
 import {
   HIGH_SCORE_MAP_ID_MAX_LENGTH,
-  HIGH_SCORE_PLAYER_NAME_MAX_LENGTH,
   SHARED_CHAMPION_SCORE_RULESET,
   SITEWIDE_CHAMPION_BOARD_KEY,
   createSharedChampion,
@@ -12,11 +11,9 @@ import {
   normalizeSharedChampionRunSummary,
   parseStoredGameplayProfileIdentity,
   sanitizeSharedChampionMapId,
-  sanitizeSharedChampionName,
   validateSharedChampionRunSummary,
   type SharedChampion,
   type SharedChampionControlMode,
-  type SharedChampionPostRequest,
   type SharedChampionRunSummary,
 } from "../apps/shared/highScore.js";
 import type {
@@ -24,7 +21,9 @@ import type {
   GameplayProfileId,
 } from "../apps/shared/gameplayProfile.js";
 import {
+  PLAYER_NAME_MAX_LENGTH,
   parseStoredPlayerName,
+  sanitizeValidatedPlayerName,
 } from "../apps/shared/playerName.js";
 import {
   createRunCursor,
@@ -656,10 +655,6 @@ export type SharedChampionAuditEvent = {
 
 export type SharedChampionStore = {
   getChampion: (identity?: GameplayProfileIdentity | null) => Promise<SharedChampion | null>;
-  submitCandidate: (input: SharedChampionPostRequest, identity: GameplayProfileIdentity) => Promise<{
-    updated: boolean;
-    champion: SharedChampion | null;
-  }>;
   /**
    * Shared (database-backed) sliding-window limiter. `key` is a namespaced
    * fingerprint such as `run-start:<ipFingerprint>`. Unlike the per-instance
@@ -851,7 +846,7 @@ function getNameContractExpression(columnName: string, lowercaseOnly = false): s
   const pattern = lowercaseOnly ? PLAYER_NAME_KEY_SQL_PATTERN : PLAYER_NAME_SQL_PATTERN;
   const alphanumericPattern = lowercaseOnly ? "[a-z0-9]" : "[A-Za-z0-9]";
   return [
-    `char_length(${columnName}) BETWEEN 1 AND ${HIGH_SCORE_PLAYER_NAME_MAX_LENGTH}`,
+    `char_length(${columnName}) BETWEEN 1 AND ${PLAYER_NAME_MAX_LENGTH}`,
     `${columnName} ~ E'${pattern}'`,
     `${columnName} ~ E'${alphanumericPattern}'`,
     `${columnName} = btrim(${columnName})`,
@@ -1030,21 +1025,12 @@ function roundMetric(value: number | null, digits = 2): number {
   return Math.round(value * factor) / factor;
 }
 
-function requireSharedChampionName(value: unknown, controlMode: SharedChampionControlMode): string {
-  const normalized = sanitizeSharedChampionName(value, controlMode);
+function requireSharedChampionName(value: unknown): string {
+  const normalized = sanitizeValidatedPlayerName(value);
   if (normalized === null) {
     throw new Error("Expected a validated shared champion player name.");
   }
   return normalized;
-}
-
-function normalizeSubmission(input: SharedChampionPostRequest): SharedChampionPostRequest {
-  return {
-    playerName: requireSharedChampionName(input.playerName, input.controlMode),
-    score: normalizeScore(input.score),
-    controlMode: input.controlMode,
-    ...(input.telemetry ? { telemetry: input.telemetry } : {}),
-  };
 }
 
 function normalizeRunTokenInput(input: {
@@ -1065,7 +1051,7 @@ function normalizeRunTokenInput(input: {
   return {
     runId: input.runId,
     tokenHash: input.tokenHash.trim(),
-    playerName: requireSharedChampionName(input.playerName, input.controlMode),
+    playerName: requireSharedChampionName(input.playerName),
     controlMode: input.controlMode,
     mapId: sanitizeSharedChampionMapId(input.mapId),
     ruleset: SHARED_CHAMPION_SCORE_RULESET as typeof SHARED_CHAMPION_SCORE_RULESET,
@@ -1512,34 +1498,6 @@ export function createInMemorySharedChampionStore(): SharedChampionStore {
         ? deriveSharedChampionBoardKey(identity)
         : SITEWIDE_CHAMPION_BOARD_KEY;
       return champions.get(boardKey) ?? null;
-    },
-    async submitCandidate(input, identity) {
-      const normalized = normalizeSubmission(input);
-      if (!isGameplayProfileCompatibleWithControlMode(identity, normalized.controlMode)) {
-        throw new Error("Gameplay profile identity is incompatible with the candidate control mode.");
-      }
-      const boardKey = deriveSharedChampionBoardKey(identity);
-      const champion = champions.get(boardKey) ?? null;
-      const nextChampion = createSharedChampion({
-        holderName: normalized.playerName,
-        score: normalized.score,
-        controlMode: normalized.controlMode,
-        updatedAt: new Date(),
-        identity,
-      });
-
-      if (!champion || normalized.score > champion.score) {
-        champions.set(boardKey, nextChampion);
-        return {
-          updated: true,
-          champion: nextChampion,
-        };
-      }
-
-      return {
-        updated: false,
-        champion,
-      };
     },
     async isRateLimited() {
       return false;
@@ -2403,29 +2361,6 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
       const row = result.rows[0];
       return row ? mapRowToChampion(row, `shared_champion_scores:${boardKey}`) : null;
     },
-    async submitCandidate(input, identity) {
-      await ensureSchemaReady();
-      const normalized = normalizeSubmission(input);
-      if (!isGameplayProfileCompatibleWithControlMode(identity, normalized.controlMode)) {
-        throw new Error("Gameplay profile identity is incompatible with the candidate control mode.");
-      }
-      const boardKey = deriveSharedChampionBoardKey(identity);
-      const result = await getPool("write").query<ChampionMutationRow>(UPSERT_CHAMPION_SQL, [
-        boardKey,
-        SHARED_CHAMPION_SCORE_RULESET,
-        identity.balanceSeason,
-        identity.profileId,
-        identity.tuningRevision,
-        normalized.score,
-        normalized.playerName,
-        normalized.controlMode,
-      ]);
-      const row = result.rows[0] ?? null;
-      return {
-        updated: row?.updated === true,
-        champion: row ? mapRowToChampion(row, `shared_champion_scores:${boardKey}`) : null,
-      };
-    },
     async isRateLimited(key, limit) {
       await ensureSchemaReady();
       const result = await getPool("write").query<{ recent: string }>(RATE_LIMIT_CHECK_SQL, [key, limit.windowMs]);
@@ -2520,7 +2455,7 @@ export function createPostgresSharedChampionStore(): SharedChampionStore {
           identity.profileId,
           identity.tuningRevision,
           normalizeScore(input.score),
-          requireSharedChampionName(input.tokenRecord.playerName, input.tokenRecord.controlMode),
+          requireSharedChampionName(input.tokenRecord.playerName),
           input.tokenRecord.controlMode,
         ]);
         const championRow = championResult.rows[0] ?? null;

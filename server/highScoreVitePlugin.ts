@@ -11,7 +11,7 @@ import {
   handleSharedChampionRunFinishRequest,
   handleSharedChampionRunStartRequest,
 } from "./highScoreRunApi";
-import { createInMemorySharedChampionStore } from "./highScoreStore";
+import { createInMemorySharedChampionStore } from "./highScoreStoreImpl";
 
 const devStore = createInMemorySharedChampionStore();
 

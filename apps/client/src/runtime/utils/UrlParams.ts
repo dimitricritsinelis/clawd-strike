@@ -164,12 +164,6 @@ function parseControlMode(modeValue: string | null, autostartValue: string | nul
   return "human";
 }
 
-export function sanitizeRuntimePlayerName(
-  value: string | null | undefined,
-): string | null {
-  return sanitizeValidatedPlayerName(value);
-}
-
 function parseQualityTier(value: string | null): RuntimeQualityTier {
   return value?.trim().toLowerCase() === "standard" ? "standard" : "high";
 }
@@ -232,7 +226,7 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
 
   const mapId = rawMapId && rawMapId.trim().length > 0 ? rawMapId.trim() : DEFAULT_MAP_ID;
   const controlMode = parseControlMode(rawControlMode, rawAutostart);
-  const playerName = sanitizeRuntimePlayerName(rawPlayerName);
+  const playerName = sanitizeValidatedPlayerName(rawPlayerName);
   const shot = rawShot && rawShot.trim().length > 0 ? rawShot.trim() : null;
   const spawn = rawSpawn?.trim().toUpperCase() === "B" ? "B" : "A";
   const debug = parseBooleanFlag(rawDebug);

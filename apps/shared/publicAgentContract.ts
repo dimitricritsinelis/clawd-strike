@@ -26,6 +26,3 @@ export const PUBLIC_AGENT_SUPPORTED_GLOBALS = [
   "agent_apply_action",
   "advanceTime",
 ] as const;
-
-export type PublicAgentStableSelectorKey = keyof typeof PUBLIC_AGENT_STABLE_SELECTORS;
-export type PublicAgentSupportedGlobal = (typeof PUBLIC_AGENT_SUPPORTED_GLOBALS)[number];

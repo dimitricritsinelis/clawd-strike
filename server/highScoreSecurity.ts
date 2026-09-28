@@ -57,15 +57,6 @@ export function isSharedChampionPublicRunSubmissionEnabled(): boolean {
   return true;
 }
 
-export function getSharedChampionAdminToken(): string | null {
-  const value = process.env.SHARED_CHAMPION_ADMIN_TOKEN?.trim() ?? "";
-  return value.length > 0 ? value : null;
-}
-
-export function hasSharedChampionAdminToken(): boolean {
-  return getSharedChampionAdminToken() !== null;
-}
-
 export function sha256Hex(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -257,10 +248,6 @@ export function protectJsonWriteRequest(
     userAgentFingerprint,
     origin,
   };
-}
-
-export function getStatsAdminToken(): string | null {
-  return resolveStatsAdminToken();
 }
 
 export function resolveStatsAdminToken(env: NodeJS.ProcessEnv = process.env): string | null {

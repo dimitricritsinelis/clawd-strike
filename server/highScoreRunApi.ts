@@ -9,7 +9,6 @@ import {
   parseCurrentGameplayProfileIdentity,
   parseStoredGameplayProfileIdentity,
   sanitizeSharedChampionMapId,
-  sanitizeSharedChampionName,
   validateSharedChampionRunSummary,
   type SharedChampionRunFinishRequest,
   type SharedChampionRunFinishResponse,
@@ -17,6 +16,7 @@ import {
   type SharedChampionRunStartResponse,
 } from "../apps/shared/highScore.js";
 import type { GameplayProfileIdentity } from "../apps/shared/gameplayProfile.js";
+import { sanitizeValidatedPlayerName } from "../apps/shared/playerName.js";
 import {
   isSharedChampionPublicRunSubmissionEnabled,
   protectJsonWriteRequest,
@@ -27,7 +27,8 @@ import {
   type RateLimit,
   type SharedChampionAuditEvent,
   type SharedChampionStore,
-} from "./highScoreStore.js";
+} from "./highScoreStoreImpl.js";
+import { errorResponse, jsonResponse } from "./http.js";
 
 /**
  * Per-IP ceiling enforced in Postgres so it holds across lambda instances;
@@ -45,11 +46,6 @@ async function consumeSharedRateLimit(
   await store.logSubmission(key);
   return true;
 }
-
-const JSON_HEADERS = {
-  "cache-control": "no-store",
-  "content-type": "application/json; charset=utf-8",
-} as const;
 
 /**
  * Ceiling on a run request body. Sized so that an implausible-but-parseable
@@ -85,20 +81,6 @@ function exceedsRunBodyLimit(request: Request): boolean {
   return Number.isFinite(declared) && declared > MAX_RUN_BODY_BYTES;
 }
 
-function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
-  return Response.json(body, {
-    ...init,
-    headers: {
-      ...JSON_HEADERS,
-      ...(init.headers ?? {}),
-    },
-  });
-}
-
-function errorResponse(status: number, error: string): Response {
-  return jsonResponse({ error }, { status });
-}
-
 function parseRunStartBody(value: unknown): SharedChampionRunStartRequest | null {
   if (!value || typeof value !== "object") return null;
   const record = value as Record<string, unknown>;
@@ -106,7 +88,7 @@ function parseRunStartBody(value: unknown): SharedChampionRunStartRequest | null
   const profileIdentity = parseCurrentGameplayProfileIdentity(record);
   if (!profileIdentity) return null;
   if (!isGameplayProfileCompatibleWithControlMode(profileIdentity, record.controlMode)) return null;
-  const playerName = sanitizeSharedChampionName(record.playerName, record.controlMode);
+  const playerName = sanitizeValidatedPlayerName(record.playerName);
   if (playerName === null) return null;
   return {
     playerName,
@@ -445,10 +427,7 @@ export async function handleSharedChampionRunFinishRequest(
       return buildRejectedFinishResponse(store, 409, "profile-control-mode-mismatch", tokenIdentity);
     }
 
-    const normalizedTokenPlayerName = sanitizeSharedChampionName(
-      consumed.record.playerName,
-      consumed.record.controlMode,
-    );
+    const normalizedTokenPlayerName = sanitizeValidatedPlayerName(consumed.record.playerName);
     if (normalizedTokenPlayerName === null) {
       await recordAuditEvent(store, {
         eventType: "run-finish",
