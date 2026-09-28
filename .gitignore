@@ -2,6 +2,7 @@
 node_modules/
 dist/
 **/test-results/
+**/playwright-report/
 
 # Local evidence and scratch space. Captures, review renders and logs go here,
 # never into the repository.

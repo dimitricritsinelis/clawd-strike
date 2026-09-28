@@ -9,9 +9,10 @@ on:
 permissions:
   contents: read
 
+# Superseded PR runs are cancelled; every push to main keeps its own result.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
