@@ -11,7 +11,7 @@ const AK47_CLOSE_BASENAME = "/assets/audio/weapons/ak47/fire_close_01";
 const AK47_TAIL_BASENAME = "/assets/audio/weapons/ak47/fire_tail_01";
 /** Legacy recording; only the gunshot mechanism layer is still cut from it. */
 const AK47_RELOAD_BASENAME = "/assets/audio/weapons/ak47/reload";
-/** CC0 magazine foley cuts (see reload-foley.provenance.json and AK47_RELOAD_FOLEY_LAYOUT). */
+/** CC0 magazine foley cuts (see assets/source/audio/reload-foley.provenance.json and AK47_RELOAD_FOLEY_LAYOUT). */
 const AK47_RELOAD_FOLEY_BASENAME = "/assets/audio/weapons/ak47/reload-foley";
 const KILL_DING_BASENAME = "/assets/audio/ui/kill_ding";
 // Prefer mp3 first: the deployed site ships mp3, and probing for ogg first creates noisy 404s in the console.

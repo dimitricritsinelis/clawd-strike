@@ -305,7 +305,7 @@ function synthCloth(
 
 /**
  * Cuts packed in reload-foley.wav (seconds at any decode rate). Built offline
- * from CC0 recordings, see reload-foley.provenance.json: each cut is filtered,
+ * from CC0 recordings, see assets/source/audio/reload-foley.provenance.json: each cut is filtered,
  * faded and peak-normalised to 0.89. hitS is the transient inside the cut
  * (0 for cloth, which is aligned by its start).
  */

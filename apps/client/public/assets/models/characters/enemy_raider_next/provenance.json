@@ -40,30 +40,6 @@
   ],
   "files": [
     {
-      "file": "raider-albedo.jpg",
-      "md5": "4520c3063937da2e650296003b639ae2"
-    },
-    {
-      "file": "raider-normal.jpg",
-      "md5": "8ba5f50389fdfd3a369fddf1a8d79517"
-    },
-    {
-      "file": "raider-orm.png",
-      "md5": "e633f2fc60d05aa55f049964f76ea8d9"
-    },
-    {
-      "file": "raider-rifle-0.jpg",
-      "md5": "8319d6def3240f9bbeb847a4d6b0620d"
-    },
-    {
-      "file": "raider-rifle-1.jpg",
-      "md5": "547ad398e318163cda6ebc201bdd36cb"
-    },
-    {
-      "file": "raider-rifle-2.jpg",
-      "md5": "0de42bfeee408e62a0b54d752593cdd3"
-    },
-    {
       "file": "raider.glb",
       "md5": "40cdbd1c563635848f4f85c2b1fddee7"
     }

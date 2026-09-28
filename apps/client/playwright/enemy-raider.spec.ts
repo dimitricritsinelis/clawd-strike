@@ -507,8 +507,8 @@ test("raider bind knees match the mesh and boots face forward at both LODs", asy
 
 
 test("raider GLB embeds the reviewed material maps", async () => {
-  const directory = path.resolve("public/assets/models/characters/enemy_raider_next");
-  const glb = await readFile(path.join(directory, "raider.glb"));
+  const glb = await readFile(path.resolve("public/assets/models/characters/enemy_raider_next/raider.glb"));
+  const exportsDir = path.resolve("../../assets/source/enemy-raider/exports");
   const jsonLength = glb.readUInt32LE(12);
   const document = JSON.parse(glb.subarray(20, 20 + jsonLength).toString());
   const binaryStart = 28 + jsonLength;
@@ -522,7 +522,7 @@ test("raider GLB embeds the reviewed material maps", async () => {
     const view = document.bufferViews[image.bufferView];
     const start = binaryStart + (view.byteOffset ?? 0);
     const exported = glb.subarray(start, start + view.byteLength);
-    const reviewed = await readFile(path.join(directory, filename));
+    const reviewed = await readFile(path.join(exportsDir, filename));
     // Imported packed images used to silently export the unedited donor bytes.
     expect(exported.equals(reviewed), filename).toBe(true);
   }

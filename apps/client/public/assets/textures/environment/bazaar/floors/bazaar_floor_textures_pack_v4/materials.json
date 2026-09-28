@@ -20,11 +20,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -48,11 +43,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -76,11 +66,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -127,11 +112,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -285,11 +265,6 @@
           "albedo": "./bz06-derived/bz06_rough_service_paving-albedo.png",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./bz06-derived/bz06_rough_service_paving-albedo.png",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -313,11 +288,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },
@@ -375,11 +345,6 @@
           "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_2k.jpg",
           "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_2k.jpg",
           "arm": "./medieval_blocks_05/medieval_blocks_05_arm_2k.jpg"
-        },
-        "4k": {
-          "albedo": "./medieval_blocks_05/medieval_blocks_05_diff_4k.jpg",
-          "normal": "./medieval_blocks_05/medieval_blocks_05_nor_gl_4k.jpg",
-          "arm": "./medieval_blocks_05/medieval_blocks_05_arm_4k.jpg"
         }
       }
     },

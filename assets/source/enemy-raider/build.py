@@ -180,9 +180,11 @@ def import_fitted_rifle(root):
 SOURCE = Path(__file__).resolve().parent
 ROOT = SOURCE.parents[2]
 OUT = ROOT / 'apps/client/public/assets/models/characters/enemy_raider_next'
+# Texture maps packed into raider.glb; only the GLB ships.
+EXPORTS = SOURCE / 'exports'
 REVIEW = ROOT / 'artifacts/raider-review'
 DONOR = ROOT / 'assets/source/enemy-raider/donor/model_source_4k.glb'
-for folder in [OUT, REVIEW]:
+for folder in [OUT, EXPORTS, REVIEW]:
     folder.mkdir(parents=True, exist_ok=True)
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.context.preferences.filepaths.save_version = 0
@@ -260,8 +262,8 @@ for node in textures:
     if is_color or is_normal:
         # Preserve the source JPEG bytes without another lossy encode.
         filename = 'raider-albedo.jpg' if is_color else 'raider-normal.jpg'
-        image.filepath_raw = str(OUT / filename)
-        (OUT / filename).write_bytes(image.packed_file.data)
+        image.filepath_raw = str(EXPORTS / filename)
+        (EXPORTS / filename).write_bytes(image.packed_file.data)
         continue
     width, height = image.size
     pixels = np.array(image.pixels[:], dtype=np.float32).reshape(height, width, 4)
@@ -276,10 +278,10 @@ for node in textures:
     refined.colorspace_settings.name = 'Non-Color'
     refined.pixels.foreach_set(pixels.ravel())
     refined.scale(2048, 2048)
-    refined.filepath_raw = str(OUT / 'raider-orm.png')
+    refined.filepath_raw = str(EXPORTS / 'raider-orm.png')
     refined.file_format = 'PNG'
     refined.save()
-    packed = (OUT / 'raider-orm.png').read_bytes()
+    packed = (EXPORTS / 'raider-orm.png').read_bytes()
     refined.pack(data=packed, data_len=len(packed))
     node.image = refined
 for retired_map in ['raider-normal.png', 'raider-orm.jpg']:
@@ -430,7 +432,7 @@ rifle_images = sorted({node.image for mat in weapon.data.materials for node in m
                        if node.type == 'TEX_IMAGE' and node.image},key=lambda im:im.name)
 for index,im in enumerate(rifle_images):
     im.scale(1024,1024)
-    im.filepath_raw = str(OUT/f'raider-rifle-{index}.jpg')
+    im.filepath_raw = str(EXPORTS/f'raider-rifle-{index}.jpg')
     im.file_format = 'JPEG'
     im.save()
     im.pack()

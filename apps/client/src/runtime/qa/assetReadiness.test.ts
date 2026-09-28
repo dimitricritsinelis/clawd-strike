@@ -272,10 +272,8 @@ test("QA door loading selects the 1K derivative while normal loading keeps the 2
     resolvePropModelUrlForQuality(castleDoor, "1k"),
     "large_castle_door/large_castle_door_1k.gltf",
   );
-  const rollerShutter = entries.find((entry) => entry.id === "ph_rollershutter_window_02");
-  assert.ok(rollerShutter);
   assert.throws(
-    () => resolvePropModelUrlForQuality(rollerShutter, "1k"),
+    () => resolvePropModelUrlForQuality({ ...castleDoor, variants: {} }, "1k"),
     /missing required '1k' variant/,
   );
 

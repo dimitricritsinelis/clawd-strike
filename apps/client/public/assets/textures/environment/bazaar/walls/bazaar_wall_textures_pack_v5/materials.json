@@ -670,32 +670,6 @@
       }
     },
     {
-      "id": "ph_plastered_wall_04",
-      "tileSizeM": 3.2,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./plastered_wall_04/plastered_wall_04_diff_1k.jpg",
-          "normal": "./plastered_wall_04/plastered_wall_04_nor_gl_1k.jpg",
-          "arm": "./plastered_wall_04/plastered_wall_04_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_fabric_leather_02",
-      "tileSizeM": 0.5,
-      "tintHex": "#e5ceaa",
-      "textures": {
-        "1k": {
-          "albedo": "./fabric_leather_02/fabric_leather_02_diff_1k.jpg",
-          "normal": "./fabric_leather_02/fabric_leather_02_nor_gl_1k.jpg",
-          "arm": "./fabric_leather_02/fabric_leather_02_arm_1k.jpg"
-        }
-      },
-      "albedoBoost": 1.0,
-      "roughness": 0.96
-    },
-    {
       "id": "ph_red_plaster_weathered",
       "tileSizeM": 2,
       "tintHex": "#ffffff",
@@ -704,30 +678,6 @@
           "albedo": "./red_plaster_weathered/red_plaster_weathered_diff_1k.jpg",
           "normal": "./red_plaster_weathered/red_plaster_weathered_nor_gl_1k.jpg",
           "arm": "./red_plaster_weathered/red_plaster_weathered_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_grey_plaster_02",
-      "tileSizeM": 1,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./grey_plaster_02/grey_plaster_02_diff_1k.jpg",
-          "normal": "./grey_plaster_02/grey_plaster_02_nor_gl_1k.jpg",
-          "arm": "./grey_plaster_02/grey_plaster_02_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_plaster_brick_pattern",
-      "tileSizeM": 2,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./plaster_brick_pattern/plaster_brick_pattern_diff_1k.jpg",
-          "normal": "./plaster_brick_pattern/plaster_brick_pattern_nor_gl_1k.jpg",
-          "arm": "./plaster_brick_pattern/plaster_brick_pattern_arm_1k.jpg"
         }
       }
     },
@@ -768,42 +718,6 @@
       }
     },
     {
-      "id": "ph_castle_brick_02_red",
-      "tileSizeM": 1.5,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./castle_brick_02_red/castle_brick_02_red_diff_1k.jpg",
-          "normal": "./castle_brick_02_red/castle_brick_02_red_nor_gl_1k.jpg",
-          "arm": "./castle_brick_02_red/castle_brick_02_red_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_weathered_brown_planks",
-      "tileSizeM": 1.8,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./weathered_brown_planks/weathered_brown_planks_diff_1k.jpg",
-          "normal": "./weathered_brown_planks/weathered_brown_planks_nor_gl_1k.jpg",
-          "arm": "./weathered_brown_planks/weathered_brown_planks_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_rough_wood",
-      "tileSizeM": 0.5,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./rough_wood/rough_wood_diff_1k.jpg",
-          "normal": "./rough_wood/rough_wood_nor_gl_1k.jpg",
-          "arm": "./rough_wood/rough_wood_arm_1k.jpg"
-        }
-      }
-    },
-    {
       "id": "ph_dark_wood",
       "tileSizeM": 2,
       "tintHex": "#ffffff",
@@ -812,18 +726,6 @@
           "albedo": "./dark_wood/dark_wood_diff_1k.jpg",
           "normal": "./dark_wood/dark_wood_nor_gl_1k.jpg",
           "arm": "./dark_wood/dark_wood_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_brown_planks_03",
-      "tileSizeM": 1,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./brown_planks_03/brown_planks_03_diff_1k.jpg",
-          "normal": "./brown_planks_03/brown_planks_03_nor_gl_1k.jpg",
-          "arm": "./brown_planks_03/brown_planks_03_arm_1k.jpg"
         }
       }
     },
@@ -842,30 +744,6 @@
       "roughness": 0.96
     },
     {
-      "id": "ph_dirty_carpet",
-      "tileSizeM": 0.6,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./dirty_carpet/dirty_carpet_diff_1k.jpg",
-          "normal": "./dirty_carpet/dirty_carpet_nor_gl_1k.jpg",
-          "arm": "./dirty_carpet/dirty_carpet_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_rusty_metal_04",
-      "tileSizeM": 2,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./rusty_metal_04/rusty_metal_04_diff_1k.jpg",
-          "normal": "./rusty_metal_04/rusty_metal_04_nor_gl_1k.jpg",
-          "arm": "./rusty_metal_04/rusty_metal_04_arm_1k.jpg"
-        }
-      }
-    },
-    {
       "id": "ph_painted_metal_shutter",
       "tileSizeM": 2,
       "tintHex": "#ffffff",
@@ -874,42 +752,6 @@
           "albedo": "./painted_metal_shutter/painted_metal_shutter_diff_1k.jpg",
           "normal": "./painted_metal_shutter/painted_metal_shutter_nor_gl_1k.jpg",
           "arm": "./painted_metal_shutter/painted_metal_shutter_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_corrugated_iron_02",
-      "tileSizeM": 2.7,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./corrugated_iron_02/corrugated_iron_02_diff_1k.jpg",
-          "normal": "./corrugated_iron_02/corrugated_iron_02_nor_gl_1k.jpg",
-          "arm": "./corrugated_iron_02/corrugated_iron_02_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_terracotta_floor_tiles",
-      "tileSizeM": 2.08,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./terracotta_floor_tiles/terracotta_floor_tiles_diff_1k.jpg",
-          "normal": "./terracotta_floor_tiles/terracotta_floor_tiles_nor_gl_1k.jpg",
-          "arm": "./terracotta_floor_tiles/terracotta_floor_tiles_arm_1k.jpg"
-        }
-      }
-    },
-    {
-      "id": "ph_stone_embedded_tiles",
-      "tileSizeM": 2,
-      "tintHex": "#ffffff",
-      "textures": {
-        "1k": {
-          "albedo": "./stone_embedded_tiles/stone_embedded_tiles_diff_1k.jpg",
-          "normal": "./stone_embedded_tiles/stone_embedded_tiles_nor_gl_1k.jpg",
-          "arm": "./stone_embedded_tiles/stone_embedded_tiles_arm_1k.jpg"
         }
       }
     },

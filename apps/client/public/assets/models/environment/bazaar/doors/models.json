@@ -31,21 +31,6 @@
           }
         }
       }
-    },
-    {
-      "id": "ph_rollershutter_window_02",
-      "url": "rollershutter_window_02/rollershutter_window_02_2k.gltf",
-      "scale": 1.0,
-      "source": "https://polyhaven.com/a/rollershutter_window_02",
-      "license": "CC0-1.0",
-      "md5": {
-        "rollershutter_window_02/rollershutter_window_02_2k.gltf": "8f4cc736e1362276df3ce8b019545793",
-        "rollershutter_window_02/rollershutter_window_02.bin": "344eb7276920e1fafb9a91c32bc376fe",
-        "rollershutter_window_02/textures/rollershutter_window_02_arm_2k.jpg": "ed319eb3855b7785dbb68b1d88e75669",
-        "rollershutter_window_02/textures/rollershutter_window_02_diff_2k.jpg": "e7a3b8647902a8b89e6f3cfb6d68b63a",
-        "rollershutter_window_02/textures/rollershutter_window_02_graffiti_diff_2k.jpg": "c2809434ff7869167a1d5fb8a414c05d",
-        "rollershutter_window_02/textures/rollershutter_window_02_nor_gl_2k.jpg": "a052d82c9dd695e777d996bfaf8811da"
-      }
     }
   ]
 }

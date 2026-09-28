@@ -13,10 +13,8 @@ import {
   MeshPhysicalMaterial,
   MeshStandardMaterial,
   Quaternion,
-  Texture,
   Vector3,
 } from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { PlayerController } from "../sim/PlayerController";
 import { WorldColliders } from "../sim/collision/WorldColliders";
 import { buildProps } from "./buildProps";
@@ -47,65 +45,30 @@ const POLISH_MODULES = new Set([
   "bazaar_spice_goods",
 ]);
 
-test("B18 exported mounting preserves the booth and changes only the authorized north collider", async () => {
+test("B18 north cabinet height changes only its authorized collider and the west canopy keeps its carrier", async () => {
   const raw = JSON.parse(await readFile(new URL("../../../public/maps/bazaar-map/map_spec.json", import.meta.url), "utf8"));
   const blockout = parseBlockoutSpec(raw);
   const anchors = parseAnchorsSpec(raw);
-  const manifest = JSON.parse(await readFile(new URL("../../../public/assets/models/environment/bazaar/props/models.json", import.meta.url), "utf8"));
-  const ids = new Set(["b18-dye-counter", "b18-packing-finish", "b18-roof-access", "original_textile_booth"]);
+  // The B18 counter, roof-access and textile-booth GLBs were never placed on
+  // the shipped map and are no longer published; the procedural canopy keeps
+  // the compiled dressing path active.
   blockout.dressingPlacements = [
-    legacyPlacement("PLACE_B18_DYE_COUNTER_B18_SAMPLE_DISPLAY","b18-dye-counter",{width:1.48,depth:.34,height:2.11},
-      {x:53.17,y:44.82,z:.14},{anchorId:"B18_SAMPLE_DISPLAY",yawDeg:450}),
-    legacyPlacement("PLACE_B18_PACKING_FINISH_B18_PACKING_DISPLAY","b18-packing-finish",{width:1.48,depth:.34,height:1.535},
-      {x:53.17,y:35.18,z:.14},{anchorId:"B18_PACKING_DISPLAY",yawDeg:450}),
-    legacyPlacement("PLACE_B18_ROOF_ACCESS_B18_ROOF_ACCESS","b18-roof-access",{width:1.8,depth:3.8,height:2.59},
-      {x:55.5,y:42.8,z:4.76},{anchorId:"B18_ROOF_ACCESS",yawDeg:180,semanticClass:"architecture"}),
-    legacyPlacement("PLACE_TEXTILE_BOOTH_DYE_E_TEXTILE_BOOTH","original_textile_booth",{width:2.683,depth:1.291,height:3.64},
-      {x:52.735,y:40,z:0},{anchorId:"DYE_E_TEXTILE_BOOTH",yawDeg:450}),
     legacyPlacement("PLACE_DYERS_CANOPY_CANOPY_DYERS_01","bazaar_cloth_canopy",{width:4.4,depth:11.7,height:.18},
       {x:47.15,y:45.36,z:5.9},{anchorId:"CANOPY_DYERS_01",classification:"overhead",semanticClass:"overhead",
         spanSeats:{start:{x:41.3,y:45.36,z:5.9},end:{x:53,y:45.36,z:5.9}}}),
   ];
-  const templates = new Map<string, Group>();
-  const loader = new GLTFLoader();
-  // Node has no image decoder. Keep real GLB geometry/transforms; browser QA
-  // separately exercises PropModelLibrary, PBR image loading and rendering.
-  loader.register(() => ({ name: "geometry-only-image-decode", loadTexture: async () => new Texture() }));
-  for (const entry of manifest.models.filter((entry: { id: string }) => ids.has(entry.id))) {
-    const bytes = await readFile(new URL(`../../../public/assets/models/environment/bazaar/props/${entry.url}`, import.meta.url));
-    const gltf = await loader.parseAsync(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength), "");
-    templates.set(entry.id, gltf.scene);
-  }
-  const models = {
-    hasModel: (id: string) => templates.has(id),
-    instantiate: (id: string) => templates.get(id)!.clone(true),
-  } as unknown as PropModelLibrary;
+  const models = { hasModel: () => false } as unknown as PropModelLibrary;
   const options = { mapId: blockout.mapId, blockout, anchors, seedOverride: null,
     propChaos: { profile: "subtle" as const, jitter: null, cluster: null, density: null },
     propVisuals: "bazaar" as const, propModels: models, highVis: false };
   const result = buildProps(options);
-  const expected: Record<string, number[]> = {
-    PLACE_B18_DYE_COUNTER: [53, .14, 44.08, 53.34, 2.25, 45.56],
-    PLACE_B18_PACKING_FINISH: [53, .14, 34.44, 53.34, 1.675, 35.92],
-    PLACE_B18_ROOF_ACCESS: [54.6, 4.76, 40.9, 56.4, 7.35, 44.7],
-    PLACE_TEXTILE_BOOTH: [52.0895, 0, 38.659472, 53.3805, 3.639354, 41.340528],
-  };
-  for (const [id, limits] of Object.entries(expected)) {
-    const node = result.root.children[0]?.children.find((entry) => entry.name.startsWith(`v3-dressing-${id}_`));
-    assert.ok(node, `${id} was not loaded`);
-    const bounds = new Box3().setFromObject(node);
-    [...bounds.min.toArray(), ...bounds.max.toArray()].forEach((value, index) => {
-      assert.ok(Math.abs(value - limits[index]!) < .0001, `${id} bound ${index}: ${value}`);
-    });
-  }
   const carrier = result.root.getObjectByName("v3-dyers-west-canopy-carrier");
   assert.ok(carrier, "west canopy lost its supported carrier");
   const carrierBounds = new Box3().setFromObject(carrier);
   assert.ok(carrierBounds.min.x < 41 && carrierBounds.max.x >= 41.39, "carrier no longer bears into masonry");
   assert.ok(carrierBounds.min.y >= 4.379 && carrierBounds.max.y <= 6.021, "carrier enters the body envelope or leaves its roof datum");
   const beforeAnchors = { ...anchors, anchors: anchors.anchors.filter((entry) => !entry.id.startsWith("B18_")).map((entry) => entry.id === "DYE_E_SHOP_2" ? { ...entry, heightM: 3.2 } : entry) };
-  const before = buildProps({ ...options, anchors: beforeAnchors,
-    blockout: { ...blockout, dressingPlacements: blockout.dressingPlacements!.filter((entry) => entry.runtime.id === "original_textile_booth") } });
+  const before = buildProps({ ...options, anchors: beforeAnchors });
   const retained = (colliders: typeof result.colliders) => colliders.filter((entry) => entry.id !== "DYE_E_SHOP_2-shop");
   assert.deepEqual(retained(result.colliders), retained(before.colliders));
   const cabinet = result.colliders.find((entry) => entry.id === "DYE_E_SHOP_2-shop");
@@ -656,12 +619,6 @@ test("CC0 merchant payloads preserve native pivots, dimensions, and focused tria
     }>;
   };
   const expected = [
-    {
-      id: "ph_wooden_table_01",
-      url: "wooden_table_01/WoodenTable_01_1k.gltf",
-      dimensions: [1.7996479273, 0.5488492709, 0.6571746469],
-      triangles: 952,
-    },
     {
       id: "cc0_spice_sack",
       url: "spice_sack/spice_sack_1k.gltf",

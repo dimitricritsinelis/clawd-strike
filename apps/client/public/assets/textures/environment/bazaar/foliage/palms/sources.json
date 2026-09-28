@@ -27,12 +27,10 @@
       "license": "CC0",
       "notes": "Normal and ARM maps are also reused on the palm frond cards to restore subtle leaf-surface breakup without adding another texture allocation.",
       "md5": {
-        "palm_bark/palm_bark_diff_1k.jpg": "89e6474313f1547e3c12c4b68410ee39",
         "palm_bark/palm_bark_nor_gl_1k.jpg": "47c13a26ef585fbb0d93f5593f8f711f",
         "palm_bark/palm_bark_arm_1k.jpg": "94ac0d9506483f206b67e20b3e4b590f"
       },
       "files": [
-        "palm_bark/palm_bark_diff_1k.jpg",
         "palm_bark/palm_bark_nor_gl_1k.jpg",
         "palm_bark/palm_bark_arm_1k.jpg"
       ]
