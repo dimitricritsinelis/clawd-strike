@@ -2014,8 +2014,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     );
   }
 
-  // Authored facade GLBs referenced by frontages' facadeModelId. Loaded on every
-  // profile (mobile included): without them the owning wall shells render bare.
+  // Authored section and facade GLBs render every frontage. Loaded on every
+  // profile (mobile included); without them the map falls back to flat
+  // blockout walls. Collision never depends on these models.
   let facadeModels: PropModelLibrary | null = null;
   const facadeModelIds = new Set([
     ...(mapAssets?.blockout.architecturePlacements ?? []).flatMap((placement) =>
@@ -2039,7 +2040,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         for (const requestId of qaFacadeRequestIds) qaAssetTracker.fail(requestId, error);
         throw new Error(`[qa-assets] facade model pack failed; capture is blocked: ${message}`);
       }
-      appendWarning(`Failed to load authored facade models; their wall shells render bare.\n${message}`);
+      console.error(`[runtime:boot] authored facade models failed to load; rendering flat blockout walls: ${message}`);
+      appendWarning(`Failed to load the authored facade models. Falling back to flat blockout walls.\n${message}`);
+      wallMaterials = null;
+      resolvedWallMode = "blockout";
     }
   }
 

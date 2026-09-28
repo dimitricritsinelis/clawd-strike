@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { BoxGeometry, Group, Mesh, MeshStandardMaterial } from "three";
-import { bz04FloorTreatmentShader, bz04CourtyardVisualSegments, bz04ReceiverFragments, bz04RoofFragments, bz04SectionVisualSegments, readBz04BoundaryCoverage } from "./bz04Trial";
+import { bz04FloorTreatmentShader, bz04CourtyardVisualSegments, bz04RoofFragments, bz04SectionVisualSegments, readBz04BoundaryCoverage } from "./bz04Trial";
 import { createV3BoundaryFinishTrim } from "./buildBlockout";
 import { buildAuthoredPlacements, validateBz04Bounds } from "./buildFacadeModels";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
@@ -77,27 +77,6 @@ test("roof planning overruns load during construction without losing geometry or
   assert.equal(result.children.reduce((count,child)=>count+(child as Mesh).geometry.index!.count/3,0),144);
   allowance=1;assert.equal(build().userData.bz04RoofPrimitiveCounts.actual,12);
   allowance=-1;assert.throws(build,/Invalid per-area/);
-});
-
-
-test("receiver clipping retains exact outside strips, metadata and rotated non-crossing details", () => {
-  const wall: WallDetailInstance={placementId:"backing",meshId:"facade_wall_shell",position:{x:22,y:5,z:61},scale:{x:8.4,y:7,z:3.3},yawRad:Math.PI/2,wallMaterialId:"ph_lime_plaster_sun",trimMaterialId:null,semanticClass:"wall"};
-  const coverage=[{orientation:"vertical" as const,coord:19,start:56,end:64}];
-  const [fragment]=bz04ReceiverFragments(wall,coverage);
-  assert.ok(fragment);
-  assert.ok(Math.abs(fragment.position.z-fragment.scale.x/2-64)<1e-6);
-  assert.ok(Math.abs(fragment.position.z+fragment.scale.x/2-65.2)<1e-6);
-  assert.equal(fragment.scale.y,wall.scale.y);assert.equal(fragment.scale.z,wall.scale.z);
-  assert.equal(fragment.wallMaterialId,wall.wallMaterialId);assert.equal(fragment.semanticClass,wall.semanticClass);
-  const outside={...wall,position:{...wall.position,z:70},pitchRad:.1};
-  assert.equal(bz04ReceiverFragments(outside,coverage)[0],outside);
-  const covered={...wall,scale:{...wall.scale,x:1},pitchRad:.1};
-  assert.deepEqual(bz04ReceiverFragments(covered,coverage),[]);
-  assert.throws(()=>bz04ReceiverFragments({...wall,pitchRad:.1},coverage),/crosses rotated legacy detail/);
-  assert.deepEqual(bz04ReceiverFragments({...wall,rollRad:.025,semanticClass:"residential_plaster_repair"},coverage),[]);
-  const outsidePatch={...outside,semanticClass:"residential_plaster_repair"};
-  assert.equal(bz04ReceiverFragments(outsidePatch,coverage)[0],outsidePatch);
-  assert.equal(wall.scale.x,8.4);
 });
 
 

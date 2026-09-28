@@ -4,7 +4,6 @@ import test from "node:test";
 import {
   QA_PALM_DIRECT_TEXTURE_URLS,
   QA_RENDERER_DIRECT_TEXTURE_URLS,
-  QA_STAINED_GLASS_DIRECT_TEXTURE_URLS,
   QaAssetReadinessTracker,
   createQaAssetPlan,
   hashQaAssetRequestIds,
@@ -192,7 +191,6 @@ test("current V3 plan derives door models only from compiled runtime placements 
   const plan = createQaAssetPlan(mapAssets, "cell-review", {
     floorPbr: false,
     wallPbr: false,
-    wallDetails: false,
     bazaarProps: false,
     doorModels: true,
   });
@@ -325,7 +323,7 @@ test("QA facade requests remain pending between prop and door packs until the GL
     facadeModelId: "spice-facade",
   }];
   const plan = createQaAssetPlan(map, "cell-review", {
-    floorPbr: false, wallPbr: false, wallDetails: false, bazaarProps: false, doorModels: true,
+    floorPbr: false, wallPbr: false, bazaarProps: false, doorModels: true,
   });
   assert.deepEqual(plan.facadeModelIds, ["spice-facade"]);
   const requestId = qaFacadeModelRequestId("spice-facade");
@@ -388,7 +386,7 @@ test("QA direct-texture inventory matches every static buildProps asset URL", ()
   }
 });
 
-test("QA direct-texture inventory covers palm and stained-glass loader declarations", () => {
+test("QA direct-texture inventory covers palm loader declarations", () => {
   const palmSource = readFileSync(
     new URL("../map/buildDecorativePalms.ts", import.meta.url),
     "utf8",
@@ -404,26 +402,9 @@ test("QA direct-texture inventory covers palm and stained-glass loader declarati
     ])].sort(),
     "decorative palm texture declarations changed without updating the QA asset plan",
   );
-
-  const windowsSource = readFileSync(
-    new URL("../map/wallDetailFamilies/windows.ts", import.meta.url),
-    "utf8",
-  );
-  const stainedGlassBase = windowsSource.match(
-    /STAINED_GLASS_TEXTURE_BASE_URL\s*=\s*"([^"]+)"/,
-  )?.[1];
-  assert.ok(stainedGlassBase);
-  const stainedGlassDeclaredUrls = [...windowsSource.matchAll(
-    /\$\{STAINED_GLASS_TEXTURE_BASE_URL\}\/([^`]+\.(?:jpg|jpeg|png|webp))/g,
-  )].map((match) => `${stainedGlassBase}/${match[1]}`);
-  assert.deepEqual(
-    [...new Set(stainedGlassDeclaredUrls)].sort(),
-    [...QA_STAINED_GLASS_DIRECT_TEXTURE_URLS].sort(),
-    "stained-glass texture declarations changed without updating the QA asset plan",
-  );
 });
 
-test("QA plan includes only the selected palm tier and tracks stained glass when enabled", () => {
+test("QA plan includes only the selected palm tier and no unrendered window textures", () => {
   const map = fixtureMap();
   map.anchors.anchors.push({
     id: "PALM_FIXTURE",
@@ -434,7 +415,6 @@ test("QA plan includes only the selected palm tier and tracks stained glass when
   const plan = createQaAssetPlan(map, "cell-review", {
     floorPbr: false,
     wallPbr: false,
-    wallDetails: true,
     bazaarProps: false,
     doorModels: false,
     textureTier: "1k",
@@ -448,9 +428,7 @@ test("QA plan includes only the selected palm tier and tracks stained glass when
       assert.ok(!plan.directTextureUrls.includes(url));
     }
   }
-  for (const url of QA_STAINED_GLASS_DIRECT_TEXTURE_URLS) {
-    assert.ok(plan.directTextureUrls.includes(url));
-  }
+  assert.ok(!plan.directTextureUrls.some((url) => url.includes("/textures/environment/bazaar/windows/")));
 });
 
 test("QA readiness requires matching plan, zero failures, eight frames, and 500ms stability", () => {

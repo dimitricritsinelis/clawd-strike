@@ -1,4 +1,3 @@
-import { Euler, Matrix4 } from "three";
 import type { BoundarySegment } from "./buildBlockout";
 import type { WallDetailInstance } from "./wallDetailKit";
 
@@ -138,35 +137,4 @@ function rectangularFragments(instance: WallDetailInstance, coverage: readonly n
   return rects.map((r,i)=>({...instance,placementId:`${instance.placementId}:bz04-remainder-${i}`,
     position:{...instance.position,x:(r[0]!+r[2]!)/2,z:(r[1]!+r[3]!)/2},
     scale:{...instance.scale,x:quarter?r[3]!-r[1]!:r[2]!-r[0]!,z:quarter?r[2]!-r[0]!:r[3]!-r[1]!}}));
-}
-
-
-/** Retire a loaded receiver's exact along-wall span through its old frontage depth. */
-export function bz04ReceiverFragments(instance: WallDetailInstance, coverage: readonly Bz04BoundaryCoverage[]): WallDetailInstance[] {
-  if (!coverage.length || /roof_slab|roof_parapet|roof_coping|roof_finish/.test(instance.meshId+":"+(instance.semanticClass??""))) return [instance];
-  const horizontal = coverage[0]!.orientation === "horizontal";
-  const axis = horizontal ? 0 : 2;
-  const rotation = new Matrix4().makeRotationFromEuler(new Euler(instance.pitchRad ?? 0, instance.yawRad, instance.rollRad ?? 0)).elements;
-  const half = (Math.abs(rotation[axis]!) * instance.scale.x + Math.abs(rotation[axis+4]!) * instance.scale.y + Math.abs(rotation[axis+8]!) * instance.scale.z) / 2;
-  const center = horizontal ? instance.position.x : instance.position.z;
-  const segment = { ...coverage[0]!, start:center-half, end:center+half, outward:1 as const };
-  const remaining = bz04SectionVisualSegments(segment, coverage);
-  if (remaining.length === 1 && remaining[0]!.start === segment.start && remaining[0]!.end === segment.end) return [instance];
-  if (!remaining.length) return [];
-  // A legacy cosmetic plaster patch cannot straddle its replaced receiver.
-  // Retire that patch as a whole; its underlying wall retains exact fragments.
-  if (instance.semanticClass === "residential_plaster_repair") return [];
-  if (Math.abs(Math.sin(instance.yawRad*2)) > 1e-6 || instance.pitchRad || instance.rollRad) {
-    throw new Error(`Receiver boundary crosses rotated legacy detail '${instance.placementId}'`);
-  }
-  const radius = instance.scale.x + instance.scale.z;
-  // ponytail: normalized-instance clipping preserves box/strip cross-sections;
-  // use mesh-plane clipping for irregular shapes when their queued replacement is unavailable.
-  return rectangularFragments(instance, coverage.map(span => horizontal
-    ? [span.start,instance.position.z-radius,span.end,instance.position.z+radius]
-    : [instance.position.x-radius,span.start,instance.position.x+radius,span.end])).map(fragment => {
-      const alongLocalX = horizontal !== (Math.abs(Math.sin(instance.yawRad)) > .5);
-      return {...fragment,position:{...fragment.position,[horizontal ? "z" : "x"]:instance.position[horizontal ? "z" : "x"]},
-        scale:{...fragment.scale,[alongLocalX ? "z" : "x"]:instance.scale[alongLocalX ? "z" : "x"]}};
-    });
 }

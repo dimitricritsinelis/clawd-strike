@@ -37,7 +37,6 @@ export type QaAssetPlan = {
 export type QaAssetPlanOptions = {
   floorPbr?: boolean;
   wallPbr?: boolean;
-  wallDetails?: boolean;
   bazaarProps?: boolean;
   doorModels?: boolean;
   textureTier?: "1k" | "2k";
@@ -175,16 +174,6 @@ export const QA_PALM_DIRECT_TEXTURE_URLS = {
     "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_2k.jpg",
   ],
 } as const;
-
-export const QA_STAINED_GLASS_DIRECT_TEXTURE_URLS = [
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_ambientOcclusion.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_basecolor.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_height.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_metallic.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_normal.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_opacity.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_roughness.png",
-] as const;
 
 function sortedUnique(values: Iterable<string>): string[] {
   return [...new Set(values)].sort((left, right) => left.localeCompare(right));
@@ -349,7 +338,6 @@ export function createQaAssetPlan(
   const directTextureUrls = sortedUnique([
     ...(options.bazaarProps === false ? [] : QA_RENDERER_DIRECT_TEXTURE_URLS),
     ...(hasDecorativePalms ? QA_PALM_DIRECT_TEXTURE_URLS[textureTier] : []),
-    ...(options.wallDetails === false ? [] : QA_STAINED_GLASS_DIRECT_TEXTURE_URLS),
   ]);
   const requiredLogicalRequestIds = sortedUnique([
     ...floorMaterialIds.map(qaFloorMaterialRequestId),
