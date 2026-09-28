@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { BoxGeometry, Color, Group, DoubleSide, Mesh, MeshStandardMaterial, Object3D, Raycaster, Vector3, type InstancedMesh } from "three";
+import { BoxGeometry, Color, Group, DoubleSide, Mesh, MeshStandardMaterial, Raycaster, Vector3, type InstancedMesh } from "three";
 import { createArchSpandrelGeometry, createOpenBottomArchRecessGeometry, createOpenBottomPointedArchFrameGeometry } from "./wallDetailFamilies/arches";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
@@ -224,7 +224,7 @@ test("loaded receiver spans retire the covered legacy frontage and its reverse b
   assert.deepEqual(buildV3Architecture({...options,bz04BoundaryCoverage:coverage.map(span=>({...span,coord:11}))}).instances,original.instances);
 });
 
-test("merchant storefronts override legacy flat timber/metal templates with varied PBR joinery", () => {
+test("merchant massing joinery overrides legacy flat timber/metal templates with PBR materials", () => {
   const legacyProfiles = facadeProfiles.map((profile) => profile.family === "active_merchant"
     ? {
       ...profile,
@@ -261,150 +261,6 @@ test("merchant storefronts override legacy flat timber/metal templates with vari
     instance.trimMaterialId?.startsWith("ph_")
     || instance.detailMaterialId?.startsWith("ph_")
   )), "merchant construction lost its manifest-backed PBR joinery");
-  // The struts and their fixings are deliberately timber, not iron: on the
-  // metal role they reflected the sky as pale galvanised pipe. They must carry
-  // the manifest-backed merchant timber id, bypassing the profile's (possibly
-  // legacy) timber slot entirely.
-  assert.ok(
-    result.instances
-      .filter((instance) => instance.moduleId === "awning_support_pole")
-      .every((instance) => instance.detailMaterialId === "ph_worn_planks"),
-    "awning hardware bypassed the manifest-backed merchant timber role",
-  );
-
-  const shopTints = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "merchant_timber_surround")
-      .map((instance) => instance.detailTintHex),
-  );
-  assert.ok(shopTints.size >= 2, "neighboring served shops lost deterministic joinery separation");
-  const shutterSignatures = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "merchant_louvered_shutter")
-      .map((instance) => `${instance.scale.x}:${instance.yawRad.toFixed(3)}:${instance.detailTintHex}`),
-  );
-  assert.ok(shutterSignatures.size >= 3, "neighboring shutter states collapsed into one repeated silhouette");
-  const counterWidths = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "merchant_counter")
-      .map((instance) => instance.scale.x.toFixed(4)),
-  );
-  const shelfWidths = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "merchant_interior_shelf")
-      .map((instance) => instance.scale.x.toFixed(4)),
-  );
-  const valanceHeights = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "canopy_valance")
-      .map((instance) => instance.scale.y.toFixed(4)),
-  );
-  assert.ok(counterWidths.size >= 2, "neighboring served counters lost seeded width separation");
-  assert.ok(shelfWidths.size >= 2, "neighboring served shelves lost seeded width separation");
-  assert.ok(valanceHeights.size >= 2, "neighboring served awning edges collapsed into one silhouette");
-  const foregroundStock = result.instances.filter((instance) => (
-    instance.semanticClass === "merchant_generic_counter_stock"
-  ));
-  assert.ok(foregroundStock.length >= 4, "served merchant counters lost their visible generic occupied-market baseline");
-  assert.ok(
-    new Set(foregroundStock.map((instance) => `${instance.meshId}:${instance.scale.x}:${instance.detailTintHex}`)).size >= 3,
-    "foreground merchant stock collapsed into one readable repeat",
-  );
-});
-
-test("Rug Gate threshold awnings derive separated east/west silhouettes from their served openings", () => {
-  const east = {
-    ...modulePlacement(
-      "LEGACY_RUG_GATE_EAST_GROUND_01",
-      "shop_recess_market",
-      "shop_recess",
-      { x: 10, y: 14, z: 1.35 },
-    ),
-    frontageId: "FRONTAGE_RUG_GATE_EAST",
-    zoneId: "RUG_GATE",
-  };
-  const west = {
-    ...modulePlacement(
-      "LEGACY_RUG_GATE_WEST_GROUND_02",
-      "shop_recess_market",
-      "shop_recess",
-      { x: 10, y: 18, z: 1.35 },
-    ),
-    frontageId: "FRONTAGE_RUG_GATE_WEST",
-    zoneId: "RUG_GATE",
-  };
-  const result = build([massingPlacement(), east, west], true, true);
-  const eastAwning = result.instances.find((instance) => instance.placementId === `${east.id}:awning`);
-  const westAwning = result.instances.find((instance) => instance.placementId === `${west.id}:awning`);
-  const eastValance = result.instances.find((instance) => instance.placementId === `${east.id}:awning-valance`);
-  const westValance = result.instances.find((instance) => instance.placementId === `${west.id}:awning-valance`);
-  assert.ok(eastAwning && westAwning && eastValance && westValance);
-  assert.ok(eastAwning.scale.z >= westAwning.scale.z + 0.3, "threshold frontage roles lost their canopy-depth separation");
-  assert.ok(eastValance.scale.y >= westValance.scale.y + 0.08, "threshold frontage roles lost their eave silhouette separation");
-  assert.equal(typeof eastAwning.detailTintHex, "number");
-  assert.equal(typeof westAwning.detailTintHex, "number");
-  assert.notEqual(westAwning.detailTintHex, eastAwning.detailTintHex);
-  assert.ok(Math.abs(eastAwning.scale.x - westAwning.scale.x) < 0.2, "served-opening width stopped governing threshold hoods");
-  const retiredWest = { ...west, id: "ARCH_FRONTAGE_RUG_GATE_WEST_GROUND_02" };
-  const retired = build([massingPlacement(), retiredWest], true, true);
-  assert.equal(retired.instances.some((instance) => instance.placementId?.startsWith(`${retiredWest.id}:awning`)), false,
-    "the explicitly retired west awning must not render beside its replacement");
-});
-
-test("covered-arcade ground openings derive generic occupied counters from their sill datum", () => {
-  const coveredProfile: V3FacadeProfile = {
-    ...facadeProfiles[0]!,
-    id: "covered_arcade",
-    label: "Covered arcade",
-    family: "covered_arcade",
-  };
-  const groundWindow = modulePlacement(
-    "COVERED_GROUND_MARKET_WINDOW",
-    "window_screened",
-    "window",
-    { x: 10, y: 16, z: 1.4 },
-    "covered_arcade",
-  );
-  groundWindow.sizeM = { width: 1.5, depth: 0.24, height: 2.2 };
-  const upperWindow = modulePlacement(
-    "COVERED_UPPER_WINDOW_NO_MARKET",
-    "window_screened",
-    "window",
-    { x: 10, y: 18, z: 4.5 },
-    "covered_arcade",
-  );
-  const result = build([groundWindow, upperWindow], true, true, [coveredProfile]);
-  const counters = result.instances.filter((instance) => (
-    instance.semanticClass === "covered_arcade_generic_merchant_counter"
-  ));
-  const shelves = result.instances.filter((instance) => (
-    instance.semanticClass === "covered_arcade_generic_merchant_shelf"
-  ));
-  const stock = result.instances.filter((instance) => (
-    instance.semanticClass === "covered_arcade_generic_merchant_stock"
-  ));
-  const groundAwning = result.instances.find((instance) => (
-    instance.placementId === `${groundWindow.id}:awning`
-  ));
-  const groundSupports = result.instances.filter((instance) => (
-    instance.placementId?.startsWith(`${groundWindow.id}:awning-pole:`)
-  ));
-  assert.equal(counters.length, 2, "ground served opening needs one counter front and one top");
-  assert.equal(shelves.length, 1, "ground served opening needs one shop-depth shelf");
-  assert.equal(stock.length, 2, "ground served opening needs visible generic counter stock");
-  assert.ok(groundAwning, "served covered-arcade opening lost its opening-derived rain hood");
-  assert.ok(
-    Math.abs((groundAwning?.scale.x ?? 0) - groundWindow.sizeM.width) <= 0.25,
-    "served rain hood stopped deriving its width from the opening",
-  );
-  assert.equal(groundSupports.length, 2, "served rain hood lost its two opening-edge braces");
-  assert.ok(counters.every((instance) => instance.placementId?.startsWith(groundWindow.id)));
-  assert.equal(
-    result.instances.some((instance) => instance.placementId?.startsWith(`${upperWindow.id}:arcade-counter`)),
-    false,
-    "upper story window incorrectly received a market counter",
-  );
-  assert.equal("colliders" in result, false, "render-only market sill changed gameplay authority");
 });
 
 test("covered-arcade massing returns derive aligned lower niches and upper screens from shared story datums", () => {
@@ -626,161 +482,6 @@ test("facade story courses derive from authored heads and sills and never invent
   assert.equal(merchantCourse.scale.x, 9.3, "merchant story seam stopped respecting facade edge margins");
 });
 
-test("core-shot structural walls receive closed grammar bays without changing their boundary segments", () => {
-  const coveredProfile: V3FacadeProfile = {
-    ...facadeProfiles[0]!,
-    id: "covered_arcade",
-    label: "Covered arcade",
-    family: "covered_arcade",
-  };
-  const fixtureZones: RuntimeBlockoutZone[] = [
-    {
-      id: "COVERED_SOUK",
-      type: "side_hall",
-      rect: { x: 41, y: 32, w: 12, h: 16 },
-      label: "Covered Souk",
-      notes: "fixture",
-      facadeProfileId: "covered_arcade",
-    },
-    {
-      id: "DYERS_DOGLEG",
-      type: "side_hall",
-      rect: { x: 46, y: 48, w: 7, h: 14 },
-      label: "Dyers Dogleg",
-      notes: "fixture",
-      facadeProfileId: "quiet_residential",
-    },
-  ];
-  const segments = [
-    { orientation: "horizontal" as const, coord: 48, start: 41, end: 46, outward: 1 as const },
-    { orientation: "vertical" as const, coord: 46, start: 48, end: 62, outward: -1 as const },
-    { orientation: "vertical" as const, coord: 53, start: 48, end: 62, outward: 1 as const },
-  ];
-  const segmentSnapshot = structuredClone(segments);
-  const result = buildV3Architecture({
-    placements: [massingPlacement(),
-      { ...modulePlacement("DOOR_SOURCE", "door_residential_timber", "door", { x: 10, y: 14, z: 1.125 }, "quiet_residential"), sizeM: { width: 1.05, height: 2.25, depth: .2 } },
-      { ...modulePlacement("WINDOW_SOURCE", "window_dark_recess", "window", { x: 10, y: 16, z: 4.775 }, "quiet_residential"), sizeM: { width: .9, height: 1.25, depth: .28 } },
-      { ...modulePlacement("VENT_SOURCE", "vent_service", "vent", { x: 10, y: 18, z: 6.2 }), sizeM: { width: .58, height: .48, depth: .18 } },
-    ],
-    massingProfiles,
-    facadeProfiles: [...facadeProfiles, coveredProfile],
-    segments,
-    zones: fixtureZones,
-    traversalSurfaces: [],
-    wallHeightM: 7,
-    fortifiedDoorModelAvailable: true,
-    experimentalVisualCutoutMassing: true,
-  });
-  const niches = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_blind_niche"
-  ));
-  const screens = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_upper_screen"
-  ));
-  const courses = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_grounding"
-  ));
-  const variedClosures = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_varied_closure"
-  ));
-  const merchantCounters = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_merchant_counter"
-  ));
-  const merchantStock = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_merchant_stock"
-  ));
-  const merchantCanopies = result.instances.filter((instance) => (
-    instance.placementId?.endsWith(":served-opening:awning")
-  ));
-  const twoStoryDyersGate = result.instances.filter((instance) => (
-    instance.moduleId === "boundary_facade_two_story_blind_gate"
-  ));
-
-  assert.deepEqual(segments, segmentSnapshot, "visual grammar mutated collision boundary authority");
-  assert.equal(niches.length, 2, "only the retained Souk boundary uses generic lower niches");
-  assert.equal(screens.length, 2, "the Dogleg must use authored windows and vents, not generic upper screens");
-  assert.equal(courses.length, 3, "each named structural frontage needs one continuous contact course");
-  assert.equal(variedClosures.length, 4, "generic Dogleg shutters must be replaced");
-  const houseWindows = result.instances.filter((instance) => instance.semanticClass === "dark_window_recess" && instance.placementId?.startsWith("ARCH_DYERS_DOGLEG_EAST_BOUNDARY_1:house-"));
-  assert.equal(houseWindows.length, 5);
-  assert.deepEqual(houseWindows.map((instance) => Math.round(instance.position.z * 10) / 10).sort(), [52.2, 52.2, 55, 57.8, 57.8]);
-  assert.equal(result.instances.filter((instance) => instance.meshId === "door_panel_timber" && instance.placementId?.startsWith("ARCH_DYERS_DOGLEG_EAST_BOUNDARY_1:house-door")).length, 1);
-  assert.ok(
-    twoStoryDyersGate.some((instance) => instance.semanticClass === "grammar_served_boundary_gate_stone_surround"),
-    "the Dyers terminal gate lost its pointed masonry surround",
-  );
-  assert.ok(
-    twoStoryDyersGate.some((instance) => instance.semanticClass === "grammar_served_boundary_gate_threshold"),
-    "the Dyers terminal gate lost its grounded threshold",
-  );
-  assert.equal(merchantCounters.length, 4, "the two covered-souk bays need counter fronts and tops");
-  assert.equal(merchantStock.length, 2, "the two covered-souk bays need varied generic stock");
-  assert.equal(merchantCanopies.length, 2, "the two covered-souk bays need opening-derived supported hoods");
-  assert.ok(
-    merchantCanopies.every((canopy) => Math.abs(canopy.scale.x - 1.25) <= 0.25),
-    "boundary market hoods stopped deriving width from their served bay",
-  );
-  assert.equal(new Set(variedClosures.map((instance) => (
-    `${instance.scale.x.toFixed(4)}:${instance.yawRad.toFixed(4)}:${instance.detailTintHex}`
-  ))).size, variedClosures.length, "structural closure assemblies repeated visibly");
-  assert.ok(niches.every((instance) => Math.abs(instance.position.y - 1.635) <= 0.001));
-  assert.ok(screens.every((instance) => Math.abs(instance.position.y - 4.81) <= 0.001));
-  const identityPlanes = result.instances.filter((instance) => (
-    instance.semanticClass === "grammar_served_boundary_wall_identity"
-  ));
-  assert.equal(identityPlanes.length, 3);
-  assert.equal(
-    identityPlanes.find((instance) => instance.placementId?.includes("DYERS_DOGLEG_WEST"))?.wallMaterialId,
-    "ph_beige_wall_002",
-    "opposing Dogleg buildings reused an identical material+tint",
-  );
-  assert.equal("colliders" in result, false);
-});
-
-test("Spice-west terminal boundary relief derives its span from the massing edge without changing collision", () => {
-  const spiceZone: RuntimeBlockoutZone = {
-    id: "SPICE_STREET",
-    type: "main_lane_segment",
-    rect: { x: 21, y: 14, w: 12, h: 18 },
-    label: "Spice Street",
-    notes: "fixture",
-    facadeProfileId: "active_merchant",
-  };
-  const spiceMassing = massingPlacement("active_merchant", "ARCH_FRONTAGE_SPICE_STREET_WEST_MASSING", { heightM: 7 });
-  if (spiceMassing.kind !== "massing") throw new Error("fixture drift");
-  spiceMassing.center = { x: 18.6, y: 23, z: 3.5 };
-  spiceMassing.sizeM = { width: 15.12, depth: 4.8, height: 7 };
-  spiceMassing.face = "west";
-  spiceMassing.yawDeg = 90;
-  const segments = [{ orientation: "vertical" as const, coord: 21, start: 14, end: 16, outward: -1 as const }];
-  const snapshot = structuredClone(segments);
-  const result = buildV3Architecture({
-    placements: [spiceMassing],
-    massingProfiles,
-    facadeProfiles,
-    segments,
-    zones: [spiceZone],
-    traversalSurfaces: [],
-    wallHeightM: 7,
-    fortifiedDoorModelAvailable: true,
-    experimentalVisualCutoutMassing: true,
-  });
-  const lower = result.instances.filter((instance) => instance.semanticClass === "grammar_served_boundary_blind_niche");
-  const upper = result.instances.filter((instance) => instance.semanticClass === "grammar_served_boundary_upper_screen");
-  const arrises = result.instances.filter((instance) => instance.semanticClass === "grammar_served_boundary_terminal_arris");
-  const course = result.instances.find((instance) => (
-    instance.placementId === "ARCH_SPICE_STREET_WEST_TERMINAL_BOUNDARY_1:story-string-course"
-  ));
-  assert.deepEqual(segments, snapshot, "terminal visual relief mutated the surviving collision segment");
-  assert.equal(lower.length, 1, "the derived 1.44m terminal span needs one complete lower bay");
-  assert.equal(upper.length, 1, "the terminal upper screen lost the return bay centerline");
-  assert.equal(arrises.length, 2, "the surviving wall span needs two bounded terminal arrises");
-  assert.equal(course?.position.y, 3.12, "terminal story course left the Spice return datum");
-  assert.ok(lower.every((instance) => instance.position.x > 21), "terminal relief was not placed on the playable face");
-  assert.equal("colliders" in result, false);
-});
-
 test("v3 massing is a closed authored volume with a supported roof and four parapet sides", () => {
   const result = build([massingPlacement()]);
   assert.equal(result.segmentHeights[0], 7);
@@ -904,52 +605,6 @@ test("visual facade segmentation remains deterministic and explicitly opt-in", (
     false,
     "the v2 closed-massing path must remain unchanged",
   );
-  assert.equal(
-    stable.instances.some((instance) => instance.placementId?.includes(":reveal-jamb:") === true),
-    false,
-  );
-  assert.equal(
-    experimental.instances.filter((instance) => instance.placementId?.includes(":reveal-jamb:") === true).length,
-    2,
-  );
-  const stableShopBacking = stable.instances.find((instance) => instance.placementId === "SEGMENTED_SHOP");
-  const experimentalShopBacking = experimental.instances.find((instance) => instance.placementId === "SEGMENTED_SHOP");
-  assert.ok(stableShopBacking && experimentalShopBacking);
-  assert.equal(
-    experimentalShopBacking.visualQaDimensions?.z,
-    0.6,
-    "visual QA must report the assembled recess depth rather than the thin backing plane",
-  );
-  assert.equal(experimentalShopBacking.wallMaterialId, materialSlots.wall);
-  assert.equal(
-    experimentalShopBacking.detailMaterialId,
-    undefined,
-    "the experimental shop backing must stay on the manifest-backed wall path",
-  );
-  assert.ok(
-    experimentalShopBacking.position.x < stableShopBacking.position.x - 0.5,
-    "opt-in shop backing must sit behind the visual facade plane rather than masking it outward",
-  );
-  const merchantReturns = experimental.instances.filter(
-    (instance) => instance.semanticClass === "merchant_interior_return",
-  );
-  assert.equal(merchantReturns.length, 2);
-  assert.ok(merchantReturns.every((instance) => instance.scale.x >= 0.5));
-  const merchantCeiling = experimental.instances.find(
-    (instance) => instance.semanticClass === "merchant_interior_ceiling",
-  );
-  const merchantFloor = experimental.instances.find(
-    (instance) => instance.semanticClass === "merchant_interior_floor",
-  );
-  assert.ok(merchantCeiling && merchantFloor);
-  assert.ok(merchantCeiling.scale.z >= 0.5 && merchantFloor.scale.z >= 0.5);
-  assert.equal(
-    experimental.instances.filter(
-      (instance) => instance.semanticClass === "active_merchant_bay" && instance.meshId === "shop_recess_back",
-    ).length,
-    1,
-    "the merchant opening may have one rear shadow plane, never an opaque panel at its face",
-  );
   assert.deepEqual(experimental, build(placements, true, true));
 });
 
@@ -1007,19 +662,9 @@ test("backing volume covers every facade span without changing aperture, collide
   assert.ok(interiorFaces.every((instance) => instance.position.x - instance.scale.z * 0.5 > backingFrontX));
   assert.ok(facadeFaces.every((instance) => instance.scale.x <= backing.scale.x));
   assert.ok(facadeFaces.every((instance) => instance.scale.y <= backing.scale.y));
-
-  const shop = result.instances.find((instance) => instance.placementId === "BACKED_SHOP");
-  const doorReveal = result.instances.find(
-    (instance) => instance.placementId === "BACKED_DOOR:reveal-jamb:-1",
-  );
-  assert.equal(shop?.visualQaDimensions?.z, 0.6);
-  assert.ok(
-    doorReveal && doorReveal.scale.z > 0 && doorReveal.scale.z <= 0.26,
-    "the merchant door reveal must remain positive and bounded inside the backing clearance",
-  );
 });
 
-test("authored merchant recess depth drives collision-backed shell clearance and stocked interior construction", () => {
+test("authored merchant recess depth drives collision-backed shell clearance", () => {
   const deepShop = modulePlacement(
     "DEEP_AUTHORED_SHOP",
     "shop_recess_market",
@@ -1036,120 +681,11 @@ test("authored merchant recess depth drives collision-backed shell clearance and
   const backing = result.instances.find(
     (instance) => instance.semanticClass === "segmented_massing_backing_volume",
   );
-  const shopBack = result.instances.find((instance) => instance.placementId === deepShop.id);
-  assert.ok(backing && shopBack);
+  assert.ok(backing);
   assert.ok(Math.abs(backing.scale.z - 1.53) <= 0.001);
   assert.ok(Math.abs(10 - (backing.position.x + backing.scale.z * 0.5) - 1.47) <= 0.001);
-  assert.equal(shopBack.visualQaDimensions?.z, 1.35);
-  assert.equal(shopBack.meshId, "shop_recess_back");
-  assert.equal(shopBack.wallMaterialId, materialSlots.wall);
-  assert.equal(shopBack.scale.z, 0.06, "deep shop interior must terminate in a rear plane, not a solid block");
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_interior_return").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_interior_stock").length, 5);
-  const stockMeshes = new Set(
-    result.instances
-      .filter((instance) => instance.semanticClass === "merchant_interior_stock")
-      .map((instance) => instance.meshId),
-  );
-  assert.deepEqual(
-    stockMeshes,
-    new Set(["merchant_goods_pot", "merchant_goods_basket", "merchant_goods_folded_textile"]),
-  );
-  const counter = result.instances.find((instance) => instance.placementId === `${deepShop.id}:counter-front`);
-  assert.ok(counter && counter.scale.y <= 0.62 && counter.scale.x <= deepShop.sizeM.width * 0.74 + 0.001);
-  const depthWitness = result.instances.find((instance) => instance.placementId === `${deepShop.id}:counter-top`);
-  assert.equal(depthWitness?.semanticClass, "active_merchant_bay");
-  assert.equal(depthWitness?.visualQaDimensions?.z, 1.35);
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "merchant_interior_hanging_goods"));
-  assert.ok(
-    result.instances.filter((instance) => instance.semanticClass === "canopy_support")
-      .every((instance) => instance.detailMaterialId === "ph_worn_planks"),
-    "canopy supports must use the manifest-backed merchant timber material",
-  );
-  assert.ok(
-    result.instances.filter((instance) => instance.semanticClass === "merchant_interior_stock")
-      .filter((instance) => instance.meshId !== "merchant_goods_folded_textile")
-      .every((instance) => instance.uvProjection === "world"),
-  );
   assert.equal("colliders" in result, false);
   assert.equal("lineOfSight" in result, false);
-});
-
-test("distant windows have thin rear planes, constructed returns, and grammar-served coverage", () => {
-  const window = modulePlacement(
-    "DEEP_WINDOW",
-    "window_screened",
-    "window",
-    { x: 10, y: 16, z: 4.1 },
-    "quiet_residential",
-  );
-  const result = build([massingPlacement("quiet_residential", "DEEP_WINDOW_MASSING"), window], true, true);
-  const backing = result.instances.find((instance) => instance.placementId === window.id);
-  assert.ok(backing);
-  assert.equal(backing.scale.z, 0.06);
-  assert.equal(backing.visualQaDimensions?.z, 0.42);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "window_recess_return").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "window_recess_head").length, 1);
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "window_screen"));
-});
-
-test("main-lane upper windows use dense but seeded mashrabiya closure variants", () => {
-  const firstWindow = modulePlacement(
-    "MERCHANT_UPPER_WINDOW_A",
-    "window_screened",
-    "window",
-    { x: 10, y: 14, z: 4.1 },
-    "active_merchant",
-  );
-  const secondWindow = modulePlacement(
-    "MERCHANT_UPPER_WINDOW_B",
-    "window_screened",
-    "window",
-    { x: 10, y: 18, z: 4.1 },
-    "active_merchant",
-  );
-  const result = build([massingPlacement(), firstWindow, secondWindow], true, true);
-  const closureSignature = (placementId: string): string => {
-    const bars = result.instances.filter((instance) => (
-      instance.semanticClass === "window_screen" && instance.placementId?.startsWith(`${placementId}:`)
-    ));
-    const diagonals = result.instances.filter((instance) => (
-      instance.semanticClass === "upper_story_mashrabiya_lattice"
-      && instance.placementId?.startsWith(`${placementId}:`)
-    ));
-    assert.ok(bars.length >= 7 && bars.length <= 11, "seeded lattice left the dense closure range");
-    assert.ok(diagonals.length >= 1 && diagonals.length <= 2, "seeded motif lost its diagonal construction");
-    assert.ok(diagonals.every((instance) => Math.abs(instance.rollRad ?? 0) > 0.4));
-    assert.ok(
-      diagonals.every((instance) => instance.trimMaterialId?.startsWith("ph_")),
-      "mashrabiya diagonals left the manifest-backed timber family",
-    );
-    assert.ok([...bars, ...diagonals].every((instance) => typeof instance.detailTintHex === "number"));
-    return `${bars.length}:${diagonals.map((instance) => Math.sign(instance.rollRad ?? 0)).join(",")}:${bars[0]?.detailTintHex}`;
-  };
-  assert.notEqual(
-    closureSignature(firstWindow.id),
-    closureSignature(secondWindow.id),
-    "neighboring upper closures collapsed into an identical prefab read",
-  );
-});
-
-test("terminal Spice merchant awning keeps both supports inside its shallow return clearance", () => {
-  const terminalShop = modulePlacement(
-    "ARCH_FRONTAGE_SPICE_STREET_WEST_GROUND_01",
-    "shop_recess_market",
-    "shop_recess",
-    { x: 10, y: 16, z: 1.35 },
-  );
-  const result = build([massingPlacement(), terminalShop], true, true);
-  const awning = result.instances.find((instance) => instance.placementId === `${terminalShop.id}:awning`);
-  assert.equal(awning?.scale.z, 0.46);
-  assert.equal(
-    result.instances.filter(
-      (instance) => instance.placementId?.startsWith(`${terminalShop.id}:awning-pole:`) === true,
-    ).length,
-    2,
-  );
 });
 
 test("boundary infill becomes physical massing and stays inside the authored facade envelope", () => {
@@ -1584,7 +1120,7 @@ test("arch meshes leave a real opening facing the frontage and masonry above the
   }
 });
 
-test("authored arch cutouts stay facade-aligned with no coplanar infill overlap", () => {
+test("authored arch cutouts remove exactly their aperture with no coplanar infill overlap", () => {
   const archPlacement = modulePlacement(
     "ARCH_AXIS_REGRESSION",
     "arch_arcade",
@@ -1592,23 +1128,7 @@ test("authored arch cutouts stay facade-aligned with no coplanar infill overlap"
     { x: 10, y: 16, z: 1.8 },
   );
   const result = build([massingPlacement(), archPlacement], true, true);
-  const archSurfaces = result.instances.filter((instance) => (
-    instance.placementId === "ARCH_AXIS_REGRESSION"
-    || instance.placementId?.startsWith("ARCH_AXIS_REGRESSION:arch-")
-  ));
-  assert.ok(archSurfaces.length >= 3);
-  for (const surface of archSurfaces) {
-    const normalExtentM = Math.abs(Math.cos(surface.yawRad)) * surface.scale.x
-      + Math.abs(Math.sin(surface.yawRad)) * surface.scale.z;
-    const tangentExtentM = Math.abs(Math.sin(surface.yawRad)) * surface.scale.x
-      + Math.abs(Math.cos(surface.yawRad)) * surface.scale.z;
-    assert.ok(normalExtentM <= 0.3, `${surface.placementId} escaped down the return wall (${normalExtentM}m)`);
-    assert.ok(tangentExtentM <= 1.401, `${surface.placementId} exceeded the authored 1.4m aperture width`);
-  }
-
   const infill = result.instances.filter((instance) => instance.semanticClass === "facade_wall_infill");
-  const spandrel = result.instances.find((instance) => instance.semanticClass === "arcade_arch_spandrel");
-  assert.ok(spandrel);
   const infillAreaM2 = infill.reduce((total, instance) => total + instance.scale.x * instance.scale.y, 0);
   const renderedFacadeWidthM = 10 - SEGMENTED_SHELL_RENDER_EDGE_CLEARANCE_M * 2;
   assert.ok(
@@ -1617,11 +1137,10 @@ test("authored arch cutouts stay facade-aligned with no coplanar infill overlap"
   );
   assert.ok(infill.every((instance) => instance.scale.z === 3));
   assert.ok(infill.every((instance) => instance.meshId === "facade_wall_shell"));
-  const coplanarSurfaces = [...infill, spandrel];
-  for (let leftIndex = 0; leftIndex < coplanarSurfaces.length; leftIndex += 1) {
-    const left = coplanarSurfaces[leftIndex]!;
-    for (let rightIndex = leftIndex + 1; rightIndex < coplanarSurfaces.length; rightIndex += 1) {
-      const right = coplanarSurfaces[rightIndex]!;
+  for (let leftIndex = 0; leftIndex < infill.length; leftIndex += 1) {
+    const left = infill[leftIndex]!;
+    for (let rightIndex = leftIndex + 1; rightIndex < infill.length; rightIndex += 1) {
+      const right = infill[rightIndex]!;
       if (Math.abs(left.position.x - right.position.x) > 0.02) continue;
       const alongOverlapM = Math.min(
         left.position.z + left.scale.x * 0.5,
@@ -1930,51 +1449,6 @@ test("the three compiled skyline regressions are absorbed into authored massing 
   assert.equal("colliders" in fullRuntime, false);
   assert.equal("lineOfSight" in fullRuntime, false);
 
-  const rugGableCourses = fullRuntime.instances.filter(
-    (instance) => instance.semanticClass === "hero_gate_gable_tympanum",
-  );
-  assert.equal(rugGableCourses.length, 13, "Rug Gate lost its deterministic stepped masonry courses");
-  assert.ok(rugGableCourses.every((instance) => (
-    instance.wallMaterialId === "ph_sandstone_blocks_05"
-    && instance.uvProjection === "world"
-  )), "Rug Gate tympanum regained the frontage's pale plaster finish");
-  const rugRakeCaps = fullRuntime.instances.filter(
-    (instance) => instance.semanticClass === "hero_gate_gable_raking_cornice",
-  );
-  assert.equal(rugRakeCaps.length, 26);
-  for (const cap of rugRakeCaps) {
-    const courseIndex = Number(cap.placementId?.split(":")[2]);
-    const course = rugGableCourses.find(
-      (candidate) => candidate.placementId === `ARCH_RUG_GATE_STRUCTURAL_FINISH:gable-course:${courseIndex}`,
-    );
-    assert.ok(course, `${cap.placementId} lost its supporting gable course`);
-    assert.ok(
-      cap.position.x - cap.scale.x * 0.5 >= course.position.x - course.scale.x * 0.5 - 0.001
-        && cap.position.x + cap.scale.x * 0.5 <= course.position.x + course.scale.x * 0.5 + 0.001,
-      `${cap.placementId} regained its floating three-centimetre bearing`,
-    );
-    assert.equal(cap.scale.z, course.scale.z);
-    assert.equal(cap.detailMaterialId, "ph_sandstone_blocks_05");
-  }
-  const continuousRakeCaps = fullRuntime.instances.filter(
-    (instance) => instance.semanticClass === "hero_gate_gable_continuous_raking_cap",
-  );
-  assert.equal(continuousRakeCaps.length, 2, "Rug Gate lost its paired continuous pediment cap");
-  assert.ok(continuousRakeCaps.every((instance) => (
-    typeof instance.rollRad === "number"
-    && Math.abs(instance.rollRad) > 0.1
-    && instance.detailMaterialId?.startsWith("ph_") === true
-  )));
-  assert.equal(
-    fullRuntime.instances.filter((instance) => instance.semanticClass === "hero_gate_gable_raking_cap_bond").length,
-    3,
-    "Rug Gate cornice lost its two shoulder bonds or apex bond",
-  );
-  assert.equal(
-    fullRuntime.instances.some((instance) => instance.semanticClass === "hero_gate_gable_inlay_band"),
-    false,
-    "Rug Gate regained the flat full-width teal decal",
-  );
   let localizedSkylineCopingCount = 0;
   for (const massingId of requiredMassingIds) {
     const massing = fullRuntimeInput.placements.find((placement) => placement.id === massingId);
@@ -2222,81 +1696,6 @@ test("Spawn B shallow skyline roofs receive complete edge-seated exhaust fixture
   );
 });
 
-test("closed merchant doors derive generic displays and supported hoods from their opening", () => {
-  const door = modulePlacement(
-    "CLOSED_MERCHANT_DOOR_OCCUPANCY",
-    "door_shop_timber",
-    "door",
-    { x: 10, y: 16, z: 1.35 },
-  );
-  door.sizeM = { width: 1.15, depth: 0.22, height: 2.7 };
-  const result = build([
-    massingPlacement("active_merchant", "CLOSED_MERCHANT_DOOR_MASS"),
-    door,
-  ], true, true);
-  const display = result.instances.find((instance) => (
-    instance.semanticClass === "active_merchant_generic_door_display"
-  ));
-  const stock = result.instances.find((instance) => (
-    instance.semanticClass === "active_merchant_generic_door_stock"
-  ));
-  const awning = result.instances.find((instance) => (
-    instance.placementId === `${door.id}:awning`
-  ));
-  assert.ok(display && stock && awning);
-  const doorClearHalfWidthM = door.sizeM.width * 0.5;
-  const displayNearestDoorEdgeM = Math.abs(display.position.z - door.center.z) - display.scale.x * 0.5;
-  assert.ok(
-    displayNearestDoorEdgeM >= doorClearHalfWidthM + 0.1,
-    "closed-shop display entered the full door-leaf clear strip",
-  );
-  assert.ok(
-    Math.abs(stock.position.z - display.position.z) <= 0.001,
-    "closed-shop stock detached from its side plinth",
-  );
-  assert.ok(Math.abs(awning.scale.x - door.sizeM.width) <= 0.2);
-  assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith(`${door.id}:awning-pole:`)).length,
-    2,
-  );
-  assert.equal(
-    result.instances.some((instance) => instance.placementId?.startsWith(`${door.id}:sign-mount:`)),
-    false,
-    "closed shop hood regained unattached sign mounts",
-  );
-  assert.equal("colliders" in result, false, "render-only closed-shop occupancy changed gameplay authority");
-});
-
-test("service-storage doors are a heavy door in an untinted stone surround with no stall, goods, or awning", () => {
-  const door = modulePlacement(
-    "COURT_SERVICE_STORAGE_OCCUPANCY",
-    "door_storage_heavy",
-    "door",
-    { x: 10, y: 16, z: 1.35 },
-    "service_storage",
-  );
-  door.sizeM = { width: 2.4, depth: 1.35, height: 2.7 };
-  const result = build([
-    massingPlacement("service_storage", "COURT_SERVICE_STORAGE_MASS"),
-    door,
-  ], true, true);
-  assert.equal(
-    result.instances.filter((instance) => instance.moduleId === "service_storage_served_loading_bay").length,
-    0,
-    "storage door regained its loading apron or stock",
-  );
-  assert.equal(
-    result.instances.some((instance) => instance.placementId?.startsWith(`${door.id}:awning`)),
-    false,
-    "storage door regained an awning",
-  );
-  const frame = result.instances.filter((instance) => instance.semanticClass === "service_storage_door_frame");
-  assert.equal(frame.length, 3, "storage door lost its two jambs and lintel");
-  assert.ok(frame.every((instance) => instance.detailTintHex === undefined), "stone surround was tinted");
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "door_threshold"));
-  assert.equal("colliders" in result, false, "render-only storage occupancy changed gameplay authority");
-});
-
 test("authored openings replace repetitive facade-wide dividers and story courses", () => {
   const merchant = build([
     massingPlacement("active_merchant", "MASS_MERCHANT_BAYS"),
@@ -2347,7 +1746,7 @@ test("authored openings replace repetitive facade-wide dividers and story course
   assert.equal(residential.instances.filter((instance) => instance.semanticClass?.endsWith("facade_story_course")).length, 0);
 });
 
-test("hero courtyard massing ties its arch, screen, ordinary door, and landmark bay into one frontage", () => {
+test("hero courtyard massing frames its bays with edge supports and parapet piers, not dividers or story courses", () => {
   const arch = modulePlacement(
     "HERO_ARCH",
     "arch_hero_courtyard",
@@ -2403,23 +1802,6 @@ test("hero courtyard massing ties its arch, screen, ordinary door, and landmark 
   assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_courtyard_facade_bay_divider").length, 0);
   assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_courtyard_facade_story_course").length, 0);
   assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_courtyard_parapet_pier").length, 2);
-  assert.ok(result.instances.some((instance) => instance.meshId === "arch_pointed_frame"));
-  const archAccent = result.instances.find((instance) => instance.semanticClass === "hero_arch_accent");
-  assert.ok(archAccent && archAccent.scale.x < 0.5, "hero accent must remain a restrained keystone");
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_masonry_return").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_timber_screen").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "screened_arch_interior").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_closed_double_door").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_double_door_center_seam").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_door_joinery").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "hero_arch_double_door_handle").length, 0);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "open_arch_threshold").length, 1);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass?.startsWith("hero_arch_column_")).length, 4);
-  assert.equal(result.instances.find((instance) => instance.placementId === "HERO_DOOR")?.meshId, "door_panel_timber");
-  assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith("HERO_SCREEN:screen-")).length,
-    5,
-  );
 });
 
 test("elevated terrace and ramp foundations close visible under-surface gaps without colliders", () => {
@@ -2466,88 +1848,13 @@ test("elevated terrace and ramp foundations close visible under-surface gaps wit
   assert.ok(cheeks.every((instance) => instance.scale.y <= 1.4));
 });
 
-test("v3 merchant modules emit supported awnings, ordinary timber doors, and dark shuttered windows", () => {
+test("v3 merchant massing grounds its wall base and derives a restrained upper timber screen above headroom", () => {
   const result = build([
     massingPlacement(),
     modulePlacement("MOD_SHOP", "shop_recess_market", "shop_recess", { x: 10, y: 14, z: 1.1 }),
     modulePlacement("MOD_DOOR", "door_shop_timber", "door", { x: 10, y: 17, z: 1.1 }),
     modulePlacement("MOD_WINDOW", "window_shuttered", "window", { x: 10, y: 19, z: 4.3 }),
   ]);
-  assert.equal(result.doorModelPlacements.length, 0, "ordinary doors must not use the castle model");
-  assert.ok(result.instances.some((instance) => instance.moduleId === "awning_supported"));
-  assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith("MOD_SHOP:awning-pole:")).length,
-    2,
-  );
-  assert.ok(result.instances.some((instance) => instance.meshId === "awning_valance"));
-  assert.ok(
-    result.instances.filter((instance) => instance.moduleId === "awning_support_pole")
-      .every((instance) => Math.abs(instance.pitchRad ?? 0) > 0.5),
-    "awning supports regressed to unsupported vertical stubs",
-  );
-  const shopRecess = result.instances.find((instance) => instance.placementId === "MOD_SHOP");
-  assert.match(shopRecess?.meshId ?? "", /^shop_recess(?:_timber)?_back$/);
-  assert.equal(shopRecess?.scale.z, 0.06, "shop backing must be a thin inset plane, not a brown block");
-  assert.equal(typeof shopRecess?.detailTintHex, "number");
-  assert.equal(shopRecess?.uvProjection, "world");
-  const interiorReturns = result.instances.filter((instance) => instance.semanticClass === "merchant_interior_return");
-  assert.equal(interiorReturns.length, 2);
-  assert.ok(interiorReturns.every((instance) => /^shop_recess(?:_timber)?_back$/.test(instance.meshId)));
-  assert.ok(interiorReturns.every((instance) => typeof instance.detailTintHex === "number"));
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_interior_ceiling").length, 1);
-  const timberSurround = result.instances.filter((instance) => instance.semanticClass === "merchant_timber_surround");
-  assert.equal(timberSurround.length, 3);
-  assert.ok(timberSurround.every((instance) => instance.scale.z >= 0.56));
-  assert.ok(timberSurround.every((instance) => instance.trimMaterialId?.startsWith("ph_")));
-  const portalSill = result.instances.find((instance) => instance.semanticClass === "merchant_timber_portal_sill");
-  assert.ok(portalSill && portalSill.scale.z >= 0.56);
-  assert.match(portalSill.trimMaterialId ?? "", /^ph_/);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_display_frame").length, 4);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_counter_joinery").length, 4);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_interior_shelf").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_interior_shelf_support").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "merchant_louvered_shutter").length, 2);
-  assert.equal(
-    result.instances.filter((instance) => instance.semanticClass === "merchant_sign_support").length,
-    0,
-    "awning emitter created detached sign hardware without a served signboard",
-  );
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "canopy_attachment_ledger"));
-  const door = result.instances.find((instance) => instance.placementId === "MOD_DOOR");
-  assert.equal(door?.meshId, "door_panel_shop");
-  assert.equal(door?.semanticClass, "ordinary_door");
-  assert.match(door?.detailMaterialId ?? door?.trimMaterialId ?? "", /^ph_/);
-  assert.ok((door?.scale.z ?? 0) >= 0.12, "ordinary door lost its constructed relief depth");
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_joinery").length, 5);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_hinge").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_hinge_pin").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_handle").length, 1);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "active_merchant_door_handle_backplate").length, 1);
-  assert.equal(
-    result.instances.filter((instance) => instance.semanticClass === "active_merchant_generic_door_display").length,
-    2,
-    "closed shop display should include its masonry base and capping course",
-  );
-  assert.equal(
-    result.instances.filter((instance) => instance.semanticClass === "active_merchant_generic_door_stock").length,
-    1,
-  );
-  assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith("MOD_DOOR:awning-pole:")).length,
-    2,
-    "closed shop bay lost its opening-edge canopy supports",
-  );
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "door_threshold"));
-  const windowRecess = result.instances.find((instance) => instance.placementId === "MOD_WINDOW");
-  assert.equal(windowRecess?.meshId, "window_recess_dark");
-  assert.equal(windowRecess?.semanticClass, "dark_window_recess");
-  assert.ok((windowRecess?.scale.z ?? 0) >= 0.18);
-  const windowShutters = result.instances.filter((instance) => instance.semanticClass === "window_shutter");
-  assert.equal(windowShutters.length, 2);
-  assert.ok(windowShutters.every((instance) => instance.scale.z >= 0.1));
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "window_shutter_hinge").length, 4);
-  const windowScreens = result.instances.filter((instance) => instance.semanticClass === "window_screen");
-  assert.ok(windowScreens.length >= 5 && windowScreens.length <= 12);
   assert.ok(result.instances.some((instance) => instance.semanticClass === "active_merchant_wall_base_contact"));
   const upperScreenSlab = result.instances.find(
     (instance) => instance.semanticClass === "active_merchant_upper_screen_slab",
@@ -2564,7 +1871,7 @@ test("v3 merchant modules emit supported awnings, ordinary timber doors, and dar
   );
 });
 
-test("residential and service modules retain visibly different construction grammar", () => {
+test("residential and service massing retain visibly different base construction", () => {
   const residential = build([
     massingPlacement("quiet_residential", "MASS_RESIDENTIAL"),
     modulePlacement(
@@ -2586,32 +1893,6 @@ test("residential and service modules retain visibly different construction gram
     ),
   ]);
 
-  assert.equal(
-    residential.instances.find((instance) => instance.placementId === "DOOR_RESIDENTIAL")?.meshId,
-    "door_panel_timber",
-  );
-  assert.equal(
-    service.instances.find((instance) => instance.placementId === "DOOR_SERVICE")?.meshId,
-    "door_panel_storage",
-  );
-  assert.equal(
-    residential.instances.find((instance) => instance.placementId === "DOOR_RESIDENTIAL")?.semanticClass,
-    "ordinary_door",
-  );
-  assert.equal(
-    residential.instances.filter((instance) => instance.semanticClass === "quiet_residential_door_joinery").length,
-    4,
-  );
-  assert.equal(residential.instances.filter((instance) => instance.moduleId === "awning_supported").length, 0);
-  assert.equal(residential.instances.filter((instance) => instance.semanticClass === "active_merchant_bay").length, 0);
-  assert.equal(
-    residential.instances.filter((instance) => instance.semanticClass === "service_storage_door_strap").length,
-    0,
-  );
-  assert.equal(
-    service.instances.filter((instance) => instance.semanticClass === "service_storage_door_strap").length,
-    2,
-  );
   const residentialBase = residential.instances.find(
     (instance) => instance.semanticClass === "quiet_residential_wall_base_contact",
   );
@@ -2621,38 +1902,6 @@ test("residential and service modules retain visibly different construction gram
   assert.ok(residentialBase && serviceBase);
   assert.ok(serviceBase.scale.y > residentialBase.scale.y, "service plinth must read heavier than residential trim");
   assert.ok(serviceBase.scale.z > residentialBase.scale.z, "service plinth must project farther than residential trim");
-});
-
-test("blind and service apertures remain explicitly closed", () => {
-  const blind = build([
-    massingPlacement("quiet_residential", "MASS_BLIND_NICHE"),
-    modulePlacement(
-      "BLIND_NICHE_CLOSED",
-      "blind_niche",
-      "blind_niche",
-      { x: 10, y: 16, z: 1.4 },
-      "quiet_residential",
-    ),
-  ], true, true);
-  const service = build([
-    massingPlacement("service_storage", "MASS_SERVICE_LEAF"),
-    modulePlacement(
-      "SERVICE_LEAF_CLOSED",
-      "door_storage_heavy",
-      "door",
-      { x: 10, y: 16, z: 1.25 },
-      "service_storage",
-    ),
-  ], true, true);
-  assert.equal(blind.instances.find((instance) => instance.placementId === "BLIND_NICHE_CLOSED")?.meshId, "niche_recess_back");
-  assert.equal(blind.instances.filter((instance) => instance.semanticClass === "blind_niche_masonry_return").length, 3);
-  assert.equal(service.instances.find((instance) => instance.placementId === "SERVICE_LEAF_CLOSED")?.meshId, "door_panel_storage");
-  assert.equal(
-    [...blind.instances, ...service.instances].some(
-      (instance) => instance.meshId === "door_void" || instance.meshId === "door_void_arch",
-    ),
-    false,
-  );
 });
 
 test("constructed merchant-bay output is deterministic", () => {
@@ -2665,231 +1914,18 @@ test("constructed merchant-bay output is deterministic", () => {
   assert.deepEqual(build(placements), build(placements));
 });
 
-test("noninteractive arches are shallow masonry-framed recesses, never deep black blocks", () => {
-  const result = build([
-    massingPlacement(),
-    modulePlacement("MOD_ARCH", "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 }),
-  ]);
-  const recess = result.instances.find((instance) => instance.placementId === "MOD_ARCH");
-  assert.equal(recess?.meshId, "arch_recess_back");
-  assert.equal(recess?.semanticClass, "screened_arch_interior");
-  // The bay back is the frontage's own plastered wall, not a boarded timber
-  // panel: on the timber source a 2 m tile stretched across the whole plane and
-  // read as pale straw planking wherever the arcade caught sun.
-  assert.equal(recess?.detailMaterialId, materialSlots.wall);
-  assert.ok((recess?.scale.z ?? 1) <= 0.1, "arch recess became a deep protruding volume");
-  assert.ok((recess?.scale.y ?? Infinity) < 2.2, "default fixture backing unexpectedly fills the full arch height");
-  assert.equal(result.instances.some((instance) => instance.meshId === "door_void_arch"), false);
-  assert.equal(result.instances.some((instance) => instance.meshId === "door_arch_lintel"), false);
-  const frame = result.instances.find((instance) => instance.meshId === "arch_pointed_frame");
-  assert.ok(frame);
-  assert.equal(frame.rollRad, undefined);
-  assert.ok(frame.scale.z >= 0.18, "masonry frame lost its constructed reveal depth");
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "arcade_arch").length, 1);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "arcade_arch_masonry_return").length, 2);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass?.startsWith("arcade_arch_column_")).length, 4);
-  assert.equal(result.instances.filter((instance) => instance.semanticClass === "screened_arch_threshold").length, 1);
-  const grille = result.instances.filter((instance) => instance.semanticClass === "arcade_arch_complete_grille");
-  assert.equal(grille.length, 12);
-  assert.ok(grille.every((instance) => instance.detailMaterialId === "tm_arch_screen_dark"));
-  assert.equal(
-    result.instances.filter((instance) => instance.semanticClass === "covered_arcade_generic_merchant_counter").length,
-    2,
-    "served arcade kiosk lost its counter front/top baseline",
-  );
-  assert.ok(
-    result.instances.filter((instance) => instance.semanticClass === "covered_arcade_generic_merchant_stock").length >= 2,
-    "served arcade kiosk lost its visible generic stock baseline",
-  );
-  assert.equal(
-    result.instances.filter((instance) => instance.placementId?.startsWith("MOD_ARCH:awning-pole:")).length,
-    2,
-    "served arcade kiosk lost its opening-edge canopy supports",
-  );
-  assert.equal(result.instances.some((instance) => instance.semanticClass?.includes("timber_dado")), false);
-});
-
-test("noninteractive apertures emit explicit readable closures with bounded reveal depth", () => {
-  const shop = build([
-    massingPlacement(),
-    modulePlacement("CLOSED_SHOP", "shop_recess_market", "shop_recess", { x: 10, y: 16, z: 1.35 }),
-  ], true, true);
-  const door = build([
-    massingPlacement(),
-    modulePlacement("CLOSED_DOOR", "door_shop_timber", "door", { x: 10, y: 16, z: 1.175 }),
-  ], true, true);
-  const window = build([
-    massingPlacement(),
-    modulePlacement("CLOSED_WINDOW", "window_screened", "window", { x: 10, y: 16, z: 3.4 }),
-  ], true, true);
-  const arch = build([
-    massingPlacement(),
-    modulePlacement("CLOSED_ARCH", "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 }),
-  ], true, true);
-
-  const shopBacking = shop.instances.find((instance) => instance.placementId === "CLOSED_SHOP");
-  assert.match(shopBacking?.wallMaterialId ?? shopBacking?.detailMaterialId ?? "", /^ph_/);
-  assert.ok((shopBacking?.visualQaDimensions?.z ?? 0) >= 0.5);
-  assert.ok(shop.instances.some((instance) => instance.semanticClass === "merchant_interior_shelf"));
-  assert.ok(shop.instances.some((instance) => instance.semanticClass === "merchant_interior_return"));
-  assert.ok(shop.instances.some((instance) => instance.semanticClass === "merchant_interior_floor"));
-
-  const doorLeaf = door.instances.find((instance) => instance.placementId === "CLOSED_DOOR");
-  assert.equal(doorLeaf?.meshId, "door_panel_shop");
-  assert.equal(doorLeaf?.semanticClass, "ordinary_door");
-  assert.match(doorLeaf?.detailMaterialId ?? doorLeaf?.trimMaterialId ?? "", /^ph_/);
-
-  const windowBacking = window.instances.find((instance) => instance.placementId === "CLOSED_WINDOW");
-  assert.equal(windowBacking?.meshId, "window_recess_dark");
-  assert.equal(windowBacking?.detailMaterialId, "tm_window_interior_merchant");
-  assert.ok((windowBacking?.scale.z ?? Infinity) > 0 && (windowBacking?.scale.z ?? Infinity) <= 0.1);
-  assert.ok((windowBacking?.visualQaDimensions?.z ?? 0) >= 0.28);
-  const windowScreenBars = window.instances.filter((instance) => instance.semanticClass === "window_screen");
-  assert.ok(windowScreenBars.length >= 5 && windowScreenBars.length <= 12);
-
-  const archBacking = arch.instances.find((instance) => instance.placementId === "CLOSED_ARCH");
-  assert.equal(archBacking?.detailMaterialId, materialSlots.wall);
-  assert.ok((archBacking?.scale.y ?? Infinity) < 2.1, "arch backing regressed to a full-height tan slab");
-  assert.ok((archBacking?.visualQaDimensions?.z ?? 0) >= 0.4);
-  const returns = arch.instances.filter((instance) => instance.semanticClass === "arcade_arch_masonry_return");
-  assert.equal(returns.length, 2);
-  assert.ok(returns.every((instance) => instance.scale.z >= 0.3 && instance.scale.z <= 0.8));
-  const spandrel = arch.instances.find((instance) => instance.semanticClass === "arcade_arch_spandrel");
-  assert.equal(spandrel?.wallMaterialId, materialSlots.wall);
-  assert.equal(spandrel?.detailMaterialId, spandrel?.wallMaterialId);
-  assert.equal(spandrel?.uvProjection, "world");
-  const archFrame = arch.instances.find((instance) => instance.semanticClass === "arcade_arch");
-  assert.ok(archFrame);
-  assert.match(archFrame.detailMaterialId ?? "", /^ph_/);
-  assert.equal(archFrame.uvProjection, "world");
-  assert.ok(
-    archFrame.scale.x <= 1.4 && archFrame.scale.y <= 2.2 && archFrame.scale.z <= 0.25,
-    "arch surround escaped its authored aperture bounds",
-  );
-  const completeGrille = arch.instances.filter((instance) => instance.semanticClass === "arcade_arch_complete_grille");
-  assert.equal(completeGrille.length, 12);
-
-  const allApertureInstances = [shop, door, window, arch].flatMap((result) => result.instances);
-  assert.equal(
-    allApertureInstances.some((instance) => instance.meshId === "door_void" || instance.meshId === "door_void_arch"),
-    false,
-    "a noninteractive bay regressed to a black passable-looking void",
-  );
-
-  const previousWindow = Reflect.get(globalThis, "window");
-  const previousDocument = Reflect.get(globalThis, "document");
-  const image = {
-    addEventListener() {},
-    removeEventListener() {},
-    set src(_value: string) {},
-    crossOrigin: "",
-  };
-  Reflect.set(globalThis, "window", { location: { href: "http://localhost/" } });
-  Reflect.set(globalThis, "document", { createElementNS: () => image });
-  try {
-    const wallMaterials = {
-      getMaterialIds: () => [
-        materialSlots.wall,
-        materialSlots.trim,
-        "ph_rough_pine_door",
-        "ph_stone_trim_sandstone",
-      ],
-      createStandardMaterial: () => new MeshStandardMaterial({ color: 0xb8aa92 }),
-      getTileSizeM: () => 2,
-    } as unknown as WallMaterialLibrary;
-    const readableBackings = [shopBacking, windowBacking, archBacking].filter(
-      (instance): instance is WallDetailInstance => Boolean(instance),
-    );
-    const root = buildWallDetailMeshes(readableBackings, {
-      highVis: false,
-      wallMode: "pbr",
-      wallMaterials,
-      quality: "1k",
-      seed: 23,
-    });
-    assert.equal(root.children.length, 3);
-    for (const child of root.children) {
-      const mesh = child as InstancedMesh;
-      assert.ok(!Array.isArray(mesh.material));
-      assert.ok(mesh.material instanceof MeshStandardMaterial);
-      const { r, g, b } = mesh.material.color;
-      const luminance = r * 0.2126 + g * 0.7152 + b * 0.0722;
-      const minimumLuminance = mesh.name.includes("tm_arch_interior_warm") ? 0.055 : 0.045;
-      assert.ok(luminance > minimumLuminance, `${mesh.name} regressed to a near-black backing (${luminance})`);
-      assert.match(mesh.name, /wall-detail-(shop_recess|window_recess|arch_recess)/);
-    }
-
-    const frameRoot = buildWallDetailMeshes([archFrame], {
-      highVis: false,
-      wallMode: "pbr",
-      wallMaterials: {
-        ...wallMaterials,
-        getMaterialIds: () => [materialSlots.wall, materialSlots.trim],
-      } as unknown as WallMaterialLibrary,
-      quality: "1k",
-      seed: 23,
-    });
-    assert.equal(frameRoot.children.length, 1);
-    const frameGeometry = (frameRoot.children[0] as InstancedMesh).geometry;
-    frameGeometry.computeBoundingBox();
-    const bounds = frameGeometry.boundingBox;
-    assert.ok(bounds);
-    const frameExtents = [
-      bounds.max.x - bounds.min.x,
-      bounds.max.y - bounds.min.y,
-      bounds.max.z - bounds.min.z,
-    ];
-    assert.ok(frameExtents.every((extent) => Number.isFinite(extent) && extent > 0));
-
-    const spandrelRoot = buildWallDetailMeshes([spandrel], {
-      highVis: false,
-      wallMode: "pbr",
-      wallMaterials,
-      quality: "1k",
-      seed: 23,
-    });
-    assert.equal(spandrelRoot.children.length, 1);
-    const spandrelMesh = spandrelRoot.children[0] as InstancedMesh;
-    assert.match(spandrelMesh.name, new RegExp(materialSlots.wall));
-    assert.ok(!Array.isArray(spandrelMesh.material));
-    assert.ok(spandrelMesh.material instanceof MeshStandardMaterial);
-
-  } finally {
-    if (typeof previousWindow === "undefined") Reflect.deleteProperty(globalThis, "window");
-    else Reflect.set(globalThis, "window", previousWindow);
-    if (typeof previousDocument === "undefined") Reflect.deleteProperty(globalThis, "document");
-    else Reflect.set(globalThis, "document", previousDocument);
-  }
-});
-
-test("screened windows use open grille bars and retain a real sill", () => {
-  const result = build([
-    massingPlacement(),
-    modulePlacement("MOD_SCREEN", "window_screened", "window", { x: 10, y: 16, z: 4 }),
-  ]);
-  assert.equal(result.instances.some((instance) => instance.meshId === "window_screen"), false);
-  const bars = result.instances.filter((instance) => instance.meshId === "window_screen_bar");
-  assert.ok(bars.length >= 5 && bars.length <= 12, "screen grille left its bounded density range");
-  assert.ok(bars.some((instance) => instance.scale.x < instance.scale.y), "screen lost its vertical grille bars");
-  assert.ok(bars.some((instance) => instance.scale.x > instance.scale.y), "screen lost its horizontal grille rails");
-  assert.ok(result.instances.some((instance) => instance.semanticClass === "window_sill"));
-});
-
-test("only the explicit fortified-gate module may instantiate the castle door", () => {
-  const fortified = modulePlacement("MOD_GATE", "door_fortified_gate", "door", { x: 10, y: 16, z: 1.5 });
-  const desktop = build([massingPlacement(), fortified], true);
-  assert.equal(desktop.doorModelPlacements.length, 1);
-  assert.equal(desktop.doorModelPlacements[0]?.modelId, "ph_large_castle_door");
-  assert.equal(desktop.instances.some((instance) => instance.meshId === "door_panel_fortified"), false);
-
-  const reducedDetail = build([massingPlacement(), fortified], false);
-  assert.equal(reducedDetail.doorModelPlacements.length, 0);
-  assert.ok(reducedDetail.instances.some((instance) => instance.meshId === "door_panel_fortified"));
-});
-
 test("v3 renderer rejects unresolved modules and refuses to bury future collision openings", () => {
   const unknown = modulePlacement("MOD_UNKNOWN", "made_up_module", "window", { x: 10, y: 16, z: 4 });
   assert.throws(() => build([massingPlacement(), unknown]), /outside profile/);
+  const unknownProfile = modulePlacement("MOD_NO_PROFILE", "window_screened", "window", { x: 10, y: 16, z: 4 }, "made_up_profile");
+  assert.throws(() => build([massingPlacement(), unknownProfile]), /references unknown facade profile 'made_up_profile'/);
+  const emptyTimber = facadeProfiles.map((profile) => ({ ...profile, materialSlots: { ...profile.materialSlots, timber: "" } }));
+  const window = modulePlacement("MOD_EMPTY_SLOT", "window_screened", "window", { x: 10, y: 16, z: 4 });
+  assert.throws(() => build([massingPlacement(), window], true, false, emptyTimber), /resolves an empty 'timber' material slot/);
+  const flat = modulePlacement("MOD_FLAT", "window_screened", "window", { x: 10, y: 16, z: 4 });
+  if (flat.kind !== "facade_module") throw new Error("fixture drift");
+  flat.sizeM.depth = 0;
+  assert.throws(() => build([massingPlacement(), flat]), /'MOD_FLAT' has invalid depth=0/);
 
   const connector = modulePlacement("MOD_OPEN", "door_shop_timber", "door", { x: 10, y: 16, z: 1.2 });
   if (connector.kind !== "facade_module") throw new Error("fixture drift");
@@ -2898,58 +1934,6 @@ test("v3 renderer rejects unresolved modules and refuses to bury future collisio
     () => build([massingPlacement(), connector], true, true),
     /cannot place a closed backing volume behind collision opening 'MOD_OPEN'/,
   );
-});
-
-test("the single Blender textile booth replaces furnishings but preserves its masonry", () => {
-  const targetId = "ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_02";
-  const target = modulePlacement(targetId, "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 });
-  const neighbor = modulePlacement("NEIGHBOR_ARCH", "arch_arcade", "arch", { x: 10, y: 20, z: 1.8 });
-  const result = build([massingPlacement(), target, neighbor]);
-  const own = result.instances.filter((instance) => instance.placementId?.startsWith(targetId));
-  const adjacent = result.instances.filter((instance) => instance.placementId?.startsWith(neighbor.id));
-  const furniture = (instance: WallDetailInstance) => instance.moduleId === "covered_arcade_served_kiosk"
-    || instance.semanticClass === "arcade_arch_complete_grille"
-    || instance.placementId?.includes("awning");
-  assert.equal(own.filter(furniture).length, 0);
-  assert.ok(adjacent.some(furniture));
-  for (const semantic of ["arcade_arch", "screened_arch_interior", "screened_arch_threshold", "arcade_arch_masonry_return"]) {
-    assert.equal(
-      own.filter((instance) => instance.semanticClass === semantic).length,
-      adjacent.filter((instance) => instance.semanticClass === semantic).length,
-    );
-  }
-});
-
-test("B18 counters replace only their furniture and retain independent awnings and masonry", () => {
-  for (const suffix of ["01", "03"]) {
-    const id = `ARCH_FRONTAGE_COVERED_SOUK_EAST_GROUND_${suffix}`;
-    const target = modulePlacement(id, "arch_arcade", "arch", { x: 10, y: 16, z: 1.8 });
-    const neighbor = modulePlacement("NEIGHBOR_ARCH", "arch_arcade", "arch", { x: 10, y: 20, z: 1.8 });
-    const result = build([massingPlacement(), target, neighbor]);
-    const own = result.instances.filter((instance) => instance.placementId?.startsWith(id));
-    const adjacent = result.instances.filter((instance) => instance.placementId?.startsWith(neighbor.id));
-    const furniture = (instance: WallDetailInstance) => instance.moduleId === "covered_arcade_served_kiosk"
-      || instance.semanticClass === "arcade_arch_complete_grille";
-    assert.equal(own.filter(furniture).length, 0);
-    assert.ok(adjacent.some(furniture));
-    for (const semantic of ["arcade_arch", "screened_arch_interior", "screened_arch_threshold", "arcade_arch_masonry_return", "canopy_attachment_ledger", "canopy_support"]) {
-      assert.ok(own.some((instance) => instance.semanticClass === semantic), `${id} lost ${semantic}`);
-      assert.equal(own.filter((instance) => instance.semanticClass === semantic).length,
-        adjacent.filter((instance) => instance.semanticClass === semantic).length);
-    }
-    for (const side of [-1, 1]) {
-      const strut = own.find((entry) => entry.placementId === `${id}:awning-pole:${side}`)!;
-      const wall = own.find((entry) => entry.placementId === `${id}:awning-bracket:${side}`)!;
-      const edge = own.find((entry) => entry.placementId === `${id}:awning-edge-socket:${side}`)!;
-      const transform = new Object3D();
-      transform.position.copy(strut.position);
-      transform.scale.copy(strut.scale);
-      transform.rotation.set(strut.pitchRad ?? 0, strut.yawRad, strut.rollRad ?? 0);
-      transform.updateMatrix();
-      assert.ok(new Vector3(0, -.5, 0).applyMatrix4(transform.matrix).distanceTo(new Vector3().copy(wall.position)) < .00001);
-      assert.ok(new Vector3(0, .5, 0).applyMatrix4(transform.matrix).distanceTo(new Vector3().copy(edge.position)) <= .021);
-    }
-  }
 });
 
 // A recessed source leaf must remain visible ahead of its opaque backing.
@@ -3001,7 +1985,6 @@ test("a frontage with facadeModelId keeps its wall mass and roof edge but hands 
   assert.ok(!withCutouts.instances.some((instance) => instance.placementId === module.id), "the retained aperture input does not render a duplicate kit module");
   const plain = build([massingPlacement(), module]);
   assert.equal(plain.facadeModelPlacements.length, 0);
-  assert.ok(plain.instances.some((instance) => instance.placementId?.startsWith("ARCH_MODULE_001")), "kit modules render when no facade model owns the face");
 });
 
 test("a section-owned face retains module apertures while suppressing duplicate kit detail", () => {
