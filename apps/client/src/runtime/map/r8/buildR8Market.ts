@@ -24,12 +24,12 @@ import {
 } from "./buildR8Atmosphere";
 
 /**
- * R8.1 market touches (docs/map-design/construction/r8-art-direction.md):
- * hanging kilims beside rug and textile shops, rugs airing over upper sills,
- * zellige tile friezes over civic doors, brass plates, pierced-brass lantern
- * clusters and goods on the free part of existing counters. Records come from
- * r8.py, which enforces the clearance contract; everything here is
- * render-only and procedural (no downloaded art, no script).
+ * R8.1 market touches: hanging kilims beside rug and textile shops, rugs
+ * airing over upper sills, zellige tile friezes over civic doors, brass plates,
+ * pierced-brass lantern clusters and goods on the free part of existing
+ * counters. Records come from the frozen atmosphere overlay (see
+ * buildR8Atmosphere.ts), which keeps the clearance contract; everything here
+ * is render-only and procedural (no downloaded art, no script).
  */
 
 type WallArt = {

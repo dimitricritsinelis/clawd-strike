@@ -16,6 +16,7 @@ import {
   validateQaReadiness,
   waitForQaServer,
 } from "./qaServer.mjs";
+import { MAP_SOURCE } from "./mapPaths.mjs";
 
 const execFileAsync = promisify(execFile);
 const sourceHash = "a".repeat(64);
@@ -32,7 +33,7 @@ const fingerprint = {
   },
   files: {
     sourceMap: {
-      path: "docs/map-design/specs/map_spec.json",
+      path: MAP_SOURCE.spec,
       sha256: sourceHash,
       bytes: 100,
     },
@@ -42,13 +43,13 @@ const fingerprint = {
       bytes: 200,
       generatedFrom: {
         schemaVersion: 1,
-        path: "docs/map-design/specs/map_spec.json",
+        path: MAP_SOURCE.spec,
         sha256: sourceHash,
         generator: QA_GENERATOR_IDENTITY,
       },
     },
     sourceShots: {
-      path: "docs/map-design/shots.json",
+      path: MAP_SOURCE.shots,
       sha256: sourceHash,
       bytes: 100,
     },
@@ -58,7 +59,7 @@ const fingerprint = {
       bytes: 200,
       generatedFrom: {
         schemaVersion: 1,
-        path: "docs/map-design/shots.json",
+        path: MAP_SOURCE.shots,
         sha256: sourceHash,
         generator: QA_GENERATOR_IDENTITY,
       },

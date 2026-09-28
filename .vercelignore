@@ -9,5 +9,6 @@ artifacts
 output
 tmp
 assets/source
+/docs
 apps/client/dist
 **/test-results

@@ -23,9 +23,10 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, renameSync, rmSync, w
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { externalizeGlbImages } from "./lib/glbTextures.mjs";
+import { MAP_SOURCE } from "../apps/client/scripts/lib/mapPaths.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SPEC = path.join(ROOT, "docs/map-design/specs/map_spec.json");
+const SPEC = path.join(ROOT, MAP_SOURCE.spec);
 const FACADES = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/facades");
 const MANIFEST = path.join(FACADES, "models.json");
 const TEXTURE_DIR = "textures";

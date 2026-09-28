@@ -1,7 +1,7 @@
 {
   "generatedFrom": {
     "schemaVersion": 1,
-    "path": "docs/map-design/specs/map_spec.json",
+    "path": "apps/client/assets-src/maps/bazaar-map/map_spec.json",
     "sha256": "c5ddf1617b748dbda646abf58734a7f0d568fbf40a35c67993187dd21d172c3e",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },

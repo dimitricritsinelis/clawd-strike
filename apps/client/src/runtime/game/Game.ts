@@ -1341,7 +1341,7 @@ export class Game {
     }
 
     // ── High desert daylight rig ───────────────────────────────────────
-    // R8 (docs/map-design/construction/r8-art-direction.md): late-afternoon
+    // R8 art direction: late-afternoon
     // warm key from the south-south-west at ~34 degrees so it rakes down the
     // north-south lanes, amber haze from 60 m, warm bounce fill. The luminance
     // measurements quoted below were taken against the earlier midday rig.

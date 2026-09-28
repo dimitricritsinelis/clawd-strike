@@ -7,6 +7,7 @@ import {
   normalizeCompositionWaiverRegistry,
 } from "./composition-waivers.mjs";
 import { validateMapSpecAgainstSchema } from "../gen-map-runtime.mjs";
+import { MAP_SOURCE_ABS } from "./mapPaths.mjs";
 
 function registryDocument(waivers) {
   return {
@@ -57,7 +58,7 @@ function approvedWaiver(overrides = {}) {
 
 test("authoritative legacy ids exactly match the allowlist while isolated subsets remain testable", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const registry = normalizeCompositionWaiverRegistry(raw);
@@ -80,7 +81,7 @@ test("authoritative legacy ids exactly match the allowlist while isolated subset
 
 test("legacy-migrated waivers must remain exact members of the closed migration", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const [legacyWaiver] = raw.waivers;
@@ -103,11 +104,11 @@ test("legacy-migrated waivers must remain exact members of the closed migration"
 
 test("normalizer and schema reject ignored or cross-shape fields", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const schema = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.schema.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaiversSchema,
     "utf8",
   ));
   // The canopy-opening waivers were resolved on 2026-09-07; use the retained hard-overlap
@@ -144,7 +145,7 @@ test("normalizer and schema reject ignored or cross-shape fields", async () => {
 
 test("legacy hashes use canonical object-key order", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const reordered = {

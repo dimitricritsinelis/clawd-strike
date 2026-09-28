@@ -20,6 +20,7 @@ import {
   resolveShotDefinition,
   summarizeCapturedShot,
 } from "./shotReview.mjs";
+import { MAP_SOURCE_ABS } from "./mapPaths.mjs";
 
 function runtimeState(overrides = {}) {
   return {
@@ -255,8 +256,7 @@ test("selects the exact authored inventory and rejects synthetic compare substit
 });
 
 test("authored closeup cameras hold their framing and acceptance names only what the shipped map renders", async () => {
-  const shotsUrl = new URL("../../../../docs/map-design/shots.json", import.meta.url);
-  const shotsSpec = JSON.parse(await readFile(shotsUrl, "utf8"));
+  const shotsSpec = JSON.parse(await readFile(MAP_SOURCE_ABS.shots, "utf8"));
   const inventory = validateReviewShotInventory(shotsSpec);
   assert.equal(inventory.passed, true, inventory.errors.join(" | "));
   assert.equal(inventory.coreShotIds.length, 12);

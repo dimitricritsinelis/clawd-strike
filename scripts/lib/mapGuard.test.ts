@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
+import { MAP_SOURCE_ABS } from "../../apps/client/scripts/lib/mapPaths.mjs";
 import { detectProtectedChanges } from "./mapGuard";
 
-const source = JSON.parse(readFileSync(new URL("../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"));
+const source = JSON.parse(readFileSync(MAP_SOURCE_ABS.spec, "utf8"));
 
 /** The shipped spec plus one soft_visual and one overhead dressing cluster, each with a placement. */
 function withVisualDressing(spec: typeof source): typeof source {

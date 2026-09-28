@@ -15,8 +15,9 @@ import {
   validateMapSpec,
 } from "./lib/mapGuard";
 import type { Bounds3 } from "./lib/mapGuard";
+import { MAP_SOURCE } from "../apps/client/scripts/lib/mapPaths.mjs";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const SPEC = "docs/map-design/specs/map_spec.json";
+const SPEC = MAP_SOURCE.spec;
 const CLIENT = path.join(ROOT, "apps/client");
 const BASELINE = path.join(ROOT, "artifacts/map-guard/baseline");
 const FACADES = path.join(ROOT, "apps/client/public/assets/models/environment/bazaar/facades");

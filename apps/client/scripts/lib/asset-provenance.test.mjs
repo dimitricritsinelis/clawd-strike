@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { MAP_SOURCE_ABS } from "./mapPaths.mjs";
 
 function readJson(url) {
   return JSON.parse(readFileSync(url, "utf8"));
@@ -301,10 +302,7 @@ test("bazaar model packs carry complete CC0 provenance and no dead files", () =>
     ...verifyModelPack(doorManifestUrl),
     ...verifyModelPack(facadeManifestUrl),
   ]);
-  const sourceSpec = readJson(new URL(
-    "../../../../docs/map-design/specs/map_spec.json",
-    import.meta.url,
-  ));
+  const sourceSpec = readJson(MAP_SOURCE_ABS.spec);
   for (const asset of sourceSpec.asset_registry.filter((entry) => (
     entry.source.kind === "external_cc0" && entry.runtime.mode === "model"
   ))) {

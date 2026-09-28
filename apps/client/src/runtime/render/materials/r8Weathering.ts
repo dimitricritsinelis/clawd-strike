@@ -3,7 +3,7 @@ import { DataTexture, NoColorSpace, RepeatWrapping, RGBAFormat, SRGBColorSpace, 
 import type { RuntimeTraversalSurface } from "../../map/types";
 
 /**
- * R8 weathering (docs/map-design/construction/r8-art-direction.md).
+ * R8 weathering.
  *
  * A render-only surface-history pass layered on top of every finished material
  * family: broad sun-bleached mottling, a ragged grime and sand-splash band at

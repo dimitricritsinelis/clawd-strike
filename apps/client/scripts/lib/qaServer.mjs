@@ -5,6 +5,7 @@ import { createServer as createNetServer } from "node:net";
 import path from "node:path";
 import { promisify } from "node:util";
 import { createServer as createViteServer } from "vite";
+import { MAP_SOURCE } from "./mapPaths.mjs";
 
 const execFileAsync = promisify(execFile);
 
@@ -17,8 +18,8 @@ export const GENERATED_PROVENANCE_SCHEMA_VERSION = 1;
 export const QA_GENERATOR_IDENTITY = "apps/client/scripts/gen-map-runtime.mjs";
 
 const FINGERPRINT_FILES = Object.freeze({
-  sourceMap: "docs/map-design/specs/map_spec.json",
-  sourceShots: "docs/map-design/shots.json",
+  sourceMap: MAP_SOURCE.spec,
+  sourceShots: MAP_SOURCE.shots,
   generatedMap: "apps/client/public/maps/bazaar-map/map_spec.json",
   generatedShots: "apps/client/public/maps/bazaar-map/shots.json",
   runtimeBootstrap: "apps/client/src/runtime/bootstrap.ts",

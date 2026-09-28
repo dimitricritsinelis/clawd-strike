@@ -4,6 +4,7 @@ import os from "node:os";
 import path from "node:path";
 import { spawnSync } from "node:child_process";
 import test from "node:test";
+import { MAP_SOURCE } from "../apps/client/scripts/lib/mapPaths.mjs";
 
 function glb(label) {
   const json = Buffer.from(JSON.stringify({ asset: { version: "2.0", generator: label }, materials: [] }));
@@ -52,7 +53,7 @@ function fixture(t, kind = "section") {
     mkdirSync(path.dirname(path.join(root, file)), { recursive: true });
     writeFileSync(path.join(root, file), data);
   };
-  const spec = "docs/map-design/specs/map_spec.json";
+  const spec = MAP_SOURCE.spec;
   const assets = "apps/client/public/assets/models/environment/bazaar/facades/";
   const manifest = `${assets}models.json`;
   const model = `${assets}unit-test/test.glb`;
@@ -70,6 +71,8 @@ function fixture(t, kind = "section") {
   copyFileSync(new URL("./apply-facade-package.mjs", import.meta.url), path.join(root, "scripts/apply-facade-package.mjs"));
   mkdirSync(path.join(root, "scripts/lib"), { recursive: true });
   copyFileSync(new URL("./lib/glbTextures.mjs", import.meta.url), path.join(root, "scripts/lib/glbTextures.mjs"));
+  mkdirSync(path.join(root, "apps/client/scripts/lib"), { recursive: true });
+  copyFileSync(new URL("../apps/client/scripts/lib/mapPaths.mjs", import.meta.url), path.join(root, "apps/client/scripts/lib/mapPaths.mjs"));
   const run = (action, succeeds = true) => {
     const result = spawnSync(process.execPath, [path.join(root, "scripts/apply-facade-package.mjs"), action, "unit-test"], { encoding: "utf8" });
     assert.equal(result.status === 0, succeeds, result.stderr || result.stdout);

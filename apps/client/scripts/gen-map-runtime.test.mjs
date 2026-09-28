@@ -4,17 +4,18 @@ import test from "node:test";
 import { compileMapSpec, deriveShotsRuntime, validateMapSpecAgainstSchema } from "./gen-map-runtime.mjs";
 import { normalizeCompositionWaiverRegistry } from "./lib/composition-waivers.mjs";
 import { expectedSignWidthM } from "./lib/facade-layout-grammar.mjs";
+import { MAP_SOURCE_ABS } from "./lib/mapPaths.mjs";
 
 const authoritativeCompositionWaiverDocument = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+  MAP_SOURCE_ABS.compositionWaivers,
   "utf8",
 ));
 const compositionWaiverSchema = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/composition_waivers.schema.json", import.meta.url),
+  MAP_SOURCE_ABS.compositionWaiversSchema,
   "utf8",
 ));
 const generatedProvenanceSchema = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/generated_provenance.schema.json", import.meta.url),
+  MAP_SOURCE_ABS.generatedProvenanceSchema,
   "utf8",
 ));
 const authoritativeCompositionWaivers = normalizeCompositionWaiverRegistry(
@@ -359,7 +360,7 @@ test("compiles the optional v3 contract without source/runtime drift", () => {
 
 test("validates the source document against the owning schema before compilation", async () => {
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   const source = makeV3Spec();
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
@@ -373,7 +374,7 @@ test("validates the source document against the owning schema before compilation
 
 test("schema owns the complete map polish survey camera override shape", async () => {
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   const source = makeV3Spec();
   source.map_polish_survey_camera_overrides = {
@@ -534,7 +535,7 @@ test("resolves stable frontage-relative anchors without persisting segment ordin
     vertical_offset_m: 2.2,
   });
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
 
@@ -549,10 +550,10 @@ test("resolves stable frontage-relative anchors without persisting segment ordin
 
 test("keeps authoritative v3 massing and frontage anchors out of authored connector gaps", async () => {
   const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.spec, "utf8"),
   );
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
   const runtime = compileMapSpec(source, authoritativeCompositionWaivers);

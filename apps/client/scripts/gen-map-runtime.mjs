@@ -17,6 +17,7 @@ import {
   emptyCompositionWaiverRegistry,
   normalizeCompositionWaiverRegistry,
 } from "./lib/composition-waivers.mjs";
+import { MAP_SOURCE, MAP_SOURCE_ABS } from "./lib/mapPaths.mjs";
 
 const MAP_ID = "bazaar-map";
 const DEFAULT_COMPARE_SHOT_ID = "SHOT_02_SPAWN_A_TO_BAZAAR";
@@ -135,14 +136,11 @@ const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
 const repoRoot = path.resolve(scriptDir, "../../..");
 
-// Source-of-truth inputs from the design packet.
-const mapSpecPath = path.join(repoRoot, "docs/map-design/specs/map_spec.json");
-const mapSpecSchemaPath = path.join(repoRoot, "docs/map-design/specs/map_spec_schema.json");
-const compositionWaiversPath = path.join(
-  repoRoot,
-  "docs/map-design/specs/composition_waivers.json",
-);
-const designShotsPath = path.join(repoRoot, "docs/map-design/shots.json");
+// Source-of-truth inputs (apps/client/assets-src/maps/bazaar-map).
+const mapSpecPath = MAP_SOURCE_ABS.spec;
+const mapSpecSchemaPath = MAP_SOURCE_ABS.specSchema;
+const compositionWaiversPath = MAP_SOURCE_ABS.compositionWaivers;
+const designShotsPath = MAP_SOURCE_ABS.shots;
 const runtimeDir = path.join(repoRoot, "apps/client/public/maps", MAP_ID);
 
 const mapSpecOutPath = path.join(runtimeDir, "map_spec.json");
@@ -3053,7 +3051,7 @@ function deriveBlockoutSpec(spec, zones) {
 export function deriveShotsRuntime(designShotsDoc) {
   const sourceShots = Array.isArray(designShotsDoc?.shots) ? designShotsDoc.shots : [];
   if (sourceShots.length === 0) {
-    fail("docs/map-design/shots.json must contain a non-empty 'shots' array");
+    fail(`${MAP_SOURCE.shots} must contain a non-empty 'shots' array`);
   }
 
   const shots = sourceShots.map((shot) => JSON.parse(JSON.stringify(shot)));

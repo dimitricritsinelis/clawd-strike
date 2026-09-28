@@ -4,9 +4,10 @@ import { R8_ATMOSPHERE, type R8Clutter } from "./buildR8Atmosphere";
 
 /**
  * R8 wall-foot goods that reuse registered CC0 prop models. Every record sits
- * against a solid wall with at most 0.30 m projection (enforced by r8.py); the
- * runtime re-measures the scaled model and shrinks it if its real bounds would
- * exceed the recorded projection. Render-only: no colliders.
+ * against a solid wall with at most 0.30 m projection (checked by
+ * r8Atmosphere.test.ts); the runtime re-measures the scaled model and shrinks
+ * it if its real bounds would exceed the recorded projection. Render-only: no
+ * colliders.
  */
 
 const LOW_PROJECTION_MAX_M = 0.3;
