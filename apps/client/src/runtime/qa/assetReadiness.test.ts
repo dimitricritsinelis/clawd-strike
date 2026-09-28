@@ -207,8 +207,8 @@ test("current V3 plan derives door models only from compiled runtime placements 
   );
   assert.match(
     buildBlockoutSource,
-    /const wallDetailPlacements = isV3\s*\?\s*buildV3Architecture\(/,
-    "V3 maps must continue to bypass the legacy wallDetailPlacer door selector",
+    /const wallDetailPlacements = buildV3Architecture\(/,
+    "wall architecture and door placements must come only from buildV3Architecture",
   );
 });
 

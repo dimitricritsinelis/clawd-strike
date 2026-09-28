@@ -225,7 +225,6 @@ test("PBR wall fragments inherit parent material context and UV seed while keepi
     createStandardMaterial: () => new MeshStandardMaterial(),
   } as unknown as WallMaterialLibrary;
   const root = buildPbrWalls({
-    formatVersion: "3.0",
     segments: [
       { ...source, end: 3 },
       { ...source, start: 7 },

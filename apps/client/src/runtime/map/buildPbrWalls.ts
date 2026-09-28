@@ -7,7 +7,6 @@ import type { RuntimeBlockoutZone, RuntimeFacadeProfile, RuntimeFrontage } from 
 import {
   resolveFacadeFaceForSegment,
   resolveFacadeStyleForSegment,
-  resolveWallPlaneOverride,
   type FacadeFace,
 } from "./wallMaterialAssignment";
 import { resolveWallShaderProfile } from "./wallShaderProfiles";
@@ -29,7 +28,6 @@ type MaterialBatch = {
 };
 
 type BuildPbrWallsOptions = {
-  formatVersion?: string;
   segments: readonly BoundarySegment[];
   /** Untouched collision-wall authority used for stable assignment context. */
   sourceSegments?: readonly BoundarySegment[];
@@ -297,69 +295,21 @@ export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
   }
 
   const batches = new Map<string, MaterialBatch>();
-  const isV3 = /^3(?:\.|$)/.test(options.formatVersion ?? "");
   const availableMaterialIds = new Set(materialIds);
   const facadeProfileById = new Map((options.facadeProfiles ?? []).map((profile) => [profile.id, profile]));
-  const segmentMetaByIndex = new Map<number, {
-    zone: RuntimeBlockoutZone | null;
-    facadeFace: FacadeFace;
-    segmentOrdinal: number | null;
-  }>();
-  const segmentGroupsByFace = new Map<string, Array<{ index: number; start: number }>>();
-
-  for (let index = 0; index < options.segments.length; index += 1) {
-    const parent = resolveSegmentParent(options, index);
-    const frame = toSegmentFrame(parent.segment);
-    const zone = resolveSegmentZone(frame, options.zones);
-    const facadeFace = resolveFacadeFaceForSegment(zone, frame);
-    segmentMetaByIndex.set(index, {
-      zone,
-      facadeFace,
-      segmentOrdinal: null,
-    });
-    if (!zone) continue;
-    const key = `${zone.id}:${facadeFace}`;
-    const entries = segmentGroupsByFace.get(key) ?? [];
-    entries.push({ index, start: parent.segment.start });
-    segmentGroupsByFace.set(key, entries);
-  }
-
-  for (const entries of segmentGroupsByFace.values()) {
-    entries.sort((left, right) => left.start - right.start);
-    for (let ordinal = 0; ordinal < entries.length; ordinal += 1) {
-      const meta = segmentMetaByIndex.get(entries[ordinal]!.index);
-      if (meta) {
-        meta.segmentOrdinal = ordinal + 1;
-      }
-    }
-  }
 
   for (let index = 0; index < options.segments.length; index += 1) {
     const segment = options.segments[index]!;
     const parent = resolveSegmentParent(options, index);
-    const frame = toSegmentFrame(isV3 ? segment : parent.segment);
-    const meta = segmentMetaByIndex.get(index);
-    const zone = isV3
-      ? resolveSegmentZone(frame, options.zones)
-      : meta?.zone ?? resolveSegmentZone(frame, options.zones);
+    const frame = toSegmentFrame(segment);
+    const zone = resolveSegmentZone(frame, options.zones);
     const facadeFace = resolveFacadeFaceForSegment(zone, frame);
-    const frontage = isV3
-      ? resolveSegmentFrontage(zone, facadeFace, frame, options.frontages ?? [])
-      : null;
+    const frontage = resolveSegmentFrontage(zone, facadeFace, frame, options.frontages ?? []);
     const authoredProfile = facadeProfileById.get(
       frontage?.facadeProfileId ?? zone?.facadeProfileId ?? "",
     );
     const zoneMaterialId = zone
-      ? (
-          (!isV3
-            ? resolveWallPlaneOverride(
-                zone,
-                meta?.facadeFace ?? resolveFacadeFaceForSegment(zone, frame),
-                meta?.segmentOrdinal ?? null,
-              )?.materials.wall
-            : null)
-          ?? resolveFacadeStyleForSegment(zone, frame, authoredProfile).materials.wall
-        )
+      ? resolveFacadeStyleForSegment(zone, frame, authoredProfile).materials.wall
       : resolveZoneMaterialId(zone);
     const materialId = resolveManifestMaterialId(
       materialIds,

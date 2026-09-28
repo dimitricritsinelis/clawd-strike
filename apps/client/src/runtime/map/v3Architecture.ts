@@ -173,19 +173,21 @@ export type FacadeModelPlacement = {
   heightM: number;
 };
 
+export type WallDetailPlacementStats = {
+  enabled: boolean;
+  seed: number;
+  density: number;
+  segmentCount: number;
+  segmentsDecorated: number;
+  instanceCount: number;
+};
+
 export type V3ArchitectureBuildResult = {
   instances: WallDetailInstance[];
   doorModelPlacements: DoorModelPlacement[];
   facadeModelPlacements: FacadeModelPlacement[];
   segmentHeights: number[];
-  stats: {
-    enabled: boolean;
-    seed: number;
-    density: number;
-    segmentCount: number;
-    segmentsDecorated: number;
-    instanceCount: number;
-  };
+  stats: WallDetailPlacementStats;
 };
 
 const MIN_DIMENSION_M = 0.02;

@@ -370,6 +370,21 @@ test("validates the source document against the owning schema before compilation
     () => validateMapSpecAgainstSchema(source, schema),
     /visualStyle: additional property is not allowed/,
   );
+
+  for (const retiredKey of [
+    "facade_overrides",
+    "composition_layout_overrides",
+    "door_layout_overrides",
+    "window_layout_overrides",
+    "balcony_layout_overrides",
+  ]) {
+    const retired = makeV3Spec();
+    retired.wall_details[retiredKey] = [];
+    assert.throws(
+      () => validateMapSpecAgainstSchema(retired, schema),
+      new RegExp(`wall_details\\.${retiredKey}: additional property is not allowed`),
+    );
+  }
 });
 
 test("schema owns the complete map polish survey camera override shape", async () => {
@@ -632,42 +647,22 @@ test("keeps authoritative v3 massing and frontage anchors out of authored connec
   }
 });
 
-test("keeps the legacy v2.3 shape valid when v3 sections are absent", () => {
-  const source = makeV3Spec();
-  for (const key of [
-    "map_center",
-    "districts",
-    "traversal_surfaces",
-    "tactical_lanes",
-    "explicit_connectivity",
-    "authored_spawns",
-    "frontages",
-    "frontage_exemptions",
-    "massing_profiles",
-    "facade_modules",
-    "facade_profiles",
-    "dressing_clusters",
-    "dressing_placements",
-    "asset_registry",
-    "exterior_wall_patches",
-  ]) {
-    delete source[key];
-  }
-  for (const zone of source.zones) {
-    delete zone.surfaceId;
-    delete zone.districtId;
-    delete zone.macroLane;
-    delete zone.floorMaterialId;
-    delete zone.facadeProfileId;
-    delete zone.clearWidthM;
-  }
-  source.metadata.version = "2.3";
+test("rejects source specs that are not format v3", () => {
+  const legacy = makeV3Spec();
+  legacy.metadata.version = "2.3";
+  assert.throws(() => compileMapSpec(legacy), /metadata\.version '2\.3' is not supported; the map compiler accepts only format 3\.x/);
 
-  const runtime = compileMapSpec(source);
-  assert.equal(runtime.formatVersion, "2.3");
-  assert.deepEqual(runtime.exterior_wall_patches, []);
-  assert.equal("traversalSurfaces" in runtime, false);
-  assert.equal("authoredSpawns" in runtime, false);
+  const unversioned = makeV3Spec();
+  delete unversioned.metadata.version;
+  assert.throws(() => compileMapSpec(unversioned), /metadata\.version must be a non-empty string/);
+});
+
+test("stops emitting the retired wall-detail collections", () => {
+  const emittedKeys = ["density", "enabled", "maxProtrusion", "seed", "style"];
+  const source = makeV3Spec();
+  source.wall_details.module_registry = { window_modules: [], door_modules: [], hero_bay_modules: [] };
+  assert.deepEqual(Object.keys(compileMapSpec(source).wall_details).sort(), emittedKeys);
+  assert.deepEqual(Object.keys(authoritativeGeneratedMap.wall_details).sort(), emittedKeys);
 });
 
 test("preserves the exact authored shot inventory and points compare at a real shot", () => {

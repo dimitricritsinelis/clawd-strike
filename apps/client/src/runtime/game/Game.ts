@@ -16,7 +16,7 @@ import {
   type RenderedPropPlacement,
 } from "../map/buildProps";
 import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
-import type { WallDetailPlacementStats } from "../map/wallDetailPlacer";
+import type { WallDetailPlacementStats } from "../map/v3Architecture";
 import type { FloorMaterialLibrary } from "../render/materials/FloorMaterialLibrary";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";

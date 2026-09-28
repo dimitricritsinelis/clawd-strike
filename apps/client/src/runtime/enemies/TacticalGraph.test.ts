@@ -24,12 +24,6 @@ function makeElevatedGraphSpec(): RuntimeBlockoutSpec {
       style: "bazaar",
       density: 0,
       maxProtrusion: 0.2,
-      facadeOverrides: [],
-      doorLayoutOverrides: [],
-      windowLayoutOverrides: [],
-      balconyLayoutOverrides: [],
-      moduleRegistry: { windowModules: [], doorModules: [], heroBayModules: [] },
-      compositionLayoutOverrides: [],
     },
     zones: [
       {

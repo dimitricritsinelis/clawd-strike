@@ -35,12 +35,11 @@ import { buildSandAccumulation } from "./buildSandAccumulation";
 import { buildWallBaseDebris } from "./buildWallBaseDebris";
 import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
-import { buildWallDetailPlacements, type WallDetailPlacementStats } from "./wallDetailPlacer";
 import { buildDoorModels } from "./buildDoorModels";
 import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels, validateBz04Bounds } from "./buildFacadeModels";
 import { buildDecorativePalms } from "./buildDecorativePalms";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
-import { buildV3Architecture, type V3ArchitectureBuildResult } from "./v3Architecture";
+import { buildV3Architecture, type WallDetailPlacementStats } from "./v3Architecture";
 import { planV3VisualWallSegments } from "./v3VisualWallSegments";
 import { applyWallShaderTweaks } from "../render/materials/applyWallShaderTweaks";
 import { applyR8Weathering, createR8DetailSet } from "../render/materials/r8Weathering";
@@ -2784,9 +2783,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
 
   // Run wall detail placements first — they compute per-segment heights
   // that the wall geometry builder needs for varied building silhouettes.
-  const wallDetailDensityScale = typeof options.wallDetails.densityScale === "number"
-    ? options.wallDetails.densityScale
-    : 1;
   const useV3AuthoredVisualWallOwnership = isV3
     && options.wallMaterials !== null
     && usesV3AuthoredVisualWallOwnership(
@@ -2805,50 +2801,29 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         playableBoundary: spec.playable_boundary,
       })
     : null;
-  const wallDetailPlacements = isV3
-    ? buildV3Architecture({
-        placements: spec.architecturePlacements ?? [],
-        massingProfiles: spec.massingProfiles ?? [],
-        facadeProfiles: spec.facadeProfiles ?? [],
-        segments: wallSegments,
-        zones: spec.zones,
-        traversalSurfaces,
-        wallHeightM: spec.defaults.wall_height,
-        fortifiedDoorModelAvailable: Boolean(options.doorModels),
-        experimentalVisualCutoutMassing: useV3AuthoredVisualWallOwnership,
-        // Bays whose recess already houses an authored merchant stall.
-        stallSeatedPlacementIds: new Set(
-          (options.anchors?.anchors ?? [])
-            .filter((anchor) => anchor.type === "shopfront_anchor" && anchor.servedBayId && anchor.frontageId)
-            .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
-        ),
-        bz04Courtyard,
-        bz04SectionOwnedFaces,
-        bz04BoundaryCoverage,
-        bz04ReplacedRoofMassings,
-        bz04Gateway: Boolean(spec.dressingPlacements?.some(p => p.assetId === "ASSET_BZ04_RUG_GATE")),
-        sectionOwnedFaces: new Set((spec.sectionModels ?? []).flatMap((section) => section.faces.map((face) => `${section.zoneId}:${face}`))),
-      })
-    : buildWallDetailPlacements({
-        segments: wallSegments,
-        zones: spec.zones,
-        anchors: options.anchors,
-        facadeOverrides: spec.wall_details.facadeOverrides,
-        moduleRegistry: spec.wall_details.moduleRegistry,
-        compositionLayoutOverrides: spec.wall_details.compositionLayoutOverrides,
-        doorLayoutOverrides: spec.wall_details.doorLayoutOverrides,
-        windowLayoutOverrides: spec.wall_details.windowLayoutOverrides,
-        balconyLayoutOverrides: spec.wall_details.balconyLayoutOverrides,
-        seed: options.seed,
-        wallHeightM: spec.defaults.wall_height,
-        wallThicknessM,
-        enabled: spec.wall_details.enabled && options.wallDetails.enabled,
-        profile: options.wallMode === "pbr" ? "pbr" : "blockout",
-        detailSeed: typeof spec.wall_details.seed === "number" ? spec.wall_details.seed : null,
-        density: clamp(spec.wall_details.density * wallDetailDensityScale, 0, 1.25),
-        maxProtrusionM: spec.wall_details.maxProtrusion,
-        segmentBaseYs,
-      });
+  const wallDetailPlacements = buildV3Architecture({
+    placements: spec.architecturePlacements ?? [],
+    massingProfiles: spec.massingProfiles ?? [],
+    facadeProfiles: spec.facadeProfiles ?? [],
+    segments: wallSegments,
+    zones: spec.zones,
+    traversalSurfaces,
+    wallHeightM: spec.defaults.wall_height,
+    fortifiedDoorModelAvailable: Boolean(options.doorModels),
+    experimentalVisualCutoutMassing: useV3AuthoredVisualWallOwnership,
+    // Bays whose recess already houses an authored merchant stall.
+    stallSeatedPlacementIds: new Set(
+      (options.anchors?.anchors ?? [])
+        .filter((anchor) => anchor.type === "shopfront_anchor" && anchor.servedBayId && anchor.frontageId)
+        .map((anchor) => `ARCH_${anchor.frontageId}_${anchor.servedBayId}`),
+    ),
+    bz04Courtyard,
+    bz04SectionOwnedFaces,
+    bz04BoundaryCoverage,
+    bz04ReplacedRoofMassings,
+    bz04Gateway: Boolean(spec.dressingPlacements?.some(p => p.assetId === "ASSET_BZ04_RUG_GATE")),
+    sectionOwnedFaces: new Set((spec.sectionModels ?? []).flatMap((section) => section.faces.map((face) => `${section.zoneId}:${face}`))),
+  });
 
   const segmentHeights = wallDetailPlacements.segmentHeights.map((heightM, index) => (
     heightM + (segmentElevationEnvelopes[index]!.maxY - segmentElevationEnvelopes[index]!.minY)
@@ -2892,7 +2867,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     const primaryVisualSegments = primaryVisualEntries.map((entry) => entry.segment);
     const primaryVisualSourceIndices = primaryVisualEntries.map((entry) => entry.sourceIndex);
     const pbrWalls = buildPbrWalls({
-      ...(spec.formatVersion ? { formatVersion: spec.formatVersion } : {}),
       segments: primaryVisualSegments,
       sourceSegments: wallSegments,
       segmentSourceIndices: primaryVisualSourceIndices,
@@ -2966,7 +2940,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     const standardEndCaps = supportEndCaps.filter((entry) => !customPierSourceIndices.has(entry.sourceSegmentIndex));
     if (standardEndCaps.length > 0) {
       const endCapWalls = buildPbrWalls({
-        ...(spec.formatVersion ? { formatVersion: spec.formatVersion } : {}),
         segments: standardEndCaps.map((entry) => entry.segment),
         sourceSegments: wallSegments,
         segmentSourceIndices: standardEndCaps.map((entry) => entry.sourceSegmentIndex),
@@ -2996,7 +2969,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         plan.renderSourceIndices.map((sourceIndex) => segmentBaseYs[sourceIndex]!)
       ));
       const supportWalls = buildPbrWalls({
-        ...(spec.formatVersion ? { formatVersion: spec.formatVersion } : {}),
         segments: supportSegments,
         zones: supportPlans.map((plan) => plan.renderZone),
         frontages: spec.frontages ?? [],
@@ -3305,7 +3277,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     }
   }
 
-  const facadeModelPlacements = isV3 ? (wallDetailPlacements as V3ArchitectureBuildResult).facadeModelPlacements : [];
+  const facadeModelPlacements = wallDetailPlacements.facadeModelPlacements;
   const packBinding = { wallMaterials: options.wallMaterials, quality: wallTextureQuality, seed: options.seed };
   if (options.facadeModels && facadeModelPlacements.length > 0) {
     root.add(buildFacadeModels(facadeModelPlacements, options.facadeModels, packBinding));

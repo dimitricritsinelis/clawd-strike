@@ -331,11 +331,3 @@ test("v3 rejects unresolved floor authority instead of revealing a flat fallback
     /unresolved traversal surface 'missing'/,
   );
 });
-
-test("v2 keeps the legacy material fallback and receives no v3 seam geometry", () => {
-  const legacy = zone("LEGACY_ZONE", { x: 0, y: 0, w: 4, h: 4 });
-  const root = build(spec("2.0", [legacy]));
-  assert.equal(root.userData.floorPolish, undefined);
-  assert.ok(root.getObjectByName("floor-cobblestone_color"));
-  assert.equal(root.children.some((child) => child.name.startsWith("floor-edge-fascia-")), false);
-});

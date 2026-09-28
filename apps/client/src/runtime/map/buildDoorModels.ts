@@ -6,9 +6,8 @@ import { DeterministicRng, deriveSubSeed } from "../utils/Rng";
 import { resolveWallShaderProfile } from "./wallShaderProfiles";
 
 /**
- * Placement record for a 3D door model.
- * Emitted by the wall-detail placer which has the full segment frame
- * (including outward direction) available.
+ * Placement record for a 3D door model, emitted by buildV3Architecture with
+ * the full segment frame (including outward direction) available.
  */
 export type DoorModelPlacement = {
   /** World-space center of the door opening on the wall surface. */
@@ -38,7 +37,6 @@ export type DoorModelPlacement = {
 export type DoorCoverShape = "arched" | "rect";
 
 export const CASTLE_DOOR_ID = "ph_large_castle_door";
-export const ROLLERSHUTTER_ID = "ph_rollershutter_window_02";
 
 const _bbox = new Box3();
 const _bboxSize = new Vector3();
@@ -54,14 +52,14 @@ const CASTLE_DOOR_MODEL_WIDTH_M = 2.012115716934204;
 const CASTLE_DOOR_MODEL_HEIGHT_M = 2.964752435684204;
 const FALLBACK_TRIM_COLOR = 0xd2c3a6;
 
-export type DoorSilhouette = {
+type DoorSilhouette = {
   widthM: number;
   heightM: number;
   radiusM: number;
   springLineOffsetYM: number;
 };
 
-export function resolveCastleDoorSilhouette(heightM: number): DoorSilhouette {
+function resolveCastleDoorSilhouette(heightM: number): DoorSilhouette {
   const scale = heightM / CASTLE_DOOR_MODEL_HEIGHT_M;
   const widthM = CASTLE_DOOR_MODEL_WIDTH_M * scale;
   const radiusM = widthM * 0.5;
@@ -73,11 +71,7 @@ export function resolveCastleDoorSilhouette(heightM: number): DoorSilhouette {
   };
 }
 
-export function resolveCastleDoorRevealWidth(trimThicknessM: number): number {
-  return Math.max(0.035, Math.min(0.06, trimThicknessM * 0.24));
-}
-
-export function resolveCastleDoorSurroundRevealWidth(trimThicknessM: number): number {
+function resolveCastleDoorSurroundRevealWidth(trimThicknessM: number): number {
   return Math.max(0.008, Math.min(0.018, trimThicknessM * 0.08));
 }
 
@@ -358,11 +352,6 @@ export function buildDoorModels(
       }
     }
 
-    // For the rollershutter, remove the graffiti variant
-    if (placement.modelId === ROLLERSHUTTER_ID) {
-      const graffitiNode = clone.getObjectByName("rollershutter_window_02_graffiti");
-      if (graffitiNode) graffitiNode.removeFromParent();
-    }
     // Scale model to fit the door opening (uniform scale, fit within bounds)
     const scaleByH = placement.doorH / modelBbox.height;
     const scaleByW = placement.doorW / modelBbox.width;

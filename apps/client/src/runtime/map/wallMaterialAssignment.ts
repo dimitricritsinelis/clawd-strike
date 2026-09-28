@@ -1,4 +1,4 @@
-export type FacadeFamily = "merchant" | "residential" | "service" | "spawn" | "connector" | "side_hall" | "cut";
+export type FacadeFamily = "merchant" | "residential" | "service" | "spawn";
 export type FacadeTrimTier = "restrained" | "accented" | "hero";
 export type BalconyStyle = "none" | "merchant_ledge" | "residential_parapet" | "hero_cantilever";
 export type FacadeFace = "north" | "south" | "east" | "west";
@@ -38,16 +38,6 @@ export type ResolvedFacadeStyle = {
   materials: FacadeMaterialSlots;
 };
 
-export type WallPlaneOverrideKind =
-  | "spawn_facing_end_wall"
-  | "connector_adjacent_corner_window"
-  | "spawn_b_reference_shell";
-
-export type WallPlaneOverride = {
-  kind: WallPlaneOverrideKind;
-  materials: FacadeMaterialSlots;
-};
-
 const SHADED_TIMBER_MATERIAL_ID = "ph_rough_pine_door";
 
 function withWallVariant(
@@ -60,92 +50,7 @@ function withWallVariant(
   };
 }
 
-const SLOT_MERCHANT_WARM: FacadeMaterialSlots = {
-  wall: "ph_lime_plaster_sun",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_lime_soft",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_MERCHANT_HERO: FacadeMaterialSlots = {
-  wall: "ph_aged_plaster_ochre",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_RESIDENTIAL_CALM: FacadeMaterialSlots = {
-  wall: "ph_whitewashed_brick_warm",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_RESIDENTIAL_DUSTY: FacadeMaterialSlots = {
-  wall: "ph_whitewashed_brick_dusty",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_SERVICE_MAIN: FacadeMaterialSlots = {
-  wall: "ph_sandstone_blocks_06",
-  trimHeavy: "ph_stone_trim_white",
-  trimLight: "ph_band_beige_002",
-  balcony: null,
-};
-
-const SLOT_SPAWN: FacadeMaterialSlots = {
-  wall: "ph_sandstone_blocks_05",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_SPAWN_SIDE: FacadeMaterialSlots = {
-  wall: "ph_sandstone_blocks_05",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: SHADED_TIMBER_MATERIAL_ID,
-};
-
-const SLOT_SPAWN_B_BRICK: FacadeMaterialSlots = {
-  wall: "ph_brick_4_desert",
-  trimHeavy: "ph_stone_trim_white",
-  trimLight: "ph_band_plastered",
-  balcony: null,
-};
-
-const SLOT_SIDE_HALL: FacadeMaterialSlots = {
-  wall: "ph_plastered_wall",
-  trimHeavy: "ph_sandstone_blocks_05",
-  trimLight: "ph_band_plastered",
-  balcony: null,
-};
-
-const SLOT_CONNECTOR: FacadeMaterialSlots = {
-  wall: "ph_whitewashed_brick_cool",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_plastered",
-  balcony: null,
-};
-
-const SLOT_CUT: FacadeMaterialSlots = {
-  wall: "ph_beige_wall_002",
-  trimHeavy: "ph_trim_sanded_01",
-  trimLight: "ph_band_beige_001",
-  balcony: null,
-};
-
-const LEGACY_DEFAULT_STYLE: ResolvedFacadeStyle = {
-  family: "side_hall",
-  trimTier: "restrained",
-  balconyStyle: "none",
-  materials: SLOT_SIDE_HALL,
-};
-
-// V3 uses a deliberately small material grammar. These slots never feed the
-// legacy v2 compositor, whose historical aliases remain isolated above.
+// V3 uses a deliberately small material grammar.
 const V3_SLOT_LIMESTONE: FacadeMaterialSlots = {
   wall: "ph_sandstone_blocks_05",
   trimHeavy: "ph_trim_sanded_01",
@@ -296,182 +201,16 @@ function resolveProfiledFacadeStyle(
   }
 }
 
-export function resolveWallPlaneOverride(
-  zone: ZoneLike,
-  face: FacadeFace,
-  segmentOrdinal: number | null,
-): WallPlaneOverride | null {
-  if (!zone || segmentOrdinal === null) {
-    return null;
-  }
-
-  if (
-    (zone.id === "SPAWN_A_COURTYARD" && face === "north" && (segmentOrdinal === 1 || segmentOrdinal === 2))
-    || (zone.id === "SPAWN_B_GATE_PLAZA" && face === "south" && (segmentOrdinal === 1 || segmentOrdinal === 2))
-  ) {
-    return {
-      kind: "spawn_facing_end_wall",
-      materials: SLOT_SPAWN,
-    };
-  }
-
-  if (
-    (zone.id === "SPAWN_A_COURTYARD" && face === "west" && segmentOrdinal === 2)
-    || (zone.id === "SPAWN_A_COURTYARD" && face === "east" && segmentOrdinal === 2)
-    || (zone.id === "SPAWN_B_GATE_PLAZA" && face === "west" && segmentOrdinal === 1)
-    || (zone.id === "SPAWN_B_GATE_PLAZA" && face === "east" && segmentOrdinal === 1)
-  ) {
-    return {
-      kind: "connector_adjacent_corner_window",
-      materials: zone.id === "SPAWN_B_GATE_PLAZA" ? SLOT_SPAWN_B_BRICK : SLOT_SPAWN_SIDE,
-    };
-  }
-
-  if (
-    (zone.id === "SPAWN_B_GATE_PLAZA" && face === "north" && segmentOrdinal === 1)
-    || (zone.id === "SPAWN_B_GATE_PLAZA" && face === "west" && segmentOrdinal === 2)
-    || (zone.id === "SPAWN_B_GATE_PLAZA" && face === "east" && segmentOrdinal === 2)
-  ) {
-    return {
-      kind: "spawn_b_reference_shell",
-      materials: SLOT_SPAWN_B_BRICK,
-    };
-  }
-
-  return null;
-}
-
-function resolveMainLaneStyle(zone: NonNullable<ZoneLike>, frame: FacadeSegmentFrame): ResolvedFacadeStyle {
-  const { z: zoneCenterZ } = getZoneCenter(zone);
-  const face = resolveFacadeFaceForSegment(zone, frame);
-  const verticalFacade = face === "west" || face === "east";
-
-  if (!verticalFacade) {
-    if (frame.centerZ < zoneCenterZ) {
-      return {
-        family: "service",
-        trimTier: "restrained",
-        balconyStyle: "none",
-        materials: SLOT_SERVICE_MAIN,
-      };
-    }
-    return {
-      family: "residential",
-      trimTier: zone.id === "BZ_M3" ? "accented" : "restrained",
-      balconyStyle: "residential_parapet",
-      materials: zone.id === "BZ_M3" ? SLOT_RESIDENTIAL_DUSTY : SLOT_RESIDENTIAL_CALM,
-    };
-  }
-
-  switch (`${zone.id}:${face}`) {
-    case "BZ_M1:west":
-      return {
-        family: "merchant",
-        trimTier: "accented",
-        balconyStyle: "merchant_ledge",
-        materials: SLOT_MERCHANT_WARM,
-      };
-    case "BZ_M1:east":
-      return {
-        family: "residential",
-        trimTier: "restrained",
-        balconyStyle: "residential_parapet",
-        materials: SLOT_RESIDENTIAL_CALM,
-      };
-    case "BZ_M2_JOG:west":
-      return {
-        family: "service",
-        trimTier: "restrained",
-        balconyStyle: "none",
-        materials: SLOT_SERVICE_MAIN,
-      };
-    case "BZ_M2_JOG:east":
-      return {
-        family: "merchant",
-        trimTier: "hero",
-        balconyStyle: "hero_cantilever",
-        materials: SLOT_MERCHANT_HERO,
-      };
-    case "BZ_M3:west":
-      return {
-        family: "residential",
-        trimTier: "accented",
-        balconyStyle: "residential_parapet",
-        materials: SLOT_RESIDENTIAL_DUSTY,
-      };
-    case "BZ_M3:east":
-      return {
-        family: "merchant",
-        trimTier: "accented",
-        balconyStyle: "merchant_ledge",
-        materials: SLOT_MERCHANT_WARM,
-      };
-    default:
-      return {
-        family: "merchant",
-        trimTier: "accented",
-        balconyStyle: "merchant_ledge",
-        materials: SLOT_MERCHANT_WARM,
-      };
-  }
-}
-
 export function resolveFacadeStyleForSegment(
-  zone: ZoneLike,
+  zone: NonNullable<ZoneLike>,
   frame: FacadeSegmentFrame,
   authoredProfile?: RuntimeFacadeProfile,
 ): ResolvedFacadeStyle {
-  if (!zone) {
-    return LEGACY_DEFAULT_STYLE;
+  const style = resolveProfiledFacadeStyle(zone, frame, authoredProfile);
+  if (!style) {
+    throw new Error(`[wall materials] zone '${zone.id}' has no supported facade profile`);
   }
-
-  const profiledStyle = resolveProfiledFacadeStyle(zone, frame, authoredProfile);
-  if (profiledStyle) {
-    return profiledStyle;
-  }
-
-  if (zone.type === "main_lane_segment") {
-    return resolveMainLaneStyle(zone, frame);
-  }
-
-  if (zone.type === "spawn_plaza") {
-    const face = resolveFacadeFaceForSegment(zone, frame);
-    const isHorizontalFace = face === "north" || face === "south";
-    const isSpawnBOuterShell = zone.id === "SPAWN_B_GATE_PLAZA" && face !== "south";
-    return {
-      family: "spawn",
-      trimTier: isSpawnBOuterShell ? (face === "north" ? "hero" : "accented") : isHorizontalFace ? "hero" : "accented",
-      balconyStyle: isSpawnBOuterShell ? "none" : "residential_parapet",
-      materials: zone.id === "SPAWN_B_GATE_PLAZA"
-        ? isSpawnBOuterShell ? SLOT_SPAWN_B_BRICK : isHorizontalFace ? SLOT_SPAWN : SLOT_SPAWN_SIDE
-        : isHorizontalFace ? SLOT_SPAWN : SLOT_SPAWN_SIDE,
-    };
-  }
-
-  if (zone.type === "connector") {
-    return {
-      family: "connector",
-      trimTier: "restrained",
-      balconyStyle: "none",
-      materials: SLOT_CONNECTOR,
-    };
-  }
-
-  if (zone.type === "cut") {
-    return {
-      family: "cut",
-      trimTier: "restrained",
-      balconyStyle: "none",
-      materials: SLOT_CUT,
-    };
-  }
-
-  return {
-    family: "side_hall",
-    trimTier: "restrained",
-    balconyStyle: "none",
-    materials: SLOT_SIDE_HALL,
-  };
+  return style;
 }
 
 import type { RuntimeFacadeProfile } from "./types";

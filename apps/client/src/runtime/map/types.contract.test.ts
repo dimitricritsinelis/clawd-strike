@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { parseBlockoutSpec } from "./types";
 
-function makeLegacyRuntime() {
+function makeBaseRuntime() {
   return {
     mapId: "bazaar-map",
     playable_boundary: { x: 0, y: 0, w: 20, h: 12 },
@@ -24,7 +24,7 @@ function makeLegacyRuntime() {
 
 function makeV3Runtime() {
   return {
-    ...makeLegacyRuntime(),
+    ...makeBaseRuntime(),
     formatVersion: "3.0",
     mapCenter: { x: 10, y: 6 },
     wall_details: {
@@ -290,12 +290,23 @@ function makeV3Runtime() {
   };
 }
 
-test("parses legacy map JSON without requiring any v3 fields", () => {
-  const parsed = parseBlockoutSpec(makeLegacyRuntime(), "legacy-map.json");
+test("rejects map JSON that is not format v3", () => {
+  assert.throws(
+    () => parseBlockoutSpec(makeBaseRuntime(), "unversioned-map.json"),
+    /unversioned-map\.json\.formatVersion: expected a 3\.x map format, got 'missing'/,
+  );
+  assert.throws(
+    () => parseBlockoutSpec({ ...makeV3Runtime(), formatVersion: "2.3" }, "legacy-map.json"),
+    /legacy-map\.json\.formatVersion: expected a 3\.x map format, got '2\.3'/,
+  );
+});
+
+test("defaults omitted wall_details on a v3 map", () => {
+  const withoutWallDetails: Record<string, unknown> = makeV3Runtime();
+  delete withoutWallDetails.wall_details;
+  const parsed = parseBlockoutSpec(withoutWallDetails, "v3-defaults.json");
+  assert.equal(parsed.wall_details.style, "bazaar");
   assert.equal(parsed.wall_details.maxProtrusion, 0.3);
-  assert.deepEqual(parsed.exterior_wall_patches, []);
-  assert.equal(parsed.traversalSurfaces, undefined);
-  assert.equal(parsed.authoredSpawns, undefined);
 });
 
 test("parses and preserves the complete optional v3 runtime contract", () => {

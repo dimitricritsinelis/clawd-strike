@@ -2,7 +2,6 @@ import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from "three";
 import type { FloorMaterialLibrary, FloorTextureQuality } from "../render/materials/FloorMaterialLibrary";
 import { applyFloorShaderTweaks } from "../render/materials/applyFloorShaderTweaks";
 import { deriveSubSeed } from "../utils/Rng";
-import { resolveFloorMaterialIdForZone } from "./floorMaterialAssignment";
 import { bz04FloorTreatmentShader } from "./bz04Trial";
 import type {
   RuntimeBlockoutSpec,
@@ -40,7 +39,6 @@ export type FloorMaterialId =
 const UV_QUARTER_TURNS: 0 | 1 | 2 | 3 = 0;
 const UV_OFFSET_U = 0;
 const UV_OFFSET_V = 0;
-const V3_FORMAT = /^3(?:\.|$)/;
 const EDGE_EPSILON_M = 1e-4;
 const ELEVATION_EPSILON_M = 0.015;
 // A change of paving between two districts is a built joint, and a mason lays a
@@ -477,23 +475,18 @@ function isFloorMaterialId(value: string | undefined): value is FloorMaterialId 
   return typeof value === "string" && MATERIAL_ORDER.includes(value as FloorMaterialId);
 }
 
-function resolveZoneMaterialId(zone: RuntimeBlockoutZone, isV3: boolean): FloorMaterialId {
+function resolveZoneMaterialId(zone: RuntimeBlockoutZone): FloorMaterialId {
   if (isFloorMaterialId(zone.floorMaterialId)) return zone.floorMaterialId;
-  if (isV3) {
-    throw new Error(
-      `[buildPbrFloors] v3 walkable zone '${zone.id}' has unresolved floor material '${zone.floorMaterialId ?? "missing"}'`,
-    );
-  }
-  return resolveFloorMaterialIdForZone(zone.id);
+  throw new Error(
+    `[buildPbrFloors] v3 walkable zone '${zone.id}' has unresolved floor material '${zone.floorMaterialId ?? "missing"}'`,
+  );
 }
 
 function resolveZoneSurface(
   zone: RuntimeBlockoutZone,
   surfacesById: ReadonlyMap<string, RuntimeTraversalSurface>,
-  isV3: boolean,
-): RuntimeTraversalSurface | undefined {
+): RuntimeTraversalSurface {
   const surface = zone.surfaceId ? surfacesById.get(zone.surfaceId) : undefined;
-  if (!isV3) return surface;
   if (!surface) {
     throw new Error(
       `[buildPbrFloors] v3 walkable zone '${zone.id}' has unresolved traversal surface '${zone.surfaceId ?? "missing"}'`,
@@ -960,7 +953,6 @@ export function buildPbrFloors(spec: RuntimeBlockoutSpec, opts: BuildPbrFloorsOp
   const surfacesById = new Map((spec.traversalSurfaces ?? []).map((surface) => [surface.id, surface]));
   const occupiedFloorRects: RuntimeRect[] = [];
   const regions: FloorRegion[] = [];
-  const isV3 = V3_FORMAT.test(spec.formatVersion ?? "");
   const polishStats: FloorPolishStats = {
     transitionBandCount: 0,
     materialTransitionCount: 0,
@@ -975,7 +967,7 @@ export function buildPbrFloors(spec: RuntimeBlockoutSpec, opts: BuildPbrFloorsOp
   for (const zone of spec.zones) {
     if (!INCLUDED_ZONE_TYPES.has(zone.type)) continue;
 
-    const materialId = resolveZoneMaterialId(zone, isV3);
+    const materialId = resolveZoneMaterialId(zone);
     const tileSizeM = opts.manifest.getTileSizeM(materialId);
     const batch = getBatch(batches, materialId);
     const zoneFloorRects = occupiedFloorRects.reduce<RuntimeRect[]>(
@@ -983,7 +975,7 @@ export function buildPbrFloors(spec: RuntimeBlockoutSpec, opts: BuildPbrFloorsOp
       [zone.rect],
     );
     occupiedFloorRects.push(zone.rect);
-    const surface = resolveZoneSurface(zone, surfacesById, isV3);
+    const surface = resolveZoneSurface(zone, surfacesById);
     const uvVariation = resolveZoneUvVariation(opts.seed, zone.id);
     regions.push({
       zoneId: zone.id,
@@ -992,7 +984,7 @@ export function buildPbrFloors(spec: RuntimeBlockoutSpec, opts: BuildPbrFloorsOp
       uvQuarterTurns: uvVariation.quarterTurns,
       uvOffsetU: uvVariation.offsetU,
       uvOffsetV: uvVariation.offsetV,
-      ...(surface ? { surface } : {}),
+      surface,
     });
     for (const rect of zoneFloorRects) {
       const cellXStart = Math.floor((rect.x - gridOriginX) / patchSizeM);
@@ -1026,12 +1018,10 @@ export function buildPbrFloors(spec: RuntimeBlockoutSpec, opts: BuildPbrFloorsOp
     }
   }
 
-  if (isV3) {
-    appendV3TransitionBands(regions, batches, opts, polishStats);
-    appendV3PbrStairs(regions, batches, opts, polishStats);
-    appendV3ElevatedFascias(regions, fasciaBatches, opts, polishStats);
-    root.userData.floorPolish = Object.freeze({ formatVersion: spec.formatVersion, ...polishStats });
-  }
+  appendV3TransitionBands(regions, batches, opts, polishStats);
+  appendV3PbrStairs(regions, batches, opts, polishStats);
+  appendV3ElevatedFascias(regions, fasciaBatches, opts, polishStats);
+  root.userData.floorPolish = Object.freeze({ formatVersion: spec.formatVersion, ...polishStats });
 
   for (const materialId of MATERIAL_ORDER) {
     const batch = batches.get(materialId);
