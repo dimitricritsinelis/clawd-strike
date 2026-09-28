@@ -7,17 +7,27 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { DeterministicRng } from "../utils/Rng";
-import { Ak47ViewModel, type WeaponAlignmentSnapshot } from "./Ak47ViewModel";
 import { Ak47Motion, type Ak47MotionShot } from "./Ak47Motion";
 import type { Ak47AmmoSnapshot } from "./Ak47Weapon";
 import { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } from "./ak47ReloadMarks";
 import type { ViewModelLighting } from "./viewModelLighting";
 
-export type WeaponViewModel = Pick<Ak47ViewModel,
-  "viewModelScene" | "viewModelCamera" | "load" | "setAspect" | "setFrameInput" |
-  "updateFromMainCamera" | "getAlignmentSnapshot" | "dispose"
-> & {
-  /** Shot facts from the fire controller; the legacy viewmodel ignores them. */
+export type WeaponAlignmentSnapshot = {
+  loaded: boolean;
+  dot: number;
+  angleDeg: number;
+};
+
+export type WeaponViewModel = {
+  readonly viewModelScene: Scene;
+  readonly viewModelCamera: PerspectiveCamera;
+  load: () => Promise<void>;
+  setAspect: (aspect: number) => void;
+  setFrameInput: (speedMps: number, grounded: boolean, mouseDeltaX: number, mouseDeltaY: number) => void;
+  updateFromMainCamera: (mainCamera: PerspectiveCamera, deltaSeconds: number) => void;
+  getAlignmentSnapshot: () => WeaponAlignmentSnapshot;
+  dispose: () => void;
+  /** Shot facts from the fire controller. */
   triggerShotFx: (event?: Ak47MotionShot) => void;
   /** Footstep cadence from the bootstrap timer (seconds until the next step). */
   onFootstep?: (intervalS: number) => void;
@@ -33,11 +43,8 @@ export type WeaponViewModel = Pick<Ak47ViewModel,
   reset?: () => void;
 };
 
-/** The previous implementation and GLB stay intact until the candidate is approved. */
-export function createAk47ViewModel(options: { vmDebug: boolean; search: string }): WeaponViewModel {
-  return new URLSearchParams(options.search).get("weapon") === "legacy"
-    ? new Ak47ViewModel(options)
-    : new Ak47AnimatedViewModel();
+export function createAk47ViewModel(): WeaponViewModel {
+  return new Ak47AnimatedViewModel();
 }
 
 const BASE_POSITION = new Vector3(.147, -.128, -.30);

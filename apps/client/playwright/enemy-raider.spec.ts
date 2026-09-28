@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { advanceRuntime, buildRuntimeUrl, readRuntimeState, waitForRuntimeReady } from "../scripts/lib/runtimePlaywright.mjs";
 
-test("Blender raider plants feet, animates independent clones, and retains the garage", async ({ page }) => {
+test("Blender raider plants feet and animates independent clones", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.route("**/enemy-raider-test", (route) => route.fulfill({
@@ -315,15 +315,7 @@ test("Blender raider plants feet, animates independent clones, and retains the g
     pending.dispose(scene);
     await new Promise((resolve)=>setTimeout(resolve,0));
     const attachedAfterDispose=!!pendingRoot.getObjectByName("RaiderRig");
-    history.replaceState(null,"","?raider=legacy");
-    await preloadEnemyVisualAssets();
-    const legacy = new EnemyVisual("Garage",scene,loader);
-    await new Promise((resolve)=>setTimeout(resolve,0));
-    const legacyRoot=scene.children[0];
-    const legacyHasRig=!!legacyRoot.getObjectByName("RaiderRig");
-    const legacyHasModel=legacyRoot.children.some((child:any)=>child.isGroup && child.children.some((c:any)=>c.type==="Group"));
-    legacy.dispose(scene);
-    return {forwardGaits,strides,legLengthWorst,torsoMotion,plantedSamples,rollingPlantSamples,plantedGroundError,plantedFrameDrift,transitionFrameTravel,frames,legLengths,standingHipHeight,bootSampleCount:bootSamples.length,bootDeformation,bootWorst,runLegLengthError,passingHipHeight,passingHipSamples,strafeBootClearance,strafeLegClearance,otherRest,otherAfter,frozen,paused,beforeFire,afterFire,torsoStart,torsoSettled,slopeRotations,farLod,reset,rampSamples,survivor,attachedAfterDispose,legacyHasRig,legacyHasModel,remaining:scene.children.length};
+    return {forwardGaits,strides,legLengthWorst,torsoMotion,plantedSamples,rollingPlantSamples,plantedGroundError,plantedFrameDrift,transitionFrameTravel,frames,legLengths,standingHipHeight,bootSampleCount:bootSamples.length,bootDeformation,bootWorst,runLegLengthError,passingHipHeight,passingHipSamples,strafeBootClearance,strafeLegClearance,otherRest,otherAfter,frozen,paused,beforeFire,afterFire,torsoStart,torsoSettled,slopeRotations,farLod,reset,rampSamples,survivor,attachedAfterDispose,remaining:scene.children.length};
   });
   for(const gait of result.forwardGaits) {
     expect(gait.minPelvis,JSON.stringify(gait)).toBeGreaterThanOrEqual(.967);
@@ -385,19 +377,17 @@ test("Blender raider plants feet, animates independent clones, and retains the g
   expect(result.reset[2]).toBeGreaterThan(-.5);
   expect(result.survivor.every(Number.isFinite)).toBe(true);
   expect(result.attachedAfterDispose).toBe(false);
-  expect(result.legacyHasRig).toBe(false);
-  expect(result.legacyHasModel).toBe(true);
   expect(result.remaining).toBe(0);
   expect(errors).toEqual([]);
 });
 
-for (const variant of ["next","legacy"]) test(`the live game loads ${variant} and keeps ten active raiders`, async ({ page }, testInfo) => {
+test("the live game loads the raider and keeps ten active raiders", async ({ page }, testInfo) => {
   const errors: string[]=[];
   page.on("pageerror",error=>errors.push(error.message));
   const requests: string[]=[];
   page.on("request",request=>{if(request.url().includes("enemy_raider"))requests.push(request.url());});
   await page.goto(buildRuntimeUrl(testInfo.project.use.baseURL as string, {
-    autostart:"human",agentName:"RaiderReview",extraSearchParams:{debug:1,god:1,raider:variant,vm:0},
+    autostart:"human",agentName:"RaiderReview",extraSearchParams:{debug:1,god:1,vm:0},
   }), {waitUntil:"domcontentloaded"});
   await waitForRuntimeReady(page,{routeId:"raider-game"});
   await advanceRuntime(page,1000);
@@ -412,11 +402,11 @@ for (const variant of ["next","legacy"]) test(`the live game loads ${variant} an
   const perf=await page.evaluate(()=>window.__debug_render_perf?.());
   const output=path.resolve("../../artifacts/raider-review");
   await mkdir(output,{recursive:true});
-  await page.screenshot({path:path.join(output,`in-game-${variant}.png`)});
-  await writeFile(path.join(output,`in-game-${variant}.json`),JSON.stringify({state,perf,requests,errors},null,2));
-  expect(requests.some(url=>url.includes(variant==="next"?"enemy_raider_next/raider.glb":"enemy_raider/model.glb"))).toBe(true);
+  await page.screenshot({path:path.join(output,"in-game.png")});
+  await writeFile(path.join(output,"in-game.json"),JSON.stringify({state,perf,requests,errors},null,2));
+  expect(requests.some(url=>url.includes("enemy_raider_next/raider.glb"))).toBe(true);
   expect(state.bots.aliveCount).toBe(10);
-  if(variant==="next")expect(JSON.stringify(perf)).toContain("Raider_High");
+  expect(JSON.stringify(perf)).toContain("Raider_High");
   expect(errors).toEqual([]);
 });
 

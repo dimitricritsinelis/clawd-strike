@@ -1,7 +1,7 @@
 """Author the raider candidate, skin, PBR textures and in-place animation in Blender.
 
 Run Blender --background --python assets/source/enemy-raider/build.py.
-The existing source and shipping raider are read-only garage dependencies.
+The donor source and the legacy rifle GLB are read-only inputs.
 """
 from pathlib import Path
 import bpy
@@ -129,7 +129,7 @@ def repair_hand_boundaries(body):
 def import_fitted_rifle(root):
     scene = bpy.context.scene
     before = set(scene.objects)
-    bpy.ops.import_scene.gltf(filepath=str(root / 'apps/client/public/assets/models/weapons/ak47/ak47.glb'))
+    bpy.ops.import_scene.gltf(filepath=str(root / 'assets/source/ak47/legacy/ak47.glb'))
     bpy.context.view_layer.update()
     imported = sorted(set(scene.objects) - before, key=lambda ob: ob.name)
     scale = .976 / (5.63754 - 3.72077)
@@ -662,10 +662,10 @@ manifest = {
     'license': 'Existing project Tripo character; rifle derivative CC-BY-NC-4.0; new rig and motion Project-Original',
     'dependencies': [{'file':str(DONOR.relative_to(ROOT)), 'source':'Existing repository Tripo export',
         'license':'Existing project asset; no new external acquisition', 'md5':hashlib.md5(DONOR.read_bytes()).hexdigest()},
-        {'file':'apps/client/public/assets/models/weapons/ak47/ak47.glb',
+        {'file':'assets/source/ak47/legacy/ak47.glb',
          'source':'https://sketchfab.com/3d-models/ak-47-384565b1779c450b90397232163e4e6d',
          'author':'lokeig','license':'CC-BY-NC-4.0',
-         'md5':hashlib.md5((ROOT/'apps/client/public/assets/models/weapons/ak47/ak47.glb').read_bytes()).hexdigest()}],
+         'md5':hashlib.md5((ROOT/'assets/source/ak47/legacy/ak47.glb').read_bytes()).hexdigest()}],
     'triangles':triangles, 'bones':len(definition), 'heightM':1.8,
     'coordinates':'Blender +X forward, +Z up; glTF +X forward, +Y up. Foot plane at 0.',
     'animations':[track.name for track in rig.animation_data.nla_tracks],

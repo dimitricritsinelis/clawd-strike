@@ -2148,10 +2148,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   if (viewModelEnabled && !viewModel) {
     try {
       const { createAk47ViewModel } = await import("./weapons/Ak47AnimatedViewModel");
-      const nextViewModel = createAk47ViewModel({
-        vmDebug: runtimeParams.vmDebug && runtimeParams.debug,
-        search: window.location.search,
-      });
+      const nextViewModel = createAk47ViewModel();
       nextViewModel.setAspect(renderer.getAspect());
       await nextViewModel.load();
       viewModel = nextViewModel;

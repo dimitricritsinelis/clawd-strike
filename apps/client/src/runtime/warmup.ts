@@ -93,10 +93,7 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
     warmupTasks.push((async () => {
       let warmedViewModel: WeaponViewModel | null = null;
       try {
-        warmedViewModel = createAk47ViewModel({
-          vmDebug: parsed.vmDebug && parsed.debug,
-          search,
-        });
+        warmedViewModel = createAk47ViewModel();
         await warmedViewModel.load();
         viewModel = warmedViewModel;
         warmedViewModel = null;

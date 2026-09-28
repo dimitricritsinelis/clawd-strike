@@ -187,41 +187,39 @@ test("each fired round schedules audio and keeps its flash on the shot frame", a
       await audio.loadPromise;
       if (!audio.shotVariants) throw new Error("Gunshot asset did not load");
       const world = new WorldColliders([], { x: -100, y: -100, w: 200, h: 200 });
-      for (const search of ["", "?weapon=legacy"]) {
-        const vm = createAk47ViewModel({ vmDebug: false, search });
-        if (!search) await vm.load();
-        const camera = vm.viewModelCamera.clone(false);
-        const flash = search ? vm.muzzleFlash : vm.viewModelScene.getObjectByName("MuzzleFlame");
-        for (const fps of [144, 60, 30, 10]) for (const rate of [8, 12.5]) {
-          const weapon = new Ak47Weapon({ seed: 7 });
-          weapon.setFireIntervalS(1 / rate);
-          let shots = 0, audioMatches = 0, visibleShotFrames = 0, shotFrames = 0;
-          for (let frame = 0; frame < fps; frame++) {
-            time += 1 / fps;
-            let fired = false;
-            weapon.update({
-              deltaSeconds: 1 / fps, fireHeld: true, world,
-              origin: camera.position, forward: camera.getWorldDirection(camera.position.clone()),
-              grounded: true, speedMps: 0,
-            }, () => {
-              shots++;
-              fired = true;
-              vm.triggerShotFx();
-              audio.playAk47Shot();
-              if (audio.playerBurst.close?.startTime === time) audioMatches++;
-            });
-            vm.updateFromMainCamera(camera, 1 / fps);
-            if (fired) {
-              shotFrames++;
-              if (flash.visible) visibleShotFrames++;
-            }
+      const vm = createAk47ViewModel();
+      await vm.load();
+      const camera = vm.viewModelCamera.clone(false);
+      const flash = vm.viewModelScene.getObjectByName("MuzzleFlame");
+      for (const fps of [144, 60, 30, 10]) for (const rate of [8, 12.5]) {
+        const weapon = new Ak47Weapon({ seed: 7 });
+        weapon.setFireIntervalS(1 / rate);
+        let shots = 0, audioMatches = 0, visibleShotFrames = 0, shotFrames = 0;
+        for (let frame = 0; frame < fps; frame++) {
+          time += 1 / fps;
+          let fired = false;
+          weapon.update({
+            deltaSeconds: 1 / fps, fireHeld: true, world,
+            origin: camera.position, forward: camera.getWorldDirection(camera.position.clone()),
+            grounded: true, speedMps: 0,
+          }, () => {
+            shots++;
+            fired = true;
+            vm.triggerShotFx();
+            audio.playAk47Shot();
+            if (audio.playerBurst.close?.startTime === time) audioMatches++;
+          });
+          vm.updateFromMainCamera(camera, 1 / fps);
+          if (fired) {
+            shotFrames++;
+            if (flash.visible) visibleShotFrames++;
           }
-          vm.updateFromMainCamera(camera, .1);
-          vm.updateFromMainCamera(camera, .1);
-          results.push({ search, fps, rate, shots, audioMatches, shotFrames, visibleShotFrames, ended: !flash.visible });
         }
-        vm.dispose();
+        vm.updateFromMainCamera(camera, .1);
+        vm.updateFromMainCamera(camera, .1);
+        results.push({ fps, rate, shots, audioMatches, shotFrames, visibleShotFrames, ended: !flash.visible });
       }
+      vm.dispose();
       return results;
     } finally {
       window.AudioContext = original;

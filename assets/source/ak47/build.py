@@ -133,7 +133,7 @@ validation = {
     'weightMaxError': max(weight_errors),
 }
 (OUT / 'idle-validation.json').write_text(json.dumps(validation) + '\n')
-legacy = ROOT / 'apps/client/public/assets/models/weapons/ak47/ak47.glb'
+legacy = SOURCE / 'legacy/ak47.glb'
 hand = SOURCE / 'hand-base-cc0.blend'
 textures = ['urban-b-albedo.png', 'urban-b-normal.png', 'urban-b-occlusion.png']
 material_sources = []

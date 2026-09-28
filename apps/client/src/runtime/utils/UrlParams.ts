@@ -36,7 +36,6 @@ export type RuntimeUrlParams = {
   perf: boolean;
   highVis: boolean;
   vm: boolean;
-  vmDebug: boolean;
   anchors: boolean;
   labels: boolean;
   anchorTypes: string[];
@@ -203,7 +202,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const rawPerf = getParam(params, "perf");
   const rawHighVis = getParam(params, "high-vis", "highvis");
   const rawVm = getParam(params, "vm");
-  const rawVmDebug = getParam(params, "vm-debug", "vmDebug");
   const rawAnchors = getParam(params, "anchors");
   const rawLabels = getParam(params, "labels");
   const rawAnchorTypes = getParam(params, "anchor-types", "anchorTypes");
@@ -233,7 +231,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const perf = parseBooleanFlag(rawPerf);
   const highVis = parseBooleanFlag(rawHighVis);
   const vm = parseBooleanFlagWithDefault(rawVm, true);
-  const vmDebug = parseBooleanFlag(rawVmDebug);
   const anchors = parseBooleanFlag(rawAnchors);
   const labels = parseBooleanFlag(rawLabels);
   const anchorTypes = parseAnchorTypes(rawAnchorTypes);
@@ -272,7 +269,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     perf,
     highVis,
     vm,
-    vmDebug,
     anchors,
     labels,
     anchorTypes,

@@ -1,11 +1,9 @@
 import {
   AdditiveBlending,
-  Box3,
   CanvasTexture,
   Color,
   CylinderGeometry,
   Group,
-  Matrix4,
   Mesh,
   MeshStandardMaterial,
   Object3D,
@@ -30,24 +28,18 @@ import {
   resolveHitReactionFrame,
 } from "./RaiderAnimation";
 
-const MODEL_URL = "/assets/models/characters/enemy_raider/model.glb";
-const CANDIDATE_MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
+const MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
 const MODEL_TARGET_HEIGHT_M = 1.8;
 // Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
 // this leaves the whole wave near half the map's remaining tri headroom.
 //
-// Pinned just above the shipping asset's measured count (7,492 tris) so a
+// Pinned just above the shipping Raider_Low plus rifle count (7,814 tris) so a
 // heavier re-export actually trips it. Keep this in step with the asset: a
 // threshold at or above whatever ships can never fire and protects nothing,
 // which is exactly how the earlier 30,000 sat uselessly above a 24,986-tri
 // model for an entire release cycle.
 const MODEL_MAX_TRIS_WARN = 8_000;
 const MODEL_FACING_FIXUP_YAW_RAD = Math.PI * 0.5;
-const MODEL_BARREL_AXIS_LOCAL = new Vector3(1, 0, 0);
-const MUZZLE_FORWARD_OFFSET_M = 0.03;
-const MUZZLE_MIN_HEIGHT_RATIO = 0.45;
-const MUZZLE_CENTERLINE_Z_RATIO = 0.7;
-const MUZZLE_FALLBACK_HEIGHT_RATIO = 0.63;
 
 const BODY_RADIUS_M = 0.28;
 const BODY_HEIGHT_M = 1.2;
@@ -134,20 +126,10 @@ let enemyVisualModelStreamingEnabled = true;
 
 type EnemyModelTemplate = {
   template: Object3D;
-  center: Vector3;
-  minY: number;
-  sizeY: number;
-  muzzleLocal: Vector3;
-  animations?: AnimationClip[];
+  animations: AnimationClip[];
 };
 
-const enemyModelTemplates = new Map<string, Promise<EnemyModelTemplate>>();
-
-function selectedModelUrl(): string {
-  // Keep the shipping asset and original rendering path in the garage until approval.
-  return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("raider") === "legacy"
-    ? MODEL_URL : CANDIDATE_MODEL_URL;
-}
+let enemyModelTemplate: Promise<EnemyModelTemplate> | null = null;
 
 export async function preloadEnemyVisualAssets(): Promise<void> {
   const warmupLoader = new GLTFLoader();
@@ -159,125 +141,48 @@ export function setEnemyVisualModelStreamingEnabled(enabled: boolean): void {
 }
 
 function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyModelTemplate> {
-  const url = selectedModelUrl();
-  const cached = enemyModelTemplates.get(url);
-  if (cached) return cached;
+  if (enemyModelTemplate) return enemyModelTemplate;
 
-  const promise = sharedGltfLoader.loadAsync(url)
+  const promise = sharedGltfLoader.loadAsync(MODEL_URL)
     .then((gltf) => {
       gltf.scene.updateMatrixWorld(true);
 
-      if (url === CANDIDATE_MODEL_URL) {
-        if (!gltf.scene.getObjectByName("MuzzleSocket") || gltf.animations.length !== 9) {
-          throw new Error("Raider candidate is missing its rig, socket or animation set");
-        }
-        const triangleCount = (name: string): number => {
-          const mesh = gltf.scene.getObjectByName(name) as Mesh | undefined;
-          if (!mesh?.isMesh) throw new Error(`Raider candidate missing ${name}`);
-          return (mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position").count) / 3;
-        };
-        const rifleTris = triangleCount("Raider_Rifle");
-        for (const [name, budget] of [["Raider_Low", MODEL_MAX_TRIS_WARN], ["Raider_High", 28_000]] as const) {
-          const tris = triangleCount(name) + rifleTris;
-          if (tris > budget) throw new Error(`Raider ${name} exceeds ${budget} triangles`);
-        }
-        // Preserve garment and leather detail at oblique viewing angles.
-        // Three clamps this to the device's supported anisotropy at upload.
-        gltf.scene.traverse((child) => {
-          if (!(child instanceof Mesh)) return;
-          for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
-            if (!(material instanceof MeshStandardMaterial)) continue;
-            for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
-              if (texture) texture.anisotropy = 4;
-            }
-          }
-        });
-        // Authored metre scale and foot origin; weapon length and animated bounds
-        // must never recenter or resize the character away from its hitbox.
-        return { template: gltf.scene, center: new Vector3(), minY: 0,
-          sizeY: MODEL_TARGET_HEIGHT_M, muzzleLocal: new Vector3(), animations: gltf.animations };
+      if (!gltf.scene.getObjectByName("MuzzleSocket") || gltf.animations.length !== 9) {
+        throw new Error("Raider candidate is missing its rig, socket or animation set");
       }
-
-      const bounds = new Box3().setFromObject(gltf.scene);
-      const size = new Vector3();
-      const center = new Vector3();
-      bounds.getSize(size);
-      bounds.getCenter(center);
-
-      const minMuzzleY = bounds.min.y + size.y * MUZZLE_MIN_HEIGHT_RATIO;
-      const maxMuzzleAbsZ = size.z * MUZZLE_CENTERLINE_Z_RATIO;
-      const rootWorldInverse = new Matrix4().copy(gltf.scene.matrixWorld).invert();
-      const vertexWorld = new Vector3();
-      const vertexRootLocal = new Vector3();
-      const bestMuzzle = new Vector3();
-      let bestProjection = -Infinity;
-
-      gltf.scene.traverse((child) => {
-        const maybeMesh = child as Mesh;
-        if (!maybeMesh.isMesh) return;
-        const positionAttr = maybeMesh.geometry?.getAttribute("position");
-        if (!positionAttr || positionAttr.itemSize < 3) return;
-
-        const step = positionAttr.count > 20000 ? 2 : 1;
-        for (let i = 0; i < positionAttr.count; i += step) {
-          vertexRootLocal
-            .set(positionAttr.getX(i), positionAttr.getY(i), positionAttr.getZ(i))
-            .applyMatrix4(maybeMesh.matrixWorld);
-          vertexWorld.copy(vertexRootLocal).applyMatrix4(rootWorldInverse);
-
-          if (vertexWorld.y < minMuzzleY) continue;
-          if (Math.abs(vertexWorld.z - center.z) > maxMuzzleAbsZ) continue;
-
-          const projection = vertexWorld.dot(MODEL_BARREL_AXIS_LOCAL);
-          if (projection > bestProjection) {
-            bestProjection = projection;
-            bestMuzzle.copy(vertexWorld);
-          }
-        }
-      });
-
-      const muzzleLocal = Number.isFinite(bestProjection)
-        ? bestMuzzle
-        : new Vector3(
-          bounds.max.x,
-          bounds.min.y + size.y * MUZZLE_FALLBACK_HEIGHT_RATIO,
-          center.z,
-        );
-      muzzleLocal.addScaledVector(MODEL_BARREL_AXIS_LOCAL, MUZZLE_FORWARD_OFFSET_M);
-
-      // The asset ships pre-optimized (LOD + texture sizing happen offline in
-      // art-source tooling); runtime decimation is forbidden here — three's
-      // SimplifyModifier tears UV seams open and shreds the silhouette.
-      let templateTris = 0;
-      gltf.scene.traverse((child) => {
-        const mesh = child as Mesh;
-        if (!mesh.isMesh) return;
-        const index = mesh.geometry.getIndex();
-        const position = mesh.geometry.getAttribute("position");
-        templateTris += Math.floor((index ? index.count : position?.count ?? 0) / 3);
-      });
-      if (templateTris > MODEL_MAX_TRIS_WARN) {
-        console.warn(
-          `[enemy-visual] enemy model is ${templateTris} tris (budget guardrail ${MODEL_MAX_TRIS_WARN}); ` +
-          "re-export a lighter LOD offline (see art-source/characters/enemy_raider)",
-        );
-      }
-
-      return {
-        template: gltf.scene,
-        center,
-        minY: bounds.min.y,
-        sizeY: Math.max(0.001, size.y),
-        muzzleLocal,
+      // The asset ships pre-optimized (LOD and texture sizing happen offline in
+      // assets/source/enemy-raider/build.py); runtime decimation is forbidden
+      // here: three's SimplifyModifier tears UV seams open and shreds the silhouette.
+      const triangleCount = (name: string): number => {
+        const mesh = gltf.scene.getObjectByName(name) as Mesh | undefined;
+        if (!mesh?.isMesh) throw new Error(`Raider candidate missing ${name}`);
+        return (mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position").count) / 3;
       };
+      const rifleTris = triangleCount("Raider_Rifle");
+      for (const [name, budget] of [["Raider_Low", MODEL_MAX_TRIS_WARN], ["Raider_High", 28_000]] as const) {
+        const tris = triangleCount(name) + rifleTris;
+        if (tris > budget) throw new Error(`Raider ${name} exceeds ${budget} triangles`);
+      }
+      // Preserve garment and leather detail at oblique viewing angles.
+      // Three clamps this to the device's supported anisotropy at upload.
+      gltf.scene.traverse((child) => {
+        if (!(child instanceof Mesh)) return;
+        for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+          if (!(material instanceof MeshStandardMaterial)) continue;
+          for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
+            if (texture) texture.anisotropy = 4;
+          }
+        }
+      });
+      return { template: gltf.scene, animations: gltf.animations };
     })
     .catch((error) => {
       // Allow retry if the first load fails.
-      enemyModelTemplates.delete(url);
+      enemyModelTemplate = null;
       throw error;
     });
 
-  enemyModelTemplates.set(url, promise);
+  enemyModelTemplate = promise;
   return promise;
 }
 
@@ -373,7 +278,7 @@ export class EnemyVisual {
    */
   private hitFlashFresh = false;
   private yaw = 0;
-  /** Root-tilt flinch for models without the raider rig (legacy GLB, capsule). */
+  /** Root-tilt flinch for the fallback capsule, which has no raider rig. */
   private readonly rootFlinch = new FlinchSpring();
   private readonly rootFlinchAxis = new Vector3(1, 0, 0);
   private rootFlinchTwist: 1 | -1 = 1;
@@ -462,24 +367,15 @@ export class EnemyVisual {
         for (const material of this.instanceMaterials) this.trackFlash(material);
         this.applyHitFlash();
 
+        // Authored metre scale and foot origin; weapon length and animated bounds
+        // must never recenter or resize the character away from its hitbox.
         this.modelRoot = new Group();
         this.modelRoot.rotation.y = MODEL_FACING_FIXUP_YAW_RAD;
-        this.modelRoot.scale.setScalar(MODEL_TARGET_HEIGHT_M / templateData.sizeY);
-        modelInstance.position.set(
-          -templateData.center.x,
-          -templateData.minY,
-          -templateData.center.z,
-        );
         this.modelRoot.add(modelInstance);
-        this.muzzleAnchor.position.copy(templateData.muzzleLocal).add(modelInstance.position);
-        if (templateData.animations) {
-          this.animation = new RaiderAnimation(modelInstance, templateData.animations);
-          this.muzzleFlashMat!.depthTest = true;
-          this.muzzleAnchor.position.set(0, 0, 0);
-          modelInstance.getObjectByName("MuzzleSocket")!.add(this.muzzleAnchor);
-        } else {
-          this.modelRoot.add(this.muzzleAnchor);
-        }
+        this.animation = new RaiderAnimation(modelInstance, templateData.animations);
+        this.muzzleFlashMat!.depthTest = true;
+        this.muzzleAnchor.position.set(0, 0, 0);
+        modelInstance.getObjectByName("MuzzleSocket")!.add(this.muzzleAnchor);
         this.root.add(this.modelRoot);
 
         this.bodyMesh.visible = false;

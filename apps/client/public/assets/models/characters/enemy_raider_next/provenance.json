@@ -12,7 +12,7 @@
       "md5": "d1d134b5700a6de5f412aa0d1072b41f"
     },
     {
-      "file": "apps/client/public/assets/models/weapons/ak47/ak47.glb",
+      "file": "assets/source/ak47/legacy/ak47.glb",
       "source": "https://sketchfab.com/3d-models/ak-47-384565b1779c450b90397232163e4e6d",
       "author": "lokeig",
       "license": "CC-BY-NC-4.0",

@@ -144,7 +144,7 @@ test("AK viewmodel: ready grip, firing, and the magazine-only reload on the shar
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { Triangle, Vector3 } = await import(threeUrl);
     const provenance = await (await fetch("/assets/models/weapons/ak47-next/provenance.json")).json();
-    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    const vm = createAk47ViewModel();
     await vm.load();
     vm.setAspect(16 / 9);
     const camera = vm.viewModelCamera.clone(false);
@@ -414,17 +414,12 @@ test("AK viewmodel: ready grip, firing, and the magazine-only reload on the shar
     };
     const armTriangles = triangleCount((mesh) => Boolean(mesh.isSkinnedMesh));
     vm.dispose();
-    const legacy = createAk47ViewModel({ vmDebug: false, search: "?weapon=legacy" });
-    await legacy.load();
-    const legacyLoaded = legacy.getAlignmentSnapshot().loaded;
-    const legacyName = legacy.constructor.name;
-    legacy.dispose();
     return {
       packageScale, marks, duration, clip, provenance: { animations: provenance.animations, clips: provenance.reload?.clips, audioMarks: provenance.reload?.audioMarks },
       rest, readyGrip, foreEndFingerGaps, fired, frozen, paused, lowFpsBolt, flashEnded, reloadWeight, start, end, windows, hold,
       maxBoltTravel, minSeatedScale, partialScale, midSwap, afterLatch, armBones, maxArmStepDeg, maxDigitDisplacement, wrists,
       firstSequence, caseTravel, caseExpired, resetSequence, beforeCameraKick, afterCameraKick, finalRound, socketParent,
-      texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, persistentOcclusion: persistentOcclusion.sort(), armTriangles, legacyLoaded, legacyName,
+      texturedMaterials: [...texturedMaterials].sort(), detailTextures, handContactOcclusion, persistentOcclusion: persistentOcclusion.sort(), armTriangles,
     };
   });
   console.info("Viewmodel reload:", JSON.stringify({
@@ -510,8 +505,6 @@ test("AK viewmodel: ready grip, firing, and the magazine-only reload on the shar
     expect(texture.anisotropy, texture.material).toBe(16);
   }
   expect(result.armTriangles, "arm budget").toBeLessThan(130000);
-  expect(result.legacyLoaded).toBe(true);
-  expect(result.legacyName).toBe("Ak47ViewModel");
   expect(errors).toEqual([]);
 });
 
@@ -529,7 +522,7 @@ test("reload glove fingers do not intersect one another or sink into the magazin
     const { Box3, PerspectiveCamera, Ray, Triangle, Vector3 } = await import(threeUrl);
     type Probe = { solids(root: Object3D): unknown[]; penetration(solids: unknown[], gloves: SkinnedMesh[]): { count: number; depth: number; where: string } };
     const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
-    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    const vm = createAk47ViewModel();
     await vm.load();
     const camera = new PerspectiveCamera();
     const scene = vm.viewModelScene;
@@ -741,7 +734,7 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
     type V3 = import("three").Vector3;
     type Probe = { solids(root: Object3D): unknown[]; nearest(solids: unknown[], world: V3): number };
     const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
-    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    const vm = createAk47ViewModel();
     await vm.load();
     const camera = new PerspectiveCamera();
     const scene = vm.viewModelScene;
@@ -967,7 +960,7 @@ test("reload framing exposes the trigger and its contacting index finger", async
     const { createAk47ViewModel } = await import(moduleUrl);
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { WebGLRenderer, PerspectiveCamera, BufferAttribute, MeshBasicMaterial } = await import(threeUrl);
-    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    const vm = createAk47ViewModel();
     await vm.load();
     type Action = { getEffectiveWeight(): number };
     const reloadAction = (vm as unknown as { reloadAction: Action }).reloadAction;
@@ -1047,7 +1040,7 @@ test("reload cancel and restart play the hand home along the clip: no joint blen
     const { Box3, Frustum, Matrix4, Quaternion, Vector3 } = await import(threeUrl);
     type Probe = { solids(root: Object3D): unknown[]; penetration(solids: unknown[], gloves: SkinnedMesh[]): { count: number; depth: number; where: string } };
     const probe = (window as unknown as { __gloveProbe: Probe }).__gloveProbe;
-    const vm = createAk47ViewModel({ vmDebug: false, search: "" });
+    const vm = createAk47ViewModel();
     await vm.load();
     vm.setAspect(16 / 9);
     /** Whether a shown magazine is inside the 16:9 view (for the log only; hidden penetration still fails). */
