@@ -1,17 +1,23 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { captureEvidenceErrors, deriveReviewUnits, detectProtectedChanges, hasFrameMeasurement } from "./mapShoot";
-import type { CaptureEvidence } from "./mapShoot";
+import { detectProtectedChanges } from "./mapGuard";
 
 const source = JSON.parse(readFileSync(new URL("../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"));
 
-test("B spawn survey includes both entrance wings even when a frontage is shorter than three metres", () => {
-  const unit = deriveReviewUnits(source).find((unit) => unit.id === "unit-spawn-b-courtyard")!;
-  for (const side of ["WEST", "EAST"]) {
-    assert.ok(unit.views.some((view) => view.id === `elev:FRONTAGE_SPAWN_B_SOUTH_${side}`));
+/** The shipped spec plus one soft_visual and one overhead dressing cluster, each with a placement. */
+function withVisualDressing(spec: typeof source): typeof source {
+  const fixture = structuredClone(spec);
+  for (const classification of ["soft_visual", "overhead"]) {
+    const id = `FIXTURE_${classification.toUpperCase()}`;
+    fixture.dressing_clusters.push({ id: `CLUSTER_${id}`, zoneId: fixture.zones[0].id, classification, anchors: [], assetIds: [`ASSET_${id}`] });
+    fixture.dressing_placements.push({
+      id: `PLACE_${id}`, clusterId: `CLUSTER_${id}`, assetId: `ASSET_${id}`, anchorIds: [],
+      offsetM: { x: 0, y: 0, z: 0 }, scale: { x: 1, y: 1, z: 1 }, yawOffsetDeg: 0,
+    });
   }
-});
+  return fixture;
+}
 
 test("static guard catches tactical inputs and cover transforms outside the old projection", () => {
   const edits = [
@@ -34,7 +40,8 @@ test("static guard catches tactical inputs and cover transforms outside the old 
 });
 
 test("visual dressing and authored composition pass without freezing noncolliding asset dimensions", () => {
-  const changed = structuredClone(source);
+  const base = withVisualDressing(source);
+  const changed = structuredClone(base);
   for (const classification of ["soft_visual", "overhead"]) {
     const cluster = changed.dressing_clusters.find((row: any) => row.classification === classification);
     changed.dressing_placements.find((row: any) => row.clusterId === cluster.id).offsetM.x += 0.1;
@@ -47,7 +54,7 @@ test("visual dressing and authored composition pass without freezing noncollidin
     bays: [{ id: "BAY", moduleId: "blind_niche", columnId: "AXIS" }],
   };
   changed.anchors.find((row: any) => row.type === "cover_cluster").notes = "Updated description.";
-  assert.deepEqual(detectProtectedChanges(source, changed, []), []);
+  assert.deepEqual(detectProtectedChanges(base, changed, []), []);
 });
 
 test("moving an anchor that can produce a legacy collider is protected", () => {
@@ -56,56 +63,13 @@ test("moving an anchor that can produce a legacy collider is protected", () => {
   assert.ok(detectProtectedChanges(source, changed, []).some((reason) => reason.includes("gameplayAnchors")));
 });
 
-function evidence(): CaptureEvidence {
-  return {
-    valid: true, synthetic: false, protectedAuthorityHash: "stable-colliders",
-    units: [{ id: "unit-test", views: { primary: { valid: true }, context: { valid: true } } }],
-  };
-}
-
-test("only fresh finite frame measurements support performance comparison", () => {
-  const good = { drawCalls: 400, triangles: 800_000, medianFrameMs: 5, measurement: "per-view-qa-frame" };
-  assert.equal(hasFrameMeasurement(good), true);
-  assert.equal(hasFrameMeasurement(undefined), false);
-  assert.equal(hasFrameMeasurement({ ...good, measurement: "rolling-runtime-median" }), false);
-  for (const medianFrameMs of [0, -1, NaN, Infinity, null]) {
-    assert.equal(hasFrameMeasurement({ ...good, medianFrameMs }), false);
-  }
-  assert.equal(hasFrameMeasurement({ ...good, drawCalls: 0 }), false);
-  assert.equal(hasFrameMeasurement({ ...good, triangles: NaN }), false);
-});
-
-test("paired runtime evidence catches builder changes that static spec checks cannot", () => {
-  const before = evidence();
-  const after = evidence();
-  assert.deepEqual(captureEvidenceErrors(after, before), []);
-  // Render builders are editable; actual collider output, not the filename, decides.
+test("render builders are editable; only protected gameplay files count", () => {
   assert.deepEqual(detectProtectedChanges(source, source, ["apps/client/src/runtime/map/buildProps.ts"]), []);
-  after.protectedAuthorityHash = "changed-colliders";
-  assert.ok(captureEvidenceErrors(after, before).includes("runtime colliders changed since before capture"));
-});
-
-test("invalid, empty, synthetic, and partial evidence cannot pass", () => {
-  const changes = [
-    (row: CaptureEvidence) => { row.valid = false; },
-    (row: CaptureEvidence) => { row.synthetic = true; },
-    (row: CaptureEvidence) => { row.protectedAuthorityHash = ""; },
-    (row: CaptureEvidence) => { row.units = []; },
-    (row: CaptureEvidence) => { row.units[0]!.views = {}; },
-    (row: CaptureEvidence) => { row.units[0]!.views.primary!.valid = false; },
-    (row: CaptureEvidence) => { delete row.units[0]!.views.context; },
-  ];
-  for (const change of changes) {
-    const bad = evidence();
-    change(bad);
-    assert.ok(captureEvidenceErrors(bad, evidence()).length, String(change));
-    assert.ok(captureEvidenceErrors(evidence(), bad).length, String(change));
-  }
 });
 
 // ---- authored placement guard ----
-import { authoredPlacementReasons, glbBounds, placementDesignBounds, walkableBoundarySegments } from "./mapShoot";
-import type { MapSpec } from "./mapShoot";
+import { authoredPlacementReasons, glbBounds, placementDesignBounds, walkableBoundarySegments } from "./mapGuard";
+import type { MapSpec } from "./mapGuard";
 
 function glb(gltf: object): Buffer {
   const json = Buffer.from(JSON.stringify(gltf));
@@ -177,7 +141,7 @@ test("authoredPlacementReasons rejects walk-through props, floating bases and su
 });
 
 test("authored geometry guard leaves disconnected empty space open and rejects a spanning triangle", async () => {
-  const { glbTriangleBounds } = await import("./mapShoot");
+  const { glbTriangleBounds } = await import("./mapGuard");
   const make = (points: number[]) => {
     const binary=Buffer.alloc(points.length*4);points.forEach((v,i)=>binary.writeFloatLE(v,i*4));
     const data={asset:{version:"2.0"},buffers:[{byteLength:binary.length}],bufferViews:[{buffer:0,byteOffset:0,byteLength:binary.length}],accessors:[{bufferView:0,componentType:5126,count:points.length/3,type:"VEC3"}],meshes:[{primitives:[{attributes:{POSITION:0}}]}],nodes:[{mesh:0,translation:[1,0,0]}],scenes:[{nodes:[0]}],scene:0};
@@ -189,7 +153,7 @@ test("authored geometry guard leaves disconnected empty space open and rejects a
   assert.deepEqual(vertices.slice(0,3), [[-2,0,0],[-1,0,0],[-1,0,10]]);
   assert.deepEqual(apart[0],{min:[-2,0,0],max:[-1,0,10]});
   const spec={zones:[],traversal_surfaces:[{id:"court",kind:"flat",rect:{x:0,y:0,w:10,h:10},elevationM:0}],authored_placements:[{id:"shared",modelId:"model",position:{x:0,y:0,z:0},yawDeg:180}]} as unknown as MapSpec;
-  const enclosing={min:[-2,0,0],max:[12,0,10]} as import("./mapShoot").Bounds3;
+  const enclosing={min:[-2,0,0],max:[12,0,10]} as import("./mapGuard").Bounds3;
   assert.match(authoredPlacementReasons(spec,()=>enclosing).join("\n"),/geometry below/);
   assert.deepEqual(authoredPlacementReasons(spec,()=>enclosing,undefined,undefined,()=>apart),[]);
   const crossing=glbTriangleBounds(make([-3,0,-2,11,0,-2,4,0,12]));
@@ -199,7 +163,7 @@ test("authored geometry guard leaves disconnected empty space open and rejects a
 
 
 test("placement contact uses transformed mesh vertices on a slope and still rejects sinking and floating", () => {
-  const local = { min: [0.1,0,10], max: [0.1,3,18] } as import("./mapShoot").Bounds3;
+  const local = { min: [0.1,0,10], max: [0.1,3,18] } as import("./mapGuard").Bounds3;
   const points: [number,number,number][] = [[0.1,0,10],[0.1,1.4,18],[0.1,3,10]];
   const ramp = { id:"ramp",kind:"ramp",rect:{x:0,y:10,w:10,h:8},axis:"y",startElevationM:0,endElevationM:1.4 };
   const reasons = (z: number, vertices = points) => authoredPlacementReasons(

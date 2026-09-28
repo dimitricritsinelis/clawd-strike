@@ -125,7 +125,7 @@ if (action === "revert") {
   }
   restore(files);
   rmSync(checkpoint);
-  console.log(`revert ${unit}: restored the previous files; run pnpm map:shoot <unit> --tag <round> to regenerate and capture`);
+  console.log(`revert ${unit}: restored the previous files; run pnpm map:check to regenerate the runtime map and check protected gameplay`);
   process.exit(0);
 }
 const packagePath = path.join(ROOT, "assets/source", unit, "package.json");
@@ -290,4 +290,4 @@ try {
   restore(files);
   throw error;
 }
-console.log(`${action} ${unit}: done; run pnpm map:shoot <unit> --tag <round> to regenerate and capture`);
+console.log(`${action} ${unit}: done; run pnpm map:check to regenerate the runtime map and check protected gameplay`);

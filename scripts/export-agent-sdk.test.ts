@@ -12,7 +12,6 @@ import {
   PUBLIC_AGENT_COMPANION_REPO_URL,
 } from "../apps/shared/publicAgentContract";
 import { exportAgentSdkRepo } from "./lib/agentSdkExport";
-import { exportAgentStarterRepo } from "./lib/agentStarterExport";
 
 const execFile = promisify(execFileCallback);
 const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -63,10 +62,6 @@ async function readExportSnapshot(targetRoot: string, managedPaths: string[]): P
   }
   return snapshot;
 }
-
-test("starter export alias points at the canonical agent SDK exporter", () => {
-  assert.equal(exportAgentStarterRepo, exportAgentSdkRepo);
-});
 
 test("dry-run export succeeds against a separate agent SDK repo checkout", async () => {
   const tempRoot = await createTempRoot();

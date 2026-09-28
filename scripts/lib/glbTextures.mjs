@@ -159,12 +159,3 @@ export function assertSameAccessors(beforeBytes, afterBytes) {
     if (!a.equals(b)) throw new Error(`accessor ${index} changed during texture externalization`);
   }
 }
-
-/** Shared texture files a GLB references through `uriPrefix`. */
-export function glbSharedTextures(bytes, uriPrefix) {
-  const { json } = parseGlb(bytes);
-  return [...new Set((json.images ?? [])
-    .map((image) => image.uri)
-    .filter((uri) => typeof uri === "string" && uri.startsWith(uriPrefix))
-    .map((uri) => uri.slice(uriPrefix.length)))].sort();
-}

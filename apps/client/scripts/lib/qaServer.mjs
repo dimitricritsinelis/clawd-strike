@@ -477,16 +477,3 @@ export async function startQaServer(options = {}) {
     throw error;
   }
 }
-
-export async function withQaServer(callback, options = {}) {
-  const {
-    startServer = startQaServer,
-    ...serverOptions
-  } = options;
-  const server = await startServer(serverOptions);
-  try {
-    return await callback(server);
-  } finally {
-    await server.close();
-  }
-}

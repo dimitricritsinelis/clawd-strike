@@ -43,8 +43,3 @@ assets/source/unit-*/*.png
 assets/source/bz04-shared-environment/*.glb
 assets/source/bz04-shared-environment/*.inspection.json
 assets/source/ak47/exports/
-
-# Map-guard scratch output (written by scripts/map-shoot.ts)
-docs/map-design/layout-reference.md
-docs/map-design/layout-reference.svg
-docs/map-design/blockout/topdown_layout.svg

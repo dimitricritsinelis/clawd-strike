@@ -14,7 +14,6 @@ import {
 } from "./runtimePlaywright.mjs";
 import {
   aggregateShotReviews,
-  compareCapturedShotPair,
   parseHumanReviewPolicy,
   parseShotAcceptance,
   resolveShotDefinition,
@@ -125,36 +124,12 @@ test("verifies the live camera against the authored shot pose", () => {
   assert.ok(mismatching.deltas.positionM > 10);
 });
 
-test("compares distinct captures at the exact authored camera tolerance", () => {
-  const before = healthyCapture();
-  const after = healthyCapture();
-  const result = compareCapturedShotPair({
-    shotId: "SHOT_A",
-    shotDefinition: { id: "SHOT_A", acceptance: {} },
-    beforeCapture: before,
-    afterCapture: after,
-    beforeMetrics: healthyMetrics,
-    afterMetrics: { ...healthyMetrics, hash: "hash-b", contrast: 0.21 },
-    diff: { changedPixelRatio: 0.1 },
-  });
-  assert.equal(result.passed, true, result.findings.map((finding) => finding.code).join(" | "));
-  assert.deepEqual(result.cameraTolerance, {
+test("defaults to the exact authored camera tolerance", () => {
+  assert.deepEqual(parseShotAcceptance({ id: "SHOT_A", acceptance: {} }).cameraTolerance, {
     positionM: 0.02,
     angleDeg: 0.25,
     fovDeg: 0.05,
   });
-
-  const identical = compareCapturedShotPair({
-    shotId: "SHOT_A",
-    shotDefinition: { id: "SHOT_A", acceptance: {} },
-    beforeCapture: before,
-    afterCapture: after,
-    beforeMetrics: healthyMetrics,
-    afterMetrics: healthyMetrics,
-    diff: { changedPixelRatio: 0 },
-  });
-  assert.equal(identical.passed, false);
-  assert.ok(identical.findings.some((finding) => finding.code === "identical-images"));
 });
 
 test("parses canonical and backward-compatible structured acceptance", () => {
