@@ -5,7 +5,7 @@ import type { RuntimeMapAssets } from "../map/types";
 export type QaAssetProfile = "qa" | "cell-review";
 
 /** CC0 children emitted by the retained procedural prefab layouts. */
-export function compiledPrefabModelIds(runtimeId: string): readonly string[] {
+function compiledPrefabModelIds(runtimeId: string): readonly string[] {
   if (runtimeId === "bazaar_spawn_cover") return ["ph_wooden_crate_01"];
   if (runtimeId === "bazaar_cover_goods") return ["cc0_spice_sack"];
   if (runtimeId === "bazaar_market_stall") return ["ph_wooden_crate_01", "ph_wicker_basket_02", "cc0_spice_sack", "ph_brass_pot_01", "ph_ceramic_pot"];
@@ -263,15 +263,64 @@ export function resolveQaDoorModelIds(mapAssets: RuntimeMapAssets): string[] {
       .filter((asset) => asset.runtime?.mode === "model")
       .map((asset) => [asset.id, asset.runtime!.id] as const),
   );
+  // buildV3Architecture emits no modules on a frontage whose massing an
+  // authored facade or section GLB owns, so doors there never place a model.
+  const sectionFaces = new Set((blockout.sectionModels ?? []).flatMap((section) => (
+    section.faces.map((face) => `${section.zoneId}:${face}`)
+  )));
+  const glbOwnedFrontageIds = new Set((blockout.architecturePlacements ?? []).flatMap((placement) => (
+    placement.kind === "massing" && (placement.facadeModelId || sectionFaces.has(`${placement.zoneId}:${placement.face}`))
+      ? [placement.frontageId]
+      : []
+  )));
   return sortedUnique(
     (blockout.architecturePlacements ?? []).flatMap((placement) => {
-      if (placement.kind !== "facade_module" || placement.moduleKind !== "door" || !placement.assetId) {
+      if (
+        placement.kind !== "facade_module"
+        || placement.moduleKind !== "door"
+        || !placement.assetId
+        || glbOwnedFrontageIds.has(placement.frontageId)
+      ) {
         return [];
       }
       const modelId = modelIdByAssetId.get(placement.assetId);
       return modelId ? [modelId] : [];
     }),
   );
+}
+
+/** Wall-pack materials the compiled map builds with; both boot paths preload only these. */
+export function plannedWallMaterialIds(mapAssets: RuntimeMapAssets): string[] {
+  return sortedUnique([
+    ...QA_WALL_DIRECT_MATERIAL_IDS,
+    ...(r8AppliesTo(mapAssets.blockout.mapId) ? [...Object.values(R8_DETAIL_MATERIAL_IDS), ...R8_PROP_MATERIAL_IDS] : []),
+    ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
+      Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
+    )),
+    ...(mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
+      placement.kind === "massing"
+        ? Object.values(placement.materialSlots).filter((id) => id.startsWith("ph_"))
+        : []
+    )),
+    // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
+    ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
+    ...(mapAssets.blockout.authoredPlacements ?? []).flatMap((placement) => placement.materialIds),
+  ]);
+}
+
+/**
+ * Registered prop models the compiled map instantiates: model dressing, the
+ * retained prefab children and, unless excluded, the R8 wall-foot clutter.
+ */
+export function plannedPropModelIds(mapAssets: RuntimeMapAssets, includeR8Clutter = true): string[] {
+  const dressingPlacements = mapAssets.blockout.dressingPlacements ?? [];
+  return sortedUnique([
+    ...dressingPlacements.flatMap((placement) => (
+      placement.runtime.mode === "model" ? [placement.runtime.id] : []
+    )),
+    ...dressingPlacements.flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
+    ...(includeR8Clutter && dressingPlacements.length > 0 && r8AppliesTo(mapAssets.blockout.mapId) ? R8_CLUTTER_MODEL_IDS : []),
+  ]);
 }
 
 export function createQaAssetPlan(
@@ -285,32 +334,8 @@ export function createQaAssetPlan(
         ...QA_FLOOR_DIRECT_MATERIAL_IDS,
         ...mapAssets.blockout.zones.flatMap((zone) => zone.floorMaterialId ? [zone.floorMaterialId] : []),
       ]);
-  const wallMaterialIds = options.wallPbr === false
-    ? []
-    : sortedUnique([
-        ...QA_WALL_DIRECT_MATERIAL_IDS,
-        ...(r8AppliesTo(mapAssets.blockout.mapId) ? [...Object.values(R8_DETAIL_MATERIAL_IDS), ...R8_PROP_MATERIAL_IDS] : []),
-        ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
-          Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
-        )),
-        ...(mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
-          placement.kind === "massing"
-            ? Object.values(placement.materialSlots).filter((id) => id.startsWith("ph_"))
-            : []
-        )),
-        // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
-        ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
-        ...(mapAssets.blockout.authoredPlacements ?? []).flatMap((placement) => placement.materialIds),
-      ]);
-  const propModelIds = options.bazaarProps === false
-    ? []
-    : sortedUnique([
-        ...(mapAssets.blockout.dressingPlacements ?? []).flatMap((placement) => (
-          placement.runtime.mode === "model" ? [placement.runtime.id] : []
-        )),
-        ...(mapAssets.blockout.dressingPlacements ?? []).flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
-        ...((mapAssets.blockout.dressingPlacements ?? []).length > 0 && r8AppliesTo(mapAssets.blockout.mapId) ? R8_CLUTTER_MODEL_IDS : []),
-      ]);
+  const wallMaterialIds = options.wallPbr === false ? [] : plannedWallMaterialIds(mapAssets);
+  const propModelIds = options.bazaarProps === false ? [] : plannedPropModelIds(mapAssets);
   const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
   const facadeModelIds = sortedUnique(
     (mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (

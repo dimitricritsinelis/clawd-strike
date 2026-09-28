@@ -8,6 +8,7 @@ import {
   QaAssetReadinessTracker,
   createQaAssetPlan,
   hashQaAssetRequestIds,
+  plannedPropModelIds,
   preloadQaDirectTextures,
   qaDirectTextureRequestId,
   qaFacadeModelRequestId,
@@ -18,12 +19,14 @@ import {
 import {
   parseAnchorsSpec,
   parseBlockoutSpec,
+  type RuntimeArchitectureMassingPlacement,
   type RuntimeMapAssets,
 } from "../map/types";
 import {
   parsePropModelManifest,
   resolvePropModelUrlForQuality,
 } from "../render/models/PropModelLibrary";
+import { R8_CLUTTER_MODEL_IDS } from "../map/r8/buildR8Clutter";
 
 function fixtureMap(): RuntimeMapAssets {
   return {
@@ -123,6 +126,15 @@ test("retained prefab children preload after standalone dressing is retired", ()
   assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack","ph_brass_pot_01","ph_ceramic_pot","ph_wicker_basket_02","ph_wooden_crate_01"]);
 });
 
+test("mobile prop plan drops only the R8 wall-foot clutter models", () => {
+  const map = fixtureMap();
+  map.blockout.mapId = "bazaar-map";
+  map.blockout.dressingPlacements![0]!.runtime = { mode: "procedural", id: "bazaar_spawn_cover" };
+  assert.deepEqual(plannedPropModelIds(map, false), ["ph_wooden_crate_01"]);
+  assert.deepEqual(plannedPropModelIds(map), [...new Set(["ph_wooden_crate_01", ...R8_CLUTTER_MODEL_IDS])].sort());
+  assert.deepEqual(createQaAssetPlan(map, "qa").propModelIds, plannedPropModelIds(map));
+});
+
 test("QA asset plan is deterministic and sorts compiled dependencies", () => {
   const first = createQaAssetPlan(fixtureMap(), "cell-review");
   const second = createQaAssetPlan(fixtureMap(), "cell-review");
@@ -148,7 +160,7 @@ test("QA asset plan is deterministic and sorts compiled dependencies", () => {
   );
 });
 
-test("current V3 plan derives door models only from compiled runtime placements", () => {
+test("current V3 plan derives door models only from compiled runtime placements that can place them", () => {
   const runtimeSpecUrl = new URL(
     "../../../public/maps/bazaar-map/map_spec.json",
     import.meta.url,
@@ -176,6 +188,7 @@ test("current V3 plan derives door models only from compiled runtime placements"
       return modelId ? [modelId] : [];
     }),
   )].sort();
+  assert.deepEqual(compiledDoorModelIds, ["ph_large_castle_door"]);
   const plan = createQaAssetPlan(mapAssets, "cell-review", {
     floorPbr: false,
     wallPbr: false,
@@ -183,8 +196,10 @@ test("current V3 plan derives door models only from compiled runtime placements"
     bazaarProps: false,
     doorModels: true,
   });
-  assert.deepEqual(plan.doorModelIds, compiledDoorModelIds);
   assert.ok(!plan.doorModelIds.includes("ph_rollershutter_window_02"));
+  // The castle-door module sits on a frontage an authored section GLB owns,
+  // where buildV3Architecture emits no modules, so no door model is placed.
+  assert.deepEqual(plan.doorModelIds, []);
 
   const buildBlockoutSource = readFileSync(
     new URL("../map/buildBlockout.ts", import.meta.url),
@@ -195,6 +210,48 @@ test("current V3 plan derives door models only from compiled runtime placements"
     /const wallDetailPlacements = isV3\s*\?\s*buildV3Architecture\(/,
     "V3 maps must continue to bypass the legacy wallDetailPlacer door selector",
   );
+});
+
+test("door models load only for door modules on frontages no authored GLB owns", () => {
+  const map = fixtureMap();
+  map.blockout.formatVersion = "3.0";
+  map.blockout.assetRegistry = [{
+    id: "ASSET_DOOR",
+    label: "Door",
+    source: { kind: "external_cc0", uri: "https://example.test/door" },
+    license: "CC0-1.0",
+    dimensionsM: { width: 2, depth: 0.3, height: 3 },
+    collisionClass: "soft",
+    shadowPolicy: "cast_receive",
+    lodEligible: true,
+    runtime: { mode: "model", id: "ph_large_castle_door" },
+  }];
+  const massing: RuntimeArchitectureMassingPlacement = {
+    id: "massing", kind: "massing", frontageId: "frontage", zoneId: "A", face: "north",
+    profileId: "profile", massingProfileId: "mass", center: { x: 0, y: 0, z: 0 },
+    sizeM: { width: 4, depth: 2, height: 3 }, yawDeg: 0,
+    materialSlots: map.blockout.facadeProfiles![0]!.materialSlots,
+    roof: { style: "flat_parapet", setbackM: 0, parapetHeightM: 0.2, upperStorySetbackM: 0, elevationM: 3 },
+  };
+  map.blockout.architecturePlacements = [massing, {
+    id: "door", kind: "facade_module", frontageId: "frontage", zoneId: "A", face: "north",
+    profileId: "profile", moduleId: "door_fortified_gate", moduleKind: "door", openingType: "door_void",
+    datumId: "ground", columnId: "axis", layoutSource: "authored", center: { x: 0, y: 0, z: 0 },
+    sizeM: { width: 2, depth: 0.3, height: 3 }, yawDeg: 0, materialSlot: "timber",
+    collisionOpening: false, assetId: "ASSET_DOOR",
+  }];
+  const doorModelIds = () => createQaAssetPlan(map, "qa", { floorPbr: false, wallPbr: false, bazaarProps: false }).doorModelIds;
+  assert.deepEqual(doorModelIds(), ["ph_large_castle_door"]);
+
+  map.blockout.sectionModels = [{
+    zoneId: "A", modelId: "section", origin: { x: 0, y: 0, z: 0 },
+    sizeM: { width: 2, depth: 2 }, faces: ["north"], materialIds: [],
+  }];
+  assert.deepEqual(doorModelIds(), [], "a section GLB owns the frontage");
+
+  map.blockout.sectionModels = [];
+  massing.facadeModelId = "facade";
+  assert.deepEqual(doorModelIds(), [], "a facade GLB owns the frontage");
 });
 
 test("QA door loading selects the 1K derivative while normal loading keeps the 2K source", () => {
@@ -228,8 +285,34 @@ test("QA door loading selects the 1K derivative while normal loading keeps the 2
   );
   assert.match(
     bootstrapSource,
-    /if \(qaAssetTracker && qaAssetPlan\)[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL, \{[\s\S]*?quality: "1k",[\s\S]*?\}\);[\s\S]*?\} else \{[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL\)/,
-    "QA must select the 1K door variant while normal loading keeps the manifest default",
+    /const doorModelIds = mapAssets && !mobile \? resolveQaDoorModelIds\(mapAssets\) : \[\];\s*if \(doorModelIds\.length > 0\) \{/,
+    "the door pack must be skipped when no door module can place a model",
+  );
+  assert.match(
+    bootstrapSource,
+    /if \(qaAssetTracker && qaAssetPlan\)[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL, \{[\s\S]*?quality: "1k",[\s\S]*?\}\);[\s\S]*?\} else \{\s*doorModels = await PropModelLibrary\.load\(DOOR_MANIFEST_URL, \{ modelIds: new Set\(doorModelIds\) \}\);/,
+    "QA must select the 1K door variant while normal loading keeps the manifest default for the placed doors only",
+  );
+});
+
+test("normal boot loads only the planned prop models, wall textures and door models", () => {
+  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  const warmupSource = readFileSync(new URL("../warmup.ts", import.meta.url), "utf8");
+  for (const [name, source] of [["bootstrap.ts", bootstrapSource], ["warmup.ts", warmupSource]] as const) {
+    assert.doesNotMatch(source, /PropModelLibrary\.load\((?:PROP|DOOR)_MANIFEST_URL\)/, `${name} loads a whole model pack`);
+    assert.doesNotMatch(source, /preloadAllTextures\(wallQuality\)/, `${name} preloads every wall material`);
+  }
+  assert.match(
+    bootstrapSource,
+    /propModels = await PropModelLibrary\.load\(PROP_MANIFEST_URL, \{\s*modelIds: new Set\(mapAssets \? plannedPropModelIds\(mapAssets, !mobile\) : \[\]\),\s*\}\);/,
+  );
+  assert.match(
+    bootstrapSource,
+    /wallMaterials\.preloadAllTextures\(wallQuality, \{\s*materialIds: new Set\(mapAssets \? plannedWallMaterialIds\(mapAssets\) : \[\]\),\s*\}\);/,
+  );
+  assert.match(
+    warmupSource,
+    /wallMaterials\.preloadAllTextures\(wallQuality, \{\s*materialIds: new Set\(plannedWallMaterialIds\(await mapLoad\)\),\s*\}\);/,
   );
 });
 

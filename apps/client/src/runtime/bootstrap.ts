@@ -38,7 +38,8 @@ import { resolveVisualSupport, type VisualSupportCandidate } from "./qa/visualSu
 import {
   QaAssetReadinessTracker,
   createQaAssetPlan,
-  compiledPrefabModelIds,
+  plannedPropModelIds,
+  plannedWallMaterialIds,
   preloadQaDirectTextures,
   qaDoorModelRequestId,
   qaFacadeModelRequestId,
@@ -47,7 +48,15 @@ import {
   qaWallMaterialRequestId,
   resolveQaAssetProfile,
   resolveQaAssetTimeoutMs,
+  resolveQaDoorModelIds,
 } from "./qa/assetReadiness";
+import {
+  DOOR_MANIFEST_URL,
+  FACADE_MANIFEST_URL,
+  FLOOR_MANIFEST_URL,
+  PROP_MANIFEST_URL,
+  WALL_MANIFEST_URL,
+} from "./assetManifests";
 import { WeaponAudio } from "./audio/WeaponAudio";
 import { AmmoHud } from "./ui/AmmoHud";
 import { HealthHud } from "./ui/HealthHud";
@@ -116,15 +125,6 @@ const OVERVIEW_VIEWMODEL_DISABLE_HEIGHT_M = 10;
 const PERF_SCENE_SAMPLE_INTERVAL_MS = 300;
 const PERF_CPU_FRAME_SAMPLE_LIMIT = 120;
 const POINTER_LOCK_BANNER_GRACE_MS = 2600;
-const FLOOR_MANIFEST_URL = "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/materials.json";
-const WALL_MANIFEST_URL = "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
-const DOOR_MANIFEST_URL = "/assets/models/environment/bazaar/doors/models.json";
-const PROP_MANIFEST_URL = "/assets/models/environment/bazaar/props/models.json";
-const FACADE_MANIFEST_URL = "/assets/models/environment/bazaar/facades/models.json";
-const PBR_FLOORS_ENABLED = true;
-const PBR_WALLS_ENABLED = true;
-const MAP_PROPS_ENABLED = true;
-const DOOR_MODELS_ENABLED = true;
 const RUNTIME_TEXT_API_VERSION = 4;
 const SCORE_STORAGE_PREFIX = "clawd-strike:score-best";
 const SCORE_RULESET_KEY = SHARED_CHAMPION_SCORE_RULESET;
@@ -169,12 +169,6 @@ type ScenePerfSnapshot = {
   potentialTriangles: number;
   groups: Record<string, { meshes: number; instancedMeshes: number; instances: number; potentialTriangles: number }>;
   topMeshes: Array<{ name: string; instances: number; potentialTriangles: number }>;
-};
-
-type PropManifestModel = {
-  id: string;
-  url: string;
-  scale?: number;
 };
 
 function overviewQaSpan(object: Object3D): number | null {
@@ -247,65 +241,6 @@ function applyOverviewRenderLod(scene: Object3D): () => void {
     }
     changedVisibility.clear();
   };
-}
-
-function requiredMobilePropModelIds(mapAssets: RuntimeMapAssets | null): Set<string> {
-  const ids = new Set<string>();
-  for (const placement of mapAssets?.blockout.dressingPlacements ?? []) {
-    if (placement.runtime.mode === "model") {
-      ids.add(placement.runtime.id);
-    }
-    for (const modelId of compiledPrefabModelIds(placement.runtime.id)) {
-      ids.add(modelId);
-    }
-  }
-  return ids;
-}
-
-async function loadRegisteredPropModelSubset(
-  manifestUrl: string,
-  requiredIds: ReadonlySet<string>,
-): Promise<PropModelLibrary> {
-  const resolvedManifestUrl = new URL(manifestUrl, window.location.href);
-  const response = await fetch(resolvedManifestUrl.toString());
-  if (!response.ok) {
-    throw new Error(`Failed to fetch prop manifest (${response.status} ${response.statusText})`);
-  }
-  const rawManifest = await response.json() as { models?: unknown };
-  if (!Array.isArray(rawManifest.models)) {
-    throw new Error("models.json.models must be an array");
-  }
-
-  const selectedModels: PropManifestModel[] = [];
-  for (const rawEntry of rawManifest.models) {
-    if (!rawEntry || typeof rawEntry !== "object" || Array.isArray(rawEntry)) continue;
-    const entry = rawEntry as Record<string, unknown>;
-    if (typeof entry.id !== "string" || !requiredIds.has(entry.id)) continue;
-    if (typeof entry.url !== "string" || entry.url.length === 0) {
-      throw new Error(`Registered prop model '${entry.id}' has no usable URL`);
-    }
-    selectedModels.push({
-      id: entry.id,
-      url: new URL(entry.url, resolvedManifestUrl).toString(),
-      ...(typeof entry.scale === "number" ? { scale: entry.scale } : {}),
-    });
-  }
-
-  const selectedIds = new Set(selectedModels.map((model) => model.id));
-  const missingIds = [...requiredIds].filter((id) => !selectedIds.has(id));
-  if (missingIds.length > 0) {
-    throw new Error(`Required registered prop models are missing: ${missingIds.join(", ")}`);
-  }
-
-  const subsetManifestUrl = URL.createObjectURL(new Blob(
-    [JSON.stringify({ models: selectedModels })],
-    { type: "application/json" },
-  ));
-  try {
-    return await PropModelLibrary.load(subsetManifestUrl);
-  } finally {
-    URL.revokeObjectURL(subsetManifestUrl);
-  }
 }
 
 type VisualQaDimensions = {
@@ -1867,7 +1802,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   let mapAssets: RuntimeMapAssets | null = null;
   try {
-    mapAssets = await loadMap(runtimeParams.mapId);
+    mapAssets = warmupAssets?.mapAssets ?? await loadMap(runtimeParams.mapId);
     mapLoaded = true;
   } catch (error) {
     mapErrorMessage = formatMapLoadError(error);
@@ -1881,8 +1816,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         floorPbr: runtimeParams.floorMode === "pbr" && !performanceSafeFallback && !mobile,
         wallPbr: runtimeParams.wallMode === "pbr" && !performanceSafeFallback && !mobile,
         wallDetails: runtimeParams.wallDetails,
-        bazaarProps: MAP_PROPS_ENABLED && runtimeParams.propVisuals === "bazaar",
-        doorModels: DOOR_MODELS_ENABLED && !mobile,
+        bazaarProps: runtimeParams.propVisuals === "bazaar",
+        doorModels: !mobile,
         textureTier: effectiveFloorQuality === "1k" ? "1k" : "2k",
       })
     : null;
@@ -1996,13 +1931,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     appendWarning("Enemy model warmup failed. Using fallback enemy meshes to avoid late asset streaming.");
   }
 
-  let resolvedFloorMode = PBR_FLOORS_ENABLED ? runtimeParams.floorMode : "blockout";
+  let resolvedFloorMode = runtimeParams.floorMode;
   if (performanceSafeFallback || mobile) {
     resolvedFloorMode = "blockout";
   }
   let floorMaterials: FloorMaterialLibrary | null = null;
   const qaFloorRequestIds = qaAssetPlan?.floorMaterialIds.map(qaFloorMaterialRequestId) ?? [];
-  if (PBR_FLOORS_ENABLED && resolvedFloorMode === "pbr") {
+  if (resolvedFloorMode === "pbr") {
     try {
       if (qaAssetTracker && qaAssetPlan) {
         for (const requestId of qaFloorRequestIds) qaAssetTracker.start(requestId);
@@ -2046,13 +1981,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   }
 
-  let resolvedWallMode = PBR_WALLS_ENABLED ? runtimeParams.wallMode : "blockout";
+  let resolvedWallMode = runtimeParams.wallMode;
   if (performanceSafeFallback || mobile) {
     resolvedWallMode = "blockout";
   }
   let wallMaterials: WallMaterialLibrary | null = null;
   const qaWallRequestIds = qaAssetPlan?.wallMaterialIds.map(qaWallMaterialRequestId) ?? [];
-  if (PBR_WALLS_ENABLED && resolvedWallMode === "pbr") {
+  if (resolvedWallMode === "pbr") {
     try {
       const wallQuality = effectiveFloorQuality === "1k" ? "1k" : "2k";
       if (qaAssetTracker && qaAssetPlan) {
@@ -2077,7 +2012,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         for (const requestId of qaWallRequestIds) qaAssetTracker.complete(requestId);
       } else {
         wallMaterials = warmupAssets?.wallMaterials ?? await WallMaterialLibrary.load(WALL_MANIFEST_URL);
-        await wallMaterials.preloadAllTextures(wallQuality);
+        await wallMaterials.preloadAllTextures(wallQuality, {
+          materialIds: new Set(mapAssets ? plannedWallMaterialIds(mapAssets) : []),
+        });
       }
     } catch (error) {
       if (qaAssetTracker) {
@@ -2097,12 +2034,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
   }
 
-  const resolvedPropVisuals = MAP_PROPS_ENABLED ? runtimeParams.propVisuals : "blockout";
   let propModels: PropModelLibrary | null = null;
   const qaPropRequestIds = qaAssetPlan?.propModelIds.map(qaPropModelRequestId) ?? [];
-  if (resolvedPropVisuals === "bazaar") {
+  if (runtimeParams.propVisuals === "bazaar") {
     try {
-      const mobileModelIds = requiredMobilePropModelIds(mapAssets);
       if (qaAssetTracker && qaAssetPlan) {
         for (const requestId of qaPropRequestIds) qaAssetTracker.start(requestId);
         propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
@@ -2112,9 +2047,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         });
         for (const requestId of qaPropRequestIds) qaAssetTracker.complete(requestId);
       } else {
-        propModels = mobile && mobileModelIds.size > 0
-          ? await loadRegisteredPropModelSubset(PROP_MANIFEST_URL, mobileModelIds)
-          : await PropModelLibrary.load(PROP_MANIFEST_URL);
+        // Mobile has never loaded the R8 wall-foot clutter models; buildR8Clutter
+        // skips records whose model is absent.
+        propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
+          modelIds: new Set(mapAssets ? plannedPropModelIds(mapAssets, !mobile) : []),
+        });
       }
     } catch (error) {
       if (qaAssetTracker) {
@@ -2163,7 +2100,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   let doorModels: PropModelLibrary | null = null;
   const qaDoorRequestIds = qaAssetPlan?.doorModelIds.map(qaDoorModelRequestId) ?? [];
-  if (DOOR_MODELS_ENABLED && !mobile) {
+  const doorModelIds = mapAssets && !mobile ? resolveQaDoorModelIds(mapAssets) : [];
+  if (doorModelIds.length > 0) {
     try {
       if (qaAssetTracker && qaAssetPlan) {
         for (const requestId of qaDoorRequestIds) qaAssetTracker.start(requestId);
@@ -2175,7 +2113,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         });
         for (const requestId of qaDoorRequestIds) qaAssetTracker.complete(requestId);
       } else {
-        doorModels = await PropModelLibrary.load(DOOR_MANIFEST_URL);
+        doorModels = await PropModelLibrary.load(DOOR_MANIFEST_URL, { modelIds: new Set(doorModelIds) });
       }
     } catch (error) {
       if (qaAssetTracker) {
@@ -2316,7 +2254,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     createEnvironmentMap: (scene, position) => renderer.createPmremEnvironment(scene, position),
     floorMaterials,
     wallMaterials,
-    propVisuals: resolvedPropVisuals,
+    propVisuals: runtimeParams.propVisuals,
     propModels,
     doorModels,
     facadeModels,
@@ -3495,7 +3433,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         },
         props: {
           requestedVisualMode: runtimeParams.propVisuals,
-          activeVisualMode: resolvedPropVisuals,
+          activeVisualMode: runtimeParams.propVisuals,
           modelCount: propModels?.getModelCount() ?? 0,
         },
       },
