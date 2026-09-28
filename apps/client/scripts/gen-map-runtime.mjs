@@ -1180,10 +1180,6 @@ function getRuntimeModelCatalog() {
       publicBase: "/assets/models/environment/bazaar/props",
     },
     {
-      filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/doors/models.json"),
-      publicBase: "/assets/models/environment/bazaar/doors",
-    },
-    {
       filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/facades/models.json"),
       publicBase: "/assets/models/environment/bazaar/facades",
     },
@@ -1417,12 +1413,6 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, massingById, prof
     if (massingProfileId && !massingById?.has(massingProfileId)) {
       fail(`Frontage '${id}' references unknown massing profile '${massingProfileId}'`);
     }
-    // An authored facade GLB owns this frontage's street face; the runtime keeps
-    // the massing and drops the kit's face modules. It must be a registered model.
-    const facadeModelId = optionalString(entry.facadeModelId, `frontages[${index}].facadeModelId`);
-    if (facadeModelId && !getRuntimeModelCatalog().has(facadeModelId)) {
-      fail(`Frontage '${id}' facadeModelId '${facadeModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
-    }
     let bays;
     let layout;
     const layoutIntent = entry.layoutIntent;
@@ -1488,7 +1478,6 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, massingById, prof
       ...(districtId ? { districtId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
       ...(massingProfileId ? { massingProfileId } : {}),
-      ...(facadeModelId ? { facadeModelId } : {}),
       ...(bays ? { bays } : {}),
       ...(layout ? { layout } : {}),
     };
@@ -1809,7 +1798,6 @@ function deriveArchitecturePlacements(frontages, zoneById, surfaceById, massingB
       face: frontage.face,
       profileId: profile.id,
       massingProfileId: massing.id,
-      ...(frontage.facadeModelId ? { facadeModelId: frontage.facadeModelId } : {}),
       center: { x: center2d.x, y: center2d.y, z: baseElevationM + massing.heightM * 0.5 },
       sizeM: { width: frontageLengthM, depth: massing.depthM, height: massing.heightM },
       yawDeg,

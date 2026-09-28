@@ -36,20 +36,17 @@ import { resolveVisualSupport, type VisualSupportCandidate } from "./qa/visualSu
 import {
   QaAssetReadinessTracker,
   createQaAssetPlan,
+  plannedFloorMaterialIds,
   plannedPropModelIds,
   plannedWallMaterialIds,
   preloadQaDirectTextures,
-  qaDoorModelRequestId,
-  qaFacadeModelRequestId,
   qaFloorMaterialRequestId,
   qaPropModelRequestId,
   qaWallMaterialRequestId,
   resolveQaAssetProfile,
   resolveQaAssetTimeoutMs,
-  resolveQaDoorModelIds,
 } from "./qa/assetReadiness";
 import {
-  DOOR_MANIFEST_URL,
   FACADE_MANIFEST_URL,
   FLOOR_MANIFEST_URL,
   PROP_MANIFEST_URL,
@@ -1760,7 +1757,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     ? createQaAssetPlan(mapAssets, qaAssetProfile, {
         floorPbr: runtimeParams.floorMode === "pbr" && !performanceSafeFallback && !mobile,
         wallPbr: runtimeParams.wallMode === "pbr" && !performanceSafeFallback && !mobile,
-        doorModels: !mobile,
         textureTier: effectiveFloorQuality === "1k" ? "1k" : "2k",
       })
     : null;
@@ -1792,7 +1788,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   const renderer = new Renderer(runtimeRoot, {
     ao: (performanceSafeFallback || mobile || overviewShotAtBoot) ? false : runtimeParams.ao,
-    post: (performanceSafeFallback || mobile || overviewShotAtBoot) ? false : runtimeParams.post,
+    post: !(performanceSafeFallback || mobile || overviewShotAtBoot),
     maxPixelRatio: mobile ? 1.0 : undefined,
     disableShadows: mobile || overviewShotAtBoot || !shadowsEnabled,
   });
@@ -1902,7 +1898,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         for (const requestId of qaFloorRequestIds) qaAssetTracker.complete(requestId);
       } else {
         floorMaterials = warmupAssets?.floorMaterials ?? await FloorMaterialLibrary.load(FLOOR_MANIFEST_URL);
-        await floorMaterials.preloadAllTextures(effectiveFloorQuality);
+        await floorMaterials.preloadAllTextures(effectiveFloorQuality, {
+          materialIds: new Set(mapAssets ? plannedFloorMaterialIds(mapAssets) : []),
+        });
       }
     } catch (error) {
       if (qaAssetTracker) {
@@ -2013,64 +2011,25 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // blockout walls. Collision never depends on these models.
   let facadeModels: PropModelLibrary | null = null;
   const facadeModelIds = new Set([
-    ...(mapAssets?.blockout.architecturePlacements ?? []).flatMap((placement) =>
-      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []),
     ...(mapAssets?.blockout.sectionModels ?? []).map((section) => section.modelId),
     ...(mapAssets?.blockout.authoredPlacements ?? []).map((placement) => placement.modelId),
   ]);
-  const qaFacadeRequestIds = qaAssetPlan?.facadeModelIds.map(qaFacadeModelRequestId) ?? [];
   if (facadeModelIds.size > 0) {
     try {
-      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.start(requestId);
       facadeModels = await PropModelLibrary.load(FACADE_MANIFEST_URL, {
         modelIds: facadeModelIds,
         concurrency: 4,
         ...(qaAssetTracker ? { requestObserver: qaAssetTracker.observer } : {}),
       });
-      for (const requestId of qaFacadeRequestIds) qaAssetTracker?.complete(requestId);
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       if (qaAssetTracker) {
-        for (const requestId of qaFacadeRequestIds) qaAssetTracker.fail(requestId, error);
         throw new Error(`[qa-assets] facade model pack failed; capture is blocked: ${message}`);
       }
       console.error(`[runtime:boot] authored facade models failed to load; rendering flat blockout walls: ${message}`);
       appendWarning(`Failed to load the authored facade models. Falling back to flat blockout walls.\n${message}`);
       wallMaterials = null;
       resolvedWallMode = "blockout";
-    }
-  }
-
-  let doorModels: PropModelLibrary | null = null;
-  const qaDoorRequestIds = qaAssetPlan?.doorModelIds.map(qaDoorModelRequestId) ?? [];
-  const doorModelIds = mapAssets && !mobile ? resolveQaDoorModelIds(mapAssets) : [];
-  if (doorModelIds.length > 0) {
-    try {
-      if (qaAssetTracker && qaAssetPlan) {
-        for (const requestId of qaDoorRequestIds) qaAssetTracker.start(requestId);
-        doorModels = await PropModelLibrary.load(DOOR_MANIFEST_URL, {
-          modelIds: new Set(qaAssetPlan.doorModelIds),
-          concurrency: 4,
-          quality: "1k",
-          requestObserver: qaAssetTracker.observer,
-        });
-        for (const requestId of qaDoorRequestIds) qaAssetTracker.complete(requestId);
-      } else {
-        doorModels = await PropModelLibrary.load(DOOR_MANIFEST_URL, { modelIds: new Set(doorModelIds) });
-      }
-    } catch (error) {
-      if (qaAssetTracker) {
-        for (const requestId of qaDoorRequestIds) qaAssetTracker.fail(requestId, error);
-        qaAssetTracker.fail("door-model-pack", error);
-        throw new Error(
-          `[qa-assets] door model pack failed; capture is blocked: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-      appendWarning(
-        `Failed to load door model pack. Doors will use flat void panels.\n${error instanceof Error ? error.message : String(error)}`,
-      );
     }
   }
 
@@ -2186,12 +2145,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     floorMode: resolvedFloorMode,
     wallMode: resolvedWallMode,
     floorQuality: effectiveFloorQuality,
-    environmentLighting: runtimeParams.environmentLighting,
     createEnvironmentMap: (scene, position) => renderer.createPmremEnvironment(scene, position),
     floorMaterials,
     wallMaterials,
     propModels,
-    doorModels,
     facadeModels,
     freezeInput: inputFrozen,
     spawn: runtimeParams.spawn,
@@ -2676,7 +2633,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     try {
       console.info("[runtime:boot] human map readiness gate started");
       // 1. Let stragglers started through the default loading manager settle
-      //    (prop/door GLB textures load fire-and-forget during the map build).
+      //    (prop GLB textures load fire-and-forget during the map build).
       const assetSettle = await waitForPendingAssetLoads(MAP_ASSET_SETTLE_TIMEOUT_MS);
       // 2. Compile every shader variant the scene needs.
       let compileTimeoutId = 0;

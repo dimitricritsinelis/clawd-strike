@@ -23,58 +23,22 @@ import { DynamicResolution } from "./DynamicResolution";
 
 
 // ── Ambient-occlusion tuning constants ──────────────────────────────
-// The bazaar's key light is a high south-west sun, so the east-facing
-// merchant frontages that most of the review cameras look at are lit
-// almost entirely by sky and bounce. In that regime occlusion is the only
-// term that separates a reveal side-face from the wall plane, a shop
-// recess from its jamb, or a stall's feet from the paving. The previous
-// SSAO ran at half resolution with a 25 mm falloff over blockout geometry
-// only, which is contact-scale on a wall built at reveal scale — every
-// opening read as a decal and every prop as a cut-out. GTAO resolves the
-// same occlusion at architectural distances without the halo artifacts
-// that forced the SSAO radius down in the first place.
-// Radius is set from the deepest feature that has to read, not the smallest:
-// a merchant bay is 1.0-2.0 m deep, so occlusion has to still be accumulating
-// at a metre or the recess mouth stays as bright as the pier beside it.
-//
-// Held at 1.15 m. Widening to 2.0 m to chase the 1.35 m deep bay interiors was
-// tried and rejected: it bought only +0.3 global std and 3 luma on one bay,
-// and cost the paving 88 -> 85 against a target of 90 — a navigation surface
-// this map cannot afford to dim. The bay interiors are floored by an additive
-// term rather than by unoccluded ambient (a 45% albedo cut moves them 8%), so
-// neither albedo nor occlusion radius is the lever that closes that gap.
+// The high south-west sun leaves the east-facing merchant frontages lit mostly
+// by sky and bounce, so occlusion is what separates a reveal from the wall
+// plane, a recess from its jamb and a stall's feet from the paving. GTAO
+// resolves it at architectural distances. The radius follows the deepest
+// feature that must read (1.0-2.0 m merchant bays); widening it to 2.0 m dimmed
+// the paving more than it helped the bays.
 const AO_RADIUS_M = 1.15;
 const AO_THICKNESS_M = 0.5;
 const AO_DISTANCE_EXPONENT = 1.0;
 const AO_DISTANCE_FALLOFF = 1.0;
 const AO_SCALE = 1.0;
 const AO_SAMPLES = 24;
-// Eased from 1.0. The shade-dominated cameras were CRUSHING: the prop-grounding
-// closeup put 3.07% of its pixels below luminance 4 against 0.02% in its target
-// (a 150x excess) and 13.52% below 16 against 4.01%, with the canopy camera at
-// 0.86%/10.77% against 0.03%/0.50%. The black floor itself is right - minimum 0,
-// matching the target - so the fault was how much of the frame bottoms out, and
-// it concentrates exactly where occlusion accumulates: prop clusters in contact.
-//
-// 0.78 improves every camera on that metric (closeup 3.07 -> 2.66 below L4,
-// canopy 0.86 -> 0.62, Spawn-A 2.42 -> 2.19 below L16 against a target of 2.20)
-// and lands the Spawn-A median exactly on 92. Going further to 0.5 helps the
-// crush more but starts pulling Spawn-A off a match it already had.
-//
-// Be honest about what this does and does not fix: it is worth ~13% of the crush
-// gap, and it costs some contact darkening, which is a quality feature this map
-// wants. The dominant cause is that shaded regions are ~35% darker than targets
-// rendered with multi-bounce GI - see SCENE_ENVIRONMENT_INTENSITY in Game.ts.
-//
-// Do not keep easing this to chase the rest, and do not suspect the pass itself.
-// GTAOPass runs in the composer with default output, so it multiplies the
-// composited beauty rather than ambient alone - a reasonable thing to suspect of
-// over-darkening shade. It was measured by taking this constant to 0: the canopy
-// camera moved 59 -> 62 against a target of 88, the west elevation 51 -> 54
-// against 77, and the grounding closeup 49 -> 51 against 83. That is 6-12% of
-// each gap, while the two cameras that were already on target overshot (Spawn-A
-// 103 -> 104 against 101, tea terrace 109 -> 111 against 98). Occlusion is not
-// what is holding the shade down.
+// Eased from 1.0 to cut crushed shade where props meet, while keeping contact
+// darkening. The remaining shade deficit comes from missing multi-bounce GI
+// (see SCENE_ENVIRONMENT_INTENSITY in Game.ts), not from this pass: taking it to
+// 0 closed only 6-12% of each camera's gap.
 const AO_BLEND_INTENSITY = 0.78;
 // Lowest pixel ratio dynamic resolution may use: the standard tier's budget.
 const DYNAMIC_RESOLUTION_FLOOR = 1.1;
@@ -103,30 +67,6 @@ const GOLDEN_POST_SHADER = {
     resolution: { value: new Vector2(1, 1) },
     bloomStrength: { value: 0.015 },
     bloomThreshold: { value: 0.96 },
-    // Disabled. This was the single largest obstacle to matching the targets and
-    // it hid behind every other lighting experiment for a long time.
-    //
-    // The term adds vec3(0.82, 0.88, 0.92) * shadowLift below luma 0.07. At the
-    // old 0.008 that is ~L24 in sRGB, which is exactly where the render's p1 sat
-    // (24) while both targets reach 0. So NOTHING in the scene could ever be
-    // black: the floor was nailed 24 levels up, and because the added colour is
-    // blue-biased it also pushed the deepest shade cool. Critics kept reporting
-    // deep shade as "too bright, too grey and too cool" and every fix aimed at
-    // the light rig, which could not move a constant added after tone mapping.
-    //
-    // Removing it lands the primary camera's shadow end exactly on target:
-    // min 9 -> 0 (target 0), p5 34 -> 23 (target 23), median unchanged at 92
-    // (target 92), share below L16 0.04% -> 2.68% (target 2.20%). It also
-    // reverses what looked like an unavoidable regression on the two supporting
-    // cameras - west elevation relative contrast 0.417 -> 0.573 and canopy
-    // 0.543 -> 0.668. All three cameras improve.
-    //
-    // Nothing crushes, which was the fear this term existed to prevent: the dark
-    // regions keep 32-33 distinct code values (target 33) and normalised local
-    // gradient RISES in every one of them (shopfront 0.235 -> 0.330 against a
-    // target of 0.398). If crush ever does appear, fix the geometry or material
-    // that is genuinely black rather than lifting the whole frame off zero.
-    shadowLift: { value: 0.0 },
     vignetteStrength: { value: 0.012 },
     // Luma-weighted unsharp mask over the 4-neighbourhood. Restores texel
     // contrast lost to mip filtering and MSAA resolve without haloing edges:
@@ -150,7 +90,6 @@ const GOLDEN_POST_SHADER = {
     uniform vec2 resolution;
     uniform float bloomStrength;
     uniform float bloomThreshold;
-    uniform float shadowLift;
     uniform float vignetteStrength;
     uniform float sharpenStrength;
     uniform float gradeContrast;
@@ -166,8 +105,6 @@ const GOLDEN_POST_SHADER = {
       vec2 texel = 1.0 / max(resolution, vec2(1.0));
       vec3 base = texture2D(tDiffuse, vUv).rgb;
       float baseLuma = dot(base, vec3(0.2126, 0.7152, 0.0722));
-      float toeMask = 1.0 - smoothstep(0.025, 0.07, baseLuma);
-      base += vec3(0.82, 0.88, 0.92) * shadowLift * toeMask;
       if (sharpenStrength > 0.0) {
         vec3 n = texture2D(tDiffuse, vUv + vec2(0.0, texel.y)).rgb
           + texture2D(tDiffuse, vUv - vec2(0.0, texel.y)).rgb

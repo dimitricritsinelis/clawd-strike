@@ -2,7 +2,6 @@ import type { BoundarySegment } from "./buildBlockout";
 import { bz04SectionVisualSegments, type Bz04BoundaryCoverage } from "./bz04Trial";
 import { designToWorldVec3, designYawDegToWorldYawRad } from "./coordinateTransforms";
 import type { RuntimeBlockoutZone, RuntimeTraversalSurface } from "./types";
-import type { DoorModelPlacement } from "./buildDoorModels";
 import type { WallDetailInstance, WallDetailMeshId } from "./wallDetailKit";
 
 type FacadeFace = "north" | "south" | "east" | "west";
@@ -79,8 +78,6 @@ export type V3ArchitectureMassingPlacement = {
     upperStorySetbackM: number;
     elevationM: number;
   };
-  /** Registered facade GLB that owns this frontage's street face. */
-  facadeModelId?: string;
 };
 
 export type V3ArchitectureModulePlacement = {
@@ -120,7 +117,6 @@ export type BuildV3ArchitectureOptions = {
   zones: readonly RuntimeBlockoutZone[];
   traversalSurfaces: readonly RuntimeTraversalSurface[];
   wallHeightM: number;
-  fortifiedDoorModelAvailable: boolean;
   /**
    * Also run the checks authored PBR wall ownership relies on: every facade
    * aperture fits its massing face, recesses leave a positive backing depth,
@@ -128,18 +124,6 @@ export type BuildV3ArchitectureOptions = {
    * boundary infill keeps its corner and return widths.
    */
   validateCutoutMassing?: boolean;
-};
-
-export type FacadeModelPlacement = {
-  placementId: string;
-  frontageId: string;
-  modelId: string;
-  /** World-space bottom-center of the street-facing wall plane. */
-  base: { x: number; y: number; z: number };
-  /** Unit vector from the wall plane toward the street. */
-  inward: { x: number; z: number };
-  widthM: number;
-  heightM: number;
 };
 
 export type WallDetailPlacementStats = {
@@ -153,8 +137,6 @@ export type WallDetailPlacementStats = {
 
 export type V3ArchitectureBuildResult = {
   instances: WallDetailInstance[];
-  doorModelPlacements: DoorModelPlacement[];
-  facadeModelPlacements: FacadeModelPlacement[];
   segmentHeights: number[];
   stats: WallDetailPlacementStats;
 };
@@ -902,8 +884,6 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
     }
   }
   const instances: WallDetailInstance[] = [];
-  const doorModelPlacements: DoorModelPlacement[] = [];
-  const facadeModelPlacements: FacadeModelPlacement[] = [];
   const modulesByFrontage = new Map<string, V3ArchitectureModulePlacement[]>();
   for (const placement of options.placements) {
     if (placement.kind !== "facade_module") continue;
@@ -945,23 +925,6 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
         fail(`massing '${placement.id}' roof setback consumes the roof footprint`);
       }
     }
-    if (placement.facadeModelId) {
-      const center = designToWorldVec3(placement.center);
-      const inward = faceInward(placement.face);
-      facadeModelPlacements.push({
-        placementId: placement.id,
-        frontageId: placement.frontageId,
-        modelId: placement.facadeModelId,
-        base: {
-          x: center.x + inward.x * placement.sizeM.depth * 0.5,
-          y: center.y - placement.sizeM.height * 0.5,
-          z: center.z + inward.z * placement.sizeM.depth * 0.5,
-        },
-        inward,
-        widthM: placement.sizeM.width,
-        heightM: placement.sizeM.height,
-      });
-    }
   }
 
   const segmentHeights = options.segments.map((segment) => {
@@ -973,8 +936,6 @@ export function buildV3Architecture(options: BuildV3ArchitectureOptions): V3Arch
   });
   return {
     instances,
-    doorModelPlacements,
-    facadeModelPlacements,
     segmentHeights,
     stats: {
       enabled: true,

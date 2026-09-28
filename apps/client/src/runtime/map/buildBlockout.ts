@@ -25,17 +25,15 @@ import type {
 } from "./types";
 import type { RuntimeColliderAabb } from "../sim/collision/WorldColliders";
 import { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
-import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
-import type { RuntimeFloorMode, RuntimeFloorQuality, RuntimeLightingPreset, RuntimeWallMode } from "../utils/UrlParams";
+import { BLOCKOUT_PALETTE } from "../render/BlockoutMaterials";
+import type { RuntimeFloorMode, RuntimeFloorQuality, RuntimeWallMode } from "../utils/UrlParams";
 import { buildPbrFloors } from "./buildPbrFloors";
 import { buildFloorWearDecals } from "./floorWearDecals";
 import { buildSandAccumulation } from "./buildSandAccumulation";
 import { buildWallBaseDebris } from "./buildWallBaseDebris";
 import { buildPbrWalls } from "./buildPbrWalls";
 import { buildWallDetailMeshes } from "./wallDetailKit";
-import { buildDoorModels } from "./buildDoorModels";
-import { buildAuthoredPlacements, buildFacadeModels, buildSectionModels, validateBz04Bounds } from "./buildFacadeModels";
-import { buildDecorativePalms } from "./buildDecorativePalms";
+import { buildAuthoredPlacements, buildSectionModels, validateBz04Bounds } from "./buildFacadeModels";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { buildV3Architecture, type WallDetailPlacementStats } from "./v3Architecture";
 import { planV3VisualWallSegments } from "./v3VisualWallSegments";
@@ -260,24 +258,15 @@ export type BlockoutBuildResult = {
   wallDetailStats: WallDetailPlacementStats;
 };
 
-export type BlockoutWallDetailOptions = {
-  enabled: boolean;
-  densityScale: number | null;
-};
-
 export type BlockoutBuildOptions = {
-  highVis: boolean;
   seed: number;
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
   floorQuality: RuntimeFloorQuality;
-  lightingPreset: RuntimeLightingPreset;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
   anchors: RuntimeAnchorsSpec | null;
-  wallDetails: BlockoutWallDetailOptions;
-  doorModels: PropModelLibrary | null;
-  /** Authored facade GLBs referenced by frontages' facadeModelId. */
+  /** Authored section and placement GLBs (facades/models.json). */
   facadeModels?: PropModelLibrary | null;
 };
 
@@ -1114,7 +1103,7 @@ export function createV3BoundaryFinishTrim(
 export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildOptions): BlockoutBuildResult {
   const root = new Group();
   root.name = "map-blockout";
-  const palette = resolveBlockoutPalette(options.highVis);
+  const palette = BLOCKOUT_PALETTE;
   const wallTextureQuality = resolveWallTextureQuality(options.floorQuality);
   const isV3 = /^3(?:\.|$)/.test(spec.formatVersion ?? "");
 
@@ -1182,25 +1171,23 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     const floorWearDecals = buildFloorWearDecals(spec, options.seed, floorTopY);
     if (floorWearDecals) root.add(floorWearDecals);
 
-    if (options.lightingPreset === "golden") {
-      const sandAccumulation = buildSandAccumulation({
-        wallSegments: wallSegments.flatMap(visualSegments),
-        seed: options.seed,
-        floorTopY,
-        manifest: options.floorMaterials,
-        quality: options.floorQuality,
-      });
-      root.add(sandAccumulation);
+    const sandAccumulation = buildSandAccumulation({
+      wallSegments: wallSegments.flatMap(visualSegments),
+      seed: options.seed,
+      floorTopY,
+      manifest: options.floorMaterials,
+      quality: options.floorQuality,
+    });
+    root.add(sandAccumulation);
 
-      const wallBaseDebris = buildWallBaseDebris({
-        wallSegments: wallSegments.flatMap(visualSegments),
-        seed: options.seed,
-        floorTopY,
-        manifest: options.floorMaterials,
-        quality: options.floorQuality,
-      });
-      root.add(wallBaseDebris);
-    }
+    const wallBaseDebris = buildWallBaseDebris({
+      wallSegments: wallSegments.flatMap(visualSegments),
+      seed: options.seed,
+      floorTopY,
+      manifest: options.floorMaterials,
+      quality: options.floorQuality,
+    });
+    root.add(wallBaseDebris);
   } else {
     const walkableFloor = traversalSurfaces.length > 0
       ? createTraversalFloorGroup(
@@ -1308,7 +1295,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     zones: spec.zones,
     traversalSurfaces,
     wallHeightM: spec.defaults.wall_height,
-    fortifiedDoorModelAvailable: Boolean(options.doorModels),
     validateCutoutMassing: useV3AuthoredVisualWallOwnership,
     bz04BoundaryCoverage,
   });
@@ -1333,7 +1319,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
     const visualWallPlan = v3VisualWallPlan ?? {
           segments: wallSegments.map((segment) => ({ ...segment })),
           sourceSegmentIndices: wallSegments.map((_, index) => index),
-          architectureOwnedFrontages: [],
         };
     const primaryVisualEntries = visualWallPlan.segments
       .map((segment, index) => ({
@@ -1378,7 +1363,6 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
         }
       });
     }
-    pbrWalls.userData.v3ArchitectureOwnedFrontages = visualWallPlan.architectureOwnedFrontages;
     root.add(pbrWalls);
 
     if (isV3) {
@@ -1439,42 +1423,20 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
 
   if (wallDetailPlacements.instances.length > 0) {
     const detailRoot = buildWallDetailMeshes(wallDetailPlacements.instances.flatMap(instance => bz04RoofFragments(instance, bz04RoofCoverage)), {
-      highVis: options.highVis,
       wallMode: options.wallMode,
       wallMaterials: options.wallMaterials,
       quality: wallTextureQuality,
       seed: options.seed,
     });
     root.add(detailRoot);
-
-    if (options.doorModels && wallDetailPlacements.doorModelPlacements.length > 0) {
-      const doorRoot = buildDoorModels(
-        wallDetailPlacements.doorModelPlacements,
-        options.doorModels,
-        wallThicknessM,
-        options.wallMaterials,
-        wallTextureQuality,
-        options.seed,
-      );
-      root.add(doorRoot);
-    }
   }
 
-  const facadeModelPlacements = wallDetailPlacements.facadeModelPlacements;
   const packBinding = { wallMaterials: options.wallMaterials, quality: wallTextureQuality, seed: options.seed };
-  if (options.facadeModels && facadeModelPlacements.length > 0) {
-    root.add(buildFacadeModels(facadeModelPlacements, options.facadeModels, packBinding));
-  }
   if (options.facadeModels && spec.sectionModels?.length) {
     root.add(buildSectionModels(spec.sectionModels, options.facadeModels, packBinding));
   }
   if (options.facadeModels && spec.authoredPlacements?.length) {
     root.add(buildAuthoredPlacements(spec.authoredPlacements, options.facadeModels, packBinding));
-  }
-
-  const decorativePalms = buildDecorativePalms(options.anchors, options.seed, wallTextureQuality);
-  if (decorativePalms) {
-    root.add(decorativePalms);
   }
 
   if (traversalSurfaces.length === 0) {
@@ -1522,7 +1484,7 @@ export function buildBlockout(spec: RuntimeBlockoutSpec, options: BlockoutBuildO
 
   // R8 art direction: render-only street life and surface history on the
   // finished golden-lighting build. No colliders are created here.
-  const r8 = r8AppliesTo(spec.mapId) && options.lightingPreset === "golden" && options.wallMode === "pbr";
+  const r8 = r8AppliesTo(spec.mapId) && options.wallMode === "pbr";
   if (r8 && options.facadeModels) {
     root.add(buildR8Atmosphere({
       seed: options.seed,

@@ -13,9 +13,7 @@ export const SHIP_QA_SEARCH_PARAMS = Object.freeze({
   qa: 1,
   floors: "pbr",
   walls: "pbr",
-  wallDetails: 1,
   floorRes: "1k",
-  lighting: "golden",
   ao: 1,
   shadows: 1,
 });
@@ -703,7 +701,7 @@ export function findHighResolutionTextureRequests(requestUrls) {
 export function assertQaNetworkTexturePolicy(network, runtimeUrl) {
   const params = new URL(runtimeUrl).searchParams;
   const qaProfile = captureProfileFromUrl(runtimeUrl);
-  const requestedTier = params.get("floorRes") ?? params.get("floor-res") ?? "1k";
+  const requestedTier = params.get("floorRes") ?? "1k";
   if (
     params.get("qa") !== "1"
     || !["qa", "cell-review"].includes(qaProfile)

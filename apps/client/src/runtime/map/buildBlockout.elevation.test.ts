@@ -95,7 +95,6 @@ test("compiled v3 architecture keeps the Caravan/Tea slot collider authority", (
     zones: spec.zones,
     traversalSurfaces: spec.traversalSurfaces ?? [],
     wallHeightM: spec.defaults.wall_height,
-    fortifiedDoorModelAvailable: false,
     validateCutoutMassing: true,
   });
   const segmentHeights = architecture.segmentHeights.map((heightM, index) => (

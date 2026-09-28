@@ -177,8 +177,6 @@ export type RuntimeArchitectureMassingPlacement = {
     upperStorySetbackM: number;
     elevationM: number;
   };
-  /** Registered facade GLB that owns this frontage's street face. */
-  facadeModelId?: string;
 };
 
 export type RuntimeArchitectureModulePlacement = {
@@ -745,14 +743,10 @@ function parseRuntimeArchitecturePlacements(
       const roof = asObject(entry.roof, `${path}.roof`);
       const style = asString(roof.style, `${path}.roof.style`);
       if (!RUNTIME_MASSING_ROOF_STYLES.has(style)) failParse(`${path}.roof.style`, "unsupported roof style");
-      const facadeModelId = typeof entry.facadeModelId === "undefined"
-        ? undefined
-        : asString(entry.facadeModelId, `${path}.facadeModelId`);
       return {
         ...shared,
         kind: "massing",
         massingProfileId,
-        ...(facadeModelId ? { facadeModelId } : {}),
         materialSlots: parseRuntimeMaterialSlots(entry.materialSlots, `${path}.materialSlots`),
         roof: {
           style: style as RuntimeArchitectureMassingPlacement["roof"]["style"],

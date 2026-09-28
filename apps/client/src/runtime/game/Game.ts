@@ -54,7 +54,6 @@ const EYE_HEIGHT_LERP_RATE = 17.1;
 const RAD_TO_DEG = 180 / Math.PI;
 const DEG_TO_RAD = Math.PI / 180;
 const AGENT_LOOK_ACCUM_LIMIT_DEG = 540;
-const MAP_PROPS_ENABLED = true;
 // Lowered from 0.28. No longer coupled to the sky dome's tint: the PMREM bake in
 // Renderer.createPmremEnvironment neutralises skyTint for the duration of the
 // bake, so the dome's artistic colour and the irradiance it contributes are now
@@ -265,12 +264,10 @@ type GameOptions = {
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
   floorQuality: RuntimeFloorQuality;
-  environmentLighting: boolean;
   createEnvironmentMap: (scene: Scene, position: Vector3) => Texture | null;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
   propModels: PropModelLibrary | null;
-  doorModels: PropModelLibrary | null;
   facadeModels?: PropModelLibrary | null;
   onTogglePerfHud?: () => void;
   mountEl?: HTMLElement;
@@ -351,7 +348,6 @@ export class Game {
   private spawn: RuntimeSpawnId = "A";
   private mapId = "bazaar-map";
   private seedOverride: number | null = null;
-  private environmentLighting = true;
   private createEnvironmentMap: ((scene: Scene, position: Vector3) => Texture | null) | null = null;
   private floorMode: RuntimeFloorMode = "blockout";
   private wallMode: RuntimeWallMode = "blockout";
@@ -359,7 +355,6 @@ export class Game {
   private floorMaterials: FloorMaterialLibrary | null = null;
   private wallMaterials: WallMaterialLibrary | null = null;
   private propModels: PropModelLibrary | null = null;
-  private doorModels: PropModelLibrary | null = null;
   private facadeModels: PropModelLibrary | null = null;
   private blockoutSpec: RuntimeBlockoutSpec | null = null;
   private anchorsSpec: RuntimeAnchorsSpec | null = null;
@@ -490,7 +485,6 @@ export class Game {
     this.controlMode = options.controlMode;
     this.mapId = options.mapId;
     this.seedOverride = options.seedOverride;
-    this.environmentLighting = options.environmentLighting;
     this.createEnvironmentMap = options.createEnvironmentMap;
     this.floorMode = options.floorMode;
     this.wallMode = options.wallMode;
@@ -498,7 +492,6 @@ export class Game {
     this.floorMaterials = options.floorMaterials;
     this.wallMaterials = options.wallMaterials;
     this.propModels = options.propModels;
-    this.doorModels = options.doorModels;
     this.facadeModels = options.facadeModels ?? null;
     this.freezeInput = options.freezeInput ?? false;
     this.spawn = options.spawn ?? "A";
@@ -1347,10 +1340,8 @@ export class Game {
       sunLight: sun,
       preset: "late-afternoon",
     });
-    if (this.environmentLighting) {
-      this.scene.environment = this.createEnvironmentMap?.(this.scene, this.camera.position) ?? null;
-      this.scene.environmentIntensity = SCENE_ENVIRONMENT_INTENSITY;
-    }
+    this.scene.environment = this.createEnvironmentMap?.(this.scene, this.camera.position) ?? null;
+    this.scene.environmentIntensity = SCENE_ENVIRONMENT_INTENSITY;
   }
 
   private applyMapLightingBounds(spec: RuntimeBlockoutSpec): void {
@@ -1715,20 +1706,13 @@ export class Game {
     this.clearProps();
 
     const builtBlockout = buildBlockout(blockoutSpec, {
-      highVis: false,
       seed: runtimeSeed,
       floorMode: this.floorMode,
       wallMode: this.wallMode,
       floorQuality: this.floorQuality,
-      lightingPreset: "golden",
       floorMaterials: this.floorMaterials,
       wallMaterials: this.wallMaterials,
       anchors: this.anchorsSpec,
-      wallDetails: {
-        enabled: true,
-        densityScale: null,
-      },
-      doorModels: this.doorModels,
       facadeModels: this.facadeModels,
     });
     this.wallDetailStats = builtBlockout.wallDetailStats;
@@ -1748,7 +1732,7 @@ export class Game {
       rejectedGapRule: 0,
     };
 
-    if (MAP_PROPS_ENABLED && this.anchorsSpec) {
+    if (this.anchorsSpec) {
       const builtProps = buildProps({
         mapId: this.mapId,
         blockout: blockoutSpec,
@@ -1772,7 +1756,7 @@ export class Game {
     }
     // Independently authored sections, roofs, walls and props share some faces;
     // clip the hidden duplicates so coincident surfaces cannot z-fight.
-    builtBlockout.root.userData.coplanarResolve = resolveCoplanarSurfaces(this.propsRoot ? [builtBlockout.root, this.propsRoot] : [builtBlockout.root]);
+    resolveCoplanarSurfaces(this.propsRoot ? [builtBlockout.root, this.propsRoot] : [builtBlockout.root]);
 
     this.runtimeColliders = [...builtBlockout.colliders, ...this.propColliders].sort((a, b) => a.id.localeCompare(b.id));
     this.worldColliders = new WorldColliders(

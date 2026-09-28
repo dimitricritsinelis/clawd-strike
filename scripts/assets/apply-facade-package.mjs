@@ -13,7 +13,6 @@
 //
 // package.json: { "models": [ { id, file, source, license } ],
 //                 "section": { "zoneId": "<ZONE_ID>", "modelId": "<model id>", "faces": ["north"] },  // faces the GLB owns; omit for all four
-//                 "frontages": { "<FRONTAGE_ID>": "<model id>" },                     // legacy per-face binding
 //                 "placements": [ { id, modelId, position: {x,y,z}, yawDeg, role } ] }  // free render-only GLBs
 // placements: design metres (x east, y north, z up), model origin at its base centre, yawDeg as anchors[].yawDeg
 // (0 = north). role is "dressing" (default) or "skyline"; both are render-only and never collide.
@@ -132,6 +131,9 @@ if (action === "revert") {
 const packagePath = path.join(ROOT, "assets/source", unit, "package.json");
 if (!existsSync(packagePath)) throw new Error(`${path.relative(ROOT, packagePath)} not found`);
 const pkg = JSON.parse(readFileSync(packagePath, "utf8"));
+if (pkg.frontages !== undefined) {
+  throw new Error("package.frontages (per-face facadeModelId) is no longer supported; bind a section instead");
+}
 const manifest = JSON.parse(readFileSync(MANIFEST, "utf8"));
 let spec = readFileSync(SPEC, "utf8");
 const writes = new Map();
@@ -144,14 +146,10 @@ function glbPackMaterialIds(file) {
   return [...new Set((json.materials ?? []).map((m) => String(m.name ?? "").split(".")[0]).filter((n) => n.startsWith("ph_")))].sort();
 }
 
-/** Textual edit so the 380 KB spec keeps its formatting; only the one frontage object changes. */
-function setFrontageModel(frontageId, modelId) {
-  const start = spec.indexOf(`"id": "${frontageId}"`);
-  if (start < 0) throw new Error(`frontage ${frontageId} not found in map_spec.json`);
-  insertLineBeforeId(start, "facadeModelId", modelId === null ? null : JSON.stringify(modelId));
-}
-
-/** Insert `"<key>": <json>,` on its own line just above the object's `"id"` line (always valid JSON), or remove it. */
+/**
+ * Textual edit so the 380 KB spec keeps its formatting: insert `"<key>": <json>,` on its own line just above
+ * the object's `"id"` line (always valid JSON), or remove it.
+ */
 function insertLineBeforeId(idStart, key, jsonValue) {
   const lineStart = spec.lastIndexOf("\n", idStart) + 1;
   const indent = spec.slice(lineStart, idStart);
@@ -228,10 +226,6 @@ for (const model of pkg.models) {
     md5: checksums,
     materialIds,
   });
-}
-for (const [frontageId, modelId] of Object.entries(pkg.frontages ?? {})) {
-  if (!unitModelIds.has(modelId)) throw new Error(`${frontageId} references ${modelId}, which is not in this package`);
-  setFrontageModel(frontageId, modelId);
 }
 if (pkg.section) {
   if (!unitModelIds.has(pkg.section.modelId)) throw new Error(`section references ${pkg.section.modelId}, which is not in this package`);

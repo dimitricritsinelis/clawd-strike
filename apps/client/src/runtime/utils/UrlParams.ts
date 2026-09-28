@@ -8,7 +8,6 @@ export type RuntimeControlMode = "human" | "agent";
 export type RuntimeFloorMode = "blockout" | "pbr";
 export type RuntimeWallMode = "blockout" | "pbr";
 export type RuntimeFloorQuality = "1k" | "2k" | "4k";
-export type RuntimeLightingPreset = "golden" | "flat";
 /**
  * Desktop graphics tier. "high" (default) renders at native resolution up to
  * 2x, loads 2k surface textures and enables GTAO in live play; "standard"
@@ -30,7 +29,6 @@ export type RuntimeUrlParams = {
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
   floorQuality: RuntimeFloorQuality;
-  environmentLighting: boolean;
   unlimitedHealth: boolean;
   /**
    * Whether the god-mode flag was named in the URL at all, and what it said.
@@ -40,7 +38,6 @@ export type RuntimeUrlParams = {
    */
   unlimitedHealthExplicit: boolean | null;
   ao: boolean;
-  post: boolean;
   quality: RuntimeQualityTier;
 };
 
@@ -127,15 +124,15 @@ export function resolveDynamicResolution(search: string): boolean {
   if (explicit !== null) return parseBooleanFlag(explicit);
   if (resolveQualityTier(search) !== "high") return false;
   if (getParam(params, "shot") !== null || params.get("qa") === "1" || params.has("qaProfile")) return false;
-  return parseControlMode(getParam(params, "mode", "controlMode"), getParam(params, "autostart")) === "human";
+  return parseControlMode(getParam(params, "mode"), getParam(params, "autostart")) === "human";
 }
 
 export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const params = new URLSearchParams(search);
   const rawMapId = getParam(params, "map");
-  const rawControlMode = getParam(params, "mode", "controlMode");
+  const rawControlMode = getParam(params, "mode");
   const rawAutostart = getParam(params, "autostart");
-  const rawPlayerName = getParam(params, "name", "player", "playerName");
+  const rawPlayerName = getParam(params, "name");
   const rawShot = getParam(params, "shot");
   const rawSpawn = getParam(params, "spawn");
   const rawDebug = getParam(params, "debug");
@@ -144,11 +141,9 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const rawSeed = getParam(params, "seed");
   const rawFloors = getParam(params, "floors");
   const rawWalls = getParam(params, "walls");
-  const rawFloorRes = getParam(params, "floorRes", "floor-res");
-  const rawEnvironmentLighting = getParam(params, "ibl", "environmentLighting", "environment-lighting");
-  const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god", "godMode");
+  const rawFloorRes = getParam(params, "floorRes");
+  const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god");
   const rawAo = getParam(params, "ao");
-  const rawPost = getParam(params, "post");
 
   const mapId = rawMapId && rawMapId.trim().length > 0 ? rawMapId.trim() : DEFAULT_MAP_ID;
   const controlMode = parseControlMode(rawControlMode, rawAutostart);
@@ -163,7 +158,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const wallMode = parseWallMode(rawWalls);
   const quality = parseQualityTier(getParam(params, "quality", "gfx"));
   const floorQuality = rawFloorRes === null && quality === "high" ? "2k" : parseFloorQuality(rawFloorRes);
-  const environmentLighting = parseBooleanFlagWithDefault(rawEnvironmentLighting, true);
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
   const unlimitedHealthExplicit = rawUnlimitedHealth === null ? null : unlimitedHealth;
   // GTAO is on for authored shots and for live play in the high tier. It reads
@@ -171,7 +165,6 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   // about 6 ms at 2x DPR on an M3 Pro. The standard tier opts in via ?ao=1, and
   // performance gates that need an AO-free frame pass ?ao=0 explicitly.
   const ao = parseBooleanFlagWithDefault(rawAo, shot !== null || quality === "high");
-  const post = parseBooleanFlagWithDefault(rawPost, true);
 
   return {
     mapId,
@@ -186,11 +179,9 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     floorMode,
     wallMode,
     floorQuality,
-    environmentLighting,
     unlimitedHealth,
     unlimitedHealthExplicit,
     ao,
-    post,
     quality,
   };
 }

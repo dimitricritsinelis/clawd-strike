@@ -42,7 +42,7 @@ const OVERLAY_FAILURE_BANNER = "Menu art unavailable";
 
 export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = {}): LoadingScreenHandle {
   const isInternalDebugSurface = import.meta.env.DEV || isLocalhostHostname(window.location.hostname);
-  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
+  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode)=agent(?:&|$)/i
     .test(window.location.search);
   const mobileDevice = isMobileDevice();
   const loadingProfileResolution = resolveGameplayProfileIdentity({

@@ -46,7 +46,7 @@ function glbWithImages(label, payloads) {
   return Buffer.concat([header, chunk(jsonPadded.length, 0x4e4f534a), jsonPadded, chunk(binPadded.length, 0x004e4942), binPadded]);
 }
 
-function fixture(t, kind = "section") {
+function fixture(t) {
   const root = mkdtempSync(path.join(os.tmpdir(), "facade-undo-test-"));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const write = (file, data) => {
@@ -61,7 +61,7 @@ function fixture(t, kind = "section") {
   const packageFile = "assets/source/unit-test/package.json";
   const pkg = {
     models: [{ id: "model-test", file: "test.glb" }],
-    ...(kind === "section" ? { section: { zoneId: "ZONE", modelId: "model-test" } } : { frontages: { FACE: "model-test" } }),
+    section: { zoneId: "ZONE", modelId: "model-test" },
   };
   write(spec, JSON.stringify({ zones: [{ id: "ZONE", label: "Keep this" }], frontages: [{ id: "FACE", zoneId: "ZONE" }] }, null, 2) + "\n");
   write(manifest, JSON.stringify({ models: [{ id: "other-unit", url: "other/file.glb" }] }, null, 2) + "\n");
@@ -82,20 +82,28 @@ function fixture(t, kind = "section") {
   return { root, write, read, run, spec, manifest, model, source, packageFile, pkg };
 }
 
-for (const kind of ["section", "frontage"]) {
-  test(`${kind}: a rejected revision restores the last accepted model and bindings byte for byte`, (t) => {
-    const f = fixture(t, kind);
-    f.run("apply");
-    const accepted = [f.model, f.spec, f.manifest].map(f.read);
-    f.write(f.source, glb("rejected revision"));
-    f.run("apply");
-    assert.notDeepEqual(f.read(f.model), accepted[0]);
-    // Rebuilding or removing the source package must not change what undo restores.
-    rmSync(path.join(f.root, f.packageFile));
-    f.run("revert");
-    [f.model, f.spec, f.manifest].forEach((file, i) => assert.deepEqual(f.read(file), accepted[i]));
-  });
-}
+test("section: a rejected revision restores the last accepted model and bindings byte for byte", (t) => {
+  const f = fixture(t);
+  f.run("apply");
+  const accepted = [f.model, f.spec, f.manifest].map(f.read);
+  f.write(f.source, glb("rejected revision"));
+  f.run("apply");
+  assert.notDeepEqual(f.read(f.model), accepted[0]);
+  // Rebuilding or removing the source package must not change what undo restores.
+  rmSync(path.join(f.root, f.packageFile));
+  f.run("revert");
+  [f.model, f.spec, f.manifest].forEach((file, i) => assert.deepEqual(f.read(file), accepted[i]));
+});
+
+test("a package with the retired per-face frontages binding fails before any write", (t) => {
+  const f = fixture(t);
+  const before = [f.spec, f.manifest].map(f.read);
+  f.write(f.packageFile, JSON.stringify({ ...f.pkg, frontages: { FACE: "model-test" } }));
+  assert.match(f.run("apply", false).stderr, /package\.frontages \(per-face facadeModelId\) is no longer supported/);
+  [f.spec, f.manifest].forEach((file, i) => assert.deepEqual(f.read(file), before[i]));
+  assert.equal(existsSync(path.join(f.root, f.model)), false);
+  assert.equal(existsSync(path.join(f.root, "artifacts/facade-packages/unit-test.json")), false);
+});
 
 test("first apply can be undone without deleting neighboring files", (t) => {
   const f = fixture(t);

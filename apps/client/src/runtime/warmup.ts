@@ -6,7 +6,7 @@ import type { RuntimeMapAssets } from "./map/types";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { createAk47ViewModel, type WeaponViewModel } from "./weapons/Ak47AnimatedViewModel";
-import { plannedWallMaterialIds, resolveQaAssetProfile } from "./qa/assetReadiness";
+import { plannedFloorMaterialIds, plannedWallMaterialIds, resolveQaAssetProfile } from "./qa/assetReadiness";
 import { FLOOR_MANIFEST_URL, WALL_MANIFEST_URL } from "./assetManifests";
 
 // Upper bound before boot proceeds with the performance-safe fallback
@@ -50,18 +50,21 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   let enemyVisualsReady = false;
   const warmupTasks: Promise<void>[] = [];
 
-  // The map decides which wall materials to preload; bootstrap reuses it. On
-  // failure bootstrap loads it again and reports the error.
+  // The map decides which floor and wall materials to preload; bootstrap reuses
+  // it. On failure bootstrap loads it again and reports the error.
   const mapLoad = loadMap(parsed.mapId);
   warmupTasks.push(mapLoad.then((assets) => {
     mapAssets = assets;
   }, () => undefined));
 
-  if (parsed.floorMode === "pbr") {
+  // Mobile always renders blockout floors and walls.
+  if (parsed.floorMode === "pbr" && !isMobileDevice()) {
     warmupTasks.push((async () => {
       try {
         floorMaterials = await FloorMaterialLibrary.load(FLOOR_MANIFEST_URL);
-        await floorMaterials.preloadAllTextures(parsed.floorQuality);
+        await floorMaterials.preloadAllTextures(parsed.floorQuality, {
+          materialIds: new Set(plannedFloorMaterialIds(await mapLoad)),
+        });
       } catch (error) {
         floorMaterials = null;
         console.warn(
@@ -71,7 +74,6 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
     })());
   }
 
-  // Mobile always renders blockout walls.
   if (parsed.wallMode === "pbr" && !isMobileDevice()) {
     warmupTasks.push((async () => {
       try {

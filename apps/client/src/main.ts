@@ -69,7 +69,7 @@ function parseAutoStartSelection(search: string): AutoStartResolution {
   }
 
   const mode = rawMode as LoadingScreenMode;
-  const rawName = params.get("name") ?? params.get("player") ?? params.get("playerName");
+  const rawName = params.get("name");
   const validation = validatePlayerName(rawName);
   if (!validation.ok) {
     return {

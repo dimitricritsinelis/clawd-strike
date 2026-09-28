@@ -4812,8 +4812,7 @@
         "height": 2.965
       },
       "materialSlot": "timber",
-      "collisionOpening": false,
-      "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR"
+      "collisionOpening": false
     },
     {
       "id": "window_shuttered",
@@ -7929,39 +7928,6 @@
         "mode": "model",
         "id": "ph_wicker_basket_02",
         "uri": "/assets/models/environment/bazaar/props/wicker_basket_02/wicker_basket_02_1k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
-      "id": "ASSET_CC0_LARGE_CASTLE_DOOR",
-      "label": "Poly Haven Large Castle Door",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/large_castle_door"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 2.012,
-        "depth": 0.339,
-        "height": 2.965
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_large_castle_door",
-        "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf"
       },
       "transform": {
         "pivot": "base_center",

@@ -30,7 +30,6 @@ export type WallDetailInstance = {
 };
 
 export type BuildWallDetailMeshesOptions = {
-  highVis: boolean;
   wallMode: RuntimeWallMode;
   wallMaterials: WallMaterialLibrary | null;
   quality: WallTextureQuality;

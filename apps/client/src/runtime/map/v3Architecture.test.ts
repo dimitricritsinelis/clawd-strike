@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { BoxGeometry, Group, Mesh, MeshStandardMaterial, Raycaster, Vector3, type InstancedMesh } from "three";
+import { BoxGeometry, Group, Mesh, MeshStandardMaterial, type InstancedMesh } from "three";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import { buildWallDetailMeshes, type WallDetailInstance } from "./wallDetailKit";
 import {
@@ -11,8 +11,7 @@ import {
   type V3FacadeProfile,
   type V3MassingProfile,
 } from "./v3Architecture";
-import { buildDoorModels, CASTLE_DOOR_ID } from "./buildDoorModels";
-import { buildFacadeModels, buildSectionModels } from "./buildFacadeModels";
+import { buildAuthoredPlacements, buildSectionModels } from "./buildFacadeModels";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
 import { parseBlockoutSpec, type RuntimeBlockoutZone } from "./types";
 
@@ -161,7 +160,6 @@ function modulePlacement(
 
 function build(
   placements: V3ArchitecturePlacement[],
-  fortifiedDoorModelAvailable = true,
   validateCutoutMassing = false,
   profiles: V3FacadeProfile[] = facadeProfiles,
 ) {
@@ -173,7 +171,6 @@ function build(
     zones,
     traversalSurfaces: [],
     wallHeightM: 9.5,
-    fortifiedDoorModelAvailable,
     validateCutoutMassing,
   });
 }
@@ -187,7 +184,7 @@ test("massing placements set wall heights and emit no render geometry of their o
   ];
   const snapshot = structuredClone(placements);
   for (const validateCutoutMassing of [false, true]) {
-    const result = build(placements, true, validateCutoutMassing);
+    const result = build(placements, validateCutoutMassing);
     assert.deepEqual(placements, snapshot, "architecture build mutated compiled placements");
     assert.deepEqual(result.segmentHeights, [7]);
     assert.deepEqual(result.instances, []);
@@ -195,7 +192,7 @@ test("massing placements set wall heights and emit no render geometry of their o
     assert.equal(result.stats.segmentsDecorated, 1);
     assert.equal("colliders" in result, false);
     assert.equal("lineOfSight" in result, false);
-    assert.deepEqual(result, build(placements, true, validateCutoutMassing));
+    assert.deepEqual(result, build(placements, validateCutoutMassing));
   }
 });
 
@@ -217,7 +214,6 @@ test("the compiled bazaar spec passes every massing check and renders only found
       facadeProfiles: compiled.facadeProfiles ?? [],
       segments: [],
       wallHeightM: compiled.defaults.wall_height,
-      fortifiedDoorModelAvailable: true,
       validateCutoutMassing,
     });
     assert.deepEqual(input, snapshot, "architecture build mutated the compiled spec");
@@ -228,8 +224,6 @@ test("the compiled bazaar spec passes every massing check and renders only found
       || instance.moduleId === "elevation_retaining_cap"
       || instance.placementId === "ARCH_RUG_GATE_WEST_NORTH_WALL_COPING"
     )), "a massing placement emitted render geometry");
-    assert.equal(result.facadeModelPlacements.length, 0);
-    assert.equal(result.doorModelPlacements.length, 0);
   }
 });
 
@@ -248,7 +242,7 @@ test("massing checks reject invalid size, roof, apertures, recesses and boundary
   turned.yawDeg = 0;
   assert.doesNotThrow(() => build([turned, door()]), "yaw is only checked with cutout massing checks");
   assert.throws(
-    () => build([turned, door()], true, true),
+    () => build([turned, door()], true),
     /massing 'ARCH_MASSING_001' yaw does not orient its removable face toward 'west'/,
   );
 
@@ -256,13 +250,13 @@ test("massing checks reject invalid size, roof, apertures, recesses and boundary
   if (otherFace.kind !== "facade_module") throw new Error("fixture drift");
   otherFace.face = "east";
   assert.throws(
-    () => build([massingPlacement(), otherFace], true, true),
+    () => build([massingPlacement(), otherFace], true),
     /module 'MOD_DOOR' does not belong to massing 'ARCH_MASSING_001' frontage face/,
   );
 
   const outside = modulePlacement("MOD_OUTSIDE", "door_shop_timber", "door", { x: 10, y: 21.5, z: 1.1 });
   assert.throws(
-    () => build([massingPlacement(), outside], true, true),
+    () => build([massingPlacement(), outside], true),
     /module 'MOD_OUTSIDE' cutout does not fit massing 'ARCH_MASSING_001' face/,
   );
 
@@ -272,7 +266,7 @@ test("massing checks reject invalid size, roof, apertures, recesses and boundary
   const shallow = massingPlacement() as V3ArchitectureMassingPlacement;
   shallow.sizeM.depth = 2;
   assert.throws(
-    () => build([shallow, deepShop], true, true),
+    () => build([shallow, deepShop], true),
     /massing depth 2 cannot back a 2m shop recess with 0.12m construction clearance/,
   );
 
@@ -282,7 +276,7 @@ test("massing checks reject invalid size, roof, apertures, recesses and boundary
   tight.center = { ...tight.center, z: 2.25 };
   tight.roof.setbackM = 0;
   assert.throws(
-    () => build([tight, door()], true, true),
+    () => build([tight, door()], true),
     /massing 'ARCH_MASSING_001' boundary infill 1 cannot fit shared-shell return clearance/,
   );
 
@@ -296,7 +290,7 @@ test("massing checks reject invalid size, roof, apertures, recesses and boundary
   narrowDoor.sizeM = { width: 0.8, depth: 0.16, height: 2.2 };
   highWindow.sizeM = { width: 0.5, depth: 0.16, height: 1.5 };
   assert.throws(
-    () => build([narrow, narrowDoor, highWindow], true, true),
+    () => build([narrow, narrowDoor, highWindow], true),
     /boundary infill \d+ has only 0.100m tangent width; a skyline-visible corner requires at least 0.62m/,
   );
 });
@@ -338,7 +332,7 @@ test("wall detail kit renders foundations, trim and coping in blockout and PBR",
       trimMaterialId: "ph_stone_trim_sandstone",
     },
   ];
-  const baseOptions = { highVis: false, quality: "1k" as const, seed: 23 };
+  const baseOptions = { quality: "1k" as const, seed: 23 };
   const blockout = buildWallDetailMeshes(instances, { ...baseOptions, wallMode: "blockout", wallMaterials: null });
   assert.deepEqual(
     blockout.children.map((child) => child.name),
@@ -416,7 +410,6 @@ test("elevated terrace and ramp foundations close visible under-surface gaps wit
       },
     ],
     wallHeightM: 9.5,
-    fortifiedDoorModelAvailable: false,
   });
   const foundations = result.instances.filter((instance) => instance.moduleId === "elevation_foundation");
   assert.equal(foundations.filter((instance) => instance.semanticClass === "terrace_retaining_mass").length, 1);
@@ -446,7 +439,7 @@ test("v3 renderer rejects unresolved modules and refuses to bury future collisio
   assert.throws(() => build([massingPlacement(), unknownProfile]), /references unknown facade profile 'made_up_profile'/);
   const emptyTimber = facadeProfiles.map((profile) => ({ ...profile, materialSlots: { ...profile.materialSlots, timber: "" } }));
   const window = modulePlacement("MOD_EMPTY_SLOT", "window_screened", "window", { x: 10, y: 16, z: 4 });
-  assert.throws(() => build([massingPlacement(), window], true, false, emptyTimber), /resolves an empty 'timber' material slot/);
+  assert.throws(() => build([massingPlacement(), window], false, emptyTimber), /resolves an empty 'timber' material slot/);
   const flat = modulePlacement("MOD_FLAT", "window_screened", "window", { x: 10, y: 16, z: 4 });
   if (flat.kind !== "facade_module") throw new Error("fixture drift");
   flat.sizeM.depth = 0;
@@ -456,94 +449,23 @@ test("v3 renderer rejects unresolved modules and refuses to bury future collisio
   if (connector.kind !== "facade_module") throw new Error("fixture drift");
   connector.collisionOpening = true;
   assert.throws(
-    () => build([massingPlacement(), connector], true, true),
+    () => build([massingPlacement(), connector], true),
     /cannot place a closed backing volume behind collision opening 'MOD_OPEN'/,
   );
 });
 
-// A recessed source leaf must remain visible ahead of its opaque backing.
-test("castle door backing stays behind closed leaves on all wall orientations", () => {
-  const source = new Group();
-  const leaf = new Mesh(new BoxGeometry(2, 3, .04), new MeshStandardMaterial());
-  leaf.name = "large_castle_door_left";
-  leaf.position.set(0, 1.5, .2);
-  leaf.rotation.y = .17;
-  source.add(leaf);
-  const models = { hasModel: () => true, instantiate: () => source.clone(true) } as unknown as PropModelLibrary;
-  for (const [x, z] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-    const root = buildDoorModels([{ wallSurfacePos: { x: 0, y: 1.4825, z: 0 },
-      doorW: 2.012, doorH: 2.965, yawRad: x ? 0 : Math.PI / 2,
-      outwardX: x!, outwardZ: z!, modelId: CASTLE_DOOR_ID }], models, .3, null, "1k", 1);
-    root.updateMatrixWorld(true);
-    const hits = new Raycaster(new Vector3(x! * 3, 1.4, z! * 3), new Vector3(-x!, 0, -z!)).intersectObject(root, true);
-    assert.equal(hits[0]?.object.name, leaf.name, "backing masked the actual door leaf");
-    assert.equal(root.getObjectByName(leaf.name)?.rotation.y, 0, "closed entry retained an open source pose");
-  }
-});
-
-test("a frontage with facadeModelId hands its street face to the GLB", () => {
-  const massing = { ...(massingPlacement() as V3ArchitectureMassingPlacement), facadeModelId: "facade_test_row" };
-  const module = modulePlacement("ARCH_MODULE_001", "shop_recess_market", "shop_recess", { x: 10, y: 14, z: 1.35 });
-  const result = build([massing, module]);
-  assert.deepEqual(result.facadeModelPlacements, [{
-    placementId: "ARCH_MASSING_001",
-    frontageId: "FRONTAGE_001",
-    modelId: "facade_test_row",
-    base: { x: 10, y: 0, z: 16 },
-    inward: { x: 1, z: 0 },
-    widthM: 10,
-    heightM: 7,
-  }]);
-  assert.deepEqual(result.instances, []);
-  assert.equal(result.doorModelPlacements.length, 0);
-  assert.deepEqual(build([massing, module], true, true).facadeModelPlacements, result.facadeModelPlacements);
-  assert.equal(build([massingPlacement(), module]).facadeModelPlacements.length, 0);
-});
-
-test("facade relief warning ignores a high awning but catches low projected geometry", () => {
-  const facade = (awningY: number) => {
-    const source = new Group();
-    const material = new MeshStandardMaterial();
-    const wall = new Mesh(new BoxGeometry(6, 3, 0.1), material);
-    wall.position.set(0, 1.5, 0.05);
-    const awning = new Mesh(new BoxGeometry(2, 0.2, 0.8), material);
-    awning.position.set(0, awningY, 0.4);
-    source.add(wall, awning);
-    return source;
-  };
-  const high = facade(2.45);
-  const low = facade(1.5);
-  const models = {
-    hasModel: () => true,
-    instantiate: (modelId: string) => (modelId === "high-awning" ? high : low).clone(true),
-  } as unknown as PropModelLibrary;
-  const warnings: string[] = [];
-  const originalWarn = console.warn;
-  console.warn = (message: unknown) => warnings.push(String(message));
-  try {
-    buildFacadeModels([
-      { placementId: "HIGH", frontageId: "HIGH", modelId: "high-awning", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 4 },
-      { placementId: "LOW", frontageId: "LOW", modelId: "low-relief", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 4 },
-    ], models, { wallMaterials: null, quality: "1k", seed: 1 });
-  } finally {
-    console.warn = originalWarn;
-  }
-  assert.ok(!warnings.some((warning) => warning.includes("high-awning") && warning.includes("protrudes")), "a high awning is clear of the walk-through relief warning");
-  assert.ok(warnings.some((warning) => warning.includes("low-relief") && warning.includes("protrudes")), "low projected relief remains guarded");
-});
-
-test("authored plaster faces use the wall wear profile in facade and section GLBs", () => {
-  const facadeSource = new Group();
-  const facadeWall = new Mesh(new BoxGeometry(6, 3, 0.1), new MeshStandardMaterial({ name: "ph_lime_plaster_sun" }));
-  facadeWall.position.y = 1.5;
-  facadeSource.add(facadeWall);
+test("authored plaster faces use the wall wear profile in placement and section GLBs", () => {
+  const placementSource = new Group();
+  const placementWall = new Mesh(new BoxGeometry(6, 3, 0.1), new MeshStandardMaterial({ name: "ph_lime_plaster_sun" }));
+  placementWall.position.y = 1.5;
+  placementSource.add(placementWall);
   const sectionSource = new Group();
-  const sectionWall = facadeWall.clone();
+  const sectionWall = placementWall.clone();
   sectionWall.position.set(3, 1.5, 1.5);
   sectionSource.add(sectionWall);
   const models = {
     hasModel: () => true,
-    instantiate: (modelId: string) => (modelId === "plaster-section" ? sectionSource : facadeSource).clone(true),
+    instantiate: (modelId: string) => (modelId === "plaster-section" ? sectionSource : placementSource).clone(true),
   } as unknown as PropModelLibrary;
   const wallMaterials = {
     getMaterialIds: () => ["ph_lime_plaster_sun"],
@@ -551,14 +473,14 @@ test("authored plaster faces use the wall wear profile in facade and section GLB
     getTileSizeM: () => 2,
   } as unknown as WallMaterialLibrary;
 
-  const facadeRoot = buildFacadeModels([
-    { placementId: "PLASTER", frontageId: "PLASTER", modelId: "plaster", base: { x: 0, y: 0, z: 0 }, inward: { x: 0, z: 1 }, widthM: 6, heightM: 3 },
+  const placementRoot = buildAuthoredPlacements([
+    { id: "PLASTER", unit: "fixture", modelId: "plaster", materialIds: ["ph_lime_plaster_sun"], position: { x: 0, y: 0, z: 0 }, yawDeg: 0, role: "dressing" },
   ], models, { wallMaterials, quality: "1k", seed: 1 });
   const sectionRoot = buildSectionModels([
     { zoneId: "PLASTER", modelId: "plaster-section", origin: { x: 0, y: 0, z: 0 }, sizeM: { width: 6, depth: 3 }, faces: ["north"], materialIds: ["ph_lime_plaster_sun"] },
   ], models, { wallMaterials, quality: "1k", seed: 1 });
 
-  for (const root of [facadeRoot, sectionRoot]) {
+  for (const root of [placementRoot, sectionRoot]) {
     const material = (root.children[0]!.children[0] as Mesh).material as MeshStandardMaterial;
     assert.match(material.customProgramCacheKey(), /:wear:/, "the plaster face receives repairs, chips, and datum drips");
   }
@@ -570,7 +492,7 @@ test("checked ramp-edge receivers retire only covered caps and cheeks and preser
       rect:{x:10,y:14,w:8,h:8},axis,startElevationM:0,endElevationM:1.4};
     const options={placements:[massingPlacement()],massingProfiles,facadeProfiles,
       segments:[{orientation:"vertical" as const,coord:10,start:10,end:22,outward:-1 as const}],
-      zones,traversalSurfaces:[surface],wallHeightM:9.5,fortifiedDoorModelAvailable:false};
+      zones,traversalSurfaces:[surface],wallHeightM:9.5};
     const original=buildV3Architecture(options);
     const coverage={orientation:axis==="y"?"vertical" as const:"horizontal" as const,
       coord:axis==="y"?18:22,start:axis==="y"?14:10,end:axis==="y"?22:18};
@@ -601,7 +523,7 @@ test("ramp foundation bodies clear both rising and falling floors without moving
     const surface={id:"CLEAR_RAMP",zoneId:"ARBITRARY_ZONE_ID",kind:"ramp" as const,
       rect:{x:10,y:14,w:8,h:8},axis,startElevationM:descending?1.4:0,endElevationM:descending?0:1.4};
     const options={placements:[massingPlacement()],massingProfiles,facadeProfiles,
-      segments:[],zones,traversalSurfaces:[surface],wallHeightM:9.5,fortifiedDoorModelAvailable:false};
+      segments:[],zones,traversalSurfaces:[surface],wallHeightM:9.5};
     const result=buildV3Architecture(options);
     const bodies=result.instances.filter(i=>i.semanticClass==="ramp_foundation");
     assert.equal(bodies.length,9);

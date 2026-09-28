@@ -14,8 +14,8 @@
 // Headless gaps. Node has no WebGL, image decoding or canvas, so:
 //   - prop GLBs load through the real PropModelLibrary with every
 //     props/models.json entry (the desktop boot), but images are not decoded;
-//   - buildBlockout runs with blockout floors/walls and no door models, as the
-//     mobile boot does, and also without the facade library. Its collider
+//   - buildBlockout runs with blockout floors/walls, as the mobile boot does,
+//     and also without the facade library. Its collider
 //     producers read only the spec, but a future collider that depends on a
 //     render input would not be seen here;
 //   - enemy visuals use the capsule fallback (render only).
@@ -105,17 +105,13 @@ async function buildSnapshot(): Promise<Snapshot> {
   const propModels = await PropModelLibrary.load("/assets/models/environment/bazaar/props/models.json");
 
   const builtBlockout = buildBlockout(blockout, {
-    highVis: false,
     seed: resolveRuntimeSeed(blockout.mapId, null),
     floorMode: "blockout",
     wallMode: "blockout",
     floorQuality: "1k",
-    lightingPreset: "golden",
     floorMaterials: null,
     wallMaterials: null,
     anchors,
-    wallDetails: { enabled: true, densityScale: null },
-    doorModels: null,
     facadeModels: null,
   });
   const builtProps = buildProps({

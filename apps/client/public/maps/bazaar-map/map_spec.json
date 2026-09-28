@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "apps/client/assets-src/maps/bazaar-map/map_spec.json",
-    "sha256": "37fd589ddfd5516ebcefeb772b70a056002eab41c2263fe3a2a733c360ebf91b",
+    "sha256": "d306a37db2a35473d1b5d4a559ffda8cc363b204d8bb8525959d67ea2fd725ce",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -3787,39 +3787,6 @@
       }
     },
     {
-      "id": "ASSET_CC0_LARGE_CASTLE_DOOR",
-      "label": "Poly Haven Large Castle Door",
-      "source": {
-        "kind": "external_cc0",
-        "uri": "https://polyhaven.com/a/large_castle_door"
-      },
-      "license": "CC0-1.0",
-      "dimensionsM": {
-        "width": 2.012,
-        "depth": 0.339,
-        "height": 2.965
-      },
-      "collisionClass": "soft",
-      "shadowPolicy": "cast_receive",
-      "lodEligible": true,
-      "semanticClass": "architecture",
-      "runtime": {
-        "mode": "model",
-        "id": "ph_large_castle_door",
-        "uri": "/assets/models/environment/bazaar/doors/large_castle_door/large_castle_door_2k.gltf"
-      },
-      "transform": {
-        "pivot": "base_center",
-        "upAxis": "+y",
-        "forwardAxis": "+z",
-        "authoredScale": {
-          "x": 1,
-          "y": 1,
-          "z": 1
-        }
-      }
-    },
-    {
       "id": "ASSET_CC0_POTTERY",
       "label": "Poly Haven Ceramic Pot",
       "source": {
@@ -4097,8 +4064,7 @@
         "height": 2.965
       },
       "materialSlot": "timber",
-      "collisionOpening": false,
-      "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR"
+      "collisionOpening": false
     },
     {
       "id": "door_residential_timber",
@@ -6896,8 +6862,7 @@
       },
       "yawDeg": 90,
       "materialSlot": "timber",
-      "collisionOpening": false,
-      "assetId": "ASSET_CC0_LARGE_CASTLE_DOOR"
+      "collisionOpening": false
     },
     {
       "id": "ARCH_FRONTAGE_NORTH_COURT_WEST_MASSING",

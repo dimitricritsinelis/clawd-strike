@@ -54,10 +54,7 @@ function resolveKitPbrOptions(
 function createTemplates(
   options: BuildWallDetailMeshesOptions,
 ): Record<WallDetailMeshId, DetailTemplate> {
-  const { stonePrimary, stoneTrim, roofBitumen } = createWallDetailMaterialBank(
-    options.highVis,
-    resolveKitPbrOptions(options),
-  );
+  const { stonePrimary, stoneTrim, roofBitumen } = createWallDetailMaterialBank(resolveKitPbrOptions(options));
   return {
     plinth_strip: {
       geometry: createPlinthTrimGeometry(),

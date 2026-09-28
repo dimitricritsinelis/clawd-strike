@@ -26,8 +26,6 @@ export type QaAssetPlan = {
   floorMaterialIds: readonly string[];
   wallMaterialIds: readonly string[];
   propModelIds: readonly string[];
-  doorModelIds: readonly string[];
-  facadeModelIds: readonly string[];
   directTextureUrls: readonly string[];
   requiredLogicalRequestIds: readonly string[];
   hash: string;
@@ -37,7 +35,6 @@ export type QaAssetPlanOptions = {
   floorPbr?: boolean;
   wallPbr?: boolean;
   bazaarProps?: boolean;
-  doorModels?: boolean;
   textureTier?: "1k" | "2k";
 };
 
@@ -110,11 +107,6 @@ const QA_WALL_DIRECT_MATERIAL_IDS = [
   "ph_worn_plaster_sun",
 ] as const;
 
-const LEGACY_QA_DOOR_MODEL_IDS = [
-  "ph_large_castle_door",
-  "ph_rollershutter_window_02",
-] as const;
-
 // Textures loaded directly by render-only prop templates rather than through
 // a material manifest. The capture gate prefetches and observes these requests.
 export const QA_RENDERER_DIRECT_TEXTURE_URLS = [
@@ -185,14 +177,6 @@ export function qaPropModelRequestId(modelId: string): string {
   return `prop-model:${modelId}`;
 }
 
-export function qaDoorModelRequestId(modelId: string): string {
-  return `door-model:${modelId}`;
-}
-
-export function qaFacadeModelRequestId(modelId: string): string {
-  return `facade-model:${modelId}`;
-}
-
 export function qaDirectTextureRequestId(url: string): string {
   return `direct-texture:${url}`;
 }
@@ -223,44 +207,12 @@ export function resolveQaAssetTimeoutMs(search: string): number {
   return Math.max(1_000, Math.min(120_000, parsed));
 }
 
-export function resolveQaDoorModelIds(mapAssets: RuntimeMapAssets): string[] {
-  const blockout = mapAssets.blockout;
-  if (!/^3(?:\.|$)/.test(blockout.formatVersion ?? "")) {
-    // Legacy wall-detail placement chooses between both registered models from
-    // the computed door width. V3 bypasses that placer and declares model
-    // dependencies on the compiled facade placements instead.
-    return sortedUnique(LEGACY_QA_DOOR_MODEL_IDS);
-  }
-
-  const modelIdByAssetId = new Map(
-    (blockout.assetRegistry ?? [])
-      .filter((asset) => asset.runtime?.mode === "model")
-      .map((asset) => [asset.id, asset.runtime!.id] as const),
-  );
-  // buildV3Architecture emits no modules on a frontage whose massing an
-  // authored facade or section GLB owns, so doors there never place a model.
-  const sectionFaces = new Set((blockout.sectionModels ?? []).flatMap((section) => (
-    section.faces.map((face) => `${section.zoneId}:${face}`)
-  )));
-  const glbOwnedFrontageIds = new Set((blockout.architecturePlacements ?? []).flatMap((placement) => (
-    placement.kind === "massing" && (placement.facadeModelId || sectionFaces.has(`${placement.zoneId}:${placement.face}`))
-      ? [placement.frontageId]
-      : []
-  )));
-  return sortedUnique(
-    (blockout.architecturePlacements ?? []).flatMap((placement) => {
-      if (
-        placement.kind !== "facade_module"
-        || placement.moduleKind !== "door"
-        || !placement.assetId
-        || glbOwnedFrontageIds.has(placement.frontageId)
-      ) {
-        return [];
-      }
-      const modelId = modelIdByAssetId.get(placement.assetId);
-      return modelId ? [modelId] : [];
-    }),
-  );
+/** Floor-pack materials the compiled map builds with; both boot paths preload only these. */
+export function plannedFloorMaterialIds(mapAssets: RuntimeMapAssets): string[] {
+  return sortedUnique([
+    ...QA_FLOOR_DIRECT_MATERIAL_IDS,
+    ...mapAssets.blockout.zones.flatMap((zone) => zone.floorMaterialId ? [zone.floorMaterialId] : []),
+  ]);
 }
 
 /** Wall-pack materials the compiled map builds with; both boot paths preload only these. */
@@ -302,23 +254,10 @@ export function createQaAssetPlan(
   profile: QaAssetProfile,
   options: QaAssetPlanOptions = {},
 ): QaAssetPlan {
-  const floorMaterialIds = options.floorPbr === false
-    ? []
-    : sortedUnique([
-        ...QA_FLOOR_DIRECT_MATERIAL_IDS,
-        ...mapAssets.blockout.zones.flatMap((zone) => zone.floorMaterialId ? [zone.floorMaterialId] : []),
-      ]);
+  const floorMaterialIds = options.floorPbr === false ? [] : plannedFloorMaterialIds(mapAssets);
   const wallMaterialIds = options.wallPbr === false ? [] : plannedWallMaterialIds(mapAssets);
   const propModelIds = options.bazaarProps === false ? [] : plannedPropModelIds(mapAssets);
-  const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
-  const facadeModelIds = sortedUnique(
-    (mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
-      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []
-    )),
-  );
-  const hasDecorativePalms = (r8AppliesTo(mapAssets.blockout.mapId) && R8_ATMOSPHERE.palms.length > 0) || mapAssets.anchors.anchors.some((anchor) => (
-    anchor.type.toLowerCase() === "decorative_palm"
-  ));
+  const hasDecorativePalms = r8AppliesTo(mapAssets.blockout.mapId) && R8_ATMOSPHERE.palms.length > 0;
   const textureTier = options.textureTier ?? "1k";
   const directTextureUrls = sortedUnique([
     ...(options.bazaarProps === false ? [] : QA_RENDERER_DIRECT_TEXTURE_URLS),
@@ -328,8 +267,6 @@ export function createQaAssetPlan(
     ...floorMaterialIds.map(qaFloorMaterialRequestId),
     ...wallMaterialIds.map(qaWallMaterialRequestId),
     ...propModelIds.map(qaPropModelRequestId),
-    ...doorModelIds.map(qaDoorModelRequestId),
-    ...facadeModelIds.map(qaFacadeModelRequestId),
     ...directTextureUrls.map(qaDirectTextureRequestId),
   ]);
   return {
@@ -338,8 +275,6 @@ export function createQaAssetPlan(
     floorMaterialIds,
     wallMaterialIds,
     propModelIds,
-    doorModelIds,
-    facadeModelIds,
     directTextureUrls,
     requiredLogicalRequestIds,
     hash: hashQaAssetRequestIds(profile, requiredLogicalRequestIds),

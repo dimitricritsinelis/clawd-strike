@@ -1,5 +1,5 @@
 import { MeshStandardMaterial } from "three";
-import { resolveBlockoutPalette } from "../../render/BlockoutMaterials";
+import { BLOCKOUT_PALETTE } from "../../render/BlockoutMaterials";
 import type {
   WallMaterialLibrary,
   WallTextureQuality,
@@ -273,11 +273,7 @@ float roofValueNoise(vec2 p) {
   material.needsUpdate = true;
 }
 
-export function createWallDetailMaterialBank(
-  highVis: boolean,
-  pbrOptions?: KitPbrMaterialOptions,
-) {
-  const palette = resolveBlockoutPalette(highVis);
+export function createWallDetailMaterialBank(pbrOptions?: KitPbrMaterialOptions) {
   const mapped = (
     recipe: KitMappedMaterialRecipe,
     fallback: MeshStandardMaterial,
@@ -287,40 +283,40 @@ export function createWallDetailMaterialBank(
 
   const stonePrimary = mapped({
     materialId: "ph_painted_plaster_warm",
-    tintHex: highVis ? 0xd8cbb7 : 0xc2b49f,
+    tintHex: 0xc2b49f,
     roughness: 0.92,
     metalness: 0,
-    albedoBoost: highVis ? 1.12 : 1.06,
+    albedoBoost: 1.06,
     macroColorAmplitude: 0.025,
     macroRoughnessAmplitude: 0.035,
     dirtEnabled: true,
     dirtDarken: 0.18,
   }, new MeshStandardMaterial({
-    color: palette.wall,
+    color: BLOCKOUT_PALETTE.wall,
     roughness: 0.88,
     metalness: 0.03,
   }));
   const stoneTrim = mapped({
     materialId: "ph_stone_trim_sandstone",
-    tintHex: highVis ? 0xd4c7b3 : 0xbeb09a,
+    tintHex: 0xbeb09a,
     roughness: 0.86,
     metalness: 0.01,
     macroColorAmplitude: 0.03,
   }, new MeshStandardMaterial({
-    color: palette.serviceDoor,
+    color: BLOCKOUT_PALETTE.serviceDoor,
     roughness: 0.84,
     metalness: 0.03,
   }));
   const roofBitumen = mapped({
     materialId: "ph_beige_wall_002",
-    tintHex: highVis ? 0x5d554d : 0x49423c,
+    tintHex: 0x49423c,
     roughness: 0.94,
     metalness: 0,
-    albedoBoost: highVis ? 1.15 : 1.05,
+    albedoBoost: 1.05,
     macroColorAmplitude: 0.045,
     macroRoughnessAmplitude: 0.04,
   }, new MeshStandardMaterial({
-    color: highVis ? 0x4a4540 : 0x3a3530,
+    color: 0x3a3530,
     roughness: 0.92,
     metalness: 0,
   }));

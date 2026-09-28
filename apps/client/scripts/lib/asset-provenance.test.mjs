@@ -289,17 +289,12 @@ test("bazaar model packs carry complete CC0 provenance and no dead files", () =>
     "../../public/assets/models/environment/bazaar/props/models.json",
     import.meta.url,
   );
-  const doorManifestUrl = new URL(
-    "../../public/assets/models/environment/bazaar/doors/models.json",
-    import.meta.url,
-  );
   const facadeManifestUrl = new URL(
     "../../public/assets/models/environment/bazaar/facades/models.json",
     import.meta.url,
   );
   const modelById = new Map([
     ...verifyModelPack(propManifestUrl),
-    ...verifyModelPack(doorManifestUrl),
     ...verifyModelPack(facadeManifestUrl),
   ]);
   const sourceSpec = readJson(MAP_SOURCE_ABS.spec);
