@@ -1,0 +1,32 @@
+{
+  "recordedAt": "2026-09-29",
+  "source": "Project owner confirmation during production-readiness review",
+  "statement": "these were created by me",
+  "classification": "Project-Original (owner-declared)",
+  "assets": [
+    {
+      "kind": "raider donor",
+      "sourceFiles": [
+        "assets/source/enemy-raider/donor/model_source_4k.glb"
+      ],
+      "toolRecord": "Existing project Tripo export"
+    },
+    {
+      "kind": "weapon and UI audio",
+      "shippedFiles": [
+        "apps/client/public/assets/audio/weapons/ak47/fire_close_01.mp3",
+        "apps/client/public/assets/audio/weapons/ak47/fire_tail_01.mp3",
+        "apps/client/public/assets/audio/weapons/ak47/reload.mp3",
+        "apps/client/public/assets/audio/ui/kill_ding.mp3"
+      ]
+    },
+    {
+      "kind": "loading-screen imagery and music",
+      "sourceDirectory": "apps/client/assets-src/loading-screen/masters",
+      "processingManifest": "apps/client/assets-src/loading-screen/manifest.json",
+      "shippedDirectory": "apps/client/public/loading-screen/assets"
+    }
+  ],
+  "scope": "This records authorship declared by the owner. Existing third-party source dependencies, including the AK rifle, Blender hand topology and acquired CC0 assets, retain their separate provenance. It does not grant an overall repository software licence.",
+  "timeZone": "UTC"
+}

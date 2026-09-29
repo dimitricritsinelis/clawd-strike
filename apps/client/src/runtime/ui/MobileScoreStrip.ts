@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * MobileScoreStrip — compact single-line score display for mobile gameplay.
  *
@@ -17,7 +18,6 @@ type ScoreHudKillRecord = {
   isHeadshot: boolean;
 };
 
-const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 const BASE_OPACITY = 0.6;
 const FLASH_OPACITY = 1.0;
 const FLASH_DURATION_S = 1.5;

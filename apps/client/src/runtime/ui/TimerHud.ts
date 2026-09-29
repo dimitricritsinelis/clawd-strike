@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * TimerHud — top-center HUD showing elapsed time for the current wave.
  * Displayed directly below the ScoreHud (z-index 22).
@@ -38,7 +39,7 @@ export class TimerHud {
 
     this.timeEl = document.createElement("span");
     Object.assign(this.timeEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "30px",
       fontWeight: "600",
       fontVariantNumeric: "tabular-nums",

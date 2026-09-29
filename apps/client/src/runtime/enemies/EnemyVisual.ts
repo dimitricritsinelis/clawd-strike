@@ -1,3 +1,4 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
 import {
   AdditiveBlending,
   CanvasTexture,
@@ -29,7 +30,6 @@ import {
 } from "./RaiderAnimation";
 
 const MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
-const MODEL_TARGET_HEIGHT_M = 1.8;
 // Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
 // this leaves the whole wave near half the map's remaining tri headroom.
 //
@@ -380,7 +380,7 @@ export class EnemyVisual {
 
         this.bodyMesh.visible = false;
         this.headMesh.visible = false;
-        this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, MODEL_TARGET_HEIGHT_M + 0.4);
+        this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, ENEMY_HEIGHT_M + 0.4);
       }).catch((error: unknown) => {
         // Model load failed — fallback body/head remain visible.
         console.warn("[enemy-visual] model load failed", error);

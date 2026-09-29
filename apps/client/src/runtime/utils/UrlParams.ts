@@ -1,4 +1,5 @@
-import { sanitizeValidatedPlayerName } from "../../../../shared/playerName";
+import type { LoadingScreenInitialNameEntry, LoadingScreenMode, RuntimeLaunchSelection } from "../../loading-screen/types";
+import { clampPlayerNameInput, validatePlayerName, sanitizeValidatedPlayerName } from "../../../../shared/playerName";
 
 const DEFAULT_MAP_ID = "bazaar-map";
 const DEFAULT_FLOOR_QUALITY = "1k";
@@ -17,6 +18,10 @@ export type RuntimeFloorQuality = "1k" | "2k" | "4k";
 type RuntimeQualityTier = "high" | "standard";
 
 export type RuntimeUrlParams = {
+  qaTargets: string[];
+  shadows: boolean;
+  audioForced: string | null;
+  forceHumanBootGate: boolean;
   mapId: string;
   controlMode: RuntimeControlMode;
   playerName: string | null;
@@ -167,6 +172,10 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const ao = parseBooleanFlagWithDefault(rawAo, shot !== null || quality === "high");
 
   return {
+    qaTargets: (params.get("qaTargets") ?? "").split(",").map((value) => value.trim()).filter(Boolean),
+    shadows: params.get("shadows") !== "0",
+    audioForced: params.get("audio"),
+    forceHumanBootGate: params.get("bootGate") === "1",
     mapId,
     controlMode,
     playerName,
@@ -184,4 +193,67 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     ao,
     quality,
   };
+}
+
+type AutoStartResolution = {
+  runtimeLaunchSelection: RuntimeLaunchSelection | null;
+  initialNameEntry: LoadingScreenInitialNameEntry | null;
+};
+
+export function parseAutoStartSelection(search: string): AutoStartResolution {
+  const params = new URLSearchParams(search);
+  const rawMode = params.get("autostart")?.trim().toLowerCase();
+  if (rawMode !== "human" && rawMode !== "agent") {
+    return {
+      runtimeLaunchSelection: null,
+      initialNameEntry: null,
+    };
+  }
+
+  const mode = rawMode as LoadingScreenMode;
+  const rawName = params.get("name");
+  const validation = validatePlayerName(rawName);
+  if (!validation.ok) {
+    return {
+      runtimeLaunchSelection: null,
+      initialNameEntry: {
+        mode,
+        playerName: clampPlayerNameInput(rawName),
+        validationReason: validation.reason,
+      },
+    };
+  }
+
+  return {
+    runtimeLaunchSelection: {
+      mode,
+      playerName: validation.normalized,
+    },
+    initialNameEntry: null,
+  };
+}
+
+export function parseLoadingUrlParams(search: string): { runtimeUrlIsAgent: boolean; audioForced: string | null } {
+  return {
+    // Preserve the menu's historical raw-query match, including case and duplicate keys.
+    runtimeUrlIsAgent: /(?:^|[?&])(?:autostart|mode)=agent(?:&|$)/i.test(search),
+    audioForced: new URLSearchParams(search).get("audio"),
+  };
+}
+
+export type QaAssetProfile = "qa" | "cell-review";
+
+export function resolveQaAssetProfile(search: string): QaAssetProfile | null {
+  const params = new URLSearchParams(search);
+  const namedProfile = params.get("qaProfile")?.trim().toLowerCase();
+  if (namedProfile === "cell-review") return "cell-review";
+  if (params.get("qa") !== "1") return null;
+  return params.has("shot") ? "cell-review" : "qa";
+}
+
+export function resolveQaAssetTimeoutMs(search: string): number {
+  const raw = new URLSearchParams(search).get("qaAssetTimeoutMs");
+  const parsed = raw === null ? Number.NaN : Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed)) return 20_000;
+  return Math.max(1_000, Math.min(120_000, parsed));
 }

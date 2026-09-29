@@ -6,7 +6,7 @@ import {
   ORB_LIFETIME_S,
   ORB_SPAWN_HEIGHT_OFFSET_M,
 } from "./BuffTypes";
-import { type SlabAabb } from "../sim/collision/rayVsAabb";
+import type { MutableAabb } from "../sim/collision/Aabb";
 
 const TWO_PI = Math.PI * 2;
 
@@ -20,7 +20,7 @@ export class BuffOrb {
   /** BuffOrbRenderer slot while the orb is drawn, otherwise -1. */
   renderSlot = -1;
   private readonly buffType: BuffType;
-  private readonly aabb: SlabAabb;
+  private readonly aabb: MutableAabb;
   private readonly lifetimeS: number;
   private age = 0;
 
@@ -54,7 +54,7 @@ export class BuffOrb {
     return this.age < this.lifetimeS;
   }
 
-  getAabb(): SlabAabb {
+  getAabb(): MutableAabb {
     return this.aabb;
   }
 

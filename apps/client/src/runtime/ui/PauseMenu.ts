@@ -1,3 +1,4 @@
+import { SANS_FONT, SERIF_FONT } from "../../shared/uiFonts";
 /**
  * PauseMenu — shown when the player presses Escape while pointer locked.
  * Displays a semi-transparent overlay with "PAUSED" and actions.
@@ -9,8 +10,6 @@
 
 import { isMobileDevice } from "../input/MobileDetect";
 
-const SERIF_FONT = 'Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif';
-const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 function applyButtonHover(btn: HTMLButtonElement, restBg: string, hoverBg: string): void {
   btn.addEventListener("mouseenter", () => {

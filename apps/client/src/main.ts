@@ -1,13 +1,16 @@
+import creditsUrl from "../../../THIRD_PARTY_NOTICES.md?url";
 import "./styles.css";
 import type { LoadingScreenHandle } from "./loading-screen/bootstrap";
 import { bootstrapLoadingScreen } from "./loading-screen/bootstrap";
 import type {
-  LoadingScreenInitialNameEntry,
-  LoadingScreenMode,
   RuntimeLaunchSelection,
 } from "./loading-screen/types";
 import type { RuntimeWarmupAssets } from "./runtime/warmup";
-import { clampPlayerNameInput, validatePlayerName } from "../../shared/playerName";
+import type { RuntimeHandle } from "./runtime/bootstrap";
+import { parseAutoStartSelection } from "./runtime/utils/UrlParams";
+
+const creditsLink = document.querySelector<HTMLAnchorElement>("#credits-link");
+if (creditsLink) creditsLink.href = creditsUrl;
 
 // Vercel serves analytics on deployments; local dev and preview have no endpoint.
 if (!["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
@@ -18,13 +21,6 @@ if (!["localhost", "127.0.0.1", "[::1]"].includes(window.location.hostname)) {
 }
 
 type LaunchState = "idle" | "warming" | "revealing" | "active";
-type RuntimeHandle = {
-  teardown: () => void;
-  getRootElement: () => HTMLDivElement;
-  beginReveal: () => void;
-  activate: () => void;
-};
-
 const REVEAL_DURATION_MS = 280;
 const REVEAL_BUFFER_MS = 96;
 
@@ -34,11 +30,6 @@ let runtimeBootPromise: Promise<void> | null = null;
 let warmupPromise: Promise<RuntimeWarmupAssets | null> | null = null;
 let warmupAssets: RuntimeWarmupAssets | null = null;
 let launchState: LaunchState = "idle";
-
-type AutoStartResolution = {
-  runtimeLaunchSelection: RuntimeLaunchSelection | null;
-  initialNameEntry: LoadingScreenInitialNameEntry | null;
-};
 
 function startWarmup(): void {
   if (warmupPromise) return;
@@ -56,39 +47,6 @@ function startWarmup(): void {
       );
       return null;
     });
-}
-
-function parseAutoStartSelection(search: string): AutoStartResolution {
-  const params = new URLSearchParams(search);
-  const rawMode = params.get("autostart")?.trim().toLowerCase();
-  if (rawMode !== "human" && rawMode !== "agent") {
-    return {
-      runtimeLaunchSelection: null,
-      initialNameEntry: null,
-    };
-  }
-
-  const mode = rawMode as LoadingScreenMode;
-  const rawName = params.get("name");
-  const validation = validatePlayerName(rawName);
-  if (!validation.ok) {
-    return {
-      runtimeLaunchSelection: null,
-      initialNameEntry: {
-        mode,
-        playerName: clampPlayerNameInput(rawName),
-        validationReason: validation.reason,
-      },
-    };
-  }
-
-  return {
-    runtimeLaunchSelection: {
-      mode,
-      playerName: validation.normalized,
-    },
-    initialNameEntry: null,
-  };
 }
 
 const autoStartResolution = parseAutoStartSelection(window.location.search);

@@ -1,3 +1,4 @@
+import { clamp01, lerp } from "../utils/math";
 import {
   AK47_DSP_PEAK,
   ak47ShotVariantSteps,
@@ -244,14 +245,6 @@ type Ak47BufferPlaybackOptions = {
   offsetSeconds?: number;
   onEnded?: () => void;
 };
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
-}
-
-function lerp(start: number, end: number, t: number): number {
-  return start + (end - start) * t;
-}
 
 function createDriveCurve(samples: number, amount: number): Float32Array {
   const curve = new Float32Array(samples);

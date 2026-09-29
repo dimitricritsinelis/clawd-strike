@@ -40,4 +40,6 @@ test("performance report renders every ceiling from the shared budget source", (
   assert.match(report, new RegExp(`minimum ${budget.minMobileFps}`));
   assert.doesNotMatch(report, /max 1200/);
   assert.doesNotMatch(report, /max 1600000/);
+  assert.match(report, /emulated rendered rAF cadence/);
+  assert.match(report, /CPU submission/);
 });

@@ -7,8 +7,9 @@ export function renderPerformanceSummary(performance) {
   const budget = performance?.budget ?? BAZAAR_PERFORMANCE_BUDGET;
   return [
     `- Status: ${performance?.passed ? "PASS" : "FAIL"}`,
-    `- Desktop ${budget.viewport.width}x${budget.viewport.height}: draws=${performance?.desktop?.drawCalls ?? "n/a"} (target <=${budget.targetDrawCalls}, max ${budget.maxDrawCalls}), triangles=${performance?.desktop?.triangles ?? "n/a"} (max ${budget.maxTriangles}), median=${performance?.desktop?.medianFps?.toFixed?.(1) ?? "n/a"} fps / ${performance?.desktop?.medianFrameMs?.toFixed?.(2) ?? "n/a"}ms (max ${budget.maxDesktopFrameMs}ms)`,
-    `- Mobile reduced-detail: draws=${performance?.mobile?.drawCalls ?? "n/a"} (max ${budget.maxMobileDrawCalls}), triangles=${performance?.mobile?.triangles ?? "n/a"} (max ${budget.maxMobileTriangles}), median=${performance?.mobile?.medianFps?.toFixed?.(1) ?? "n/a"} fps (minimum ${budget.minMobileFps})`,
+    `- Desktop ${budget.viewport.width}x${budget.viewport.height}: draws=${performance?.desktop?.drawCalls ?? "n/a"} (target <=${budget.targetDrawCalls}, max ${budget.maxDrawCalls}), triangles=${performance?.desktop?.triangles ?? "n/a"} (max ${budget.maxTriangles}), rendered rAF cadence=${performance?.desktop?.medianFps?.toFixed?.(1) ?? "n/a"} fps; CPU submission median=${performance?.desktop?.medianFrameMs?.toFixed?.(2) ?? "n/a"}ms (max ${budget.maxDesktopFrameMs}ms)`,
+    `- Mobile reduced-detail: draws=${performance?.mobile?.drawCalls ?? "n/a"} (max ${budget.maxMobileDrawCalls}), triangles=${performance?.mobile?.triangles ?? "n/a"} (max ${budget.maxMobileTriangles}), emulated rendered rAF cadence=${performance?.mobile?.medianFps?.toFixed?.(1) ?? "n/a"} fps (minimum ${budget.minMobileFps})`,
+    "- Cadence measures rendered requestAnimationFrame intervals on the test host. Mobile is emulated; CPU submission time is separate from GPU completion.",
     `- Boot ready: ${performance?.desktop?.bootReadyMs?.toFixed?.(1) ?? "n/a"}ms; baseline comparison=${performance?.comparisons?.bootTime?.status ?? "not-run"}`,
     `- Frame baseline comparison: ${performance?.comparisons?.frameTime?.status ?? "not-run"}`,
   ];

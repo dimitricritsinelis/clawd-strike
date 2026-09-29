@@ -1,3 +1,4 @@
+import { MONO_FONT } from "../../shared/uiFonts";
 type HudSnapshot = {
   x: number;
   y: number;
@@ -39,7 +40,7 @@ export class Hud {
     this.root.style.borderRadius = "8px";
     this.root.style.background = "rgba(6, 14, 23, 0.78)";
     this.root.style.color = "#d5ecff";
-    this.root.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    this.root.style.fontFamily = MONO_FONT;
     this.root.style.fontSize = "12px";
     this.root.style.lineHeight = "1.35";
     this.root.style.whiteSpace = "pre";

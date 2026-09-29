@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 export type AmmoHudSnapshot = {
   mag: number;
   reserve: number;
@@ -48,7 +49,7 @@ export class AmmoHud {
     this.magEl = document.createElement("div");
     this.magEl.style.minWidth = "52px";
     this.magEl.style.textAlign = "right";
-    this.magEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.magEl.style.fontFamily = SANS_FONT;
     this.magEl.style.fontSize = "42px";
     this.magEl.style.fontWeight = "780";
     this.magEl.style.lineHeight = "0.95";
@@ -61,7 +62,7 @@ export class AmmoHud {
     reserveWrap.style.gap = "6px";
     reserveWrap.style.marginBottom = "2px";
     reserveWrap.style.color = "rgba(233, 240, 249, 0.92)";
-    reserveWrap.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    reserveWrap.style.fontFamily = SANS_FONT;
     reserveWrap.style.fontWeight = "620";
     reserveWrap.style.fontSize = "22px";
     reserveWrap.style.lineHeight = "1";

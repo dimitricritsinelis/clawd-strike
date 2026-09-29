@@ -8,19 +8,19 @@ import {
   type EnemyManagerDebugSnapshot,
 } from "../enemies/EnemyManager";
 import type { WeaponAudio } from "../audio/WeaponAudio";
-import { buildBlockout } from "../map/buildBlockout";
-import { resolveCoplanarSurfaces } from "../map/resolveCoplanarSurfaces";
+import { buildBlockout } from "../map/world/buildBlockout";
+import { resolveCoplanarSurfaces } from "../map/world/resolveCoplanarSurfaces";
 import {
   buildProps,
   type PropsBuildStats,
   type RenderedPropPlacement,
-} from "../map/buildProps";
-import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
-import type { WallDetailPlacementStats } from "../map/v3Architecture";
+} from "../map/props/buildProps";
+import { designYawDegToWorldYawRad } from "../map/world/coordinateTransforms";
+import type { WallDetailPlacementStats } from "../map/architecture/architecture";
 import type { FloorMaterialLibrary } from "../render/materials/FloorMaterialLibrary";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
-import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../map/types";
+import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../map/spec/types";
 import {
   PLAYER_EYE_HEIGHT_M,
   PlayerController,

@@ -4,7 +4,7 @@ function normalizeUint32(value: number): number {
   return value >>> 0;
 }
 
-function deriveSeedFromString(input: string): number {
+export function hashString32(input: string): number {
   let hash = 0x811c9dc5;
   for (let i = 0; i < input.length; i += 1) {
     hash ^= input.charCodeAt(i);
@@ -16,7 +16,7 @@ function deriveSeedFromString(input: string): number {
 export function deriveSubSeed(seed: number, tag: string): number {
   const normalizedSeed = normalizeSeed(seed) || 1;
   const mixedInput = `${normalizedSeed}:${tag}`;
-  const hashed = deriveSeedFromString(mixedInput);
+  const hashed = hashString32(mixedInput);
   return hashed || 1;
 }
 
@@ -65,5 +65,5 @@ export function resolveRuntimeSeed(mapId: string, seedOverride: number | null): 
   if (typeof seedOverride === "number" && Number.isFinite(seedOverride)) {
     return normalizeSeed(seedOverride) || 1;
   }
-  return deriveSeedFromString(mapId) || 1;
+  return hashString32(mapId) || 1;
 }

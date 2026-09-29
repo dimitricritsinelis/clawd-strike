@@ -58,7 +58,10 @@ const PROTECTED_FILE_PATTERNS = Object.freeze([
   /^apps\/client\/src\/runtime\/enemies\/TacticalGraph(?:\.test)?\.ts$/,
   /^apps\/client\/src\/runtime\/enemies\/enemyLineOfSight\.ts$/,
   /^apps\/client\/src\/runtime\/game\/Game\.ts$/,
-  /^apps\/client\/src\/runtime\/bootstrap\.ts$/,
+  /^apps\/client\/src\/runtime\/bootstrap(?:\.ts$|\/)/,
+  /^apps\/client\/src\/runtime\/utils\/(?:math|deepFreeze|UrlParams)\.ts$/,
+  /^apps\/client\/src\/runtime\/enemies\/enemyDimensions\.ts$/,
+  /^apps\/client\/src\/shared\/(?:OrientationGuard|runtimeTextApi|hostEnvironment)\.ts$/,
   /^apps\/client\/src\/global\.d\.ts$/,
 ]);
 

@@ -1,9 +1,8 @@
+import { asRecord, asString } from "../materials/pbrManifest";
 import { Group } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { disposeObjectRoot } from "../../utils/disposeObjectRoot";
 import { createSharedTextureLoadingManager } from "./sharedGltfTextures";
-
-type UnknownRecord = Record<string, unknown>;
 
 type PropModelManifestEntry = {
   id: string;
@@ -35,20 +34,6 @@ const PROP_MODEL_ALBEDO_CORRECTION: Readonly<Record<string, readonly [number, nu
   ph_wooden_crate_01: [1.92, 1.66, 1.34],
   ph_wine_barrel_01: [1.86, 1.6, 1.3],
 };
-
-function asRecord(value: unknown, context: string): UnknownRecord {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${context}: expected object`);
-  }
-  return value as UnknownRecord;
-}
-
-function asString(value: unknown, context: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error(`${context}: expected non-empty string`);
-  }
-  return value;
-}
 
 function asOptionalNumber(value: unknown, context: string): number | undefined {
   if (value === undefined) return undefined;

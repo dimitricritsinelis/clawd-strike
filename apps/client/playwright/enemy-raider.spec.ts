@@ -525,7 +525,7 @@ test("live raiders maintain body separation while hunting the player", async ({ 
   page.on("pageerror", error => errors.push(error.message));
   await page.goto(buildRuntimeUrl(testInfo.project.use.baseURL as string, {
     autostart: "human", agentName: "RaiderCollisionReview",
-    extraSearchParams: { qa: 1, debug: 1, god: 1, vm: 0, seed: 412805685 },
+    extraSearchParams: { qa: 1, floorRes: "1k", debug: 1, god: 1, vm: 0, seed: 412805685 },
   }), { waitUntil: "domcontentloaded" });
   await waitForRuntimeReady(page, { routeId: "raider-collision" });
   const initial = await readRuntimeState(page);

@@ -1,18 +1,15 @@
 import { FloorMaterialLibrary } from "./render/materials/FloorMaterialLibrary";
 import { preloadEnemyVisualAssets } from "./enemies/EnemyVisual";
 import { isMobileDevice } from "./input/MobileDetect";
-import { loadMap } from "./map/loadMap";
-import type { RuntimeMapAssets } from "./map/types";
+import { loadMap } from "./map/spec/loadMap";
+import type { RuntimeMapAssets } from "./map/spec/types";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { createAk47ViewModel, type WeaponViewModel } from "./weapons/Ak47AnimatedViewModel";
 import { plannedFloorMaterialIds, plannedWallMaterialIds, resolveQaAssetProfile } from "./qa/assetReadiness";
 import { FLOOR_MANIFEST_URL, WALL_MANIFEST_URL } from "./assetManifests";
 
-// Upper bound before boot proceeds with the performance-safe fallback
-// (blockout surfaces, capsule enemies). Local/dev loads finish in well under
-// 2s; this cap only matters on genuinely slow networks, so it is generous —
-// hitting it silently costs the player every PBR surface.
+// Bound speculative prefetch; bootstrap still owns required asset loading.
 const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
 
 export type RuntimeWarmupAssets = {
@@ -145,7 +142,7 @@ export async function warmupRuntimeAssets(): Promise<RuntimeWarmupAssets> {
   window.clearTimeout(timeoutId);
 
   if (typeof timeoutResult === "symbol") {
-    console.warn(`[runtime:warmup] timed out after ${RUNTIME_WARMUP_TIMEOUT_MS}ms; using safe fallback`);
+    console.warn(`[runtime:warmup] timed out after ${RUNTIME_WARMUP_TIMEOUT_MS}ms; continuing runtime startup`);
     return createEmptyWarmupAssets(true);
   }
 

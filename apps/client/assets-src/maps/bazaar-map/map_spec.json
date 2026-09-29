@@ -56,11 +56,7 @@
     "y": 46
   },
   "wall_details": {
-    "enabled": true,
     "style": "bazaar",
-    "density": 0.58,
-    "maxProtrusion": 0.3,
-    "seed": 3009,
     "module_registry": {
       "window_modules": [
         {

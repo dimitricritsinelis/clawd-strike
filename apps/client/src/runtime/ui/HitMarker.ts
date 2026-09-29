@@ -1,3 +1,4 @@
+import { clamp01 } from "../utils/math";
 /**
  * HitMarker — the X that pops over the crosshair when a shot lands.
  *
@@ -47,10 +48,6 @@ type HitMarkerFrame = Readonly<{
   scale: number;
   ringSizePx: number;
 }>;
-
-function clamp01(value: number): number {
-  return value <= 0 ? 0 : value >= 1 ? 1 : value;
-}
 
 function easeOutQuad(t: number): number {
   const inv = 1 - t;

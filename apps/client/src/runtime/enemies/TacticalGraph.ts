@@ -5,8 +5,8 @@ import type {
   RuntimeBlockoutZone,
   RuntimeExplicitConnectivityEdge,
   RuntimeTraversalSurface,
-} from "../map/types";
-import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
+} from "../map/spec/types";
+import { designYawDegToWorldYawRad } from "../map/world/coordinateTransforms";
 import { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
 
 export type TacticalLane = "west" | "main" | "east";

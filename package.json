@@ -26,6 +26,7 @@
     "test:unit": "node apps/client/scripts/run-unit-tests.mjs",
     "test:tools": "node --test 'apps/client/scripts/**/*.test.mjs' 'scripts/**/*.test.mjs' && tsx --test 'scripts/**/*.test.ts'",
     "test:server": "tsx --test 'server/*.test.ts'",
+    "test:postgres": "REQUIRE_TEST_POSTGRES=1 tsx --test server/realPostgres.integration.test.ts",
     "test:e2e:smoke": "pnpm --filter @clawd-strike/client test:e2e:smoke",
     "test:e2e": "pnpm --filter @clawd-strike/client test:e2e",
     "test:e2e:headed": "pnpm --filter @clawd-strike/client test:e2e:headed",
@@ -50,5 +51,8 @@
     "db:reconcile": "tsx scripts/ops/reconcile-shared-champion.ts",
     "db:validate-constraints": "tsx scripts/ops/validate-shared-champion-constraints.ts",
     "ops:stats": "bash scripts/ops/admin-stats.sh"
+  },
+  "engines": {
+    "node": "22.x"
   }
 }

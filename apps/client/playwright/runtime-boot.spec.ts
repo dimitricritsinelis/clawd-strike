@@ -6,6 +6,10 @@ import {
   gotoAgentRuntime,
   gotoHumanShot,
   readDocumentedAgentState,
+  readQaPerformanceState,
+  renderRuntimeFrame,
+  readRuntimeState,
+  waitForRuntimeReady,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
 const DESKTOP_AGENT_IDENTITY = getGameplayProfileIdentity("desktop-agent");
@@ -124,4 +128,63 @@ test("boots mobile bazaar final dressing with registered models", async ({ brows
   } finally {
     await context.close();
   }
+});
+
+
+test("manual zero-time QA renders cannot manufacture a higher runtime FPS", async ({ page }, testInfo) => {
+  await gotoHumanShot(page, {
+    baseUrl: testInfo.project.use.baseURL as string,
+    shot: "SHOT_02_SPAWN_A_TO_BAZAAR",
+    extraSearchParams: { qa: 1, floors: "blockout", walls: "blockout", ao: 0, vm: 0, perf: 1 },
+  });
+  type PerfState = { perf: { fps: number; msPerFrame: number } };
+  const before = await readQaPerformanceState(page) as PerfState;
+  const beforeCounter = await page.evaluate(() => window.__qa_heartbeat?.().frameCounter);
+  for (let index = 0; index < 20; index += 1) await renderRuntimeFrame(page);
+  const after = await readQaPerformanceState(page) as PerfState;
+  const afterCounter = await page.evaluate(() => window.__qa_heartbeat?.().frameCounter);
+  expect(before.perf.fps).toBeGreaterThan(0);
+  expect(after.perf.fps).toBe(before.perf.fps);
+  expect(after.perf.msPerFrame).toBe(before.perf.msPerFrame);
+  expect(afterCounter! - beforeCounter!).toBe(20);
+});
+
+
+test("desktop preserves PBR and its weapon after a warmup network timeout", async ({ page }, testInfo) => {
+  const recorder = attachConsoleRecorder(page);
+  let delayedRequests = 0;
+  await page.route("**/assets/models/weapons/ak47-next/ak47.glb", async (route) => {
+    delayedRequests += 1;
+    // Exercise the real 20-second prefetch deadline with an actual asset request.
+    // Subsequent bootstrap requests can recover normally after the first delay.
+    if (delayedRequests === 1) await new Promise((resolve) => setTimeout(resolve, 23_000));
+    await route.continue();
+  });
+  const recoveredAsset = page.waitForResponse(
+    (response) => response.url().endsWith("/assets/models/weapons/ak47-next/ak47.glb") && response.ok(),
+    { timeout: 60_000 },
+  );
+  await page.goto(buildRuntimeUrl(testInfo.project.use.baseURL as string, {
+    autostart: "human",
+    agentName: "ColdLoadProbe",
+    extraSearchParams: { bootGate: 1 },
+  }), { waitUntil: "domcontentloaded" });
+  await recoveredAsset;
+  await waitForRuntimeReady(page, { routeId: "ColdLoadProbe", timeoutMs: 90_000 });
+  const state = await readRuntimeState(page);
+  const groups = await page.evaluate(() => {
+    const perf = window.__debug_render_perf?.() as { scene: { groups: Record<string, unknown> } } | undefined;
+    return Object.keys(perf?.scene.groups ?? {});
+  });
+
+  expect(delayedRequests).toBeGreaterThan(0);
+  expect(state.boot?.warmupTimedOut).toBe(true);
+  expect(state.boot?.performanceSafeFallback).toBe(false);
+  expect(state.assets?.floor?.activeMode).toBe("pbr");
+  expect(state.assets?.wall?.activeMode).toBe("pbr");
+  expect(state.weapon).toMatchObject({ enabled: true, visible: true, loaded: true });
+  expect(groups).toContain("map-blockout/map-pbr-floors");
+  expect(groups).toContain("map-blockout/r8-atmosphere");
+  expect(groups.some((name) => name.startsWith("AK47_AnimatedPose/"))).toBe(true);
+  expect(recorder.counts().errorCount).toBe(0);
 });

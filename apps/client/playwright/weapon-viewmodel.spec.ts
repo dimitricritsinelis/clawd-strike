@@ -716,6 +716,68 @@ const HELD_THUMB = {
   screenIpMinDeg: 35, screenMcpMinDeg: 20, ringMagazineMinShare: .8,
 };
 
+type RingFrame = { minX: number; maxX: number; minY: number; maxY: number; minDepth: number; maxDepth: number };
+type HeldRingObservation = { seconds: number; ringMagazineShare: number; ringFrame: RingFrame };
+type HeldWindows = { old: readonly [number, number]; fresh: readonly [number, number] };
+
+function fullyObservedRing(frame: RingFrame): boolean {
+  return Object.values(frame).every(Number.isFinite)
+    && frame.minX >= 0 && frame.maxX <= 960 && frame.minY >= 0 && frame.maxY <= 540
+    && frame.minDepth >= -1 && frame.maxDepth <= 1;
+}
+
+function heldRingFailures(samples: readonly HeldRingObservation[], windows: HeldWindows): string[] {
+  const failures: string[] = [];
+  // The shipped 960x540 clip fully frames nine removal samples (0.34–0.4733 s)
+  // and 21 insertion samples (0.8267–1.16 s). Keep that coverage and its exact
+  // time slots so hiding a grip outside the frame cannot satisfy this check.
+  for (const [phase, first, count] of [["old", 0, 9], ["fresh", 4, 21]] as const) {
+    const [from, to] = windows[phase];
+    const visible = samples.filter((sample) => sample.seconds >= from - 1e-4
+      && sample.seconds <= to + 1e-4 && fullyObservedRing(sample.ringFrame));
+    if (visible.length < count) failures.push(`${phase}: observed ${visible.length}/${count} required ring samples`);
+    for (let index = first; index < first + count; index += 1) {
+      const seconds = from + index / 60;
+      if (!visible.some((sample) => Math.abs(sample.seconds - seconds) < 1e-4)) {
+        failures.push(`${phase}: ring must be fully observed at ${seconds.toFixed(4)} s`);
+      }
+    }
+  }
+  for (const sample of samples) {
+    if (fullyObservedRing(sample.ringFrame) && (!Number.isFinite(sample.ringMagazineShare) || sample.ringMagazineShare < HELD_THUMB.ringMagazineMinShare)) {
+      failures.push(`ring at ${sample.seconds} s: magazine share ${sample.ringMagazineShare} is below ${HELD_THUMB.ringMagazineMinShare}`);
+    }
+  }
+  return failures;
+}
+
+test("held-ring observation rejects visible bad grips and missing required framing", () => {
+  const windows: HeldWindows = { old: [0.34, 0.54], fresh: [0.76, 1.16] };
+  const frame: RingFrame = { minX: 100, maxX: 300, minY: 100, maxY: 300, minDepth: 0, maxDepth: 0.9 };
+  const samples = Object.values(windows).flatMap(([from, to]) =>
+    Array.from({ length: Math.round((to - from) * 60) + 1 }, (_, index) => ({
+      seconds: +(from + index / 60).toFixed(4), ringMagazineShare: 1, ringFrame: frame,
+    })));
+  expect(heldRingFailures(samples, windows)).toEqual([]);
+  expect(heldRingFailures(samples.map((sample, index) => index === 0
+    ? { ...sample, ringMagazineShare: 0.79 } : sample), windows))
+    .toContain("ring at 0.34 s: magazine share 0.79 is below 0.8");
+  expect(heldRingFailures(samples.map((sample, index) => index === 0
+    ? { ...sample, ringMagazineShare: Number.NaN } : sample), windows))
+    .toContain("ring at 0.34 s: magazine share NaN is below 0.8");
+  const offscreen = { ...frame, minY: -20 };
+  const hidden = heldRingFailures(samples.map((sample) => ({ ...sample, ringFrame: offscreen })), windows);
+  expect(hidden).toContain("old: observed 0/9 required ring samples");
+  expect(hidden).toContain("fresh: observed 0/21 required ring samples");
+  expect(heldRingFailures(samples.map((sample, index) => index === 0
+    ? { ...sample, ringFrame: offscreen } : sample), windows))
+    .toContain("old: ring must be fully observed at 0.3400 s");
+  // The departing loop is cropped here: its remaining pixels do not measure
+  // the whole grip. Contact and penetration still run for this timestamp.
+  expect(heldRingFailures(samples.map((sample) => sample.seconds === 0.5067
+    ? { ...sample, ringMagazineShare: 0, ringFrame: offscreen } : sample), windows)).toEqual([]);
+});
+
 test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the magazine, tip not past its rear edge", async ({ page }) => {
   // The top acceptance criterion. Contact distances alone passed (0.45 mm pad)
   // while the thumb lay straight along the near face and ran past the rear
@@ -823,7 +885,7 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
     // Pixel coordinates with y up, matching readPixels rows.
     const toScreen = (object: Object3D) => {
       const ndc = object.getWorldPosition(new Vector3()).project(vm.viewModelCamera);
-      return [(ndc.x + 1) / 2 * W, (ndc.y + 1) / 2 * H] as [number, number];
+      return [(ndc.x + 1) / 2 * W, (ndc.y + 1) / 2 * H, ndc.z] as [number, number, number];
     };
     // Turn angle at b between screen segments a-b and b-c; null when any point
     // is out of frame (the thumb has left the view, nothing to judge).
@@ -866,6 +928,10 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
         screenMcpDeg: screenTurn(thumbScreen[0]!, thumbScreen[1]!, thumbScreen[2]!),
         screenIpDeg: screenTurn(thumbScreen[1]!, thumbScreen[2]!, thumbScreen[3]!),
         ring: count, ringMagazineShare: seen >= 50 ? count.magazine / seen : 1,
+        ringFrame: {
+          minX: Math.min(...xs), maxX: Math.max(...xs), minY: Math.min(...ys), maxY: Math.max(...ys),
+          minDepth: Math.min(...ring.map((point) => point[2])), maxDepth: Math.max(...ring.map((point) => point[2])),
+        },
         ringScreen: ring.map((p) => [Math.round(p[0]!), Math.round(H - p[1]!)]),
       };
     };
@@ -873,7 +939,7 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
     // is allowed behind the rear edge on the paddle, about 0.26-0.33 s) until
     // just before it is let go; the fresh one from when it enters view until
     // the grip opens after the seat tap.
-    const windows = { old: [marks.release! + .04, marks.drop! - .02], fresh: [marks.newMagazineInView!, marks.gripOpens!] };
+    const windows = { old: [marks.release! + .04, marks.drop! - .02], fresh: [marks.newMagazineInView!, marks.gripOpens!] } as const;
     const times = Object.values(windows).flatMap(([from, to]) => {
       const list: number[] = [];
       for (let t = from!; t <= to! + 1e-9; t += 1 / 60) list.push(+t.toFixed(4));
@@ -916,7 +982,7 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
     });
     vm.dispose();
     renderer.dispose();
-    return { alongBone, padOffHingeSideDeg, distalCount: distal.length, padSideCount: padSide.filter(Boolean).length, proximalCount: proximal.length, samples };
+    return { alongBone, padOffHingeSideDeg, distalCount: distal.length, padSideCount: padSide.filter(Boolean).length, proximalCount: proximal.length, samples, windows };
   }, { hingeArray: [...THUMB_HINGE] as [number, number, number] });
   const r = (value: number, digits = 1) => +value.toFixed(digits);
   console.info("Reload held thumb:", JSON.stringify({
@@ -948,8 +1014,8 @@ test("reload thumb wraps each held magazine: bent at MCP and IP, pad on the maga
     expect.soft(s.tipBehindRear, `thumb tip behind the magazine's rear edge at ${at}`).toBeLessThanOrEqual(HELD_THUMB.tipBehindRearMaxM);
     if (s.screenIpDeg !== null) expect.soft(s.screenIpDeg, `game-camera thumb IP bend (L_thumb02-03 to L_thumb03-tip) at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.screenIpMinDeg);
     if (s.screenMcpDeg !== null) expect.soft(s.screenMcpDeg, `game-camera thumb MCP bend (L_thumb01-02 to L_thumb02-03) at ${at}`).toBeGreaterThanOrEqual(HELD_THUMB.screenMcpMinDeg);
-    expect.soft(s.ringMagazineShare, `game-camera thumb/index ring interior (not hand) that is magazine at ${at}: ${JSON.stringify(s.ring)}`).toBeGreaterThanOrEqual(HELD_THUMB.ringMagazineMinShare);
   }
+  expect(heldRingFailures(result.samples, result.windows)).toEqual([]);
 });
 
 test("reload framing exposes the trigger and its contacting index finger", async ({ page }) => {

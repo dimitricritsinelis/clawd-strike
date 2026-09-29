@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 import {
   type BuffType,
   BUFF_DEFINITIONS,
@@ -31,7 +32,6 @@ type BuffEntryElements = {
 };
 
 const ICON_SIZE = 48;
-const FONT_FAMILY = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 function hexToRgba(colorStr: string, alpha: number): string {
   return `rgba(${colorStr}, ${alpha})`;
@@ -206,7 +206,7 @@ export class BuffHud {
       fontWeight: "700",
       color: "#fff",
       textShadow: "0 1px 3px rgba(0, 0, 0, 0.95)",
-      fontFamily: FONT_FAMILY,
+      fontFamily: SANS_FONT,
       lineHeight: "1",
     } satisfies Partial<CSSStyleDeclaration>);
 

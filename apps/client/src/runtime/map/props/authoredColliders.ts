@@ -1,6 +1,6 @@
 import type { RuntimeColliderAabb } from "../../sim/collision/WorldColliders";
-import { designToWorldVec3, designYawDegToWorldYawRad, type WorldVec3 } from "../coordinateTransforms";
-import type { RuntimeAnchor, RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../types";
+import { designToWorldVec3, designYawDegToWorldYawRad, type WorldVec3 } from "../world/coordinateTransforms";
+import type { RuntimeAnchor, RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../spec/types";
 
 // The DYE_W_SHOP_2 collider takes its depth from this closed service door.
 const SERVICE_DOOR_MODULE_ID = "ARCH_FRONTAGE_COVERED_SOUK_WEST_NORTH_GROUND_01";

@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * BuffTextHud — displays active buff effects as colored text lines
  * above the ammo HUD in the bottom-right corner.
@@ -15,7 +16,6 @@ import type { ActiveBuffSnapshot } from "../buffs/BuffManager";
 import type { GameplayTuning } from "../tuning/gameplayTuning";
 import { createBuffDisplayCopy } from "./BuffDisplayCopy";
 
-const FONT_FAMILY = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 /** Canonical display order (top → bottom) */
 const DISPLAY_ORDER: readonly BuffType[] = BUFF_TYPES;
@@ -79,7 +79,7 @@ export class BuffTextHud {
       const def = BUFF_DEFINITIONS[type];
       const el = document.createElement("div");
       Object.assign(el.style, {
-        fontFamily: FONT_FAMILY,
+        fontFamily: SANS_FONT,
         fontSize: "18px",
         fontWeight: "700",
         letterSpacing: "0.03em",

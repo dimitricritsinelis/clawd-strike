@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * CountdownHud — center-screen "5…4…3…2…1" shown after the loading screen,
  * before the player can move and before the wave timer starts.
@@ -17,7 +18,7 @@ export class CountdownHud {
       zIndex: "27",
       pointerEvents: "none",
       userSelect: "none",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       color: "rgba(235, 240, 250, 0.95)",
       textShadow: "0 4px 18px rgba(0, 0, 0, 0.7)",
     });

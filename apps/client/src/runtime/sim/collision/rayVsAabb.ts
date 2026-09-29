@@ -1,11 +1,4 @@
-export type SlabAabb = {
-  minX: number;
-  minY: number;
-  minZ: number;
-  maxX: number;
-  maxY: number;
-  maxZ: number;
-};
+import type { MutableAabb } from "./Aabb";
 
 const RAY_EPS = 1e-6;
 
@@ -21,7 +14,7 @@ export function rayVsAabb(
   dy: number,
   dz: number,
   maxDist: number,
-  aabb: SlabAabb,
+  aabb: MutableAabb,
 ): number {
   let tMin = 0;
   let tMax = maxDist;

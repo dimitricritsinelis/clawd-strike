@@ -1,3 +1,4 @@
+import { clamp } from "../../utils/math";
 import { Color, type MeshStandardMaterial, type WebGLRenderer } from "three";
 
 type MaterialShader = Parameters<NonNullable<MeshStandardMaterial["onBeforeCompile"]>>[0];
@@ -39,10 +40,6 @@ export type WallShaderTweakOptions = {
 };
 
 const UINT32_MAX = 0xffff_ffff;
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, value));
-}
 
 function toFiniteNumber(value: unknown, fallback: number): number {
   if (typeof value !== "number" || !Number.isFinite(value)) return fallback;

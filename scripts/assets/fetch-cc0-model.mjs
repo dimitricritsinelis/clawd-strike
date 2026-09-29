@@ -6,8 +6,9 @@
 // Writes <pack>/<id>/<id>_<res>.gltf with its .bin and textures/ exactly as Poly
 // Haven lays them out, then registers `ph_<id>` in models.json (url, source,
 // license, md5 per file) in the same shape as the existing entries. A registered
-// prop is used by adding its id to a pool in MODEL_POOLS_BY_KIND
-// (apps/client/src/runtime/map/buildProps.ts).
+// prop is used through an asset_registry entry and a dressing cluster in
+// apps/client/assets-src/maps/bazaar-map/map_spec.json. The compiler emits the
+// corresponding dressingPlacements model entry consumed by buildProps.ts.
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import path from "node:path";

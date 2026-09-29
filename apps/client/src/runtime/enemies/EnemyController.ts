@@ -1,3 +1,5 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
+import { clamp01 } from "../utils/math";
 import { Vector3 } from "three";
 import { AabbCollisionSolver, type MotionResult, type MutablePosition } from "../sim/collision/Solver";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
@@ -14,7 +16,6 @@ const DEG_TO_RAD = Math.PI / 180;
 const RAD_TO_DEG = 180 / Math.PI;
 
 export const ENEMY_HALF_WIDTH_M = 0.3;
-export const ENEMY_HEIGHT_M = 1.8;
 export const ENEMY_EYE_HEIGHT_M = 1.5;
 const ENEMY_ROTATE_SPEED_MPS = 3.15;
 const ENEMY_INVESTIGATE_SPEED_MPS = 2.6;
@@ -33,7 +34,7 @@ const ENEMY_EXPECTED_PROGRESS_RATIO = 0.2;
 const ENEMY_ACCEL_MPS2 = 14;
 const ENEMY_SWEEP_CHANGE_S_MIN = 0.9;
 const ENEMY_SWEEP_CHANGE_S_MAX = 1.5;
-const ENEMY_MIN_NODE_RADIUS_M = 0.6;
+export const ENEMY_MIN_NODE_RADIUS_M = 0.6;
 const ENEMY_RELOAD_DECISION_MAG = 6;
 const GRAVITY_MPS2 = 20.0;
 const MAX_SUBSTEP_DT_S = 1 / 120;
@@ -315,10 +316,6 @@ export function applyCircularConeSpread(
     fy + ry * horizontalOffset + uy * verticalOffset,
     fz + rz * horizontalOffset + uz * verticalOffset,
   ).normalize();
-}
-
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
 }
 
 export type EnemyTarget = {
@@ -770,6 +767,16 @@ export class EnemyController {
     const stepDt = clampedDt / stepCount;
     const preX = this.position.x;
     const preZ = this.position.z;
+    const commandedSpeedMps = Math.hypot(this.desiredVX, this.desiredVZ);
+    // Steer the command before acceleration. Collision can reset velocity to
+    // zero each frame; rotating that clipped velocity never builds enough
+    // lateral speed to get a stalled bot around the obstacle.
+    if (this.stuckEscapeTimerS > 0) {
+      const escapeX = -this.desiredVZ * this.stuckEscapeDir;
+      const escapeZ = this.desiredVX * this.stuckEscapeDir;
+      this.desiredVX = this.desiredVX * STUCK_ESCAPE_FORWARD_BLEND + escapeX * STUCK_ESCAPE_SIDE_BLEND;
+      this.desiredVZ = this.desiredVZ * STUCK_ESCAPE_FORWARD_BLEND + escapeZ * STUCK_ESCAPE_SIDE_BLEND;
+    }
     const maxDeltaV = ENEMY_ACCEL_MPS2 * clampedDt;
     const dvx = this.desiredVX - this.velX;
     const dvz = this.desiredVZ - this.velZ;
@@ -783,18 +790,6 @@ export class EnemyController {
     }
     let vx = this.velX;
     let vz = this.velZ;
-
-    // Stuck escape: flipping peek direction only helps a bot that is peeking.
-    // A bot travelling into a prop or a wall corner keeps pushing straight at
-    // it forever, and because the wave only ends when every bot dies, one
-    // wedged bot can stall the whole run. Steering perpendicular to the blocked
-    // heading lets it slide along the obstacle and re-path.
-    if (this.stuckEscapeTimerS > 0) {
-      const escapeX = -vz * this.stuckEscapeDir;
-      const escapeZ = vx * this.stuckEscapeDir;
-      vx = vx * STUCK_ESCAPE_FORWARD_BLEND + escapeX * STUCK_ESCAPE_SIDE_BLEND;
-      vz = vz * STUCK_ESCAPE_FORWARD_BLEND + escapeZ * STUCK_ESCAPE_SIDE_BLEND;
-    }
 
     for (let i = 0; i < stepCount; i += 1) {
       this.velocityY -= GRAVITY_MPS2 * stepDt;
@@ -893,7 +888,9 @@ export class EnemyController {
     } else {
       this.movementSpreadTimerS = Math.max(0, this.movementSpreadTimerS - clampedDt);
     }
-    if (hasInsufficientEnemyMotion(movedDistanceM, desiredSpeedMps, clampedDt)) {
+    // Collision zeroes velocity on blocked axes; compare against the movement
+    // command so a bot pressed against a wall still detects its stalled motion.
+    if (hasInsufficientEnemyMotion(movedDistanceM, commandedSpeedMps, clampedDt)) {
       this.stuckTimer += clampedDt;
       if (this.stuckTimer >= ENEMY_STUCK_THRESHOLD_S) {
         this.stuckTimer = 0;

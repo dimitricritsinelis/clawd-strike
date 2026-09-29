@@ -3,7 +3,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
-import { resolveAuthoredWallShaderProfile, resolveWallShaderProfile } from "../../map/wallShaderProfiles";
+import { resolveAuthoredWallShaderProfile, resolveWallShaderProfile } from "../../map/walls/wallShaderProfiles";
 import {
   parseFloorMaterialManifest,
   resolveFloorTextureSetForQuality,

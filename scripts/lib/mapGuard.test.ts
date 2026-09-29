@@ -65,7 +65,7 @@ test("moving an anchor that can produce a legacy collider is protected", () => {
 });
 
 test("render builders are editable; only protected gameplay files count", () => {
-  assert.deepEqual(detectProtectedChanges(source, source, ["apps/client/src/runtime/map/buildProps.ts"]), []);
+  assert.deepEqual(detectProtectedChanges(source, source, ["apps/client/src/runtime/map/props/buildProps.ts"]), []);
 });
 
 // ---- authored placement guard ----
@@ -175,4 +175,20 @@ test("placement contact uses transformed mesh vertices on a slope and still reje
   assert.match(reasons(-0.2).join("\n"), /sinks 0\.20 m/);
   assert.match(reasons(0.3).join("\n"), /floats 0\.30 m/);
   assert.match(reasons(0, [[0.1,0,10],[0.1,1.1,18],[0.1,3,10]]).join("\n"), /sinks 0\.30 m/);
+});
+
+
+test("bootstrap extracts retain gameplay protection", () => {
+  for (const file of ["bootstrap.ts", "bootstrap/runtimeState.ts", "bootstrap/sceneTelemetry.ts", "bootstrap/mapTelemetry.ts", "bootstrap/hud.ts", "bootstrap/scoreStorage.ts", "bootstrap/assetLoading.ts"]) {
+    const path = `apps/client/src/runtime/${file}`;
+    assert.ok(detectProtectedChanges(source, source, [path]).some((reason) => reason.includes(path)));
+  }
+});
+
+
+test("shared helpers extracted from protected gameplay code stay protected", () => {
+  for (const relative of ["runtime/utils/math.ts", "runtime/utils/deepFreeze.ts", "runtime/utils/UrlParams.ts", "runtime/enemies/enemyDimensions.ts", "shared/OrientationGuard.ts", "shared/runtimeTextApi.ts", "shared/hostEnvironment.ts"]) {
+    const path = `apps/client/src/${relative}`;
+    assert.ok(detectProtectedChanges(source, source, [path]).some((reason) => reason.includes(path)));
+  }
 });

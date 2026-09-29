@@ -1,3 +1,5 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
+import { clamp01 } from "../utils/math";
 import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { computeListenerSpatial, type WeaponAudio } from "../audio/WeaponAudio";
@@ -6,7 +8,7 @@ import type {
   RuntimeAuthoredSpawn,
   RuntimeBlockoutSpec,
   RuntimeBlockoutZone,
-} from "../map/types";
+} from "../map/spec/types";
 import { PLAYER_EYE_HEIGHT_M, PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/PlayerController";
 import { intersectsAabb, setAabbFromFootPosition, type MutableAabb } from "../sim/collision/Aabb";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
@@ -20,8 +22,8 @@ import type { RuntimeSpawnId } from "../utils/UrlParams";
 import {
   EnemyController,
   ENEMY_EYE_HEIGHT_M,
-  ENEMY_HEIGHT_M,
   ENEMY_HALF_WIDTH_M,
+  ENEMY_MIN_NODE_RADIUS_M,
   clampEnemyTier,
   resolveEnemyTierProfile,
   type EnemyAabb,
@@ -88,7 +90,7 @@ const SPAWN_ELEVATION_EPSILON_M = 0.05;
  * damage forces an immediate re-plan; between plans the cached directive only
  * has its per-frame sight flag and age refreshed.
  */
-const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
+export const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
 /** Idle bots face the strongest zone belief; below this they fall back to the node's exposure yaw. */
 const FOCUS_BELIEF_MIN = 0.16;
 /** A belief zone this close to the bot's own node gives no useful facing. */
@@ -182,6 +184,7 @@ type NodeSelection = {
 type DirectiveMemory = {
   state: EnemyState;
   targetNodeId: string | null;
+  moveNodeId: string | null;
   score: number;
   startedAtS: number;
   commitUntilS: number;
@@ -430,10 +433,6 @@ function distanceSq(aX: number, aZ: number, bX: number, bZ: number): number {
 
 function distanceM(aX: number, aZ: number, bX: number, bZ: number): number {
   return Math.hypot(aX - bX, aZ - bZ);
-}
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
 }
 
 function laneFromPosition(x: number): TacticalLane {
@@ -2608,9 +2607,25 @@ export class EnemyManager {
       debugReason = "full hunt mode";
     }
 
-    const path = this.findTacticalPathCached(currentNode?.id ?? null, targetNode?.id ?? null);
-    const moveNodeId = path.length > 1 ? path[1]! : targetNode?.id ?? null;
-    const moveNode = moveNodeId ? this.tacticalGraph?.nodeById.get(moveNodeId) ?? null : targetNode;
+    // Keep following the chosen waypoint until arrival. Re-anchoring to the
+    // nearest node mid-edge can select a portal whose path goes back through
+    // the previous zone center, making the bot reverse forever between them.
+    const previousMoveNode = previous?.targetNodeId === targetNode?.id && previous?.moveNodeId
+      ? this.tacticalGraph?.nodeById.get(previous.moveNodeId) ?? null
+      : null;
+    const atPreviousMoveNode = previousMoveNode
+      && distanceM(controllerPos.x, controllerPos.z, previousMoveNode.x, previousMoveNode.z) <= ENEMY_MIN_NODE_RADIUS_M;
+    const pathStart = previousMoveNode ?? currentNode;
+    const path = this.findTacticalPathCached(pathStart?.id ?? null, targetNode?.id ?? null);
+    // Distinct portal and zone nodes can occupy the same position. Skip those
+    // zero-length steps instead of pointing at an already-reached waypoint.
+    const nextMoveNodeId = path.slice(1).find((id) => {
+      const node = this.tacticalGraph?.nodeById.get(id);
+      return node && (!pathStart || node.x !== pathStart.x || node.y !== pathStart.y || node.z !== pathStart.z);
+    }) ?? targetNode?.id ?? null;
+    const moveNode = previousMoveNode && !atPreviousMoveNode
+      ? previousMoveNode
+      : nextMoveNodeId ? this.tacticalGraph?.nodeById.get(nextMoveNodeId) ?? null : targetNode;
     const holdPoint = targetNode ? { x: targetNode.x, z: targetNode.z } : null;
     const movePoint = moveNode ? { x: moveNode.x, z: moveNode.z } : holdPoint;
     const focusPoint = this.resolveFocusPoint(targetNode, knowledge);
@@ -2626,6 +2641,7 @@ export class EnemyManager {
     this.directiveMemoryByEnemyId.set(controller.id, {
       state,
       targetNodeId: targetNode?.id ?? null,
+      moveNodeId: moveNode?.id ?? null,
       score: targetScore,
       startedAtS,
       commitUntilS,

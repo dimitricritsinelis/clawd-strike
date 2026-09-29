@@ -1,5 +1,5 @@
 import type { LoadingScreenInitialNameEntry, LoadingScreenMode } from "./types";
-import { LoadingScreenOrientationGuard } from "./LoadingScreenOrientationGuard";
+import { OrientationGuard } from "../shared/OrientationGuard";
 import {
   getDeviceVariant,
   getLoadingScreenFallbackAssetUrl,
@@ -285,7 +285,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   }
 
   // Portrait lock: show overlay when mobile user rotates to landscape on loading screen
-  const loadingOrientationGuard = new LoadingScreenOrientationGuard(start);
+  const loadingOrientationGuard = new OrientationGuard(start, "portrait");
 
   function setNameInputValidationState(reason: PlayerNameValidationReason): void {
     const invalid = reason !== "valid";

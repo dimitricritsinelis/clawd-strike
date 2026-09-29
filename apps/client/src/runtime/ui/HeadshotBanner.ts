@@ -1,3 +1,4 @@
+import { lerp } from "../utils/math";
 const INTRO_DURATION_S = 0.24;
 const HOLD_DURATION_S = 1;
 const OUTRO_DURATION_S = 0.42;
@@ -120,10 +121,6 @@ export class HeadshotBanner {
     this.root.style.opacity = opacity.toFixed(3);
     this.root.style.transform = `translateX(-50%) translateY(${translateYPx.toFixed(2)}px) scale(${scale.toFixed(3)})`;
   }
-}
-
-function lerp(start: number, end: number, t: number): number {
-  return start + (end - start) * t;
 }
 
 function easeOutCubic(t: number): number {

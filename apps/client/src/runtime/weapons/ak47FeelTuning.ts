@@ -1,3 +1,5 @@
+import { deepFreeze } from "../utils/deepFreeze";
+
 /**
  * AK-47 feel tuning: every feel constant, grouped by layer, so feel is signed
  * off by playing rather than by test bounds. The exported object is deep-frozen.
@@ -5,15 +7,6 @@
  * Units: metres, radians, seconds; springs are { frequency (rad/s), damping
  * ratio }. Damping must stay below 1 (the exact spring step is underdamped).
  */
-
-type DeepReadonly<T> = { readonly [K in keyof T]: T[K] extends object ? DeepReadonly<T[K]> : T[K] };
-
-function deepFreeze<T extends object>(value: T): DeepReadonly<T> {
-  for (const child of Object.values(value)) {
-    if (child !== null && typeof child === "object") deepFreeze(child as object);
-  }
-  return Object.freeze(value) as DeepReadonly<T>;
-}
 
 const DEG = Math.PI / 180;
 

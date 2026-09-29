@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 import {
   formatSharedChampionMode,
   formatSharedChampionScore,
@@ -59,7 +60,7 @@ export class ScoreHud {
     const nameEl = document.createElement("div");
     Object.assign(nameEl.style, {
       width: "100%",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "18px",
       fontWeight: "800",
       lineHeight: "1.05",
@@ -78,7 +79,7 @@ export class ScoreHud {
       gridTemplateColumns: "1fr 1fr 1fr",
       width: "100%",
       columnGap: "10px",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "10px",
       fontWeight: "600",
       letterSpacing: "0.12em",
@@ -102,7 +103,7 @@ export class ScoreHud {
       alignItems: "center",
       width: "100%",
       columnGap: "10px",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontVariantNumeric: "tabular-nums",
     });
 
@@ -147,7 +148,7 @@ export class ScoreHud {
       marginTop: "6px",
       paddingTop: "6px",
       borderTop: "1px solid rgba(255,255,255,0.08)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
     });
 
     const sessionLabel = document.createElement("span");
@@ -180,7 +181,7 @@ export class ScoreHud {
       marginTop: "4px",
       paddingTop: "7px",
       borderTop: "1px solid rgba(255,255,255,0.08)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
     });
 
     const championHeader = document.createElement("div");

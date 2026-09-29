@@ -2127,29 +2127,6 @@ function deriveBlockoutSpec(spec, zones) {
     fail("wall_details.style must be 'bazaar' when provided");
   }
 
-  const wallDetailDensity =
-    wallDetailsRaw && typeof wallDetailsRaw.density !== "undefined"
-      ? asNumber(wallDetailsRaw.density, "wall_details.density")
-      : 0.48;
-  const wallDetailMaxProtrusion =
-    wallDetailsRaw && typeof wallDetailsRaw.maxProtrusion !== "undefined"
-      ? asNumber(wallDetailsRaw.maxProtrusion, "wall_details.maxProtrusion")
-      : 0.15;
-  const wallDetailSeed =
-    wallDetailsRaw && typeof wallDetailsRaw.seed !== "undefined"
-      ? asNumber(wallDetailsRaw.seed, "wall_details.seed")
-      : undefined;
-  const wallDetailEnabled =
-    wallDetailsRaw && typeof wallDetailsRaw.enabled !== "undefined"
-      ? optionalBoolean(wallDetailsRaw.enabled, "wall_details.enabled")
-      : undefined;
-  if (wallDetailDensity < 0 || wallDetailDensity > 1.25) {
-    fail("wall_details.density must be >= 0 and <= 1.25");
-  }
-  ensurePositive(wallDetailMaxProtrusion, "wall_details.maxProtrusion");
-  if (typeof wallDetailSeed !== "undefined" && !Number.isInteger(wallDetailSeed)) {
-    fail("wall_details.seed must be an integer when provided");
-  }
   if (wallDetailsRaw && typeof wallDetailsRaw.module_registry !== "undefined") {
     validateWallModuleRegistry(wallDetailsRaw.module_registry);
   }
@@ -2164,11 +2141,7 @@ function deriveBlockoutSpec(spec, zones) {
       floor_height: floorHeight,
     },
     wall_details: {
-      enabled: typeof wallDetailEnabled === "boolean" ? wallDetailEnabled : true,
       style: wallDetailsStyle,
-      density: wallDetailDensity,
-      maxProtrusion: wallDetailMaxProtrusion,
-      ...(typeof wallDetailSeed === "number" ? { seed: wallDetailSeed } : {}),
     },
     zones,
     exterior_wall_patches: deriveExteriorWallPatches(spec),

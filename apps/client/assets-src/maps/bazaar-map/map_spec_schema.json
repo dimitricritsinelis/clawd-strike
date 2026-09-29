@@ -248,26 +248,11 @@
     "wall_details": {
       "type": "object",
       "properties": {
-        "enabled": {
-          "type": "boolean"
-        },
-        "seed": {
-          "type": "integer"
-        },
         "style": {
           "type": "string",
           "enum": [
             "bazaar"
           ]
-        },
-        "density": {
-          "type": "number",
-          "minimum": 0,
-          "maximum": 1.25
-        },
-        "maxProtrusion": {
-          "type": "number",
-          "exclusiveMinimum": 0
         },
         "module_registry": {
           "type": "object",

@@ -13,8 +13,10 @@ test("locks pointer and moves in human mode when explicitly requested", async ({
   await waitForRuntimeReady(page);
 
   const canvas = page.getByTestId("game-canvas");
+  await page.bringToFront();
   await canvas.click();
-  await page.waitForTimeout(250);
+  await expect.poll(() => page.evaluate(() => document.pointerLockElement !== null)).toBe(true);
+  await expect(page.locator(".countdown-num")).toBeHidden();
 
   const initial = await readRuntimeState(page);
   expect(initial.gameplay?.pointerLocked).toBe(true);

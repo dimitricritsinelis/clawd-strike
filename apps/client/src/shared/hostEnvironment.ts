@@ -23,3 +23,8 @@ export function isAutomatedClient(
   if (nav.webdriver === true) return true;
   return /\bClaude\/[\d.]+/i.test(nav.userAgent ?? "");
 }
+
+/** Internal hooks are available in development builds or on a local host. */
+export function isInternalDebugSurface(development: boolean, hostname: string): boolean {
+  return development || isLocalhostHostname(hostname);
+}

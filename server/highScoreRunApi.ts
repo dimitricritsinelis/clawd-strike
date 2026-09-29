@@ -42,9 +42,7 @@ async function consumeSharedRateLimit(
   ipFingerprint: string,
 ): Promise<boolean> {
   const key = `${namespace}:${ipFingerprint}`;
-  if (await store.isRateLimited(key, RUN_RATE_LIMIT)) return false;
-  await store.logSubmission(key);
-  return true;
+  return store.consumeRateLimit(key, RUN_RATE_LIMIT);
 }
 
 /**

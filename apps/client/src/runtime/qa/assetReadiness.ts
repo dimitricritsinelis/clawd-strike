@@ -1,8 +1,10 @@
-import { R8_ATMOSPHERE, R8_DETAIL_MATERIAL_IDS, R8_PROP_MATERIAL_IDS, r8AppliesTo } from "../map/r8/buildR8Atmosphere";
-import { R8_CLUTTER_MODEL_IDS } from "../map/r8/buildR8Clutter";
-import type { RuntimeMapAssets } from "../map/types";
+import { hashString32 } from "../utils/Rng";
+import { STREET_ATMOSPHERE, STREET_DETAIL_MATERIAL_IDS, STREET_PROP_MATERIAL_IDS, atmosphereAppliesTo } from "../map/atmosphere/buildStreetAtmosphere";
+import { WALL_FOOT_CLUTTER_MODEL_IDS } from "../map/atmosphere/buildWallFootClutter";
+import type { RuntimeMapAssets } from "../map/spec/types";
 
-export type QaAssetProfile = "qa" | "cell-review";
+import type { QaAssetProfile } from "../utils/UrlParams";
+export { resolveQaAssetProfile, resolveQaAssetTimeoutMs } from "../utils/UrlParams";
 
 /** CC0 children emitted by the retained procedural prefab layouts. */
 function compiledPrefabModelIds(runtimeId: string): readonly string[] {
@@ -157,12 +159,7 @@ function sortedUnique(values: Iterable<string>): string[] {
 }
 
 function stableHash(value: string): string {
-  let hash = 0x811c9dc5;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return `fnv1a32:${(hash >>> 0).toString(16).padStart(8, "0")}`;
+  return `fnv1a32:${hashString32(value).toString(16).padStart(8, "0")}`;
 }
 
 export function qaFloorMaterialRequestId(materialId: string): string {
@@ -192,21 +189,6 @@ export function hashQaAssetRequestIds(
   }));
 }
 
-export function resolveQaAssetProfile(search: string): QaAssetProfile | null {
-  const params = new URLSearchParams(search);
-  const namedProfile = params.get("qaProfile")?.trim().toLowerCase();
-  if (namedProfile === "cell-review") return "cell-review";
-  if (params.get("qa") !== "1") return null;
-  return params.has("shot") ? "cell-review" : "qa";
-}
-
-export function resolveQaAssetTimeoutMs(search: string): number {
-  const raw = new URLSearchParams(search).get("qaAssetTimeoutMs");
-  const parsed = raw === null ? Number.NaN : Number.parseInt(raw, 10);
-  if (!Number.isFinite(parsed)) return 20_000;
-  return Math.max(1_000, Math.min(120_000, parsed));
-}
-
 /** Floor-pack materials the compiled map builds with; both boot paths preload only these. */
 export function plannedFloorMaterialIds(mapAssets: RuntimeMapAssets): string[] {
   return sortedUnique([
@@ -219,7 +201,7 @@ export function plannedFloorMaterialIds(mapAssets: RuntimeMapAssets): string[] {
 export function plannedWallMaterialIds(mapAssets: RuntimeMapAssets): string[] {
   return sortedUnique([
     ...QA_WALL_DIRECT_MATERIAL_IDS,
-    ...(r8AppliesTo(mapAssets.blockout.mapId) ? [...Object.values(R8_DETAIL_MATERIAL_IDS), ...R8_PROP_MATERIAL_IDS] : []),
+    ...(atmosphereAppliesTo(mapAssets.blockout.mapId) ? [...Object.values(STREET_DETAIL_MATERIAL_IDS), ...STREET_PROP_MATERIAL_IDS] : []),
     ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
       Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
     )),
@@ -245,7 +227,7 @@ export function plannedPropModelIds(mapAssets: RuntimeMapAssets, includeR8Clutte
       placement.runtime.mode === "model" ? [placement.runtime.id] : []
     )),
     ...dressingPlacements.flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
-    ...(includeR8Clutter && dressingPlacements.length > 0 && r8AppliesTo(mapAssets.blockout.mapId) ? R8_CLUTTER_MODEL_IDS : []),
+    ...(includeR8Clutter && dressingPlacements.length > 0 && atmosphereAppliesTo(mapAssets.blockout.mapId) ? WALL_FOOT_CLUTTER_MODEL_IDS : []),
   ]);
 }
 
@@ -257,7 +239,7 @@ export function createQaAssetPlan(
   const floorMaterialIds = options.floorPbr === false ? [] : plannedFloorMaterialIds(mapAssets);
   const wallMaterialIds = options.wallPbr === false ? [] : plannedWallMaterialIds(mapAssets);
   const propModelIds = options.bazaarProps === false ? [] : plannedPropModelIds(mapAssets);
-  const hasDecorativePalms = r8AppliesTo(mapAssets.blockout.mapId) && R8_ATMOSPHERE.palms.length > 0;
+  const hasDecorativePalms = atmosphereAppliesTo(mapAssets.blockout.mapId) && STREET_ATMOSPHERE.palms.length > 0;
   const textureTier = options.textureTier ?? "1k";
   const directTextureUrls = sortedUnique([
     ...(options.bazaarProps === false ? [] : QA_RENDERER_DIRECT_TEXTURE_URLS),

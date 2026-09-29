@@ -1,4 +1,4 @@
-import type { RuntimeRect } from "../map/types";
+import type { RuntimeRect } from "../map/spec/types";
 
 const SURFACE_EPSILON_M = 0.001;
 const RAY_EPSILON = 1e-7;

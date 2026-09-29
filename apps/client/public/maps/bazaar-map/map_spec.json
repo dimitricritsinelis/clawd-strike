@@ -2,7 +2,7 @@
   "generatedFrom": {
     "schemaVersion": 1,
     "path": "apps/client/assets-src/maps/bazaar-map/map_spec.json",
-    "sha256": "d306a37db2a35473d1b5d4a559ffda8cc363b204d8bb8525959d67ea2fd725ce",
+    "sha256": "e95e548852aa3b3bd28e885953eb5361bed96174523788dbe5eec0ca72a45dca",
     "generator": "apps/client/scripts/gen-map-runtime.mjs"
   },
   "mapId": "bazaar-map",
@@ -19,11 +19,7 @@
     "floor_height": 0
   },
   "wall_details": {
-    "enabled": true,
-    "style": "bazaar",
-    "density": 0.58,
-    "maxProtrusion": 0.3,
-    "seed": 3009
+    "style": "bazaar"
   },
   "zones": [
     {

@@ -1,3 +1,5 @@
+import { SANS_FONT } from "../../shared/uiFonts";
+import { clamp01 } from "../utils/math";
 /**
  * DamageNumbers — floating damage numbers that appear at enemy hit positions
  * and drift upward before fading out.
@@ -37,10 +39,6 @@ export const DAMAGE_NUMBER_TUNING = Object.freeze({
 // Kept for readability of the update loop.
 const FADE_DURATION_S = DAMAGE_NUMBER_TUNING.fadeS;
 const RISE_SPEED_PX = DAMAGE_NUMBER_TUNING.risePxPerS;
-
-function clamp01(value: number): number {
-  return value <= 0 ? 0 : value >= 1 ? 1 : value;
-}
 
 /** Font size for a displayed total: 25 -> ~1.21 rem, 100 -> ~1.83 rem, capped at 2.0 rem. */
 export function damageNumberFontRem(total: number): number {
@@ -139,7 +137,7 @@ export class DamageNumbers {
       position: "absolute",
       left: `${(screenX + jitterX).toFixed(1)}%`,
       top: `${(screenY + jitterY).toFixed(1)}%`,
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       pointerEvents: "none",
       userSelect: "none",
       opacity: "1",

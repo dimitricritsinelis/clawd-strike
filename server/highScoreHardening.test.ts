@@ -36,10 +36,9 @@ function createRecordingStore(): {
       counters.championReads += 1;
       return null;
     },
-    async isRateLimited() {
-      return false;
+    async consumeRateLimit() {
+      return true;
     },
-    async logSubmission() {},
     async issueRunToken() {
       throw new Error("unexpected issueRunToken");
     },
@@ -158,10 +157,10 @@ test("a normal run summary still normalizes unchanged", () => {
 test("run-finish honours the shared database rate limiter", async () => {
   const recording = createRecordingStore();
   const seenKeys: string[] = [];
-  (recording.store as { isRateLimited: SharedChampionStore["isRateLimited"] }).isRateLimited =
+  (recording.store as { consumeRateLimit: SharedChampionStore["consumeRateLimit"] }).consumeRateLimit =
     async (key) => {
       seenKeys.push(key);
-      return true;
+      return false;
     };
 
   const response = await handleSharedChampionRunFinishRequest(
@@ -182,9 +181,9 @@ test("run-finish honours the shared database rate limiter", async () => {
 // not read or write the database, while keeping its transport status codes.
 test("a direct high-score write is refused without touching the database", async () => {
   const recording = createRecordingStore();
-  (recording.store as { isRateLimited: SharedChampionStore["isRateLimited"] }).isRateLimited =
+  (recording.store as { consumeRateLimit: SharedChampionStore["consumeRateLimit"] }).consumeRateLimit =
     async () => {
-      throw new Error("unexpected isRateLimited");
+      throw new Error("unexpected consumeRateLimit");
     };
   const post = (headers: Record<string, string>) => handleSharedChampionRequest(
     new Request("https://example.test/api/high-score", {

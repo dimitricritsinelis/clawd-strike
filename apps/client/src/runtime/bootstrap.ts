@@ -1,15 +1,5 @@
-import {
-  Box3,
-  InstancedMesh,
-  Matrix4,
-  Mesh,
-  PerspectiveCamera,
-  PointLight,
-  Quaternion,
-  Raycaster,
-  Vector3,
-  type Object3D,
-} from "three";
+import { PointLight, Vector3 } from "three";
+import { RUNTIME_TEXT_API_VERSION } from "../shared/runtimeTextApi";
 import { Game } from "./game/Game";
 import { createViewModelLighting } from "./weapons/viewModelLighting";
 import { DEFAULT_FIRE_INTERVAL_S } from "./weapons/Ak47FireController";
@@ -18,40 +8,22 @@ import { PerfHud } from "./debug/PerfHud";
 import { preloadEnemyVisualAssets, setEnemyVisualModelStreamingEnabled } from "./enemies/EnemyVisual";
 import { ENEMIES_PER_WAVE } from "./enemies/EnemyManager";
 import { PointerLockController } from "./input/PointerLock";
-import { loadMap, RuntimeMapLoadError } from "./map/loadMap";
-import { designToWorldVec3 } from "./map/coordinateTransforms";
-import { resolveShot } from "./map/shots";
-import type { RuntimeAnchor, RuntimeBlockoutSpec, RuntimeMapAssets } from "./map/types";
+import { loadMap, RuntimeMapLoadError } from "./map/spec/loadMap";
+import { resolveShot } from "./map/spec/shots";
+import type { RuntimeMapAssets } from "./map/spec/types";
 import { Renderer } from "./render/Renderer";
 import {
   collectSceneTextures,
   uploadTexturesInBatches,
   waitForPendingAssetLoads,
 } from "./render/sceneReadiness";
-import { FloorMaterialLibrary } from "./render/materials/FloorMaterialLibrary";
-import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
-import { PropModelLibrary } from "./render/models/PropModelLibrary";
-import { auditVisibleFacadeBacking } from "./qa/facadeBacking";
-import { resolveVisualSupport, type VisualSupportCandidate } from "./qa/visualSupport";
 import {
   QaAssetReadinessTracker,
   createQaAssetPlan,
-  plannedFloorMaterialIds,
-  plannedPropModelIds,
-  plannedWallMaterialIds,
   preloadQaDirectTextures,
-  qaFloorMaterialRequestId,
-  qaPropModelRequestId,
-  qaWallMaterialRequestId,
   resolveQaAssetProfile,
   resolveQaAssetTimeoutMs,
 } from "./qa/assetReadiness";
-import {
-  FACADE_MANIFEST_URL,
-  FLOOR_MANIFEST_URL,
-  PROP_MANIFEST_URL,
-  WALL_MANIFEST_URL,
-} from "./assetManifests";
 import { WeaponAudio } from "./audio/WeaponAudio";
 import { AmmoHud } from "./ui/AmmoHud";
 import { HealthHud } from "./ui/HealthHud";
@@ -70,12 +42,12 @@ import { ControlsOverlay } from "./ui/ControlsOverlay";
 import { FadeOverlay } from "./ui/FadeOverlay";
 import { HeadshotBanner } from "./ui/HeadshotBanner";
 import { CountdownHud } from "./ui/CountdownHud";
-import { parseRuntimeUrlParams, type RuntimeControlMode } from "./utils/UrlParams";
+import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { normalizeAgentAction, type AgentAction } from "./input/AgentAction";
 import { isMobileDevice } from "./input/MobileDetect";
 import { TouchInputManager } from "./input/TouchInputManager";
 import { MobileTouchHud } from "./ui/MobileTouchHud";
-import { MobileOrientationGuard } from "./ui/MobileOrientationGuard";
+import { OrientationGuard } from "../shared/OrientationGuard";
 import { MobileFullscreenHint } from "./ui/MobileFullscreenHint";
 import { BulletHoleManager } from "./effects/BulletHoleManager";
 import { BuffManager } from "./buffs/BuffManager";
@@ -84,8 +56,11 @@ import { BuffHud } from "./ui/BuffHud";
 import { BuffTextHud } from "./ui/BuffTextHud";
 import { BuffVignette } from "./ui/BuffVignette";
 import { getGameplayTuning } from "./tuning/gameplayTuning";
-import type { RuntimeWarmupAssets } from "./warmup";
-import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
+import {
+  isAutomatedClient,
+  isLocalhostHostname,
+  isInternalDebugSurface as resolveInternalDebugSurface,
+} from "../shared/hostEnvironment";
 import {
   getSharedChampionSnapshot,
   loadSharedChampion,
@@ -99,20 +74,43 @@ import {
   type SharedChampionRunCompletion,
 } from "../shared/sharedChampionRunLifecycle";
 import {
-  SHARED_CHAMPION_SCORE_RULESET,
   deriveSharedChampionBoardKey,
-  type SharedChampion,
   type SharedChampionRunSummary,
   type SharedChampionSnapshot,
 } from "../../../shared/highScore";
-import {
-  resolveGameplayProfileIdentity,
-  type GameplayProfileIdentity,
-} from "../../../shared/gameplayProfile";
+import { resolveGameplayProfileIdentity } from "../../../shared/gameplayProfile";
 import {
   PUBLIC_AGENT_API_VERSION,
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
+
+import {
+  applyOverviewRenderLod,
+  collectScenePerfSnapshot,
+  collectVisibleAssetTelemetry,
+  type ScenePerfSnapshot,
+} from "./bootstrap/sceneTelemetry";
+import { findCurrentZone, collectLandmarkState, collectVisibleAnchorIds } from "./bootstrap/mapTelemetry";
+import { getAppRoot, createRuntimeRoot, createOverlay, createCrosshair, configureMobileHud } from "./bootstrap/hud";
+import {
+  shouldReplaceSharedChampion,
+  makeScoreStorageKey,
+  normalizeScoreValue,
+  readBestScore,
+  writeBestScore,
+} from "./bootstrap/scoreStorage";
+import { loadRuntimeMaterials } from "./bootstrap/assetLoading";
+import type {
+  RevealPhase,
+  PublicAgentFeedbackEvent,
+  PublicAgentFeedbackEventInput,
+  RuntimeTextState,
+  PublicAgentRunSummary,
+  PublicAgentObserveState,
+  RuntimeHandle,
+  RuntimeBootstrapOptions,
+} from "./bootstrap/runtimeState";
+export type { RuntimeTextState, RuntimeHandle } from "./bootstrap/runtimeState";
 
 type ViewModelInstance = import("./weapons/Ak47AnimatedViewModel").WeaponViewModel;
 
@@ -120,9 +118,6 @@ const OVERVIEW_VIEWMODEL_DISABLE_HEIGHT_M = 10;
 const PERF_SCENE_SAMPLE_INTERVAL_MS = 300;
 const PERF_CPU_FRAME_SAMPLE_LIMIT = 120;
 const POINTER_LOCK_BANNER_GRACE_MS = 2600;
-const RUNTIME_TEXT_API_VERSION = 4;
-const SCORE_STORAGE_PREFIX = "clawd-strike:score-best";
-const SCORE_RULESET_KEY = SHARED_CHAMPION_SCORE_RULESET;
 const AGENT_VISIBLE_RENDER_INTERVAL_MS = 1000 / 30;
 const AGENT_BACKGROUND_STEP_INTERVAL_MS = 500;
 /** Frames that may throw back-to-back before the loop stops trying. */
@@ -154,148 +149,6 @@ function isLikelySoftwareGl(renderer: Renderer): boolean {
   }
 }
 const PUBLIC_AGENT_FEEDBACK_MAX_EVENTS = 24;
-const OVERVIEW_MIN_VISIBLE_SPAN_M = 6;
-
-type ScenePerfSnapshot = {
-  materials: number;
-  instancedMeshes: number;
-  instancedInstances: number;
-  meshes: number;
-  potentialTriangles: number;
-  groups: Record<string, { meshes: number; instancedMeshes: number; instances: number; potentialTriangles: number }>;
-  topMeshes: Array<{ name: string; instances: number; potentialTriangles: number }>;
-};
-
-function overviewQaSpan(object: Object3D): number | null {
-  const records = Array.isArray(object.userData.visualQaInstances)
-    ? object.userData.visualQaInstances
-    : [object.userData.visualQa];
-  let largest = Number.NEGATIVE_INFINITY;
-  for (const raw of records) {
-    if (!isRecordValue(raw) || !isRecordValue(raw.dimensions)) continue;
-    const dimensions = raw.dimensions;
-    for (const key of ["x", "y", "z"]) {
-      const value = dimensions[key];
-      if (typeof value === "number" && Number.isFinite(value)) {
-        largest = Math.max(largest, Math.abs(value));
-      }
-    }
-  }
-  return Number.isFinite(largest) ? largest : null;
-}
-
-function belongsToOverviewLandmark(object: Object3D): boolean {
-  let current: Object3D | null = object;
-  while (current) {
-    const qa = isRecordValue(current.userData.visualQa) ? current.userData.visualQa : null;
-    const placementId = typeof qa?.placementId === "string" ? qa.placementId : "";
-    if (placementId.startsWith("LMK_") || placementId.includes("_LMK_")) return true;
-    const instances = current === object ? current.userData.visualQaInstances : null;
-    if (Array.isArray(instances) && instances.some((raw) => {
-      if (!isRecordValue(raw)) return false;
-      return typeof raw.placementId === "string"
-        && (raw.placementId.startsWith("LMK_") || raw.placementId.includes("_LMK_"));
-    })) {
-      return true;
-    }
-    current = current.parent;
-  }
-  return false;
-}
-
-function applyOverviewRenderLod(scene: Object3D): () => void {
-  scene.updateMatrixWorld(true);
-  const worldScale = new Vector3();
-  const changedVisibility = new Map<Object3D, boolean>();
-  scene.traverse((object) => {
-    if (!(object instanceof Mesh) || !object.visible) return;
-    if (belongsToOverviewLandmark(object)) return;
-
-    const qaSpan = overviewQaSpan(object);
-    if (qaSpan !== null) {
-      if (qaSpan < OVERVIEW_MIN_VISIBLE_SPAN_M) {
-        changedVisibility.set(object, object.visible);
-        object.visible = false;
-      }
-      return;
-    }
-
-    if (!object.geometry.boundingSphere) object.geometry.computeBoundingSphere();
-    const radius = object.geometry.boundingSphere?.radius;
-    if (typeof radius !== "number" || !Number.isFinite(radius)) return;
-    object.getWorldScale(worldScale);
-    const diameterM = 2 * radius * Math.max(worldScale.x, worldScale.y, worldScale.z);
-    if (diameterM < OVERVIEW_MIN_VISIBLE_SPAN_M) {
-      changedVisibility.set(object, object.visible);
-      object.visible = false;
-    }
-  });
-  return () => {
-    for (const [object, visible] of changedVisibility) {
-      object.visible = visible;
-    }
-    changedVisibility.clear();
-  };
-}
-
-type VisualQaDimensions = {
-  width: number;
-  depth: number;
-  height: number;
-};
-
-type VisualQaPlacementSource = {
-  placementId: string;
-  anchorId?: string;
-  assetId?: string;
-  moduleId?: string;
-  semanticClass: string;
-  representation: string;
-  materialMode: string;
-  groundingGapM: number;
-  supportPlacementId?: string;
-  backingPlacementId?: string;
-  structurallyBacked?: boolean;
-  dimensionsM: VisualQaDimensions;
-  shadowMode: string;
-  center: { x: number; y: number; z: number };
-  orientation: { x: number; y: number; z: number; w: number };
-  sourceObject: Object3D | null;
-  sourceInstanceId: number | null;
-};
-
-type RuntimeVisibleAsset = Omit<
-  VisualQaPlacementSource,
-  "center" | "orientation" | "sourceObject" | "sourceInstanceId"
-> & {
-  screenAreaRatio: number;
-  occluded: false;
-};
-
-const CANONICAL_VISUAL_ARTIFACT_TAGS = new Set([
-  "backface",
-  "duplicate-representation",
-  "exposed-shell",
-  "exterior-opening",
-  "floor-gap",
-  "interpenetration",
-  "invalid-scale",
-  "placeholder",
-  "procedural-proxy",
-  "unsupported-slab",
-]);
-const VISUAL_QA_OCCLUSION_EPSILON_M = 0.04;
-const VISUAL_QA_MIN_SCREEN_AREA_RATIO = 1e-6;
-const GROUNDED_PROP_SEMANTIC_CLASSES = new Set([
-  "architecture",
-  "container",
-  "cover",
-  "foliage",
-  "furniture",
-  "landmark",
-]);
-
-type RevealPhase = "warming" | "ready" | "revealing" | "active";
 
 type QueuedCombatFeedbackEvent =
   | {
@@ -314,59 +167,6 @@ type QueuedCombatFeedbackEvent =
       isHeadshot: boolean;
     };
 
-export type PublicAgentFeedbackEvent =
-  | {
-      id: number;
-      type: "damage-taken";
-      amount?: number;
-    }
-  | {
-      id: number;
-      type: "enemy-hit";
-    }
-  | {
-      id: number;
-      type: "kill";
-    }
-  | {
-      id: number;
-      type: "wave-complete";
-    }
-  | {
-      id: number;
-      type: "reload-start";
-    }
-  | {
-      id: number;
-      type: "reload-end";
-    };
-
-type PublicAgentFeedbackEventInput =
-  | {
-      type: "damage-taken";
-      amount?: number;
-    }
-  | {
-      type: "enemy-hit";
-    }
-  | {
-      type: "kill";
-    }
-  | {
-      type: "wave-complete";
-    }
-  | {
-      type: "reload-start";
-    }
-  | {
-      type: "reload-end";
-    };
-
-export type PublicAgentFeedback = {
-  episodeId?: string | number;
-  recentEvents?: PublicAgentFeedbackEvent[];
-};
-
 type DebugCombatFeedbackPayload = {
   isHeadshot?: boolean;
   didKill?: boolean;
@@ -384,524 +184,8 @@ type DebugBuffVignettePayload = {
   exclusive?: boolean;
 };
 
-function shouldReplaceSharedChampion(
-  currentChampion: SharedChampion | null,
-  nextChampion: SharedChampion | null,
-): boolean {
-  if (nextChampion === null) {
-    return currentChampion === null;
-  }
-  if (currentChampion === null) {
-    return true;
-  }
-  if (nextChampion.score !== currentChampion.score) {
-    return nextChampion.score > currentChampion.score;
-  }
-  return nextChampion.updatedAt >= currentChampion.updatedAt;
-}
-
 function isDebugBuffType(value: string): value is BuffType {
   return (BUFF_TYPES as readonly string[]).includes(value);
-}
-
-function collectScenePerfSnapshot(worldScene: { traverse: (cb: (node: unknown) => void) => void }, viewModelScene: { traverse: (cb: (node: unknown) => void) => void } | null): ScenePerfSnapshot {
-  const materials = new Set<unknown>();
-  let instancedMeshes = 0;
-  let instancedInstances = 0;
-  let meshes = 0;
-  let potentialTriangles = 0;
-  const groups: ScenePerfSnapshot["groups"] = {};
-  const meshCosts: ScenePerfSnapshot["topMeshes"] = [];
-
-  const walk = (scene: { traverse: (cb: (node: unknown) => void) => void }): void => {
-    scene.traverse((node) => {
-      const mesh = node as {
-        isMesh?: boolean;
-        material?: unknown;
-        isInstancedMesh?: boolean;
-        count?: number;
-      };
-      if (!mesh.isMesh) return;
-      meshes += 1;
-
-      if (Array.isArray(mesh.material)) {
-        for (const material of mesh.material) {
-          if (material) materials.add(material);
-        }
-      } else if (mesh.material) {
-        materials.add(mesh.material);
-      }
-
-      if (mesh.isInstancedMesh) {
-        instancedMeshes += 1;
-        instancedInstances += Math.max(0, mesh.count ?? 0);
-      }
-
-      const object = node as Object3D & { geometry?: { index?: { count: number } | null; getAttribute?: (name: string) => { count: number } | undefined }; count?: number };
-      const vertexCount = object.geometry?.index?.count
-        ?? object.geometry?.getAttribute?.("position")?.count
-        ?? 0;
-      const instanceCount = mesh.isInstancedMesh ? Math.max(0, mesh.count ?? 0) : 1;
-      const triangles = (vertexCount / 3) * instanceCount;
-      potentialTriangles += triangles;
-      meshCosts.push({ name: object.name || object.type, instances: instanceCount, potentialTriangles: triangles });
-      const lineage: string[] = [];
-      let root: Object3D | null = object;
-      while (root?.parent) {
-        if (root.name) lineage.unshift(root.name);
-        if (root.parent.type === "Scene") break;
-        root = root.parent;
-      }
-      const groupName = lineage.slice(0, 2).join("/") || root?.type || "unnamed";
-      const group = groups[groupName] ?? { meshes: 0, instancedMeshes: 0, instances: 0, potentialTriangles: 0 };
-      group.meshes += 1;
-      group.instancedMeshes += mesh.isInstancedMesh ? 1 : 0;
-      group.instances += instanceCount;
-      group.potentialTriangles += triangles;
-      groups[groupName] = group;
-    });
-  };
-
-  walk(worldScene);
-  if (viewModelScene) {
-    walk(viewModelScene);
-  }
-
-  return {
-    materials: materials.size,
-    instancedMeshes,
-    instancedInstances,
-    meshes,
-    potentialTriangles,
-    groups,
-    topMeshes: meshCosts.sort((left, right) => right.potentialTriangles - left.potentialTriangles).slice(0, 20),
-  };
-}
-
-export type RuntimeTextState = {
-  apiVersion: number;
-  mode: "runtime";
-  profile: GameplayProfileIdentity;
-  map: {
-    loaded: boolean;
-    mapId: string;
-    seed: number;
-    spawn: "A" | "B";
-    colliderCount: number;
-    wallDetails: {
-      enabled: boolean;
-      density: number;
-      segmentsDecorated: number;
-      instanceCount: number;
-    };
-    error?: string;
-  };
-  shot: {
-    active: boolean;
-    id: string | null;
-    cameraZoneId: string | null;
-    cameraPose: {
-      pos: { x: number; y: number; z: number };
-      lookAt: { x: number; y: number; z: number };
-      fovDeg: number;
-    } | null;
-  };
-  render: {
-    webgl: boolean;
-    viewport: {
-      width: number;
-      height: number;
-    };
-    warnings: string[];
-    visibleSceneTags: string[];
-    visibleAssets: RuntimeVisibleAsset[];
-    artifactTags: string[];
-  };
-  boot: {
-    revealPhase: RevealPhase;
-    warmupTimedOut: boolean;
-    performanceSafeFallback: boolean;
-    enemyVisualsReady: boolean;
-    viewModelPrewarmed: boolean;
-    hiddenWarmupRenderDone: boolean;
-    precompiled: boolean;
-    precompileTimedOut: boolean;
-    textureStabilityTimedOut: boolean;
-    readyAtMs: number | null;
-    readyTextureCount: number | null;
-    textureStableAtMs: number | null;
-    stableTextureCount: number | null;
-    lateTextureGrowth: number;
-  };
-  view: {
-    camera: {
-      pos: { x: number; y: number; z: number };
-      yawDeg: number;
-      pitchDeg: number;
-      fovDeg: number;
-      aspect: number;
-    };
-  };
-  gameplay: {
-    active: boolean;
-    alive: boolean;
-    health: number;
-    pointerLocked: boolean;
-    focused: boolean;
-    visibility: "visible" | "hidden";
-    inputFrozen: boolean;
-    grounded: boolean;
-    speedMps: number;
-  };
-  agent: {
-    enabled: boolean;
-    name: string;
-  };
-  player: {
-    name: string;
-    pos: { x: number; y: number; z: number };
-    vel: { x: number; y: number; z: number };
-    withinPlayableBounds: boolean;
-    zoneId: string | null;
-    zoneType: string | null;
-    zoneLabel: string | null;
-    collision: {
-      hitX: boolean;
-      hitY: boolean;
-      hitZ: boolean;
-      grounded: boolean;
-    };
-  };
-  bots: {
-    waveNumber: number;
-    waveElapsedS: number;
-    tier: number;
-    aliveCount: number;
-    graphNodeCount: number;
-    searchPhase: "caution" | "probe" | "sweep" | "collapse" | "pinch";
-    topSearchZones: Array<{
-      zoneId: string;
-      score: number;
-      reason: string;
-      lastClearedAgeS: number | null;
-    }>;
-    squadTasks: Array<{
-      enemyId: string;
-      kind: "hold" | "clear" | "contain" | "flank";
-      zoneId: string;
-      lane: "west" | "main" | "east";
-      reason: string;
-    }>;
-    roleCounts: Record<"anchor" | "rifler" | "flanker" | "roamer", number>;
-    preventedFriendlyFireCount: number;
-    lastSeenPlayer: {
-      x: number;
-      y: number;
-      z: number;
-      timeS: number;
-      zoneId: string | null;
-      lane: "west" | "main" | "east";
-      radiusM: number;
-      confidence: number;
-      sourceEnemyId?: string;
-      source: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
-      kind?: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
-      precise: boolean;
-      shared: boolean;
-    } | null;
-    lastHeardPlayer: {
-      x: number;
-      y: number;
-      z: number;
-      timeS: number;
-      zoneId: string | null;
-      lane: "west" | "main" | "east";
-      radiusM: number;
-      confidence: number;
-      sourceEnemyId?: string;
-      source: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
-      kind?: "gunshot" | "footstep" | "visual" | "radio" | "hunt";
-      precise: boolean;
-      shared: boolean;
-    } | null;
-    lastSpawn: {
-      mode: "authored-fixed" | "adaptive";
-      distanceFloorM: number | null;
-      minDistanceToPlayerM: number | null;
-      visibleCount: number;
-      selectedNodeIds: string[];
-      playerZoneId: string | null;
-      usedAdjacentZoneFallback: boolean;
-      usedVisibilityFallback: boolean;
-      usedPlayerZoneEmergencyFallback: boolean;
-      usedDistanceEmergencyFallback: boolean;
-      correctedPlacements: number;
-    } | null;
-    enemies?: Array<{
-      id: string;
-      name: string;
-      team: "player" | "enemy";
-      role: "anchor" | "rifler" | "flanker" | "roamer";
-      state: "HOLD" | "OVERWATCH" | "ROTATE" | "INVESTIGATE" | "PEEK" | "PRESSURE" | "FALLBACK" | "RELOAD";
-      tier: number;
-      health: number;
-      reloading: boolean;
-      mag: number;
-      reserve: number;
-      assignedNodeId: string | null;
-      targetNodeId: string | null;
-      memoryRemainingS: number;
-      reactionRemainingS: number;
-      burstShotsRemaining: number;
-      debugReason: string;
-      position: { x: number; y: number; z: number };
-      movePoint: { x: number; z: number } | null;
-      holdPoint: { x: number; z: number } | null;
-      focusPoint: { x: number; y: number; z: number } | null;
-      directSight: boolean;
-      aimYawErrorDeg: number;
-      directiveAgeS: number;
-      targetNodeChangeCount: number;
-      spawnValidation?: {
-        spawnX: number;
-        spawnY: number;
-        spawnZ: number;
-        actualZoneId: string | null;
-        expectedZoneId: string | null;
-        withinPlayableBounds: boolean;
-        insideExpectedZone: boolean;
-        blockingColliderIds: string[];
-        elevated: boolean;
-        valid: boolean;
-        correctionKind: "none" | "same-lane-fallback" | "global-fallback";
-        fallbackNodeId: string | null;
-      } | null;
-    }>;
-  };
-  landmarks: {
-    visible: Array<{
-      id: string;
-      type: string;
-      zone: string;
-      distanceM: number;
-      screenX: number;
-      screenY: number;
-    }>;
-    nearest: {
-      id: string;
-      type: string;
-      zone: string;
-      distanceM: number;
-    } | null;
-  };
-  assets: {
-    floor: {
-      requestedMode: string;
-      activeMode: string;
-      materialCount: number;
-    };
-    wall: {
-      requestedMode: string;
-      activeMode: string;
-      materialCount: number;
-    };
-    props: {
-      requestedVisualMode: string;
-      activeVisualMode: string;
-      modelCount: number;
-    };
-  };
-  score: {
-    current: number;
-    best: number;
-    lastRun?: number;
-  };
-  sharedChampion: SharedChampion | null;
-  gameOver: {
-    visible: boolean;
-    finalScore: number;
-    bestScore: number;
-    canPlayAgain: boolean;
-  };
-  props: {
-    candidatesTotal: number;
-    collidersPlaced: number;
-    rejections: {
-      clearZone: number;
-      bounds: number;
-      gapRule: number;
-    };
-  };
-  weapon: {
-    enabled: boolean;
-    visible: boolean;
-    loaded: boolean;
-    alignDot: number;
-    alignAngleDeg: number;
-  };
-  perf: {
-    visible: boolean;
-    fps: number;
-    msPerFrame: number;
-    cpuFrameMedianMs: number;
-    cpuFrameSampleCount: number;
-    drawCalls: number;
-    triangles: number;
-    geometries: number;
-    textures: number;
-    materials: number;
-    instancedMeshes: number;
-    instancedInstances: number;
-    meshes: number;
-    potentialTriangles: number;
-    groups: ScenePerfSnapshot["groups"];
-    topMeshes: ScenePerfSnapshot["topMeshes"];
-    combatFeedbackQueue: number;
-    lastCombatFeedbackMs: number;
-    lastKillFeedbackMs: number;
-    orbCount: number;
-    orbCapacity: number;
-    orbSpawnMs: number;
-    orbUpdateMs: number;
-  };
-};
-
-export type PublicAgentRunSummary = {
-  survivalTimeS: number;
-  kills: number;
-  headshots: number;
-  shotsFired: number;
-  shotsHit: number;
-  accuracy: number;
-  finalScore: number;
-  bestScore: number;
-  deathCause?: "enemy-fire" | "unknown";
-};
-
-export type PublicAgentObserveState = {
-  apiVersion: number;
-  contract: "public-agent-v1";
-  mode: "loading-screen" | "runtime";
-  profile: GameplayProfileIdentity;
-  runtimeReady: boolean;
-  gameplay: {
-    alive: boolean;
-    gameOverVisible: boolean;
-  };
-  health: number | null;
-  ammo:
-    | {
-        mag: number;
-        reserve: number;
-        reloading: boolean;
-      }
-    | null;
-  score: {
-    current: number;
-    best: number;
-    lastRun: number | null;
-    scope: "browser-session";
-  };
-  sharedChampion: SharedChampion | null;
-  lastRunSummary: PublicAgentRunSummary | null;
-  feedback?: PublicAgentFeedback | null;
-  perception: ReturnType<Game["getPublicPerception"]>;
-};
-
-export type RuntimeHandle = {
-  teardown: () => void;
-  getRootElement: () => HTMLDivElement;
-  beginReveal: () => void;
-  activate: () => void;
-};
-
-export type RuntimeBootstrapOptions = {
-  controlMode?: RuntimeControlMode;
-  playerName?: string;
-  warmup?: RuntimeWarmupAssets | null;
-};
-
-function getAppRoot(): HTMLElement {
-  const app = document.querySelector<HTMLElement>("#app");
-  if (!app) throw new Error("Missing #app mount root");
-  return app;
-}
-
-function createRuntimeRoot(appRoot: HTMLElement): HTMLDivElement {
-  const existing = appRoot.querySelector<HTMLDivElement>("#runtime-root");
-  if (existing) {
-    existing.style.position = "absolute";
-    existing.style.inset = "0";
-    existing.style.background = "#0b0b0b";
-    existing.style.overflow = "hidden";
-    existing.style.userSelect = "none";
-    existing.style.opacity = "0";
-    existing.style.pointerEvents = "none";
-    existing.style.willChange = "opacity";
-    existing.style.transition = "none";
-    return existing;
-  }
-
-  const runtimeRoot = document.createElement("div");
-  runtimeRoot.id = "runtime-root";
-  runtimeRoot.style.position = "absolute";
-  runtimeRoot.style.inset = "0";
-  runtimeRoot.style.background = "#0b0b0b";
-  runtimeRoot.style.overflow = "hidden";
-  runtimeRoot.style.userSelect = "none";
-  runtimeRoot.style.opacity = "0";
-  runtimeRoot.style.pointerEvents = "none";
-  runtimeRoot.style.willChange = "opacity";
-  runtimeRoot.style.transition = "none";
-  appRoot.prepend(runtimeRoot);
-  return runtimeRoot;
-}
-
-function createOverlay(root: HTMLElement, style: Partial<CSSStyleDeclaration>): HTMLDivElement {
-  const el = document.createElement("div");
-  el.style.position = "absolute";
-  el.style.maxWidth = "min(90vw, 640px)";
-  el.style.display = "none";
-  el.style.whiteSpace = "pre-wrap";
-  el.style.zIndex = "20";
-  Object.assign(el.style, style);
-  root.append(el);
-  return el;
-}
-
-function createCrosshair(root: HTMLElement): HTMLDivElement {
-  const crosshair = document.createElement("div");
-  crosshair.style.position = "absolute";
-  crosshair.style.left = "50%";
-  crosshair.style.top = "50%";
-  crosshair.style.width = "18px";
-  crosshair.style.height = "18px";
-  crosshair.style.transform = "translate(-50%, -50%)";
-  crosshair.style.pointerEvents = "none";
-  crosshair.style.zIndex = "16";
-
-  const horizontal = document.createElement("div");
-  horizontal.style.position = "absolute";
-  horizontal.style.left = "0";
-  horizontal.style.top = "8px";
-  horizontal.style.width = "18px";
-  horizontal.style.height = "2px";
-  horizontal.style.background = "rgba(13, 23, 38, 0.92)";
-  horizontal.style.borderRadius = "1px";
-  crosshair.append(horizontal);
-
-  const vertical = document.createElement("div");
-  vertical.style.position = "absolute";
-  vertical.style.left = "8px";
-  vertical.style.top = "0";
-  vertical.style.width = "2px";
-  vertical.style.height = "18px";
-  vertical.style.background = "rgba(13, 23, 38, 0.92)";
-  vertical.style.borderRadius = "1px";
-  crosshair.append(vertical);
-
-  root.append(crosshair);
-  return crosshair;
 }
 
 function formatMapLoadError(error: unknown): string {
@@ -915,15 +199,6 @@ function formatMapLoadError(error: unknown): string {
   return `Failed to load map JSON\n${String(error)}`;
 }
 
-function makeScoreStorageKey(mapId: string, boardKey: string): string {
-  return `${SCORE_STORAGE_PREFIX}:${mapId}:${SCORE_RULESET_KEY}:${boardKey}`;
-}
-
-function normalizeScoreValue(value: number): number {
-  if (!Number.isFinite(value)) return 0;
-  return Math.max(0, Math.round(value));
-}
-
 function splitOverlayMessages(text: string | null | undefined): string[] {
   if (!text) return [];
   return text
@@ -932,713 +207,14 @@ function splitOverlayMessages(text: string | null | undefined): string[] {
     .filter((line) => line.length > 0);
 }
 
-const PLAYER_ZONE_TYPES = new Set(["spawn_plaza", "main_lane_segment", "side_hall", "connector", "cut"]);
-
-function findCurrentZone(
-  spec: RuntimeBlockoutSpec | null,
-  x: number,
-  y: number,
-  z: number,
-): { id: string; type: string; label: string } | null {
-  if (!spec) return null;
-
-  let bestMatch: { id: string; type: string; label: string; area: number; verticalDelta: number } | null = null;
-  const surfacesById = new Map((spec.traversalSurfaces ?? []).map((surface) => [surface.id, surface]));
-  for (const zone of spec.zones) {
-    if (!PLAYER_ZONE_TYPES.has(zone.type)) continue;
-    const insideX = x >= zone.rect.x && x <= zone.rect.x + zone.rect.w;
-    const insideZ = z >= zone.rect.y && z <= zone.rect.y + zone.rect.h;
-    if (!insideX || !insideZ) continue;
-
-    const area = zone.rect.w * zone.rect.h;
-    const surface = zone.surfaceId ? surfacesById.get(zone.surfaceId) : undefined;
-    let surfaceY = spec.defaults.floor_height;
-    if (surface?.kind === "flat") {
-      surfaceY = surface.elevationM;
-    } else if (surface?.kind === "ramp") {
-      const axisStart = surface.axis === "x" ? surface.rect.x : surface.rect.y;
-      const axisLength = surface.axis === "x" ? surface.rect.w : surface.rect.h;
-      const axisCoord = surface.axis === "x" ? x : z;
-      const t = Math.max(0, Math.min(1, (axisCoord - axisStart) / Math.max(axisLength, 1e-6)));
-      surfaceY = surface.startElevationM + (surface.endElevationM - surface.startElevationM) * t;
-    }
-    const verticalDelta = Math.abs(y - surfaceY);
-    if (
-      !bestMatch
-      || verticalDelta < bestMatch.verticalDelta - 0.05
-      || (Math.abs(verticalDelta - bestMatch.verticalDelta) <= 0.05 && area < bestMatch.area)
-    ) {
-      bestMatch = {
-        id: zone.id,
-        type: zone.type,
-        label: zone.label,
-        area,
-        verticalDelta,
-      };
-    }
-  }
-
-  if (!bestMatch) return null;
-  return {
-    id: bestMatch.id,
-    type: bestMatch.type,
-    label: bestMatch.label,
-  };
-}
-
-function isLandmarkAnchor(anchor: RuntimeAnchor): boolean {
-  const normalized = anchor.type.toLowerCase();
-  return normalized === "landmark" || normalized === "hero_landmark";
-}
-
-function collectLandmarkState(
-  anchors: readonly RuntimeAnchor[] | null,
-  visibleAnchorIds: ReadonlySet<string>,
-  camera: PerspectiveCamera,
-  viewportWidth: number,
-  viewportHeight: number,
-): RuntimeTextState["landmarks"] {
-  if (!anchors || anchors.length === 0) {
-    return {
-      visible: [],
-      nearest: null,
-    };
-  }
-
-  const scratch = new Vector3();
-  const visible: RuntimeTextState["landmarks"]["visible"] = [];
-  let nearest: RuntimeTextState["landmarks"]["nearest"] = null;
-
-  for (const anchor of anchors) {
-    if (!isLandmarkAnchor(anchor)) continue;
-    if (!visibleAnchorIds.has(anchor.id)) continue;
-
-    const world = designToWorldVec3(anchor.pos);
-    world.y += Math.max(0.3, (anchor.heightM ?? 1) * 0.5);
-    const dx = world.x - camera.position.x;
-    const dy = world.y - camera.position.y;
-    const dz = world.z - camera.position.z;
-    const distanceM = Math.hypot(dx, dy, dz);
-
-    if (!nearest || distanceM < nearest.distanceM) {
-      nearest = {
-        id: anchor.id,
-        type: anchor.type,
-        zone: anchor.zone,
-        distanceM,
-      };
-    }
-
-    scratch.set(world.x, world.y, world.z).project(camera);
-    const inClipSpace = scratch.z >= -1 && scratch.z <= 1;
-    const inViewport = Math.abs(scratch.x) <= 1 && Math.abs(scratch.y) <= 1;
-    if (!inClipSpace || !inViewport) continue;
-
-    visible.push({
-      id: anchor.id,
-      type: anchor.type,
-      zone: anchor.zone,
-      distanceM,
-      screenX: ((scratch.x + 1) * 0.5) * viewportWidth,
-      screenY: ((1 - scratch.y) * 0.5) * viewportHeight,
-    });
-  }
-
-  visible.sort((a, b) => a.distanceM - b.distanceM || a.id.localeCompare(b.id));
-
-  return {
-    visible: visible.slice(0, 6),
-    nearest,
-  };
-}
-
-function collectVisibleAnchorIds(
-  anchors: readonly RuntimeAnchor[] | null,
-  renderedAnchorIds: readonly string[],
-  sceneRoot: Object3D,
-  camera: PerspectiveCamera,
-): Set<string> {
-  const visible = new Set<string>();
-  if (!anchors || anchors.length === 0) return visible;
-  const rendered = new Set(renderedAnchorIds);
-  const target = new Vector3();
-  const projected = new Vector3();
-  const direction = new Vector3();
-  const raycaster = new Raycaster();
-  raycaster.camera = camera;
-  for (const anchor of anchors) {
-    if (!rendered.has(anchor.id)) continue;
-    const world = designToWorldVec3(anchor.pos);
-    target.set(world.x, world.y + Math.max(0.3, (anchor.heightM ?? 1) * 0.5), world.z);
-    projected.copy(target).project(camera);
-    if (projected.z < -1 || projected.z > 1 || Math.abs(projected.x) > 1 || Math.abs(projected.y) > 1) continue;
-    const distanceM = target.distanceTo(camera.position);
-    const targetRadiusM = Math.max(0.55, (anchor.widthM ?? 0) * 0.5, (anchor.heightM ?? 0) * 0.5);
-    direction.copy(target).sub(camera.position).normalize();
-    raycaster.set(camera.position, direction);
-    raycaster.near = 0.05;
-    raycaster.far = distanceM + targetRadiusM;
-    const firstHit = raycaster.intersectObject(sceneRoot, true)[0];
-    if (!firstHit || firstHit.distance >= distanceM - targetRadiusM) visible.add(anchor.id);
-  }
-  return visible;
-}
-
-function isRecordValue(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function canonicalArtifactTag(value: unknown): string | null {
-  if (typeof value !== "string") return null;
-  const normalized = value.trim().toLowerCase().replaceAll("_", "-");
-  return CANONICAL_VISUAL_ARTIFACT_TAGS.has(normalized) ? normalized : null;
-}
-
-function collectDeclaredArtifactTags(object: Object3D, target: Set<string>): void {
-  const qa = isRecordValue(object.userData.visualQa) ? object.userData.visualQa : null;
-  const values = [
-    object.userData.visualQaArtifactTags,
-    object.userData.artifactTags,
-    qa?.artifactTags,
-  ];
-  for (const value of values) {
-    if (!Array.isArray(value)) continue;
-    for (const candidate of value) {
-      const tag = canonicalArtifactTag(candidate);
-      if (tag) target.add(tag);
-    }
-  }
-}
-
-function resolveArchitectureShadowMode(mesh: Object3D, raw: unknown): string {
-  if (mesh.castShadow && mesh.receiveShadow) return "cast_receive";
-  if (mesh.castShadow) return "cast_only";
-  if (mesh.receiveShadow) return "receive_only";
-  if (raw === "cast") return "cast_only";
-  if (raw === "receive") return "receive_only";
-  return typeof raw === "string" && raw.length > 0 ? raw : "none";
-}
-
-function resolveSurfaceHeightAt(
-  spec: RuntimeBlockoutSpec,
-  x: number,
-  z: number,
-): number {
-  let highest = Number.NEGATIVE_INFINITY;
-  for (const surface of spec.traversalSurfaces ?? []) {
-    if (
-      x < surface.rect.x
-      || x > surface.rect.x + surface.rect.w
-      || z < surface.rect.y
-      || z > surface.rect.y + surface.rect.h
-    ) {
-      continue;
-    }
-    if (surface.kind === "flat") {
-      highest = Math.max(highest, surface.elevationM);
-      continue;
-    }
-    const start = surface.axis === "x" ? surface.rect.x : surface.rect.y;
-    const length = surface.axis === "x" ? surface.rect.w : surface.rect.h;
-    const coordinate = surface.axis === "x" ? x : z;
-    const t = Math.max(0, Math.min(1, (coordinate - start) / Math.max(length, 1e-6)));
-    highest = Math.max(
-      highest,
-      surface.startElevationM + (surface.endElevationM - surface.startElevationM) * t,
-    );
-  }
-  return Number.isFinite(highest) ? highest : spec.defaults.floor_height;
-}
-
-function collectVisualQaPlacementSources(
-  game: Game,
-  spec: RuntimeBlockoutSpec | null,
-): { placements: VisualQaPlacementSource[]; declaredArtifactTags: Set<string> } {
-  game.scene.updateMatrixWorld(true);
-  const placements: VisualQaPlacementSource[] = [];
-  const declaredArtifactTags = new Set<string>();
-  const namedPropRoots = new Map<string, Object3D>();
-  const instancedPlacementIds = new Set<string>();
-  const instanceMatrix = new Matrix4();
-  const worldMatrix = new Matrix4();
-  const worldPosition = new Vector3();
-  const worldScale = new Vector3();
-  const worldQuaternion = game.camera.quaternion.clone();
-
-  game.scene.traverse((object) => {
-    if (!object.visible) return;
-    collectDeclaredArtifactTags(object, declaredArtifactTags);
-    if (object.name.startsWith("v3-dressing-")) {
-      namedPropRoots.set(object.name.slice("v3-dressing-".length), object);
-    }
-    const rawInstances = object.userData.visualQaInstances;
-    if (!Array.isArray(rawInstances)) return;
-    const isInstancedMesh = object instanceof InstancedMesh;
-    const batchedObject = object as Object3D & {
-      isBatchedMesh?: boolean;
-      getMatrixAt?: (index: number, target: Matrix4) => Matrix4;
-    };
-    const isBatchedMesh = batchedObject.isBatchedMesh === true && typeof batchedObject.getMatrixAt === "function";
-    if (!isInstancedMesh && !isBatchedMesh) return;
-    const instanceCount = isInstancedMesh ? Math.min(rawInstances.length, object.count) : rawInstances.length;
-    for (let index = 0; index < instanceCount; index += 1) {
-      const raw = rawInstances[index];
-      if (!isRecordValue(raw)) continue;
-      const placementId = typeof raw.placementId === "string" ? raw.placementId : "";
-      const moduleId = typeof raw.moduleId === "string" ? raw.moduleId : "";
-      const anchorId = typeof raw.anchorId === "string" ? raw.anchorId : undefined;
-      const assetId = typeof raw.assetId === "string" ? raw.assetId : undefined;
-      const semanticClass = typeof raw.semanticClass === "string" ? raw.semanticClass : "";
-      const representation = typeof raw.representation === "string" ? raw.representation : "module";
-      const materialMode = typeof raw.materialMode === "string" ? raw.materialMode : "debug";
-      const backingPlacementId = typeof raw.backingPlacementId === "string" && raw.backingPlacementId.trim().length > 0
-        ? raw.backingPlacementId.trim()
-        : undefined;
-      const structurallyBacked = typeof raw.structurallyBacked === "boolean"
-        ? raw.structurallyBacked
-        : undefined;
-      const dimensions = isRecordValue(raw.dimensions) ? raw.dimensions : null;
-      if (!placementId || !moduleId || !semanticClass || !dimensions) {
-        declaredArtifactTags.add("invalid-scale");
-        continue;
-      }
-      const width = dimensions.x;
-      const height = dimensions.y;
-      const depth = dimensions.z;
-      if (
-        typeof width !== "number"
-        || typeof depth !== "number"
-        || typeof height !== "number"
-      ) {
-        declaredArtifactTags.add("invalid-scale");
-        continue;
-      }
-
-      if (isInstancedMesh) object.getMatrixAt(index, instanceMatrix);
-      else batchedObject.getMatrixAt!(index, instanceMatrix);
-      worldMatrix.multiplyMatrices(object.matrixWorld, instanceMatrix);
-      worldMatrix.decompose(worldPosition, worldQuaternion, worldScale);
-      const rawGroundingGap = raw.groundingGapM ?? raw.groundedGapM;
-      placements.push({
-        placementId,
-        ...(anchorId ? { anchorId } : {}),
-        ...(assetId ? { assetId } : {}),
-        moduleId,
-        semanticClass,
-        representation,
-        materialMode,
-        groundingGapM: typeof rawGroundingGap === "number" ? rawGroundingGap : 0,
-        ...(backingPlacementId ? { backingPlacementId } : {}),
-        ...(typeof structurallyBacked === "boolean" ? { structurallyBacked } : {}),
-        dimensionsM: { width, depth, height },
-        shadowMode: resolveArchitectureShadowMode(object, raw.shadowMode),
-        center: { x: worldPosition.x, y: worldPosition.y, z: worldPosition.z },
-        orientation: {
-          x: worldQuaternion.x,
-          y: worldQuaternion.y,
-          z: worldQuaternion.z,
-          w: worldQuaternion.w,
-        },
-        sourceObject: object,
-        sourceInstanceId: index,
-      });
-      instancedPlacementIds.add(placementId);
-    }
-  });
-
-  const renderedPropPlacements = game.getRenderedPropPlacements();
-  const supportCandidates: VisualSupportCandidate[] = renderedPropPlacements.flatMap((placement) => {
-    const sourceObject = namedPropRoots.get(placement.placementId);
-    if (!sourceObject) return [];
-    const bounds = new Box3().setFromObject(sourceObject);
-    if (bounds.isEmpty()) return [];
-    return [{ placementId: placement.placementId, bounds }];
-  });
-
-  for (const placement of renderedPropPlacements) {
-    if (instancedPlacementIds.has(placement.placementId)) continue;
-    const sourceObject = namedPropRoots.get(placement.placementId) ?? null;
-    const sourceBounds = sourceObject ? new Box3().setFromObject(sourceObject) : null;
-    let groundingGapM = placement.groundingGapM;
-    let supportPlacementId: string | undefined;
-    if (spec && GROUNDED_PROP_SEMANTIC_CLASSES.has(placement.semanticClass)) {
-      const bottomY = sourceBounds && !sourceBounds.isEmpty()
-        ? sourceBounds.min.y
-        : placement.center.y - placement.dimensionsM.height * 0.5;
-      const surfaceY = resolveSurfaceHeightAt(spec, placement.center.x, placement.center.z);
-      const signedGapM = bottomY - surfaceY;
-      const support = sourceBounds && signedGapM > 0.03
-        ? resolveVisualSupport(placement.placementId, sourceBounds, supportCandidates)
-        : null;
-      if (support) {
-        groundingGapM = support.gapM;
-        supportPlacementId = support.supportPlacementId;
-      } else {
-        if (signedGapM < -0.03) declaredArtifactTags.add("interpenetration");
-        groundingGapM = Math.max(0, signedGapM);
-      }
-    }
-    const sourceOrientation = sourceObject
-      ? sourceObject.getWorldQuaternion(new Quaternion())
-      : new Quaternion();
-    placements.push({
-      placementId: placement.placementId,
-      anchorId: placement.anchorId,
-      assetId: placement.assetId,
-      moduleId: placement.moduleId,
-      semanticClass: placement.semanticClass,
-      representation: placement.representation,
-      materialMode: placement.materialMode,
-      groundingGapM,
-      ...(supportPlacementId ? { supportPlacementId } : {}),
-      dimensionsM: placement.dimensionsM,
-      shadowMode: placement.shadowMode,
-      center: placement.center,
-      orientation: {
-        x: sourceOrientation.x,
-        y: sourceOrientation.y,
-        z: sourceOrientation.z,
-        w: sourceOrientation.w,
-      },
-      sourceObject,
-      sourceInstanceId: null,
-    });
-  }
-
-  return { placements, declaredArtifactTags };
-}
-
-function hasValidVisualDimensions(dimensions: VisualQaDimensions): boolean {
-  return [dimensions.width, dimensions.depth, dimensions.height].every((value) => (
-    Number.isFinite(value) && value > 0
-  ));
-}
-
-function projectedScreenAreaRatio(
-  placement: VisualQaPlacementSource,
-  camera: PerspectiveCamera,
-): number {
-  if (!hasValidVisualDimensions(placement.dimensionsM)) return 0;
-  const { width, depth, height } = placement.dimensionsM;
-  const halfX = width * 0.5;
-  const halfY = height * 0.5;
-  const halfZ = depth * 0.5;
-  let minX = Number.POSITIVE_INFINITY;
-  let minY = Number.POSITIVE_INFINITY;
-  let maxX = Number.NEGATIVE_INFINITY;
-  let maxY = Number.NEGATIVE_INFINITY;
-  let projectedCornerCount = 0;
-  const worldCorner = new Vector3();
-  const cameraCorner = new Vector3();
-  const placementCenter = new Vector3(
-    placement.center.x,
-    placement.center.y,
-    placement.center.z,
-  );
-  const orientation = new Quaternion(
-    placement.orientation.x,
-    placement.orientation.y,
-    placement.orientation.z,
-    placement.orientation.w,
-  );
-
-  for (const dx of [-halfX, halfX]) {
-    for (const dy of [-halfY, halfY]) {
-      for (const dz of [-halfZ, halfZ]) {
-        worldCorner
-          .set(dx, dy, dz)
-          .applyQuaternion(orientation)
-          .add(placementCenter);
-        cameraCorner.copy(worldCorner).applyMatrix4(camera.matrixWorldInverse);
-        if (-cameraCorner.z <= camera.near) continue;
-        worldCorner.project(camera);
-        if (!Number.isFinite(worldCorner.x) || !Number.isFinite(worldCorner.y)) continue;
-        minX = Math.min(minX, worldCorner.x);
-        minY = Math.min(minY, worldCorner.y);
-        maxX = Math.max(maxX, worldCorner.x);
-        maxY = Math.max(maxY, worldCorner.y);
-        projectedCornerCount += 1;
-      }
-    }
-  }
-
-  if (projectedCornerCount === 0) return 0;
-  const clippedMinX = Math.max(-1, minX);
-  const clippedMaxX = Math.min(1, maxX);
-  const clippedMinY = Math.max(-1, minY);
-  const clippedMaxY = Math.min(1, maxY);
-  if (clippedMaxX <= clippedMinX || clippedMaxY <= clippedMinY) return 0;
-  return Math.min(1, ((clippedMaxX - clippedMinX) * (clippedMaxY - clippedMinY)) / 4);
-}
-
-function placementVisibilitySamples(placement: VisualQaPlacementSource): Vector3[] {
-  const { width, depth, height } = placement.dimensionsM;
-  const center = new Vector3(placement.center.x, placement.center.y, placement.center.z);
-  const orientation = new Quaternion(
-    placement.orientation.x,
-    placement.orientation.y,
-    placement.orientation.z,
-    placement.orientation.w,
-  );
-  const sample = (x: number, y: number, z: number): Vector3 => (
-    new Vector3(x, y, z).applyQuaternion(orientation).add(center)
-  );
-  const samples = [
-    center.clone(),
-    sample(0, height * 0.35, 0),
-    sample(-width * 0.35, 0, 0),
-    sample(width * 0.35, 0, 0),
-    sample(0, 0, -depth * 0.35),
-    sample(0, 0, depth * 0.35),
-  ];
-  // A long architectural volume can be center-occluded while one of its end
-  // faces still cuts a large, obvious silhouette against the sky. Sampling
-  // only the center axes made those visible end caps disappear from QA
-  // telemetry. Probe the inset corners at mid-height and near the roofline so
-  // the reported placement identity follows the pixels a reviewer can see.
-  for (const xSign of [-1, 1]) {
-    for (const zSign of [-1, 1]) {
-      samples.push(
-        sample(width * 0.42 * xSign, 0, depth * 0.42 * zSign),
-        sample(width * 0.42 * xSign, height * 0.38, depth * 0.42 * zSign),
-      );
-    }
-  }
-  return samples;
-}
-
-function rayReachesPlacement(
-  placement: VisualQaPlacementSource,
-  sceneRoot: Object3D,
-  camera: PerspectiveCamera,
-  raycaster: Raycaster,
-): Object3D[] {
-  const direction = new Vector3();
-  const reachedObjects = new Set<Object3D>();
-  raycaster.camera = camera;
-  const firstSceneHit = () => raycaster.intersectObject(sceneRoot, true).find((hit) => (
-    (hit.object as Object3D & { isSprite?: boolean }).isSprite !== true
-  ));
-  for (const target of placementVisibilitySamples(placement)) {
-    direction.copy(target).sub(camera.position);
-    const distanceM = direction.length();
-    if (distanceM <= camera.near) continue;
-    direction.multiplyScalar(1 / distanceM);
-    raycaster.set(camera.position, direction);
-    raycaster.near = camera.near;
-
-    const half = placement.dimensionsM;
-    const supportM = (
-      Math.abs(direction.x) * half.width
-      + Math.abs(direction.y) * half.height
-      + Math.abs(direction.z) * half.depth
-    ) * 0.5;
-    raycaster.far = distanceM + supportM + VISUAL_QA_OCCLUSION_EPSILON_M;
-
-    if (placement.sourceObject) {
-      const ownHit = raycaster.intersectObject(placement.sourceObject, true).find((hit) => (
-        placement.sourceInstanceId === null
-        || hit.instanceId === placement.sourceInstanceId
-        || (hit as typeof hit & { batchId?: number }).batchId === placement.sourceInstanceId
-      ));
-      if (!ownHit) continue;
-      const sceneHit = firstSceneHit();
-      if (!sceneHit || ownHit.distance <= sceneHit.distance + VISUAL_QA_OCCLUSION_EPSILON_M) {
-        reachedObjects.add(ownHit.object);
-      }
-      continue;
-    }
-
-    const nearBoundM = Math.max(camera.near, distanceM - supportM - VISUAL_QA_OCCLUSION_EPSILON_M);
-    const farBoundM = distanceM + supportM + VISUAL_QA_OCCLUSION_EPSILON_M;
-    const sceneHit = firstSceneHit();
-    if (sceneHit && sceneHit.distance >= nearBoundM && sceneHit.distance <= farBoundM) {
-      reachedObjects.add(sceneHit.object);
-    }
-  }
-  return [...reachedObjects];
-}
-
-function collectRenderableObjects(
-  placement: VisualQaPlacementSource,
-  reachedObjects: readonly Object3D[],
-): Object3D[] {
-  if (!placement.sourceObject) return [...reachedObjects];
-  const rendered: Object3D[] = [];
-  placement.sourceObject.traverse((object) => {
-    if ((object as Object3D & { isMesh?: boolean }).isMesh) rendered.push(object);
-  });
-  return rendered.length > 0 ? rendered : [...reachedObjects];
-}
-
-function actualShadowMode(
-  placement: VisualQaPlacementSource,
-  reachedObjects: readonly Object3D[],
-): string {
-  const rendered = collectRenderableObjects(placement, reachedObjects);
-  const casts = rendered.some((object) => object.castShadow);
-  const receives = rendered.some((object) => object.receiveShadow);
-  if (casts && receives) return "cast_receive";
-  if (casts) return "cast_only";
-  if (receives) return "receive_only";
-  return rendered.length > 0 ? "none" : placement.shadowMode;
-}
-
-function actualMaterialMode(
-  placement: VisualQaPlacementSource,
-  reachedObjects: readonly Object3D[],
-): string {
-  if (placement.materialMode === "debug") return "debug";
-  let hasPbr = false;
-  let hasLitStandard = false;
-  let hasUnlit = false;
-  const rendered = collectRenderableObjects(placement, reachedObjects);
-  for (const object of rendered) {
-    const materialValue = (object as Object3D & { material?: unknown }).material;
-    const materials = Array.isArray(materialValue) ? materialValue : [materialValue];
-    for (const material of materials) {
-      if (!isRecordValue(material)) continue;
-      if (material.isMeshPhysicalMaterial === true || material.isMeshStandardMaterial === true) {
-        hasPbr = true;
-      } else if (material.isMeshBasicMaterial === true) {
-        hasUnlit = true;
-      } else if (
-        material.isMeshLambertMaterial === true
-        || material.isMeshPhongMaterial === true
-        || material.isMeshToonMaterial === true
-      ) {
-        hasLitStandard = true;
-      }
-    }
-  }
-  if (hasPbr) return "pbr";
-  if (hasLitStandard) return "standard";
-  if (hasUnlit) return "unlit";
-  return placement.materialMode === "blockout" ? "standard" : placement.materialMode;
-}
-
-function collectVisibleAssetTelemetry(
-  game: Game,
-  spec: RuntimeBlockoutSpec | null,
-  qaTargets: ReadonlySet<string>,
-): { visibleAssets: RuntimeVisibleAsset[]; artifactTags: string[] } {
-  game.camera.updateMatrixWorld(true);
-  game.camera.updateProjectionMatrix();
-  const { placements, declaredArtifactTags } = collectVisualQaPlacementSources(game, spec);
-  const artifactTags = new Set(declaredArtifactTags);
-  const raycaster = new Raycaster();
-  const visibleAssets: RuntimeVisibleAsset[] = [];
-  const placementCounts = new Map<string, number>();
-  for (const placement of placements) {
-    placementCounts.set(placement.placementId, (placementCounts.get(placement.placementId) ?? 0) + 1);
-  }
-
-  for (const placement of placements) {
-    if (!hasValidVisualDimensions(placement.dimensionsM)) {
-      artifactTags.add("invalid-scale");
-      continue;
-    }
-    const screenAreaRatio = projectedScreenAreaRatio(placement, game.camera);
-    if (screenAreaRatio < VISUAL_QA_MIN_SCREEN_AREA_RATIO) continue;
-    const isExplicitTarget = [
-      placement.placementId,
-      placement.assetId,
-      placement.moduleId,
-    ].some((value) => typeof value === "string" && qaTargets.has(value));
-    const requiresArtifactProbe = (
-      placement.representation === "placeholder"
-      || placement.representation === "procedural-proxy"
-      || placement.structurallyBacked === false
-      || (placementCounts.get(placement.placementId) ?? 0) > 1
-    );
-    // Full-scene raycasts are the expensive part of state serialization. The
-    // capture harness sends each shot's required telemetry selectors, while
-    // artifact-risk candidates are always probed. Healthy unrelated placements
-    // do not need dozens of whole-scene raycasts merely to prove they exist.
-    if (!isExplicitTarget && !requiresArtifactProbe) continue;
-    const reachedObjects = rayReachesPlacement(placement, game.scene, game.camera, raycaster);
-    if (reachedObjects.length === 0) continue;
-    visibleAssets.push({
-      placementId: placement.placementId,
-      ...(placement.anchorId ? { anchorId: placement.anchorId } : {}),
-      ...(placement.assetId ? { assetId: placement.assetId } : {}),
-      ...(placement.moduleId ? { moduleId: placement.moduleId } : {}),
-      semanticClass: placement.semanticClass,
-      representation: placement.representation,
-      materialMode: actualMaterialMode(placement, reachedObjects),
-      groundingGapM: placement.groundingGapM,
-      ...(placement.supportPlacementId ? { supportPlacementId: placement.supportPlacementId } : {}),
-      ...(placement.backingPlacementId ? { backingPlacementId: placement.backingPlacementId } : {}),
-      ...(typeof placement.structurallyBacked === "boolean"
-        ? { structurallyBacked: placement.structurallyBacked }
-        : {}),
-      dimensionsM: placement.dimensionsM,
-      shadowMode: actualShadowMode(placement, reachedObjects),
-      screenAreaRatio,
-      occluded: false,
-    });
-  }
-
-  visibleAssets.sort((left, right) => (
-    left.placementId.localeCompare(right.placementId)
-    || (left.assetId ?? "").localeCompare(right.assetId ?? "")
-    || (left.moduleId ?? "").localeCompare(right.moduleId ?? "")
-    || left.representation.localeCompare(right.representation)
-  ));
-
-  const visibleByPlacement = new Map<string, number>();
-  for (const asset of visibleAssets) {
-    visibleByPlacement.set(asset.placementId, (visibleByPlacement.get(asset.placementId) ?? 0) + 1);
-    if (asset.representation === "placeholder") artifactTags.add("placeholder");
-    if (asset.representation === "procedural-proxy") artifactTags.add("procedural-proxy");
-  }
-  if ([...visibleByPlacement.values()].some((count) => count > 1)) {
-    artifactTags.add("duplicate-representation");
-  }
-  const facadeBackingFailures = auditVisibleFacadeBacking(visibleAssets, placements);
-  if (facadeBackingFailures.length > 0) {
-    artifactTags.add("exposed-shell");
-  }
-
-  return {
-    visibleAssets,
-    artifactTags: [...artifactTags].filter((tag) => CANONICAL_VISUAL_ARTIFACT_TAGS.has(tag)).sort(),
-  };
-}
-
-function readBestScore(storageKey: string): number {
-  try {
-    const raw = window.sessionStorage.getItem(storageKey);
-    if (raw === null) return 0;
-    const parsed = Number(raw);
-    if (!Number.isFinite(parsed)) return 0;
-    return normalizeScoreValue(parsed);
-  } catch {
-    return 0;
-  }
-}
-
-function writeBestScore(storageKey: string, value: number): void {
-  try {
-    window.sessionStorage.setItem(storageKey, String(normalizeScoreValue(value)));
-  } catch {
-    // Ignore storage errors in constrained browser contexts.
-  }
-}
-
 export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): Promise<RuntimeHandle> {
   const appRoot = getAppRoot();
   const runtimeRoot = createRuntimeRoot(appRoot);
   const parsedUrlParams = parseRuntimeUrlParams(window.location.search);
   const qaAssetProfile = resolveQaAssetProfile(window.location.search);
   const deterministicQa = qaAssetProfile !== null;
-  const qaTelemetryTargets = new Set(
-    (new URLSearchParams(window.location.search).get("qaTargets") ?? "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean),
-  );
-  const shadowsEnabled = new URLSearchParams(window.location.search).get("shadows") !== "0";
+  const qaTelemetryTargets = new Set(parsedUrlParams.qaTargets);
+  const shadowsEnabled = parsedUrlParams.shadows;
   const controlMode = options.controlMode ?? parsedUrlParams.controlMode;
   const playerName = options.playerName ?? parsedUrlParams.playerName;
   if (!playerName) {
@@ -1681,7 +257,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const effectiveUnlimitedHealth = isLocalHostRuntime && runtimeParams.unlimitedHealthExplicit === true;
   const warmupAssets = options.warmup ?? null;
   const warmupTimedOut = warmupAssets?.timedOut === true;
-  const performanceSafeFallback = warmupTimedOut;
+  // A prefetch deadline measures network readiness, not desktop GPU capability.
+  const performanceSafeFallback = mobile && warmupTimedOut;
   const bootStartedAtMs = performance.now();
 
   const warningOverlay = createOverlay(runtimeRoot, {
@@ -1804,7 +381,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // is by definition nobody sitting at the keyboard. Real players match none of
   // these conditions, so production audio is unaffected. ?audio=1 forces sound
   // back on for an agent run, ?audio=0 forces it off anywhere.
-  const audioForced = new URLSearchParams(window.location.search).get("audio");
+  const audioForced = runtimeParams.audioForced;
   const audioSuppressedByDefault =
     isAutomatedClient() || runtimeParams.controlMode === "agent";
   const audioMuted = audioForced === "1"
@@ -1864,174 +441,15 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   if (performanceSafeFallback) {
     appendWarning("Runtime warmup timed out. Using performance-safe fallback before spawn.");
   }
-  if (!deterministicQa && warmupAssets && !warmupAssets.enemyVisualsReady && !mobile) {
+  if (!deterministicQa && warmupAssets && !warmupTimedOut && !warmupAssets.enemyVisualsReady && !mobile) {
     appendWarning("Enemy model warmup failed. Using fallback enemy meshes to avoid late asset streaming.");
   }
 
-  let resolvedFloorMode = runtimeParams.floorMode;
-  if (performanceSafeFallback || mobile) {
-    resolvedFloorMode = "blockout";
-  }
-  let floorMaterials: FloorMaterialLibrary | null = null;
-  const qaFloorRequestIds = qaAssetPlan?.floorMaterialIds.map(qaFloorMaterialRequestId) ?? [];
-  if (resolvedFloorMode === "pbr") {
-    try {
-      if (qaAssetTracker && qaAssetPlan) {
-        for (const requestId of qaFloorRequestIds) qaAssetTracker.start(requestId);
-        const floorIds = new Set(qaAssetPlan.floorMaterialIds);
-        floorMaterials = await FloorMaterialLibrary.load(FLOOR_MANIFEST_URL, {
-          materialIds: floorIds,
-          requestObserver: qaAssetTracker.observer,
-        });
-        const resolutions = await floorMaterials.preloadAllTextures(effectiveFloorQuality, {
-          materialIds: floorIds,
-          allowUpscale: false,
-          requestObserver: qaAssetTracker.observer,
-        });
-        qaAssetTracker.addResolvedTextures(resolutions.map((resolution) => ({
-          kind: "floor",
-          materialId: resolution.materialId,
-          requestedTier: resolution.requestedQuality,
-          resolvedTier: resolution.resolvedQuality,
-          urls: resolution.urls,
-        })));
-        for (const requestId of qaFloorRequestIds) qaAssetTracker.complete(requestId);
-      } else {
-        floorMaterials = warmupAssets?.floorMaterials ?? await FloorMaterialLibrary.load(FLOOR_MANIFEST_URL);
-        await floorMaterials.preloadAllTextures(effectiveFloorQuality, {
-          materialIds: new Set(mapAssets ? plannedFloorMaterialIds(mapAssets) : []),
-        });
-      }
-    } catch (error) {
-      if (qaAssetTracker) {
-        for (const requestId of qaFloorRequestIds) qaAssetTracker.fail(requestId, error);
-        qaAssetTracker.fail("floor-material-pack", error);
-        throw new Error(
-          `[qa-assets] floor material pack failed; capture is blocked: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-      floorMaterials = null;
-      resolvedFloorMode = "blockout";
-      appendWarning(
-        `Failed to load floor PBR pack. Falling back to blockout floors.\n${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  let resolvedWallMode = runtimeParams.wallMode;
-  if (performanceSafeFallback || mobile) {
-    resolvedWallMode = "blockout";
-  }
-  let wallMaterials: WallMaterialLibrary | null = null;
-  const qaWallRequestIds = qaAssetPlan?.wallMaterialIds.map(qaWallMaterialRequestId) ?? [];
-  if (resolvedWallMode === "pbr") {
-    try {
-      const wallQuality = effectiveFloorQuality === "1k" ? "1k" : "2k";
-      if (qaAssetTracker && qaAssetPlan) {
-        for (const requestId of qaWallRequestIds) qaAssetTracker.start(requestId);
-        const wallIds = new Set(qaAssetPlan.wallMaterialIds);
-        wallMaterials = await WallMaterialLibrary.load(WALL_MANIFEST_URL, {
-          materialIds: wallIds,
-          requestObserver: qaAssetTracker.observer,
-        });
-        const resolutions = await wallMaterials.preloadAllTextures(wallQuality, {
-          materialIds: wallIds,
-          allowUpscale: false,
-          requestObserver: qaAssetTracker.observer,
-        });
-        qaAssetTracker.addResolvedTextures(resolutions.map((resolution) => ({
-          kind: "wall",
-          materialId: resolution.materialId,
-          requestedTier: resolution.requestedQuality,
-          resolvedTier: resolution.resolvedQuality,
-          urls: resolution.urls,
-        })));
-        for (const requestId of qaWallRequestIds) qaAssetTracker.complete(requestId);
-      } else {
-        wallMaterials = warmupAssets?.wallMaterials ?? await WallMaterialLibrary.load(WALL_MANIFEST_URL);
-        await wallMaterials.preloadAllTextures(wallQuality, {
-          materialIds: new Set(mapAssets ? plannedWallMaterialIds(mapAssets) : []),
-        });
-      }
-    } catch (error) {
-      if (qaAssetTracker) {
-        for (const requestId of qaWallRequestIds) qaAssetTracker.fail(requestId, error);
-        qaAssetTracker.fail("wall-material-pack", error);
-        throw new Error(
-          `[qa-assets] wall material pack failed; capture is blocked: ${
-            error instanceof Error ? error.message : String(error)
-          }`,
-        );
-      }
-      wallMaterials = null;
-      resolvedWallMode = "blockout";
-      appendWarning(
-        `Failed to load wall PBR pack. Falling back to blockout walls.\n${error instanceof Error ? error.message : String(error)}`,
-      );
-    }
-  }
-
-  let propModels: PropModelLibrary | null = null;
-  const qaPropRequestIds = qaAssetPlan?.propModelIds.map(qaPropModelRequestId) ?? [];
-  try {
-    if (qaAssetTracker && qaAssetPlan) {
-      for (const requestId of qaPropRequestIds) qaAssetTracker.start(requestId);
-      propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
-        modelIds: new Set(qaAssetPlan.propModelIds),
-        concurrency: 4,
-        requestObserver: qaAssetTracker.observer,
-      });
-      for (const requestId of qaPropRequestIds) qaAssetTracker.complete(requestId);
-    } else {
-      // Mobile has never loaded the R8 wall-foot clutter models; buildR8Clutter
-      // skips records whose model is absent.
-      propModels = await PropModelLibrary.load(PROP_MANIFEST_URL, {
-        modelIds: new Set(mapAssets ? plannedPropModelIds(mapAssets, !mobile) : []),
-      });
-    }
-  } catch (error) {
-    if (qaAssetTracker) {
-      for (const requestId of qaPropRequestIds) qaAssetTracker.fail(requestId, error);
-      qaAssetTracker.fail("prop-model-pack", error);
-      throw new Error(
-        `[qa-assets] prop model pack failed; capture is blocked: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
-    appendWarning(
-      `Failed to load the CC0 bazaar prop pack. Final-mode map readiness will fail rather than render placeholders.\n${error instanceof Error ? error.message : String(error)}`,
-    );
-  }
-
-  // Authored section and facade GLBs render every frontage. Loaded on every
-  // profile (mobile included); without them the map falls back to flat
-  // blockout walls. Collision never depends on these models.
-  let facadeModels: PropModelLibrary | null = null;
-  const facadeModelIds = new Set([
-    ...(mapAssets?.blockout.sectionModels ?? []).map((section) => section.modelId),
-    ...(mapAssets?.blockout.authoredPlacements ?? []).map((placement) => placement.modelId),
-  ]);
-  if (facadeModelIds.size > 0) {
-    try {
-      facadeModels = await PropModelLibrary.load(FACADE_MANIFEST_URL, {
-        modelIds: facadeModelIds,
-        concurrency: 4,
-        ...(qaAssetTracker ? { requestObserver: qaAssetTracker.observer } : {}),
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (qaAssetTracker) {
-        throw new Error(`[qa-assets] facade model pack failed; capture is blocked: ${message}`);
-      }
-      console.error(`[runtime:boot] authored facade models failed to load; rendering flat blockout walls: ${message}`);
-      appendWarning(`Failed to load the authored facade models. Falling back to flat blockout walls.\n${message}`);
-      wallMaterials = null;
-      resolvedWallMode = "blockout";
-    }
-  }
+  const { resolvedFloorMode, resolvedWallMode, floorMaterials, wallMaterials, propModels, facadeModels } =
+    await loadRuntimeMaterials({
+      runtimeParams, performanceSafeFallback, mobile, warmupAssets, mapAssets,
+      qaAssetPlan, qaAssetTracker, effectiveFloorQuality, appendWarning,
+    });
 
   if (qaDirectTextureResult) {
     const directTextureError = await qaDirectTextureResult;
@@ -2501,8 +919,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // real player goes through — is unreachable from any test by construction,
   // so nothing would catch it hanging or regressing. It only ever makes boot do
   // more work behind the loading overlay, so it is safe to expose.
-  const forceHumanBootGate =
-    new URLSearchParams(window.location.search).get("bootGate") === "1";
+  const forceHumanBootGate = runtimeParams.forceHumanBootGate;
   const humanBootGateEligible =
     mapAssets !== null
     && !deterministicQa
@@ -2530,8 +947,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // disabled model streaming; a successful settle here supersedes it —
     // without this, the retry would resolve a template no enemy ever uses.
     setEnemyVisualModelStreamingEnabled(templateReady);
-    if (!templateReady && !warmupAssets) {
-      // warmupAssets != null already produced the fallback-mesh warning.
+    if (!templateReady && (!warmupAssets || warmupTimedOut)) {
+      // A completed but failed warmup already produced the fallback-mesh warning.
       appendWarning("Enemy model unavailable. Using fallback enemy meshes.");
     }
   }
@@ -2702,7 +1119,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   let touchInput: TouchInputManager | null = null;
   let mobileTouchHud: MobileTouchHud | null = null;
-  let mobileOrientationGuard: MobileOrientationGuard | null = null;
+  let mobileOrientationGuard: OrientationGuard | null = null;
   let mobileFlashUpdate: ((dt: number, health: number, mag: number) => void) | null = null;
 
   if (
@@ -2719,7 +1136,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       aimAssistEnabled: gameplayTuning.touch.aimAssist.enabled,
     });
     mobileTouchHud = new MobileTouchHud(runtimeRoot, touchInput);
-    mobileOrientationGuard = new MobileOrientationGuard(runtimeRoot);
+    mobileOrientationGuard = new OrientationGuard(runtimeRoot, "landscape");
     void mobileOrientationGuard.requestLandscape();
 
     // Pause button wiring
@@ -2741,127 +1158,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     };
     runtimeRoot.addEventListener("touchstart", unlockAudioOnTouch, { passive: true });
 
-    // ── PUBG-style compact HUD for iPhone landscape ──────────────
-    // Effective viewport: ~667x325 (SE) to ~932x380 (Pro Max)
-    // Design: strip away panel chrome, use thin bars + floating text
-    // Auto-opacity: 0.45 base, flash to 1.0 on state change for 1.5s
-
-    const MOBILE_BASE_OPACITY = "0.6";
-    const MOBILE_FLASH_OPACITY = "1";
-    const MOBILE_FLASH_DURATION_S = 1.5;
-    let mobileHealthFlashTimer = 0;
-    let mobileAmmoFlashTimer = 0;
-    let mobilePrevHealth = 100;
-    let mobilePrevMag = 30;
-
-    // ── Health: thin edge bar + small number, no panel ──────────
-    const hRoot = healthHud.root;
-    Object.assign(hRoot.style, {
-      bottom: `calc(4px + env(safe-area-inset-bottom, 0px))`,
-      left: `calc(16px + env(safe-area-inset-left, 0px))`,
-      padding: "0",
-      background: "transparent",
-      border: "none",
-      borderRadius: "3px",
-      boxShadow: "none",
-      backdropFilter: "none",
-      transform: "none",
-      minWidth: "120px",
-      width: "120px",
-      opacity: MOBILE_BASE_OPACITY,
-      transition: "opacity 0.3s ease",
-    });
-    // Hide "HP" label (child 1), shrink numeric (child 2), widen bar (child 3)
-    const hChildren = Array.from(hRoot.children) as HTMLElement[];
-    if (hChildren[1]) hChildren[1].style.display = "none"; // "HP" label
-    if (hChildren[2]) {
-      Object.assign(hChildren[2].style, {
-        fontSize: "18px",
-        fontWeight: "700",
-        marginBottom: "3px",
-        minWidth: "0",
-        textShadow: "0 1px 4px rgba(0, 0, 0, 1), 0 0 8px rgba(0, 0, 0, 0.5)",
-      });
-    }
-    if (hChildren[3]) (hChildren[3] as HTMLElement).style.height = "6px";
-
-    // ── Ammo: floating text, no panel ───────────────────────────
-    const aRoot = ammoHud.root;
-    Object.assign(aRoot.style, {
-      bottom: `calc(4px + env(safe-area-inset-bottom, 0px))`,
-      right: `calc(10px + env(safe-area-inset-right, 0px))`,
-      padding: "0",
-      background: "transparent",
-      border: "none",
-      borderRadius: "0",
-      boxShadow: "none",
-      backdropFilter: "none",
-      transform: "none",
-      textAlign: "right",
-      opacity: MOBILE_BASE_OPACITY,
-      transition: "opacity 0.3s ease",
-    });
-    // Shrink ammo font sizes
-    const aChildren = Array.from(aRoot.children) as HTMLElement[];
-    if (aChildren[0]) {
-      // Row containing magEl and reserveWrap
-      aChildren[0].style.gap = "2px";
-      const magEl = aChildren[0].children[0] as HTMLElement | undefined;
-      if (magEl) {
-        Object.assign(magEl.style, {
-          fontSize: "22px",
-          minWidth: "0",
-          textShadow: "0 1px 4px rgba(0, 0, 0, 1), 0 0 8px rgba(0, 0, 0, 0.5)",
-        });
-      }
-      const reserveWrap = aChildren[0].children[1] as HTMLElement | undefined;
-      if (reserveWrap) {
-        reserveWrap.style.fontSize = "11px";
-        const reserveSpan = reserveWrap.querySelector("span");
-        if (reserveSpan) (reserveSpan as HTMLElement).style.fontSize = "13px";
-      }
-    }
-
-    // ── Timer: more aggressive scale ────────────────────────────
-    timerHud.setBaseScale(0.45);
-    Object.assign(timerHud.root.style, {
-      top: `calc(4px + env(safe-area-inset-top, 0px))`,
-      padding: "2px 10px 3px",
-      minWidth: "80px",
-      background: "rgba(8, 16, 28, 0.35)",
-      borderRadius: "6px",
-      opacity: MOBILE_BASE_OPACITY,
-      transition: "opacity 0.3s ease",
-    });
-
-    // ── Kill feed: compact width ────────────────────────────────
-    killFeed.root.style.width = "220px";
-    killFeed.root.style.minWidth = "0";
-
-    // ── Auto-opacity flash helper (called in step loop) ─────────
-    mobileFlashUpdate = (dt: number, currentHealth: number, currentMag: number): void => {
-      // Health flash
-      if (currentHealth !== mobilePrevHealth) {
-        hRoot.style.opacity = MOBILE_FLASH_OPACITY;
-        mobileHealthFlashTimer = MOBILE_FLASH_DURATION_S;
-        mobilePrevHealth = currentHealth;
-      }
-      if (mobileHealthFlashTimer > 0) {
-        mobileHealthFlashTimer -= dt;
-        if (mobileHealthFlashTimer <= 0) hRoot.style.opacity = MOBILE_BASE_OPACITY;
-      }
-
-      // Ammo flash
-      if (currentMag !== mobilePrevMag) {
-        aRoot.style.opacity = MOBILE_FLASH_OPACITY;
-        mobileAmmoFlashTimer = MOBILE_FLASH_DURATION_S;
-        mobilePrevMag = currentMag;
-      }
-      if (mobileAmmoFlashTimer > 0) {
-        mobileAmmoFlashTimer -= dt;
-        if (mobileAmmoFlashTimer <= 0) aRoot.style.opacity = MOBILE_BASE_OPACITY;
-      }
-    };
+    mobileFlashUpdate = configureMobileHud(healthHud, ammoHud, timerHud, killFeed);
 
     // Add touch-action: manipulation to root to prevent 300ms tap delay
     runtimeRoot.style.touchAction = "manipulation";
@@ -3045,7 +1342,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   let recentPublicFeedbackEvents: PublicAgentFeedbackEvent[] = [];
   beginSharedChampionRun();
   const pendingAgentActions: AgentAction[] = [];
-  const isInternalDebugSurface = import.meta.env.DEV || isLocalHostRuntime;
+  const isInternalDebugSurface = resolveInternalDebugSurface(import.meta.env.DEV, window.location.hostname);
   const resetPublicFeedback = (): void => {
     feedbackEventId = 0;
     recentPublicFeedbackEvents = [];
@@ -3773,8 +2070,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     }
 
     if (renderFrame && perfHud.isVisible()) {
-      perfMsPerFrame = perfMsPerFrame * 0.9 + clampedMs * 0.1;
-      perfFps = 1000 / Math.max(0.01, perfMsPerFrame);
+      // A manual QA render advances no time and provides no frame-cadence sample.
+      if (clampedMs > 0) {
+        perfMsPerFrame = perfMsPerFrame * 0.9 + clampedMs * 0.1;
+        perfFps = 1000 / Math.max(0.01, perfMsPerFrame);
+      }
       const buffPerf = buffManager.getPerfSnapshot();
 
       scenePerfSampleElapsed += clampedMs;

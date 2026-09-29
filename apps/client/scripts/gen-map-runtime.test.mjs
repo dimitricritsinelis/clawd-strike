@@ -53,13 +53,7 @@ function makeV3Spec() {
       ceiling_height_default: 10,
       floor_height_default: 0,
     },
-    wall_details: {
-      enabled: true,
-      style: "bazaar",
-      density: 0.4,
-      maxProtrusion: 0.73,
-      seed: 7,
-    },
+    wall_details: { style: "bazaar" },
     map_center: { x: 10, y: 6 },
     districts: [{ id: "DISTRICT_SPICE", label: "Spice Street" }],
     zones: [
@@ -316,7 +310,7 @@ test("compiles the optional v3 contract without source/runtime drift", () => {
 
   assert.equal(runtime.formatVersion, "3.0");
   assert.deepEqual(runtime.mapCenter, { x: 10, y: 6 });
-  assert.equal(runtime.wall_details.maxProtrusion, 0.73);
+  assert.deepEqual(runtime.wall_details, { style: "bazaar" });
   assert.equal(runtime.exterior_wall_patches.length, 4);
   assert.deepEqual(runtime.traversalSurfaces?.[1], {
     id: "SURFACE_RAMP",
@@ -372,6 +366,10 @@ test("validates the source document against the owning schema before compilation
   );
 
   for (const retiredKey of [
+    "enabled",
+    "density",
+    "maxProtrusion",
+    "seed",
     "facade_overrides",
     "composition_layout_overrides",
     "door_layout_overrides",
@@ -657,8 +655,8 @@ test("rejects source specs that are not format v3", () => {
   assert.throws(() => compileMapSpec(unversioned), /metadata\.version must be a non-empty string/);
 });
 
-test("stops emitting the retired wall-detail collections", () => {
-  const emittedKeys = ["density", "enabled", "maxProtrusion", "seed", "style"];
+test("emits only the live wall-detail style", () => {
+  const emittedKeys = ["style"];
   const source = makeV3Spec();
   source.wall_details.module_registry = { window_modules: [], door_modules: [], hero_bay_modules: [] };
   assert.deepEqual(Object.keys(compileMapSpec(source).wall_details).sort(), emittedKeys);
@@ -820,9 +818,9 @@ test("rejects malformed geometry and broken v3 references", () => {
   badPatch.exterior_wall_patches[0].end = 0;
   assert.throws(() => compileMapSpec(badPatch), /start must be less than end/);
 
-  const badProtrusion = makeV3Spec();
-  badProtrusion.wall_details.maxProtrusion = 0;
-  assert.throws(() => compileMapSpec(badProtrusion), /maxProtrusion must be > 0/);
+  const badStyle = makeV3Spec();
+  badStyle.wall_details.style = "unsupported";
+  assert.throws(() => compileMapSpec(badStyle), /wall_details.style must be 'bazaar'/);
 
   const missingFrontageCoverage = makeV3Spec();
   missingFrontageCoverage.frontage_exemptions.pop();

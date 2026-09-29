@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 export type HealthHudSnapshot = {
   health: number;    // 0–maxHealth
   maxHealth?: number; // defaults to 100
@@ -46,7 +47,7 @@ export class HealthHud {
 
     // Label row
     const labelEl = document.createElement("div");
-    labelEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    labelEl.style.fontFamily = SANS_FONT;
     labelEl.style.fontSize = "11px";
     labelEl.style.fontWeight = "600";
     labelEl.style.letterSpacing = "0.12em";
@@ -59,7 +60,7 @@ export class HealthHud {
     this.numericEl = document.createElement("div");
     this.numericEl.style.minWidth = "52px";
     this.numericEl.style.textAlign = "left";
-    this.numericEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.numericEl.style.fontFamily = SANS_FONT;
     this.numericEl.style.fontSize = "42px";
     this.numericEl.style.fontWeight = "780";
     this.numericEl.style.lineHeight = "0.95";
@@ -106,7 +107,7 @@ export class HealthHud {
     this.godModeEl.style.left = "0";
     this.godModeEl.style.bottom = "100%";
     this.godModeEl.style.marginBottom = "8px";
-    this.godModeEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.godModeEl.style.fontFamily = SANS_FONT;
     this.godModeEl.style.fontSize = "18px";
     this.godModeEl.style.fontWeight = "780";
     this.godModeEl.style.letterSpacing = "0.08em";

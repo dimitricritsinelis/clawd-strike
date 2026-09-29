@@ -15,12 +15,9 @@ import {
   resolveQaAssetTimeoutMs,
   type QaAssetPlan,
 } from "./assetReadiness";
-import {
-  parseAnchorsSpec,
-  parseBlockoutSpec,
-  type RuntimeMapAssets,
-} from "../map/types";
-import { R8_CLUTTER_MODEL_IDS } from "../map/r8/buildR8Clutter";
+import { parseAnchorsSpec, parseBlockoutSpec } from "../map/spec/parseMapSpec";
+import type { RuntimeMapAssets } from "../map/spec/types";
+import { WALL_FOOT_CLUTTER_MODEL_IDS } from "../map/atmosphere/buildWallFootClutter";
 
 function fixtureMap(): RuntimeMapAssets {
   return {
@@ -121,7 +118,7 @@ test("mobile prop plan drops only the R8 wall-foot clutter models", () => {
   map.blockout.mapId = "bazaar-map";
   map.blockout.dressingPlacements![0]!.runtime = { mode: "procedural", id: "bazaar_spawn_cover" };
   assert.deepEqual(plannedPropModelIds(map, false), ["ph_wooden_crate_01"]);
-  assert.deepEqual(plannedPropModelIds(map), [...new Set(["ph_wooden_crate_01", ...R8_CLUTTER_MODEL_IDS])].sort());
+  assert.deepEqual(plannedPropModelIds(map), [...new Set(["ph_wooden_crate_01", ...WALL_FOOT_CLUTTER_MODEL_IDS])].sort());
   assert.deepEqual(createQaAssetPlan(map, "qa").propModelIds, plannedPropModelIds(map));
 });
 
@@ -169,9 +166,14 @@ test("the shipped map plans only floor, wall, prop and direct-texture requests",
 });
 
 test("normal boot loads only the planned prop models, floor textures and wall textures", () => {
-  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  const assetLoadingSource = readFileSync(new URL("../bootstrap/assetLoading.ts", import.meta.url), "utf8");
   const warmupSource = readFileSync(new URL("../warmup.ts", import.meta.url), "utf8");
-  for (const [name, source] of [["bootstrap.ts", bootstrapSource], ["warmup.ts", warmupSource]] as const) {
+  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  for (const [name, source] of [
+    ["bootstrap.ts", bootstrapSource],
+    ["bootstrap/assetLoading.ts", assetLoadingSource],
+    ["warmup.ts", warmupSource],
+  ] as const) {
     assert.doesNotMatch(source, /PropModelLibrary\.load\(PROP_MANIFEST_URL\)/, `${name} loads a whole model pack`);
     assert.doesNotMatch(source, /preloadAllTextures\(wallQuality\)/, `${name} preloads every wall material`);
     assert.doesNotMatch(
@@ -181,7 +183,7 @@ test("normal boot loads only the planned prop models, floor textures and wall te
     );
   }
   assert.match(
-    bootstrapSource,
+    assetLoadingSource,
     /floorMaterials\.preloadAllTextures\(effectiveFloorQuality, \{\s*materialIds: new Set\(mapAssets \? plannedFloorMaterialIds\(mapAssets\) : \[\]\),\s*\}\);/,
   );
   assert.match(
@@ -190,11 +192,11 @@ test("normal boot loads only the planned prop models, floor textures and wall te
     "warmup preloads only planned floors and skips them on mobile, where floors are blockout",
   );
   assert.match(
-    bootstrapSource,
+    assetLoadingSource,
     /propModels = await PropModelLibrary\.load\(PROP_MANIFEST_URL, \{\s*modelIds: new Set\(mapAssets \? plannedPropModelIds\(mapAssets, !mobile\) : \[\]\),\s*\}\);/,
   );
   assert.match(
-    bootstrapSource,
+    assetLoadingSource,
     /wallMaterials\.preloadAllTextures\(wallQuality, \{\s*materialIds: new Set\(mapAssets \? plannedWallMaterialIds\(mapAssets\) : \[\]\),\s*\}\);/,
   );
   assert.match(
@@ -204,20 +206,20 @@ test("normal boot loads only the planned prop models, floor textures and wall te
 });
 
 test("QA facade GLB loads are observed and block capture when they fail", () => {
-  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  const assetLoadingSource = readFileSync(new URL("../bootstrap/assetLoading.ts", import.meta.url), "utf8");
   assert.match(
-    bootstrapSource,
+    assetLoadingSource,
     /facadeModels = await PropModelLibrary\.load\(FACADE_MANIFEST_URL, \{[\s\S]*?\.\.\.\(qaAssetTracker \? \{ requestObserver: qaAssetTracker\.observer \} : \{\}\),\s*\}\);/,
     "every facade manifest and GLB request must be tracked as a planned child request",
   );
   assert.match(
-    bootstrapSource,
+    assetLoadingSource,
     /if \(qaAssetTracker\) \{\s*throw new Error\(`\[qa-assets\] facade model pack failed; capture is blocked: \$\{message\}`\);/,
   );
 });
 
 test("QA direct-texture inventory matches every static buildProps and propsCore asset URL", () => {
-  const declaredUrls = ["../map/buildProps.ts", "../map/propFamilies/propsCore.ts"].flatMap((path) => [
+  const declaredUrls = ["../map/props/buildProps.ts", "../map/props/families/propsCore.ts"].flatMap((path) => [
     ...readFileSync(new URL(path, import.meta.url), "utf8").matchAll(
       /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
     ),
@@ -231,7 +233,7 @@ test("QA direct-texture inventory matches every static buildProps and propsCore 
 
 test("QA direct-texture inventory covers palm loader declarations", () => {
   const palmSource = readFileSync(
-    new URL("../map/buildDecorativePalms.ts", import.meta.url),
+    new URL("../map/props/buildDecorativePalms.ts", import.meta.url),
     "utf8",
   );
   const palmDeclaredUrls = [...palmSource.matchAll(

@@ -16,12 +16,14 @@ test("visible perception respects camera, rendered occlusion, live hitboxes, and
     const visualUrl = "/src/runtime/enemies/EnemyVisual.ts";
     const worldUrl = "/src/runtime/sim/collision/WorldColliders.ts";
     const gameUrl = "/src/runtime/game/Game.ts";
+    const recoilRecoveryUrl = "/src/runtime/game/RecoilRecovery.ts";
     const threeUrl = "/node_modules/.vite/deps/three.js";
     const { EnemyManager } = await import(managerUrl);
     const { EnemyController } = await import(controllerUrl);
     const { EnemyVisual } = await import(visualUrl);
     const { WorldColliders } = await import(worldUrl);
     const { Game } = await import(gameUrl);
+    const { RecoilRecovery } = await import(recoilRecoveryUrl);
     const { Scene, PerspectiveCamera, Mesh, BoxGeometry, MeshBasicMaterial, Group, WebGLRenderer } = await import(threeUrl);
     const scene = new Scene();
     const camera = new PerspectiveCamera(75, 1.6, 0.1, 100);
@@ -53,6 +55,7 @@ test("visible perception respects camera, rendered occlusion, live hitboxes, and
     const game = Object.create(Game.prototype);
     Object.assign(game, {
       camera, controlMode: "agent", freezeInput: false, yaw: 0, pitch: 0,
+      recoilRecovery: new RecoilRecovery(),
       agentLookYawDeltaDeg: 0, agentLookPitchDeltaDeg: 0,
       agentMoveX: 0, agentMoveZ: 0, agentFireHeld: false, agentCrouchHeld: false,
       agentJumpQueued: false, agentReloadQueued: false, tickIntent: {},

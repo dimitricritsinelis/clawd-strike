@@ -1,3 +1,4 @@
+import { deepFreeze, type DeepReadonly } from "../utils/deepFreeze";
 import {
   GAMEPLAY_PROFILE_IDENTITIES,
   GAMEPLAY_PROFILE_IDS,
@@ -7,15 +8,6 @@ import {
   type GameplayProfileResolutionInput,
 } from "../../../../shared/gameplayProfile";
 import { SHARED_CHAMPION_WAVE_ENEMY_COUNT } from "../../../../shared/highScore";
-
-type Atomic = string | number | boolean | bigint | symbol | null | undefined;
-
-/** Compile-time counterpart to the runtime deep freeze applied to every profile. */
-export type DeepReadonly<T> =
-  T extends Atomic ? T
-    : T extends readonly unknown[] ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
-      : T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
-        : T;
 
 type TierTuple<T> = readonly [T, T, T, T, T, T];
 type CountRange = readonly [minimum: number, maximum: number];
@@ -179,14 +171,6 @@ export type GameplayTuning = DeepReadonly<{
   };
 }>;
 
-function deepFreeze<T>(value: T): DeepReadonly<T> {
-  if (typeof value !== "object" || value === null || Object.isFrozen(value)) {
-    return value as DeepReadonly<T>;
-  }
-
-  for (const child of Object.values(value)) deepFreeze(child);
-  return Object.freeze(value) as DeepReadonly<T>;
-}
 
 function isFiniteNumber(value: number): boolean {
   return Number.isFinite(value);
