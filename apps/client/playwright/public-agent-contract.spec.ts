@@ -262,7 +262,20 @@ test("reveals the loading-screen overlay only after the first-paint art is fully
   expect(readyOverlayState.images.every((image) => /\.(avif|webp)$/.test(image.currentSrc))).toBe(true);
 
   await page.waitForTimeout(250);
-  expect(await readLoadingScreenRevealState(page)).toMatchObject(readyOverlayState);
+  // Hidden name-entry/info art may finish preloading after the first-paint
+  // overlay is ready. Assert the visible overlay stays ready, not that those
+  // independent background requests stop progressing.
+  expect(await readLoadingScreenRevealState(page)).toMatchObject({
+    backgroundReady: "true",
+    assetsReady: "true",
+    overlayOpacity: readyOverlayState.overlayOpacity,
+    overlayVisibility: "visible",
+    images: readyOverlayState.images,
+    nameEntryVisible: "false",
+    infoVisible: "false",
+    bannerVisible: readyOverlayState.bannerVisible,
+    bannerText: readyOverlayState.bannerText,
+  });
   expect(recorder.counts().errorCount).toBe(0);
 });
 
