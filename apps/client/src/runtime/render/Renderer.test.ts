@@ -90,6 +90,15 @@ test("composer resize preserves supported MSAA and effective DPR across targets 
     subject.resize();
     assert.deepEqual(disposals, stableDisposals, "unchanged targets must not be discarded");
 
+    const hardwareQueries = queries;
+    Object.assign(subject, { softwareRendering: true });
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [0, 0], "software HDR targets must avoid the stalled multisample resolve path");
+    assert.equal(queries, hardwareQueries, "advertised software sample counts cannot establish resolve compatibility");
+    Object.assign(subject, { softwareRendering: false });
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [2, 2], "hardware MSAA remains enabled at the supported count");
+
     mount.clientWidth = 600; mount.clientHeight = 400;
     viewport.devicePixelRatio = 1;
     subject.resize();

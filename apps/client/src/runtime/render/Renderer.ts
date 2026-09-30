@@ -359,6 +359,9 @@ export class Renderer {
       shadows: this.renderer?.shadowMap.enabled ?? false,
       ao: this.aoPass !== null,
       post: this.goldenPostPass !== null,
+      composerSamples: this.composer
+        ? [this.composer.renderTarget1.samples, this.composer.renderTarget2.samples]
+        : [],
     })}`);
   }
 
@@ -421,7 +424,10 @@ export class Renderer {
         // depth attachments must support the selected low-DPR sample count.
         const gl = this.renderer.getContext();
         let samples = 0;
-        if (dpr < 1.5 && "getInternalformatParameter" in gl) {
+        // SwiftShader advertises compatible counts, but repeatedly resolving
+        // multisampled HDR targets stalls its GL queue. Keep the single-sample
+        // composer used before MSAA was introduced on software renderers.
+        if (!this.softwareRendering && dpr < 1.5 && "getInternalformatParameter" in gl) {
           const limit = Math.min(4, this.renderer.capabilities.maxSamples);
           const colorSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA16F, gl.SAMPLES) as Int32Array | null;
           const depthSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, gl.SAMPLES) as Int32Array | null;

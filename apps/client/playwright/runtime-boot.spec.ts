@@ -191,6 +191,9 @@ test("desktop preserves PBR and its weapon after a warmup network timeout", asyn
   expect(rendererIdentity.shadows).toBe(true);
   expect(rendererIdentity.ao).toBe(true);
   expect(rendererIdentity.post).toBe(true);
+  if (rendererIdentity.softwareRendering) {
+    expect(rendererIdentity.composerSamples).toEqual([0, 0]);
+  }
   expect(state.assets?.floor?.activeMode).toBe("pbr");
   expect(state.assets?.wall?.activeMode).toBe("pbr");
   expect(state.weapon).toMatchObject({ enabled: true, visible: true, loaded: true });
