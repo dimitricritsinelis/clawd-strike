@@ -128,8 +128,8 @@ const SCENE_COMPILE_TIMEOUT_MS = 2_500;
 // network or driver can delay the reveal by at most the sum of these caps.
 const MAP_ASSET_SETTLE_TIMEOUT_MS = 10_000;
 const MAP_SCENE_COMPILE_TIMEOUT_MS = 10_000;
-// Software drivers compile executable GPU kernels lazily on the first draw.
-// Measured cold initialization takes ~30s even after Three's compileAsync;
+// Software GPU work can remain pending after Three's compileAsync completes.
+// Measured cold initialization takes ~30s until its completion fence retires;
 // bound that startup stage separately from the 9s steady-state QA operations.
 const SOFTWARE_FRAME_INIT_TIMEOUT_MS = 60_000;
 const ENEMY_TEMPLATE_BOOT_TIMEOUT_MS = 10_000;

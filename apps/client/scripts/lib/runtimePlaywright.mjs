@@ -1105,7 +1105,7 @@ export async function waitForRuntimeReady(page, options = {}) {
           }
           return { runtimeReady: false, readyState: null, qaCapture };
         }, expectedShotId),
-        Math.min(2_000, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
+        Math.min(DEFAULT_STATE_READ_TIMEOUT_MS, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
         "runtime boot readiness probe",
       );
       consecutiveProbeTimeouts = 0;
@@ -1136,10 +1136,10 @@ export async function waitForRuntimeReady(page, options = {}) {
     } catch (error) {
       if (error instanceof Error && error.message.includes("[qa-capture]")) throw error;
       if (error instanceof RuntimeOperationTimeoutError) {
-        // Asset compilation can briefly occupy the browser main thread for
-        // more than the lightweight 2s probe budget. Treat one or two isolated
-        // stalls as boot progress; three consecutive stalls still fail fast
-        // instead of hiding a genuinely wedged runtime until the 90s deadline.
+        // Use the same operation deadline as actual state reads. Linux traces
+        // show valid Ready responses in 3.6–8.1s; the former 2s probe discarded
+        // those responses and falsely reported a permanently stalled runtime.
+        // Three failures still stop polling before the overall boot deadline.
         consecutiveProbeTimeouts += 1;
         lastBootError = error;
         if (consecutiveProbeTimeouts >= 3) {
@@ -1148,7 +1148,7 @@ export async function waitForRuntimeReady(page, options = {}) {
             {
               routeId,
               shotId: expectedShotId,
-              timeoutMs: error.details?.timeoutMs ?? 2_000,
+              timeoutMs: error.details?.timeoutMs ?? DEFAULT_STATE_READ_TIMEOUT_MS,
             },
           );
         }

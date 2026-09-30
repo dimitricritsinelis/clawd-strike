@@ -240,6 +240,26 @@ test("runtime readiness surfaces an early asset failure before the runtime-ready
   assert.equal(waited, 0);
 });
 
+test("readiness accepts a valid response beyond two seconds within the existing state-read budget", async () => {
+  let readinessReads = 0;
+  const page = {
+    async evaluate(fn) {
+      if (fn.toString().includes("__runtime_ready_state")) {
+        readinessReads += 1;
+        await new Promise((resolve) => setTimeout(resolve, 2_500));
+        return { runtimeReady: true, readyState: { mapLoaded: true, revealPhase: "active" }, qaCapture: null };
+      }
+      if (fn.toString().includes("__qa_capture_state")) return null;
+      return { mode: "runtime" };
+    },
+    url: () => "http://127.0.0.1:43210/?autostart=human",
+    waitForTimeout: async () => {},
+  };
+  const state = await waitForRuntimeReady(page, { timeoutMs: 9_000 });
+  assert.equal(state.mode, "runtime");
+  assert.equal(readinessReads, 1, "a responsive probe must not be abandoned and duplicated");
+});
+
 test("capture state validation rejects malformed, unstable, mismatched-profile, and non-1K evidence", () => {
   assert.equal(validateQaCaptureState(validCaptureState(), {
     expectedProfile: "qa",
