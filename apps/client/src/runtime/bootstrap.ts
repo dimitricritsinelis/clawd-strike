@@ -136,17 +136,7 @@ const ENEMY_TEMPLATE_BOOT_TIMEOUT_MS = 10_000;
  * The human boot gate skips them and keeps the historical fast-reveal boot.
  */
 function isLikelySoftwareGl(renderer: Renderer): boolean {
-  const gl = renderer.getWebGLRenderer()?.getContext();
-  if (!gl) return true;
-  try {
-    const info = gl.getExtension("WEBGL_debug_renderer_info");
-    const name = info
-      ? String(gl.getParameter(info.UNMASKED_RENDERER_WEBGL))
-      : String(gl.getParameter(gl.RENDERER));
-    return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
-  } catch {
-    return false;
-  }
+  return !renderer.hasWebGL || renderer.softwareRendering;
 }
 const PUBLIC_AGENT_FEEDBACK_MAX_EVENTS = 24;
 
@@ -915,10 +905,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // (review cameras, including tens-of-seconds overview frames), or software
   // rasterizers, where whole-scene compiles and renders have monopolized the
   // main thread in the past.
-  // ?bootGate=1 opts automation back in. Without it this gate — the one every
+  // ?bootGate=1 opts hardware-backed automation back in. Without it this gate — the one every
   // real player goes through — is unreachable from any test by construction,
   // so nothing would catch it hanging or regressing. It only ever makes boot do
-  // more work behind the loading overlay, so it is safe to expose.
+  // more work behind the loading overlay. Software GL remains excluded because
+  // synchronous driver work cannot be interrupted by the timer budgets.
   const forceHumanBootGate = runtimeParams.forceHumanBootGate;
   const humanBootGateEligible =
     mapAssets !== null
@@ -926,7 +917,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     && runtimeParams.controlMode === "human"
     && runtimeParams.shot === null
     && (navigator.webdriver !== true || forceHumanBootGate)
-    && (!isLikelySoftwareGl(renderer) || forceHumanBootGate);
+    && !isLikelySoftwareGl(renderer);
 
   if (
     humanBootGateEligible
@@ -2030,7 +2021,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     damageNumbers.update(dt);
     bulletHoles?.update(dt);
 
-    if (renderFrame && viewModel) {
+    if (viewModel) {
       viewModel.setFrameInput(speedMps, grounded, swayMouseDeltaX, swayMouseDeltaY);
       viewModel.setAmmoState?.(game.getAmmoSnapshot());
       viewModel.setWorldLighting?.(game.sampleViewModelLighting(viewModelLighting));
@@ -2123,8 +2114,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
     while (remaining > 0) {
       const nextStep = Math.min(frameMs, remaining);
-      step(nextStep, options);
       remaining -= nextStep;
+      // Keep every simulation/animation step, but present only the final state.
+      // advanceTime(500) previously submitted 30 full map renders synchronously.
+      step(nextStep, { renderFrame: options.renderFrame !== false && remaining <= 0 });
     }
   };
 

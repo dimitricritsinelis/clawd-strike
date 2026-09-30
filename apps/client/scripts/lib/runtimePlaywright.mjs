@@ -475,6 +475,13 @@ export function buildRuntimeUrl(baseUrl, options = {}) {
     url.searchParams.set("spawn", spawn);
   }
 
+  // Apply the asset-only host budget to every route builder, including human
+  // and mobile probes. Explicit per-test values continue to take precedence.
+  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  if (Number.isFinite(assetTimeoutOverride) && assetTimeoutOverride >= 1_000
+    && !("qaAssetTimeoutMs" in extraSearchParams)) {
+    url.searchParams.set("qaAssetTimeoutMs", String(Math.round(assetTimeoutOverride)));
+  }
   for (const [key, rawValue] of Object.entries(extraSearchParams)) {
     if (rawValue === null || rawValue === undefined || rawValue === false) continue;
     url.searchParams.set(key, String(rawValue));
@@ -544,6 +551,9 @@ export function attachConsoleRecorder(page) {
   };
 
   page.on("console", (message) => {
+    if (message.text().startsWith("[renderer] ")) {
+      console.info(`[browser ${page.context?.()?.browser?.()?.version?.() ?? "unknown"}] ${message.text()}`);
+    }
     push({
       kind: "console",
       type: message.type(),
@@ -802,6 +812,8 @@ async function collectRuntimeFailureDiagnostics(page, options, error) {
     shotId: options.shotId ?? null,
     url: page.url(),
     lastSuccessfulStateAt: lastSuccessfulStateAtByPage.get(page) ?? null,
+    browserVersion: page.context?.()?.browser?.()?.version?.() ?? null,
+    rendererEvents: consolePayload.events.filter((event) => event.text?.startsWith("[renderer] ")),
     heartbeat,
     readyState,
     failureKind: classifyRuntimeFailure({
@@ -1038,6 +1050,7 @@ export async function gotoAgentRuntimeViaUi(page, options = {}) {
 }
 
 export async function waitForRuntimeReady(page, options = {}) {
+  if (!consoleRecorderByPage.has(page) && typeof page.on === "function") attachConsoleRecorder(page);
   const {
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
     expectedShotId = null,
@@ -1146,6 +1159,10 @@ export async function waitForRuntimeReady(page, options = {}) {
     await page.waitForTimeout(50);
   }
   if (lastBootState?.runtimeReady !== true) {
+    const failure = lastBootError ?? new Error(`Runtime did not become active within ${timeoutMs}ms`);
+    const diagnostics = await collectRuntimeFailureDiagnostics(page, {
+      operation: "runtime-ready", routeId, shotId: expectedShotId, ...(artifactDir ? { artifactDir } : {}),
+    }, failure);
     throw new RuntimeOperationTimeoutError(
       `[runtime-ready] boot did not become active within ${timeoutMs}ms | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | qaCapture=${JSON.stringify(lastBootState?.qaCapture ?? null)} | last=${lastBootError instanceof Error ? lastBootError.message : String(lastBootError ?? "none")}`,
       {
@@ -1153,6 +1170,7 @@ export async function waitForRuntimeReady(page, options = {}) {
         shotId: expectedShotId,
         timeoutMs,
         qaCapture: lastBootState?.qaCapture ?? null,
+        diagnostics,
       },
     );
   }
@@ -1185,14 +1203,7 @@ export async function gotoAgentRuntime(page, options = {}) {
     artifactDir = null,
     routeId = null,
   } = options;
-  // The runtime clamps this to [1s, 120s]; the env knob lets software-rendered
-  // hosts extend the in-page asset budget without touching every caller.
-  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
-  const extraSearchParams = Number.isFinite(assetTimeoutOverride)
-    && assetTimeoutOverride >= 1_000
-    && !("qaAssetTimeoutMs" in rawExtraSearchParams)
-    ? { ...rawExtraSearchParams, qaAssetTimeoutMs: Math.round(assetTimeoutOverride) }
-    : rawExtraSearchParams;
+  const extraSearchParams = rawExtraSearchParams;
 
   await page.goto(
     buildRuntimeUrl(baseUrl, {

@@ -1,7 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
-  advanceRuntime,
   attachConsoleRecorder,
   gotoAgentRuntime,
   readDocumentedAgentState,
@@ -60,7 +59,13 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
         fire,
       });
     }, { stepIndex: step });
-    await advanceRuntime(page, COMBAT_STEP_MS);
+    const submittedFrames = await page.evaluate(async (stepMs) => {
+      const before = window.__qa_heartbeat?.().frameCounter;
+      await window.advanceTime?.(stepMs);
+      const after = window.__qa_heartbeat?.().frameCounter;
+      return after! - before!;
+    }, COMBAT_STEP_MS);
+    expect(submittedFrames).toBe(1);
   }
 
   expect(died).toBe(true);

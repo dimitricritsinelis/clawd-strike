@@ -180,6 +180,13 @@ test("desktop preserves PBR and its weapon after a warmup network timeout", asyn
   expect(delayedRequests).toBeGreaterThan(0);
   expect(state.boot?.warmupTimedOut).toBe(true);
   expect(state.boot?.performanceSafeFallback).toBe(false);
+  const rendererEvent = recorder.snapshot().find((event: { text?: string }) => event.text?.startsWith("[renderer] "));
+  expect(rendererEvent).toBeTruthy();
+  const rendererIdentity = JSON.parse(rendererEvent!.text.slice("[renderer] ".length));
+  // Hardware automation exercises the real player's gate. Software GL must
+  // recover the same assets without forcing synchronous whole-scene warmup.
+  expect(state.boot?.hiddenWarmupRenderDone).toBe(!rendererIdentity.softwareRendering);
+  expect(state.boot?.precompiled).toBe(!rendererIdentity.softwareRendering);
   expect(state.assets?.floor?.activeMode).toBe("pbr");
   expect(state.assets?.wall?.activeMode).toBe("pbr");
   expect(state.weapon).toMatchObject({ enabled: true, visible: true, loaded: true });

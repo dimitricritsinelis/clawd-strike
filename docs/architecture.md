@@ -34,6 +34,8 @@ The gameplay tuning profile supplies player economy and bot behavior. Its finger
 
 [skills.md](../apps/client/public/skills.md) is authoritative for the public API and permitted observations. The entry points include `window.agent_observe`, `agent_apply_action`, `render_game_to_text`, and `advanceTime`; `?autostart=agent&name=...` selects an agent run. Internal QA state is not part of this public contract.
 
+Compatibility time advances keep the 60 Hz simulation and weapon-animation substeps, then render only the final state of the batch. A 500 ms advance therefore submits one frame rather than thirty synchronous full-map frames. The normal animation loop continues independently, as documented in the public contract.
+
 The exporter in `scripts/sdk/` packages a legacy helper snapshot. Its [README](../scripts/sdk/template/README.md) records the missing current learning-workflow features; exporting it does not establish full `agentic-gameplay-v1` conformance.
 
 ## URL controls

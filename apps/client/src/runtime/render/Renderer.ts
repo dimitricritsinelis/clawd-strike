@@ -177,6 +177,7 @@ function tryCreateWebGLContext(canvas: HTMLCanvasElement, needsAA: boolean): Web
 }
 
 export class Renderer {
+  readonly softwareRendering: boolean;
   readonly canvas: HTMLCanvasElement;
   readonly hasWebGL: boolean;
   private contextLost = false;
@@ -229,6 +230,12 @@ export class Renderer {
     const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
     const canvas = document.createElement("canvas");
     const context = tryCreateWebGLContext(canvas, needsAA);
+    const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
+    const rendererName = context
+      ? String(context.getParameter(rendererInfo ? rendererInfo.UNMASKED_RENDERER_WEBGL : context.RENDERER))
+      : "unavailable";
+    this.softwareRendering = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(rendererName);
+    console.info(`[renderer] ${JSON.stringify({ renderer: rendererName, softwareRendering: this.softwareRendering, pixelRatioCap: this.effectiveMaxPixelRatio })}`);
 
     let renderer: WebGLRenderer | null = null;
     if (context) {

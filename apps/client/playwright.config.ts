@@ -17,8 +17,16 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL,
-    channel: "chrome",
-    viewport: { width: 1440, height: 900 },
+    // CI installs the Playwright-pinned Chromium, not the runner's system Chrome.
+    channel: process.env.CI ? "chromium" : "chrome",
+    launchOptions: process.env.PW_SOFTWARE_RENDERING === "1"
+      ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] }
+      : {},
+    // Gameplay smoke runs still draw the complete scene on CPU-only CI hosts.
+    // Desktop visual captures retain their own authored viewport settings.
+    viewport: process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1"
+      ? { width: 640, height: 400 }
+      : { width: 1440, height: 900 },
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "off",

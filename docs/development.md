@@ -49,6 +49,8 @@ CI supplies an ephemeral PostgreSQL 16 service and fixture credentials for this 
 
 ## Map and visual checks
 
+CI runs the Playwright-pinned Chromium installed with its Linux dependencies. Local QA keeps system Chrome. Set `CI=1` locally to select the pinned browser and `PW_SOFTWARE_RENDERING=1` to reproduce SwiftShader explicitly. CI allows 60 seconds for the asset tracker to load the complete scene and observe eight texture-stability frames on software GL; the 9-second state/frame deadline and 150-second test deadline remain unchanged. The asset budget applies to agent, human and mobile URLs, with an explicit `qaAssetTimeoutMs` taking precedence. The forced human boot gate still requires hardware GL. Renderer identity and browser version appear in QA logs; failed CI runs retain traces, screenshots and runtime diagnostics for seven days.
+
 The canonical traversal set covers the map with 12 routes. Use `pnpm test:e2e:traversal:focused` with `BAZAAR_ROUTE` to focus a change; use `pnpm test:e2e:traversal:blockout` for the optional blockout profile. Final release evidence uses the shipped final profile.
 
 `pnpm map:check` compares protected gameplay against a recorded task baseline or HEAD and checks authored placement geometry. An existing task baseline must be inspected before interpreting the result. Do not replace it to hide a new failure. See [map](map.md).

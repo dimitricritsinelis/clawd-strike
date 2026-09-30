@@ -50,7 +50,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Chromium
-        run: pnpm --filter @clawd-strike/client exec playwright install chromium
+        run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
 
       - name: Runtime maps are up to date
         run: pnpm check:maps
@@ -71,6 +71,21 @@ jobs:
 
       - name: Game smoke
         run: pnpm test:e2e:smoke
+        env:
+          # Eight real texture-stability frames exceed 20s on software GL.
+          # Keep individual frame/read and overall test deadlines unchanged.
+          QA_ASSET_READY_TIMEOUT_MS: 60000
 
       - name: Build
         run: pnpm build
+
+      - name: Upload browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-diagnostics
+          path: |
+            apps/client/test-results/
+            artifacts/playwright/
+          if-no-files-found: ignore
+          retention-days: 7
