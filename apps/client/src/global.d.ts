@@ -20,7 +20,7 @@ declare global {
     __debug_render_perf?: () => unknown;
     __qa_performance_state?: () => unknown;
     __qa_capture_state?: () => QaCaptureState;
-    __qa_render_frame?: () => void;
+    __qa_render_frame?: () => Promise<void>;
     __qa_route_state?: () => {
       gameplay: { alive: boolean };
       player: {

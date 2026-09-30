@@ -50,11 +50,14 @@ test("rendered rAF samples measure display intervals rather than synthetic runti
   let renders = 0;
   globalThis.window = {
     requestAnimationFrame: (callback) => queueMicrotask(() => callback(timestamps[callbacks++])),
-    __qa_render_frame: () => { renders += 1; },
-    __qa_performance_state: () => ({
+    __qa_render_frame: async () => { await Promise.resolve(); renders += 1; },
+    __qa_performance_state: () => {
+      assert.equal(renders, callbacks, "telemetry must follow the awaited real render");
+      return ({
       perf: { drawCalls: 400, triangles: 900_000, fps: 10_000, msPerFrame: 0.1, cpuFrameMedianMs: 2 },
       boot: { readyAtMs: 800 },
-    }),
+      });
+    },
   };
   try {
     const states = await sampleRenderedFrameCadence(3);

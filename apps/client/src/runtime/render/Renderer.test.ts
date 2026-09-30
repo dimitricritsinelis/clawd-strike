@@ -1,9 +1,47 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Vector2, type WebGLRenderer } from "three";
+import { PerspectiveCamera, Scene, Vector2, type WebGLRenderer } from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { attachComposerDepth, Renderer } from "./Renderer";
 import { SceneDepthGtaoPass } from "./SceneDepthGtaoPass";
+
+test("software draw completion bounds queued frames without touching hardware submission", () => {
+  const calls: string[] = [];
+  let status = 0x911b; // TIMEOUT_EXPIRED
+  const fence = {};
+  const gl = {
+    TIMEOUT_EXPIRED: 0x911b, WAIT_FAILED: 0x911d, SYNC_GPU_COMMANDS_COMPLETE: 0x9117,
+    fenceSync: () => { calls.push("fence"); return fence; },
+    flush: () => { calls.push("flush"); },
+    clientWaitSync: (_fence: unknown, flags: number, timeout: number) => {
+      assert.equal(flags, 0); assert.equal(timeout, 0, "polling must not block JavaScript");
+      calls.push("poll"); return status;
+    },
+    deleteSync: () => { calls.push("delete"); },
+  };
+  const renderer = {
+    info: { reset: () => {} },
+    render: () => { calls.push("draw"); },
+    getContext: () => gl,
+  };
+  const subject = Object.create(Renderer.prototype) as Renderer;
+  Object.assign(subject, { renderer, softwareRendering: true, softwareFrameFence: null,
+    dynamicResolution: null, composer: null, contextLost: false });
+  const scene = new Scene();
+  const camera = new PerspectiveCamera();
+  assert.equal(subject.isFrameReady(), true);
+  subject.renderWithViewModel(scene, camera, null, null, false);
+  assert.deepEqual(calls, ["draw", "fence", "flush"]);
+  assert.equal(subject.isFrameReady(), false, "an unfinished GPU frame prevents another real-time draw");
+  status = 0x911a; // ALREADY_SIGNALED
+  assert.equal(subject.isFrameReady(), true);
+  assert.equal(calls.at(-1), "delete", "retired fences must be released");
+  calls.length = 0;
+  Object.assign(subject, { softwareRendering: false });
+  subject.renderWithViewModel(scene, camera, null, null, false);
+  assert.equal(subject.isFrameReady(), true);
+  assert.deepEqual(calls, ["draw"], "hardware must retain its normal asynchronous submission");
+});
 
 test("AO reads the beauty depth and runs its horizon search on the CSS grid", () => {
   const renderer = {

@@ -548,7 +548,7 @@ test("live raiders maintain body separation while hunting the player", async ({ 
         if (distance < 0.8) closePairs++;
       }
     }
-    window.__qa_render_frame?.();
+    await window.__qa_render_frame?.();
     return { minimumDistance, closePairs };
   });
   const output = path.resolve("../../artifacts/raider-review");

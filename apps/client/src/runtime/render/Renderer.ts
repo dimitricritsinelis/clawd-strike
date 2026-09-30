@@ -181,6 +181,7 @@ export class Renderer {
   readonly canvas: HTMLCanvasElement;
   readonly hasWebGL: boolean;
   private contextLost = false;
+  private softwareFrameFence: WebGLSync | null = null;
   private onContextLostCallback: (() => void) | null = null;
   private onContextRestoredCallback: (() => void) | null = null;
 
@@ -188,6 +189,7 @@ export class Renderer {
     // Without preventDefault the browser will not attempt a restore at all.
     event.preventDefault();
     this.contextLost = true;
+    this.softwareFrameFence = null;
     console.warn("[renderer] WebGL context lost");
     this.onContextLostCallback?.();
   };
@@ -466,6 +468,41 @@ export class Renderer {
     if (!this.renderer) return;
     this.renderer.info.reset();
     this.renderer.render(scene, camera);
+    this.markSoftwareFrameSubmitted();
+  }
+
+  /** Poll without blocking JavaScript; software GL must not accumulate draws. */
+  isFrameReady(): boolean {
+    if (!this.softwareRendering || !this.renderer) return true;
+    if (this.contextLost) return false;
+    if (!this.softwareFrameFence) return true;
+    const gl = this.renderer.getContext();
+    if (!("clientWaitSync" in gl)) return true;
+    const status = gl.clientWaitSync(this.softwareFrameFence, 0, 0);
+    if (status === gl.TIMEOUT_EXPIRED) return false;
+    gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = null;
+    if (status === gl.WAIT_FAILED) throw new Error("Software GPU frame completion failed");
+    return true;
+  }
+
+  async waitForFrameReady(timeoutMs = 9_000): Promise<void> {
+    const deadline = performance.now() + timeoutMs;
+    while (!this.isFrameReady()) {
+      if (this.contextLost) throw new Error("Cannot render while the GPU context is lost");
+      if (performance.now() >= deadline) throw new Error(`Software GPU frame exceeded ${timeoutMs}ms`);
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 16));
+    }
+  }
+
+  private markSoftwareFrameSubmitted(): void {
+    if (!this.softwareRendering || !this.renderer) return;
+    const gl = this.renderer.getContext();
+    if (!("fenceSync" in gl)) return;
+    if (this.softwareFrameFence) gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    if (!this.softwareFrameFence) throw new Error("Software GPU frame fence unavailable");
+    gl.flush();
   }
 
   renderWithViewModel(
@@ -492,14 +529,15 @@ export class Renderer {
       this.renderer.render(worldScene, worldCamera);
     }
 
-    if (!renderViewModel || !viewModelScene || !viewModelCamera) return;
-
-    // Viewmodel rendered directly — no SSAO applied to weapon
-    const prevAutoClear = this.renderer.autoClear;
-    this.renderer.autoClear = false;
-    this.renderer.clearDepth();
-    this.renderer.render(viewModelScene, viewModelCamera);
-    this.renderer.autoClear = prevAutoClear;
+    if (renderViewModel && viewModelScene && viewModelCamera) {
+      // Viewmodel rendered directly — no SSAO applied to weapon
+      const prevAutoClear = this.renderer.autoClear;
+      this.renderer.autoClear = false;
+      this.renderer.clearDepth();
+      this.renderer.render(viewModelScene, viewModelCamera);
+      this.renderer.autoClear = prevAutoClear;
+    }
+    this.markSoftwareFrameSubmitted();
   }
 
   private updateDynamicResolution(): void {
@@ -578,6 +616,9 @@ export class Renderer {
     this.canvas.removeEventListener("webglcontextrestored", this.onContextRestored);
     this.onContextLostCallback = null;
     this.onContextRestoredCallback = null;
+    const gl = this.renderer?.getContext();
+    if (this.softwareFrameFence && gl && "deleteSync" in gl) gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = null;
     this.environmentTarget?.dispose();
     this.environmentTarget = null;
     this.renderer?.dispose();

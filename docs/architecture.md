@@ -55,3 +55,5 @@ Vercel handlers under [api](../api/) call shared server modules:
 - `/api/admin/stats/overview`, `/runs`, `/names`, and `/daily` require the stats admin bearer token.
 
 [highScoreStoreImpl.ts](../server/highScoreStoreImpl.ts) preserves the store entry points. Implementations under [server/store](../server/store/) separate types, SQL, record conversion, connection selection, in-memory storage, schema maintenance, and Postgres operations. The deployed store uses Postgres. Privacy hashing uses `PRIVACY_HASH_SECRET`. [highScoreVitePlugin.ts](../server/highScoreVitePlugin.ts) exposes the same handlers during development with an explicit in-memory store. It is not a local Postgres integration test. See [deployment](deployment.md) for environment and operational boundaries.
+
+Software renderers keep at most one GPU frame in flight, using a nonblocking completion fence. Real-time simulation and UI updates continue when drawing must wait. Explicit QA renders and compatibility time advances wait for that draw slot, then submit and count an actual frame. Hardware keeps its normal submission policy.

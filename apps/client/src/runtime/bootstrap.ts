@@ -128,12 +128,17 @@ const SCENE_COMPILE_TIMEOUT_MS = 2_500;
 // network or driver can delay the reveal by at most the sum of these caps.
 const MAP_ASSET_SETTLE_TIMEOUT_MS = 10_000;
 const MAP_SCENE_COMPILE_TIMEOUT_MS = 10_000;
+// Software drivers compile executable GPU kernels lazily on the first draw.
+// Measured cold initialization takes ~30s even after Three's compileAsync;
+// bound that startup stage separately from the 9s steady-state QA operations.
+const SOFTWARE_FRAME_INIT_TIMEOUT_MS = 60_000;
 const ENEMY_TEMPLATE_BOOT_TIMEOUT_MS = 10_000;
 
 /**
  * Software rasterizers (headless SwiftShader, llvmpipe, Windows Basic Render)
  * have monopolized the main thread on whole-scene compiles/renders before.
- * The human boot gate skips them and keeps the historical fast-reveal boot.
+ * The hardware human boot gate excludes them; software stages initialization
+ * separately so its actual GPU completion can be awaited before reveal.
  */
 function isLikelySoftwareGl(renderer: Renderer): boolean {
   return !renderer.hasWebGL || renderer.softwareRendering;
@@ -986,11 +991,8 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     game.setWeaponDebugSnapshot(false, -1, 180);
   }
 
-  // Do not synchronously render the full authored map behind the loading
-  // overlay. On software/headless GPUs that call can monopolize the page for
-  // longer than the entire boot budget and cannot be interrupted by a timer.
-  // The first visible frame is scheduled only after the runtime is marked
-  // ready, so readiness and fallback controls remain responsive.
+  // Full-map software initialization is staged below: shaders and textures
+  // first, then an actual GPU completion fence before readiness and reveal.
   bootTelemetry.hiddenWarmupRenderDone = false;
 
   // Pre-warm buff orb materials so shader variants compile during warmup (not on first orb spawn)
@@ -1124,9 +1126,10 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       console.info("[runtime:boot] software first draw started");
       renderer.renderWithViewModel(game.scene, game.camera,
         viewModel?.viewModelScene ?? null, viewModel?.viewModelCamera ?? null, viewModelVisible);
-      // Retire this initialization frame once while still under the loading
-      // overlay; a submitted command queue is not a completed first draw.
-      webglRenderer?.getContext().finish();
+      // WebGL finish() can return before the browser's GPU service retires the
+      // submitted commands. Poll the actual fence under the startup-only budget
+      // so Ready never hands an unfinished initialization draw to a QA request.
+      await renderer.waitForFrameReady(SOFTWARE_FRAME_INIT_TIMEOUT_MS);
       bootTelemetry.hiddenWarmupRenderDone = true;
       console.info(`[runtime:boot] software first draw completed (${(performance.now() - firstDrawStartedAt).toFixed(1)}ms)`);
     } finally {
@@ -2163,6 +2166,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   };
 
   let lastAgentRenderTime = 0;
+  let manualRenderPending = 0;
+  let manualRenderQueue = Promise.resolve();
+  const queueManualRender = (update: () => void): Promise<void> => {
+    manualRenderPending += 1;
+    const next = manualRenderQueue.then(async () => {
+      await renderer.waitForFrameReady();
+      if (!disposed && runtimeActive) update();
+    }).finally(() => { manualRenderPending -= 1; });
+    // The caller receives failures; a failed request must not poison later ones.
+    manualRenderQueue = next.catch(() => {});
+    return next;
+  };
   let consecutiveFrameErrors = 0;
   let hiddenAgentTimerId: number | null = null;
   const isAgentHiddenLowPowerMode = (): boolean =>
@@ -2214,8 +2229,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // A repeatedly-throwing frame is surfaced and then given up on rather than
     // spinning silently forever.
     try {
-      step(deltaMs, { renderFrame: shouldRender });
-      if (shouldRender) {
+      // Keep simulation/UI updates running while a software GPU completes its
+      // previous draw. Submitting more frames can wedge the browser command queue.
+      const renderFrame = shouldRender && manualRenderPending === 0 && renderer.isFrameReady();
+      step(deltaMs, { renderFrame });
+      if (renderFrame) {
         lastAgentRenderTime = time;
       }
       consecutiveFrameErrors = 0;
@@ -2361,8 +2379,13 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     // Compatibility hook: this adds simulation time while the normal loop keeps
     // running. Real-time SDK control must not call it.
     if (!runtimeActive) return;
-    advanceSimulation(ms, {
-      renderFrame: !deterministicQa && (runtimeParams.controlMode !== "agent" || document.visibilityState === "visible"),
+    const renderFrame = !deterministicQa && (runtimeParams.controlMode !== "agent" || document.visibilityState === "visible");
+    if (!renderFrame) {
+      advanceSimulation(ms, { renderFrame: false });
+      return;
+    }
+    await queueManualRender(() => {
+      advanceSimulation(ms, { renderFrame: true });
     });
   };
   // QA and perf probes for local development, deterministic QA and automated
@@ -2393,9 +2416,11 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       },
       boot: { readyAtMs: bootTelemetry.readyAtMs },
     });
-    window.__qa_render_frame = () => {
+    window.__qa_render_frame = async () => {
       if (!runtimeActive) return;
-      advanceSimulation(0, { renderFrame: true });
+      await queueManualRender(() => {
+        advanceSimulation(0, { renderFrame: true });
+      });
     };
     window.__qa_route_state = () => {
       const playerPosition = game.getPlayerPosition();

@@ -1279,9 +1279,9 @@ export async function advanceRuntime(page, stepMs, options = {}) {
 export async function renderRuntimeFrame(page) {
   const rendered = await evaluateRuntimeState(
     page,
-    () => {
+    async () => {
       if (typeof window.__qa_render_frame !== "function") return false;
-      window.__qa_render_frame();
+      await window.__qa_render_frame();
       return true;
     },
     undefined,

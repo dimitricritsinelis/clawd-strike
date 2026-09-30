@@ -33,7 +33,7 @@ export function sampleRenderedFrameCadence(count) {
     const states = [];
     let previousTimestamp = null;
     let previousState = null;
-    const frame = (timestamp) => {
+    const frame = async (timestamp) => {
       try {
         if (previousTimestamp !== null) {
           const frameIntervalMs = timestamp - previousTimestamp;
@@ -46,7 +46,7 @@ export function sampleRenderedFrameCadence(count) {
             return;
           }
         }
-        window.__qa_render_frame();
+        await window.__qa_render_frame();
         previousState = window.__qa_performance_state();
         if (!previousState?.perf) throw new Error("Rendered frame performance telemetry is missing.");
         previousTimestamp = timestamp;
