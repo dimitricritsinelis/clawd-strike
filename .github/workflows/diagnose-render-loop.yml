@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         source: [9cc6a44757757ca03de05f9c33da5ed10b50c78c]
-        probe: [lavapipe-vulkan, llvmpipe-gl]
+        probe: [gpu-backpressure, lightweight-reads]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -25,17 +25,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
-      - name: Mesa software drivers and native GPU stack tool
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y gdb mesa-vulkan-drivers vulkan-tools libgl1-mesa-dri libegl1 xvfb
-          lvp_icd=$(find /usr/share/vulkan/icd.d -name 'lvp_icd*.json' -print -quit)
-          test -n "$lvp_icd"
-          echo "VK_ICD_FILENAMES=$lvp_icd" >> "$GITHUB_ENV"
-          echo 'LIBGL_ALWAYS_SOFTWARE=1' >> "$GITHUB_ENV"
-          echo 'GALLIUM_DRIVER=llvmpipe' >> "$GITHUB_ENV"
-          echo 'DISPLAY=:99' >> "$GITHUB_ENV"
-          Xvfb :99 -screen 0 1024x768x24 > /tmp/xvfb-diagnostic.log 2>&1 &
+      - name: Native GPU stack tool
+        run: command -v gdb || (sudo apt-get update -qq && sudo apt-get install -y gdb)
       - uses: actions/checkout@v7
         with:
           ref: ${{ matrix.source }}

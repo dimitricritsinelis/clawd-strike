@@ -20,12 +20,8 @@ const bounded = async (promise, ms, label) => {
   } finally { clearTimeout(timer); }
 };
 const browser = await chromium.launch({
-  channel: "chromium", headless: process.env.DIAGNOSTIC_PROBE !== "llvmpipe-gl",
-  args: ["--use-gl=angle", "--ignore-gpu-blocklist", "--disable-gpu-compositing",
-    ...(process.env.DIAGNOSTIC_PROBE === "lavapipe-vulkan"
-      ? ["--use-angle=vulkan", "--enable-features=Vulkan", "--disable-vulkan-surface"]
-      : ["--use-angle=gl"]),
-  ],
+  channel: "chromium", headless: true,
+  args: [],
 });
 record({ source: process.env.DIAGNOSTIC_SOURCE, probe: process.env.DIAGNOSTIC_PROBE, browser: browser.version() });
 const system = await browser.newBrowserCDPSession();
@@ -58,7 +54,7 @@ page.on("console", message => {
   }
 });
 page.on("pageerror", error => record({ pageerror: error.message }));
-await page.addInitScript(() => {
+await page.addInitScript(({ probe }) => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
@@ -71,10 +67,26 @@ await page.addInitScript(() => {
   const nativeRaf = window.requestAnimationFrame.bind(window);
   let frame = 0;
   let inFrame = false;
+  let frameContext = null;
+  let fence = null;
   let observed = new Set();
   window.requestAnimationFrame = callback => nativeRaf(time => {
+    if (active && callback.name === "animate" && probe === "gpu-backpressure" && fence) {
+      const status = frameContext.clientWaitSync(fence, 0, 0);
+      if (status === frameContext.TIMEOUT_EXPIRED) { window.requestAnimationFrame(callback); return; }
+      if (status === frameContext.WAIT_FAILED) throw new Error("GPU fence wait failed");
+      frameContext.deleteSync(fence);
+      fence = null;
+    }
     const diagnose = active && callback.name === "animate" && frame < 3;
-    if (!diagnose) return callback(time);
+    if (!diagnose) {
+      const result = callback(time);
+      if (active && callback.name === "animate" && probe === "gpu-backpressure" && frameContext) {
+        fence = frameContext.fenceSync(frameContext.SYNC_GPU_COMMANDS_COMPLETE, 0);
+        frameContext.flush();
+      }
+      return result;
+    }
     frame += 1;
     observed = new Set();
     inFrame = true;
@@ -84,6 +96,10 @@ await page.addInitScript(() => {
     finally {
       info(`[diagnostic] frame ${frame} exited ${(performance.now() - start).toFixed(1)}ms`);
       inFrame = false;
+      if (probe === "gpu-backpressure" && frameContext) {
+        fence = frameContext.fenceSync(frameContext.SYNC_GPU_COMMANDS_COMPLETE, 0);
+        frameContext.flush();
+      }
 
     }
   });
@@ -92,6 +108,7 @@ await page.addInitScript(() => {
       const native = prototype[name];
       prototype[name] = function (...args) {
         if (!inFrame) return native.apply(this, args);
+        frameContext = this;
         const first = !observed.has(name);
         observed.add(name);
         if (first) info(`[diagnostic] frame ${frame} GL ${name} entered`);
@@ -104,7 +121,7 @@ await page.addInitScript(() => {
       };
     }
   }
-});
+}, { probe: process.env.DIAGNOSTIC_PROBE });
 const profiler = await context.newCDPSession(page);
 await profiler.send("Profiler.enable");
 await profiler.send("Profiler.setSamplingInterval", { interval: 10000 });
@@ -121,14 +138,20 @@ try {
         || (state?.map?.loaded === true && state?.boot?.revealPhase === "active"));
     } catch { return false; }
   }, undefined, { timeout: 90000, polling: 100 }), 92000, "runtime readiness");
-  if (!/llvmpipe|lavapipe/i.test(rendererIdentity?.renderer ?? "")) throw new Error(`Requested Mesa backend not selected: ${JSON.stringify(rendererIdentity)}`);
+  if (!/swiftshader/i.test(rendererIdentity?.renderer ?? "")) throw new Error(`Requested SwiftShader backend not selected: ${JSON.stringify(rendererIdentity)}`);
   record({ ready: true });
   for (let frame = 0; frame < 10; frame += 1) {
     await new Promise(resolve => setTimeout(resolve, 500));
-    const state = await bounded(page.evaluate(() => window.render_game_to_text?.()), 9000, "runtime state");
+    const state = await bounded(page.evaluate(({ lightweight }) => {
+      console.info("[diagnostic] state read entered");
+      const start = performance.now();
+      const text = lightweight ? JSON.stringify({ ready: window.__runtime_ready_state?.(), heartbeat: window.__qa_heartbeat?.() }) : window.render_game_to_text?.();
+      console.info(`[diagnostic] state read exited ${(performance.now() - start).toFixed(1)}ms (${text?.length ?? 0} chars)`);
+      return text;
+    }, { lightweight: process.env.DIAGNOSTIC_PROBE === "lightweight-reads" }), 9000, "runtime state");
     writeFileSync(`${dir}/last-runtime-state.json`, state ?? "null");
     const parsed = JSON.parse(state ?? "null");
-    record({ sample: frame, mode: parsed?.mode, boot: parsed?.boot, profile: parsed?.profile });
+    record({ sample: frame, mode: parsed?.mode, boot: parsed?.boot, profile: parsed?.profile, heartbeat: parsed?.heartbeat });
   }
   record({ outcome: "passed" });
 } catch (error) {
