@@ -1,6 +1,10 @@
 name: Linux render-loop diagnosis
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/diagnose-render-loop.yml
+      - apps/client/scripts/diagnose-render-loop.mjs
 permissions:
   contents: read
 jobs:
