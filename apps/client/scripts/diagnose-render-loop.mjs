@@ -20,10 +20,11 @@ const bounded = async (promise, ms, label) => {
   } finally { clearTimeout(timer); }
 };
 const browser = await chromium.launch({
-  channel: "chromium", headless: true,
-  args: [
-    ...(process.env.PW_SOFTWARE_RENDERING === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []),
-
+  channel: "chromium", headless: process.env.DIAGNOSTIC_PROBE !== "llvmpipe-gl",
+  args: ["--use-gl=angle", "--ignore-gpu-blocklist", "--disable-gpu-compositing",
+    ...(process.env.DIAGNOSTIC_PROBE === "lavapipe-vulkan"
+      ? ["--use-angle=vulkan", "--enable-features=Vulkan", "--disable-vulkan-surface"]
+      : ["--use-angle=gl"]),
   ],
 });
 record({ source: process.env.DIAGNOSTIC_SOURCE, probe: process.env.DIAGNOSTIC_PROBE, browser: browser.version() });
@@ -49,9 +50,15 @@ const context = await browser.newContext({
   userAgent: "Mozilla/5.0 (Linux; Android 13; Mobile) AppleWebKit/537.36 Chrome/124.0 Mobile Safari/537.36",
 });
 const page = await context.newPage();
-page.on("console", message => record({ console: message.text(), type: message.type() }));
+let rendererIdentity = null;
+page.on("console", message => {
+  record({ console: message.text(), type: message.type() });
+  if (message.text().startsWith("[renderer] ")) {
+    try { rendererIdentity = JSON.parse(message.text().slice("[renderer] ".length)); } catch {}
+  }
+});
 page.on("pageerror", error => record({ pageerror: error.message }));
-await page.addInitScript(({ probe }) => {
+await page.addInitScript(() => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
@@ -61,16 +68,6 @@ await page.addInitScript(({ probe }) => {
     }
     info(...args);
   };
-  if (probe === "anisotropy-one") {
-    for (const prototype of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
-      const nativeParameter = prototype.texParameterf;
-      prototype.texParameterf = function (target, parameter, value) {
-        // EXT_texture_filter_anisotropic's immutable enum. Only this temporary
-        // probe changes sampling cost; materials, texture resolution and scene stay fixed.
-        return nativeParameter.call(this, target, parameter, parameter === 0x84fe ? 1 : value);
-      };
-    }
-  }
   const nativeRaf = window.requestAnimationFrame.bind(window);
   let frame = 0;
   let inFrame = false;
@@ -107,7 +104,7 @@ await page.addInitScript(({ probe }) => {
       };
     }
   }
-}, { probe: process.env.DIAGNOSTIC_PROBE });
+});
 const profiler = await context.newCDPSession(page);
 await profiler.send("Profiler.enable");
 await profiler.send("Profiler.setSamplingInterval", { interval: 10000 });
@@ -124,6 +121,7 @@ try {
         || (state?.map?.loaded === true && state?.boot?.revealPhase === "active"));
     } catch { return false; }
   }, undefined, { timeout: 90000, polling: 100 }), 92000, "runtime readiness");
+  if (!/llvmpipe|lavapipe/i.test(rendererIdentity?.renderer ?? "")) throw new Error(`Requested Mesa backend not selected: ${JSON.stringify(rendererIdentity)}`);
   record({ ready: true });
   for (let frame = 0; frame < 10; frame += 1) {
     await new Promise(resolve => setTimeout(resolve, 500));
