@@ -6,10 +6,95 @@ import type { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
 
 const UP = new Vector3(0, 1, 0);
 const FOOT_HEIGHT_M = .13;
-const WALK_STRIDE_M = 1.1;
-const RUN_STRIDE_M = 1.4;
-const STRAFE_WALK_STRIDE_M = .65;
-const STRAFE_RUN_STRIDE_M = .7;
+const WALK_STRIDE_M = 1.35;
+const BACKWARD_WALK_STRIDE_M = 1.1;
+const RUN_STRIDE_M = 2;
+const STRAFE_WALK_STRIDE_M = .6;
+const STRAFE_RUN_STRIDE_M = 1.2;
+
+const DEG = Math.PI / 180;
+
+// Hit flinch: an additive chest rotation (rig) or root tilt (non-rigged
+// fallback), driven by an underdamped spring so it snaps and settles in ~0.1 s.
+const FLINCH_OMEGA = 30;
+const FLINCH_ZETA = .5;
+/** Lean along the bullet's travel direction (the chest pitches away from the shooter). */
+export const FLINCH_PITCH_RAD = 6 * DEG;
+/** Twist about the vertical axis, turning the chest away from the shooter. */
+export const FLINCH_YAW_RAD = 4 * DEG;
+/** Head thrown back along the shot on a killing headshot. */
+export const HEADSHOT_HEAD_SNAP_RAD = 15 * DEG;
+const FLINCH_MAX = 1.5;
+
+const FLINCH_DAMPED_OMEGA = FLINCH_OMEGA * Math.sqrt(1 - FLINCH_ZETA * FLINCH_ZETA);
+/** Time of the first peak after a velocity kick from rest. */
+export const FLINCH_PEAK_S = Math.atan2(FLINCH_DAMPED_OMEGA, FLINCH_ZETA * FLINCH_OMEGA) / FLINCH_DAMPED_OMEGA;
+// Kick velocity that makes the first peak exactly 1 (full pitch/yaw amplitude).
+const FLINCH_KICK_VELOCITY = FLINCH_DAMPED_OMEGA
+  / (Math.exp(-FLINCH_ZETA * FLINCH_OMEGA * FLINCH_PEAK_S) * Math.sin(FLINCH_DAMPED_OMEGA * FLINCH_PEAK_S));
+
+/**
+ * Normalized flinch amount (1 = full 6 deg lean / 4 deg twist at the first
+ * peak). Stepped analytically, so it is exact and stable at any frame rate.
+ */
+export class FlinchSpring {
+  value = 0;
+  velocity = 0;
+
+  kick(): void {
+    this.velocity += FLINCH_KICK_VELOCITY;
+  }
+
+  step(deltaSeconds: number): void {
+    if (!Number.isFinite(deltaSeconds) || deltaSeconds <= 0) return;
+    if (this.value === 0 && this.velocity === 0) return;
+    const w = FLINCH_OMEGA;
+    const zw = FLINCH_ZETA * w;
+    const wd = FLINCH_DAMPED_OMEGA;
+    const decay = Math.exp(-zw * deltaSeconds);
+    const c = Math.cos(wd * deltaSeconds);
+    const s = Math.sin(wd * deltaSeconds);
+    const x = this.value;
+    const v = this.velocity;
+    this.value = decay * (x * c + ((v + zw * x) / wd) * s);
+    this.velocity = decay * (v * c - ((zw * v + w * w * x) / wd) * s);
+    if (Math.abs(this.value) < 1e-5 && Math.abs(this.velocity) < 1e-3) this.value = this.velocity = 0;
+  }
+
+  /** Clamped so rapid follow-up kicks cannot fold the torso. */
+  amount(): number {
+    return Math.max(-FLINCH_MAX, Math.min(FLINCH_MAX, this.value));
+  }
+
+  reset(): void {
+    this.value = this.velocity = 0;
+  }
+}
+
+/**
+ * World-space reaction frame for a bullet travelling along (dirX, dirZ) into a
+ * character facing `yaw` (forward = (-sin yaw, 0, -cos yaw)). The lean axis
+ * is up x dir, so a positive rotation tips the body along the shot, away from
+ * the shooter. The twist sign turns the chest away from the shooter; a
+ * head-on shot uses the entry point's lateral offset, else `fallbackTwist`.
+ * Returns null when the direction has no horizontal component.
+ */
+export function resolveHitReactionFrame(
+  yaw: number, dirX: number, dirZ: number, fallbackTwist: 1 | -1,
+  hitOffsetX = 0, hitOffsetZ = 0,
+): { leanAxisX: number; leanAxisZ: number; twistSign: 1 | -1 } | null {
+  const length = Math.hypot(dirX, dirZ);
+  if (!(length > 1e-6)) return null;
+  const dx = dirX / length;
+  const dz = dirZ / length;
+  const forwardX = -Math.sin(yaw);
+  const forwardZ = -Math.cos(yaw);
+  const turn = forwardZ * dx - forwardX * dz;
+  const torque = hitOffsetZ * dx - hitOffsetX * dz;
+  const twistSign: 1 | -1 = Math.abs(turn) > .1 ? (turn > 0 ? 1 : -1)
+    : Math.abs(torque) > 1e-4 ? (torque > 0 ? 1 : -1) : fallbackTwist;
+  return { leanAxisX: dz, leanAxisZ: -dx, twistSign };
+}
 
 /** Movement is measured after collision and overlap resolution, in metres. */
 export class RaiderMotion {
@@ -48,8 +133,9 @@ export class RaiderMotion {
     if (this.moving) {
       this.forward = -(Math.sin(yaw) * dx + Math.cos(yaw) * dz) / distance;
       this.right = (Math.cos(yaw) * dx - Math.sin(yaw) * dz) / distance;
-      this.runWeight = Math.max(0, Math.min(1, (distance / dt - 1.7) / 1.3));
-      const forwardStride = WALK_STRIDE_M + (RUN_STRIDE_M - WALK_STRIDE_M) * this.runWeight;
+      this.runWeight = Math.max(0, Math.min(1, (distance / dt - 1.1) / 1.9));
+      const walkStride = this.forward >= 0 ? WALK_STRIDE_M : BACKWARD_WALK_STRIDE_M;
+      const forwardStride = walkStride + (RUN_STRIDE_M - walkStride) * this.runWeight;
       const sideStride = STRAFE_WALK_STRIDE_M + (STRAFE_RUN_STRIDE_M - STRAFE_WALK_STRIDE_M) * this.runWeight;
       // Side steps have shorter travel. Weight by cycles/metre so diagonal
       // blends still match displacement on both axes without sliding.
@@ -66,7 +152,8 @@ export class RaiderMotion {
 
 type Leg = {
   thigh: Bone; shin: Bone; foot: Bone; anchor: Vector3; target: Vector3; normal: Vector3;
-  releaseOffset: Vector3; planted: boolean; shift: number;
+  releaseOffset: Vector3; planted: boolean; shift: number; solePoints: Vector3[]; contactHeight: number;
+  plantPivot: Vector3; plantPosition: Vector3; plantRotation: Quaternion; rollingPlant: boolean;
 };
 
 function contactShadow(): Mesh<PlaneGeometry, MeshBasicMaterial> {
@@ -97,6 +184,14 @@ export class RaiderAnimation {
   private readonly legs: Leg[];
   private readonly chest: Bone;
   private readonly pelvis: Bone;
+  private readonly head: Bone | null;
+  private readonly flinch = new FlinchSpring();
+  private readonly flinchLeanAxis = new Vector3(1, 0, 0);
+  private flinchTwistSign: 1 | -1 = 1;
+  /** Dead: no further sampling, IK or procedural motion; the last pose holds. */
+  private frozen = false;
+  private readonly headRestRotation = new Quaternion();
+  private headSnapped = false;
   private readonly sampledPelvisPosition = new Vector3();
   private readonly directionWeights = { Forward: 1, Backward: 0, Left: 0, Right: 0 };
   private runBlend = 0;
@@ -141,16 +236,40 @@ export class RaiderAnimation {
     };
     this.chest = bone("Chest");
     this.pelvis = bone("Pelvis");
+    const head = model.getObjectByName("Head");
+    this.head = head instanceof Bone ? head : null;
     this.sampledPelvisPosition.copy(this.pelvis.position);
     this.high = model.getObjectByName("Raider_High")!;
     this.low = model.getObjectByName("Raider_Low")!;
     this.high.visible = true;
     this.low.visible = false;
-    this.legs = ["R", "L"].map((side, i) => ({
-      thigh: bone(`Thigh_${side}`), shin: bone(`Shin_${side}`), foot: bone(`Foot_${side}`),
-      anchor: new Vector3(), target: new Vector3(), normal: new Vector3(),
-      releaseOffset: new Vector3(), planted: false, shift: i * .5,
-    }));
+    this.legs = ["R", "L"].map((side, i) => {
+      const foot = bone(`Foot_${side}`);
+      const solePoints: Vector3[] = [];
+      for (const mesh of [this.high, this.low]) {
+        if (!(mesh instanceof SkinnedMesh)) continue;
+        const index = mesh.skeleton.bones.indexOf(foot);
+        const positions = mesh.geometry.getAttribute("position");
+        const indices = mesh.geometry.getAttribute("skinIndex");
+        const weights = mesh.geometry.getAttribute("skinWeight");
+        for (let vertex = 0; vertex < positions.count; vertex++) {
+          let weight = 0;
+          for (let component = 0; component < 4; component++) {
+            if (indices.getComponent(vertex, component) === index) weight += weights.getComponent(vertex, component);
+          }
+          if (weight > .999) solePoints.push(new Vector3().fromBufferAttribute(positions, vertex)
+            .applyMatrix4(mesh.bindMatrix).applyMatrix4(mesh.skeleton.boneInverses[index]!));
+        }
+      }
+      if (!solePoints.length) throw new Error(`Raider asset missing rigid boot vertices ${side}`);
+      return {
+        thigh: bone(`Thigh_${side}`), shin: bone(`Shin_${side}`), foot,
+        anchor: new Vector3(), target: new Vector3(), normal: new Vector3(),
+        releaseOffset: new Vector3(), planted: false, shift: i * .5,
+        solePoints, contactHeight: FOOT_HEIGHT_M,
+        plantPivot: new Vector3(), plantPosition: new Vector3(), plantRotation: new Quaternion(), rollingPlant: false,
+      };
+    });
     this.sampledRotations = [this.chest, ...this.legs.flatMap(({ thigh, shin, foot }) => [thigh, shin, foot])]
       .map((bone) => ({ bone, rotation: bone.quaternion.clone() }));
     // The bind-pose box cannot cull a posed limb or its shadow correctly.
@@ -165,16 +284,60 @@ export class RaiderAnimation {
   }
 
   reset(): void {
+    this.frozen = false;
+    this.shadow.visible = true;
+    this.flinch.reset();
+    // The head is not in the sampled set, and the mixer skips unchanged
+    // writes, so undo a death snap explicitly before sampling.
+    if (this.head && this.headSnapped) this.head.quaternion.copy(this.headRestRotation);
+    this.headSnapped = false;
     this.motion.reset();
     this.shotAge = 1;
-    for (const leg of this.legs) { leg.planted = false; leg.releaseOffset.set(0, 0, 0); }
+    for (const leg of this.legs) { leg.planted = leg.rollingPlant = false; leg.releaseOffset.set(0, 0, 0); }
     this.sampleClips();
   }
 
   shoot(): void { this.shotAge = 0; }
 
+  /** Flinch along a world lean axis (see resolveHitReactionFrame). */
+  hit(leanAxisX: number, leanAxisZ: number, twistSign: 1 | -1): void {
+    if (this.frozen) return;
+    this.flinchLeanAxis.set(leanAxisX, 0, leanAxisZ);
+    if (this.flinchLeanAxis.lengthSq() < 1e-12) return;
+    this.flinchLeanAxis.normalize();
+    this.flinchTwistSign = twistSign;
+    this.flinch.kick();
+  }
+
+  /**
+   * Death: stop sampling the mixer (the pose freezes where the killing shot
+   * found it; the root fall is the visual's job). A headshot snaps the head
+   * back 15 deg about the world lean axis. Actions are not stopped, because
+   * deactivating a mixer binding restores the bind pose.
+   */
+  die(leanAxisX: number, leanAxisZ: number, headshot: boolean): void {
+    if (this.frozen) return;
+    this.frozen = true;
+    // The contact shadow is a child of the model, so the root fall would tip
+    // it on edge at the feet; update() no longer runs to re-ground it.
+    this.shadow.visible = false;
+    if (!headshot || !this.head) return;
+    this.axis.set(leanAxisX, 0, leanAxisZ);
+    if (this.axis.lengthSq() < 1e-12) return;
+    this.axis.normalize();
+    this.headRestRotation.copy(this.head.quaternion);
+    this.headSnapped = true;
+    this.head.getWorldQuaternion(this.worldRotation).invert();
+    this.axis.applyQuaternion(this.worldRotation);
+    this.head.rotateOnAxis(this.axis, HEADSHOT_HEAD_SNAP_RAD);
+    this.head.updateWorldMatrix(false, true);
+  }
+
+  isFrozen(): boolean { return this.frozen; }
+
   update(position: Vector3, yaw: number, dt: number, grounded: boolean,
     surfaces?: TraversalSurfaceResolver, viewerDistanceM = 0): void {
+    if (this.frozen) return;
     const wasIdle = this.motion.moveWeight < .01;
     if (!this.motion.update(position, yaw, dt, grounded)) return;
     // Hysteresis avoids silhouette flicker while crossing the 12 m LOD boundary.
@@ -194,6 +357,16 @@ export class RaiderAnimation {
     this.chest.getWorldQuaternion(this.worldRotation).invert();
     this.axis.applyQuaternion(this.worldRotation);
     this.chest.rotateOnAxis(this.axis, recoil);
+    // Hit flinch, additive on top of the sampled clip and recoil.
+    this.flinch.step(Math.min(dt, .1));
+    const flinch = this.flinch.amount();
+    if (flinch !== 0) {
+      this.chest.getWorldQuaternion(this.worldRotation).invert();
+      this.axis.copy(this.flinchLeanAxis).applyQuaternion(this.worldRotation);
+      this.chest.rotateOnAxis(this.axis, flinch * FLINCH_PITCH_RAD);
+      this.axis.copy(UP).applyQuaternion(this.worldRotation);
+      this.chest.rotateOnAxis(this.axis, flinch * FLINCH_YAW_RAD * this.flinchTwistSign);
+    }
     this.chest.updateWorldMatrix(false, true);
     this.model.getWorldQuaternion(this.worldRotation);
     this.forward.set(1, 0, 0).applyQuaternion(this.worldRotation);
@@ -204,18 +377,53 @@ export class RaiderAnimation {
     this.shadow.quaternion.setFromUnitVectors(this.axis.set(0,0,1),this.normal);
     let pelvisDrop = 0;
     for (const leg of this.legs) {
-      if (!grounded) { leg.planted = false; leg.releaseOffset.set(0, 0, 0); continue; }
+      if (!grounded) { leg.planted = leg.rollingPlant = false; leg.releaseOffset.set(0, 0, 0); continue; }
       leg.foot.getWorldPosition(this.target);
+      let footHeight = FOOT_HEIGHT_M;
+      if (this.directionWeights.Forward > .001) {
+        // Forward heel/toe roll changes ankle clearance. Ground the rigid boot
+        // surface, rather than forcing the rolling ankle back to a fixed height.
+        leg.foot.getWorldQuaternion(this.footRotation).invert();
+        this.axis.copy(UP).applyQuaternion(this.footRotation);
+        footHeight = -Infinity;
+        for (const point of leg.solePoints) {
+          const height = -point.dot(this.axis);
+          if (height > footHeight) { footHeight = height; leg.plantPivot.copy(point); }
+        }
+      }
       const phase = (this.motion.phase + leg.shift) % 1;
       // A reversal must finish transferring weight before taking a new plant;
       // an anchor from the outgoing stride is soon beyond the new leg's reach.
       const directionWeight = this.directionWeights[this.motion.forward >= 0 ? "Forward" : "Backward"]
         + this.directionWeights[this.motion.right >= 0 ? "Right" : "Left"];
-      const stance = this.motion.moving && this.motion.moveWeight > .9 && directionWeight > .9 && phase <= .5;
+      // Match the authored contact intervals: fast steps spend less of each
+      // cycle planted, covering more ground without forcing a crouched split.
+      const sideBlend = this.directionWeights.Left + this.directionWeights.Right;
+      const stanceEnd = .5 + ((.32 * this.directionWeights.Forward + .35 * this.directionWeights.Backward + .27 * sideBlend) - .5) * this.runBlend;
+      const stance = this.motion.moving && this.motion.moveWeight > .9 && directionWeight > .9 && phase <= stanceEnd
+        && (this.directionWeights.Forward < .001 || this.target.y - position.y - footHeight < .003);
+      const rollingPlant = stance && this.directionWeights.Forward > .001;
       if (stance) {
-        if (!leg.planted || leg.anchor.distanceTo(this.target) > .6) leg.anchor.copy(this.target);
-        this.target.x = leg.anchor.x;
-        this.target.z = leg.anchor.z;
+        if (rollingPlant) {
+          // Keep the supporting surface point still, not the ankle. Switching
+          // from heel to forefoot rebases on the previous resolved pose, so the
+          // ankle can roll continuously without snapping to a new anchor.
+          if (leg.planted && leg.rollingPlant && leg.plantPosition.distanceTo(this.target) < .6) {
+            const ground = surfaces?.sample(this.target.x, this.target.z, position.y);
+            this.normal.set(ground?.normal.x ?? 0, ground?.normal.y ?? 1, ground?.normal.z ?? 0);
+            leg.foot.getWorldQuaternion(this.footRotation);
+            this.deltaRotation.setFromUnitVectors(UP, this.normal);
+            this.footRotation.premultiply(this.deltaRotation);
+            leg.anchor.copy(leg.plantPivot).applyQuaternion(leg.plantRotation).add(leg.plantPosition);
+            this.to.copy(leg.plantPivot).applyQuaternion(this.footRotation);
+            this.target.x = leg.anchor.x - this.to.x;
+            this.target.z = leg.anchor.z - this.to.z;
+          }
+        } else {
+          if (!leg.planted || leg.rollingPlant || leg.anchor.distanceTo(this.target) > .6) leg.anchor.copy(this.target);
+          this.target.x = leg.anchor.x;
+          this.target.z = leg.anchor.z;
+        }
         leg.foot.getWorldPosition(leg.releaseOffset);
         leg.releaseOffset.subVectors(this.target, leg.releaseOffset);
         leg.releaseOffset.y = 0;
@@ -226,10 +434,12 @@ export class RaiderAnimation {
         this.target.add(leg.releaseOffset);
       }
       leg.planted = stance;
+      leg.rollingPlant = rollingPlant;
       const ground = surfaces?.sample(this.target.x, this.target.z, position.y);
       const groundY = ground?.elevationM ?? position.y;
-      const lift = stance ? 0 : Math.max(0, this.target.y - position.y - FOOT_HEIGHT_M);
-      this.target.y = position.y + Math.max(-.35, Math.min(.35, groundY - position.y)) + FOOT_HEIGHT_M + lift;
+      const lift = stance ? 0 : Math.max(0, this.target.y - position.y - footHeight);
+      leg.contactHeight = footHeight / (this.directionWeights.Forward > .001 ? ground?.normal.y ?? 1 : 1);
+      this.target.y = position.y + Math.max(-.35, Math.min(.35, groundY - position.y)) + leg.contactHeight + lift;
       leg.target.copy(this.target);
       leg.normal.set(ground?.normal.x ?? 0, ground?.normal.y ?? 1, ground?.normal.z ?? 0);
       leg.thigh.getWorldPosition(this.hip);
@@ -251,6 +461,8 @@ export class RaiderAnimation {
         this.target.copy(leg.target);
         this.normal.copy(leg.normal);
         this.solveLeg(leg);
+        leg.foot.getWorldPosition(leg.plantPosition);
+        leg.foot.getWorldQuaternion(leg.plantRotation);
       }
     }
   }
@@ -301,7 +513,14 @@ export class RaiderAnimation {
     const distance = Math.max(Math.abs(upper - lower) + .0001, Math.min(this.axis.length(), upper + lower - .0001));
     this.axis.normalize();
     const along = (upper * upper - lower * lower + distance * distance) / (2 * distance);
-    this.bend.copy(this.forward).addScaledVector(this.axis, -this.forward.dot(this.axis)).normalize();
+    // Preserve the authored knee pole, including the strafe hip turn. Forcing
+    // every knee toward aim erases lower-body direction during foot correction.
+    this.bend.subVectors(this.knee, this.hip);
+    this.bend.addScaledVector(this.axis, -this.bend.dot(this.axis));
+    if (this.bend.lengthSq() < .000001) {
+      this.bend.copy(this.forward).addScaledVector(this.axis, -this.forward.dot(this.axis));
+    }
+    this.bend.normalize();
     this.desiredKnee.copy(this.hip).addScaledVector(this.axis, along)
       .addScaledVector(this.bend, Math.sqrt(Math.max(0, upper * upper - along * along)));
     this.rotateBone(leg.thigh, this.from.subVectors(this.knee, this.hip), this.to.subVectors(this.desiredKnee, this.hip));

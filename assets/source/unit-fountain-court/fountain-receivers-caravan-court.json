@@ -1,0 +1,32 @@
+{
+  "modelId": "fountain_receivers_caravan_court",
+  "file": "fountain-receivers-caravan-court.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 3,
+    "y": 30,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "67c98ce750eae935e6753660d03aafdfd7cc064a886aaa49b2bb3fc637aa22a6",
+  "receiverParcelIds": [
+    "cc-en",
+    "cc-es-part-2"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 15,
+      "start": 32.0,
+      "end": 36.0
+    },
+    {
+      "orientation": "vertical",
+      "coord": 15,
+      "start": 41.0,
+      "end": 48.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

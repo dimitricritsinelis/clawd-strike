@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -7,7 +7,7 @@ import {
   waitForRuntimeReady,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
-async function readWaveClock(page): Promise<number> {
+async function readWaveClock(page: Page): Promise<number> {
   const state = await readRuntimeState(page);
   const elapsed = state.bots?.waveElapsedS;
   expect(typeof elapsed).toBe("number");
@@ -38,15 +38,19 @@ test("opening the pause menu freezes the simulation clock", async ({ page }, tes
   );
   await waitForRuntimeReady(page, { routeId: "PauseProbe" });
 
+  // Human startup has a five-second countdown before its simulation clock runs.
+  await advanceRuntime(page, 6000);
+  await expect(page.locator(".countdown-num")).toBeHidden();
+
   // Baseline: with the game running, the wave clock tracks simulated time.
   const runningBefore = await readWaveClock(page);
   await advanceRuntime(page, 2000);
   const runningAdvance = (await readWaveClock(page)) - runningBefore;
   expect(runningAdvance).toBeGreaterThan(1.5);
 
-  // Escape shows the pause menu behind a 50ms pointer-lock settle timer.
+  // Confirm Escape opened the overlay before measuring the paused clock.
   await page.keyboard.press("Escape");
-  await page.waitForTimeout(300);
+  await expect(page.getByText("PAUSED", { exact: true })).toBeVisible();
 
   // Paused: the simulation clock must not move at all.
   const pausedBefore = await readWaveClock(page);

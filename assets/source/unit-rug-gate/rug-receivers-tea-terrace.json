@@ -1,0 +1,25 @@
+{
+  "modelId": "rug_receivers_tea_terrace",
+  "file": "rug-receivers-tea-terrace.glb",
+  "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 11,
+    "y": 56,
+    "z": 1.4
+  },
+  "yawDeg": 180,
+  "inputSha256": "d55fb3f4ed990e727c6e1885819eddddfbf7856a1d8afacbae3ce0c34fc9db94",
+  "receiverParcelIds": [
+    "tt-rug-return"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 19,
+      "start": 64,
+      "end": 66
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

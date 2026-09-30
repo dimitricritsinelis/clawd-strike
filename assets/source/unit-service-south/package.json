@@ -1,13 +1,39 @@
 {
   "models": [
     {
-      "id": "service_south_east_face",
-      "file": "service-south-east.glb",
+      "id": "bz04_roof_bundle_unit_service_south",
+      "file": "roof-bundle-service-south.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_service_south",
+      "file": "unit-service-south.glb",
       "source": "repo://assets/source/unit-service-south/build.py",
       "license": "Project-Original"
     }
   ],
-  "frontages": {
-    "FRONTAGE_SERVICE_SOUTH_EAST": "service_south_east_face"
-  }
+  "section": {
+    "zoneId": "SERVICE_SOUTH",
+    "modelId": "section_unit_service_south",
+    "faces": [
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_SERVICE_SOUTH",
+      "modelId": "bz04_roof_bundle_unit_service_south",
+      "position": {
+        "x": 6.5,
+        "y": 19.7,
+        "z": 4.6
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "a1e4805e2687736a481ec79f1c8cca7188c1291ade87d3109c57cbf3efbefc29"
 }

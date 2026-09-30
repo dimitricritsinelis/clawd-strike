@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_covered_souk",
+      "file": "roof-bundle-covered-souk.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_covered_souk",
+      "file": "unit-covered-souk.glb",
+      "source": "repo://assets/source/unit-covered-souk/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "COVERED_SOUK",
+    "modelId": "section_unit_covered_souk",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_COVERED_SOUK",
+      "modelId": "bz04_roof_bundle_unit_covered_souk",
+      "position": {
+        "x": 48.8,
+        "y": 40.05,
+        "z": 5.4
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "d40e08eb36ead030462b0535df07197d357773db503a68da03596fc536f18430"
+}

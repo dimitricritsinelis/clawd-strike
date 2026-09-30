@@ -1,0 +1,25 @@
+{
+  "modelId": "service_south_receivers_caravan_court",
+  "file": "service-south-receivers-caravan-court.glb",
+  "source": "repo://assets/source/unit-service-south/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 3,
+    "y": 30,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "67c98ce750eae935e6753660d03aafdfd7cc064a886aaa49b2bb3fc637aa22a6",
+  "receiverParcelIds": [
+    "cc-s"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 30,
+      "start": 10.0,
+      "end": 13.6
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

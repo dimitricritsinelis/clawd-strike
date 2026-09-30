@@ -1,7 +1,18 @@
-import type { RuntimeMapAssets } from "../map/types";
+import { hashString32 } from "../utils/Rng";
+import { STREET_ATMOSPHERE, STREET_DETAIL_MATERIAL_IDS, STREET_PROP_MATERIAL_IDS, atmosphereAppliesTo } from "../map/atmosphere/buildStreetAtmosphere";
+import { WALL_FOOT_CLUTTER_MODEL_IDS } from "../map/atmosphere/buildWallFootClutter";
+import type { RuntimeMapAssets } from "../map/spec/types";
 
-export type QaAssetProfile = "qa" | "cell-review";
-export type QaTextureTier = "1k" | "2k" | "4k";
+import type { QaAssetProfile } from "../utils/UrlParams";
+export { resolveQaAssetProfile, resolveQaAssetTimeoutMs } from "../utils/UrlParams";
+
+/** CC0 children emitted by the retained procedural prefab layouts. */
+function compiledPrefabModelIds(runtimeId: string): readonly string[] {
+  if (runtimeId === "bazaar_spawn_cover") return ["ph_wooden_crate_01"];
+  if (runtimeId === "bazaar_cover_goods") return ["cc0_spice_sack"];
+  return [];
+}
+type QaTextureTier = "1k" | "2k" | "4k";
 
 export type QaResolvedTexture = {
   kind: "floor" | "wall";
@@ -17,8 +28,6 @@ export type QaAssetPlan = {
   floorMaterialIds: readonly string[];
   wallMaterialIds: readonly string[];
   propModelIds: readonly string[];
-  doorModelIds: readonly string[];
-  facadeModelIds: readonly string[];
   directTextureUrls: readonly string[];
   requiredLogicalRequestIds: readonly string[];
   hash: string;
@@ -27,13 +36,11 @@ export type QaAssetPlan = {
 export type QaAssetPlanOptions = {
   floorPbr?: boolean;
   wallPbr?: boolean;
-  wallDetails?: boolean;
   bazaarProps?: boolean;
-  doorModels?: boolean;
   textureTier?: "1k" | "2k";
 };
 
-export type QaAssetFailure = {
+type QaAssetFailure = {
   id: string;
   message: string;
 };
@@ -102,11 +109,6 @@ const QA_WALL_DIRECT_MATERIAL_IDS = [
   "ph_worn_plaster_sun",
 ] as const;
 
-const LEGACY_QA_DOOR_MODEL_IDS = [
-  "ph_large_castle_door",
-  "ph_rollershutter_window_02",
-] as const;
-
 // Textures loaded directly by render-only prop templates rather than through
 // a material manifest. The capture gate prefetches and observes these requests.
 export const QA_RENDERER_DIRECT_TEXTURE_URLS = [
@@ -116,28 +118,14 @@ export const QA_RENDERER_DIRECT_TEXTURE_URLS = [
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_arm_1k.jpg",
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_diff_1k.jpg",
   "/assets/models/environment/bazaar/props/wooden_crate_02/textures/wooden_crate_02_nor_gl_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_arm_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_diff_1k.jpg",
-  "/assets/models/environment/bazaar/props/wooden_table_02/textures/wooden_table_02_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_arm_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_diff_1k.jpg",
   "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/court_flagstone_01/court_flagstone_01_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/canopy_stripe_albedo_v1.jpg",
   "/assets/textures/environment/bazaar/textiles/project_original/levantine_rug_albedo_v1.jpg",
-  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v2.jpg",
-  "/assets/textures/environment/bazaar/textiles/project_original/shade_cloth_woven_v3.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_arm_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_diff_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rough_pine_door/rough_pine_door_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/rusty_metal_02/rusty_metal_02_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/sandstone_blocks_05/sandstone_blocks_05_nor_gl_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_arm_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_diff_1k.jpg",
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_plaster_02/white_plaster_02_nor_gl_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_arm_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_diff_1k.jpg",
   "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/white_sandstone_blocks_02/white_sandstone_blocks_02_nor_gl_1k.jpg",
@@ -166,27 +154,12 @@ export const QA_PALM_DIRECT_TEXTURE_URLS = {
   ],
 } as const;
 
-export const QA_STAINED_GLASS_DIRECT_TEXTURE_URLS = [
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_ambientOcclusion.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_basecolor.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_height.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_metallic.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_normal.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_opacity.png",
-  "/assets/textures/environment/bazaar/windows/stained_glass_panel_001/Glass_Stained_Panel_001_roughness.png",
-] as const;
-
 function sortedUnique(values: Iterable<string>): string[] {
   return [...new Set(values)].sort((left, right) => left.localeCompare(right));
 }
 
 function stableHash(value: string): string {
-  let hash = 0x811c9dc5;
-  for (let index = 0; index < value.length; index += 1) {
-    hash ^= value.charCodeAt(index);
-    hash = Math.imul(hash, 0x01000193);
-  }
-  return `fnv1a32:${(hash >>> 0).toString(16).padStart(8, "0")}`;
+  return `fnv1a32:${hashString32(value).toString(16).padStart(8, "0")}`;
 }
 
 export function qaFloorMaterialRequestId(materialId: string): string {
@@ -199,14 +172,6 @@ export function qaWallMaterialRequestId(materialId: string): string {
 
 export function qaPropModelRequestId(modelId: string): string {
   return `prop-model:${modelId}`;
-}
-
-export function qaDoorModelRequestId(modelId: string): string {
-  return `door-model:${modelId}`;
-}
-
-export function qaFacadeModelRequestId(modelId: string): string {
-  return `facade-model:${modelId}`;
 }
 
 export function qaDirectTextureRequestId(url: string): string {
@@ -224,44 +189,46 @@ export function hashQaAssetRequestIds(
   }));
 }
 
-export function resolveQaAssetProfile(search: string): QaAssetProfile | null {
-  const params = new URLSearchParams(search);
-  const namedProfile = params.get("qaProfile")?.trim().toLowerCase();
-  if (namedProfile === "cell-review") return "cell-review";
-  if (params.get("qa") !== "1") return null;
-  return params.has("shot") ? "cell-review" : "qa";
+/** Floor-pack materials the compiled map builds with; both boot paths preload only these. */
+export function plannedFloorMaterialIds(mapAssets: RuntimeMapAssets): string[] {
+  return sortedUnique([
+    ...QA_FLOOR_DIRECT_MATERIAL_IDS,
+    ...mapAssets.blockout.zones.flatMap((zone) => zone.floorMaterialId ? [zone.floorMaterialId] : []),
+  ]);
 }
 
-export function resolveQaAssetTimeoutMs(search: string): number {
-  const raw = new URLSearchParams(search).get("qaAssetTimeoutMs");
-  const parsed = raw === null ? Number.NaN : Number.parseInt(raw, 10);
-  if (!Number.isFinite(parsed)) return 20_000;
-  return Math.max(1_000, Math.min(120_000, parsed));
+/** Wall-pack materials the compiled map builds with; both boot paths preload only these. */
+export function plannedWallMaterialIds(mapAssets: RuntimeMapAssets): string[] {
+  return sortedUnique([
+    ...QA_WALL_DIRECT_MATERIAL_IDS,
+    ...(atmosphereAppliesTo(mapAssets.blockout.mapId) ? [...Object.values(STREET_DETAIL_MATERIAL_IDS), ...STREET_PROP_MATERIAL_IDS] : []),
+    ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
+      Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
+    )),
+    ...(mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
+      placement.kind === "massing"
+        ? Object.values(placement.materialSlots).filter((id) => id.startsWith("ph_"))
+        : []
+    )),
+    // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
+    ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
+    ...(mapAssets.blockout.authoredPlacements ?? []).flatMap((placement) => placement.materialIds),
+  ]);
 }
 
-export function resolveQaDoorModelIds(mapAssets: RuntimeMapAssets): string[] {
-  const blockout = mapAssets.blockout;
-  if (!/^3(?:\.|$)/.test(blockout.formatVersion ?? "")) {
-    // Legacy wall-detail placement chooses between both registered models from
-    // the computed door width. V3 bypasses that placer and declares model
-    // dependencies on the compiled facade placements instead.
-    return sortedUnique(LEGACY_QA_DOOR_MODEL_IDS);
-  }
-
-  const modelIdByAssetId = new Map(
-    (blockout.assetRegistry ?? [])
-      .filter((asset) => asset.runtime?.mode === "model")
-      .map((asset) => [asset.id, asset.runtime!.id] as const),
-  );
-  return sortedUnique(
-    (blockout.architecturePlacements ?? []).flatMap((placement) => {
-      if (placement.kind !== "facade_module" || placement.moduleKind !== "door" || !placement.assetId) {
-        return [];
-      }
-      const modelId = modelIdByAssetId.get(placement.assetId);
-      return modelId ? [modelId] : [];
-    }),
-  );
+/**
+ * Registered prop models the compiled map instantiates: model dressing, the
+ * retained prefab children and, unless excluded, the R8 wall-foot clutter.
+ */
+export function plannedPropModelIds(mapAssets: RuntimeMapAssets, includeR8Clutter = true): string[] {
+  const dressingPlacements = mapAssets.blockout.dressingPlacements ?? [];
+  return sortedUnique([
+    ...dressingPlacements.flatMap((placement) => (
+      placement.runtime.mode === "model" ? [placement.runtime.id] : []
+    )),
+    ...dressingPlacements.flatMap(placement => compiledPrefabModelIds(placement.runtime.id)),
+    ...(includeR8Clutter && dressingPlacements.length > 0 && atmosphereAppliesTo(mapAssets.blockout.mapId) ? WALL_FOOT_CLUTTER_MODEL_IDS : []),
+  ]);
 }
 
 export function createQaAssetPlan(
@@ -269,58 +236,19 @@ export function createQaAssetPlan(
   profile: QaAssetProfile,
   options: QaAssetPlanOptions = {},
 ): QaAssetPlan {
-  const floorMaterialIds = options.floorPbr === false
-    ? []
-    : sortedUnique([
-        ...QA_FLOOR_DIRECT_MATERIAL_IDS,
-        ...mapAssets.blockout.zones.flatMap((zone) => zone.floorMaterialId ? [zone.floorMaterialId] : []),
-      ]);
-  const wallMaterialIds = options.wallPbr === false
-    ? []
-    : sortedUnique([
-        ...QA_WALL_DIRECT_MATERIAL_IDS,
-        ...(mapAssets.blockout.facadeProfiles ?? []).flatMap((facade) => (
-          Object.values(facade.materialSlots).filter((id) => id.startsWith("ph_"))
-        )),
-        ...(mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
-          placement.kind === "massing"
-            ? Object.values(placement.materialSlots).filter((id) => id.startsWith("ph_"))
-            : []
-        )),
-        // Authored section GLBs name pack materials; the runtime rebinds them, so they must load too.
-        ...(mapAssets.blockout.sectionModels ?? []).flatMap((section) => section.materialIds),
-      ]);
-  const propModelIds = options.bazaarProps === false
-    ? []
-    : sortedUnique([
-        ...(mapAssets.blockout.dressingPlacements ?? []).flatMap((placement) => (
-          placement.runtime.mode === "model" ? [placement.runtime.id] : []
-        )),
-        ...(mapAssets.blockout.dressingPlacements ?? []).some((placement) => (
-          placement.runtime.id === "bazaar_cover_goods"
-        )) ? ["ph_wooden_crate_01"] : [],
-      ]);
-  const doorModelIds = options.doorModels === false ? [] : resolveQaDoorModelIds(mapAssets);
-  const facadeModelIds = sortedUnique(
-    (mapAssets.blockout.architecturePlacements ?? []).flatMap((placement) => (
-      placement.kind === "massing" && placement.facadeModelId ? [placement.facadeModelId] : []
-    )),
-  );
-  const hasDecorativePalms = mapAssets.anchors.anchors.some((anchor) => (
-    anchor.type.toLowerCase() === "decorative_palm"
-  ));
+  const floorMaterialIds = options.floorPbr === false ? [] : plannedFloorMaterialIds(mapAssets);
+  const wallMaterialIds = options.wallPbr === false ? [] : plannedWallMaterialIds(mapAssets);
+  const propModelIds = options.bazaarProps === false ? [] : plannedPropModelIds(mapAssets);
+  const hasDecorativePalms = atmosphereAppliesTo(mapAssets.blockout.mapId) && STREET_ATMOSPHERE.palms.length > 0;
   const textureTier = options.textureTier ?? "1k";
   const directTextureUrls = sortedUnique([
     ...(options.bazaarProps === false ? [] : QA_RENDERER_DIRECT_TEXTURE_URLS),
     ...(hasDecorativePalms ? QA_PALM_DIRECT_TEXTURE_URLS[textureTier] : []),
-    ...(options.wallDetails === false ? [] : QA_STAINED_GLASS_DIRECT_TEXTURE_URLS),
   ]);
   const requiredLogicalRequestIds = sortedUnique([
     ...floorMaterialIds.map(qaFloorMaterialRequestId),
     ...wallMaterialIds.map(qaWallMaterialRequestId),
     ...propModelIds.map(qaPropModelRequestId),
-    ...doorModelIds.map(qaDoorModelRequestId),
-    ...facadeModelIds.map(qaFacadeModelRequestId),
     ...directTextureUrls.map(qaDirectTextureRequestId),
   ]);
   return {
@@ -329,8 +257,6 @@ export function createQaAssetPlan(
     floorMaterialIds,
     wallMaterialIds,
     propModelIds,
-    doorModelIds,
-    facadeModelIds,
     directTextureUrls,
     requiredLogicalRequestIds,
     hash: hashQaAssetRequestIds(profile, requiredLogicalRequestIds),
@@ -497,7 +423,8 @@ export class QaAssetReadinessTracker {
         .sort((left, right) => left.localeCompare(right)),
       unexpectedRequests: [...this.unexpectedRequestIds]
         .sort((left, right) => left.localeCompare(right)),
-      pending: [...this.pending].sort((left, right) => left.localeCompare(right)),
+      pending: sortedUnique([...this.pending, ...this.requiredLogicalRequestIds, ...this.plannedChildRequestIds]
+        .filter((id) => !this.completed.has(id) && !this.failures.has(id))),
       failed,
       totalRequests: this.requested.size,
       requestedCount: this.requested.size,

@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 type KillEntry = {
   el: HTMLDivElement;
   timerS: number;
@@ -43,11 +44,6 @@ export class KillFeed {
     mountEl.append(this.root);
     this.updatePositionFromAnchor();
     window.addEventListener("resize", this.resizeHandler);
-  }
-
-  setAnchorElement(anchorEl: HTMLElement | null): void {
-    this.anchorEl = anchorEl;
-    this.updatePositionFromAnchor();
   }
 
   prewarm(count = 1): void {
@@ -135,7 +131,7 @@ export class KillFeed {
     el.style.border = "1px solid rgba(255,255,255,0.08)";
     el.style.background = "rgba(8, 16, 28, 0.68)";
     el.style.boxShadow = "0 6px 16px rgba(0, 0, 0, 0.24)";
-    el.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    el.style.fontFamily = SANS_FONT;
     el.style.fontSize = "14px";
     el.style.fontWeight = "700";
     el.style.lineHeight = "1.1";

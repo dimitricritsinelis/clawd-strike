@@ -3,58 +3,89 @@ name: CI
 on:
   pull_request:
   push:
+    branches: [main]
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Superseded PR runs are cancelled; every push to main keeps its own result.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: clawdstrike_test
+          POSTGRES_PASSWORD: local-ci-fixture
+          POSTGRES_DB: clawdstrike_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U clawdstrike_test -d clawdstrike_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Setup PNPM
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.28.2
+      # Reads the pnpm version from packageManager in package.json.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v6
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: pnpm
 
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Install Playwright Browsers
-        run: pnpm --filter @clawd-strike/client exec playwright install chromium
+      - name: Install Playwright Chromium
+        run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
 
-      - name: Generate runtime maps
-        run: pnpm --filter @clawd-strike/client gen:maps
-
-      - name: Verify runtime maps are up to date
-        run: git diff --exit-code -- apps/client/public/maps
+      - name: Runtime maps are up to date
+        run: pnpm check:maps
 
       - name: Typecheck
         run: pnpm typecheck
 
-      - name: Map Tooling Tests
-        run: pnpm test:map-tooling
+      - name: Unused files, exports and dependencies
+        run: pnpm lint:unused
 
-      - name: QA Tooling Tests
-        run: pnpm test:qa-tooling
+      - name: Unit, tooling and server tests
+        run: pnpm test
 
-      - name: Map Runtime Tests
-        run: pnpm test:map-runtime
+      - name: PostgreSQL integration
+        run: pnpm test:postgres
+        env:
+          TEST_POSTGRES_URL: postgres://clawdstrike_test:local-ci-fixture@127.0.0.1:5432/clawdstrike_test
 
-      - name: Validate STM
-        run: pnpm stm -- validate
-
-      - name: Server Tests
-        run: pnpm test:server
-
-      - name: Game Smoke
-        run: pnpm smoke:game
+      - name: Game smoke
+        run: pnpm test:e2e:smoke
+        env:
+          # Eight real texture-stability frames exceed 20s on software GL.
+          # Keep individual frame/read and overall test deadlines unchanged.
+          QA_ASSET_READY_TIMEOUT_MS: 60000
 
       - name: Build
         run: pnpm build
+
+      - name: Upload browser diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: browser-diagnostics
+          path: |
+            apps/client/test-results/
+            artifacts/playwright/
+          if-no-files-found: ignore
+          retention-days: 7

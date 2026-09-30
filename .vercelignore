@@ -1,10 +1,13 @@
-artifacts
-output
-art-source
+# Files Vercel never needs to build or serve. Build inputs (apps/, api/,
+# server/, scripts/ and the map source data) must stay deployable.
 .git
 .claude
-.DS_Store
-.clawdstrike-dev.log
-.env.local
-.env.preview.local
-.env.production.local
+.codex
+.env*
+artifacts
+output
+tmp
+assets/source
+/docs
+apps/client/dist
+**/test-results

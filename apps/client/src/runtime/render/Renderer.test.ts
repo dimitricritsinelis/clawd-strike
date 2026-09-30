@@ -1,23 +1,172 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
-import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
-import { createClothGeometry } from "../map/propFamilies/signsAwnings";
-import { constrainAoOccluders } from "./Renderer";
+import { PerspectiveCamera, Scene, Vector2, type WebGLRenderer } from "three";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { attachComposerDepth, Renderer } from "./Renderer";
+import { SceneDepthGtaoPass } from "./SceneDepthGtaoPass";
 
-test("AO depth includes the visible canopy underside before background architecture", () => {
-  const pass = new GTAOPass(new Scene(), new PerspectiveCamera(), 32, 32);
-  const geometry = createClothGeometry();
-  const cloth = new Mesh(geometry, pass.normalMaterial);
-  const ray = new Raycaster(new Vector3(0.11, -20, 0.1), new Vector3(0, 1, 0));
+test("software draw completion bounds queued frames without touching hardware submission", () => {
+  const calls: string[] = [];
+  let status = 0x911b; // TIMEOUT_EXPIRED
+  const fence = {};
+  const gl = {
+    TIMEOUT_EXPIRED: 0x911b, WAIT_FAILED: 0x911d, SYNC_GPU_COMMANDS_COMPLETE: 0x9117,
+    fenceSync: () => { calls.push("fence"); return fence; },
+    flush: () => { calls.push("flush"); },
+    clientWaitSync: (_fence: unknown, flags: number, timeout: number) => {
+      assert.equal(flags, 0); assert.equal(timeout, 0, "polling must not block JavaScript");
+      calls.push("poll"); return status;
+    },
+    deleteSync: () => { calls.push("delete"); },
+  };
+  const renderer = {
+    info: { reset: () => {} },
+    render: () => { calls.push("draw"); },
+    getContext: () => gl,
+  };
+  const subject = Object.create(Renderer.prototype) as Renderer;
+  Object.assign(subject, { renderer, softwareRendering: true, softwareFrameFence: null,
+    dynamicResolution: null, composer: null, contextLost: false });
+  const scene = new Scene();
+  const camera = new PerspectiveCamera();
+  assert.equal(subject.isFrameReady(), true);
+  subject.renderWithViewModel(scene, camera, null, null, false);
+  assert.deepEqual(calls, ["draw", "fence", "flush"]);
+  assert.equal(subject.isFrameReady(), false, "an unfinished GPU frame prevents another real-time draw");
+  status = 0x911a; // ALREADY_SIGNALED
+  assert.equal(subject.isFrameReady(), true);
+  assert.equal(calls.at(-1), "delete", "retired fences must be released");
+  calls.length = 0;
+  Object.assign(subject, { softwareRendering: false });
+  subject.renderWithViewModel(scene, camera, null, null, false);
+  assert.equal(subject.isFrameReady(), true);
+  assert.deepEqual(calls, ["draw"], "hardware must retain its normal asynchronous submission");
+});
+
+test("AO reads the beauty depth and runs its horizon search on the CSS grid", () => {
+  const renderer = {
+    getPixelRatio: () => 2,
+    getSize: (size: Vector2) => size.set(600, 400),
+  };
+  const composer = new EffectComposer(renderer as unknown as WebGLRenderer);
+  const ao = new SceneDepthGtaoPass(1, 1);
   try {
-    assert.equal(ray.intersectObject(cloth).length, 0, "fixture must reproduce the omitted underside");
-    constrainAoOccluders(pass);
-    const hits = ray.intersectObject(cloth);
-    assert.ok(hits.length > 0, "AO must stop at the cloth seen by the player below it");
-    assert.ok(hits[0]!.distance < 20, "background surfaces must remain behind the cloth depth");
+    attachComposerDepth(composer);
+    assert.ok(composer.renderTarget1.depthTexture && composer.renderTarget2.depthTexture,
+      "both ping-pong targets must expose the depth the player sees");
+    assert.equal((ao as unknown as { _renderGBuffer: boolean })._renderGBuffer, false,
+      "AO must not re-render the world into its own G-buffer");
+    ao.aoPixelRatio = 1;
+    ao.setDevicePixelRatio(2);
+    ao.setSize(1200, 800);
+    assert.deepEqual([ao.width, ao.height], [1200, 800], "the pass keeps device-pixel dimensions");
+    assert.deepEqual([ao.gtaoRenderTarget.width, ao.gtaoRenderTarget.height], [600, 400]);
+    assert.deepEqual([ao.pdRenderTarget.width, ao.pdRenderTarget.height], [600, 400]);
+    ao.setDevicePixelRatio(1);
+    assert.deepEqual([ao.gtaoRenderTarget.width, ao.gtaoRenderTarget.height], [1200, 800],
+      "at 1x the horizon search stays at full resolution");
   } finally {
-    geometry.dispose();
-    pass.dispose();
+    ao.dispose();
+    composer.dispose();
+  }
+});
+
+test("composer resize preserves supported MSAA and effective DPR across targets and AO", () => {
+  const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, "window");
+  const viewport = { devicePixelRatio: 2, innerWidth: 800, innerHeight: 500 };
+  Object.defineProperty(globalThis, "window", { value: viewport, configurable: true });
+  const mount = { clientWidth: 800, clientHeight: 500 };
+  let pixelRatio = 1;
+  let colorSamples: Int32Array | null = new Int32Array([8, 4, 2]);
+  let depthSamples: Int32Array | null = new Int32Array([4, 2]);
+  let queries = 0;
+  const gl = {
+    RENDERBUFFER: 0x8d41, RGBA16F: 0x881a, DEPTH_COMPONENT24: 0x81a6, SAMPLES: 0x80a9,
+    getInternalformatParameter: (_target: number, format: number) => {
+      queries += 1;
+      return format === 0x881a ? colorSamples : depthSamples;
+    },
+  };
+  let context: typeof gl | object = gl;
+  const renderer = {
+    capabilities: { maxSamples: 8 },
+    getContext: () => context,
+    getPixelRatio: () => pixelRatio,
+    setPixelRatio: (value: number) => { pixelRatio = value; },
+    getSize: (size: Vector2) => size.set(mount.clientWidth, mount.clientHeight),
+    setSize: () => {},
+  };
+  const composer = new EffectComposer(renderer as unknown as WebGLRenderer);
+  const ao = new SceneDepthGtaoPass(1, 1);
+  composer.addPass(ao);
+  const resolution = new Vector2();
+  const subject = Object.create(Renderer.prototype) as Renderer;
+  Object.assign(subject, {
+    renderer, composer, aoPass: ao, mountEl: mount, effectiveMaxPixelRatio: 1.1,
+    goldenPostPass: { uniforms: { resolution: { value: resolution } } },
+  });
+  const targets = [composer.renderTarget1, composer.renderTarget2];
+  const disposals = [0, 0];
+  targets.forEach((target, index) => target.addEventListener("dispose", () => { disposals[index]! += 1; }));
+  try {
+    subject.resize();
+    assert.equal(pixelRatio, 1.1, "native Retina DPR must retain the existing cap");
+    assert.deepEqual(targets.map(target => target.samples), [4, 4]);
+    assert.ok(targets.every(target => Math.abs(target.width - 880) < 1e-6 && Math.abs(target.height - 550) < 1e-6));
+    assert.ok(Math.abs(ao.width - 880) < 1e-6);
+    assert.equal(ao.height, 550, "AO must not be reset to CSS dimensions");
+    assert.deepEqual(resolution.toArray(), [800 * 1.1, 500 * 1.1]);
+
+    colorSamples = new Int32Array([8, 4, 2]);
+    depthSamples = new Int32Array([2]);
+    renderer.capabilities.maxSamples = 3;
+    const previousDisposals = [...disposals];
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [2, 2], "use the shared format count below the hardware cap");
+    assert.deepEqual(disposals, previousDisposals.map(count => count + 1), "sample changes at unchanged size must recreate both targets");
+    const stableDisposals = [...disposals];
+    subject.resize();
+    assert.deepEqual(disposals, stableDisposals, "unchanged targets must not be discarded");
+
+    const hardwareQueries = queries;
+    Object.assign(subject, { softwareRendering: true });
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [0, 0], "software HDR targets must avoid the stalled multisample resolve path");
+    assert.equal(queries, hardwareQueries, "advertised software sample counts cannot establish resolve compatibility");
+    Object.assign(subject, { softwareRendering: false });
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [2, 2], "hardware MSAA remains enabled at the supported count");
+
+    mount.clientWidth = 600; mount.clientHeight = 400;
+    viewport.devicePixelRatio = 1;
+    subject.resize();
+    assert.ok(targets.every(target => target.width === 600 && target.height === 400));
+    assert.deepEqual([ao.width, ao.height], [600, 400]);
+    assert.deepEqual(resolution.toArray(), [600, 400]);
+
+    Object.assign(subject, { effectiveMaxPixelRatio: 2 });
+    viewport.devicePixelRatio = 3;
+    const previousQueries = queries;
+    subject.resize();
+    assert.equal(pixelRatio, 2);
+    assert.deepEqual(targets.map(target => target.samples), [0, 0], "actual supersampling retains the no-extra-AA policy");
+    assert.equal(queries, previousQueries);
+    assert.deepEqual([ao.width, ao.height], [1200, 800]);
+
+    viewport.devicePixelRatio = 1;
+    for (const [color, depth] of [[null, null], [[1], [1]], [[4], [2]]] as const) {
+      colorSamples = color ? new Int32Array(color) : null;
+      depthSamples = depth ? new Int32Array(depth) : null;
+      subject.resize();
+      assert.deepEqual(targets.map(target => target.samples), [0, 0], "unsupported, single-sample and incompatible formats must disable MSAA");
+    }
+    context = {};
+    subject.resize();
+    assert.deepEqual(targets.map(target => target.samples), [0, 0]);
+  } finally {
+    ao.dispose();
+    composer.dispose();
+    if (windowDescriptor) Object.defineProperty(globalThis, "window", windowDescriptor);
+    else Reflect.deleteProperty(globalThis, "window");
   }
 });

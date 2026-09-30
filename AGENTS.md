@@ -1,60 +1,53 @@
-Audience: implementation-agent
-Authority: normative
-Read when: implementation work
-Owns: durable repository-wide safeguards
-Do not use for: task status, map-polish procedure, or historical rationale
-Last updated: 2026-09-05
+# Repository instructions
 
-# AGENTS.md — Clawd Strike Operating Contract
+Clawd Strike is a browser FPS with an installed Bazaar map. Work from the current task and current source. The BZ-04 and R-round construction queues are archived at `archive/bazaar-map-dev`; those historical instructions do not authorize new construction or gameplay changes.
 
-## Task scope and instruction authority
+## Scope and verification
 
-- Apply this contract to repository work alongside global preferences. The user's explicit instructions define the current task; follow applicable system and developer instructions first.
-- Carry forward authorization and decisions within the current task. A follow-up question or status request does not revoke them. Do not infer implementation approval from a proposal or historical record.
-- Scale verification to the changed behavior. Documentation-only work needs document and diff checks, not captures. Map implementation is verified by the loop in the map-polish skill.
+Use the smallest complete change in the existing design. Preserve unrelated work. Use bounded subagents for independent work when they save time, assign disjoint files, and let one owner integrate shared registries. Serialize heavy Blender jobs and browser QA when they compete for the same machine.
 
-## Map development
+Before a PR, run the CI gates:
 
-- The loop is `.claude/skills/map-polish/SKILL.md`, run unattended by Codex with three roles: one orchestrator (GPT-6, xhigh) that owns scores, one stable brief per zone, integration, captures and keep/revert; one persistent builder per zone (GPT-6 Astra, high) that composes from `assets/source/facade_kit.py` with targeted custom geometry where the kit falls short; and a fresh judge per cycle (GPT-6 Astra, medium). No other subagents. Codex does not auto-load skill files: open them by path.
-- Two steps. Step 1 (prepare) shoots every zone, scores it 1 to 5 against the founding image and the CS2 references, and writes one brief per zone in `docs/map-design/briefs/` from the before shots and the design atlas cards; this is the only time `docs/map-design/development-plan/` is read. The user may edit scores and briefs between steps. Step 2 (execute) runs the loop from the briefs alone. The score sets the scope (skip, finish only, named walls, every wall). Composition before detail. A closing sweep judges the sixteen signoff cameras in `docs/map-design/shots.json`.
-- A cycle is: fresh `r-before`, `node scripts/apply-facade-package.mjs apply <unit>`, `r-after`, `critic/problems.md`, verdict per `.claude/skills/map-critic/SKILL.md`, keep or `revert`. Keep only when the after render wins, a named problem improved, and nothing regressed or blocks. `revert` restores the last accepted files. A zone never ends worse than it started.
-- Builders write only `assets/source/<unit>/` and hand over `package.json` with one section GLB per zone that owns only the faces it names (`zones[].sectionModelId` + `sectionFaces`); the kit keeps its details on every other face, so a section never silently removes work outside its scope. Each wall face has one owning zone. Materials are pack ids only; the GLB carries names and the runtime rebinds them to the kit's wall materials. The orchestrator is the only writer of `map_spec.json`, manifests and runtime code.
-- Scope without asking: everything render-only on the unit's faces (facades, upper volumes, cloth, awnings, signs, props). Shared systems (floor, sky, cloth canopy, prop library, shaders, lighting) and kit code deletion are logged in the row, not touched during a run.
-- Never ask the user during a run. Never write status prose. The progress table in `docs/map-design/development-plan/README.md` is the only record: unit, cycles, result, remaining gap.
-- `docs/map-design/development-plan/` is consumed into the briefs in step 1 and is not read during step 2. No building is frozen. Locked means the protected domain guarded by `pnpm map:check` plus the original textile booth files. On a guard failure, revert the package and continue.
-- Performance is one line per shoot (`perf worst view`). Act only on `OVER BUDGET`; aim under 25k triangles per facade. The run ends with `pnpm validate:map-layout` and `pnpm qa:completion` once. A command failing three times in a row is a tooling defect to fix inside the map scripts or a unit to skip, never a stall.
+```sh
+pnpm check:maps
+pnpm typecheck
+pnpm lint:unused
+pnpm test
+pnpm test:e2e:smoke
+pnpm build
+```
 
-## Branch and worktree safety
+For map or asset changes, also run `pnpm map:check`, affected browser specs, and the relevant traversal/capture checks in [development](docs/development.md). Inspect the full diff. Record failures and unavailable checks accurately. A passing build, collider snapshot, or screenshot metric does not establish visual quality, gameplay feel, physical-device performance, or audio quality.
 
-- Stay on the current branch and preserve unrelated worktree changes.
-- Keep one writer for shared files: the orchestrator. Builders write only inside their own `assets/source/<unit>/`. Do not run a second agent session against this checkout while a map run is active; concurrent edits trip the protected guard.
-- Before a Git operation that could change `HEAD`, inspect `git status --short` and `git branch --show-current`.
-- Change branches, commit, or push only when the user explicitly authorizes that action for the current task.
-- Never use destructive Git operations such as reset, clean, stash, or auto-stash, and never discard or overwrite unrelated changes. Never use checkout or restore as a rollback either. Revert your own edit by restoring the file from a snapshot taken before the edit (`map:shoot` before tags snapshot `map_spec.json`).
+## Invariants
 
-## Generated-file authority
+1. Colliders, routes, cover, spawns, playable elevation, and the protected fields/files in [mapGuard.ts](scripts/lib/mapGuard.ts) change only within an explicitly scoped task. Never weaken a check or reset its baseline to conceal a change. A protected-file report requires inspection even when the change is a refactor.
+2. [map_spec.json](apps/client/assets-src/maps/bazaar-map/map_spec.json) owns map source data. Use the existing schema and `scripts/assets/apply-facade-package.mjs` for supported asset installation. Regenerate with `pnpm --filter @clawd-strike/client gen:maps`.
+3. Do not hand-edit generated maps in `apps/client/public/maps/`, loading-screen derivatives in `apps/client/public/loading-screen/assets/`, or content-addressed facade textures. The atmosphere JSON is frozen generated data; its archived generator and inputs must be recovered together for regeneration. See [map](docs/map.md).
+4. Keep gameplay values and behavior documented in [skills.md](apps/client/public/skills.md) synchronized with code. Run the public-agent contract spec when those change and `pnpm verify:skills` against the intended deployment after release. The fingerprinted gameplay baseline contributes to `tuningRevision` and leaderboard board keys; changing it creates a new balance revision.
+5. Reload timing lives in [ak47ReloadMarks.ts](apps/client/src/runtime/weapons/ak47ReloadMarks.ts). Rebuild the clip and asset after changing it. Preserve the TypeScript literal forms parsed by the Blender exporter; [weapons](docs/weapons.md) identifies them.
+6. Record each shipped asset's source, author when known, license evidence, and transformations in its provenance or source manifest. Add third-party entries to [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). A manifest entry alone does not prove an asset is used or loaded. Keep review exports and unused sidecars out of `public/`.
+7. New AI-generated meshes or images need owner approval and a provenance/notice entry before shipping. Existing recorded assets do not authorize unrelated generation. Preserve the Latin-label art direction; do not add invented or pseudo-Arabic lettering.
+8. Never commit credentials or `.env*` files other than an explicitly requested example. Do not read or modify production configuration without authorization.
+9. Keep captures, temporary reports, and review outputs in ignored `artifacts/` or outside the checkout. Never claim historical evidence as a fresh verification.
+10. Remove a replaced runtime path with its replacement. Do not introduce permanent enable flags or legacy URL forks to retain dead code.
 
-- `docs/map-design/specs/map_spec.json` is map authority. `docs/map-design/shots.json` owns the authored fixed signoff cameras; the per-unit review cameras used by `pnpm map:shoot` are derived from the spec and do not belong there.
-- Generated map files, layout references, top-down views, screenshots, and other artifacts are evidence, not authority.
-- Regenerate map outputs with `pnpm map:check` (or `pnpm --filter @clawd-strike/client gen:maps` and `gen:layout-reference`). Never hand-edit generated map files.
+## Integration traps
 
-## Determinism and asset provenance
+- Playwright specs are typechecked, but runtime module imports expressed as URL strings still need the affected browser tests after renames.
+- `gameplayTuning.ts` must remain importable in Node; helpers used by workers must not depend on browser-only globals.
+- Some asset and readiness tests inspect source text. Check those consumers before moving literals or paths.
+- The map generator's path is recorded in the provenance schema. Move all consumers and the schema together if a task explicitly changes it.
+- Vite's development API always injects an in-memory store. A local env file does not turn it into the deployed Postgres API.
+- Use headless Blender for reproducible asset builds. Never save over the user's live scene. Confirm a live MCP connection before relying on it; machine setup in an old log is not current evidence.
 
-- Preserve deterministic behavior, stable seeds, and stable generation order. Use the repository's `DeterministicRng` path for seeded visual variation; do not introduce unseeded procedural variation.
-- New external textures and models must be CC0 and recorded in the owning manifest with source, license, and MD5 provenance. Project-original GLBs record their `build.py` source and dependencies the same way.
+## Documentation ownership
 
-## Gameplay and system safety
-
-- During map-visual work, broadly preserve layout, collision, traversal surfaces, spawns, routes, cover, sightlines, player movement, and combat unless the user explicitly changes that scope for the current task.
-- Local structural composition, render-only geometry, materials, openings, attachments, props, dressing, and directly coupled shared visual systems may change when those safeguards remain intact.
-- Render-only work must not silently change navigation, player or bot grounding, projectile collision, line of sight, opening clearance, or practical route width.
-
-## Movement paths stay clear
-
-Preserving traversal is not enough on its own. Anything placed in or near a route must also leave the path a player actually walks genuinely clear.
-
-- Keep the walking envelope clear of geometry, props, and dressing. The authored clearances in `constraints` in `docs/map-design/specs/map_spec.json` are the floor, not the target; `no_block_zone` also requires dressing clusters to sit at authored edges.
-- This applies whether or not the object collides. A colliding prop snags movement; a non-colliding one lets the player walk through it, which is a worse visual failure than not placing it at all.
-- Clearance is measured through the whole body volume a player occupies while moving, not just at the object's own footprint: check standing and crouched height, the swept path through doorways, corners, and stair or ramp transitions, and the inside line of every turn.
-- None of this is a reason to under-dress a section. Density belongs against wall bases, in recesses and alcoves, on counters and sills, on the outside of turns, and above head height. Push dressing to the edges rather than removing it.
-- Fixed-camera review cannot detect this class of defect, because a still frame does not move through the space. The facade loader warns when relief below head height exceeds 0.35 m; the run's closing `validate:map-layout` and the critic's route views cover the rest.
+| Change | Update |
+|---|---|
+| Runtime structure | [Architecture](docs/architecture.md) |
+| Commands or QA | README and [development](docs/development.md) |
+| Map or clearance | [Map](docs/map.md) |
+| Asset pipeline or provenance | [Assets](docs/assets.md) and notices |
+| Weapon timing or tuning | [Weapons](docs/weapons.md), plus the public contract when applicable |
+| Backend environment or operations | [Deployment](docs/deployment.md) |

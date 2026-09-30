@@ -1,0 +1,140 @@
+{
+ "magazine": {
+  "theta": 0,
+  "offset": [
+   0,
+   0,
+   0
+  ]
+ },
+ "hand_in_mag": {
+  "matrix": [
+   [
+    0.6751829400387419,
+    0.6032537792047742,
+    -0.42451487059441956,
+    -0.03701120215959191
+   ],
+   [
+    -0.123864705902595,
+    -0.4746057570146766,
+    -0.8714395618975473,
+    0.11697720051567405
+   ],
+   [
+    -0.7271764105857006,
+    0.6409635350655154,
+    -0.24572385843465397,
+    -0.15916744860554763
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ]
+ },
+ "anatomy": {
+  "index": {
+   "mcp": 11.2,
+   "mcp_abduct": 2.0,
+   "pip": 24.7,
+   "dip": 13.1
+  },
+  "middle": {
+   "mcp": 18.1,
+   "mcp_abduct": -1.2,
+   "pip": 38.8,
+   "dip": 19.3
+  },
+  "ring": {
+   "mcp": 22.8,
+   "mcp_abduct": -2.8,
+   "pip": 45.6,
+   "dip": 19.4
+  },
+  "pinky": {
+   "mcp": 25.8,
+   "mcp_abduct": -2.3,
+   "pip": 45.1,
+   "dip": 22.1
+  },
+  "thumb": {
+   "cmc_flex": -13.6,
+   "cmc_abduct": 35.6,
+   "cmc_rot": 8.4,
+   "mcp": 16.0,
+   "ip": 18.2
+  }
+ },
+ "arm": {
+  "forearm_roll_deg": 151.5,
+  "forearm_roll_split": 0.25,
+  "pole_offset": [
+   0,
+   0.05,
+   -0.15
+  ]
+ },
+ "_meta": {
+  "concept": "B power grip (refined)",
+  "arm_note": "The wrist cannot twist. The bake/IK must put the hand roll into the forearm: rotate L_forearm.001 by (1-split)*forearm_roll_deg and L_forearm by split*forearm_roll_deg about their local +Y (render.py applies this; 'auto' solves it so wrist twist = 0). pole_offset (m, rig space) is added to the reload bake's elbow pole for that phase.",
+  "description": "Travel/pre-grip key at the removal placement: the removal grip opened ~80% toward a relaxed cascade and backed off 35 mm along the palm normal (plus 9 mm forward, 22 mm down so the index clears the receiver) so the fingers pass in front of the front edge; thumb pre-shaped toward the paddle.",
+  "measured": {
+   "wrist_flex_deg": -42.4,
+   "wrist_radial(-)/ulnar(+)_dev_deg": 14.5,
+   "wrist_twist_deg": 0.0,
+   "palm_vs_elbowflex_angle_deg": 19.0,
+   "digits": {
+    "f_ring": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    },
+    "f_index": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    },
+    "thumb": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    },
+    "f_pinky": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    },
+    "f_middle": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 0
+    }
+   },
+   "rifle_contact": {},
+   "thumb_pad_dir_rig": [
+    0.914,
+    -0.172,
+    -0.368
+   ],
+   "thumb03_head_tail_rig": [
+    [
+     -0.0505,
+     0.0532,
+     -0.017
+    ],
+    [
+     -0.0484,
+     0.0343,
+     -0.0032
+    ]
+   ],
+   "wristErrorMm": 0.049
+  },
+  "elbow": "Uses pole_offset (0, 0.05, -0.15), same as REMOVE.",
+  "previous_version": "fix2/backup/reach.json",
+  "fix2": "Regenerated from the fix2 REMOVE (fix2/mkreach2.py): removal grip opened 80% toward the relaxed cascade (thumb target re-coupled to cmc_rot 8 so it stays consistent with CMC extension), hand backed off 40 mm along the palm normal plus 9 mm forward and 22 mm down (was 35 mm; 40 keeps the pinky 3.3 mm clear of the new front-edge line)."
+ }
+}

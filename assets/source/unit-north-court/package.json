@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_north_court",
+      "file": "roof-bundle-north-court.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_north_court",
+      "file": "unit-north-court.glb",
+      "source": "repo://assets/source/unit-north-court/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "NORTH_COURT",
+    "modelId": "section_unit_north_court",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_NORTH_COURT",
+      "modelId": "bz04_roof_bundle_unit_north_court",
+      "position": {
+        "x": 47.05,
+        "y": 72.8,
+        "z": 7.1
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "e877281f51aeda56d0b2a407dc8d7e90341610de6cf494ca88f269b938077b70"
+}

@@ -1,14 +1,14 @@
 {
-  "name": "AK47 Urban Breacher left-hand idle viewmodel",
+  "name": "AK47 Urban Breacher two-hand viewmodel",
   "source": "repo://assets/source/ak47/build.py",
-  "sourceMd5": "da0c48cd57ebbe1ebae5cfc0dc471d3f",
+  "sourceMd5": "e6067f2bbcb1b604241640acaf9812d7",
   "blendSource": "repo://assets/source/ak47/ak47.blend",
-  "blendMd5": "b731238885ab96bc324924960331620f",
+  "blendMd5": "158c28232c170ce1a608c4da6506aa19",
   "maxEmbeddedTextureSize": 2048,
   "license": "Existing AK: CC-BY-NC-4.0; hand topology: CC0; new rig and finish: project-original",
   "dependencies": [
     {
-      "file": "apps/client/public/assets/models/weapons/ak47/ak47.glb",
+      "file": "assets/source/ak47/legacy/ak47.glb",
       "source": "https://sketchfab.com/3d-models/ak-47-384565b1779c450b90397232163e4e6d",
       "author": "lokeig",
       "license": "CC-BY-NC-4.0",
@@ -113,106 +113,282 @@
         "asset": "https://polyhaven.com/a/leather_white",
         "license": "CC0-1.0",
         "md5": "5a54f45b5a2cd0d2605f13e3d14fddc9"
+      },
+      {
+        "file": "assets/source/ak47/textures/bi_stretch_diff_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bi_stretch/bi_stretch_diff_2k.jpg",
+        "asset": "https://polyhaven.com/a/bi_stretch",
+        "license": "CC0-1.0",
+        "md5": "8da4c43c744ecd0ec2bb62deb95f2287"
+      },
+      {
+        "file": "assets/source/ak47/textures/bi_stretch_nor_gl_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bi_stretch/bi_stretch_nor_gl_2k.jpg",
+        "asset": "https://polyhaven.com/a/bi_stretch",
+        "license": "CC0-1.0",
+        "md5": "c036b4841c2b2e7da46706b79ea070aa"
+      },
+      {
+        "file": "assets/source/ak47/textures/bi_stretch_arm_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/bi_stretch/bi_stretch_arm_2k.jpg",
+        "asset": "https://polyhaven.com/a/bi_stretch",
+        "license": "CC0-1.0",
+        "md5": "801609977d58cae821776bbb03221e62"
+      },
+      {
+        "file": "assets/source/ak47/textures/scuba_suede_diff_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/scuba_suede/scuba_suede_diff_2k.jpg",
+        "asset": "https://polyhaven.com/a/scuba_suede",
+        "license": "CC0-1.0",
+        "md5": "1cfa0ca16f7b3339bbe16aeef10835e7"
+      },
+      {
+        "file": "assets/source/ak47/textures/scuba_suede_nor_gl_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/scuba_suede/scuba_suede_nor_gl_2k.jpg",
+        "asset": "https://polyhaven.com/a/scuba_suede",
+        "license": "CC0-1.0",
+        "md5": "d2ba39357e70c8b6a92e2cfc99458a07"
+      },
+      {
+        "file": "assets/source/ak47/textures/scuba_suede_arm_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/scuba_suede/scuba_suede_arm_2k.jpg",
+        "asset": "https://polyhaven.com/a/scuba_suede",
+        "license": "CC0-1.0",
+        "md5": "62f0ea101a1db997fb8ef37f150d1d2b"
+      },
+      {
+        "file": "assets/source/ak47/textures/jersey_melange_diff_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jersey_melange/jersey_melange_diff_2k.jpg",
+        "asset": "https://polyhaven.com/a/jersey_melange",
+        "license": "CC0-1.0",
+        "md5": "627563d04a347af78d35e5a7a586b4a3"
+      },
+      {
+        "file": "assets/source/ak47/textures/jersey_melange_nor_gl_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jersey_melange/jersey_melange_nor_gl_2k.jpg",
+        "asset": "https://polyhaven.com/a/jersey_melange",
+        "license": "CC0-1.0",
+        "md5": "b9f7ccb2870016b3f2d0709242e4f8da"
+      },
+      {
+        "file": "assets/source/ak47/textures/jersey_melange_arm_2k.jpg",
+        "source": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/2k/jersey_melange/jersey_melange_arm_2k.jpg",
+        "asset": "https://polyhaven.com/a/jersey_melange",
+        "license": "CC0-1.0",
+        "md5": "8cccf022b620b96da272e54472abaa37"
       }
     ],
     "textures": [
       {
-        "file": "assets/source/ak47/textures/close-leather-roughness.png",
-        "md5": "e5ad1448750b833f31771d40b7fd25f4"
+        "file": "assets/source/ak47/textures/v2-rifle-atlas-color.png",
+        "md5": "db34e2893a7e9640ae2e732dfcebcfee"
       },
       {
-        "file": "assets/source/ak47/textures/close-ripstop-normal.png",
-        "md5": "0f13c4f628ec3311fb91f6e27f59a080"
+        "file": "assets/source/ak47/textures/v2-rifle-atlas-orm.png",
+        "md5": "79207a8e6df0cb975e98af2dd7d71d00"
       },
       {
-        "file": "assets/source/ak47/textures/close-ripstop-roughness.png",
-        "md5": "78949ea2c00d18d7ca668e761e4e7d23"
+        "file": "assets/source/ak47/textures/v2-walnut-color.png",
+        "md5": "332c756b7e627a5cd0f449dcfb2ef015"
       },
       {
-        "file": "assets/source/ak47/textures/close-walnut-roughness.png",
-        "md5": "17d3c56912d6b5f465997cba60d2af4e"
+        "file": "assets/source/ak47/textures/v3-glove-color.png",
+        "md5": "afdbc44146ca9d5afaa2af133aa070b4"
       },
       {
-        "file": "assets/source/ak47/textures/khaki-ripstop-sleeve-color.png",
-        "md5": "8f97fd5c0e22b3a337edb6565a39bd86"
+        "file": "assets/source/ak47/textures/v3-glove-normal.png",
+        "md5": "9225a333bd1cb3de392ee045c6823e3b"
       },
       {
-        "file": "assets/source/ak47/textures/navy-rolled-binding-color.png",
-        "md5": "82dc1addc88ef58fc4d3bba6c7523226"
+        "file": "assets/source/ak47/textures/v3-glove-orm.png",
+        "md5": "917753af59a0a4165d0462eebeba4ee4"
       },
       {
-        "file": "assets/source/ak47/textures/saddle-leather-closure-color.png",
-        "md5": "b28313215258358fc0805fe4afecfc6d"
+        "file": "assets/source/ak47/textures/v3-sleeve-color.png",
+        "md5": "80fa617a84f74d465d8006871d6ad409"
       },
       {
-        "file": "assets/source/ak47/textures/tailored-graphite-suede-reinforcement-color.png",
-        "md5": "1235856bbd0f2616f67a002e6eb602f7"
+        "file": "assets/source/ak47/textures/v3-sleeve-normal.png",
+        "md5": "800dfe65d65bf326d30a5b8692dbbc7b"
       },
       {
-        "file": "assets/source/ak47/textures/tailored-graphite-suede-reinforcement-roughness.png",
-        "md5": "8c209390e0a602d7c8edaba9ebb3e686"
+        "file": "assets/source/ak47/textures/v3-sleeve-orm.png",
+        "md5": "3a185b7ae79010257ebe940a909491f7"
       },
       {
-        "file": "assets/source/ak47/textures/tailored-urban-breacher-glove-color.png",
-        "md5": "36444b57ba964ee5509fe2bf769b8132"
+        "file": "assets/source/ak47/textures/v3-trim-color.png",
+        "md5": "92414e0d5acab89fafb42a3fd494a0c5"
       },
       {
-        "file": "assets/source/ak47/textures/tailored-urban-breacher-glove-roughness.png",
-        "md5": "29af808d066b58ee9c3983728556d981"
+        "file": "assets/source/ak47/textures/v3-trim-normal.png",
+        "md5": "de0807c98b1940e12a9928405bf9cb2a"
       },
       {
-        "file": "assets/source/ak47/textures/urban-b-occlusion.png",
-        "md5": "573e1e153189f34fa9a4749c597f83c4"
+        "file": "assets/source/ak47/textures/v3-trim-orm.png",
+        "md5": "e906eafd28863203c44ec767b5e44b87"
       }
     ],
-    "construction": "Subdivided anatomical glove, fine matte suede, continuous palm/thumb/fingertip reinforcement with double stitching, sewn leather closure and pull tab, rolled cuff binding, tailored ripstop sleeve, machined rifle edge radii",
-    "runtimeLighting": "4096px animated self-shadows, 16x anisotropic filtering, reduced environment fill"
+    "construction": "Decimated anatomical glove with continuous palm/thumb/fingertip reinforcement, double stitching, sewn closure and pull tab, rolled cuff binding, tailored ripstop sleeve, machined rifle edge radii; glove, trims and sleeve finished by glove_finish.py (below)",
+    "runtimeLighting": "World-sampled sun key with shade detection, 2048px animated self-shadows, 16x anisotropic filtering"
+  },
+  "gloveFinish": {
+    "source": "repo://assets/source/ak47/glove_finish.py",
+    "sourceMd5": "c2fa1f97c06e6ede43161155feeeb8fa",
+    "report": {
+      "guards": {
+        "Moulded knuckle guard": 3148,
+        "Index finger guard": 258,
+        "Middle finger guard": 362,
+        "Ring finger guard": 378,
+        "Little finger guard": 204,
+        "Thumb guard": 414
+      },
+      "cuffEdgeMm": [
+        35.56,
+        55.21
+      ],
+      "sleeveTriangles": {
+        "L": 6861,
+        "R": 6872
+      },
+      "hiddenIslandsShrunk": {
+        "Palm heel suede overlay": 69,
+        "Palm overlay rolled seam": 108,
+        "Rolled cuff edge": 7,
+        "Rolled cuff edge.001": 7,
+        "Raised tan wrist closure": 2,
+        "Raised tan closure pull tab": 1
+      },
+      "sleeveMetresPerUv": 0.5395,
+      "contactOcclusionMin": 0.075,
+      "glove": {
+        "coverage": 0.298,
+        "texelMm": 0.1435
+      },
+      "trim": {
+        "coverage": 0.375,
+        "texelMm": 0.1468
+      },
+      "palmPad": {
+        "alongMm": [
+          6.5,
+          100.4
+        ],
+        "acrossMm": [
+          -35.9,
+          52.4
+        ],
+        "texels": 268976
+      },
+      "sleeve": {
+        "coverage": 0.466,
+        "texelMm": 0.2398
+      },
+      "armTriangles": 121154
+    },
+    "construction": "Moulded TPR knuckle guards (four-segment MCP bridge, flex-grooved proximal and thumb guards) on both hands; compression folds displaced into the sleeve at the cuff; charcoal knit shell with side seams, stitch rows, PIP accordion flex ribs and joint creases; ribbed elastic cuff; wolf-grey synthetic suede palm with flexion creases, silicone fingertip grip print and contact abrasion; quilted graphite dorsal panel with a printed claw mark; coyote hook-and-loop strap and embossed rubber pull tab; charcoal knit binding; olive ripstop sleeve with fold creases, drape folds, fading and dust",
+    "bakes": "Cycles in the rest pose: per-texel surface position and normal, ambient occlusion with every arm part present, high-to-low tangent normals and curvature of the sculpted guards; idle-pose contact occlusion of the left glove (with over without the rifle). The sculpt layer is evaluated on the baked surface and converted to tangent normals and cavity",
+    "atlases": "Glove (UVMap), trims and guards (BakeUV), sleeve (cylindrical BakeUV), each 2048 px colour, normal and ORM shared by both hands; ORM blue carries the left glove contact occlusion (metallic factor 0)",
+    "materials": "KHR_materials_sheen on the knit shell, cuff, suede, binding, strap and sleeve; persistent glTF occlusion on every arm material; the runtime multiplies the contact term in and fades it while the hand is away"
   },
   "coordinates": "Metres; Blender +X forward, +Z up, -Y right; glTF +X forward, +Y up, +Z right",
   "runtimePose": {
     "position": [
-      0.151,
-      -0.143,
+      0.147,
+      -0.128,
       -0.3
     ],
     "roll": -0.065,
+    "scale": 0.9,
     "modelYaw": 1.5707963267948966,
-    "verticalFov": 54,
-    "aspect": 1.7777777777777777
+    "verticalFov": 54.0,
+    "aspect": 1.7777777777777777,
+    "source": "repo://apps/client/src/runtime/weapons/Ak47AnimatedViewModel.ts"
   },
   "attachments": [
     "MuzzleSocket",
     "EjectionSocket",
     "SupportGripAnchor",
-    "RightGripAnchor (marker only)",
+    "RightGripAnchor",
+    "GripHand",
     "MagazineSeatedAnchor",
     "MagazineGripAnchor",
     "ThumbPadContact",
     "ThumbPadContact1",
     "ThumbPadContact2"
   ],
+  "rightHand": {
+    "source": "repo://assets/source/ak47/right_hand.py",
+    "sourceMd5": "4a4eda9fec83512f6e689ab1534483c4",
+    "construction": "Accepted left glove and skeleton mirrored into a right hand with corrected face winding; guards lifted onto the right glove from the left patches; trims sample the left atlases through the mirror",
+    "grip": "Right/rear palm support, three curled fingers on the pistol grip, opposed thumb, index pad resting against the trigger",
+    "animation": "Rigid pistol-grip contact throughout idle, firing and reload"
+  },
   "animations": [
     "Idle",
     "Fire",
     "Reload"
   ],
   "reload": {
-    "source": "repo://assets/source/ak47/reload.py",
-    "sourceMd5": "bbccd5caf1fe29eb66b76180c3a3928a",
-    "durationSeconds": 1.225,
-    "contactFrames": [
-      33,
-      119
-    ],
-    "magazineMotion": "Existing magazine path and keyframes preserved",
-    "handMotion": "Release fore-end, reach, opposed thumb/finger grip, follow magazine, release and return to approved idle",
-    "thumbMotion": "Shallow forward curl with three measured skin points against the broad left magazine face; pad normal faces into the metal; relaxed opening without thumb flare; idle fore-end contact preserved",
-    "contactShading": "Idle occlusion fades during hand travel; live self-shadows follow the reload"
+    "source": "repo://assets/source/ak47/viewmodel_v2.py",
+    "sourceMd5": "7b915f23dde918c14d6b5e2a1764a302",
+    "clips": {
+      "Reload": 1.7
+    },
+    "timeline": "repo://apps/client/src/runtime/weapons/ak47ReloadMarks.ts",
+    "audioMarks": {
+      "leaveHandguard": 0.0,
+      "grip": 0.24,
+      "release": 0.3,
+      "rockedOut": 0.42,
+      "drop": 0.56,
+      "newMagazineInView": 0.76,
+      "hook": 0.98,
+      "latch": 1.1,
+      "gripOpens": 1.16,
+      "handOnHandguard": 1.4,
+      "end": 1.7
+    },
+    "sequence": "Magazine change only, no charging handle: the support hand drops off the handguard as a loose grasp and seats on the magazine with a short slide, fingers wrapped round the front edge; the thumb tip reaches back to the paddle and presses it into the release click while the hand stays put; right after the click the thumb comes off the paddle round the rear corner and is curled on the magazine's near face by release + 35 ms, so the magazine is held between thumb and fingers; the magazine rocks forward about its front lug while the pull down and back-left carries it out of the bottom-left of frame; the fresh magazine (top round showing) is held the same way, thumb curled on its near face, comes up on one front-loaded arc from off screen, slows into the lug hook (thumb press), rocks back into the latch (rounds count from the latch), a seat tap with a thumb press, then the grip opens, the hand returns and the rifle untilts with a damped overshoot",
+    "magazines": "Magazine rocks about its front lug (0.008, 0, 0.055) in AK47_Rig space; MagazineSpare is the fresh magazine with a MagazineSpare_TopRound child; the two swap invisibly at the latch, co-located at the seat",
+    "rifleMotion": "Tilt and presentation authored in the clip on AK47_Rig, pivoting about the pistol grip, with small damped reactions to the paddle push, the yank, the incoming magazine, the hook, the pre-seat anticipation and the seat tap; no runtime procedural tilt",
+    "handMotion": "Left arm solved by IK against hand targets with the shoulder held in camera space, baked to FK; the forearm carries the full roll (wrist twist 0), 0.65 of it at L_forearm and the remaining 0.35 at the L_forearm.001 twist bone; transitions travel arc-length paths at one speed profile with the wrist relation to the forearm interpolated; digit clearance and triangle crossings checked under the exported 4-influence skinning",
+    "grips": {
+      "helper": {
+        "file": "assets/source/ak47/hand_pose.py",
+        "md5": "bee44db6206f96546a2f849df19cde04",
+        "usage": "Anatomical joint angles to digit quaternions (thumb MCP/IP flex about the calibrated pad hinge)"
+      },
+      "specs": [
+        {
+          "file": "assets/source/ak47/grips/idle.json",
+          "md5": "0fe202ff7d0cfcc79d7ed399fc49c99c"
+        },
+        {
+          "file": "assets/source/ak47/grips/insert.json",
+          "md5": "dd99510322dea75117ec92197f03372d"
+        },
+        {
+          "file": "assets/source/ak47/grips/reach.json",
+          "md5": "8c68c964dc487159abd2dafc044b12d7"
+        },
+        {
+          "file": "assets/source/ak47/grips/reload-fit.json",
+          "md5": "d45d7be8a2b56b9a32cbb009816380f6"
+        },
+        {
+          "file": "assets/source/ak47/grips/remove.json",
+          "md5": "5117b588d2a2e7564035d21783ad8302"
+        }
+      ],
+      "usage": "reload-fit (v3): the magazine grips in use (hand_in_mag, fingers, thumb hold/press/via/hover/squeeze/let-go states, travel shape, rifle tilt, pull path), fitted under the exported skinning; remove/insert/reach: the earlier approved grips, kept for provenance (superseded placement and thumb); idle: re-authored handguard support grip and its placement off the wood"
+    },
+    "armTriangles": "121154 for both arms with the guards and sleeve folds (source 634k)"
   },
   "files": [
     {
       "file": "ak47.glb",
-      "md5": "f019dfc535b76bc8ec43db58e9a17e3d"
+      "md5": "1751717771dec9401226bcf3fe8e9387"
     }
   ]
 }

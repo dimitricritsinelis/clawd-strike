@@ -1,4 +1,8 @@
 {
+  // Editor and tsx config: every client TypeScript file, with Node and DOM
+  // types, as tsserver and the unit-test runner see it. pnpm typecheck runs it
+  // together with the stricter tsconfig.browser.json (no Node types in bundled
+  // code) and tsconfig.worker.json (no DOM in the atlas worker).
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,

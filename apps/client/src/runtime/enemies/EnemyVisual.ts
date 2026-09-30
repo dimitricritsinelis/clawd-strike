@@ -1,13 +1,14 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
 import {
   AdditiveBlending,
-  Box3,
   CanvasTexture,
+  Color,
   CylinderGeometry,
   Group,
-  Matrix4,
   Mesh,
   MeshStandardMaterial,
   Object3D,
+  Quaternion,
   Scene,
   SphereGeometry,
   Sprite,
@@ -20,26 +21,25 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { clone as cloneSkeleton } from "three/examples/jsm/utils/SkeletonUtils.js";
 import { disposeObjectRoot } from "../utils/disposeObjectRoot";
 import type { TraversalSurfaceResolver } from "../sim/TraversalSurfaceResolver";
-import { RaiderAnimation } from "./RaiderAnimation";
+import {
+  FLINCH_PITCH_RAD,
+  FLINCH_YAW_RAD,
+  FlinchSpring,
+  RaiderAnimation,
+  resolveHitReactionFrame,
+} from "./RaiderAnimation";
 
-const MODEL_URL = "/assets/models/characters/enemy_raider/model.glb";
-const CANDIDATE_MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
-const MODEL_TARGET_HEIGHT_M = 1.8;
+const MODEL_URL = "/assets/models/characters/enemy_raider_next/raider.glb";
 // Budget ratchet for future asset swaps: at 10 enemies per wave, a model above
 // this leaves the whole wave near half the map's remaining tri headroom.
 //
-// Pinned just above the shipping asset's measured count (7,492 tris) so a
+// Pinned just above the shipping Raider_Low plus rifle count (7,814 tris) so a
 // heavier re-export actually trips it. Keep this in step with the asset: a
 // threshold at or above whatever ships can never fire and protects nothing,
 // which is exactly how the earlier 30,000 sat uselessly above a 24,986-tri
 // model for an entire release cycle.
 const MODEL_MAX_TRIS_WARN = 8_000;
 const MODEL_FACING_FIXUP_YAW_RAD = Math.PI * 0.5;
-const MODEL_BARREL_AXIS_LOCAL = new Vector3(1, 0, 0);
-const MUZZLE_FORWARD_OFFSET_M = 0.03;
-const MUZZLE_MIN_HEIGHT_RATIO = 0.45;
-const MUZZLE_CENTERLINE_Z_RATIO = 0.7;
-const MUZZLE_FALLBACK_HEIGHT_RATIO = 0.63;
 
 const BODY_RADIUS_M = 0.28;
 const BODY_HEIGHT_M = 1.2;
@@ -54,24 +54,82 @@ const BODY_COLOR = 0x2a2e2a;
 const HEAD_COLOR = 0x3a2e28;
 
 const MUZZLE_FLASH_DURATION_S = 0.085;
+
+// Hit flash: a short emissive lift on this enemy's own material instances.
+export const HIT_FLASH_DURATION_S = 0.07;
+const HIT_FLASH_COLOR = new Color(1, 0.93, 0.85);
+const HIT_FLASH_INTENSITY = 0.6;
+
+// Death: the body tips over backward about its feet along the shot, sinks a
+// little, then is hidden. The collider is already gone at t = 0 (combat reads
+// the controller), so none of this delays hits, waves or respawns.
+export const DEATH_DURATION_S = 0.55;
+export const DEATH_FALL_DURATION_S = 0.4;
+export const DEATH_FALL_RAD = 80 * Math.PI / 180;
+export const DEATH_SINK_M = 0.15;
+
+/** Render-only reaction to a hit; direction is the bullet's horizontal travel. */
+export type EnemyVisualHitReaction = Readonly<{
+  dirX: number;
+  dirZ: number;
+  headshot: boolean;
+  /** Bullet entry point, when known; picks the twist side of a head-on hit. */
+  hitX?: number;
+  hitZ?: number;
+}>;
+
+/** Fall angle (ease-in over 0.4 s), sink (ease-in over the full 0.55 s) and visibility at time t after death. */
+export function resolveDeathPose(elapsedS: number): { fallRad: number; sinkM: number; visible: boolean } {
+  const t = Math.max(0, elapsedS);
+  const fall = Math.min(1, t / DEATH_FALL_DURATION_S);
+  const sink = Math.min(1, t / DEATH_DURATION_S);
+  return { fallRad: DEATH_FALL_RAD * fall * fall, sinkM: DEATH_SINK_M * sink * sink, visible: t < DEATH_DURATION_S };
+}
+
+type FlashableMaterial = MeshStandardMaterial;
+type FlashEntry = { material: FlashableMaterial; base: Color };
+
+/**
+ * Gives one cloned model its own copies of the (template-shared) lit
+ * materials so a hit flash can drive their emissive uniform without touching
+ * any other enemy. Textures and shader programs stay shared; draw calls are
+ * unchanged. Returns the per-instance clones.
+ */
+export function instanceEnemyMaterials(root: Object3D): FlashableMaterial[] {
+  const clones = new Map<FlashableMaterial, FlashableMaterial>();
+  const own = (material: unknown): unknown => {
+    if (!(material instanceof MeshStandardMaterial)) return material;
+    let clone = clones.get(material);
+    if (!clone) {
+      clone = material.clone();
+      // Material.copy drops shader hooks; keep any so the clone shares the program.
+      clone.onBeforeCompile = material.onBeforeCompile;
+      clone.customProgramCacheKey = material.customProgramCacheKey;
+      clones.set(material, clone);
+    }
+    return clone;
+  };
+  root.traverse((child) => {
+    if (!(child instanceof Mesh)) return;
+    child.material = Array.isArray(child.material)
+      ? child.material.map((material) => own(material))
+      : own(child.material);
+  });
+  return [...clones.values()];
+}
+
+const _fallAxis = new Vector3();
+const _fallQuat = new Quaternion();
+const _yawQuat = new Quaternion();
+const _up = new Vector3(0, 1, 0);
 let enemyVisualModelStreamingEnabled = true;
 
 type EnemyModelTemplate = {
   template: Object3D;
-  center: Vector3;
-  minY: number;
-  sizeY: number;
-  muzzleLocal: Vector3;
-  animations?: AnimationClip[];
+  animations: AnimationClip[];
 };
 
-const enemyModelTemplates = new Map<string, Promise<EnemyModelTemplate>>();
-
-function selectedModelUrl(): string {
-  // Keep the shipping asset and original rendering path in the garage until approval.
-  return typeof window !== "undefined" && new URLSearchParams(window.location.search).get("raider") === "legacy"
-    ? MODEL_URL : CANDIDATE_MODEL_URL;
-}
+let enemyModelTemplate: Promise<EnemyModelTemplate> | null = null;
 
 export async function preloadEnemyVisualAssets(): Promise<void> {
   const warmupLoader = new GLTFLoader();
@@ -83,125 +141,48 @@ export function setEnemyVisualModelStreamingEnabled(enabled: boolean): void {
 }
 
 function loadEnemyModelTemplate(sharedGltfLoader: GLTFLoader): Promise<EnemyModelTemplate> {
-  const url = selectedModelUrl();
-  const cached = enemyModelTemplates.get(url);
-  if (cached) return cached;
+  if (enemyModelTemplate) return enemyModelTemplate;
 
-  const promise = sharedGltfLoader.loadAsync(url)
+  const promise = sharedGltfLoader.loadAsync(MODEL_URL)
     .then((gltf) => {
       gltf.scene.updateMatrixWorld(true);
 
-      if (url === CANDIDATE_MODEL_URL) {
-        if (!gltf.scene.getObjectByName("MuzzleSocket") || gltf.animations.length !== 9) {
-          throw new Error("Raider candidate is missing its rig, socket or animation set");
-        }
-        const triangleCount = (name: string): number => {
-          const mesh = gltf.scene.getObjectByName(name) as Mesh | undefined;
-          if (!mesh?.isMesh) throw new Error(`Raider candidate missing ${name}`);
-          return (mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position").count) / 3;
-        };
-        const rifleTris = triangleCount("Raider_Rifle");
-        for (const [name, budget] of [["Raider_Low", MODEL_MAX_TRIS_WARN], ["Raider_High", 28_000]] as const) {
-          const tris = triangleCount(name) + rifleTris;
-          if (tris > budget) throw new Error(`Raider ${name} exceeds ${budget} triangles`);
-        }
-        // Preserve garment and leather detail at oblique viewing angles.
-        // Three clamps this to the device's supported anisotropy at upload.
-        gltf.scene.traverse((child) => {
-          if (!(child instanceof Mesh)) return;
-          for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
-            if (!(material instanceof MeshStandardMaterial)) continue;
-            for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
-              if (texture) texture.anisotropy = 4;
-            }
-          }
-        });
-        // Authored metre scale and foot origin; weapon length and animated bounds
-        // must never recenter or resize the character away from its hitbox.
-        return { template: gltf.scene, center: new Vector3(), minY: 0,
-          sizeY: MODEL_TARGET_HEIGHT_M, muzzleLocal: new Vector3(), animations: gltf.animations };
+      if (!gltf.scene.getObjectByName("MuzzleSocket") || gltf.animations.length !== 9) {
+        throw new Error("Raider candidate is missing its rig, socket or animation set");
       }
-
-      const bounds = new Box3().setFromObject(gltf.scene);
-      const size = new Vector3();
-      const center = new Vector3();
-      bounds.getSize(size);
-      bounds.getCenter(center);
-
-      const minMuzzleY = bounds.min.y + size.y * MUZZLE_MIN_HEIGHT_RATIO;
-      const maxMuzzleAbsZ = size.z * MUZZLE_CENTERLINE_Z_RATIO;
-      const rootWorldInverse = new Matrix4().copy(gltf.scene.matrixWorld).invert();
-      const vertexWorld = new Vector3();
-      const vertexRootLocal = new Vector3();
-      const bestMuzzle = new Vector3();
-      let bestProjection = -Infinity;
-
-      gltf.scene.traverse((child) => {
-        const maybeMesh = child as Mesh;
-        if (!maybeMesh.isMesh) return;
-        const positionAttr = maybeMesh.geometry?.getAttribute("position");
-        if (!positionAttr || positionAttr.itemSize < 3) return;
-
-        const step = positionAttr.count > 20000 ? 2 : 1;
-        for (let i = 0; i < positionAttr.count; i += step) {
-          vertexRootLocal
-            .set(positionAttr.getX(i), positionAttr.getY(i), positionAttr.getZ(i))
-            .applyMatrix4(maybeMesh.matrixWorld);
-          vertexWorld.copy(vertexRootLocal).applyMatrix4(rootWorldInverse);
-
-          if (vertexWorld.y < minMuzzleY) continue;
-          if (Math.abs(vertexWorld.z - center.z) > maxMuzzleAbsZ) continue;
-
-          const projection = vertexWorld.dot(MODEL_BARREL_AXIS_LOCAL);
-          if (projection > bestProjection) {
-            bestProjection = projection;
-            bestMuzzle.copy(vertexWorld);
-          }
-        }
-      });
-
-      const muzzleLocal = Number.isFinite(bestProjection)
-        ? bestMuzzle
-        : new Vector3(
-          bounds.max.x,
-          bounds.min.y + size.y * MUZZLE_FALLBACK_HEIGHT_RATIO,
-          center.z,
-        );
-      muzzleLocal.addScaledVector(MODEL_BARREL_AXIS_LOCAL, MUZZLE_FORWARD_OFFSET_M);
-
-      // The asset ships pre-optimized (LOD + texture sizing happen offline in
-      // art-source tooling); runtime decimation is forbidden here — three's
-      // SimplifyModifier tears UV seams open and shreds the silhouette.
-      let templateTris = 0;
-      gltf.scene.traverse((child) => {
-        const mesh = child as Mesh;
-        if (!mesh.isMesh) return;
-        const index = mesh.geometry.getIndex();
-        const position = mesh.geometry.getAttribute("position");
-        templateTris += Math.floor((index ? index.count : position?.count ?? 0) / 3);
-      });
-      if (templateTris > MODEL_MAX_TRIS_WARN) {
-        console.warn(
-          `[enemy-visual] enemy model is ${templateTris} tris (budget guardrail ${MODEL_MAX_TRIS_WARN}); ` +
-          "re-export a lighter LOD offline (see art-source/characters/enemy_raider)",
-        );
-      }
-
-      return {
-        template: gltf.scene,
-        center,
-        minY: bounds.min.y,
-        sizeY: Math.max(0.001, size.y),
-        muzzleLocal,
+      // The asset ships pre-optimized (LOD and texture sizing happen offline in
+      // assets/source/enemy-raider/build.py); runtime decimation is forbidden
+      // here: three's SimplifyModifier tears UV seams open and shreds the silhouette.
+      const triangleCount = (name: string): number => {
+        const mesh = gltf.scene.getObjectByName(name) as Mesh | undefined;
+        if (!mesh?.isMesh) throw new Error(`Raider candidate missing ${name}`);
+        return (mesh.geometry.index?.count ?? mesh.geometry.getAttribute("position").count) / 3;
       };
+      const rifleTris = triangleCount("Raider_Rifle");
+      for (const [name, budget] of [["Raider_Low", MODEL_MAX_TRIS_WARN], ["Raider_High", 28_000]] as const) {
+        const tris = triangleCount(name) + rifleTris;
+        if (tris > budget) throw new Error(`Raider ${name} exceeds ${budget} triangles`);
+      }
+      // Preserve garment and leather detail at oblique viewing angles.
+      // Three clamps this to the device's supported anisotropy at upload.
+      gltf.scene.traverse((child) => {
+        if (!(child instanceof Mesh)) return;
+        for (const material of Array.isArray(child.material) ? child.material : [child.material]) {
+          if (!(material instanceof MeshStandardMaterial)) continue;
+          for (const texture of [material.map, material.normalMap, material.roughnessMap, material.metalnessMap]) {
+            if (texture) texture.anisotropy = 4;
+          }
+        }
+      });
+      return { template: gltf.scene, animations: gltf.animations };
     })
     .catch((error) => {
       // Allow retry if the first load fails.
-      enemyModelTemplates.delete(url);
+      enemyModelTemplate = null;
       throw error;
     });
 
-  enemyModelTemplates.set(url, promise);
+  enemyModelTemplate = promise;
   return promise;
 }
 
@@ -278,10 +259,30 @@ export class EnemyVisual {
   private readonly nameMaterial: SpriteMaterial;
   private readonly muzzleAnchor: Group;
 
-  // Death fade
+  // Death fall
   private fadingOut = false;
-  private fadeTimerS = 0;
-  private readonly FADE_DURATION_S = 0.12;
+  private deathElapsedS = 0;
+  private deathYaw = 0;
+  private deathBaseY = 0;
+  private deathSinkM = 0;
+  private readonly deathFallAxis = new Vector3(1, 0, 0);
+
+  // Hit reaction
+  private readonly flashEntries: FlashEntry[] = [];
+  private instanceMaterials: FlashableMaterial[] = [];
+  private hitFlashTimerS = 0;
+  /**
+   * Set when a flash starts mid-frame. EnemyManager triggers the flash and
+   * then ages it in the same update, before anything renders, so the first
+   * aging step is skipped: the peak is always drawn once, at any frame rate.
+   */
+  private hitFlashFresh = false;
+  private yaw = 0;
+  /** Root-tilt flinch for the fallback capsule, which has no raider rig. */
+  private readonly rootFlinch = new FlinchSpring();
+  private readonly rootFlinchAxis = new Vector3(1, 0, 0);
+  private rootFlinchTwist: 1 | -1 = 1;
+  private nextFallbackTwist: 1 | -1 = 1;
 
   // Muzzle flash (sprite-only — no PointLight to avoid per-light reshading cost)
   private muzzleFlash: Sprite | null = null;
@@ -315,6 +316,9 @@ export class EnemyVisual {
     this.headMesh = new Mesh(headGeo, this.headMat);
     this.headMesh.position.y = HEAD_Y_OFFSET;
     this.root.add(this.headMesh);
+    // The fallback capsule already owns its materials.
+    this.trackFlash(this.bodyMat);
+    this.trackFlash(this.headMat);
 
     // Name tag sprite
     this.nameTexture = createNameTagTexture(name);
@@ -354,34 +358,29 @@ export class EnemyVisual {
     if (enemyVisualModelStreamingEnabled) {
       loadEnemyModelTemplate(sharedGltfLoader).then((templateData) => {
         if (this.disposed) return;
-        // Clone skeleton for independent transforms but share materials across
-        // all enemy instances — the opaque death-confirm path never modifies
-        // material opacity so per-instance clones are unnecessary.
+        // Clone skeleton for independent transforms. The hit flash needs its
+        // own emissive value, so this instance gets material clones; the
+        // template's shared materials are never modified. Textures and
+        // programs remain shared.
         const modelInstance = cloneSkeleton(templateData.template);
+        this.instanceMaterials = instanceEnemyMaterials(modelInstance);
+        for (const material of this.instanceMaterials) this.trackFlash(material);
+        this.applyHitFlash();
 
+        // Authored metre scale and foot origin; weapon length and animated bounds
+        // must never recenter or resize the character away from its hitbox.
         this.modelRoot = new Group();
         this.modelRoot.rotation.y = MODEL_FACING_FIXUP_YAW_RAD;
-        this.modelRoot.scale.setScalar(MODEL_TARGET_HEIGHT_M / templateData.sizeY);
-        modelInstance.position.set(
-          -templateData.center.x,
-          -templateData.minY,
-          -templateData.center.z,
-        );
         this.modelRoot.add(modelInstance);
-        this.muzzleAnchor.position.copy(templateData.muzzleLocal).add(modelInstance.position);
-        if (templateData.animations) {
-          this.animation = new RaiderAnimation(modelInstance, templateData.animations);
-          this.muzzleFlashMat!.depthTest = true;
-          this.muzzleAnchor.position.set(0, 0, 0);
-          modelInstance.getObjectByName("MuzzleSocket")!.add(this.muzzleAnchor);
-        } else {
-          this.modelRoot.add(this.muzzleAnchor);
-        }
+        this.animation = new RaiderAnimation(modelInstance, templateData.animations);
+        this.muzzleFlashMat!.depthTest = true;
+        this.muzzleAnchor.position.set(0, 0, 0);
+        modelInstance.getObjectByName("MuzzleSocket")!.add(this.muzzleAnchor);
         this.root.add(this.modelRoot);
 
         this.bodyMesh.visible = false;
         this.headMesh.visible = false;
-        this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, MODEL_TARGET_HEIGHT_M + 0.4);
+        this.nameSprite.position.y = Math.max(NAME_Y_OFFSET, ENEMY_HEIGHT_M + 0.4);
       }).catch((error: unknown) => {
         // Model load failed — fallback body/head remain visible.
         console.warn("[enemy-visual] model load failed", error);
@@ -396,21 +395,57 @@ export class EnemyVisual {
     // When fading out, only update position so the corpse stays in place.
     // Visibility and yaw are controlled by the fade logic.
     if (this.fadingOut) {
-      this.root.position.set(x, y, z);
+      this.root.position.set(x, y - this.deathSinkM, z);
       return;
     }
     this.root.visible = isAlive && this.renderVisible;
     if (!isAlive) return;
 
+    this.yaw = yaw;
     this.root.position.set(x, y, z);
-    this.root.rotation.y = yaw;
-    this.animation?.update(this.root.position, yaw, dt, grounded, surfaces, viewerDistanceM);
+    this.root.rotation.set(0, yaw, 0);
+    if (this.animation) {
+      this.animation.update(this.root.position, yaw, dt, grounded, surfaces, viewerDistanceM);
+    } else {
+      this.applyRootFlinch(dt);
+    }
+  }
+
+  /**
+   * Flinch and flash for a non-lethal hit. Rigged raiders flinch the chest;
+   * other models tilt the whole root about the feet.
+   */
+  triggerHitReaction(reaction: EnemyVisualHitReaction): void {
+    if (this.fadingOut) return;
+    this.hitFlashTimerS = HIT_FLASH_DURATION_S;
+    this.hitFlashFresh = true;
+    this.applyHitFlash();
+    const frame = this.resolveReactionFrame(reaction);
+    if (!frame) return;
+    if (this.animation) {
+      this.animation.hit(frame.leanAxisX, frame.leanAxisZ, frame.twistSign);
+    } else {
+      this.rootFlinchAxis.set(frame.leanAxisX, 0, frame.leanAxisZ).normalize();
+      this.rootFlinchTwist = frame.twistSign;
+      this.rootFlinch.kick();
+    }
+  }
+
+  /** Remaining hit-flash strength in [0, 1] (tests and debug). */
+  getHitFlashAmount(): number {
+    return this.hitFlashTimerS / HIT_FLASH_DURATION_S;
   }
 
   reset(): void {
     this.animation?.reset();
     this.fadingOut = false;
-    this.fadeTimerS = 0;
+    this.deathElapsedS = 0;
+    this.deathSinkM = 0;
+    this.root.rotation.set(0, this.yaw, 0);
+    this.rootFlinch.reset();
+    this.hitFlashTimerS = 0;
+    this.hitFlashFresh = false;
+    this.applyHitFlash();
     this.root.visible = this.renderVisible;
     this.nameSprite.visible = this.namesVisible;
 
@@ -434,32 +469,48 @@ export class EnemyVisual {
     this.root.visible = visible && !this.fadingOut;
   }
 
-  startDeathFade(): void {
+  /**
+   * Starts the death fall: 80 deg backward about the feet along the shot
+   * (ease-in over 0.4 s), a 0.15 m sink, then hidden at 0.55 s. Without a
+   * shot direction the body falls straight back from its facing.
+   */
+  startDeathFade(reaction: EnemyVisualHitReaction | null = null): void {
     if (this.fadingOut) return;
     this.fadingOut = true;
-    this.fadeTimerS = this.FADE_DURATION_S;
+    this.deathElapsedS = 0;
+    this.deathSinkM = 0;
+    this.deathYaw = this.yaw;
+    this.deathBaseY = this.root.position.y;
     this.root.visible = true;
     this.nameSprite.visible = false;
     // Kill any muzzle flash immediately
     if (this.muzzleFlash) this.muzzleFlash.visible = false;
     this.muzzleTimerS = 0;
+    this.rootFlinch.reset();
+
+    const frame = reaction ? this.resolveReactionFrame(reaction) : null;
+    if (frame) {
+      this.deathFallAxis.set(frame.leanAxisX, 0, frame.leanAxisZ).normalize();
+    } else {
+      // Backward = -forward = (sin yaw, 0, cos yaw); lean axis = up x backward.
+      this.deathFallAxis.set(Math.cos(this.yaw), 0, -Math.sin(this.yaw));
+    }
+    this.animation?.die(this.deathFallAxis.x, this.deathFallAxis.z, reaction?.headshot ?? false);
+    if (reaction) {
+      this.hitFlashTimerS = HIT_FLASH_DURATION_S;
+      this.hitFlashFresh = true;
+    }
+    this.applyDeathPose();
+    this.applyHitFlash();
   }
 
-  /** Returns true when the fade is fully complete. */
+  /** Returns true when the death fall is complete and the body is hidden. */
   updateDeathFade(dt: number): boolean {
     if (!this.fadingOut) return false;
 
-    this.fadeTimerS = Math.max(0, this.fadeTimerS - dt);
-
-    if (this.fadeTimerS <= 0) {
-      this.root.visible = false;
-      return true; // complete
-    }
-    return false;
-  }
-
-  isFadingOut(): boolean {
-    return this.fadingOut;
+    this.deathElapsedS += Math.max(0, Number.isFinite(dt) ? dt : 0);
+    this.advanceHitFlash(dt);
+    return !this.applyDeathPose();
   }
 
   triggerShotFx(): void {
@@ -476,6 +527,7 @@ export class EnemyVisual {
   }
 
   updateFx(dt: number): void {
+    this.advanceHitFlash(dt);
     if (this.muzzleTimerS <= 0) {
       if (this.muzzleFlash) this.muzzleFlash.visible = false;
       return;
@@ -512,6 +564,71 @@ export class EnemyVisual {
       this.muzzleFlashMat.dispose();
       this.muzzleFlashMat = null;
     }
+    // Per-instance clones only; their textures belong to the shared template.
+    for (const material of this.instanceMaterials) material.dispose();
+    this.instanceMaterials = [];
+    this.flashEntries.length = 0;
+  }
+
+  private trackFlash(material: FlashableMaterial): void {
+    this.flashEntries.push({ material, base: material.emissive.clone() });
+  }
+
+  private advanceHitFlash(dt: number): void {
+    if (this.hitFlashTimerS <= 0) return;
+    if (this.hitFlashFresh) {
+      this.hitFlashFresh = false;
+      return;
+    }
+    this.hitFlashTimerS = Math.max(0, this.hitFlashTimerS - Math.max(0, Number.isFinite(dt) ? dt : 0));
+    this.applyHitFlash();
+  }
+
+  private applyHitFlash(): void {
+    const amount = HIT_FLASH_INTENSITY * this.getHitFlashAmount();
+    for (const { material, base } of this.flashEntries) {
+      material.emissive.setRGB(
+        base.r + HIT_FLASH_COLOR.r * amount,
+        base.g + HIT_FLASH_COLOR.g * amount,
+        base.b + HIT_FLASH_COLOR.b * amount,
+      );
+    }
+  }
+
+  private resolveReactionFrame(reaction: EnemyVisualHitReaction) {
+    const hasPoint = reaction.hitX !== undefined && reaction.hitZ !== undefined;
+    const frame = resolveHitReactionFrame(
+      this.yaw, reaction.dirX, reaction.dirZ, this.nextFallbackTwist,
+      hasPoint ? reaction.hitX! - this.root.position.x : 0,
+      hasPoint ? reaction.hitZ! - this.root.position.z : 0,
+    );
+    if (frame && frame.twistSign === this.nextFallbackTwist) {
+      this.nextFallbackTwist = this.nextFallbackTwist === 1 ? -1 : 1;
+    }
+    return frame;
+  }
+
+  private applyRootFlinch(dt: number): void {
+    this.rootFlinch.step(Math.min(Math.max(0, dt), 0.1));
+    const flinch = this.rootFlinch.amount();
+    if (flinch === 0) return;
+    // Tilt about the feet (the root origin), then twist about vertical.
+    _yawQuat.setFromAxisAngle(_up, this.yaw + flinch * FLINCH_YAW_RAD * this.rootFlinchTwist);
+    _fallQuat.setFromAxisAngle(this.rootFlinchAxis, flinch * FLINCH_PITCH_RAD);
+    this.root.quaternion.copy(_fallQuat).multiply(_yawQuat);
+  }
+
+  /** Poses the fall; returns false once the body should be hidden. */
+  private applyDeathPose(): boolean {
+    const pose = resolveDeathPose(this.deathElapsedS);
+    _fallAxis.copy(this.deathFallAxis);
+    _yawQuat.setFromAxisAngle(_up, this.deathYaw);
+    _fallQuat.setFromAxisAngle(_fallAxis, pose.fallRad);
+    this.root.quaternion.copy(_fallQuat).multiply(_yawQuat);
+    this.deathSinkM = pose.sinkM;
+    this.root.position.y = this.deathBaseY - pose.sinkM;
+    if (!pose.visible) this.root.visible = false;
+    return pose.visible;
   }
 
   private nextRand(): number {

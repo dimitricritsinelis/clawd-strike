@@ -110,13 +110,9 @@ function createSharedChampionStoreStub(
     async getChampion() {
       return null;
     },
-    async submitCandidate() {
-      throw new Error("unused");
+    async consumeRateLimit() {
+      return true;
     },
-    async isRateLimited() {
-      return false;
-    },
-    async logSubmission() {},
     async issueRunToken() {
       throw new Error("unused");
     },

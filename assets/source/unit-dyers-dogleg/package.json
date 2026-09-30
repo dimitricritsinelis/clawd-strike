@@ -1,0 +1,38 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_dyers_dogleg",
+      "file": "roof-bundle-dyers-dogleg.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_dyers_dogleg",
+      "file": "unit-dyers-dogleg.glb",
+      "source": "repo://assets/source/unit-dyers-dogleg/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "DYERS_DOGLEG",
+    "modelId": "section_unit_dyers_dogleg",
+    "faces": [
+      "east",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_DYERS_DOGLEG",
+      "modelId": "bz04_roof_bundle_unit_dyers_dogleg",
+      "position": {
+        "x": 48.8,
+        "y": 55.0,
+        "z": 7.1
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "6c8285148f52bf1c5c2422384e0028b7d602f1e89a18e5983f72279b38e5561d"
+}

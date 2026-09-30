@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * RoundEndScreen — displayed when the player clears all enemies in a wave.
  * Shows "ROUND COMPLETE", the kill time, wave number, and a full stats breakdown:
@@ -28,7 +29,7 @@ function statRow(label: string, value: string, highlight = false): HTMLDivElemen
 
   const labelEl = document.createElement("span");
   Object.assign(labelEl.style, {
-    fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+    fontFamily: SANS_FONT,
     fontSize: "13px",
     fontWeight: "500",
     letterSpacing: "0.09em",
@@ -39,7 +40,7 @@ function statRow(label: string, value: string, highlight = false): HTMLDivElemen
 
   const valueEl = document.createElement("span");
   Object.assign(valueEl.style, {
-    fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+    fontFamily: SANS_FONT,
     fontSize: "15px",
     fontWeight: "700",
     letterSpacing: "0.04em",
@@ -94,7 +95,7 @@ export class RoundEndScreen {
     // "ROUND COMPLETE" title
     this.titleEl = document.createElement("div");
     Object.assign(this.titleEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "60px",
       fontWeight: "780",
       letterSpacing: "0.1em",
@@ -107,7 +108,7 @@ export class RoundEndScreen {
     // Time display (e.g. "Cleared in 02:14")
     this.timeEl = document.createElement("div");
     Object.assign(this.timeEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "28px",
       fontWeight: "500",
       color: "rgba(220, 235, 255, 0.80)",
@@ -119,7 +120,7 @@ export class RoundEndScreen {
     // Wave number label (e.g. "Wave 1 cleared")
     this.waveEl = document.createElement("div");
     Object.assign(this.waveEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "18px",
       fontWeight: "400",
       color: "rgba(180, 200, 230, 0.55)",
@@ -152,7 +153,7 @@ export class RoundEndScreen {
     // "Next wave in X" label
     this.countdownLabelEl = document.createElement("div");
     Object.assign(this.countdownLabelEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "16px",
       fontWeight: "400",
       color: "rgba(180, 200, 230, 0.5)",
@@ -163,7 +164,7 @@ export class RoundEndScreen {
     // Large countdown number
     this.countdownEl = document.createElement("div");
     Object.assign(this.countdownEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "52px",
       fontWeight: "700",
       color: "rgba(255, 255, 255, 0.85)",
@@ -185,7 +186,7 @@ export class RoundEndScreen {
       border: "1px solid rgba(255,255,255,0.28)",
       background: "rgba(18, 28, 44, 0.78)",
       color: "rgba(238, 245, 255, 0.96)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "12px",
       fontWeight: "700",
       letterSpacing: "0.12em",

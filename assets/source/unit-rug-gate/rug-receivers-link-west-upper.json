@@ -1,0 +1,25 @@
+{
+  "modelId": "rug_receivers_link_west_upper",
+  "file": "rug-receivers-link-west-upper.glb",
+  "source": "repo://assets/source/unit-rug-gate/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 19,
+    "y": 72,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "c496cd3704793b7e2ec8e2d1c3b85f89855644bc88a26b1539db46a3d94e2702",
+  "receiverParcelIds": [
+    "lwu-s"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 72,
+      "start": 19.0,
+      "end": 21.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

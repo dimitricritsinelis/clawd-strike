@@ -1,37 +1,39 @@
+# Dependencies and build output
 node_modules/
-node_modules 2/
 dist/
-**/dist/
-.turbo/
-.vite/
-**/.vite/
-**/.cache/
-.DS_Store
-.clawdstrike-dev.log
-/.claude/*
-!/.claude/skills/
-!/.claude/skills/**
-/.codex/
-/tmp/
-/review_artifacts/
-output/
-coverage/
-*.tsbuildinfo
 **/test-results/
 **/playwright-report/
-apps/client/artifacts/
+
+# Local evidence and scratch space. Captures, review renders and logs go here,
+# never into the repository.
 artifacts/
-artifacts/screenshots/
-artifacts/screenshots/**/tmp*/
-artifacts/screenshots/**/smoke/
-artifacts/screenshots/**/errors-*.json
-artifacts/screenshots/**/state-*.json
-artifacts/screenshots/**/shot-*.png
-artifacts/playwright/
-artifacts/tmp/
-artifacts/tmp/**
+/output/
+/tmp/
+
+# Environment and local tool configuration
+.env*
+!.env.example
 .vercel/
-.env*.local
-short_term_memory.md.lock
-short_term_memory.md.tmp-*
-.vercel
+/.codex/
+/.claude/*
+!/.claude/settings.json
+
+# OS junk and Finder duplicate copies ("unit 2.glb")
+.DS_Store
+* [0-9]
+* [0-9].*
+
+# Python bytecode, Blender backups and interrupted temporary export folders
+__pycache__/
+*.blend[0-9]
+.b04-export-*/
+
+# Blender build outputs. The build scripts, package.json and receiver JSON in
+# each folder stay tracked; the shipped result lives in apps/client/public.
+assets/source/unit-*/*.blend
+assets/source/unit-*/*.glb
+assets/source/unit-*/*.inspection.json
+assets/source/unit-*/*.png
+assets/source/bz04-shared-environment/*.glb
+assets/source/bz04-shared-environment/*.inspection.json
+assets/source/ak47/exports/

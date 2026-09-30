@@ -1,6 +1,5 @@
-import { AmbientLight, Color, DirectionalLight, DoubleSide, Fog, HemisphereLight, MeshStandardMaterial, Object3D, PerspectiveCamera, Scene, type Texture, Vector3 } from "three";
+import { AmbientLight, DirectionalLight, DoubleSide, Fog, HemisphereLight, MeshStandardMaterial, Object3D, PerspectiveCamera, Scene, type Texture, Vector3 } from "three";
 import { installDesertSky, type DesertSkyHandle } from "../render/DesertSky";
-import { AnchorsDebug, type AnchorsDebugState } from "../debug/AnchorsDebug";
 import { Hud } from "../debug/Hud";
 import {
   EnemyManager,
@@ -9,34 +8,31 @@ import {
   type EnemyManagerDebugSnapshot,
 } from "../enemies/EnemyManager";
 import type { WeaponAudio } from "../audio/WeaponAudio";
-import { buildBlockout } from "../map/buildBlockout";
+import { buildBlockout } from "../map/world/buildBlockout";
+import { resolveCoplanarSurfaces } from "../map/world/resolveCoplanarSurfaces";
 import {
   buildProps,
   type PropsBuildStats,
   type RenderedPropPlacement,
-} from "../map/buildProps";
-import { designYawDegToWorldYawRad } from "../map/coordinateTransforms";
-import type { WallDetailPlacementStats } from "../map/wallDetailPlacer";
-import { resolveBlockoutPalette } from "../render/BlockoutMaterials";
+} from "../map/props/buildProps";
+import { designYawDegToWorldYawRad } from "../map/world/coordinateTransforms";
+import type { WallDetailPlacementStats } from "../map/architecture/architecture";
 import type { FloorMaterialLibrary } from "../render/materials/FloorMaterialLibrary";
 import type { WallMaterialLibrary } from "../render/materials/WallMaterialLibrary";
 import type { PropModelLibrary } from "../render/models/PropModelLibrary";
-import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../map/types";
+import type { RuntimeAnchorsSpec, RuntimeBlockoutSpec } from "../map/spec/types";
 import {
   PLAYER_EYE_HEIGHT_M,
   PlayerController,
   type PlayerInputState,
 } from "../sim/PlayerController";
 import { type RuntimeColliderAabb, WorldColliders } from "../sim/collision/WorldColliders";
-import { resolveRuntimeSeed } from "../utils/Rng";
+import { deriveSubSeed, resolveRuntimeSeed } from "../utils/Rng";
 import { disposeObjectRoot } from "../utils/disposeObjectRoot";
 import type {
   RuntimeControlMode,
   RuntimeFloorMode,
   RuntimeFloorQuality,
-  RuntimeLightingPreset,
-  RuntimePropChaosOptions,
-  RuntimePropVisualMode,
   RuntimeSpawnId,
   RuntimeWallMode,
 } from "../utils/UrlParams";
@@ -45,6 +41,10 @@ import { Ak47Weapon, type Ak47AmmoSnapshot } from "../weapons/Ak47Weapon";
 import { resetTickIntent, type AgentAction, type TickIntent } from "../input/AgentAction";
 import type { GameplayTuning } from "../tuning/gameplayTuning";
 import { stepHealthRegeneration } from "./HealthRegeneration";
+import { RecoilRecovery } from "./RecoilRecovery";
+import { ViewPunch } from "./ViewPunch";
+import { raycastFirstHit, type RaycastAabbHit } from "../sim/collision/raycastAabb";
+import type { ViewModelLighting } from "../weapons/viewModelLighting";
 
 const DEFAULT_FOV = 75;
 const LOOK_SENSITIVITY = 0.002;
@@ -54,7 +54,6 @@ const EYE_HEIGHT_LERP_RATE = 17.1;
 const RAD_TO_DEG = 180 / Math.PI;
 const DEG_TO_RAD = Math.PI / 180;
 const AGENT_LOOK_ACCUM_LIMIT_DEG = 540;
-const MAP_PROPS_ENABLED = true;
 // Lowered from 0.28. No longer coupled to the sky dome's tint: the PMREM bake in
 // Renderer.createPmremEnvironment neutralises skyTint for the duration of the
 // bake, so the dome's artistic colour and the irradiance it contributes are now
@@ -201,10 +200,8 @@ function applyKitEnvironmentResponse(root: Object3D, environment: Texture): void
 }
 
 // ── Camera shake constants ────────────────────────────────────────────────────
-/** Shake impulse added per bullet fired while trigger held (metres). */
-const SHAKE_FIRE_IMPULSE = 0.008;
-/** Maximum accumulated fire-shake amplitude (metres). */
-const SHAKE_FIRE_MAX = 0.028;
+// Firing adds no camera shake: the player's view kick is the deterministic
+// recoil pattern (see RecoilRecovery) and the viewmodel's own motion.
 /** Damage-hit shake impulse (metres) — scales with damage fraction. */
 const SHAKE_DAMAGE_BASE = 0.045;
 /** Spring stiffness for shake recovery. */
@@ -261,32 +258,19 @@ type GameOptions = {
   controlMode: RuntimeControlMode;
   mapId: string;
   seedOverride: number | null;
-  propChaos: RuntimePropChaosOptions;
   freezeInput?: boolean;
   spawn?: RuntimeSpawnId;
   debug?: boolean;
-  highVis?: boolean;
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
-  wallDetails: boolean;
-  wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
-  lightingPreset: RuntimeLightingPreset;
-  environmentLighting: boolean;
   createEnvironmentMap: (scene: Scene, position: Vector3) => Texture | null;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
-  propVisuals: RuntimePropVisualMode;
   propModels: PropModelLibrary | null;
-  doorModels: PropModelLibrary | null;
   facadeModels?: PropModelLibrary | null;
   onTogglePerfHud?: () => void;
   mountEl?: HTMLElement;
-  anchorsDebug?: {
-    showMarkers: boolean;
-    showLabels: boolean;
-    anchorTypes: readonly string[];
-  };
   onWeaponShot?: (shot: WeaponShotPayload) => void;
   unlimitedHealth?: boolean;
   playerRunSpeedMps?: number;
@@ -306,6 +290,11 @@ export class Game {
 
   private desertSky: DesertSkyHandle | null = null;
   private sunLight: DirectionalLight | null = null;
+  private hemiLight: HemisphereLight | null = null;
+  private ambientLight: AmbientLight | null = null;
+  private readonly sunProbeHit: RaycastAabbHit = {
+    distance: 0, point: new Vector3(), normal: new Vector3(), colliderId: "", colliderKind: "wall",
+  };
   private controlMode: RuntimeControlMode = "human";
   private readonly pressedKeys = new Set<string>();
   private readonly lookDirection = new Vector3();
@@ -359,27 +348,14 @@ export class Game {
   private spawn: RuntimeSpawnId = "A";
   private mapId = "bazaar-map";
   private seedOverride: number | null = null;
-  private highVis = false;
-  private lightingPreset: RuntimeLightingPreset = "golden";
-  private environmentLighting = true;
   private createEnvironmentMap: ((scene: Scene, position: Vector3) => Texture | null) | null = null;
   private floorMode: RuntimeFloorMode = "blockout";
   private wallMode: RuntimeWallMode = "blockout";
-  private wallDetailsEnabled = true;
-  private wallDetailDensity: number | null = null;
   private floorQuality: RuntimeFloorQuality = "4k";
   private floorMaterials: FloorMaterialLibrary | null = null;
   private wallMaterials: WallMaterialLibrary | null = null;
-  private propVisuals: RuntimePropVisualMode = "blockout";
   private propModels: PropModelLibrary | null = null;
-  private doorModels: PropModelLibrary | null = null;
   private facadeModels: PropModelLibrary | null = null;
-  private propChaos: RuntimePropChaosOptions = {
-    profile: "subtle",
-    jitter: null,
-    cluster: null,
-    density: null,
-  };
   private blockoutSpec: RuntimeBlockoutSpec | null = null;
   private anchorsSpec: RuntimeAnchorsSpec | null = null;
   private blockoutRoot: Object3D | null = null;
@@ -387,23 +363,15 @@ export class Game {
   private worldColliders: WorldColliders | null = null;
   private runtimeColliders: RuntimeColliderAabb[] = [];
   private propColliders: RuntimeColliderAabb[] = [];
-  private renderedLandmarkAnchorIds: string[] = [];
   private renderedAnchorIds: string[] = [];
   private renderedPropPlacements: RenderedPropPlacement[] = [];
   private propStats: PropsBuildStats = {
     seed: 1,
-    profile: "subtle",
-    jitter: 0.28,
-    cluster: 0.45,
-    density: 0.55,
-    totalAnchors: 0,
     candidatesTotal: 0,
     collidersPlaced: 0,
     rejectedClearZone: 0,
     rejectedBounds: 0,
     rejectedGapRule: 0,
-    visualOnlyLandmarks: 0,
-    stallFillersPlaced: 0,
   };
   private wallDetailStats: WallDetailPlacementStats = {
     enabled: false,
@@ -423,7 +391,6 @@ export class Game {
   private wasGrounded = true;
   private onLandingCallback: (() => void) | null = null;
   private hud: Hud | null = null;
-  private anchorsDebug: AnchorsDebug | null = null;
   private debugHotkeysEnabled = false;
   private onTogglePerfHud: (() => void) | null = null;
   private onWeaponShot: ((shot: WeaponShotPayload) => void) | null = null;
@@ -437,6 +404,10 @@ export class Game {
   private weaponBloomDeg = 0;
   private weaponLastShotRecoilPitchDeg = 0;
   private weaponLastShotRecoilYawDeg = 0;
+  /** Recoil the player has not yet pulled down; returns to zero after the spray. */
+  private readonly recoilRecovery = new RecoilRecovery();
+  /** Render-only per-shot camera thump; never touches yaw/pitch or the shot ray. */
+  private readonly viewPunch = new ViewPunch(1);
 
   // Camera shake: spring state for X and Y offset
   private shakeX = 0;
@@ -449,22 +420,10 @@ export class Game {
   private shakeYVel = 0;
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
-    if (this.debugHotkeysEnabled) {
-      if (event.code === "F5") {
-        this.onTogglePerfHud?.();
-        event.preventDefault();
-        return;
-      }
-      if (event.code === "F2" && this.anchorsDebug) {
-        this.anchorsDebug.toggleMarkers();
-        event.preventDefault();
-        return;
-      }
-      if (event.code === "F3" && this.anchorsDebug) {
-        this.anchorsDebug.toggleLabels();
-        event.preventDefault();
-        return;
-      }
+    if (this.debugHotkeysEnabled && event.code === "F5") {
+      this.onTogglePerfHud?.();
+      event.preventDefault();
+      return;
     }
 
     this.pressedKeys.add(event.code);
@@ -526,22 +485,14 @@ export class Game {
     this.controlMode = options.controlMode;
     this.mapId = options.mapId;
     this.seedOverride = options.seedOverride;
-    this.highVis = options.highVis ?? false;
-    this.lightingPreset = options.lightingPreset;
-    this.environmentLighting = options.environmentLighting;
     this.createEnvironmentMap = options.createEnvironmentMap;
     this.floorMode = options.floorMode;
     this.wallMode = options.wallMode;
-    this.wallDetailsEnabled = options.wallDetails;
-    this.wallDetailDensity = options.wallDetailDensity;
     this.floorQuality = options.floorQuality;
     this.floorMaterials = options.floorMaterials;
     this.wallMaterials = options.wallMaterials;
-    this.propVisuals = options.propVisuals;
     this.propModels = options.propModels;
-    this.doorModels = options.doorModels;
     this.facadeModels = options.facadeModels ?? null;
-    this.propChaos = options.propChaos;
     this.freezeInput = options.freezeInput ?? false;
     this.spawn = options.spawn ?? "A";
     this.debugHotkeysEnabled = options.debug ?? false;
@@ -561,29 +512,12 @@ export class Game {
       reserveStart: this.gameplayTuning.player.economy.waveStartReserve,
       reserveCapacity: this.gameplayTuning.player.economy.reserveCapacity,
     });
+    this.viewPunch.reseed(deriveSubSeed(weaponSeed, "view-punch"));
     this.playerHealth = this.gameplayTuning.player.economy.waveStartHealth;
 
     const mountEl = options.mountEl ?? document.querySelector<HTMLElement>("#runtime-root") ?? document.querySelector<HTMLElement>("#app");
-    const anchorsDebugOptions = options.anchorsDebug ?? {
-      showMarkers: false,
-      showLabels: false,
-      anchorTypes: [],
-    };
-
-    if (mountEl) {
-      this.anchorsDebug = new AnchorsDebug({
-        mountEl,
-        scene: this.scene,
-        showMarkers: anchorsDebugOptions.showMarkers,
-        showLabels: anchorsDebugOptions.showLabels,
-        anchorTypes: anchorsDebugOptions.anchorTypes,
-      });
-    }
-
-    if (options.debug) {
-      if (mountEl) {
-        this.hud = new Hud(mountEl);
-      }
+    if (options.debug && mountEl) {
+      this.hud = new Hud(mountEl);
     }
 
     window.addEventListener("keydown", this.onKeyDown);
@@ -598,10 +532,6 @@ export class Game {
   setAspect(aspect: number): void {
     this.camera.aspect = aspect;
     this.camera.updateProjectionMatrix();
-  }
-
-  setViewportSize(width: number, height: number): void {
-    this.anchorsDebug?.setViewport(width, height);
   }
 
   setPointerLocked(locked: boolean): void {
@@ -653,36 +583,29 @@ export class Game {
       lookAt: { ...pose.lookAt },
       fovDeg: pose.fovDeg,
     };
+    this.recoilRecovery.reset();
+    this.viewPunch.reset();
     this.applyLockedCameraPose();
   }
 
-  setBlockoutSpec(spec: RuntimeBlockoutSpec): void {
-    this.blockoutSpec = spec;
-    this.applyMapLightingBounds(spec);
-    this.rebuildWorld();
-  }
-
-  setAnchorsSpec(spec: RuntimeAnchorsSpec): void {
-    this.anchorsSpec = spec;
-    this.anchorsDebug?.setAnchors(spec);
-    this.rebuildWorld();
-  }
-
-  /**
-   * Assigns both map specs with a single world rebuild. The split setters each
-   * trigger a full rebuild, which doubles boot-time map construction when both
-   * specs arrive together.
-   */
+  /** Assigns both map specs and builds the world once. */
   setMapSpecs(blockout: RuntimeBlockoutSpec, anchors: RuntimeAnchorsSpec): void {
     this.blockoutSpec = blockout;
     this.applyMapLightingBounds(blockout);
     this.anchorsSpec = anchors;
-    this.anchorsDebug?.setAnchors(anchors);
     this.rebuildWorld();
   }
 
   getColliderCount(): number {
     return this.runtimeColliders.length;
+  }
+
+  /** Render roots of the static world that bullets can mark. */
+  getBulletDecalSurfaceRoots(): Object3D[] {
+    const roots: Object3D[] = [];
+    if (this.blockoutRoot) roots.push(this.blockoutRoot);
+    if (this.propsRoot) roots.push(this.propsRoot);
+    return roots;
   }
 
   getPublicPerception() {
@@ -694,10 +617,6 @@ export class Game {
 
   getPropsBuildStats(): PropsBuildStats {
     return this.propStats;
-  }
-
-  getRenderedLandmarkAnchorIds(): readonly string[] {
-    return this.renderedLandmarkAnchorIds;
   }
 
   getRenderedAnchorIds(): readonly string[] {
@@ -771,15 +690,27 @@ export class Game {
       this.weaponLastShotRecoilPitchDeg = fireResult.lastShotRecoilPitchDeg;
       this.weaponLastShotRecoilYawDeg = fireResult.lastShotRecoilYawDeg;
 
-      if (fireResult.recoilPitchRad !== 0 || fireResult.recoilYawRad !== 0) {
-        this.setLookAngles(this.yaw + fireResult.recoilYawRad, this.pitch + fireResult.recoilPitchRad);
-      }
-
-      // ── Fire shake: add impulse per shot, capped at SHAKE_FIRE_MAX ─────────
       if (fireResult.shotsFired > 0) {
-        const impulse = Math.min(SHAKE_FIRE_IMPULSE * fireResult.shotsFired, SHAKE_FIRE_MAX);
-        this.shakeXVel += (Math.random() * 2 - 1) * impulse;
-        this.shakeYVel += (Math.random() * 2 - 1) * impulse;
+        // Record only the kick that survived the pitch clamp so recovery can
+        // never return more than the view actually moved.
+        const yawBefore = this.yaw;
+        const pitchBefore = this.pitch;
+        if (fireResult.recoilPitchRad !== 0 || fireResult.recoilYawRad !== 0) {
+          this.setLookAngles(this.yaw + fireResult.recoilYawRad, this.pitch + fireResult.recoilPitchRad);
+        }
+        this.recoilRecovery.addShot(this.pitch - pitchBefore, this.yaw - yawBefore);
+        // shotIndex restarts at 0 when the spray resets, so the frame's first
+        // round is the spray's first exactly when this reaches 0.
+        const firstRoundIndex = fireResult.shotIndex - fireResult.shotsFired;
+        for (let round = 0; round < fireResult.shotsFired; round += 1) {
+          this.viewPunch.addShot(firstRoundIndex + round === 0);
+        }
+      }
+      if (!this.lockedCameraPose) {
+        const recovery = this.recoilRecovery.step(deltaSeconds);
+        if (recovery.pitchRad !== 0 || recovery.yawRad !== 0) {
+          this.setLookAngles(this.yaw + recovery.yawRad, this.pitch + recovery.pitchRad);
+        }
       }
 
       if (this.enemyManager) {
@@ -823,6 +754,8 @@ export class Game {
         }
         if (!this.unlimitedHealth && this.playerHealth <= 0 && !this.isDead) {
           this.isDead = true;
+          this.recoilRecovery.reset();
+          this.viewPunch.reset();
           this.setFreezeInput(true);
         }
       }
@@ -847,14 +780,19 @@ export class Game {
 
       // Authored review shots own the camera for the entire frame. Player camera
       // shake continues to settle in the background but must not move the shot.
+      this.viewPunch.step(deltaSeconds);
       if (this.lockedCameraPose) {
         this.applyLockedCameraPose();
       } else {
         this.camera.position.x += this.shakeX;
         this.camera.position.y += this.shakeY;
+        // Last camera-rotation write of the frame: the next frame's look update
+        // overwrites these angles before the shot ray is read.
+        this.camera.rotation.x += this.viewPunch.getPitchRad();
+        this.camera.rotation.y += this.viewPunch.getYawRad();
+        this.camera.rotation.z += this.viewPunch.getRollRad();
       }
     }
-    this.anchorsDebug?.update(this.camera);
 
     if (this.hud) {
       const position = this.playerController.getPosition();
@@ -893,10 +831,6 @@ export class Game {
     this.resetInputState();
     this.hud?.dispose();
     this.hud = null;
-    if (this.anchorsDebug) {
-      this.anchorsDebug.dispose(this.scene);
-      this.anchorsDebug = null;
-    }
     this.enemyManager?.dispose(this.scene);
     this.enemyManager = null;
     this.desertSky?.dispose();
@@ -931,26 +865,6 @@ export class Game {
     return this.playerController.getLastCollisionState();
   }
 
-  getGameplayAuthoritySnapshot(): {
-    colliders: Array<{
-      id: string;
-      kind: string;
-      min: { x: number; y: number; z: number };
-      max: { x: number; y: number; z: number };
-    }>;
-  } {
-    return {
-      colliders: this.runtimeColliders
-        .map((collider) => ({
-          id: collider.id,
-          kind: collider.kind,
-          min: { x: collider.min.x, y: collider.min.y, z: collider.min.z },
-          max: { x: collider.max.x, y: collider.max.y, z: collider.max.z },
-        }))
-        .sort((left, right) => left.id.localeCompare(right.id) || left.kind.localeCompare(right.kind)),
-    };
-  }
-
   isPlayerWithinPlayableBounds(): boolean {
     return this.playerController.isWithinPlayableBounds();
   }
@@ -964,20 +878,6 @@ export class Game {
       yaw: this.yaw * RAD_TO_DEG,
       pitch: this.pitch * RAD_TO_DEG,
     };
-  }
-
-  getAnchorsDebugState(): AnchorsDebugState {
-    if (!this.anchorsDebug) {
-      return {
-        markersVisible: false,
-        labelsVisible: false,
-        totalAnchors: 0,
-        filteredAnchors: 0,
-        shownLabels: 0,
-        filterTypes: [],
-      };
-    }
-    return this.anchorsDebug.getState();
   }
 
   setWeaponDebugSnapshot(loaded: boolean, dot: number, angleDeg: number): void {
@@ -996,6 +896,28 @@ export class Game {
 
   getAmmoSnapshot(): Ak47AmmoSnapshot {
     return this.weapon.getAmmoSnapshot();
+  }
+
+  /**
+   * World light at the eye for the separately rendered viewmodel: sun, sky
+   * fill and whether map geometry shades the player.
+   */
+  sampleViewModelLighting(out: ViewModelLighting): ViewModelLighting | null {
+    const sun = this.sunLight;
+    const hemi = this.hemiLight;
+    if (!sun || !hemi) return null;
+    out.sunDirection.copy(sun.position).sub(sun.target.position).normalize();
+    out.sunColor.copy(sun.color);
+    out.sunIntensity = sun.intensity;
+    out.sunVisible = !(this.worldColliders
+      && raycastFirstHit(this.worldColliders, this.camera.position, out.sunDirection, 150, this.sunProbeHit));
+    out.skyColor.copy(hemi.color);
+    out.groundColor.copy(hemi.groundColor);
+    out.hemiIntensity = hemi.intensity;
+    out.ambientColor.copy(this.ambientLight?.color ?? hemi.groundColor);
+    out.ambientIntensity = this.ambientLight?.intensity ?? 0;
+    out.environmentIntensity = this.scene.environment ? this.scene.environmentIntensity : 0;
+    return out;
   }
 
   getPlayerHealth(): number {
@@ -1055,6 +977,8 @@ export class Game {
   debugSetPlayerPose(position: { x: number; y: number; z: number }, yawRad?: number, pitchRad?: number): void {
     this.playerController.setSpawn(position.x, position.y, position.z);
     if (typeof yawRad === "number") {
+      this.recoilRecovery.reset();
+      this.viewPunch.reset();
       this.setLookAngles(yawRad, pitchRad ?? 0);
     }
     this.updateCameraFromPlayer();
@@ -1072,7 +996,7 @@ export class Game {
   }
 
   setEnemyAudio(audio: WeaponAudio): void {
-    this.enemyManager?.setAudio(audio);
+    this.enemyManager?.setAudio(audio, this.camera);
   }
 
   setEnemyKillCallback(cb: EnemyKillCallback): void {
@@ -1141,8 +1065,9 @@ export class Game {
   }
 
   setWeaponCallbacks(cbs: {
-    onReloadStart?: () => void;
-    onReloadEnd?: () => void;
+    onReloadStart?: (durationSeconds: number) => void;
+    /** `finishedEarly`: a fire press after the latch skipped the rest of the reload. */
+    onReloadEnd?: (finishedEarly: boolean) => void;
     onReloadCancel?: () => void;
     onDryFire?: () => void;
   }): void {
@@ -1167,10 +1092,6 @@ export class Game {
 
   getIsDead(): boolean {
     return this.isDead;
-  }
-
-  getControlMode(): RuntimeControlMode {
-    return this.controlMode;
   }
 
   isPointerLocked(): boolean {
@@ -1224,6 +1145,8 @@ export class Game {
     this.resetInputState();
     this.weapon.reset();
     this.resetWeaponDebugState();
+    this.recoilRecovery.reset();
+    this.viewPunch.reset();
 
     if (this.blockoutSpec && this.worldColliders && this.enemyManager) {
       const spawnPose = this.selectSpawnPose(this.blockoutSpec, this.spawn);
@@ -1255,27 +1178,16 @@ export class Game {
   }
 
   private setupLighting(): void {
-    if (this.lightingPreset === "flat") {
-      const palette = resolveBlockoutPalette(this.highVis);
-      this.scene.background = new Color(palette.background);
-      this.scene.fog = null;
-
-      const ambient = new AmbientLight(0xffffff, 1.05);
-      const hemi = new HemisphereLight(0xfafcff, 0xf0d7ad, 1.2);
-      hemi.position.set(0, 20, 0);
-      const key = new DirectionalLight(0xfff2d0, 0.7);
-      key.position.set(22, 34, 16);
-      key.castShadow = false;
-      this.scene.add(ambient, hemi, key);
-      return;
-    }
-
     // ── High desert daylight rig ───────────────────────────────────────
+    // R8 art direction: late-afternoon
+    // warm key from the south-south-west at ~34 degrees so it rakes down the
+    // north-south lanes, amber haze from 60 m, warm bounce fill. The luminance
+    // measurements quoted below were taken against the earlier midday rig.
     // The key sits ~50 degrees above the authored map center. Near-field air
     // stays clear; a pale linear fog only separates the far skyline.
-    const FOG_COLOR = 0xDCE4E8;
-    const FOG_NEAR_M = 82;
-    const FOG_FAR_M = 190;
+    const FOG_COLOR = 0xE2C9A2;
+    const FOG_NEAR_M = 60;
+    const FOG_FAR_M = 175;
     // Fill-to-key balance is what produces desert daylight, not the absolute
     // levels. At 1.16 combined fill against a 3.15 key the shaded east-facing
     // frontages sat within 20 points of the sunlit paving, so every opening
@@ -1292,19 +1204,19 @@ export class Game {
     // references show shade that is dark but strongly warm. The ambient term was
     // neutral and the hemisphere's ground half under-saturated, so nothing in the
     // fill carried the bounce colour.
-    const AMBIENT_COLOR = 0xFFDFAC;
-    const AMBIENT_INTENSITY = 0.08;
+    const AMBIENT_COLOR = 0xFFD29C;
+    const AMBIENT_INTENSITY = 0.12;
     // Warmed off pure sky-blue. At 0xDDEBF2 the sky half of the hemisphere has a
     // red-to-blue ratio of 0.91, and since a vertical wall takes roughly half sky
     // and half ground, that cold half was holding all shade at R/B ~1.5 where the
     // target reads 2.10-2.30 and the warm CS2 reference reads 1.91. A desert
     // street's shade is filled far more by bounce off sunlit stone than by sky.
-    const HEMI_SKY = 0xEDE2D2;
+    const HEMI_SKY = 0xEAD4B6;
     // Cooled from 0xE8B070 (red-to-blue 2.07) alongside SUN_COLOR below. Measured
   // map-wide, this render was WARMER than its targets on 15 of the 19 area
   // primary cameras, mean red-to-blue excess +0.178. The ground half of the
   // hemisphere was the most saturated warm term in the rig.
-  const HEMI_GROUND = 0xDCBE9A;
+  const HEMI_GROUND = 0xD9A36C;
     // Do not retune this to chase relative contrast on the Spawn-A camera. Both
     // directions have now been measured to exhaustion and neither is the fix.
     //
@@ -1333,7 +1245,7 @@ export class Game {
     // gap is roughly 3.2x the magnitude of the entire grade above, and no value
     // of fill or exposure can synthesise a lit population that was never
     // rendered. Fix the sun, then re-derive exposure against the new scene.
-    const HEMI_INTENSITY = 0.52;
+    const HEMI_INTENSITY = 0.72;
     // Cooled from 0xFFF1D8 (red-to-blue 1.18). Together with HEMI_GROUND this
     // takes the mean red-to-blue error against target from 0.351 to 0.255 across
     // six representative cameras, every one improving and none overshooting,
@@ -1344,7 +1256,7 @@ export class Game {
     // red-minus-blue goes 45.6 -> 42.3 against a target of 42.5 on the Spawn-A
     // camera and 47.0 -> 44.4 against 44.3 on the west elevation. The shade was
     // slightly over-warm as well; it is now essentially exact.
-    const SUN_COLOR = 0xFFF7EC;
+    const SUN_COLOR = 0xFFC585;
     // Do not raise this to chase "lit surfaces falling short" on the Spawn-A
     // approach. That reading comes from comparing the frame exposure-normalised
     // against the target; in ABSOLUTE terms this render is already brighter
@@ -1380,7 +1292,7 @@ export class Game {
     // Opposing faces cannot both be lit, so this is a binary art-direction choice
     // between the two areas, not a bug with a correct answer. The current azimuth
     // favours the Spawn-A primary camera. Changing it is an owner decision.
-    const SUN_POS: [number, number, number] = [-38, 105, -22];
+    const SUN_POS: [number, number, number] = [-8, 60, -40];
     const SUN_TARGET: [number, number, number] = [25, 0, 41];
     const SHADOW_MAP_SIZE = 4096;
     // Bias is NOT the lever for the wall-detail shadow problem. Tested at 0.06
@@ -1399,6 +1311,8 @@ export class Game {
     const ambient = new AmbientLight(AMBIENT_COLOR, AMBIENT_INTENSITY);
     const hemi = new HemisphereLight(HEMI_SKY, HEMI_GROUND, HEMI_INTENSITY);
     hemi.position.set(0, 50, 0);
+    this.ambientLight = ambient;
+    this.hemiLight = hemi;
 
     const sun = new DirectionalLight(SUN_COLOR, SUN_INTENSITY);
     sun.position.set(...SUN_POS);
@@ -1424,12 +1338,10 @@ export class Game {
       scene: this.scene,
       camera: this.camera,
       sunLight: sun,
-      preset: "midday",
+      preset: "late-afternoon",
     });
-    if (this.environmentLighting) {
-      this.scene.environment = this.createEnvironmentMap?.(this.scene, this.camera.position) ?? null;
-      this.scene.environmentIntensity = SCENE_ENVIRONMENT_INTENSITY;
-    }
+    this.scene.environment = this.createEnvironmentMap?.(this.scene, this.camera.position) ?? null;
+    this.scene.environmentIntensity = SCENE_ENVIRONMENT_INTENSITY;
   }
 
   private applyMapLightingBounds(spec: RuntimeBlockoutSpec): void {
@@ -1641,7 +1553,12 @@ export class Game {
     // Agent API uses degrees-per-tick: +yaw turns right, +pitch turns up.
     const nextYaw = this.yaw - this.tickIntent.lookYawDelta * DEG_TO_RAD;
     const nextPitch = this.pitch + this.tickIntent.lookPitchDelta * DEG_TO_RAD;
+    const yawBefore = this.yaw;
+    const pitchBefore = this.pitch;
     this.setLookAngles(nextYaw, nextPitch);
+    // Pulling against the spray cancels that much pending recovery, measured
+    // after the pitch clamp so input lost to the clamp cancels nothing.
+    this.recoilRecovery.consumeLookInput(this.pitch - pitchBefore, this.yaw - yawBefore);
   }
 
   private updateInputState(): void {
@@ -1789,20 +1706,13 @@ export class Game {
     this.clearProps();
 
     const builtBlockout = buildBlockout(blockoutSpec, {
-      highVis: this.highVis,
       seed: runtimeSeed,
       floorMode: this.floorMode,
       wallMode: this.wallMode,
       floorQuality: this.floorQuality,
-      lightingPreset: this.lightingPreset,
       floorMaterials: this.floorMaterials,
       wallMaterials: this.wallMaterials,
       anchors: this.anchorsSpec,
-      wallDetails: {
-        enabled: this.wallDetailsEnabled,
-        densityScale: this.wallDetailDensity,
-      },
-      doorModels: this.doorModels,
       facadeModels: this.facadeModels,
     });
     this.wallDetailStats = builtBlockout.wallDetailStats;
@@ -1811,41 +1721,29 @@ export class Game {
     this.scene.add(builtBlockout.root);
 
     this.propColliders = [];
-    this.renderedLandmarkAnchorIds = [];
     this.renderedAnchorIds = [];
     this.renderedPropPlacements = [];
     this.propStats = {
       seed: runtimeSeed,
-      profile: this.propChaos.profile,
-      jitter: this.propChaos.jitter ?? 0.34,
-      cluster: this.propChaos.cluster ?? 0.56,
-      density: MAP_PROPS_ENABLED ? (this.propChaos.density ?? 0.44) : 0,
-      totalAnchors: this.anchorsSpec?.anchors.length ?? 0,
       candidatesTotal: 0,
       collidersPlaced: 0,
       rejectedClearZone: 0,
       rejectedBounds: 0,
       rejectedGapRule: 0,
-      visualOnlyLandmarks: 0,
-      stallFillersPlaced: 0,
     };
 
-    if (MAP_PROPS_ENABLED && this.anchorsSpec) {
+    if (this.anchorsSpec) {
       const builtProps = buildProps({
         mapId: this.mapId,
         blockout: blockoutSpec,
         anchors: this.anchorsSpec,
         seedOverride: this.seedOverride,
-        propChaos: this.propChaos,
-        propVisuals: this.propVisuals,
         propModels: this.propModels,
-        highVis: this.highVis,
       });
       this.propsRoot = builtProps.root;
       applyStaticMaterialRenderBudget(builtProps.root);
       this.propColliders = builtProps.colliders;
       this.propStats = builtProps.stats;
-      this.renderedLandmarkAnchorIds = builtProps.renderedLandmarkAnchorIds;
       this.renderedAnchorIds = builtProps.renderedAnchorIds;
       this.renderedPropPlacements = builtProps.renderedPlacements;
       this.scene.add(builtProps.root);
@@ -1856,6 +1754,9 @@ export class Game {
     if (this.scene.environment) {
       applyKitEnvironmentResponse(builtBlockout.root, this.scene.environment);
     }
+    // Independently authored sections, roofs, walls and props share some faces;
+    // clip the hidden duplicates so coincident surfaces cannot z-fight.
+    resolveCoplanarSurfaces(this.propsRoot ? [builtBlockout.root, this.propsRoot] : [builtBlockout.root]);
 
     this.runtimeColliders = [...builtBlockout.colliders, ...this.propColliders].sort((a, b) => a.id.localeCompare(b.id));
     this.worldColliders = new WorldColliders(
@@ -1867,6 +1768,8 @@ export class Game {
     const spawnPose = this.selectSpawnPose(blockoutSpec, this.spawn);
     this.spawnPoseCache = spawnPose;
     this.playerController.setSpawn(spawnPose.x, spawnPose.y, spawnPose.z);
+    this.recoilRecovery.reset();
+    this.viewPunch.reset();
     this.setLookAngles(spawnPose.yawRad, 0);
     this.enemyManager?.fullDispose(this.scene);
     this.enemyManager?.setTacticalContext(blockoutSpec, this.anchorsSpec ?? null);
@@ -1893,6 +1796,8 @@ export class Game {
       pose.y,
       pose.z,
     );
+    this.recoilRecovery.reset();
+    this.viewPunch.reset();
     this.setLookAngles(pose.yawRad, 0);
     this.updateCameraFromPlayer();
     return true;

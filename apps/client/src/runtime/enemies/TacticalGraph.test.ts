@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import type { RuntimeBlockoutSpec } from "../map/types";
+import type { RuntimeBlockoutSpec } from "../map/spec/types";
 import {
   buildTacticalGraph,
   findTacticalPath,
@@ -19,18 +19,7 @@ function makeElevatedGraphSpec(): RuntimeBlockoutSpec {
       ceiling_height: 8,
       floor_height: 0,
     },
-    wall_details: {
-      enabled: false,
-      style: "bazaar",
-      density: 0,
-      maxProtrusion: 0.2,
-      facadeOverrides: [],
-      doorLayoutOverrides: [],
-      windowLayoutOverrides: [],
-      balconyLayoutOverrides: [],
-      moduleRegistry: { windowModules: [], doorModules: [], heroBayModules: [] },
-      compositionLayoutOverrides: [],
-    },
+    wall_details: { style: "bazaar" },
     zones: [
       {
         id: "WEST_GROUND",

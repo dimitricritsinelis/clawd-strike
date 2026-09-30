@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { isAutomatedClient, isLocalhostHostname } from "./hostEnvironment";
+import { isAutomatedClient, isLocalhostHostname, isInternalDebugSurface } from "./hostEnvironment";
 
 const REAL_PLAYER_AGENTS = [
   // Chrome on macOS
@@ -55,4 +55,12 @@ test("localhost hostnames are matched exactly", () => {
   for (const hostname of ["clawdstrike.vercel.app", "localhost.evil.com", "mylocalhost", ""]) {
     assert.equal(isLocalhostHostname(hostname), false, hostname);
   }
+});
+
+
+test("internal hooks require a development build or exact local hostname", () => {
+  assert.equal(isInternalDebugSurface(false, "clawdstrike.vercel.app"), false);
+  assert.equal(isInternalDebugSurface(false, "localhost.evil.com"), false);
+  assert.equal(isInternalDebugSurface(false, "localhost"), true);
+  assert.equal(isInternalDebugSurface(true, "clawdstrike.vercel.app"), true);
 });

@@ -207,18 +207,6 @@
         }
       }
     },
-    "plastered_wall_04": {
-      "source": "https://polyhaven.com/a/plastered_wall_04",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "3a45e9e3ff0c6aa179371dff02bded1f",
-          "normal": "f18e649235bb688732fb0ef1d61a5286",
-          "arm": "4d3c55b7cbb32cce818af5b2a1f18ffa"
-        }
-      }
-    },
     "fabric_leather_02": {
       "source": "https://polyhaven.com/a/fabric_leather_02",
       "license": "CC0-1.0",
@@ -240,30 +228,6 @@
           "albedo": "67a54f08b3cba2bc58616a377f65884f",
           "normal": "8bc4d81b4a8d5c10fa05c275795879b6",
           "arm": "7bdf1aec334a4aefa82d61be77516c83"
-        }
-      }
-    },
-    "grey_plaster_02": {
-      "source": "https://polyhaven.com/a/grey_plaster_02",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "fe17ee482114c15690c2bc853c572bbc",
-          "normal": "48636f9e7c651f6370b2549e0d3eaa4b",
-          "arm": "25b57d92f54badf861a3c1fa0118123e"
-        }
-      }
-    },
-    "plaster_brick_pattern": {
-      "source": "https://polyhaven.com/a/plaster_brick_pattern",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "20375d4e6759198b3cc48840a79b2172",
-          "normal": "533e1a687a013c9c827282f071c36b66",
-          "arm": "0fb812757effced4b0058ad38e7ae8ea"
         }
       }
     },
@@ -303,18 +267,6 @@
         }
       }
     },
-    "castle_brick_02_red": {
-      "source": "https://polyhaven.com/a/castle_brick_02_red",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "2a4d048e27392dd5f02b4cfcd7c03a80",
-          "normal": "101cb56920bbe84c23e105333fbbc0cf",
-          "arm": "32e95446b2350b6c1a2d8acb629b5204"
-        }
-      }
-    },
     "weathered_brown_planks": {
       "source": "https://polyhaven.com/a/weathered_brown_planks",
       "license": "CC0-1.0",
@@ -324,18 +276,6 @@
           "albedo": "e2fbdf7ed402e272e33e3f7ba707cf69",
           "normal": "1180a2ce3566529b25128252e02bd049",
           "arm": "be352d1156f18f438a44b290b494192e"
-        }
-      }
-    },
-    "rough_wood": {
-      "source": "https://polyhaven.com/a/rough_wood",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "92d4b3dd46bab95248f5a7680b7882e7",
-          "normal": "1c9829c9023f74c74eaeba28e56e5144",
-          "arm": "3879ef7144ffa11e43e504e590ccf1d7"
         }
       }
     },
@@ -351,18 +291,6 @@
         }
       }
     },
-    "brown_planks_03": {
-      "source": "https://polyhaven.com/a/brown_planks_03",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "6c9fdc21afcdf171d0a39999392a70f4",
-          "normal": "4944cb903b7d7c4029310deb8a51d69e",
-          "arm": "ce863d98248b4f7005a238b182e70b60"
-        }
-      }
-    },
     "hessian_230": {
       "source": "https://polyhaven.com/a/hessian_230",
       "license": "CC0-1.0",
@@ -375,30 +303,6 @@
         }
       }
     },
-    "dirty_carpet": {
-      "source": "https://polyhaven.com/a/dirty_carpet",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "97c0a4b94e5660c117cc511b240aa3b3",
-          "normal": "f6835454628831b0d8feceba6202e7a1",
-          "arm": "fbe1d0c316caca13fccb36a92b5a0f75"
-        }
-      }
-    },
-    "rusty_metal_04": {
-      "source": "https://polyhaven.com/a/rusty_metal_04",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "91832efd8e5896387e2af18a5b49b895",
-          "normal": "25f7f28b3546391532a5567b86e65aeb",
-          "arm": "279a6d62861e32e4ee43cce84b932e43"
-        }
-      }
-    },
     "painted_metal_shutter": {
       "source": "https://polyhaven.com/a/painted_metal_shutter",
       "license": "CC0-1.0",
@@ -408,42 +312,6 @@
           "albedo": "b2b648a56ca737d51999525e857f499a",
           "normal": "a18c51114f00627f9e48254e870ceb91",
           "arm": "be0154e168d571f601cff127181d5ca0"
-        }
-      }
-    },
-    "corrugated_iron_02": {
-      "source": "https://polyhaven.com/a/corrugated_iron_02",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "0437ba7acc3a60e9a00245580ae7e10b",
-          "normal": "e3a9b41f29a5dee9f0835bddb440efbd",
-          "arm": "58d9a11932fae9f85d4cbcde4700abb2"
-        }
-      }
-    },
-    "terracotta_floor_tiles": {
-      "source": "https://polyhaven.com/a/terracotta_floor_tiles",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "06cc0f29e2a61115580fe147140c0201",
-          "normal": "727399912c20adf49b87078c21af8071",
-          "arm": "82da8f841a4b112206d535d4b4ff537a"
-        }
-      }
-    },
-    "stone_embedded_tiles": {
-      "source": "https://polyhaven.com/a/stone_embedded_tiles",
-      "license": "CC0-1.0",
-      "originalResolution": "1k",
-      "md5": {
-        "1k": {
-          "albedo": "dfe0a73b32750556bb14c2c88eb80ff3",
-          "normal": "921b139e6b85e8454ed6faaca31faeac",
-          "arm": "538e982f9a1756536beb0ea1ba552108"
         }
       }
     }

@@ -1,12 +1,20 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import { createHash } from "node:crypto";
 import {
+  existsSync,
   readdirSync,
   readFileSync,
   statSync,
+  mkdtempSync,
+  writeFileSync,
+  rmSync,
 } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
+import { MAP_SOURCE_ABS } from "./mapPaths.mjs";
 
 function readJson(url) {
   return JSON.parse(readFileSync(url, "utf8"));
@@ -27,12 +35,28 @@ function walkFiles(rootUrl, relative = "") {
   });
 }
 
+const REPO_ROOT = new URL("../../../../", import.meta.url);
+let trackedRepoFiles;
+
+// A repo:// source names a tracked file, or a directory of tracked files, that
+// is present in this checkout. Untracked files would pass locally and fail CI.
+function isTrackedRepoPath(path) {
+  trackedRepoFiles ??= execFileSync("git", ["ls-files", "-z"], { cwd: fileURLToPath(REPO_ROOT), encoding: "utf8" })
+    .split("\0")
+    .filter(Boolean);
+  return existsSync(join(fileURLToPath(REPO_ROOT), path))
+    && trackedRepoFiles.some((file) => file === path || file.startsWith(`${path}/`));
+}
+
 function assertSource(source, license, label) {
   assert.match(source, /^(https:\/\/|repo:\/\/)/, `${label} must declare an absolute or repo source`);
   assert.ok(
     license === "CC0" || license === "CC0-1.0" || license === "Project-Original",
     `${label} has unsupported license '${license}'`,
   );
+  if (source.startsWith("repo://")) {
+    assert.ok(isTrackedRepoPath(source.slice("repo://".length)), `${label} source '${source}' is not a tracked repository path`);
+  }
 }
 
 function assertChecksums(baseUrl, checksumByPath, label) {
@@ -61,6 +85,11 @@ function verifyModelPack(manifestUrl) {
     for (const [quality, variant] of Object.entries(model.variants ?? {})) {
       const label = `${model.id}:${quality}`;
       assert.match(quality, /^1k$/, `${label} has unsupported model quality`);
+      if (model.license === "Project-Original" && variant.url === model.url && Object.keys(variant).length === 1) {
+        // This quality is an alias of the already checksum-verified original, not a derivative.
+        continue;
+      }
+      assertChecksums(baseUrl, variant.md5, label);
       assert.ok(variant.url in variant.md5, `${label} model URL is absent from its MD5 map`);
       assert.match(
         variant.generator,
@@ -75,8 +104,18 @@ function verifyModelPack(manifestUrl) {
       for (const [derivedPath, sourcePath] of Object.entries(variant.derivedFrom)) {
         assert.ok(sourcePath in model.md5, `${label}:${derivedPath} has unknown source '${sourcePath}'`);
       }
-      assertChecksums(baseUrl, variant.md5, label);
       for (const relativePath of Object.keys(variant.md5)) claimedFiles.add(relativePath);
+    }
+  }
+  for (const asset of manifest.auxiliaryAssets ?? []) {
+    assert.ok(!entriesById.has(asset.id), `model pack repeats '${asset.id}'`);
+    assertSource(asset.source, asset.license, asset.id);
+    assert.ok(typeof asset.purpose === "string" && asset.purpose.trim(), `${asset.id} must explain its retained auxiliary purpose`);
+    assert.deepEqual([...asset.files].sort(), Object.keys(asset.md5).sort(), `${asset.id} files and MD5 inventory differ`);
+    assertChecksums(baseUrl, asset.md5, asset.id);
+    for (const relativePath of asset.files) {
+      assert.ok(!claimedFiles.has(relativePath), `${asset.id}:${relativePath} is already claimed`);
+      claimedFiles.add(relativePath);
     }
   }
   assert.deepEqual(
@@ -162,7 +201,11 @@ function verifyMaterialPack(manifestUrl) {
           family.md5[family.originalResolution],
           `${familyId} lacks checksums for original resolution '${family.originalResolution}'`,
         );
-        const expected = family.md5[resolution]?.[channel];
+        // A family whose folder holds several files per channel keys checksums by file name.
+        const checksum = family.md5[resolution]?.[channel];
+        const expected = typeof checksum === "object"
+          ? checksum?.[normalizedPath.slice(familyId.length + 1)]
+          : checksum;
         assert.match(
           expected ?? "",
           /^[0-9a-f]{32}$/,
@@ -191,13 +234,59 @@ function verifyMaterialPack(manifestUrl) {
   );
 }
 
+test("model quality aliases retain original hash coverage and CC0 derivative checks", () => {
+  const directory = mkdtempSync(join(tmpdir(), "model-provenance-"));
+  const manifestUrl = pathToFileURL(join(directory, "models.json"));
+  try {
+    writeFileSync(join(directory, "original.glb"), "fixture");
+    const model = {
+      id: "fixture", url: "original.glb", source: "repo://assets/source/unit-spawn-b-courtyard/build.py",
+      license: "Project-Original", md5: { "original.glb": md5(new URL("original.glb", manifestUrl)) },
+      variants: { "1k": { url: "original.glb" } },
+    };
+    const verify = (entry, auxiliaryAssets = []) => {
+      writeFileSync(manifestUrl, JSON.stringify({ models: [entry], auxiliaryAssets }));
+      return verifyModelPack(manifestUrl);
+    };
+    assert.doesNotThrow(() => verify(model));
+    assert.doesNotThrow(() => verify({ ...model, source: "repo://assets/source/unit-spawn-b-courtyard" }));
+    assert.throws(() => verify({ ...model, source: "assets/source/unit-spawn-b-courtyard/build.py" }), /absolute or repo source/);
+    assert.throws(() => verify({ ...model, source: "repo://assets/source/../missing.py" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, source: "repo://assets/source/nonexistent-provenance-fixture.py" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, source: "repo://.git/HEAD" }), /not a tracked repository path/);
+    assert.throws(() => verify({ ...model, license: "CC-BY-4.0" }), /unsupported license/);
+    assert.throws(() => verify({ ...model, md5: {} }), /absent from its MD5 map/);
+    assert.throws(() => verify({ ...model, md5: { "original.glb": "0".repeat(32) } }), /MD5 drifted/);
+    assert.throws(() => verify({ ...model, variants: { "1k": { url: "other.glb" } } }), /must declare an MD5 map/);
+    const cc0 = { ...model, source: "https://polyhaven.com/a/fixture", license: "CC0-1.0" };
+    assert.throws(() => verify(cc0), /must declare an MD5 map/);
+    const derivative = {
+      url: "original.glb", md5: model.md5, generator: "sharp@0.34.5 fixture",
+      derivedFrom: { "original.glb": "original.glb" },
+    };
+    assert.doesNotThrow(() => verify({ ...cc0, variants: { "1k": derivative } }));
+    assert.throws(() => verify({ ...cc0, variants: { "1k": { ...derivative, md5: {} } } }), /absent from its MD5 map/);
+    assert.throws(() => verify({ ...cc0, variants: { "1k": { ...derivative, derivedFrom: {} } } }), /inventories differ/);
+    writeFileSync(join(directory, "unclaimed.png"), "fixture");
+    assert.throws(() => verify(model), /unmanifested or stale/);
+    const auxiliary = {
+      id: "retained-source", source: model.source, license: model.license,
+      purpose: "Retained texture source, not a runtime model.", files: ["unclaimed.png"],
+      md5: { "unclaimed.png": md5(new URL("unclaimed.png", manifestUrl)) },
+    };
+    assert.doesNotThrow(() => verify(model, [auxiliary]));
+    assert.throws(() => verify(model, [{ ...auxiliary, purpose: "" }]), /auxiliary purpose/);
+    assert.throws(() => verify(model, [{ ...auxiliary, md5: {} }]), /inventory differ/);
+    assert.throws(() => verify(model, [{ ...auxiliary, md5: { "unclaimed.png": "0".repeat(32) } }]), /MD5 drifted/);
+    assert.throws(() => verify(model, [{ ...auxiliary, files: [model.url], md5: model.md5 }]), /already claimed/);
+  } finally {
+    rmSync(directory, { recursive: true, force: true });
+  }
+});
+
 test("bazaar model packs carry complete CC0 provenance and no dead files", () => {
   const propManifestUrl = new URL(
     "../../public/assets/models/environment/bazaar/props/models.json",
-    import.meta.url,
-  );
-  const doorManifestUrl = new URL(
-    "../../public/assets/models/environment/bazaar/doors/models.json",
     import.meta.url,
   );
   const facadeManifestUrl = new URL(
@@ -206,13 +295,9 @@ test("bazaar model packs carry complete CC0 provenance and no dead files", () =>
   );
   const modelById = new Map([
     ...verifyModelPack(propManifestUrl),
-    ...verifyModelPack(doorManifestUrl),
     ...verifyModelPack(facadeManifestUrl),
   ]);
-  const sourceSpec = readJson(new URL(
-    "../../../../docs/map-design/specs/map_spec.json",
-    import.meta.url,
-  ));
+  const sourceSpec = readJson(MAP_SOURCE_ABS.spec);
   for (const asset of sourceSpec.asset_registry.filter((entry) => (
     entry.source.kind === "external_cc0" && entry.runtime.mode === "model"
   ))) {

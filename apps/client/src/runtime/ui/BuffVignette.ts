@@ -1,3 +1,4 @@
+import { clamp01 } from "../utils/math";
 import {
   type BuffType,
   BUFF_DEFINITIONS,
@@ -29,10 +30,6 @@ export type BuffVignetteDebugState = {
   pulseOpacity: number;
   flashOpacity: number;
 };
-
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
-}
 
 function easeInOut(value: number): number {
   const clamped = clamp01(value);

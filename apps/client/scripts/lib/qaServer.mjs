@@ -5,23 +5,34 @@ import { createServer as createNetServer } from "node:net";
 import path from "node:path";
 import { promisify } from "node:util";
 import { createServer as createViteServer } from "vite";
+import { MAP_SOURCE } from "./mapPaths.mjs";
 
 const execFileAsync = promisify(execFile);
 
-export const QA_READY_PATH = "/__qa/ready";
+const QA_READY_PATH = "/__qa/ready";
 export const QA_READINESS_SCHEMA_VERSION = 1;
-export const DEFAULT_SERVER_READY_TIMEOUT_MS = 60_000;
-export const EXTERNAL_QA_OPT_IN_ENV = "ALLOW_EXTERNAL_QA_SERVER";
+const DEFAULT_SERVER_READY_TIMEOUT_MS = 60_000;
+const EXTERNAL_QA_OPT_IN_ENV = "ALLOW_EXTERNAL_QA_SERVER";
 export const EXTERNAL_QA_RUN_TOKEN_ENV = "QA_EXTERNAL_RUN_TOKEN";
-export const GENERATED_PROVENANCE_SCHEMA_VERSION = 1;
+const GENERATED_PROVENANCE_SCHEMA_VERSION = 1;
 export const QA_GENERATOR_IDENTITY = "apps/client/scripts/gen-map-runtime.mjs";
 
 const FINGERPRINT_FILES = Object.freeze({
-  sourceMap: "docs/map-design/specs/map_spec.json",
-  sourceShots: "docs/map-design/shots.json",
+  sourceMap: MAP_SOURCE.spec,
+  sourceShots: MAP_SOURCE.shots,
   generatedMap: "apps/client/public/maps/bazaar-map/map_spec.json",
   generatedShots: "apps/client/public/maps/bazaar-map/shots.json",
   runtimeBootstrap: "apps/client/src/runtime/bootstrap.ts",
+  runtimeSceneTelemetry: "apps/client/src/runtime/bootstrap/sceneTelemetry.ts",
+  runtimeState: "apps/client/src/runtime/bootstrap/runtimeState.ts",
+  runtimeMapTelemetry: "apps/client/src/runtime/bootstrap/mapTelemetry.ts",
+  runtimeHud: "apps/client/src/runtime/bootstrap/hud.ts",
+  runtimeScoreStorage: "apps/client/src/runtime/bootstrap/scoreStorage.ts",
+  runtimeAssetLoading: "apps/client/src/runtime/bootstrap/assetLoading.ts",
+  runtimeUrlParams: "apps/client/src/runtime/utils/UrlParams.ts",
+  runtimeTextApi: "apps/client/src/shared/runtimeTextApi.ts",
+  runtimeOrientationGuard: "apps/client/src/shared/OrientationGuard.ts",
+  runtimeHostEnvironment: "apps/client/src/shared/hostEnvironment.ts",
   qaHarness: "apps/client/scripts/lib/runtimePlaywright.mjs",
   viteConfig: "apps/client/vite.config.ts",
 });
@@ -135,7 +146,7 @@ async function hashFile(workspaceRoot, relativePath) {
   }
 }
 
-export async function collectQaFingerprint(options = {}) {
+async function collectQaFingerprint(options = {}) {
   const root = path.resolve(options.root ?? process.cwd());
   const workspaceRoot = await gitValue(root, ["rev-parse", "--show-toplevel"], root);
   const [branch, commit, worktree, ...files] = await Promise.all([
@@ -238,7 +249,7 @@ export function validateGeneratedSourceFingerprint(fingerprint) {
   return { passed: errors.length === 0, errors };
 }
 
-export function assertGeneratedSourceFingerprint(fingerprint) {
+function assertGeneratedSourceFingerprint(fingerprint) {
   const validation = validateGeneratedSourceFingerprint(fingerprint);
   if (!validation.passed) {
     throw new Error(
@@ -417,8 +428,6 @@ export async function startQaServer(options = {}) {
 
   assertGeneratedSourceFingerprint(expectedFingerprint);
   process.env.VERCEL_ENV ??= "production";
-  process.env.SESSION_SECRET ??= "clawd-strike-playwright-session-secret-32chars";
-  process.env.SHARED_CHAMPION_ADMIN_TOKEN ??= "clawd-strike-playwright-shared-champion-admin-token";
   process.env.STATS_ADMIN_TOKEN ??= "clawd-strike-dev-stats-admin-token";
   process.env.PRIVACY_HASH_SECRET ??= "clawd-strike-playwright-privacy-secret-32chars";
 
@@ -475,18 +484,5 @@ export async function startQaServer(options = {}) {
   } catch (error) {
     await server?.close().catch(() => {});
     throw error;
-  }
-}
-
-export async function withQaServer(callback, options = {}) {
-  const {
-    startServer = startQaServer,
-    ...serverOptions
-  } = options;
-  const server = await startServer(serverOptions);
-  try {
-    return await callback(server);
-  } finally {
-    await server.close();
   }
 }

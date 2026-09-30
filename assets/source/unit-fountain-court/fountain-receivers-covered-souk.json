@@ -1,0 +1,32 @@
+{
+  "modelId": "fountain_receivers_covered_souk",
+  "file": "fountain-receivers-covered-souk.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 41,
+    "y": 32,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "b963a1e3e7a71be33037cdcd0c41c143a78c291435e8967131e38fb99c7c607a",
+  "receiverParcelIds": [
+    "cs-wn",
+    "cs-ws"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 41,
+      "start": 32.0,
+      "end": 39.0
+    },
+    {
+      "orientation": "vertical",
+      "coord": 41,
+      "start": 44.0,
+      "end": 48.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

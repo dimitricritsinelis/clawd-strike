@@ -1,0 +1,128 @@
+{
+ "magazine": {
+  "theta": -0.35,
+  "offset": [
+   0.004,
+   0,
+   -0.052
+  ]
+ },
+ "hand_in_mag": {
+  "matrix": [
+   [
+    0.6767610062200369,
+    0.6013423755188645,
+    -0.42471388941894905,
+    -0.05034921620923471
+   ],
+   [
+    -0.13625293799989455,
+    -0.46462402873493414,
+    -0.8749626556650956,
+    0.08088641992736466
+   ],
+   [
+    -0.7234844002094584,
+    0.6500091224955598,
+    -0.23250475979238044,
+    -0.1543811311262948
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ]
+ },
+ "anatomy": {
+  "index": {
+   "mcp": 18.5,
+   "mcp_abduct": -6.0,
+   "pip": 48.3,
+   "dip": 28.3
+  },
+  "middle": {
+   "mcp": 29.2,
+   "mcp_abduct": 2.5,
+   "pip": 75.6,
+   "dip": 30.3
+  },
+  "ring": {
+   "mcp": 29.2,
+   "mcp_abduct": -6.0,
+   "pip": 82.4,
+   "dip": 26.1
+  },
+  "pinky": {
+   "mcp": 28.1,
+   "mcp_abduct": 0.4,
+   "pip": 65.0,
+   "dip": 38.3
+  },
+  "thumb": {
+   "cmc_flex": -16.7,
+   "cmc_abduct": 41.7,
+   "cmc_rot": 13.0,
+   "mcp": 18.0,
+   "ip": 27.9
+  }
+ },
+ "arm": {
+  "forearm_roll_deg": 170.0,
+  "forearm_roll_split": 0.25,
+  "pole_offset": [
+   0,
+   0,
+   -0.15
+  ]
+ },
+ "_meta": {
+  "concept": "B power grip (refined)",
+  "arm_note": "The wrist cannot twist. The bake/IK must put the hand roll into the forearm: rotate L_forearm.001 by (1-split)*forearm_roll_deg and L_forearm by split*forearm_roll_deg about their local +Y (render.py applies this; 'auto' solves it so wrist twist = 0). pole_offset (m, rig space) is added to the reload bake's elbow pole for that phase.",
+  "description": "Insertion start key (theta -0.35, offset (0.004,0,-0.052)): power grip at mid-body, hand top ~39 mm below the feed lips so the top is free to hook the lug; index is the top finger on the front edge, middle/ring/pinky wrap the front edge onto the far face, thumb opposed on the rear-near corner. The same hand clears the rifle when the magazine is seated (theta 0), so it can stay on through rock-and-lock.",
+  "regrip": "Different magazine from REMOVE (old one is dropped), so the ~40 deg difference in magazine-local orientation is covered by the draw from the pouch.",
+  "elbow": "Uses a 0.15 m lower elbow pole for this phase; with the default pole the wrist is at -41 flex / -19 radial deviation instead of -38 / -11.",
+  "measured": {
+   "wrist_flex_deg": -44.4,
+   "wrist_radial(-)/ulnar(+)_dev_deg": -11.4,
+   "wrist_twist_deg": 0.0,
+   "digits": {
+    "f_ring": {
+     "inside": 4,
+     "max_inside_depth_mm": 0.24,
+     "contact_2mm": 49
+    },
+    "f_index": {
+     "inside": 1,
+     "max_inside_depth_mm": 0.23,
+     "contact_2mm": 55
+    },
+    "thumb": {
+     "inside": 2,
+     "max_inside_depth_mm": 0.39,
+     "contact_2mm": 37
+    },
+    "f_pinky": {
+     "inside": 4,
+     "max_inside_depth_mm": 0.34,
+     "contact_2mm": 87
+    },
+    "f_middle": {
+     "inside": 0,
+     "max_inside_depth_mm": 0.0,
+     "contact_2mm": 58
+    }
+   },
+   "rifle_contact": {},
+   "thumb_pad_dir_rig": [
+    0.998,
+    0.062,
+    -0.006
+   ],
+   "wristErrorMm": 0.02
+  },
+  "fix2": "Re-fitted in fix2/ (cfg_i10.json): thumb CMC re-coupled (cmc_flex -16.7 with cmc_rot 13.0, was -15 / 35 pinned at both range edges; MCP 18 / IP 27.9); finger MCP cascade index 18.5 < middle 29.2 = ring 29.2 ~ pinky 28.1 (was pinky 10 vs ring 43.2); ring/pinky mcp_abduct -6 / +0.4 (was -10 / -10).",
+  "previous_version": "fix2/backup/insert.json"
+ }
+}

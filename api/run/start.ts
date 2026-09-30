@@ -2,7 +2,7 @@ import { handleSharedChampionRunStartRequest } from "../../server/highScoreRunAp
 import {
   createPostgresSharedChampionStore,
   hasConfiguredSharedChampionDatabase,
-} from "../../server/highScoreStore.js";
+} from "../../server/highScoreStoreImpl.js";
 
 const sharedChampionStore = hasConfiguredSharedChampionDatabase()
   ? createPostgresSharedChampionStore()

@@ -1,6 +1,7 @@
 import path from "node:path";
 import { copyFile, readFile, writeFile } from "node:fs/promises";
 import { tsImport } from "tsx/esm/api";
+import { recordAssignedSearchProgress } from "./lib/botSearchProgress.mjs";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -14,6 +15,7 @@ import {
   parseBooleanEnv,
   readRuntimeState,
   runAgentRoute,
+  SHIP_QA_SEARCH_PARAMS,
   startTracing,
   stopTracing,
   writeJson,
@@ -24,14 +26,17 @@ const { getGameplayTuning } = await tsImport(
   import.meta.url,
 );
 const GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
+const { DIRECTIVE_PLAN_INTERVAL_S } = await tsImport("../src/runtime/enemies/EnemyManager.ts", import.meta.url);
 
-function resolveBaselineTier(waveNumber) {
+function resolveExpectedTier(waveNumber, elapsedS = 0) {
   const bands = GAMEPLAY_TUNING.waves.tierProgression.waveBands;
   const band = bands.find((candidate) => (
     waveNumber >= candidate.minWave
     && (candidate.maxWaveInclusive === null || waveNumber <= candidate.maxWaveInclusive)
   )) ?? bands.at(-1);
-  return band?.tier ?? 0;
+  const progression = GAMEPLAY_TUNING.waves.tierProgression;
+  const elapsedBonus = progression.elapsedTierBonusThresholdsS.filter((threshold) => elapsedS >= threshold).length;
+  return Math.min(progression.maxTier, (band?.tier ?? 0) + elapsedBonus);
 }
 
 function checkpointId(seconds) {
@@ -42,15 +47,18 @@ const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) =
   band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
 ));
 if (!WAVE_ONE_PRESSURE) {
-  throw new Error("[bot:smoke] Gameplay tuning has no wave-one pressure band");
+  throw new Error("[smoke:bots] Gameplay tuning has no wave-one pressure band");
 }
 const SEARCH_START_S = WAVE_ONE_PRESSURE.searchStartS;
+// Phase changes precede the staggered planners; allow one planner interval
+// plus one simulation frame before demanding every bot has its search task.
+const SEARCH_TASK_READY_S = SEARCH_START_S + DIRECTIVE_PLAN_INTERVAL_S + 1 / 60;
 const FULL_PRESSURE_S = WAVE_ONE_PRESSURE.fullPressureS;
 const PRE_SEARCH_S = Math.min(15, SEARCH_START_S / 2);
 const SWEEP_PRESSURE_S = SEARCH_START_S + ((FULL_PRESSURE_S - SEARCH_START_S) * 2 / 3);
 const POST_FULL_PRESSURE_S = FULL_PRESSURE_S + 15;
-const WAVE_ONE_TIER = resolveBaselineTier(1);
-const WAVE_TWO_TIER = resolveBaselineTier(2);
+const WAVE_ONE_TIER = resolveExpectedTier(1);
+const WAVE_TWO_TIER = resolveExpectedTier(2);
 const MIN_HIDDEN_SWEEP_CLOSURE_M = 3.5;
 
 const BASE_URL = parseBaseUrl(process.env.BASE_URL ?? "http://127.0.0.1:5174");
@@ -82,7 +90,7 @@ function timestampId() {
 }
 
 function fail(message) {
-  throw new Error(`[bot:smoke] ${message}`);
+  throw new Error(`[smoke:bots] ${message}`);
 }
 
 function summarizeState(state) {
@@ -505,28 +513,23 @@ async function readRuntimeStateWithRetry(page, { retries = 8, delayMs = 250 } = 
   throw lastError;
 }
 
-async function advanceToWaveElapsedS(page, targetS, onIntermediateState) {
+async function advanceToWaveElapsedS(page, targetS, onIntermediateState, maxStepMs = 5_000) {
   let state = await readRuntimeStateWithRetry(page);
-  let remainingMs = Math.max(0, Math.round(targetS * 1000 - ((state?.bots?.waveElapsedS ?? 0) * 1000)));
-
-  while (remainingMs > 5_000) {
-    await advanceRuntime(page, 5_000);
-    remainingMs -= 5_000;
+  const initialElapsedS = state?.bots?.waveElapsedS ?? 0;
+  const maxSteps = Math.ceil(Math.max(0, targetS - initialElapsedS) * 1_000 / maxStepMs) + 2;
+  for (let step = 0; step < maxSteps; step += 1) {
+    const elapsedS = state?.bots?.waveElapsedS;
+    if (!Number.isFinite(elapsedS)) fail("Bot wave clock is unavailable");
+    if (elapsedS >= targetS || state?.gameplay?.alive === false || state?.gameOver?.visible === true) return state;
+    // Drive the observed simulation clock, not requested time. Round upward
+    // so floating-point frame sums still cross an exact tier/pressure mark.
+    await advanceRuntime(page, Math.min(maxStepMs, Math.ceil((targetS - elapsedS) * 1_000)));
     state = await readRuntimeStateWithRetry(page);
-    if (onIntermediateState) {
-      await onIntermediateState(state);
-    }
+    if (onIntermediateState) await onIntermediateState(state);
+    if (state?.gameplay?.alive === false || state?.gameOver?.visible === true) return state;
+    if ((state?.bots?.waveElapsedS ?? 0) <= elapsedS) fail(`Bot wave clock stalled before ${targetS}s`);
   }
-
-  if (remainingMs > 0) {
-    await advanceRuntime(page, remainingMs);
-    state = await readRuntimeStateWithRetry(page);
-    if (onIntermediateState) {
-      await onIntermediateState(state);
-    }
-  }
-
-  return state;
+  fail(`Bot wave clock did not reach ${targetS}s within ${maxSteps} steps`);
 }
 
 async function enforceHiddenPlayerPose(page, options = {}) {
@@ -576,6 +579,7 @@ const summary = {
   longSightline: null,
   zeroContact: {
     checkpoints: [],
+    assignedGoalProgress: {},
   },
   hiddenSearch: {
     route: null,
@@ -593,11 +597,14 @@ const summary = {
 };
 
 try {
+  // Bot behavior uses the existing deterministic QA clock. Rendering and
+  // screenshot latency must not advance AI between timed checkpoints.
   const url = buildRuntimeUrl(BASE_URL, {
     mapId: MAP_ID,
     autostart: "human",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       unlimitedHealth: 1,
       debug: 1,
     },
@@ -629,6 +636,7 @@ try {
     autostart: "human",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       unlimitedHealth: 1,
       debug: 1,
     },
@@ -650,6 +658,7 @@ try {
     agentName: "ZeroContact",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       debug: 1,
     },
   });
@@ -657,9 +666,10 @@ try {
   await enforceHiddenPlayerPose(page, { suppressIntelMs: 55_000 });
   summary.zeroContact.checkpoints.push(await captureCheckpoint(page, zeroContactOutputDir, consoleRecorder, "post-teleport"));
 
+  let previousZeroContactState = summary.zeroContact.checkpoints[0].state;
   const zeroContactTargetsS = [
     PRE_SEARCH_S,
-    SEARCH_START_S,
+    SEARCH_TASK_READY_S,
     SWEEP_PRESSURE_S,
     POST_FULL_PRESSURE_S,
   ];
@@ -667,13 +677,17 @@ try {
   for (const targetS of zeroContactTargetsS) {
     consoleRecorder.clear();
     await advanceToWaveElapsedS(page, targetS, async (currentState) => {
+      if (previousZeroContactState.bots.waveElapsedS >= SEARCH_START_S) {
+        recordAssignedSearchProgress(summary.zeroContact.assignedGoalProgress, previousZeroContactState, currentState);
+      }
+      previousZeroContactState = currentState;
       if (zeroContactDeathAtS === null && (currentState?.gameplay?.alive === false || currentState?.gameOver?.visible === true)) {
         zeroContactDeathAtS = currentState?.bots?.waveElapsedS ?? null;
       }
       if (zeroContactDeathAtS === null && currentState?.gameplay?.alive !== false && currentState?.player?.zoneId !== HIDDEN_PLAYER_ZONE_ID) {
         await enforceHiddenPlayerPose(page, { suppressIntelMs: 10_000 });
       }
-    });
+    }, 1_000);
     const checkpoint = await captureCheckpoint(page, zeroContactOutputDir, consoleRecorder, checkpointId(targetS));
     if (zeroContactDeathAtS === null && (checkpoint.state?.gameplay?.alive === false || checkpoint.state?.gameOver?.visible === true)) {
       zeroContactDeathAtS = checkpoint.state?.bots?.waveElapsedS ?? null;
@@ -689,6 +703,7 @@ try {
     agentName: "BotSmoke",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       debug: 1,
     },
   });
@@ -726,6 +741,7 @@ try {
     agentName: "TerraceCombat",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       unlimitedHealth: 1,
       debug: 1,
     },
@@ -750,6 +766,7 @@ try {
     agentName: "RespawnCheck",
     spawn: "A",
     extraSearchParams: {
+      ...SHIP_QA_SEARCH_PARAMS,
       unlimitedHealth: 1,
       debug: 1,
     },
@@ -792,7 +809,7 @@ try {
   const fullPressure = checkpointMap.get(checkpointId(FULL_PRESSURE_S));
   const zeroContactPostTeleport = zeroContactCheckpointMap.get("post-teleport");
   const zeroContactPreSearch = zeroContactCheckpointMap.get(checkpointId(PRE_SEARCH_S));
-  const zeroContactSearchStart = zeroContactCheckpointMap.get(checkpointId(SEARCH_START_S));
+  const zeroContactSearchStart = zeroContactCheckpointMap.get(checkpointId(SEARCH_TASK_READY_S));
   const zeroContactEnd = zeroContactCheckpointMap.get(checkpointId(POST_FULL_PRESSURE_S));
   const hiddenPostRoute = hiddenCheckpointMap.get("post-route");
   const hiddenSearchStart = hiddenCheckpointMap.get(checkpointId(SEARCH_START_S));
@@ -881,9 +898,9 @@ try {
       detail: overlappingBotPairDetail(t0),
     },
     {
-      label: "wave 1 never adds an elapsed-time difficulty tier",
-      passed: activeStates.every((state) => state.bots.tier === WAVE_ONE_TIER),
-      detail: `tiers=${activeStates.map((state) => state.bots.tier).join("/")} expected=${WAVE_ONE_TIER}`,
+      label: "wave 1 follows the tuned elapsed-time difficulty schedule",
+      passed: activeStates.every((state) => state.bots.tier === resolveExpectedTier(1, state.bots.waveElapsedS)),
+      detail: `tiers=${activeStates.map((state) => state.bots.tier).join("/")} expected=${activeStates.map((state) => resolveExpectedTier(1, state.bots.waveElapsedS)).join("/")}`,
     },
     {
       label: "friendly fire stays disabled",
@@ -975,17 +992,20 @@ try {
         && (zeroContactSearchStart.bots?.squadTasks?.length ?? 0) >= 5
         && new Set((zeroContactSearchStart.bots?.squadTasks ?? []).map((task) => task.zoneId)).size >= 3
         && (zeroContactSearchStart.bots?.squadTasks ?? []).filter((task) => task.lane === "west").length >= 2,
-      detail: `elapsed=${SEARCH_START_S} phase=${zeroContactSearchStart.bots?.searchPhase ?? "n/a"} tasks=${zeroContactSearchStart.bots?.squadTasks?.length ?? 0} westTasks=${(zeroContactSearchStart.bots?.squadTasks ?? []).filter((task) => task.lane === "west").length} uniqueZones=${new Set((zeroContactSearchStart.bots?.squadTasks ?? []).map((task) => task.zoneId)).size}`,
+      detail: `elapsed=${zeroContactSearchStart.bots?.waveElapsedS} phase=${zeroContactSearchStart.bots?.searchPhase ?? "n/a"} tasks=${zeroContactSearchStart.bots?.squadTasks?.length ?? 0} westTasks=${(zeroContactSearchStart.bots?.squadTasks ?? []).filter((task) => task.lane === "west").length} uniqueZones=${new Set((zeroContactSearchStart.bots?.squadTasks ?? []).map((task) => task.zoneId)).size}`,
     },
     {
-      label: "zero-contact hunt converges after full pressure",
+      label: "zero-contact search makes real progress without inventing player contact",
+      // The silent teleport is unknown to bots. Requiring proximity to its
+      // secret position rewards stuck bots near it and would demand cheating.
+      // Require real progress toward assigned search goals instead; changing
+      // assignments or oscillating in place must not count as progress.
       passed:
-        (summary.zeroContact.deathAtS !== null && summary.zeroContact.deathAtS <= POST_FULL_PRESSURE_S)
-        || (
-          averageDistanceToPlayer(zeroContactEnd) <= 30
-          && countBotsInLane(zeroContactEnd, "west") + countBotsInLane(zeroContactEnd, "main") >= 6
-        ),
-      detail: `target=${POST_FULL_PRESSURE_S} deathAt=${summary.zeroContact.deathAtS ?? "n/a"} avgDist=${averageDistanceToPlayer(zeroContactEnd).toFixed(2)} westMain=${countBotsInLane(zeroContactEnd, "west") + countBotsInLane(zeroContactEnd, "main")}`,
+        summary.zeroContact.checkpoints
+          .filter((checkpoint) => checkpoint.state.bots.waveElapsedS < FULL_PRESSURE_S)
+          .every((checkpoint) => checkpoint.state.bots.lastSeenPlayer === null && checkpoint.state.bots.lastHeardPlayer === null)
+        && Object.values(summary.zeroContact.assignedGoalProgress).filter((entry) => entry.distanceClosedM >= 4).length >= 6,
+      detail: `progress=${JSON.stringify(summary.zeroContact.assignedGoalProgress)} contactBeforeRelease=${summary.zeroContact.checkpoints.filter((checkpoint) => checkpoint.state.bots.waveElapsedS < FULL_PRESSURE_S).some((checkpoint) => checkpoint.state.bots.lastSeenPlayer !== null || checkpoint.state.bots.lastHeardPlayer !== null)}`,
     },
     {
       label: "hidden route reaches the west service lane",
@@ -1106,7 +1126,7 @@ try {
     fail(`assertions failed: ${failed}`);
   }
 
-  console.log(`[bot:smoke] pass | output=${outputDir}`);
+  console.log(`[smoke:bots] pass | output=${outputDir}`);
 } catch (error) {
   summary.passed = false;
   summary.finishedAt = new Date().toISOString();

@@ -1,3 +1,4 @@
+import { deepFreeze, type DeepReadonly } from "../utils/deepFreeze";
 import {
   GAMEPLAY_PROFILE_IDENTITIES,
   GAMEPLAY_PROFILE_IDS,
@@ -8,18 +9,9 @@ import {
 } from "../../../../shared/gameplayProfile";
 import { SHARED_CHAMPION_WAVE_ENEMY_COUNT } from "../../../../shared/highScore";
 
-type Atomic = string | number | boolean | bigint | symbol | null | undefined;
-
-/** Compile-time counterpart to the runtime deep freeze applied to every profile. */
-export type DeepReadonly<T> =
-  T extends Atomic ? T
-    : T extends readonly unknown[] ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
-      : T extends object ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
-        : T;
-
-export type TierTuple<T> = readonly [T, T, T, T, T, T];
-export type CountRange = readonly [minimum: number, maximum: number];
-export type GameplayValidationStatus = "approved" | "experimental";
+type TierTuple<T> = readonly [T, T, T, T, T, T];
+type CountRange = readonly [minimum: number, maximum: number];
+type GameplayValidationStatus = "approved" | "experimental";
 
 export type GameplayTuning = DeepReadonly<{
   identity: GameplayProfileIdentity;
@@ -146,6 +138,8 @@ export type GameplayTuning = DeepReadonly<{
     /** Bottomless Mag: magazines still empty and reload, but reloads never drain reserve ammo. */
     freeReloads: boolean;
     shieldHealth: number;
+    /** Iron Skin: the shield stays until damage breaks it instead of expiring on a timer. */
+    shieldPersistsUntilBroken: boolean;
     perfectWave: {
       mode: "single-deterministic" | "all-four";
       durationS: number;
@@ -177,14 +171,6 @@ export type GameplayTuning = DeepReadonly<{
   };
 }>;
 
-function deepFreeze<T>(value: T): DeepReadonly<T> {
-  if (typeof value !== "object" || value === null || Object.isFrozen(value)) {
-    return value as DeepReadonly<T>;
-  }
-
-  for (const child of Object.values(value)) deepFreeze(child);
-  return Object.freeze(value) as DeepReadonly<T>;
-}
 
 function isFiniteNumber(value: number): boolean {
   return Number.isFinite(value);
@@ -404,38 +390,38 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
     enemiesPerWave: 10,
     tierProgression: {
       waveBands: [
-        { minWave: 1, maxWaveInclusive: 2, tier: 0 },
-        { minWave: 3, maxWaveInclusive: 4, tier: 1 },
-        { minWave: 5, maxWaveInclusive: 6, tier: 2 },
-        { minWave: 7, maxWaveInclusive: 8, tier: 3 },
-        { minWave: 9, maxWaveInclusive: 10, tier: 4 },
-        { minWave: 11, maxWaveInclusive: null, tier: 5 },
+        { minWave: 1, maxWaveInclusive: 1, tier: 0 },
+        { minWave: 2, maxWaveInclusive: 2, tier: 1 },
+        { minWave: 3, maxWaveInclusive: 3, tier: 2 },
+        { minWave: 4, maxWaveInclusive: 5, tier: 3 },
+        { minWave: 6, maxWaveInclusive: 7, tier: 4 },
+        { minWave: 8, maxWaveInclusive: null, tier: 5 },
       ],
       // A wave that drags on gets smarter: +1 tier at each threshold, capped at maxTier.
-      elapsedTierBonusThresholdsS: [45, 100, 170],
+      elapsedTierBonusThresholdsS: [30, 60, 100],
       maxTier: 5,
     },
     pressure: {
       basis: "wave-elapsed",
       waveBands: [
-        { minWave: 1, maxWaveInclusive: 2, searchStartS: 30, fullPressureS: 75 },
-        { minWave: 3, maxWaveInclusive: 4, searchStartS: 25, fullPressureS: 60 },
-        { minWave: 5, maxWaveInclusive: 6, searchStartS: 20, fullPressureS: 50 },
-        { minWave: 7, maxWaveInclusive: null, searchStartS: 15, fullPressureS: 40 },
+        { minWave: 1, maxWaveInclusive: 2, searchStartS: 20, fullPressureS: 55 },
+        { minWave: 3, maxWaveInclusive: 4, searchStartS: 17, fullPressureS: 45 },
+        { minWave: 5, maxWaveInclusive: 6, searchStartS: 14, fullPressureS: 38 },
+        { minWave: 7, maxWaveInclusive: null, searchStartS: 12, fullPressureS: 32 },
       ],
     },
-    simultaneousAttackerLimitByTier: [2, 2, 2, 3, 3, 4],
-    burstStartStaggerMsByTier: [600, 500, 400, 320, 250, 200],
+    simultaneousAttackerLimitByTier: [2, 2, 3, 3, 4, 5],
+    burstStartStaggerMsByTier: [450, 400, 350, 300, 250, 200],
   },
   enemy: {
     combat: {
       maxHealth: 100,
       damagePerHit: 20,
       spreadModel: "circular",
-      // Low tiers are eager but inaccurate: they see, turn and shoot readily,
-      // and the wide cone is what makes them miss.
-      reactionTimeSByTier: [0.9, 0.8, 0.7, 0.6, 0.5, 0.4],
-      spreadDegByTier: [19, 15, 11, 8.5, 7, 6.5],
+      // Spread is the cone half-angle. At 15 m a standing player is hit by
+      // roughly 4/7/12/18/23/27% of shots across tiers 0-5.
+      reactionTimeSByTier: [0.8, 0.65, 0.5, 0.4, 0.32, 0.26],
+      spreadDegByTier: [11, 8.5, 6.5, 5, 4, 3.5],
       shotIntervalSByTier: [0.22, 0.2, 0.18, 0.14, 0.13, 0.12],
       reloadTimeSByTier: [2.8, 2.6, 2.3, 2, 1.8, 1.6],
       maxTurnDegPerSByTier: [150, 165, 180, 210, 235, 245],
@@ -521,7 +507,8 @@ export const DESKTOP_HUMAN_BALANCE_BASELINE = deepFreeze({
     rapidReloadSpeedMultiplier: 1.35,
     freeReloads: true,
     shieldHealth: 30,
-    perfectWave: { mode: "single-deterministic", durationS: 15 },
+    shieldPersistsUntilBroken: true,
+    perfectWave: { mode: "all-four", durationS: 15 },
   },
   flow: {
     intermissionDurationS: 5,
@@ -585,7 +572,7 @@ export const DESKTOP_AGENT_GAMEPLAY_TUNING = defineBaselineProfile({
  * Historical legacy values intentionally do not remain as live profile
  * defaults. A future profile divergence must start from the baseline above,
  * override only approved fields, bump that profile's revision, and document
- * the reason in docs/gameplay-balancing.md.
+ * the reason in a code comment beside the override.
  */
 
 /** Deeply frozen profiles share one immutable baseline; no mutable runtime inheritance occurs. */

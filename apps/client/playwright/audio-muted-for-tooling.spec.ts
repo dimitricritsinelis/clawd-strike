@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 import {
   advanceRuntime,
   attachConsoleRecorder,
@@ -15,7 +15,7 @@ import {
  * gain would still spin up the audio graph, and a regression there would be
  * inaudible to this test but very audible to a person.
  */
-async function instrumentAudio(page): Promise<void> {
+async function instrumentAudio(page: Page): Promise<void> {
   await page.addInitScript(() => {
     const w = window as unknown as { __audioContextCount: number; AudioContext: unknown };
     w.__audioContextCount = 0;
@@ -31,7 +31,7 @@ async function instrumentAudio(page): Promise<void> {
   });
 }
 
-async function audioContextCount(page): Promise<number> {
+async function audioContextCount(page: Page): Promise<number> {
   return page.evaluate(
     () => (window as unknown as { __audioContextCount?: number }).__audioContextCount ?? 0,
   );

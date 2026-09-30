@@ -57,15 +57,6 @@ export function isSharedChampionPublicRunSubmissionEnabled(): boolean {
   return true;
 }
 
-export function getSharedChampionAdminToken(): string | null {
-  const value = process.env.SHARED_CHAMPION_ADMIN_TOKEN?.trim() ?? "";
-  return value.length > 0 ? value : null;
-}
-
-export function hasSharedChampionAdminToken(): boolean {
-  return getSharedChampionAdminToken() !== null;
-}
-
 export function sha256Hex(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
@@ -93,7 +84,7 @@ function fingerprintValue(namespace: string, value: string): string {
     .digest("hex");
 }
 
-export function extractClientIp(request: Request): string {
+function extractClientIp(request: Request): string {
   const forwardedFor = request.headers.get("x-forwarded-for");
   if (forwardedFor) {
     const first = forwardedFor.split(",")[0]?.trim();
@@ -174,7 +165,7 @@ export function fingerprintClientIp(request: Request): string {
   return fingerprintValue("client-ip", extractClientIp(request));
 }
 
-export function fingerprintUserAgent(request: Request): string {
+function fingerprintUserAgent(request: Request): string {
   return fingerprintValue("user-agent", normalizeUserAgent(request));
 }
 
@@ -259,11 +250,7 @@ export function protectJsonWriteRequest(
   };
 }
 
-export function getStatsAdminToken(): string | null {
-  return resolveStatsAdminToken();
-}
-
-export function resolveStatsAdminToken(env: NodeJS.ProcessEnv = process.env): string | null {
+function resolveStatsAdminToken(env: NodeJS.ProcessEnv = process.env): string | null {
   const value = env.STATS_ADMIN_TOKEN?.trim() ?? "";
   if (value.length > 0) {
     return value;

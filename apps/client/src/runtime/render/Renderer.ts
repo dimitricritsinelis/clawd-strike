@@ -1,6 +1,5 @@
 import {
   ACESFilmicToneMapping,
-  DoubleSide,
   Object3D,
   PCFSoftShadowMap,
   PMREMGenerator,
@@ -12,115 +11,54 @@ import {
   type Vector3,
   WebGLRenderer,
   WebGLRenderTarget,
+  DepthTexture,
 } from "three";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { resolveBlockoutPalette } from "./BlockoutMaterials";
-import type { RuntimeLightingPreset } from "../utils/UrlParams";
+import { SceneDepthGtaoPass } from "./SceneDepthGtaoPass";
+import { resolveDesktopMaxPixelRatio, resolveDynamicResolution } from "../utils/UrlParams";
+import { DynamicResolution } from "./DynamicResolution";
 
-const MAX_PIXEL_RATIO = 1.10;
 
 // ── Ambient-occlusion tuning constants ──────────────────────────────
-// The bazaar's key light is a high south-west sun, so the east-facing
-// merchant frontages that most of the review cameras look at are lit
-// almost entirely by sky and bounce. In that regime occlusion is the only
-// term that separates a reveal side-face from the wall plane, a shop
-// recess from its jamb, or a stall's feet from the paving. The previous
-// SSAO ran at half resolution with a 25 mm falloff over blockout geometry
-// only, which is contact-scale on a wall built at reveal scale — every
-// opening read as a decal and every prop as a cut-out. GTAO resolves the
-// same occlusion at architectural distances without the halo artifacts
-// that forced the SSAO radius down in the first place.
-// Radius is set from the deepest feature that has to read, not the smallest:
-// a merchant bay is 1.0-2.0 m deep, so occlusion has to still be accumulating
-// at a metre or the recess mouth stays as bright as the pier beside it.
-//
-// Held at 1.15 m. Widening to 2.0 m to chase the 1.35 m deep bay interiors was
-// tried and rejected: it bought only +0.3 global std and 3 luma on one bay,
-// and cost the paving 88 -> 85 against a target of 90 — a navigation surface
-// this map cannot afford to dim. The bay interiors are floored by an additive
-// term rather than by unoccluded ambient (a 45% albedo cut moves them 8%), so
-// neither albedo nor occlusion radius is the lever that closes that gap.
+// The high south-west sun leaves the east-facing merchant frontages lit mostly
+// by sky and bounce, so occlusion is what separates a reveal from the wall
+// plane, a recess from its jamb and a stall's feet from the paving. GTAO
+// resolves it at architectural distances. The radius follows the deepest
+// feature that must read (1.0-2.0 m merchant bays); widening it to 2.0 m dimmed
+// the paving more than it helped the bays.
 const AO_RADIUS_M = 1.15;
 const AO_THICKNESS_M = 0.5;
 const AO_DISTANCE_EXPONENT = 1.0;
 const AO_DISTANCE_FALLOFF = 1.0;
 const AO_SCALE = 1.0;
 const AO_SAMPLES = 24;
-// Eased from 1.0. The shade-dominated cameras were CRUSHING: the prop-grounding
-// closeup put 3.07% of its pixels below luminance 4 against 0.02% in its target
-// (a 150x excess) and 13.52% below 16 against 4.01%, with the canopy camera at
-// 0.86%/10.77% against 0.03%/0.50%. The black floor itself is right - minimum 0,
-// matching the target - so the fault was how much of the frame bottoms out, and
-// it concentrates exactly where occlusion accumulates: prop clusters in contact.
-//
-// 0.78 improves every camera on that metric (closeup 3.07 -> 2.66 below L4,
-// canopy 0.86 -> 0.62, Spawn-A 2.42 -> 2.19 below L16 against a target of 2.20)
-// and lands the Spawn-A median exactly on 92. Going further to 0.5 helps the
-// crush more but starts pulling Spawn-A off a match it already had.
-//
-// Be honest about what this does and does not fix: it is worth ~13% of the crush
-// gap, and it costs some contact darkening, which is a quality feature this map
-// wants. The dominant cause is that shaded regions are ~35% darker than targets
-// rendered with multi-bounce GI - see SCENE_ENVIRONMENT_INTENSITY in Game.ts.
-//
-// Do not keep easing this to chase the rest, and do not suspect the pass itself.
-// GTAOPass runs in the composer with default output, so it multiplies the
-// composited beauty rather than ambient alone - a reasonable thing to suspect of
-// over-darkening shade. It was measured by taking this constant to 0: the canopy
-// camera moved 59 -> 62 against a target of 88, the west elevation 51 -> 54
-// against 77, and the grounding closeup 49 -> 51 against 83. That is 6-12% of
-// each gap, while the two cameras that were already on target overshot (Spawn-A
-// 103 -> 104 against 101, tea terrace 109 -> 111 against 98). Occlusion is not
-// what is holding the shade down.
+// Eased from 1.0 to cut crushed shade where props meet, while keeping contact
+// darkening. The remaining shade deficit comes from missing multi-bounce GI
+// (see SCENE_ENVIRONMENT_INTENSITY in Game.ts), not from this pass: taking it to
+// 0 closed only 6-12% of each camera's gap.
 const AO_BLEND_INTENSITY = 0.78;
-// Alpha-tested foliage renders opaque into the AO normal/depth buffer, so a
-// palm crown would occlude as a solid block. The sky dome is far-field and
-// contributes nothing but a spurious backface.
-const AO_EXCLUDED_BRANCHES = new Set([
-  "decorative-palms",
-  "desert-sky",
-]);
+// Lowest pixel ratio dynamic resolution may use: the standard tier's budget.
+const DYNAMIC_RESOLUTION_FLOOR = 1.1;
 
-type GtaoVisibilityInternals = {
-  scene: Scene;
-  _visibilityCache: Object3D[];
-  _overrideVisibility: () => void;
-};
+// Occlusion grid density in CSS pixels. At 2x DPR the horizon search runs on
+// the CSS grid (a quarter of the device pixels) and a depth-aware upsample
+// restores full-resolution silhouettes; at 1x or below it is full resolution.
+// Normals come from full-resolution depth either way.
+const AO_PIXEL_RATIO = 1;
 
-function isExcludedFromAo(object: Object3D): boolean {
-  let current: Object3D | null = object;
-  while (current) {
-    if (AO_EXCLUDED_BRANCHES.has(current.name)) return true;
-    current = current.parent;
+/**
+ * The AO pass reads the beauty pass's depth, so both composer targets carry a
+ * depth texture (the composer ping-pongs them). Occluders are exactly what the
+ * player sees: alpha-tested palm fronds only where they are opaque, canopy
+ * cloth from below, and nothing that does not write depth.
+ */
+export function attachComposerDepth(composer: EffectComposer): void {
+  for (const target of [composer.renderTarget1, composer.renderTarget2]) {
+    if (!target.depthTexture) target.depthTexture = new DepthTexture(target.width, target.height);
   }
-  return false;
-}
-
-export function constrainAoOccluders(pass: GTAOPass): void {
-  // Cloth is visible from below in the beauty pass. Include that same
-  // surface in AO depth so background windows cannot occlude through it.
-  pass.normalMaterial.side = DoubleSide;
-  const internals = pass as unknown as GtaoVisibilityInternals;
-  internals._overrideVisibility = (): void => {
-    internals.scene.traverse((object) => {
-      const renderable = object as Object3D & {
-        isLine?: boolean;
-        isLine2?: boolean;
-        isMesh?: boolean;
-        isPoints?: boolean;
-      };
-      if (!object.visible) return;
-      const unsupportedPrimitive = renderable.isPoints || renderable.isLine || renderable.isLine2;
-      const excludedMesh = renderable.isMesh && isExcludedFromAo(object);
-      if (!unsupportedPrimitive && !excludedMesh) return;
-      object.visible = false;
-      internals._visibilityCache.push(object);
-    });
-  };
 }
 
 const GOLDEN_POST_SHADER = {
@@ -129,31 +67,16 @@ const GOLDEN_POST_SHADER = {
     resolution: { value: new Vector2(1, 1) },
     bloomStrength: { value: 0.015 },
     bloomThreshold: { value: 0.96 },
-    // Disabled. This was the single largest obstacle to matching the targets and
-    // it hid behind every other lighting experiment for a long time.
-    //
-    // The term adds vec3(0.82, 0.88, 0.92) * shadowLift below luma 0.07. At the
-    // old 0.008 that is ~L24 in sRGB, which is exactly where the render's p1 sat
-    // (24) while both targets reach 0. So NOTHING in the scene could ever be
-    // black: the floor was nailed 24 levels up, and because the added colour is
-    // blue-biased it also pushed the deepest shade cool. Critics kept reporting
-    // deep shade as "too bright, too grey and too cool" and every fix aimed at
-    // the light rig, which could not move a constant added after tone mapping.
-    //
-    // Removing it lands the primary camera's shadow end exactly on target:
-    // min 9 -> 0 (target 0), p5 34 -> 23 (target 23), median unchanged at 92
-    // (target 92), share below L16 0.04% -> 2.68% (target 2.20%). It also
-    // reverses what looked like an unavoidable regression on the two supporting
-    // cameras - west elevation relative contrast 0.417 -> 0.573 and canopy
-    // 0.543 -> 0.668. All three cameras improve.
-    //
-    // Nothing crushes, which was the fear this term existed to prevent: the dark
-    // regions keep 32-33 distinct code values (target 33) and normalised local
-    // gradient RISES in every one of them (shopfront 0.235 -> 0.330 against a
-    // target of 0.398). If crush ever does appear, fix the geometry or material
-    // that is genuinely black rather than lifting the whole frame off zero.
-    shadowLift: { value: 0.0 },
     vignetteStrength: { value: 0.012 },
+    // Luma-weighted unsharp mask over the 4-neighbourhood. Restores texel
+    // contrast lost to mip filtering and MSAA resolve without haloing edges:
+    // the gain is clamped to a fraction of local contrast.
+    sharpenStrength: { value: 0.32 },
+    // R8 grade, applied in linear light before tone mapping: a gentle contrast
+    // pivot around mid-grey and a small saturation lift so late-afternoon stone
+    // reads rich rather than washed. Deliberately mild; not a colour filter.
+    gradeContrast: { value: 1.07 },
+    gradeSaturation: { value: 1.08 },
   },
   vertexShader: `
     varying vec2 vUv;
@@ -167,8 +90,10 @@ const GOLDEN_POST_SHADER = {
     uniform vec2 resolution;
     uniform float bloomStrength;
     uniform float bloomThreshold;
-    uniform float shadowLift;
     uniform float vignetteStrength;
+    uniform float sharpenStrength;
+    uniform float gradeContrast;
+    uniform float gradeSaturation;
     varying vec2 vUv;
 
     vec3 highlights(vec3 color) {
@@ -180,14 +105,26 @@ const GOLDEN_POST_SHADER = {
       vec2 texel = 1.0 / max(resolution, vec2(1.0));
       vec3 base = texture2D(tDiffuse, vUv).rgb;
       float baseLuma = dot(base, vec3(0.2126, 0.7152, 0.0722));
-      float toeMask = 1.0 - smoothstep(0.025, 0.07, baseLuma);
-      base += vec3(0.82, 0.88, 0.92) * shadowLift * toeMask;
+      if (sharpenStrength > 0.0) {
+        vec3 n = texture2D(tDiffuse, vUv + vec2(0.0, texel.y)).rgb
+          + texture2D(tDiffuse, vUv - vec2(0.0, texel.y)).rgb
+          + texture2D(tDiffuse, vUv + vec2(texel.x, 0.0)).rgb
+          + texture2D(tDiffuse, vUv - vec2(texel.x, 0.0)).rgb;
+        vec3 detail = base - n * 0.25;
+        float limit = 0.25 * max(baseLuma, 0.02);
+        base = max(base + clamp(detail * sharpenStrength, vec3(-limit), vec3(limit)), vec3(0.0));
+      }
       vec3 bloom = highlights(texture2D(tDiffuse, vUv + vec2(texel.x * 2.0, 0.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv - vec2(texel.x * 2.0, 0.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv + vec2(0.0, texel.y * 2.0)).rgb);
       bloom += highlights(texture2D(tDiffuse, vUv - vec2(0.0, texel.y * 2.0)).rgb);
       bloom *= 0.25 * bloomStrength;
 
+      {
+        float gl = dot(base, vec3(0.2126, 0.7152, 0.0722));
+        base = mix(vec3(gl), base, gradeSaturation);
+        base = max(0.18 * pow(max(base, vec3(0.0)) / 0.18, vec3(gradeContrast)), vec3(0.0));
+      }
       vec2 centered = vUv * 2.0 - 1.0;
       float edge = smoothstep(0.35, 1.35, dot(centered, centered));
       float vignette = 1.0 - edge * vignetteStrength;
@@ -196,8 +133,6 @@ const GOLDEN_POST_SHADER = {
   `,
 };
 type RendererOptions = {
-  highVis: boolean;
-  lightingPreset: RuntimeLightingPreset;
   ao: boolean;
   post: boolean;
   maxPixelRatio?: number | undefined;
@@ -213,11 +148,8 @@ export type RendererPerfInfo = {
 
 type WebGLContextLike = WebGLRenderingContext | WebGL2RenderingContext;
 
-function tryCreateWebGLContext(canvas: HTMLCanvasElement): WebGLContextLike | null {
+function tryCreateWebGLContext(canvas: HTMLCanvasElement, needsAA: boolean): WebGLContextLike | null {
   try {
-    // Skip hardware MSAA when the native DPR is high enough that supersampling
-    // already suppresses aliasing.  Saves significant fill cost on high-DPI panels.
-    const needsAA = (window.devicePixelRatio || 1) < 1.5;
     const attributes: WebGLContextAttributes = {
       alpha: false,
       antialias: needsAA,
@@ -245,9 +177,11 @@ function tryCreateWebGLContext(canvas: HTMLCanvasElement): WebGLContextLike | nu
 }
 
 export class Renderer {
+  readonly softwareRendering: boolean;
   readonly canvas: HTMLCanvasElement;
   readonly hasWebGL: boolean;
   private contextLost = false;
+  private softwareFrameFence: WebGLSync | null = null;
   private onContextLostCallback: (() => void) | null = null;
   private onContextRestoredCallback: (() => void) | null = null;
 
@@ -255,6 +189,7 @@ export class Renderer {
     // Without preventDefault the browser will not attempt a restore at all.
     event.preventDefault();
     this.contextLost = true;
+    this.softwareFrameFence = null;
     console.warn("[renderer] WebGL context lost");
     this.onContextLostCallback?.();
   };
@@ -278,26 +213,48 @@ export class Renderer {
   private readonly renderer: WebGLRenderer | null;
   private composer: EffectComposer | null = null;
   private worldPass: RenderPass | null = null;
-  private aoPass: GTAOPass | null = null;
+  private aoPass: SceneDepthGtaoPass | null = null;
   private goldenPostPass: ShaderPass | null = null;
   private environmentTarget: WebGLRenderTarget | null = null;
   private width = 1;
   private height = 1;
   private readonly effectiveMaxPixelRatio: number;
+  private readonly dynamicResolution: DynamicResolution | null = null;
+  private lastPresentAtMs: number | null = null;
   constructor(private readonly mountEl: HTMLElement, options: RendererOptions) {
-    this.effectiveMaxPixelRatio = options.maxPixelRatio ?? MAX_PIXEL_RATIO;
-    const palette = resolveBlockoutPalette(options.highVis);
-    const canvas = document.createElement("canvas");
-    const context = tryCreateWebGLContext(canvas);
+    this.effectiveMaxPixelRatio = options.maxPixelRatio ?? resolveDesktopMaxPixelRatio(window.location.search);
+    const fullPixelRatio = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio);
+    if (options.maxPixelRatio === undefined && fullPixelRatio > DYNAMIC_RESOLUTION_FLOOR
+      && resolveDynamicResolution(window.location.search)) {
+      this.dynamicResolution = new DynamicResolution({ maxPixelRatio: fullPixelRatio, minPixelRatio: DYNAMIC_RESOLUTION_FLOOR });
+    }
+    // Pixel-ratio caps determine actual supersampling, even on Retina displays.
+    const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
+    let canvas = document.createElement("canvas");
+    let context = tryCreateWebGLContext(canvas, needsAA);
+    let rendererName = "unavailable";
+    try {
+      const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
+      if (context) rendererName = String(context.getParameter(rendererInfo ? rendererInfo.UNMASKED_RENDERER_WEBGL : context.RENDERER));
+    } catch {
+      // Driver telemetry is optional and must not prevent a supported boot.
+    }
+    this.softwareRendering = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(rendererName);
+    if (this.softwareRendering && context?.getContextAttributes()?.antialias) {
+      // Context attributes are immutable. Release the unmounted probe and
+      // keep software's default framebuffer single-sample like its HDR targets.
+      context.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas = document.createElement("canvas");
+      context = tryCreateWebGLContext(canvas, false);
+    }
 
     let renderer: WebGLRenderer | null = null;
     if (context) {
       try {
-        const needsAA = (window.devicePixelRatio || 1) < 1.5;
         renderer = new WebGLRenderer({
           canvas,
           context,
-          antialias: needsAA,
+          antialias: needsAA && !this.softwareRendering,
           alpha: false,
           powerPreference: "high-performance",
         });
@@ -354,31 +311,30 @@ export class Renderer {
       // full resolution. Gameplay materials should still keep transmission at 0.
       this.renderer.transmissionResolutionScale = 0.25;
       this.renderer.info.autoReset = false;
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, options.maxPixelRatio ?? MAX_PIXEL_RATIO));
-      this.renderer.setClearColor(
-        options.lightingPreset === "golden" ? 0xE6D7C2 : palette.background,
-        1,
-      );
+      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
+      this.renderer.setClearColor(0xE6D7C2, 1);
     }
 
     this.resize();
 
     // ── Golden-hour composer (world-only; viewmodel is rendered directly after) ──
-    if (this.renderer && options.lightingPreset === "golden" && (options.ao || options.post)) {
-      const dpr = this.renderer.getPixelRatio();
+    if (this.renderer && (options.ao || options.post)) {
       this.composer = new EffectComposer(this.renderer);
-      this.composer.setPixelRatio(dpr);
-      this.composer.setSize(this.width, this.height);
+      this.resize();
+      const dpr = this.renderer.getPixelRatio();
 
       // Placeholder scene/camera — swapped each frame before render
       this.worldPass = new RenderPass(new Scene(), new PerspectiveCamera());
       this.composer.addPass(this.worldPass);
 
       if (options.ao) {
-        // Full resolution: the occlusion this pass has to deliver is a
-        // 120 mm jamb reveal and a shutter sitting proud of its recess.
-        // Half-res smears both back into the wall plane.
-        this.aoPass = new GTAOPass(new Scene(), new PerspectiveCamera(), this.width, this.height);
+        // The occlusion this pass has to deliver is a 120 mm jamb reveal and a
+        // shutter sitting proud of its recess, about 12 CSS pixels at 10 m.
+        // Below the CSS grid it smears back into the wall plane, so the AO
+        // grid never drops under one sample per CSS pixel (AO_PIXEL_RATIO).
+        attachComposerDepth(this.composer);
+        this.aoPass = new SceneDepthGtaoPass(this.width, this.height);
+        this.aoPass.aoPixelRatio = AO_PIXEL_RATIO;
         this.aoPass.blendIntensity = AO_BLEND_INTENSITY;
         this.aoPass.updateGtaoMaterial({
           radius: AO_RADIUS_M,
@@ -389,7 +345,7 @@ export class Renderer {
           samples: AO_SAMPLES,
           screenSpaceRadius: false,
         });
-        constrainAoOccluders(this.aoPass);
+        this.aoPass.setDevicePixelRatio(dpr);
         this.composer.addPass(this.aoPass);
       }
 
@@ -405,6 +361,18 @@ export class Renderer {
       // OutputPass applies tone mapping + sRGB conversion (required since Three.js r154+)
       this.composer.addPass(new OutputPass());
     }
+    console.info(`[renderer] ${JSON.stringify({
+      renderer: rendererName,
+      softwareRendering: this.softwareRendering,
+      pixelRatioCap: this.effectiveMaxPixelRatio,
+      shadows: this.renderer?.shadowMap.enabled ?? false,
+      ao: this.aoPass !== null,
+      post: this.goldenPostPass !== null,
+      canvasAntialias: this.renderer?.getContext().getContextAttributes()?.antialias ?? false,
+      composerSamples: this.composer
+        ? [this.composer.renderTarget1.samples, this.composer.renderTarget2.samples]
+        : [],
+    })}`);
   }
 
   getAspect(): number {
@@ -420,7 +388,7 @@ export class Renderer {
   }
 
   getPixelRatioCap(): number {
-    return MAX_PIXEL_RATIO;
+    return this.effectiveMaxPixelRatio;
   }
 
   getCurrentPixelRatio(): number {
@@ -457,11 +425,36 @@ export class Renderer {
     this.width = nextWidth;
     this.height = nextHeight;
     if (this.renderer) {
-      this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio));
+      const nativeDpr = window.devicePixelRatio || 1;
+      this.renderer.setPixelRatio(Math.min(nativeDpr, this.effectiveMaxPixelRatio, this.dynamicResolution?.pixelRatio ?? Infinity));
       this.renderer.setSize(nextWidth, nextHeight, false);
-      this.composer?.setSize(nextWidth, nextHeight);
-      this.aoPass?.setSize(nextWidth, nextHeight);
       const dpr = this.renderer.getPixelRatio();
+      if (this.composer) {
+        // Canvas MSAA does not cover composer targets. Both HDR color and
+        // depth attachments must support the selected low-DPR sample count.
+        const gl = this.renderer.getContext();
+        let samples = 0;
+        // SwiftShader advertises compatible counts, but repeatedly resolving
+        // multisampled HDR targets stalls its GL queue. Keep the single-sample
+        // composer used before MSAA was introduced on software renderers.
+        if (!this.softwareRendering && dpr < 1.5 && "getInternalformatParameter" in gl) {
+          const limit = Math.min(4, this.renderer.capabilities.maxSamples);
+          const colorSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.RGBA16F, gl.SAMPLES) as Int32Array | null;
+          const depthSamples = gl.getInternalformatParameter(gl.RENDERBUFFER, gl.DEPTH_COMPONENT24, gl.SAMPLES) as Int32Array | null;
+          for (const count of colorSamples ?? []) {
+            if (count > 1 && count <= limit && depthSamples?.includes(count)) samples = Math.max(samples, count);
+          }
+        }
+        for (const target of [this.composer.renderTarget1, this.composer.renderTarget2]) {
+          if (target.samples !== samples) {
+            target.dispose();
+            target.samples = samples;
+          }
+        }
+        this.aoPass?.setDevicePixelRatio(dpr);
+        this.composer.setPixelRatio(dpr);
+        this.composer.setSize(nextWidth, nextHeight);
+      }
       this.goldenPostPass?.uniforms["resolution"]!.value.set(nextWidth * dpr, nextHeight * dpr);
       return;
     }
@@ -475,6 +468,41 @@ export class Renderer {
     if (!this.renderer) return;
     this.renderer.info.reset();
     this.renderer.render(scene, camera);
+    this.markSoftwareFrameSubmitted();
+  }
+
+  /** Poll without blocking JavaScript; software GL must not accumulate draws. */
+  isFrameReady(): boolean {
+    if (!this.softwareRendering || !this.renderer) return true;
+    if (this.contextLost) return false;
+    if (!this.softwareFrameFence) return true;
+    const gl = this.renderer.getContext();
+    if (!("clientWaitSync" in gl)) return true;
+    const status = gl.clientWaitSync(this.softwareFrameFence, 0, 0);
+    if (status === gl.TIMEOUT_EXPIRED) return false;
+    gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = null;
+    if (status === gl.WAIT_FAILED) throw new Error("Software GPU frame completion failed");
+    return true;
+  }
+
+  async waitForFrameReady(timeoutMs = 9_000): Promise<void> {
+    const deadline = performance.now() + timeoutMs;
+    while (!this.isFrameReady()) {
+      if (this.contextLost) throw new Error("Cannot render while the GPU context is lost");
+      if (performance.now() >= deadline) throw new Error(`Software GPU frame exceeded ${timeoutMs}ms`);
+      await new Promise<void>((resolve) => window.setTimeout(resolve, 16));
+    }
+  }
+
+  private markSoftwareFrameSubmitted(): void {
+    if (!this.softwareRendering || !this.renderer) return;
+    const gl = this.renderer.getContext();
+    if (!("fenceSync" in gl)) return;
+    if (this.softwareFrameFence) gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
+    if (!this.softwareFrameFence) throw new Error("Software GPU frame fence unavailable");
+    gl.flush();
   }
 
   renderWithViewModel(
@@ -486,6 +514,7 @@ export class Renderer {
   ): void {
     if (!this.renderer) return;
     this.renderer.info.reset();
+    this.updateDynamicResolution();
 
     if (this.composer && this.worldPass) {
       // Swap scene/camera into the passes for this frame
@@ -500,14 +529,24 @@ export class Renderer {
       this.renderer.render(worldScene, worldCamera);
     }
 
-    if (!renderViewModel || !viewModelScene || !viewModelCamera) return;
+    if (renderViewModel && viewModelScene && viewModelCamera) {
+      // Viewmodel rendered directly — no SSAO applied to weapon
+      const prevAutoClear = this.renderer.autoClear;
+      this.renderer.autoClear = false;
+      this.renderer.clearDepth();
+      this.renderer.render(viewModelScene, viewModelCamera);
+      this.renderer.autoClear = prevAutoClear;
+    }
+    this.markSoftwareFrameSubmitted();
+  }
 
-    // Viewmodel rendered directly — no SSAO applied to weapon
-    const prevAutoClear = this.renderer.autoClear;
-    this.renderer.autoClear = false;
-    this.renderer.clearDepth();
-    this.renderer.render(viewModelScene, viewModelCamera);
-    this.renderer.autoClear = prevAutoClear;
+  private updateDynamicResolution(): void {
+    if (!this.dynamicResolution) return;
+    const now = performance.now();
+    const interval = this.lastPresentAtMs === null ? 0 : now - this.lastPresentAtMs;
+    this.lastPresentAtMs = now;
+    if (document.visibilityState !== "visible") return;
+    if (this.dynamicResolution.sample(interval, now)) this.resize();
   }
 
   async compileSceneAsync(
@@ -577,6 +616,9 @@ export class Renderer {
     this.canvas.removeEventListener("webglcontextrestored", this.onContextRestored);
     this.onContextLostCallback = null;
     this.onContextRestoredCallback = null;
+    const gl = this.renderer?.getContext();
+    if (this.softwareFrameFence && gl && "deleteSync" in gl) gl.deleteSync(this.softwareFrameFence);
+    this.softwareFrameFence = null;
     this.environmentTarget?.dispose();
     this.environmentTarget = null;
     this.renderer?.dispose();

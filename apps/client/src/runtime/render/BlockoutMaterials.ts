@@ -16,7 +16,7 @@ export type BlockoutPalette = {
   filler: number;
 };
 
-const DEFAULT_BLOCKOUT_PALETTE: BlockoutPalette = {
+export const BLOCKOUT_PALETTE: BlockoutPalette = {
   background: 0xeaf3ff,
   floorBase: 0xd8dde3,
   floorStallOverlay: 0xc8dbc4,
@@ -33,25 +33,3 @@ const DEFAULT_BLOCKOUT_PALETTE: BlockoutPalette = {
   landmarkWell: 0x2f7f9f,
   filler: 0xd6ba8a,
 };
-
-const HIGH_VIS_BLOCKOUT_PALETTE: BlockoutPalette = {
-  background: 0xf1f7ff,
-  floorBase: 0xe3e9ef,
-  floorStallOverlay: 0xd5e8d2,
-  floorClearOverlay: 0x9de9ff,
-  wall: 0xecdcb5,
-  shopfront: 0xd3ab78,
-  signage: 0x36b9cd,
-  cover: 0x94b9ae,
-  spawnCover: 0xa4c49a,
-  serviceDoor: 0xdeccb4,
-  canopy: 0xe9be84,
-  heroPillar: 0x309dc2,
-  heroLintel: 0x5bb9d0,
-  landmarkWell: 0x2a8db1,
-  filler: 0xe2c799,
-};
-
-export function resolveBlockoutPalette(highVis: boolean): BlockoutPalette {
-  return highVis ? HIGH_VIS_BLOCKOUT_PALETTE : DEFAULT_BLOCKOUT_PALETTE;
-}

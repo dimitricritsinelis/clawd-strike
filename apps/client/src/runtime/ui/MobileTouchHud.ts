@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * MobileTouchHud — on-screen touch controls for mobile FPS gameplay.
  *
@@ -17,7 +18,6 @@ import type { TouchInputManager } from "../input/TouchInputManager";
 
 // ── Shared style helpers ─────────────────────────────────────────────
 
-const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 function applyButtonBase(el: HTMLElement, size: number): void {
   Object.assign(el.style, {

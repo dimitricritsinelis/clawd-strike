@@ -1,3 +1,4 @@
+import { MONO_FONT } from "../../shared/uiFonts";
 export type PerfHudSnapshot = {
   fps: number;
   msPerFrame: number;
@@ -40,7 +41,7 @@ export class PerfHud {
     this.root.style.borderRadius = "8px";
     this.root.style.background = "rgba(12, 20, 26, 0.78)";
     this.root.style.color = "#d8f0ff";
-    this.root.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    this.root.style.fontFamily = MONO_FONT;
     this.root.style.fontSize = "12px";
     this.root.style.lineHeight = "1.35";
     this.root.style.whiteSpace = "pre";

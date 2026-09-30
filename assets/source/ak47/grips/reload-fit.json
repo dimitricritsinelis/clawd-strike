@@ -1,0 +1,294 @@
+{
+ "_meta": {
+  "version": 3,
+  "concept": "Magazine grips re-authored after the playtest (\"the thumb does not wrap around the magazine\"): the magazine is held between a thumb curled on its near (camera-side) face and fingers wrapped round the front edge onto the far face. Supersedes the placement and thumb of remove.json/insert.json.",
+  "fit": "Hand placement (6 DOF), fingers and thumb states fitted together with a (1+1)-ES and coordinate polish on numpy linear-blend skinning of the decimated glove with 4 influences (the glTF skinning), BVH signed distance with ray-parity inside tests, digit triangle crossings, and the game camera: thumb IP 40-55 and MCP 20-35 about the calibrated hinge, distal thumb within ~2 mm of the magazine, proximal within ~2.5 mm, tip ahead of the rear edge on the near face, visible IP/MCP bends in the projected game view, fingertips wrapped round the front edge (tips past the magazine centre plane), no digit crossings, no rifle contact.",
+  "removal": "hold = thumb curled on the near face after the click; press = the thumb reaches back past the rear edge only to put its tip on the paddle (0.26-0.30 s); prepress = 3-4 mm short of it; via/hover = the path off the paddle round the rear corner onto the near face (searched frame by frame); squeeze = the grip tightening for the yank.",
+  "insert": "insert_hold = thumb curled on the near face, tip toward the magazine well; insert_squeeze = the thumb press at the hook and the seat tap; insert_letgo = thumb lifted off before the hand slides away.",
+  "sources": "Fitted outside the repository (scratch optimiser runs R15 = removal, I15 = insert, via search for the press-to-hold path); the numbers below are the result, viewmodel_v2.py only reads them.",
+  "limits": "All states pass hand_pose.validate (thumb cmc_flex clamped to the -20 limit).",
+  "knownLimit": "Distal thumb contact share: a pad resting on a flat face can put at most ~11% of the distal phalanx vertices within 2 mm of it (about 20% only when pressed 1 mm in); these holds reach ~15% (removal) and ~12% (insert)."
+ },
+ "remove": {
+  "hand_in_mag": [
+   [
+    0.8648267,
+    0.4547685,
+    -0.2127445,
+    -0.0373662
+   ],
+   [
+    -0.2536999,
+    0.0301747,
+    -0.9668122,
+    0.0504833
+   ],
+   [
+    -0.4332564,
+    0.8900984,
+    0.1414706,
+    -0.1671517
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "fingers": {
+   "index": {
+    "mcp": 34.28,
+    "mcp_abduct": -1.18,
+    "pip": 40.17,
+    "dip": 44.97
+   },
+   "middle": {
+    "mcp": 25.88,
+    "mcp_abduct": 8.41,
+    "pip": 54.75,
+    "dip": 15.72
+   },
+   "ring": {
+    "mcp": 40.42,
+    "mcp_abduct": -13.8,
+    "pip": 80.99,
+    "dip": 24.28
+   },
+   "pinky": {
+    "mcp": 23.93,
+    "mcp_abduct": 13.6,
+    "pip": 73.32,
+    "dip": 47.86
+   }
+  }
+ },
+ "insert": {
+  "hand_in_mag": [
+   [
+    0.8077499,
+    0.5393989,
+    -0.2378844,
+    -0.0336668
+   ],
+   [
+    -0.2071407,
+    -0.1181038,
+    -0.9711561,
+    0.0574147
+   ],
+   [
+    -0.5519356,
+    0.8337268,
+    0.0163331,
+    -0.1736349
+   ],
+   [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  ],
+  "fingers": {
+   "index": {
+    "mcp": 31.08,
+    "mcp_abduct": -10.01,
+    "pip": 35.93,
+    "dip": 38.53
+   },
+   "middle": {
+    "mcp": 37.21,
+    "mcp_abduct": -0.68,
+    "pip": 68.07,
+    "dip": 25.19
+   },
+   "ring": {
+    "mcp": 35.5,
+    "mcp_abduct": -5.31,
+    "pip": 84.64,
+    "dip": 37.13
+   },
+   "pinky": {
+    "mcp": 26.85,
+    "mcp_abduct": 14.81,
+    "pip": 91.86,
+    "dip": 52.68
+   }
+  }
+ },
+ "thumb": {
+  "carry": {
+   "cmc_flex": 5.0,
+   "cmc_abduct": 15.0,
+   "cmc_rot": 15.0,
+   "mcp": 20.0,
+   "ip": 25.0
+  },
+  "prepress": {
+   "cmc_flex": -19.42,
+   "cmc_abduct": 42.94,
+   "cmc_rot": 23.17,
+   "mcp": 2.65,
+   "ip": 24.12
+  },
+  "press": {
+   "cmc_flex": -19.42,
+   "cmc_abduct": 42.94,
+   "cmc_rot": 23.17,
+   "mcp": 5.65,
+   "ip": 28.12
+  },
+  "via": {
+   "cmc_flex": -12,
+   "cmc_abduct": 36,
+   "cmc_rot": 15,
+   "mcp": 5,
+   "ip": 20
+  },
+  "hover": {
+   "cmc_flex": 10.01,
+   "cmc_abduct": 22.04,
+   "cmc_rot": 16.39,
+   "mcp": 23.44,
+   "ip": 43.07
+  },
+  "hold": {
+   "cmc_flex": 10.01,
+   "cmc_abduct": 28.04,
+   "cmc_rot": 16.39,
+   "mcp": 23.44,
+   "ip": 43.07
+  },
+  "squeeze": {
+   "cmc_flex": 10.01,
+   "cmc_abduct": 28.04,
+   "cmc_rot": 16.39,
+   "mcp": 23.44,
+   "ip": 46.07
+  },
+  "insert_hold": {
+   "cmc_flex": 7.44,
+   "cmc_abduct": 22.77,
+   "cmc_rot": 17.2,
+   "mcp": 35.46,
+   "ip": 51.53
+  },
+  "insert_squeeze": {
+   "cmc_flex": 7.44,
+   "cmc_abduct": 22.77,
+   "cmc_rot": 17.2,
+   "mcp": 38.46,
+   "ip": 54.53
+  },
+  "insert_letgo": {
+   "cmc_flex": 7.44,
+   "cmc_abduct": 12.77,
+   "cmc_rot": 17.2,
+   "mcp": 25.46,
+   "ip": 31.53
+  }
+ },
+ "travel": {
+  "index": {
+   "mcp": 45.0,
+   "mcp_abduct": 0.0,
+   "pip": 70.0,
+   "dip": 35.0
+  },
+  "middle": {
+   "mcp": 50.0,
+   "mcp_abduct": 0.0,
+   "pip": 80.0,
+   "dip": 40.0
+  },
+  "ring": {
+   "mcp": 55.0,
+   "mcp_abduct": 0.0,
+   "pip": 85.0,
+   "dip": 40.0
+  },
+  "pinky": {
+   "mcp": 55.0,
+   "mcp_abduct": 5.0,
+   "pip": 80.0,
+   "dip": 38.0
+  },
+  "thumb": {
+   "cmc_flex": 8.0,
+   "cmc_abduct": 15.0,
+   "cmc_rot": 20.0,
+   "mcp": 25.0,
+   "ip": 30.0
+  }
+ },
+ "tilt": {
+  "loc": [
+   0,
+   0.012,
+   0.042
+  ],
+  "rot": [
+   0.31,
+   -0.2,
+   0.28
+  ]
+ },
+ "pull": [
+  [
+   "rockedOut",
+   0,
+   [
+    -0.002,
+    0.003,
+    -0.017
+   ]
+  ],
+  [
+   "rockedOut",
+   0.05,
+   [
+    -0.01,
+    0.012,
+    -0.055
+   ]
+  ],
+  [
+   "drop",
+   -0.04,
+   [
+    -0.03,
+    0.045,
+    -0.16
+   ]
+  ],
+  [
+   "drop",
+   0,
+   [
+    -0.045,
+    0.075,
+    -0.28
+   ]
+  ],
+  [
+   "drop",
+   0.04,
+   [
+    -0.05,
+    0.08,
+    -0.27
+   ]
+  ]
+ ],
+ "approach_slide_m": [
+  0.007,
+  0.008,
+  -0.017
+ ],
+ "leave_slide_m": [
+  0.012,
+  0.012,
+  -0.008
+ ]
+}

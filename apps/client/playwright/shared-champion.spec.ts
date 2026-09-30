@@ -228,16 +228,6 @@ function buildTelemetryForScore(score: number) {
   };
 }
 
-async function getSessionToken(request: APIRequestContext, baseUrl: string): Promise<string> {
-  const response = await request.post(new URL("/api/session", baseUrl).toString(), {
-    failOnStatusCode: false,
-  });
-  expect(response.ok()).toBe(true);
-  const data = await response.json();
-  expect(typeof data.token).toBe("string");
-  return data.token as string;
-}
-
 async function postDirectChampionWrite(
   request: APIRequestContext,
   baseUrl: string,
@@ -246,7 +236,6 @@ async function postDirectChampionWrite(
     score: number;
     controlMode: "human" | "agent";
     telemetry?: ReturnType<typeof buildTelemetryForScore>;
-    sessionToken?: string;
   },
 ) {
   const response = await request.post(new URL("/api/high-score", baseUrl).toString(), {
@@ -261,7 +250,6 @@ async function postDirectChampionWrite(
       score: body.score,
       controlMode: body.controlMode,
       telemetry: body.telemetry ?? buildTelemetryForScore(body.score),
-      sessionToken: body.sessionToken,
     },
   });
 
@@ -545,7 +533,6 @@ test("api blocks raw writes and only accepts validated run submissions", async (
 
 test("run-start validates names while direct-write stays internal-only", async ({ request }, testInfo) => {
   const baseUrl = testInfo.project.use.baseURL as string;
-  const sessionToken = await getSessionToken(request, baseUrl);
 
   for (const playerName of ["", "Bad<Name", "Sh1thead"]) {
     const started = await startValidatedRun(request, baseUrl, {
@@ -561,7 +548,6 @@ test("run-start validates names while direct-write stays internal-only", async (
       playerName,
       score: 25,
       controlMode: "agent",
-      sessionToken,
     });
     expect(directWrite.response.status()).toBe(403);
     expect(directWrite.body).toEqual({
@@ -579,7 +565,6 @@ test("run-start validates names while direct-write stays internal-only", async (
     playerName: "ValidAgent",
     score: 10,
     controlMode: "agent",
-    sessionToken,
   });
   expect(validDirectWrite.response.status()).toBe(403);
   expect(validDirectWrite.body).toEqual({

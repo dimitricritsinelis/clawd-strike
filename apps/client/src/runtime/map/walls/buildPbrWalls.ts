@@ -1,0 +1,379 @@
+import { BufferGeometry, Float32BufferAttribute, Group, Mesh } from "three";
+import type { WallMaterialLibrary, WallTextureQuality } from "../../render/materials/WallMaterialLibrary";
+import { applyWallShaderTweaks } from "../../render/materials/applyWallShaderTweaks";
+import { DeterministicRng, deriveSubSeed } from "../../utils/Rng";
+import type { BoundarySegment } from "../world/buildBlockout";
+import type { RuntimeBlockoutZone, RuntimeFacadeProfile, RuntimeFrontage } from "../spec/types";
+import {
+  resolveFacadeFaceForSegment,
+  resolveFacadeStyleForSegment,
+  type FacadeFace,
+} from "./wallMaterialAssignment";
+import { resolveWallShaderProfile } from "./wallShaderProfiles";
+
+const WALL_ZONE_TYPES = new Set([
+  "spawn_plaza",
+  "main_lane_segment",
+  "side_hall",
+  "cut",
+  "connector",
+]);
+
+type MaterialBatch = {
+  positions: number[];
+  normals: number[];
+  uvs: number[];
+  indices: number[];
+  vertexCount: number;
+};
+
+type BuildPbrWallsOptions = {
+  segments: readonly BoundarySegment[];
+  /** Untouched collision-wall authority used for stable assignment context. */
+  sourceSegments?: readonly BoundarySegment[];
+  /** Parent index in sourceSegments for each render-only segment. */
+  segmentSourceIndices?: readonly number[];
+  zones: readonly RuntimeBlockoutZone[];
+  frontages?: readonly RuntimeFrontage[];
+  facadeProfiles?: readonly RuntimeFacadeProfile[];
+  seed: number;
+  quality: WallTextureQuality;
+  manifest: WallMaterialLibrary;
+  wallHeightM: number;
+  floorTopY: number;
+  segmentHeights?: readonly number[];
+  segmentBaseYs?: readonly number[];
+};
+
+function validateSegmentParentContract(options: BuildPbrWallsOptions): void {
+  const hasSourceSegments = typeof options.sourceSegments !== "undefined";
+  const hasSourceIndices = typeof options.segmentSourceIndices !== "undefined";
+  if (hasSourceSegments !== hasSourceIndices) {
+    throw new Error("[pbr walls] sourceSegments and segmentSourceIndices must be provided together");
+  }
+  if (!options.segmentSourceIndices || !options.sourceSegments) return;
+  if (options.segmentSourceIndices.length !== options.segments.length) {
+    throw new Error("[pbr walls] segmentSourceIndices must align with render segments");
+  }
+  for (let index = 0; index < options.segmentSourceIndices.length; index += 1) {
+    const sourceIndex = options.segmentSourceIndices[index]!;
+    if (!Number.isInteger(sourceIndex) || sourceIndex < 0 || sourceIndex >= options.sourceSegments.length) {
+      throw new Error(`[pbr walls] render segment ${index} has invalid source index ${sourceIndex}`);
+    }
+  }
+}
+
+function resolveSegmentParent(
+  options: BuildPbrWallsOptions,
+  segmentIndex: number,
+): { sourceIndex: number; segment: BoundarySegment } {
+  const sourceIndex = options.segmentSourceIndices?.[segmentIndex] ?? segmentIndex;
+  return {
+    sourceIndex,
+    segment: options.sourceSegments?.[sourceIndex] ?? options.segments[segmentIndex]!,
+  };
+}
+
+function getBatch(map: Map<string, MaterialBatch>, materialId: string): MaterialBatch {
+  const existing = map.get(materialId);
+  if (existing) return existing;
+  const next: MaterialBatch = {
+    positions: [],
+    normals: [],
+    uvs: [],
+    indices: [],
+    vertexCount: 0,
+  };
+  map.set(materialId, next);
+  return next;
+}
+
+function appendVertex(
+  batch: MaterialBatch,
+  x: number,
+  y: number,
+  z: number,
+  nx: number,
+  ny: number,
+  nz: number,
+  u: number,
+  v: number,
+): void {
+  batch.positions.push(x, y, z);
+  batch.normals.push(nx, ny, nz);
+  batch.uvs.push(u, v);
+}
+
+function appendSegmentFace(
+  batch: MaterialBatch,
+  segment: BoundarySegment,
+  floorTopY: number,
+  wallHeightM: number,
+  tileSizeM: number,
+  uvOffsetU: number,
+  uvOffsetV: number,
+): void {
+  const y0 = floorTopY;
+  const y1 = floorTopY + wallHeightM;
+  const baseIndex = batch.vertexCount;
+  const u0 = segment.start / tileSizeM + uvOffsetU;
+  const u1 = segment.end / tileSizeM + uvOffsetU;
+  const v0 = y0 / tileSizeM + uvOffsetV;
+  const v1 = y1 / tileSizeM + uvOffsetV;
+
+  if (segment.orientation === "vertical") {
+    const x = segment.coord;
+    const normalX = -segment.outward;
+    appendVertex(batch, x, y0, segment.start, normalX, 0, 0, u0, v0);
+    appendVertex(batch, x, y0, segment.end, normalX, 0, 0, u1, v0);
+    appendVertex(batch, x, y1, segment.end, normalX, 0, 0, u1, v1);
+    appendVertex(batch, x, y1, segment.start, normalX, 0, 0, u0, v1);
+  } else {
+    const z = segment.coord;
+    const normalZ = -segment.outward;
+    appendVertex(batch, segment.start, y0, z, 0, 0, normalZ, u0, v0);
+    appendVertex(batch, segment.end, y0, z, 0, 0, normalZ, u1, v0);
+    appendVertex(batch, segment.end, y1, z, 0, 0, normalZ, u1, v1);
+    appendVertex(batch, segment.start, y1, z, 0, 0, normalZ, u0, v1);
+  }
+
+  // Geometric (winding-derived) normal sign = sign(end − start).
+  // Shading normal sign = −outward.
+  // When they disagree the face is back-facing and Three.js culls it.
+  const product = (segment.end - segment.start) * segment.outward;
+  const needsFlip = segment.orientation === "vertical" ? product > 0 : product < 0;
+
+  if (needsFlip) {
+    batch.indices.push(
+      baseIndex,
+      baseIndex + 1,
+      baseIndex + 2,
+      baseIndex,
+      baseIndex + 2,
+      baseIndex + 3,
+    );
+  } else {
+    batch.indices.push(
+      baseIndex,
+      baseIndex + 2,
+      baseIndex + 1,
+      baseIndex,
+      baseIndex + 3,
+      baseIndex + 2,
+    );
+  }
+  batch.vertexCount += 4;
+}
+
+type SegmentFrame = {
+  centerX: number;
+  centerZ: number;
+  inwardX: number;
+  inwardZ: number;
+};
+
+function pointInRect2D(zone: RuntimeBlockoutZone, x: number, z: number): boolean {
+  const rect = zone.rect;
+  return x >= rect.x && x <= rect.x + rect.w && z >= rect.y && z <= rect.y + rect.h;
+}
+
+function toSegmentFrame(segment: BoundarySegment): SegmentFrame {
+  if (segment.orientation === "vertical") {
+    return {
+      centerX: segment.coord,
+      centerZ: (segment.start + segment.end) * 0.5,
+      inwardX: -segment.outward,
+      inwardZ: 0,
+    };
+  }
+
+  return {
+    centerX: (segment.start + segment.end) * 0.5,
+    centerZ: segment.coord,
+    inwardX: 0,
+    inwardZ: -segment.outward,
+  };
+}
+
+function resolveSegmentZone(frame: SegmentFrame, zones: readonly RuntimeBlockoutZone[]): RuntimeBlockoutZone | null {
+  const probeX = frame.centerX + frame.inwardX * 0.1;
+  const probeZ = frame.centerZ + frame.inwardZ * 0.1;
+  let winner: RuntimeBlockoutZone | null = null;
+  let winnerArea = Number.POSITIVE_INFINITY;
+
+  for (const zone of zones) {
+    if (!WALL_ZONE_TYPES.has(zone.type)) continue;
+    if (!pointInRect2D(zone, probeX, probeZ)) continue;
+    const area = zone.rect.w * zone.rect.h;
+    if (area < winnerArea) {
+      winnerArea = area;
+      winner = zone;
+    }
+  }
+
+  return winner;
+}
+
+function resolveZoneMaterialId(zone: RuntimeBlockoutZone | null): string {
+  if (!zone) {
+    return "ph_whitewashed_brick";
+  }
+  const style = resolveFacadeStyleForSegment(zone, {
+    centerX: zone.rect.x + zone.rect.w * 0.5,
+    centerZ: zone.rect.y + zone.rect.h * 0.5,
+    inwardX: 0,
+    inwardZ: 0,
+  });
+  return style.materials.wall;
+}
+
+function resolveSegmentFrontage(
+  zone: RuntimeBlockoutZone | null,
+  face: FacadeFace,
+  frame: SegmentFrame,
+  frontages: readonly RuntimeFrontage[],
+): RuntimeFrontage | null {
+  if (!zone) return null;
+  const spanM = face === "west" || face === "east" ? zone.rect.h : zone.rect.w;
+  if (spanM <= 0) return null;
+  const coordinateM = face === "west" || face === "east"
+    ? frame.centerZ - zone.rect.y
+    : frame.centerX - zone.rect.x;
+  const along = coordinateM / spanM;
+  return frontages
+    .filter((frontage) => (
+      frontage.zoneId === zone.id
+      && frontage.face === face
+      && along >= (frontage.start ?? 0) - 1e-6
+      && along <= (frontage.end ?? 1) + 1e-6
+    ))
+    .sort((left, right) => (
+      ((left.end ?? 1) - (left.start ?? 0)) - ((right.end ?? 1) - (right.start ?? 0))
+      || left.id.localeCompare(right.id)
+    ))[0] ?? null;
+}
+
+function resolveManifestMaterialId(
+  materialIds: readonly string[],
+  availableMaterialIds: ReadonlySet<string>,
+  zoneMaterialId: string,
+): string {
+  if (availableMaterialIds.has(zoneMaterialId)) return zoneMaterialId;
+  return materialIds[0]!;
+}
+
+function resolveMaterialUvOffset(seed: number, materialId: string): { x: number; y: number } {
+  const offsetSeed = deriveSubSeed(seed, `wall-uvoffset:${materialId}`);
+  const offsetRng = new DeterministicRng(offsetSeed);
+  return {
+    x: offsetRng.int(0, 4),
+    y: offsetRng.int(0, 4),
+  };
+}
+
+function finalizeGeometry(batch: MaterialBatch): BufferGeometry {
+  const geometry = new BufferGeometry();
+  geometry.setAttribute("position", new Float32BufferAttribute(batch.positions, 3));
+  geometry.setAttribute("normal", new Float32BufferAttribute(batch.normals, 3));
+  const uv = new Float32BufferAttribute(batch.uvs, 2);
+  geometry.setAttribute("uv", uv);
+  geometry.setAttribute("uv2", new Float32BufferAttribute([...batch.uvs], 2));
+  geometry.setIndex(batch.indices);
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  return geometry;
+}
+
+export function buildPbrWalls(options: BuildPbrWallsOptions): Group {
+  const root = new Group();
+  root.name = "map-pbr-walls";
+  validateSegmentParentContract(options);
+
+  const materialIds = options.manifest.getMaterialIds();
+  if (materialIds.length === 0) {
+    return root;
+  }
+
+  const batches = new Map<string, MaterialBatch>();
+  const availableMaterialIds = new Set(materialIds);
+  const facadeProfileById = new Map((options.facadeProfiles ?? []).map((profile) => [profile.id, profile]));
+
+  for (let index = 0; index < options.segments.length; index += 1) {
+    const segment = options.segments[index]!;
+    const parent = resolveSegmentParent(options, index);
+    const frame = toSegmentFrame(segment);
+    const zone = resolveSegmentZone(frame, options.zones);
+    const facadeFace = resolveFacadeFaceForSegment(zone, frame);
+    const frontage = resolveSegmentFrontage(zone, facadeFace, frame, options.frontages ?? []);
+    const authoredProfile = facadeProfileById.get(
+      frontage?.facadeProfileId ?? zone?.facadeProfileId ?? "",
+    );
+    const zoneMaterialId = zone
+      ? resolveFacadeStyleForSegment(zone, frame, authoredProfile).materials.wall
+      : resolveZoneMaterialId(zone);
+    const materialId = resolveManifestMaterialId(
+      materialIds,
+      availableMaterialIds,
+      zoneMaterialId,
+    );
+    const uvSeed = deriveSubSeed(options.seed, `wall-uv:${parent.sourceIndex}:${materialId}`);
+    const uvRng = new DeterministicRng(uvSeed);
+    const tileSizeM = options.manifest.getTileSizeM(materialId);
+    const batch = getBatch(batches, materialId);
+    const segHeight = options.segmentHeights?.[index] ?? options.wallHeightM;
+    appendSegmentFace(
+      batch,
+      segment,
+      options.segmentBaseYs?.[index] ?? options.floorTopY,
+      segHeight,
+      tileSizeM,
+      uvRng.int(0, 4),
+      uvRng.int(0, 4),
+    );
+  }
+
+  for (const materialId of materialIds) {
+    const batch = batches.get(materialId);
+    if (!batch || batch.vertexCount === 0) continue;
+
+    const geometry = finalizeGeometry(batch);
+    const material = options.manifest.createStandardMaterial(materialId, options.quality);
+    const albedoBoost =
+      typeof material.userData.wallAlbedoBoost === "number" && Number.isFinite(material.userData.wallAlbedoBoost)
+        ? material.userData.wallAlbedoBoost
+        : 1;
+    const tileSizeM = options.manifest.getTileSizeM(materialId);
+    const uvOffset = resolveMaterialUvOffset(options.seed, materialId);
+    applyWallShaderTweaks(material, {
+      albedoBoost,
+      macroColorAmplitude: 0.08,
+      macroRoughnessAmplitude: 0.05,
+      macroFrequency: 0.18,
+      macroSeed: deriveSubSeed(options.seed, `wall-macro:${materialId}`),
+      tileSizeM,
+      uvOffset,
+      dirtEnabled: true,
+      floorTopY: options.floorTopY,
+      dirtHeightM: 1.5,
+      dirtDarken: 0.12,
+      dirtRoughnessBoost: 0.12,
+      ...resolveWallShaderProfile(materialId, "wall"),
+    });
+
+    const mesh = new Mesh(geometry, material);
+    mesh.name = `wall-${materialId}`;
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData.visualQa = {
+      moduleId: "boundary_wall",
+      semanticClass: "structural_wall",
+      representation: "module",
+      materialMode: "pbr",
+      materialId,
+      shadowMode: "cast",
+    };
+    root.add(mesh);
+  }
+
+  return root;
+}

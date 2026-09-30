@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "waivers": [
+    {
+      "id": "CW-7599CB836F04",
+      "kind": "hard-overlap",
+      "signature": "hard-overlap|placementIds=PLACE_SPICE_BARREL_COVER_SPICE_01,PLACE_SPICE_COVER_CORE_COVER_SPICE_01",
+      "match": {
+        "placementIds": [
+          "PLACE_SPICE_BARREL_COVER_SPICE_01",
+          "PLACE_SPICE_COVER_CORE_COVER_SPICE_01"
+        ]
+      },
+      "reasonCode": "legacy-composition-conflict",
+      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
+      "approval": {
+        "status": "legacy-migrated",
+        "legacyRef": "L3.2"
+      }
+    },
+    {
+      "id": "CW-13333D7BED23",
+      "kind": "opening-service",
+      "signature": "opening-service|placementId=PLACE_B4_SPICE_COVER_RUG_COVER_SPICE_01|openingId=ARCH_FRONTAGE_SPICE_STREET_WEST_GROUND_05",
+      "match": {
+        "placementId": "PLACE_B4_SPICE_COVER_RUG_COVER_SPICE_01",
+        "openingId": "ARCH_FRONTAGE_SPICE_STREET_WEST_GROUND_05"
+      },
+      "reasonCode": "legacy-composition-conflict",
+      "rationale": "Exact conflict migrated from the archived visual-overhaul workflow without changing authored geometry.",
+      "approval": {
+        "status": "legacy-migrated",
+        "legacyRef": "L3.7"
+      }
+    }
+  ]
+}

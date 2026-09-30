@@ -22,5 +22,3 @@ MD5 checksums of the downloaded files:
 - `Glass_Stained_Panel_001_normal.png`: `85da31a4ca053201e7a2410b675923c1`
 - `Glass_Stained_Panel_001_opacity.png`: `7aa8213d9ad2cc89e36757924fe2c140`
 - `Glass_Stained_Panel_001_roughness.png`: `b451d60f0b3e0fc734a9c24265c6fe28`
-- `Glass_Stained_Panel_001_transmissive.png`: `0a122ca5666a5098855bdb8ea5845ea9`
-- `Material_2004.png`: `c7a8c425d4e3b2108f27671a9733d5e4`

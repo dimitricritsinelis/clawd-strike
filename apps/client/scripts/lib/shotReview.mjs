@@ -704,7 +704,7 @@ function applyVisualTelemetryAcceptance(findings, state, telemetry) {
   }
 }
 
-export function collectShotFindings({ state, metrics, consoleCounts, shotDefinition, capture }) {
+function collectShotFindings({ state, metrics, consoleCounts, shotDefinition, capture }) {
   const findings = [];
   const acceptance = parseShotAcceptance(shotDefinition);
   const observedTags = collectObservedSceneTags(state);
@@ -794,7 +794,7 @@ export function collectShotFindings({ state, metrics, consoleCounts, shotDefinit
   return findings;
 }
 
-export function scoreShotReview(findings) {
+function scoreShotReview(findings) {
   let score = 100;
   for (const finding of findings) {
     score -= finding.severity === "error" ? 35 : 10;
@@ -841,102 +841,6 @@ function angleDeltaDeg(a, b) {
   let delta = Math.abs(a - b) % 360;
   if (delta > 180) delta = 360 - delta;
   return delta;
-}
-
-export function compareCapturedShotPair(input) {
-  const {
-    shotId,
-    shotDefinition,
-    beforeCapture,
-    afterCapture,
-    beforeMetrics,
-    afterMetrics,
-    diff,
-    beforeConsole = { errorCount: 0, warningCount: 0, total: 0 },
-    afterConsole = { errorCount: 0, warningCount: 0, total: 0 },
-    minScore = 80,
-  } = input;
-  if (!isRecord(shotDefinition) || shotDefinition.id !== shotId) {
-    throw new Error(`[shot-pair] '${shotId}' must resolve to one authored shot definition`);
-  }
-  const beforeShotId = beforeCapture?.state?.shot?.id;
-  const afterShotId = afterCapture?.state?.shot?.id;
-  if (beforeShotId !== shotId || afterShotId !== shotId) {
-    throw new Error(
-      `[shot-pair] state shot mismatch (expected=${shotId}; before=${beforeShotId ?? "missing"}; after=${afterShotId ?? "missing"})`,
-    );
-  }
-
-  const before = summarizeCapturedShot(beforeCapture, beforeMetrics, beforeConsole, {
-    minScore,
-    shotDefinition,
-  });
-  const after = summarizeCapturedShot(afterCapture, afterMetrics, afterConsole, {
-    minScore,
-    shotDefinition,
-  });
-  const findings = [];
-  if (!before.camera.matches) {
-    pushFinding(findings, "error", "before-camera-invalid", before.camera.reason ?? "Before camera does not match its authored pose.");
-  }
-  if (!after.camera.matches) {
-    pushFinding(findings, "error", "after-camera-invalid", after.camera.reason ?? "After camera does not match its authored pose.");
-  }
-  if (beforeMetrics.hash === afterMetrics.hash) {
-    pushFinding(findings, "error", "identical-images", "Before and after images are identical.");
-  }
-
-  const beforeCamera = before.camera.actual;
-  const afterCamera = after.camera.actual;
-  const tolerance = after.acceptance.cameraTolerance;
-  const cameraDelta = beforeCamera?.pos && afterCamera?.pos
-    ? {
-        positionM: Math.hypot(
-          beforeCamera.pos.x - afterCamera.pos.x,
-          beforeCamera.pos.y - afterCamera.pos.y,
-          beforeCamera.pos.z - afterCamera.pos.z,
-        ),
-        yawDeg: angleDeltaDeg(beforeCamera.yawDeg, afterCamera.yawDeg),
-        pitchDeg: Math.abs(beforeCamera.pitchDeg - afterCamera.pitchDeg),
-        fovDeg: Math.abs(beforeCamera.fovDeg - afterCamera.fovDeg),
-      }
-    : null;
-  if (
-    !cameraDelta
-    || cameraDelta.positionM > tolerance.positionM
-    || cameraDelta.yawDeg > tolerance.angleDeg
-    || cameraDelta.pitchDeg > tolerance.angleDeg
-    || cameraDelta.fovDeg > tolerance.fovDeg
-  ) {
-    pushFinding(
-      findings,
-      "error",
-      "camera-drift",
-      cameraDelta
-        ? `Before/after camera drift exceeds authored tolerance (position=${cameraDelta.positionM.toFixed(4)}m, yaw=${cameraDelta.yawDeg.toFixed(3)}deg, pitch=${cameraDelta.pitchDeg.toFixed(3)}deg, fov=${cameraDelta.fovDeg.toFixed(3)}deg).`
-        : "Before/after camera metadata is unavailable.",
-    );
-  }
-  for (const finding of after.findings) findings.push(finding);
-
-  return {
-    shotId,
-    passed: findings.every((finding) => finding.severity !== "error"),
-    cameraTolerance: tolerance,
-    cameraDelta,
-    images: {
-      before: beforeMetrics,
-      after: afterMetrics,
-      diff,
-    },
-    console: {
-      before: beforeConsole,
-      after: afterConsole,
-    },
-    before,
-    after,
-    findings,
-  };
 }
 
 function camerasMatch(left, right) {

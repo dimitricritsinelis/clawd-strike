@@ -1,23 +1,19 @@
 import { FloorMaterialLibrary } from "./render/materials/FloorMaterialLibrary";
 import { preloadEnemyVisualAssets } from "./enemies/EnemyVisual";
+import { isMobileDevice } from "./input/MobileDetect";
+import { loadMap } from "./map/spec/loadMap";
+import type { RuntimeMapAssets } from "./map/spec/types";
 import { WallMaterialLibrary } from "./render/materials/WallMaterialLibrary";
 import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { createAk47ViewModel, type WeaponViewModel } from "./weapons/Ak47AnimatedViewModel";
-import { resolveQaAssetProfile } from "./qa/assetReadiness";
+import { plannedFloorMaterialIds, plannedWallMaterialIds, resolveQaAssetProfile } from "./qa/assetReadiness";
+import { FLOOR_MANIFEST_URL, WALL_MANIFEST_URL } from "./assetManifests";
 
-const FLOOR_MANIFEST_URL =
-  "/assets/textures/environment/bazaar/floors/bazaar_floor_textures_pack_v4/materials.json";
-const WALL_MANIFEST_URL =
-  "/assets/textures/environment/bazaar/walls/bazaar_wall_textures_pack_v5/materials.json";
-const PBR_FLOORS_ENABLED = true;
-const PBR_WALLS_ENABLED = true;
-// Upper bound before boot proceeds with the performance-safe fallback
-// (blockout surfaces, capsule enemies). Local/dev loads finish in well under
-// 2s; this cap only matters on genuinely slow networks, so it is generous —
-// hitting it silently costs the player every PBR surface.
+// Bound speculative prefetch; bootstrap still owns required asset loading.
 const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
 
 export type RuntimeWarmupAssets = {
+  mapAssets: RuntimeMapAssets | null;
   floorMaterials: FloorMaterialLibrary | null;
   wallMaterials: WallMaterialLibrary | null;
   viewModel: WeaponViewModel | null;
@@ -27,6 +23,7 @@ export type RuntimeWarmupAssets = {
 
 function createEmptyWarmupAssets(timedOut: boolean): RuntimeWarmupAssets {
   return {
+    mapAssets: null,
     floorMaterials: null,
     wallMaterials: null,
     viewModel: null,
@@ -43,17 +40,28 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   if (resolveQaAssetProfile(search) !== null) {
     return createEmptyWarmupAssets(false);
   }
+  let mapAssets: RuntimeMapAssets | null = null;
   let floorMaterials: FloorMaterialLibrary | null = null;
   let wallMaterials: WallMaterialLibrary | null = null;
   let viewModel: WeaponViewModel | null = null;
   let enemyVisualsReady = false;
   const warmupTasks: Promise<void>[] = [];
 
-  if (PBR_FLOORS_ENABLED && parsed.floorMode === "pbr") {
+  // The map decides which floor and wall materials to preload; bootstrap reuses
+  // it. On failure bootstrap loads it again and reports the error.
+  const mapLoad = loadMap(parsed.mapId);
+  warmupTasks.push(mapLoad.then((assets) => {
+    mapAssets = assets;
+  }, () => undefined));
+
+  // Mobile always renders blockout floors and walls.
+  if (parsed.floorMode === "pbr" && !isMobileDevice()) {
     warmupTasks.push((async () => {
       try {
         floorMaterials = await FloorMaterialLibrary.load(FLOOR_MANIFEST_URL);
-        await floorMaterials.preloadAllTextures(parsed.floorQuality);
+        await floorMaterials.preloadAllTextures(parsed.floorQuality, {
+          materialIds: new Set(plannedFloorMaterialIds(await mapLoad)),
+        });
       } catch (error) {
         floorMaterials = null;
         console.warn(
@@ -63,12 +71,14 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
     })());
   }
 
-  if (PBR_WALLS_ENABLED && parsed.wallMode === "pbr") {
+  if (parsed.wallMode === "pbr" && !isMobileDevice()) {
     warmupTasks.push((async () => {
       try {
         const wallQuality = parsed.floorQuality === "1k" ? "1k" : "2k";
         wallMaterials = await WallMaterialLibrary.load(WALL_MANIFEST_URL);
-        await wallMaterials.preloadAllTextures(wallQuality);
+        await wallMaterials.preloadAllTextures(wallQuality, {
+          materialIds: new Set(plannedWallMaterialIds(await mapLoad)),
+        });
       } catch (error) {
         wallMaterials = null;
         console.warn(
@@ -82,10 +92,7 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
     warmupTasks.push((async () => {
       let warmedViewModel: WeaponViewModel | null = null;
       try {
-        warmedViewModel = createAk47ViewModel({
-          vmDebug: parsed.vmDebug && parsed.debug,
-          search,
-        });
+        warmedViewModel = createAk47ViewModel();
         await warmedViewModel.load();
         viewModel = warmedViewModel;
         warmedViewModel = null;
@@ -114,6 +121,7 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
   await Promise.all(warmupTasks);
 
   return {
+    mapAssets,
     floorMaterials,
     wallMaterials,
     viewModel,
@@ -134,7 +142,7 @@ export async function warmupRuntimeAssets(): Promise<RuntimeWarmupAssets> {
   window.clearTimeout(timeoutId);
 
   if (typeof timeoutResult === "symbol") {
-    console.warn(`[runtime:warmup] timed out after ${RUNTIME_WARMUP_TIMEOUT_MS}ms; using safe fallback`);
+    console.warn(`[runtime:warmup] timed out after ${RUNTIME_WARMUP_TIMEOUT_MS}ms; continuing runtime startup`);
     return createEmptyWarmupAssets(true);
   }
 

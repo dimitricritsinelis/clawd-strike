@@ -1,4 +1,14 @@
 import {
+  type PbrTextureSet,
+  asRecord,
+  asString,
+  asNumberInRange,
+  asOptionalNumberInRange,
+  asOptionalString,
+  parseOptionalTextureSet,
+  parseTextureSet,
+} from "./pbrManifest";
+import {
   MeshStandardMaterial,
   NoColorSpace,
   RepeatWrapping,
@@ -10,11 +20,7 @@ import {
 
 export type WallTextureQuality = "1k" | "2k";
 
-export type WallTextureSet = {
-  albedo: string;
-  normal: string;
-  arm: string;
-};
+export type WallTextureSet = PbrTextureSet;
 
 export type WallTextureResolution = {
   materialId: string;
@@ -60,66 +66,6 @@ type WallMaterialEntry = {
   source?: WallMaterialSource;
   textures: Partial<Record<WallTextureQuality, WallTextureSet>>;
 };
-
-type UnknownRecord = Record<string, unknown>;
-
-function asRecord(value: unknown, context: string): UnknownRecord {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${context}: expected object`);
-  }
-  return value as UnknownRecord;
-}
-
-function asString(value: unknown, context: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error(`${context}: expected non-empty string`);
-  }
-  return value;
-}
-
-function asNumber(value: unknown, context: string): number {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new Error(`${context}: expected finite number`);
-  }
-  return value;
-}
-
-function asNumberInRange(value: unknown, context: string, min: number, max: number): number {
-  const parsed = asNumber(value, context);
-  if (parsed < min || parsed > max) {
-    throw new Error(`${context}: expected number in range [${min}, ${max}]`);
-  }
-  return parsed;
-}
-
-function asOptionalNumberInRange(
-  value: unknown,
-  context: string,
-  min: number,
-  max: number,
-): number | undefined {
-  if (value === undefined) return undefined;
-  return asNumberInRange(value, context, min, max);
-}
-
-function asOptionalString(value: unknown, context: string): string | undefined {
-  if (value === undefined) return undefined;
-  return asString(value, context);
-}
-
-function parseTextureSet(value: unknown, context: string): WallTextureSet {
-  const record = asRecord(value, context);
-  return {
-    albedo: asString(record.albedo, `${context}.albedo`),
-    normal: asString(record.normal, `${context}.normal`),
-    arm: asString(record.arm, `${context}.arm`),
-  };
-}
-
-function parseOptionalTextureSet(value: unknown, context: string): WallTextureSet | undefined {
-  if (value === undefined) return undefined;
-  return parseTextureSet(value, context);
-}
 
 function parseWallMaterialSource(value: unknown, context: string): WallMaterialSource | undefined {
   if (value === undefined) return undefined;
@@ -354,7 +300,7 @@ export class WallMaterialLibrary {
         resolvedQuality: resolution.quality,
         urls: [maps.albedo, maps.normal, maps.arm].map((url) => this.resolveTextureUrl(url)),
       });
-      enqueueTexture(maps.albedo, SRGBColorSpace, 8);
+      enqueueTexture(maps.albedo, SRGBColorSpace, 16);
       // Normal and ARM sample at the same anisotropy as albedo. They were left at
       // 1 while albedo ran at 8, which meant every receding surface - the walls
       // down a street, the whole ground plane - had its relief blurred flat by
@@ -363,8 +309,8 @@ export class WallMaterialLibrary {
       // the 19 area primary cameras, typically by 30-50%. Raising these lifts it
       // on every camera at no tonal cost (Fountain Court +8.2%, Spawn-A +6.3%,
       // canopy +2.8%, mean luminance unchanged to the integer everywhere).
-      enqueueTexture(maps.normal, NoColorSpace, 8);
-      enqueueTexture(maps.arm, NoColorSpace, 8);
+      enqueueTexture(maps.normal, NoColorSpace, 16);
+      enqueueTexture(maps.arm, NoColorSpace, 16);
     }
 
     await Promise.all(preloadTasks);
@@ -390,6 +336,18 @@ export class WallMaterialLibrary {
     return material;
   }
 
+  /** Loads (or reuses) a material's albedo/normal/ARM textures without creating a material. */
+  loadTextureSet(materialId: string, quality: WallTextureQuality): Promise<{ albedo: Texture; normal: Texture; arm: Texture }> {
+    const entry = this.materialsById.get(materialId);
+    if (!entry) return Promise.reject(new Error(`Wall material '${materialId}' not found`));
+    const maps = resolveWallTextureSetForQuality(entry.textures, quality).textures;
+    return Promise.all([
+      this.loadTexture(maps.albedo, SRGBColorSpace, 16),
+      this.loadTexture(maps.normal, NoColorSpace, 16),
+      this.loadTexture(maps.arm, NoColorSpace, 16),
+    ]).then(([albedo, normal, arm]) => ({ albedo, normal, arm }));
+  }
+
   private resolveTextureUrl(relativeOrAbsoluteUrl: string): string {
     return new URL(relativeOrAbsoluteUrl, this.baseDirUrl).toString();
   }
@@ -401,9 +359,9 @@ export class WallMaterialLibrary {
   ): Promise<void> {
     try {
       const [albedoTex, normalTex, armTex] = await Promise.all([
-        this.loadTexture(maps.albedo, SRGBColorSpace, 8),
-        this.loadTexture(maps.normal, NoColorSpace, 1),
-        this.loadTexture(maps.arm, NoColorSpace, 1),
+        this.loadTexture(maps.albedo, SRGBColorSpace, 16),
+        this.loadTexture(maps.normal, NoColorSpace, 16),
+        this.loadTexture(maps.arm, NoColorSpace, 16),
       ]);
 
       this.assignMaps(material, entry, albedoTex, normalTex, armTex);
@@ -450,7 +408,7 @@ export class WallMaterialLibrary {
     material.needsUpdate = true;
   }
 
-  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 8): Promise<Texture> {
+  private loadTexture(url: string, colorSpace: Texture["colorSpace"], aniso = 16): Promise<Texture> {
     const resolvedUrl = this.resolveTextureUrl(url);
     let promise = WallMaterialLibrary.textureCache.get(resolvedUrl);
     if (!promise) {

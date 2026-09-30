@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 import {
   formatSharedChampionMode,
   formatSharedChampionScore,
@@ -77,7 +78,7 @@ export class DeathScreen {
     this.root.style.userSelect = "none";
 
     this.youDiedEl = document.createElement("div");
-    this.youDiedEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.youDiedEl.style.fontFamily = SANS_FONT;
     this.youDiedEl.style.fontSize = "72px";
     this.youDiedEl.style.fontWeight = "780";
     this.youDiedEl.style.letterSpacing = "0.08em";
@@ -87,7 +88,7 @@ export class DeathScreen {
     this.youDiedEl.textContent = "YOU DIED";
 
     this.subtitleEl = document.createElement("div");
-    this.subtitleEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.subtitleEl.style.fontFamily = SANS_FONT;
     this.subtitleEl.style.fontSize = "18px";
     this.subtitleEl.style.fontWeight = "500";
     this.subtitleEl.style.color = "rgba(230, 240, 255, 0.65)";
@@ -97,7 +98,7 @@ export class DeathScreen {
     this.subtitleEl.textContent = "Run ended";
 
     this.finalScoreEl = document.createElement("div");
-    this.finalScoreEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.finalScoreEl.style.fontFamily = SANS_FONT;
     this.finalScoreEl.style.fontSize = "24px";
     this.finalScoreEl.style.fontWeight = "700";
     this.finalScoreEl.style.color = "rgba(240, 248, 255, 0.95)";
@@ -107,7 +108,7 @@ export class DeathScreen {
     this.finalScoreEl.textContent = "Final Score 0";
 
     this.sessionBestEl = document.createElement("div");
-    this.sessionBestEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.sessionBestEl.style.fontFamily = SANS_FONT;
     this.sessionBestEl.style.fontSize = "16px";
     this.sessionBestEl.style.fontWeight = "600";
     this.sessionBestEl.style.color = "rgba(190, 210, 236, 0.85)";
@@ -121,7 +122,7 @@ export class DeathScreen {
       marginTop: "14px",
       maxWidth: "560px",
       textAlign: "center",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "14px",
       fontWeight: "600",
       lineHeight: "1.6",
@@ -148,7 +149,7 @@ export class DeathScreen {
     const championKicker = document.createElement("div");
     championKicker.textContent = "WORLD CHAMPION";
     Object.assign(championKicker.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "11px",
       fontWeight: "700",
       letterSpacing: "0.18em",
@@ -159,7 +160,7 @@ export class DeathScreen {
     this.sharedChampionNameEl = document.createElement("div");
     this.sharedChampionNameEl.dataset.testid = "death-world-champion-name";
     Object.assign(this.sharedChampionNameEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "24px",
       fontWeight: "760",
       letterSpacing: "0.08em",
@@ -178,7 +179,7 @@ export class DeathScreen {
     this.sharedChampionScoreEl = document.createElement("div");
     this.sharedChampionScoreEl.dataset.testid = "death-world-champion-score";
     Object.assign(this.sharedChampionScoreEl.style, {
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "18px",
       fontWeight: "700",
       letterSpacing: "0.05em",
@@ -192,7 +193,7 @@ export class DeathScreen {
       borderRadius: "999px",
       border: "1px solid rgba(255, 214, 161, 0.24)",
       background: "rgba(255, 214, 161, 0.12)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "10px",
       fontWeight: "700",
       letterSpacing: "0.16em",
@@ -213,7 +214,7 @@ export class DeathScreen {
     this.playAgainBtn.style.border = "1px solid rgba(255, 255, 255, 0.3)";
     this.playAgainBtn.style.background = "rgba(18, 28, 44, 0.74)";
     this.playAgainBtn.style.color = "rgba(236, 244, 255, 0.95)";
-    this.playAgainBtn.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.playAgainBtn.style.fontFamily = SANS_FONT;
     this.playAgainBtn.style.fontSize = "13px";
     this.playAgainBtn.style.fontWeight = "700";
     this.playAgainBtn.style.letterSpacing = "0.12em";
@@ -228,7 +229,7 @@ export class DeathScreen {
     });
 
     this.countdownEl = document.createElement("div");
-    this.countdownEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.countdownEl.style.fontFamily = SANS_FONT;
     this.countdownEl.style.fontSize = "52px";
     this.countdownEl.style.fontWeight = "700";
     this.countdownEl.style.color = "rgba(255, 255, 255, 0.85)";

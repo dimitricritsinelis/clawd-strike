@@ -17,6 +17,7 @@ import {
   emptyCompositionWaiverRegistry,
   normalizeCompositionWaiverRegistry,
 } from "./lib/composition-waivers.mjs";
+import { MAP_SOURCE, MAP_SOURCE_ABS } from "./lib/mapPaths.mjs";
 
 const MAP_ID = "bazaar-map";
 const DEFAULT_COMPARE_SHOT_ID = "SHOT_02_SPAWN_A_TO_BAZAAR";
@@ -135,14 +136,11 @@ const scriptFile = fileURLToPath(import.meta.url);
 const scriptDir = path.dirname(scriptFile);
 const repoRoot = path.resolve(scriptDir, "../../..");
 
-// Source-of-truth inputs from the design packet.
-const mapSpecPath = path.join(repoRoot, "docs/map-design/specs/map_spec.json");
-const mapSpecSchemaPath = path.join(repoRoot, "docs/map-design/specs/map_spec_schema.json");
-const compositionWaiversPath = path.join(
-  repoRoot,
-  "docs/map-design/specs/composition_waivers.json",
-);
-const designShotsPath = path.join(repoRoot, "docs/map-design/shots.json");
+// Source-of-truth inputs (apps/client/assets-src/maps/bazaar-map).
+const mapSpecPath = MAP_SOURCE_ABS.spec;
+const mapSpecSchemaPath = MAP_SOURCE_ABS.specSchema;
+const compositionWaiversPath = MAP_SOURCE_ABS.compositionWaivers;
+const designShotsPath = MAP_SOURCE_ABS.shots;
 const runtimeDir = path.join(repoRoot, "apps/client/public/maps", MAP_ID);
 
 const mapSpecOutPath = path.join(runtimeDir, "map_spec.json");
@@ -1089,8 +1087,7 @@ function validateConnectedTopology(zones, explicitConnectivity) {
   }
 }
 
-function validateSealedPerimeter(formatVersion, boundary, patches) {
-  if (!String(formatVersion ?? "").startsWith("3")) return;
+function validateSealedPerimeter(boundary, patches) {
   const sides = [
     { name: "south", orientation: "horizontal", coord: boundary.y, outward: -1, start: boundary.x, end: boundary.x + boundary.w },
     { name: "north", orientation: "horizontal", coord: boundary.y + boundary.h, outward: 1, start: boundary.x, end: boundary.x + boundary.w },
@@ -1165,9 +1162,9 @@ function deriveAuthoredSpawns(spec, zoneById, surfaceById) {
   return sortedById(spawns);
 }
 
-function requireV3Array(spec, key, formatVersion) {
+function requireV3Array(spec, key) {
   const source = requireArrayWhenPresent(spec, key);
-  if (isV3FormatVersion(formatVersion) && (!source || source.length === 0)) {
+  if (!source || source.length === 0) {
     fail(`V3 map spec requires a non-empty '${key}' array`);
   }
   return source;
@@ -1181,10 +1178,6 @@ function getRuntimeModelCatalog() {
     {
       filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/props/models.json"),
       publicBase: "/assets/models/environment/bazaar/props",
-    },
-    {
-      filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/doors/models.json"),
-      publicBase: "/assets/models/environment/bazaar/doors",
     },
     {
       filePath: path.join(repoRoot, "apps/client/public/assets/models/environment/bazaar/facades/models.json"),
@@ -1214,9 +1207,42 @@ function getRuntimeModelCatalog() {
 }
 const runtimeModelMaterialIds = new Map();
 
-function deriveMassingProfiles(spec, formatVersion) {
-  const source = requireV3Array(spec, "massing_profiles", formatVersion);
-  if (typeof source === "undefined") return undefined;
+/** Free render-only GLBs placed by area packages (scripts/assets/apply-facade-package.mjs `placements`). */
+function deriveAuthoredPlacements(spec) {
+  const source = requireArrayWhenPresent(spec, "authored_placements");
+  if (typeof source === "undefined" || source.length === 0) return undefined;
+  const seenIds = new Set();
+  return sortedById(source.map((entry, index) => {
+    const label = `authored_placements[${index}]`;
+    if (!entry || typeof entry !== "object" || Array.isArray(entry)) fail(`${label} must be an object`);
+    const id = ensureString(entry.id, `${label}.id`);
+    if (seenIds.has(id)) fail(`Duplicate authored placement id '${id}'`);
+    seenIds.add(id);
+    const modelId = ensureString(entry.modelId, `${label}.modelId`);
+    if (!getRuntimeModelCatalog().has(modelId)) {
+      fail(`Authored placement '${id}' modelId '${modelId}' is not registered in a bazaar model manifest (facades/models.json)`);
+    }
+    const role = entry.role ?? "dressing";
+    if (!["dressing", "skyline"].includes(role)) fail(`${label}.role must be dressing or skyline`);
+    const position = entry.position && typeof entry.position === "object" ? entry.position : {};
+    return {
+      id,
+      unit: ensureString(entry.unit, `${label}.unit`),
+      modelId,
+      position: {
+        x: asNumber(position.x, `${label}.position.x`),
+        y: asNumber(position.y, `${label}.position.y`),
+        z: asNumber(position.z, `${label}.position.z`),
+      },
+      yawDeg: asNumber(entry.yawDeg ?? 0, `${label}.yawDeg`),
+      role,
+      materialIds: runtimeModelMaterialIds.get(modelId) ?? [],
+    };
+  }));
+}
+
+function deriveMassingProfiles(spec) {
+  const source = requireV3Array(spec, "massing_profiles");
   const seenIds = new Set();
   return sortedById(source.map((entry, index) => {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
@@ -1252,9 +1278,8 @@ function deriveMassingProfiles(spec, formatVersion) {
   }));
 }
 
-function deriveFacadeModules(spec, formatVersion, assetById) {
-  const source = requireV3Array(spec, "facade_modules", formatVersion);
-  if (typeof source === "undefined") return undefined;
+function deriveFacadeModules(spec, assetById) {
+  const source = requireV3Array(spec, "facade_modules");
   const seenIds = new Set();
   return sortedById(source.map((entry, index) => {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
@@ -1288,9 +1313,8 @@ function deriveFacadeModules(spec, formatVersion, assetById) {
   }));
 }
 
-function deriveFacadeProfiles(spec, formatVersion, massingById, moduleById) {
-  const source = requireV3Array(spec, "facade_profiles", formatVersion);
-  if (typeof source === "undefined") return undefined;
+function deriveFacadeProfiles(spec, massingById, moduleById) {
+  const source = requireV3Array(spec, "facade_profiles");
   const seenIds = new Set();
   return sortedById(source.map((entry, index) => {
     if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
@@ -1311,19 +1335,17 @@ function deriveFacadeProfiles(spec, formatVersion, massingById, moduleById) {
     for (const slot of FACADE_MATERIAL_SLOTS) {
       compiledMaterialSlots[slot] = ensureString(materialSlots[slot], `facade_profiles[${index}].materialSlots.${slot}`);
     }
-    if (isV3FormatVersion(formatVersion)) {
-      if (!V3_WALL_MATERIAL_IDS.has(compiledMaterialSlots.wall)) {
-        fail(`Facade profile '${id}' wall material '${compiledMaterialSlots.wall}' is outside the v3 wall-family palette`);
-      }
-      if (
-        compiledMaterialSlots.roof !== compiledMaterialSlots.wall
-        && !V3_ROOF_MATERIAL_IDS.has(compiledMaterialSlots.roof)
-      ) {
-        fail(`Facade profile '${id}' roof material '${compiledMaterialSlots.roof}' is outside the v3 roof-family palette`);
-      }
-      if (!V3_TRIM_MATERIAL_IDS.has(compiledMaterialSlots.trim)) {
-        fail(`Facade profile '${id}' trim material '${compiledMaterialSlots.trim}' is outside the v3 trim palette`);
-      }
+    if (!V3_WALL_MATERIAL_IDS.has(compiledMaterialSlots.wall)) {
+      fail(`Facade profile '${id}' wall material '${compiledMaterialSlots.wall}' is outside the v3 wall-family palette`);
+    }
+    if (
+      compiledMaterialSlots.roof !== compiledMaterialSlots.wall
+      && !V3_ROOF_MATERIAL_IDS.has(compiledMaterialSlots.roof)
+    ) {
+      fail(`Facade profile '${id}' roof material '${compiledMaterialSlots.roof}' is outside the v3 roof-family palette`);
+    }
+    if (!V3_TRIM_MATERIAL_IDS.has(compiledMaterialSlots.trim)) {
+      fail(`Facade profile '${id}' trim material '${compiledMaterialSlots.trim}' is outside the v3 trim palette`);
     }
     if (!Array.isArray(entry.moduleIds) || entry.moduleIds.length === 0) {
       fail(`facade_profiles[${index}].moduleIds must be a non-empty array`);
@@ -1345,12 +1367,9 @@ function deriveFacadeProfiles(spec, formatVersion, massingById, moduleById) {
   }));
 }
 
-function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, massingById, profileById, moduleById) {
+function deriveFrontages(spec, zoneIds, zoneById, districtIds, massingById, profileById, moduleById) {
   const source = requireArrayWhenPresent(spec, "frontages");
-  if (typeof source === "undefined") {
-    if (isV3FormatVersion(formatVersion)) fail("V3 map spec requires frontages");
-    return undefined;
-  }
+  if (typeof source === "undefined") fail("V3 map spec requires frontages");
 
   const seenIds = new Set();
   const frontages = source.map((entry, index) => {
@@ -1385,98 +1404,70 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
       fail(`Frontage '${id}' references unknown district '${districtId}'`);
     }
     const facadeProfileId = optionalString(entry.facadeProfileId, `frontages[${index}].facadeProfileId`);
-    if (isV3FormatVersion(formatVersion) && !facadeProfileId) fail(`V3 frontage '${id}' requires facadeProfileId`);
+    if (!facadeProfileId) fail(`V3 frontage '${id}' requires facadeProfileId`);
     const profile = facadeProfileId ? profileById?.get(facadeProfileId) : undefined;
     if (facadeProfileId && !profile) fail(`Frontage '${id}' references unknown facade profile '${facadeProfileId}'`);
     const massingProfileId = optionalString(entry.massingProfileId, `frontages[${index}].massingProfileId`)
       ?? profile?.massingProfileId;
-    if (isV3FormatVersion(formatVersion) && !massingProfileId) fail(`V3 frontage '${id}' requires massingProfileId`);
+    if (!massingProfileId) fail(`V3 frontage '${id}' requires massingProfileId`);
     if (massingProfileId && !massingById?.has(massingProfileId)) {
       fail(`Frontage '${id}' references unknown massing profile '${massingProfileId}'`);
-    }
-    // An authored facade GLB owns this frontage's street face; the runtime keeps
-    // the massing and drops the kit's face modules. It must be a registered model.
-    const facadeModelId = optionalString(entry.facadeModelId, `frontages[${index}].facadeModelId`);
-    if (facadeModelId && !getRuntimeModelCatalog().has(facadeModelId)) {
-      fail(`Frontage '${id}' facadeModelId '${facadeModelId}' is not registered in a bazaar model manifest (facades/models.json)`);
     }
     let bays;
     let layout;
     const layoutIntent = entry.layoutIntent;
-    if (isV3FormatVersion(formatVersion)) {
-      if (!layoutIntent || typeof layoutIntent !== "object" || Array.isArray(layoutIntent)) {
-        fail(`V3 frontage '${id}' requires layoutIntent`);
-      }
-      const mode = ensureString(layoutIntent.mode, `frontages[${index}].layoutIntent.mode`);
-      if (mode !== "generated" && mode !== "authored") {
-        fail(`Frontage '${id}' layoutIntent.mode must be 'generated' or 'authored'`);
-      }
-      if (typeof entry.bays !== "undefined") {
-        fail(`V3 frontage '${id}' cannot carry top-level bays; authored bays belong inside layoutIntent`);
-      }
-      const zone = zoneById.get(zoneId);
-      const massing = massingById.get(massingProfileId);
-      const frontageLengthM = (face === "west" || face === "east" ? zone.rect.h : zone.rect.w)
-        * ((end ?? 1) - (start ?? 0));
-      if (mode === "authored") {
-        // Composition is a design decision: named columns, declared mirrors and
-        // corner treatment, one ordering sentence. Same physical validator as generated.
-        const authored = generateAuthoredFacadeLayout({
-          frontageId: id,
-          lengthM: frontageLengthM,
-          heightM: massing.heightM,
-          family: profile.family,
-          profileModuleIds: profile.moduleIds,
-          moduleById,
-          intent: layoutIntent,
-        });
-        bays = authored.bays;
-        layout = authored.layout;
-      } else {
-        const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
-        if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
-        const accentModuleId = optionalString(
-          layoutIntent.accentModuleId,
-          `frontages[${index}].layoutIntent.accentModuleId`,
-        );
-        if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
-          fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
-        }
-        const generated = generateFacadeLayout({
-          frontageId: id,
-          lengthM: frontageLengthM,
-          heightM: massing.heightM,
-          family: profile.family,
-          rhythm,
-          profileModuleIds: profile.moduleIds,
-          moduleById,
-          accentModuleId,
-        });
-        bays = generated.bays;
-        layout = generated.layout;
-      }
-    } else if (typeof entry.bays !== "undefined") {
-      if (!Array.isArray(entry.bays) || entry.bays.length === 0) fail(`Frontage '${id}' bays must be a non-empty array`);
-      const seenBayIds = new Set();
-      bays = entry.bays.map((bay, bayIndex) => {
-        if (!bay || typeof bay !== "object" || Array.isArray(bay)) fail(`Frontage '${id}' bay ${bayIndex} must be an object`);
-        const bayId = ensureString(bay.id, `frontages[${index}].bays[${bayIndex}].id`);
-        if (seenBayIds.has(bayId)) fail(`Frontage '${id}' repeats bay id '${bayId}'`);
-        seenBayIds.add(bayId);
-        const moduleId = ensureString(bay.moduleId, `frontages[${index}].bays[${bayIndex}].moduleId`);
-        const module = moduleById?.get(moduleId);
-        if (!module) fail(`Frontage '${id}' bay '${bayId}' references unknown module '${moduleId}'`);
-        if (profile && !profile.moduleIds.includes(moduleId)) {
-          fail(`Frontage '${id}' bay '${bayId}' uses module '${moduleId}' outside facade profile '${profile.id}'`);
-        }
-        const along = asNumber(bay.along, `frontages[${index}].bays[${bayIndex}].along`);
-        if (along < 0 || along > 1) fail(`Frontage '${id}' bay '${bayId}' along must be between 0 and 1`);
-        const baseElevationM = asNumber(bay.baseElevationM, `frontages[${index}].bays[${bayIndex}].baseElevationM`);
-        if (baseElevationM < 0) fail(`Frontage '${id}' bay '${bayId}' baseElevationM must be >= 0`);
-        return { id: bayId, moduleId, along, baseElevationM };
-      }).sort((a, b) => a.along - b.along || a.id.localeCompare(b.id));
+    if (!layoutIntent || typeof layoutIntent !== "object" || Array.isArray(layoutIntent)) {
+      fail(`V3 frontage '${id}' requires layoutIntent`);
     }
-    if (isV3FormatVersion(formatVersion) && (!bays || bays.length === 0)) {
+    const mode = ensureString(layoutIntent.mode, `frontages[${index}].layoutIntent.mode`);
+    if (mode !== "generated" && mode !== "authored") {
+      fail(`Frontage '${id}' layoutIntent.mode must be 'generated' or 'authored'`);
+    }
+    if (typeof entry.bays !== "undefined") {
+      fail(`V3 frontage '${id}' cannot carry top-level bays; authored bays belong inside layoutIntent`);
+    }
+    const zone = zoneById.get(zoneId);
+    const massing = massingById.get(massingProfileId);
+    const frontageLengthM = (face === "west" || face === "east" ? zone.rect.h : zone.rect.w)
+      * ((end ?? 1) - (start ?? 0));
+    if (mode === "authored") {
+      // Composition is a design decision: named columns, declared mirrors and
+      // corner treatment, one ordering sentence. Same physical validator as generated.
+      const authored = generateAuthoredFacadeLayout({
+        frontageId: id,
+        lengthM: frontageLengthM,
+        heightM: massing.heightM,
+        family: profile.family,
+        profileModuleIds: profile.moduleIds,
+        moduleById,
+        intent: layoutIntent,
+      });
+      bays = authored.bays;
+      layout = authored.layout;
+    } else {
+      const rhythm = ensureString(layoutIntent.rhythm, `frontages[${index}].layoutIntent.rhythm`);
+      if (!FACADE_LAYOUT_RHYTHMS.has(rhythm)) fail(`Frontage '${id}' has unsupported layout rhythm '${rhythm}'`);
+      const accentModuleId = optionalString(
+        layoutIntent.accentModuleId,
+        `frontages[${index}].layoutIntent.accentModuleId`,
+      );
+      if (accentModuleId && (!moduleById?.has(accentModuleId) || !profile?.moduleIds.includes(accentModuleId))) {
+        fail(`Frontage '${id}' accent module '${accentModuleId}' is outside profile '${profile?.id}'`);
+      }
+      const generated = generateFacadeLayout({
+        frontageId: id,
+        lengthM: frontageLengthM,
+        heightM: massing.heightM,
+        family: profile.family,
+        rhythm,
+        profileModuleIds: profile.moduleIds,
+        moduleById,
+        accentModuleId,
+      });
+      bays = generated.bays;
+      layout = generated.layout;
+    }
+    if (!bays || bays.length === 0) {
       fail(`V3 frontage '${id}' requires generated or authored bays`);
     }
     return {
@@ -1487,7 +1478,6 @@ function deriveFrontages(spec, zoneIds, zoneById, districtIds, formatVersion, ma
       ...(districtId ? { districtId } : {}),
       ...(facadeProfileId ? { facadeProfileId } : {}),
       ...(massingProfileId ? { massingProfileId } : {}),
-      ...(facadeModelId ? { facadeModelId } : {}),
       ...(bays ? { bays } : {}),
       ...(layout ? { layout } : {}),
     };
@@ -1557,9 +1547,8 @@ function validateAdjacentFrontageMaterialIdentity(frontages, zoneById, profileBy
   }
 }
 
-function deriveAssetRegistry(spec, formatVersion) {
-  const source = requireV3Array(spec, "asset_registry", formatVersion);
-  if (typeof source === "undefined") return undefined;
+function deriveAssetRegistry(spec) {
+  const source = requireV3Array(spec, "asset_registry");
 
   const seenIds = new Set();
   return sortedById(source.map((entry, index) => {
@@ -1597,12 +1586,12 @@ function deriveAssetRegistry(spec, formatVersion) {
     const lodEligible = optionalBoolean(entry.lodEligible, `asset_registry[${index}].lodEligible`);
     if (typeof lodEligible === "undefined") fail(`asset_registry[${index}].lodEligible is required`);
     const semanticClass = optionalString(entry.semanticClass, `asset_registry[${index}].semanticClass`);
-    if (isV3FormatVersion(formatVersion) && !semanticClass) fail(`Asset '${id}' requires semanticClass in v3`);
+    if (!semanticClass) fail(`Asset '${id}' requires semanticClass in v3`);
     if (semanticClass && !ASSET_SEMANTIC_CLASSES.has(semanticClass)) {
       fail(`Asset '${id}' has unsupported semanticClass '${semanticClass}'`);
     }
     const runtimeRecord = entry.runtime;
-    if (isV3FormatVersion(formatVersion) && (!runtimeRecord || typeof runtimeRecord !== "object" || Array.isArray(runtimeRecord))) {
+    if (!runtimeRecord || typeof runtimeRecord !== "object" || Array.isArray(runtimeRecord)) {
       fail(`Asset '${id}' requires runtime metadata in v3`);
     }
     let runtime;
@@ -1624,7 +1613,7 @@ function deriveAssetRegistry(spec, formatVersion) {
       runtime = { mode, id: runtimeId, ...(uri ? { uri } : {}) };
     }
     const transformRecord = entry.transform;
-    if (isV3FormatVersion(formatVersion) && (!transformRecord || typeof transformRecord !== "object" || Array.isArray(transformRecord))) {
+    if (!transformRecord || typeof transformRecord !== "object" || Array.isArray(transformRecord)) {
       fail(`Asset '${id}' requires transform metadata in v3`);
     }
     let transform;
@@ -1809,7 +1798,6 @@ function deriveArchitecturePlacements(frontages, zoneById, surfaceById, massingB
       face: frontage.face,
       profileId: profile.id,
       massingProfileId: massing.id,
-      ...(frontage.facadeModelId ? { facadeModelId: frontage.facadeModelId } : {}),
       center: { x: center2d.x, y: center2d.y, z: baseElevationM + massing.heightM * 0.5 },
       sizeM: { width: frontageLengthM, depth: massing.depthM, height: massing.heightM },
       yawDeg,
@@ -1877,9 +1865,8 @@ function deriveArchitecturePlacements(frontages, zoneById, surfaceById, massingB
   return sortedById(placements);
 }
 
-function deriveDressingPlacements(spec, formatVersion, clusters, anchorById, assetById) {
-  const source = requireV3Array(spec, "dressing_placements", formatVersion);
-  if (typeof source === "undefined") return undefined;
+function deriveDressingPlacements(spec, clusters, anchorById, assetById) {
+  const source = requireV3Array(spec, "dressing_placements");
   const clusterById = new Map((clusters ?? []).map((cluster) => [cluster.id, cluster]));
   const seenTemplateIds = new Set();
   const coveredAssetsByCluster = new Map();
@@ -2140,850 +2127,9 @@ function deriveBlockoutSpec(spec, zones) {
     fail("wall_details.style must be 'bazaar' when provided");
   }
 
-  const wallDetailDensity =
-    wallDetailsRaw && typeof wallDetailsRaw.density !== "undefined"
-      ? asNumber(wallDetailsRaw.density, "wall_details.density")
-      : 0.48;
-  const wallDetailMaxProtrusion =
-    wallDetailsRaw && typeof wallDetailsRaw.maxProtrusion !== "undefined"
-      ? asNumber(wallDetailsRaw.maxProtrusion, "wall_details.maxProtrusion")
-      : 0.15;
-  const wallDetailSeed =
-    wallDetailsRaw && typeof wallDetailsRaw.seed !== "undefined"
-      ? asNumber(wallDetailsRaw.seed, "wall_details.seed")
-      : undefined;
-  const wallDetailEnabled =
-    wallDetailsRaw && typeof wallDetailsRaw.enabled !== "undefined"
-      ? optionalBoolean(wallDetailsRaw.enabled, "wall_details.enabled")
-      : undefined;
-  if (wallDetailDensity < 0 || wallDetailDensity > 1.25) {
-    fail("wall_details.density must be >= 0 and <= 1.25");
+  if (wallDetailsRaw && typeof wallDetailsRaw.module_registry !== "undefined") {
+    validateWallModuleRegistry(wallDetailsRaw.module_registry);
   }
-  ensurePositive(wallDetailMaxProtrusion, "wall_details.maxProtrusion");
-  if (typeof wallDetailSeed !== "undefined" && !Number.isInteger(wallDetailSeed)) {
-    fail("wall_details.seed must be an integer when provided");
-  }
-  const facadeOverrides =
-    wallDetailsRaw && typeof wallDetailsRaw.facade_overrides !== "undefined"
-      ? (() => {
-          if (!Array.isArray(wallDetailsRaw.facade_overrides)) {
-            fail("wall_details.facade_overrides must be an array when provided");
-          }
-
-          return wallDetailsRaw.facade_overrides.map((override, index) => {
-            if (!override || typeof override !== "object") {
-              fail(`wall_details.facade_overrides[${index}] must be an object`);
-            }
-
-            const zoneId = ensureString(override.zoneId, `wall_details.facade_overrides[${index}].zoneId`);
-            if (!zones.some((zone) => zone.id === zoneId)) {
-              fail(`wall_details.facade_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
-            }
-
-            const face = ensureString(override.face, `wall_details.facade_overrides[${index}].face`);
-            if (!["north", "south", "east", "west"].includes(face)) {
-              fail(`wall_details.facade_overrides[${index}].face must be one of north/south/east/west`);
-            }
-
-            const preset = ensureString(override.preset, `wall_details.facade_overrides[${index}].preset`);
-            if (
-              ![
-                "merchant_rhythm",
-                "merchant_hero_stack",
-                "residential_quiet",
-                "residential_balcony_stack",
-                "spawn_courtyard_landmark",
-                "spawn_gate_brick_backdrop",
-                "service_blank",
-              ].includes(preset)
-            ) {
-              fail(`wall_details.facade_overrides[${index}].preset '${preset}' is not supported`);
-            }
-
-            return { zoneId, face, preset };
-          });
-        })()
-      : [];
-  const moduleRegistry =
-    wallDetailsRaw && typeof wallDetailsRaw.module_registry !== "undefined"
-      ? (() => {
-          if (!wallDetailsRaw.module_registry || typeof wallDetailsRaw.module_registry !== "object") {
-            fail("wall_details.module_registry must be an object when provided");
-          }
-
-          const registry = wallDetailsRaw.module_registry;
-          const windowModules =
-            typeof registry.window_modules === "undefined"
-              ? []
-              : (() => {
-                  if (!Array.isArray(registry.window_modules)) {
-                    fail("wall_details.module_registry.window_modules must be an array when provided");
-                  }
-                  return registry.window_modules.map((module, index) => {
-                    if (!module || typeof module !== "object") {
-                      fail(`wall_details.module_registry.window_modules[${index}] must be an object`);
-                    }
-                    const headShape = ensureString(
-                      module.headShape,
-                      `wall_details.module_registry.window_modules[${index}].headShape`,
-                    );
-                    if (headShape !== "pointed_arch") {
-                      fail(`wall_details.module_registry.window_modules[${index}].headShape must be 'pointed_arch'`);
-                    }
-                    const glassStyle = ensureString(
-                      module.glassStyle,
-                      `wall_details.module_registry.window_modules[${index}].glassStyle`,
-                    );
-                    if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
-                      fail(`wall_details.module_registry.window_modules[${index}].glassStyle must be supported`);
-                    }
-                    return {
-                      id: ensureString(module.id, `wall_details.module_registry.window_modules[${index}].id`),
-                      headShape,
-                      glassStyle,
-                      apertureWidthM: asNumber(
-                        module.apertureWidthM,
-                        `wall_details.module_registry.window_modules[${index}].apertureWidthM`,
-                      ),
-                      apertureHeightM: asNumber(
-                        module.apertureHeightM,
-                        `wall_details.module_registry.window_modules[${index}].apertureHeightM`,
-                      ),
-                      frameWidthM: asNumber(
-                        module.frameWidthM,
-                        `wall_details.module_registry.window_modules[${index}].frameWidthM`,
-                      ),
-                      frameHeightM: asNumber(
-                        module.frameHeightM,
-                        `wall_details.module_registry.window_modules[${index}].frameHeightM`,
-                      ),
-                      frameDepthM: asNumber(
-                        module.frameDepthM,
-                        `wall_details.module_registry.window_modules[${index}].frameDepthM`,
-                      ),
-                      voidInsetM: asNumber(
-                        module.voidInsetM,
-                        `wall_details.module_registry.window_modules[${index}].voidInsetM`,
-                      ),
-                      glassInsetM: asNumber(
-                        module.glassInsetM,
-                        `wall_details.module_registry.window_modules[${index}].glassInsetM`,
-                      ),
-                      sillWidthM: asNumber(
-                        module.sillWidthM,
-                        `wall_details.module_registry.window_modules[${index}].sillWidthM`,
-                      ),
-                      sillHeightM: asNumber(
-                        module.sillHeightM,
-                        `wall_details.module_registry.window_modules[${index}].sillHeightM`,
-                      ),
-                      sillDepthM: asNumber(
-                        module.sillDepthM,
-                        `wall_details.module_registry.window_modules[${index}].sillDepthM`,
-                      ),
-                      apronWidthM: asNumber(
-                        module.apronWidthM,
-                        `wall_details.module_registry.window_modules[${index}].apronWidthM`,
-                      ),
-                      apronHeightM: asNumber(
-                        module.apronHeightM,
-                        `wall_details.module_registry.window_modules[${index}].apronHeightM`,
-                      ),
-                      apronDepthM: asNumber(
-                        module.apronDepthM,
-                        `wall_details.module_registry.window_modules[${index}].apronDepthM`,
-                      ),
-                      apronOffsetBelowSillM: asNumber(
-                        module.apronOffsetBelowSillM,
-                        `wall_details.module_registry.window_modules[${index}].apronOffsetBelowSillM`,
-                      ),
-                    };
-                  });
-                })();
-          const doorModules =
-            typeof registry.door_modules === "undefined"
-              ? []
-              : (() => {
-                  if (!Array.isArray(registry.door_modules)) {
-                    fail("wall_details.module_registry.door_modules must be an array when provided");
-                  }
-                  return registry.door_modules.map((module, index) => {
-                    if (!module || typeof module !== "object") {
-                      fail(`wall_details.module_registry.door_modules[${index}] must be an object`);
-                    }
-                    const coverShape = ensureString(
-                      module.coverShape,
-                      `wall_details.module_registry.door_modules[${index}].coverShape`,
-                    );
-                    if (!["arched", "rect"].includes(coverShape)) {
-                      fail(`wall_details.module_registry.door_modules[${index}].coverShape must be supported`);
-                    }
-                    return {
-                      id: ensureString(module.id, `wall_details.module_registry.door_modules[${index}].id`),
-                      modelId: ensureString(module.modelId, `wall_details.module_registry.door_modules[${index}].modelId`),
-                      coverShape,
-                      doorWidthM: asNumber(
-                        module.doorWidthM,
-                        `wall_details.module_registry.door_modules[${index}].doorWidthM`,
-                      ),
-                      doorHeightM: asNumber(
-                        module.doorHeightM,
-                        `wall_details.module_registry.door_modules[${index}].doorHeightM`,
-                      ),
-                      coverWidthM: asNumber(
-                        module.coverWidthM,
-                        `wall_details.module_registry.door_modules[${index}].coverWidthM`,
-                      ),
-                      coverHeightM: asNumber(
-                        module.coverHeightM,
-                        `wall_details.module_registry.door_modules[${index}].coverHeightM`,
-                      ),
-                      coverCenterYOffsetM: asNumber(
-                        module.coverCenterYOffsetM,
-                        `wall_details.module_registry.door_modules[${index}].coverCenterYOffsetM`,
-                      ),
-                      trimThicknessM: asNumber(
-                        module.trimThicknessM,
-                        `wall_details.module_registry.door_modules[${index}].trimThicknessM`,
-                      ),
-                      revealWidthM: asNumber(
-                        module.revealWidthM,
-                        `wall_details.module_registry.door_modules[${index}].revealWidthM`,
-                      ),
-                      surroundDepthM: asNumber(
-                        module.surroundDepthM,
-                        `wall_details.module_registry.door_modules[${index}].surroundDepthM`,
-                      ),
-                      voidInsetM: asNumber(
-                        module.voidInsetM,
-                        `wall_details.module_registry.door_modules[${index}].voidInsetM`,
-                      ),
-                      voidDepthM: asNumber(
-                        module.voidDepthM,
-                        `wall_details.module_registry.door_modules[${index}].voidDepthM`,
-                      ),
-                    };
-                  });
-                })();
-          const heroBayModules =
-            typeof registry.hero_bay_modules === "undefined"
-              ? []
-              : (() => {
-                  if (!Array.isArray(registry.hero_bay_modules)) {
-                    fail("wall_details.module_registry.hero_bay_modules must be an array when provided");
-                  }
-                  return registry.hero_bay_modules.map((module, index) => {
-                    if (!module || typeof module !== "object") {
-                      fail(`wall_details.module_registry.hero_bay_modules[${index}] must be an object`);
-                    }
-                    const glassStyle = ensureString(
-                      module.glassStyle,
-                      `wall_details.module_registry.hero_bay_modules[${index}].glassStyle`,
-                    );
-                    if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
-                      fail(`wall_details.module_registry.hero_bay_modules[${index}].glassStyle must be supported`);
-                    }
-                    const corbelCount = asNumber(
-                      module.corbelCount,
-                      `wall_details.module_registry.hero_bay_modules[${index}].corbelCount`,
-                    );
-                    if (!Number.isInteger(corbelCount) || corbelCount <= 0) {
-                      fail(`wall_details.module_registry.hero_bay_modules[${index}].corbelCount must be an integer > 0`);
-                    }
-                    const pedimentLayerCount = asNumber(
-                      module.pedimentLayerCount,
-                      `wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerCount`,
-                    );
-                    if (!Number.isInteger(pedimentLayerCount) || pedimentLayerCount <= 0) {
-                      fail(`wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerCount must be an integer > 0`);
-                    }
-                    return {
-                      id: ensureString(module.id, `wall_details.module_registry.hero_bay_modules[${index}].id`),
-                      glassStyle,
-                      openingWidthM: asNumber(
-                        module.openingWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].openingWidthM`,
-                      ),
-                      openingHeightM: asNumber(
-                        module.openingHeightM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].openingHeightM`,
-                      ),
-                      openingSillY: asNumber(
-                        module.openingSillY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].openingSillY`,
-                      ),
-                      surroundWidthM: asNumber(
-                        module.surroundWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].surroundWidthM`,
-                      ),
-                      surroundHeightM: asNumber(
-                        module.surroundHeightM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].surroundHeightM`,
-                      ),
-                      surroundBottomY: asNumber(
-                        module.surroundBottomY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].surroundBottomY`,
-                      ),
-                      frameDepthM: asNumber(
-                        module.frameDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].frameDepthM`,
-                      ),
-                      voidInsetM: asNumber(
-                        module.voidInsetM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].voidInsetM`,
-                      ),
-                      glassInsetM: asNumber(
-                        module.glassInsetM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].glassInsetM`,
-                      ),
-                      pilasterWidthM: asNumber(
-                        module.pilasterWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pilasterWidthM`,
-                      ),
-                      pilasterDepthM: asNumber(
-                        module.pilasterDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pilasterDepthM`,
-                      ),
-                      pilasterHeightM: asNumber(
-                        module.pilasterHeightM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pilasterHeightM`,
-                      ),
-                      pilasterBottomY: asNumber(
-                        module.pilasterBottomY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pilasterBottomY`,
-                      ),
-                      entablatureWidthM: asNumber(
-                        module.entablatureWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureWidthM`,
-                      ),
-                      entablatureDepthM: asNumber(
-                        module.entablatureDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureDepthM`,
-                      ),
-                      entablatureThicknessM: asNumber(
-                        module.entablatureThicknessM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureThicknessM`,
-                      ),
-                      entablatureCenterY: asNumber(
-                        module.entablatureCenterY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureCenterY`,
-                      ),
-                      entablatureCapWidthM: asNumber(
-                        module.entablatureCapWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapWidthM`,
-                      ),
-                      entablatureCapDepthM: asNumber(
-                        module.entablatureCapDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapDepthM`,
-                      ),
-                      entablatureCapThicknessM: asNumber(
-                        module.entablatureCapThicknessM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapThicknessM`,
-                      ),
-                      entablatureCapCenterY: asNumber(
-                        module.entablatureCapCenterY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapCenterY`,
-                      ),
-                      corbelWidthM: asNumber(
-                        module.corbelWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].corbelWidthM`,
-                      ),
-                      corbelDepthM: asNumber(
-                        module.corbelDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].corbelDepthM`,
-                      ),
-                      corbelHeightM: asNumber(
-                        module.corbelHeightM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].corbelHeightM`,
-                      ),
-                      corbelCenterY: asNumber(
-                        module.corbelCenterY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].corbelCenterY`,
-                      ),
-                      corbelCount,
-                      corbelSpreadM: asNumber(
-                        module.corbelSpreadM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].corbelSpreadM`,
-                      ),
-                      pedimentBaseWidthM: asNumber(
-                        module.pedimentBaseWidthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pedimentBaseWidthM`,
-                      ),
-                      pedimentDepthM: asNumber(
-                        module.pedimentDepthM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pedimentDepthM`,
-                      ),
-                      pedimentLayerHeightM: asNumber(
-                        module.pedimentLayerHeightM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerHeightM`,
-                      ),
-                      pedimentLayerCount,
-                      pedimentWidthStepM: asNumber(
-                        module.pedimentWidthStepM,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pedimentWidthStepM`,
-                      ),
-                      pedimentBottomY: asNumber(
-                        module.pedimentBottomY,
-                        `wall_details.module_registry.hero_bay_modules[${index}].pedimentBottomY`,
-                      ),
-                    };
-                  });
-                })();
-
-          return {
-            window_modules: windowModules,
-            door_modules: doorModules,
-            hero_bay_modules: heroBayModules,
-          };
-        })()
-      : {
-          window_modules: [],
-          door_modules: [],
-          hero_bay_modules: [],
-        };
-  const doorLayoutOverrides =
-    wallDetailsRaw && typeof wallDetailsRaw.door_layout_overrides !== "undefined"
-      ? (() => {
-          if (!Array.isArray(wallDetailsRaw.door_layout_overrides)) {
-            fail("wall_details.door_layout_overrides must be an array when provided");
-          }
-
-          return wallDetailsRaw.door_layout_overrides.map((override, index) => {
-            if (!override || typeof override !== "object") {
-              fail(`wall_details.door_layout_overrides[${index}] must be an object`);
-            }
-
-            const zoneId = ensureString(override.zoneId, `wall_details.door_layout_overrides[${index}].zoneId`);
-            if (!zones.some((zone) => zone.id === zoneId)) {
-              fail(`wall_details.door_layout_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
-            }
-
-            const face = ensureString(override.face, `wall_details.door_layout_overrides[${index}].face`);
-            if (!["north", "south", "east", "west"].includes(face)) {
-              fail(`wall_details.door_layout_overrides[${index}].face must be one of north/south/east/west`);
-            }
-
-            const segmentOrdinal = asNumber(
-              override.segmentOrdinal,
-              `wall_details.door_layout_overrides[${index}].segmentOrdinal`,
-            );
-            if (!Number.isInteger(segmentOrdinal) || segmentOrdinal <= 0) {
-              fail(`wall_details.door_layout_overrides[${index}].segmentOrdinal must be an integer > 0`);
-            }
-
-            if (!Array.isArray(override.doors) || override.doors.length === 0) {
-              fail(`wall_details.door_layout_overrides[${index}].doors must be a non-empty array`);
-            }
-
-            const doors = override.doors.map((door, doorIndex) => {
-              if (!door || typeof door !== "object") {
-                fail(`wall_details.door_layout_overrides[${index}].doors[${doorIndex}] must be an object`);
-              }
-
-              return {
-                centerS: asNumber(
-                  door.centerS,
-                  `wall_details.door_layout_overrides[${index}].doors[${doorIndex}].centerS`,
-                ),
-              };
-            });
-
-            let styleSource;
-            if (typeof override.styleSource !== "undefined") {
-              if (!override.styleSource || typeof override.styleSource !== "object") {
-                fail(`wall_details.door_layout_overrides[${index}].styleSource must be an object when provided`);
-              }
-              const sourceZoneId = ensureString(
-                override.styleSource.zoneId,
-                `wall_details.door_layout_overrides[${index}].styleSource.zoneId`,
-              );
-              if (!zones.some((zone) => zone.id === sourceZoneId)) {
-                fail(
-                  `wall_details.door_layout_overrides[${index}].styleSource.zoneId '${sourceZoneId}' does not match a known zone`,
-                );
-              }
-              const sourceFace = ensureString(
-                override.styleSource.face,
-                `wall_details.door_layout_overrides[${index}].styleSource.face`,
-              );
-              if (!["north", "south", "east", "west"].includes(sourceFace)) {
-                fail(`wall_details.door_layout_overrides[${index}].styleSource.face must be one of north/south/east/west`);
-              }
-              const sourceSegmentOrdinal = asNumber(
-                override.styleSource.segmentOrdinal,
-                `wall_details.door_layout_overrides[${index}].styleSource.segmentOrdinal`,
-              );
-              if (!Number.isInteger(sourceSegmentOrdinal) || sourceSegmentOrdinal <= 0) {
-                fail(`wall_details.door_layout_overrides[${index}].styleSource.segmentOrdinal must be an integer > 0`);
-              }
-              styleSource = {
-                zoneId: sourceZoneId,
-                face: sourceFace,
-                segmentOrdinal: sourceSegmentOrdinal,
-              };
-            }
-
-            return {
-              zoneId,
-              face,
-              segmentOrdinal,
-              doors,
-              ...(styleSource ? { styleSource } : {}),
-            };
-          });
-        })()
-      : [];
-  const windowLayoutOverrides =
-    wallDetailsRaw && typeof wallDetailsRaw.window_layout_overrides !== "undefined"
-      ? (() => {
-          if (!Array.isArray(wallDetailsRaw.window_layout_overrides)) {
-            fail("wall_details.window_layout_overrides must be an array when provided");
-          }
-
-          return wallDetailsRaw.window_layout_overrides.map((override, index) => {
-            if (!override || typeof override !== "object") {
-              fail(`wall_details.window_layout_overrides[${index}] must be an object`);
-            }
-
-            const zoneId = ensureString(override.zoneId, `wall_details.window_layout_overrides[${index}].zoneId`);
-            if (!zones.some((zone) => zone.id === zoneId)) {
-              fail(`wall_details.window_layout_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
-            }
-
-            const face = ensureString(override.face, `wall_details.window_layout_overrides[${index}].face`);
-            if (!["north", "south", "east", "west"].includes(face)) {
-              fail(`wall_details.window_layout_overrides[${index}].face must be one of north/south/east/west`);
-            }
-
-            const segmentOrdinal = asNumber(
-              override.segmentOrdinal,
-              `wall_details.window_layout_overrides[${index}].segmentOrdinal`,
-            );
-            if (!Number.isInteger(segmentOrdinal) || segmentOrdinal <= 0) {
-              fail(`wall_details.window_layout_overrides[${index}].segmentOrdinal must be an integer > 0`);
-            }
-
-            if (!Array.isArray(override.windows) || override.windows.length === 0) {
-              fail(`wall_details.window_layout_overrides[${index}].windows must be a non-empty array`);
-            }
-
-            const windows = override.windows.map((window, windowIndex) => {
-              if (!window || typeof window !== "object") {
-                fail(`wall_details.window_layout_overrides[${index}].windows[${windowIndex}] must be an object`);
-              }
-
-              const headShape = ensureString(
-                window.headShape,
-                `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].headShape`,
-              );
-              if (!["rect", "pointed_arch"].includes(headShape)) {
-                fail(`wall_details.window_layout_overrides[${index}].windows[${windowIndex}].headShape is not supported`);
-              }
-
-              const glassStyle = ensureString(
-                window.glassStyle,
-                `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].glassStyle`,
-              );
-              if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
-                fail(`wall_details.window_layout_overrides[${index}].windows[${windowIndex}].glassStyle is not supported`);
-              }
-
-              const width = asNumber(
-                window.width,
-                `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].width`,
-              );
-              const height = asNumber(
-                window.height,
-                `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].height`,
-              );
-              if (width <= 0 || height <= 0) {
-                fail(`wall_details.window_layout_overrides[${index}].windows[${windowIndex}] dimensions must be > 0`);
-              }
-
-              return {
-                centerS: asNumber(
-                  window.centerS,
-                  `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].centerS`,
-                ),
-                sillY: asNumber(
-                  window.sillY,
-                  `wall_details.window_layout_overrides[${index}].windows[${windowIndex}].sillY`,
-                ),
-                width,
-                height,
-                headShape,
-                glassStyle,
-              };
-            });
-
-            return {
-              zoneId,
-              face,
-              segmentOrdinal,
-              windows,
-            };
-          });
-        })()
-      : [];
-  const balconyLayoutOverrides =
-    wallDetailsRaw && typeof wallDetailsRaw.balcony_layout_overrides !== "undefined"
-      ? (() => {
-          if (!Array.isArray(wallDetailsRaw.balcony_layout_overrides)) {
-            fail("wall_details.balcony_layout_overrides must be an array when provided");
-          }
-
-          return wallDetailsRaw.balcony_layout_overrides.map((override, index) => {
-            if (!override || typeof override !== "object") {
-              fail(`wall_details.balcony_layout_overrides[${index}] must be an object`);
-            }
-
-            const zoneId = ensureString(override.zoneId, `wall_details.balcony_layout_overrides[${index}].zoneId`);
-            if (!zones.some((zone) => zone.id === zoneId)) {
-              fail(`wall_details.balcony_layout_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
-            }
-
-            const face = ensureString(override.face, `wall_details.balcony_layout_overrides[${index}].face`);
-            if (!["north", "south", "east", "west"].includes(face)) {
-              fail(`wall_details.balcony_layout_overrides[${index}].face must be one of north/south/east/west`);
-            }
-
-            const segmentOrdinal = asNumber(
-              override.segmentOrdinal,
-              `wall_details.balcony_layout_overrides[${index}].segmentOrdinal`,
-            );
-            if (!Number.isInteger(segmentOrdinal) || segmentOrdinal <= 0) {
-              fail(`wall_details.balcony_layout_overrides[${index}].segmentOrdinal must be an integer > 0`);
-            }
-
-            if (!Array.isArray(override.balconies) || override.balconies.length === 0) {
-              fail(`wall_details.balcony_layout_overrides[${index}].balconies must be a non-empty array`);
-            }
-
-            const balconies = override.balconies.map((balcony, balconyIndex) => {
-              if (!balcony || typeof balcony !== "object") {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}] must be an object`);
-              }
-
-              const storyIndex = asNumber(
-                balcony.storyIndex,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex`,
-              );
-              if (!Number.isInteger(storyIndex) || storyIndex < 1) {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].storyIndex must be an integer >= 1`);
-              }
-
-              const spanBays = asNumber(
-                balcony.spanBays,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays`,
-              );
-              if (!Number.isInteger(spanBays) || spanBays <= 0) {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].spanBays must be an integer > 0`);
-              }
-
-              if (!balcony.opening || typeof balcony.opening !== "object") {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening must be an object`);
-              }
-
-              const headShape = ensureString(
-                balcony.opening.headShape,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape`,
-              );
-              if (headShape !== "pointed_arch") {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.headShape must be 'pointed_arch'`);
-              }
-
-              const width = asNumber(
-                balcony.opening.width,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.width`,
-              );
-              const height = asNumber(
-                balcony.opening.height,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.height`,
-              );
-              const depthM = asNumber(
-                balcony.depthM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].depthM`,
-              );
-              const parapetHeightM = asNumber(
-                balcony.parapetHeightM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].parapetHeightM`,
-              );
-              const openingSurroundWidthM = asNumber(
-                balcony.openingSurroundWidthM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundWidthM`,
-              );
-              const openingSurroundHeightM = asNumber(
-                balcony.openingSurroundHeightM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundHeightM`,
-              );
-              const openingSurroundBottomOffsetM = asNumber(
-                balcony.openingSurroundBottomOffsetM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].openingSurroundBottomOffsetM`,
-              );
-              const roofBreakWidthM = asNumber(
-                balcony.roofBreakWidthM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakWidthM`,
-              );
-              const roofBreakBottomOffsetM = asNumber(
-                balcony.roofBreakBottomOffsetM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakBottomOffsetM`,
-              );
-              const roofBreakHeightM = asNumber(
-                balcony.roofBreakHeightM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakHeightM`,
-              );
-              const roofBreakCapHeightM = asNumber(
-                balcony.roofBreakCapHeightM,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].roofBreakCapHeightM`,
-              );
-              if (
-                width <= 0
-                || height <= 0
-                || depthM <= 0
-                || parapetHeightM <= 0
-                || openingSurroundWidthM <= 0
-                || openingSurroundHeightM <= 0
-                || roofBreakWidthM <= 0
-                || roofBreakHeightM < 0
-                || roofBreakCapHeightM < 0
-              ) {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}] dimensions must be valid (roof-break heights may be 0; all other widths/heights must be > 0)`);
-              }
-              const glassStyle = ensureString(
-                balcony.opening.glassStyle,
-                `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle`,
-              );
-              if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
-                fail(`wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.glassStyle must be supported`);
-              }
-
-              return {
-                centerS: asNumber(
-                  balcony.centerS,
-                  `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].centerS`,
-                ),
-                storyIndex,
-                spanBays,
-                depthM,
-                parapetHeightM,
-                openingSurroundWidthM,
-                openingSurroundHeightM,
-                openingSurroundBottomOffsetM,
-                roofBreakWidthM,
-                roofBreakBottomOffsetM,
-                roofBreakHeightM,
-                roofBreakCapHeightM,
-                opening: {
-                  width,
-                  height,
-                  sillOffsetM: asNumber(
-                    balcony.opening.sillOffsetM,
-                    `wall_details.balcony_layout_overrides[${index}].balconies[${balconyIndex}].opening.sillOffsetM`,
-                  ),
-                  headShape,
-                  glassStyle,
-                },
-              };
-            });
-
-            return {
-              zoneId,
-              face,
-              segmentOrdinal,
-              balconies,
-            };
-          });
-        })()
-      : [];
-  const compositionLayoutOverrides =
-    wallDetailsRaw && typeof wallDetailsRaw.composition_layout_overrides !== "undefined"
-      ? (() => {
-          if (!Array.isArray(wallDetailsRaw.composition_layout_overrides)) {
-            fail("wall_details.composition_layout_overrides must be an array when provided");
-          }
-
-          const windowModuleIds = new Set(moduleRegistry.window_modules.map((module) => module.id));
-          const doorModuleIds = new Set(moduleRegistry.door_modules.map((module) => module.id));
-          const heroBayModuleIds = new Set(moduleRegistry.hero_bay_modules.map((module) => module.id));
-
-          return wallDetailsRaw.composition_layout_overrides.map((override, index) => {
-            if (!override || typeof override !== "object") {
-              fail(`wall_details.composition_layout_overrides[${index}] must be an object`);
-            }
-
-            const zoneId = ensureString(override.zoneId, `wall_details.composition_layout_overrides[${index}].zoneId`);
-            if (!zones.some((zone) => zone.id === zoneId)) {
-              fail(`wall_details.composition_layout_overrides[${index}].zoneId '${zoneId}' does not match a known zone`);
-            }
-
-            const face = ensureString(override.face, `wall_details.composition_layout_overrides[${index}].face`);
-            if (!["north", "south", "east", "west"].includes(face)) {
-              fail(`wall_details.composition_layout_overrides[${index}].face must be one of north/south/east/west`);
-            }
-
-            const segmentOrdinal = asNumber(
-              override.segmentOrdinal,
-              `wall_details.composition_layout_overrides[${index}].segmentOrdinal`,
-            );
-            if (!Number.isInteger(segmentOrdinal) || segmentOrdinal <= 0) {
-              fail(`wall_details.composition_layout_overrides[${index}].segmentOrdinal must be an integer > 0`);
-            }
-
-            const kind = ensureString(override.kind, `wall_details.composition_layout_overrides[${index}].kind`);
-            if (!["spawn_b_front_courtyard", "spawn_b_side_courtyard"].includes(kind)) {
-              fail(`wall_details.composition_layout_overrides[${index}].kind must be a supported composition kind`);
-            }
-
-            const windowModuleId = ensureString(
-              override.windowModuleId,
-              `wall_details.composition_layout_overrides[${index}].windowModuleId`,
-            );
-            if (!windowModuleIds.has(windowModuleId)) {
-              fail(`wall_details.composition_layout_overrides[${index}].windowModuleId '${windowModuleId}' is unknown`);
-            }
-
-            const doorModuleId = ensureString(
-              override.doorModuleId,
-              `wall_details.composition_layout_overrides[${index}].doorModuleId`,
-            );
-            if (!doorModuleIds.has(doorModuleId)) {
-              fail(`wall_details.composition_layout_overrides[${index}].doorModuleId '${doorModuleId}' is unknown`);
-            }
-
-            const heroBayModuleId =
-              typeof override.heroBayModuleId === "undefined"
-                ? undefined
-                : ensureString(
-                    override.heroBayModuleId,
-                    `wall_details.composition_layout_overrides[${index}].heroBayModuleId`,
-                  );
-            if (kind === "spawn_b_front_courtyard" && !heroBayModuleId) {
-              fail(`wall_details.composition_layout_overrides[${index}].heroBayModuleId is required for front Spawn B compositions`);
-            }
-            if (heroBayModuleId && !heroBayModuleIds.has(heroBayModuleId)) {
-              fail(`wall_details.composition_layout_overrides[${index}].heroBayModuleId '${heroBayModuleId}' is unknown`);
-            }
-
-            return {
-              zoneId,
-              face,
-              segmentOrdinal,
-              kind,
-              windowModuleId,
-              doorModuleId,
-              ...(heroBayModuleId ? { heroBayModuleId } : {}),
-              lowerWindowSillY: asNumber(
-                override.lowerWindowSillY,
-                `wall_details.composition_layout_overrides[${index}].lowerWindowSillY`,
-              ),
-              upperWindowSillY: asNumber(
-                override.upperWindowSillY,
-                `wall_details.composition_layout_overrides[${index}].upperWindowSillY`,
-              ),
-            };
-          });
-        })()
-      : [];
 
   return {
     mapId: MAP_ID,
@@ -2995,17 +2141,7 @@ function deriveBlockoutSpec(spec, zones) {
       floor_height: floorHeight,
     },
     wall_details: {
-      enabled: typeof wallDetailEnabled === "boolean" ? wallDetailEnabled : true,
       style: wallDetailsStyle,
-      density: wallDetailDensity,
-      maxProtrusion: wallDetailMaxProtrusion,
-      facade_overrides: facadeOverrides,
-      module_registry: moduleRegistry,
-      composition_layout_overrides: compositionLayoutOverrides,
-      door_layout_overrides: doorLayoutOverrides,
-      window_layout_overrides: windowLayoutOverrides,
-      balcony_layout_overrides: balconyLayoutOverrides,
-      ...(typeof wallDetailSeed === "number" ? { seed: wallDetailSeed } : {}),
     },
     zones,
     exterior_wall_patches: deriveExteriorWallPatches(spec),
@@ -3016,10 +2152,343 @@ function deriveBlockoutSpec(spec, zones) {
   };
 }
 
+// wall_details.module_registry has no runtime reader and is not emitted. Its
+// door and hero-bay dimensions feed the map guard's wallDoorwayDimensions
+// projection, so the source data stays validated.
+function validateWallModuleRegistry(registry) {
+  if (!registry || typeof registry !== "object") {
+    fail("wall_details.module_registry must be an object when provided");
+  }
+
+  const windowModules =
+    typeof registry.window_modules === "undefined"
+      ? []
+      : (() => {
+          if (!Array.isArray(registry.window_modules)) {
+            fail("wall_details.module_registry.window_modules must be an array when provided");
+          }
+          return registry.window_modules.map((module, index) => {
+            if (!module || typeof module !== "object") {
+              fail(`wall_details.module_registry.window_modules[${index}] must be an object`);
+            }
+            const headShape = ensureString(
+              module.headShape,
+              `wall_details.module_registry.window_modules[${index}].headShape`,
+            );
+            if (headShape !== "pointed_arch") {
+              fail(`wall_details.module_registry.window_modules[${index}].headShape must be 'pointed_arch'`);
+            }
+            const glassStyle = ensureString(
+              module.glassStyle,
+              `wall_details.module_registry.window_modules[${index}].glassStyle`,
+            );
+            if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
+              fail(`wall_details.module_registry.window_modules[${index}].glassStyle must be supported`);
+            }
+            return {
+              id: ensureString(module.id, `wall_details.module_registry.window_modules[${index}].id`),
+              headShape,
+              glassStyle,
+              apertureWidthM: asNumber(
+                module.apertureWidthM,
+                `wall_details.module_registry.window_modules[${index}].apertureWidthM`,
+              ),
+              apertureHeightM: asNumber(
+                module.apertureHeightM,
+                `wall_details.module_registry.window_modules[${index}].apertureHeightM`,
+              ),
+              frameWidthM: asNumber(
+                module.frameWidthM,
+                `wall_details.module_registry.window_modules[${index}].frameWidthM`,
+              ),
+              frameHeightM: asNumber(
+                module.frameHeightM,
+                `wall_details.module_registry.window_modules[${index}].frameHeightM`,
+              ),
+              frameDepthM: asNumber(
+                module.frameDepthM,
+                `wall_details.module_registry.window_modules[${index}].frameDepthM`,
+              ),
+              voidInsetM: asNumber(
+                module.voidInsetM,
+                `wall_details.module_registry.window_modules[${index}].voidInsetM`,
+              ),
+              glassInsetM: asNumber(
+                module.glassInsetM,
+                `wall_details.module_registry.window_modules[${index}].glassInsetM`,
+              ),
+              sillWidthM: asNumber(
+                module.sillWidthM,
+                `wall_details.module_registry.window_modules[${index}].sillWidthM`,
+              ),
+              sillHeightM: asNumber(
+                module.sillHeightM,
+                `wall_details.module_registry.window_modules[${index}].sillHeightM`,
+              ),
+              sillDepthM: asNumber(
+                module.sillDepthM,
+                `wall_details.module_registry.window_modules[${index}].sillDepthM`,
+              ),
+              apronWidthM: asNumber(
+                module.apronWidthM,
+                `wall_details.module_registry.window_modules[${index}].apronWidthM`,
+              ),
+              apronHeightM: asNumber(
+                module.apronHeightM,
+                `wall_details.module_registry.window_modules[${index}].apronHeightM`,
+              ),
+              apronDepthM: asNumber(
+                module.apronDepthM,
+                `wall_details.module_registry.window_modules[${index}].apronDepthM`,
+              ),
+              apronOffsetBelowSillM: asNumber(
+                module.apronOffsetBelowSillM,
+                `wall_details.module_registry.window_modules[${index}].apronOffsetBelowSillM`,
+              ),
+            };
+          });
+        })();
+  const doorModules =
+    typeof registry.door_modules === "undefined"
+      ? []
+      : (() => {
+          if (!Array.isArray(registry.door_modules)) {
+            fail("wall_details.module_registry.door_modules must be an array when provided");
+          }
+          return registry.door_modules.map((module, index) => {
+            if (!module || typeof module !== "object") {
+              fail(`wall_details.module_registry.door_modules[${index}] must be an object`);
+            }
+            const coverShape = ensureString(
+              module.coverShape,
+              `wall_details.module_registry.door_modules[${index}].coverShape`,
+            );
+            if (!["arched", "rect"].includes(coverShape)) {
+              fail(`wall_details.module_registry.door_modules[${index}].coverShape must be supported`);
+            }
+            return {
+              id: ensureString(module.id, `wall_details.module_registry.door_modules[${index}].id`),
+              modelId: ensureString(module.modelId, `wall_details.module_registry.door_modules[${index}].modelId`),
+              coverShape,
+              doorWidthM: asNumber(
+                module.doorWidthM,
+                `wall_details.module_registry.door_modules[${index}].doorWidthM`,
+              ),
+              doorHeightM: asNumber(
+                module.doorHeightM,
+                `wall_details.module_registry.door_modules[${index}].doorHeightM`,
+              ),
+              coverWidthM: asNumber(
+                module.coverWidthM,
+                `wall_details.module_registry.door_modules[${index}].coverWidthM`,
+              ),
+              coverHeightM: asNumber(
+                module.coverHeightM,
+                `wall_details.module_registry.door_modules[${index}].coverHeightM`,
+              ),
+              coverCenterYOffsetM: asNumber(
+                module.coverCenterYOffsetM,
+                `wall_details.module_registry.door_modules[${index}].coverCenterYOffsetM`,
+              ),
+              trimThicknessM: asNumber(
+                module.trimThicknessM,
+                `wall_details.module_registry.door_modules[${index}].trimThicknessM`,
+              ),
+              revealWidthM: asNumber(
+                module.revealWidthM,
+                `wall_details.module_registry.door_modules[${index}].revealWidthM`,
+              ),
+              surroundDepthM: asNumber(
+                module.surroundDepthM,
+                `wall_details.module_registry.door_modules[${index}].surroundDepthM`,
+              ),
+              voidInsetM: asNumber(
+                module.voidInsetM,
+                `wall_details.module_registry.door_modules[${index}].voidInsetM`,
+              ),
+              voidDepthM: asNumber(
+                module.voidDepthM,
+                `wall_details.module_registry.door_modules[${index}].voidDepthM`,
+              ),
+            };
+          });
+        })();
+  const heroBayModules =
+    typeof registry.hero_bay_modules === "undefined"
+      ? []
+      : (() => {
+          if (!Array.isArray(registry.hero_bay_modules)) {
+            fail("wall_details.module_registry.hero_bay_modules must be an array when provided");
+          }
+          return registry.hero_bay_modules.map((module, index) => {
+            if (!module || typeof module !== "object") {
+              fail(`wall_details.module_registry.hero_bay_modules[${index}] must be an object`);
+            }
+            const glassStyle = ensureString(
+              module.glassStyle,
+              `wall_details.module_registry.hero_bay_modules[${index}].glassStyle`,
+            );
+            if (!["stained_glass_bright", "stained_glass_dim"].includes(glassStyle)) {
+              fail(`wall_details.module_registry.hero_bay_modules[${index}].glassStyle must be supported`);
+            }
+            const corbelCount = asNumber(
+              module.corbelCount,
+              `wall_details.module_registry.hero_bay_modules[${index}].corbelCount`,
+            );
+            if (!Number.isInteger(corbelCount) || corbelCount <= 0) {
+              fail(`wall_details.module_registry.hero_bay_modules[${index}].corbelCount must be an integer > 0`);
+            }
+            const pedimentLayerCount = asNumber(
+              module.pedimentLayerCount,
+              `wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerCount`,
+            );
+            if (!Number.isInteger(pedimentLayerCount) || pedimentLayerCount <= 0) {
+              fail(`wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerCount must be an integer > 0`);
+            }
+            return {
+              id: ensureString(module.id, `wall_details.module_registry.hero_bay_modules[${index}].id`),
+              glassStyle,
+              openingWidthM: asNumber(
+                module.openingWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].openingWidthM`,
+              ),
+              openingHeightM: asNumber(
+                module.openingHeightM,
+                `wall_details.module_registry.hero_bay_modules[${index}].openingHeightM`,
+              ),
+              openingSillY: asNumber(
+                module.openingSillY,
+                `wall_details.module_registry.hero_bay_modules[${index}].openingSillY`,
+              ),
+              surroundWidthM: asNumber(
+                module.surroundWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].surroundWidthM`,
+              ),
+              surroundHeightM: asNumber(
+                module.surroundHeightM,
+                `wall_details.module_registry.hero_bay_modules[${index}].surroundHeightM`,
+              ),
+              surroundBottomY: asNumber(
+                module.surroundBottomY,
+                `wall_details.module_registry.hero_bay_modules[${index}].surroundBottomY`,
+              ),
+              frameDepthM: asNumber(
+                module.frameDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].frameDepthM`,
+              ),
+              voidInsetM: asNumber(
+                module.voidInsetM,
+                `wall_details.module_registry.hero_bay_modules[${index}].voidInsetM`,
+              ),
+              glassInsetM: asNumber(
+                module.glassInsetM,
+                `wall_details.module_registry.hero_bay_modules[${index}].glassInsetM`,
+              ),
+              pilasterWidthM: asNumber(
+                module.pilasterWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pilasterWidthM`,
+              ),
+              pilasterDepthM: asNumber(
+                module.pilasterDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pilasterDepthM`,
+              ),
+              pilasterHeightM: asNumber(
+                module.pilasterHeightM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pilasterHeightM`,
+              ),
+              pilasterBottomY: asNumber(
+                module.pilasterBottomY,
+                `wall_details.module_registry.hero_bay_modules[${index}].pilasterBottomY`,
+              ),
+              entablatureWidthM: asNumber(
+                module.entablatureWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureWidthM`,
+              ),
+              entablatureDepthM: asNumber(
+                module.entablatureDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureDepthM`,
+              ),
+              entablatureThicknessM: asNumber(
+                module.entablatureThicknessM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureThicknessM`,
+              ),
+              entablatureCenterY: asNumber(
+                module.entablatureCenterY,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureCenterY`,
+              ),
+              entablatureCapWidthM: asNumber(
+                module.entablatureCapWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapWidthM`,
+              ),
+              entablatureCapDepthM: asNumber(
+                module.entablatureCapDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapDepthM`,
+              ),
+              entablatureCapThicknessM: asNumber(
+                module.entablatureCapThicknessM,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapThicknessM`,
+              ),
+              entablatureCapCenterY: asNumber(
+                module.entablatureCapCenterY,
+                `wall_details.module_registry.hero_bay_modules[${index}].entablatureCapCenterY`,
+              ),
+              corbelWidthM: asNumber(
+                module.corbelWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].corbelWidthM`,
+              ),
+              corbelDepthM: asNumber(
+                module.corbelDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].corbelDepthM`,
+              ),
+              corbelHeightM: asNumber(
+                module.corbelHeightM,
+                `wall_details.module_registry.hero_bay_modules[${index}].corbelHeightM`,
+              ),
+              corbelCenterY: asNumber(
+                module.corbelCenterY,
+                `wall_details.module_registry.hero_bay_modules[${index}].corbelCenterY`,
+              ),
+              corbelCount,
+              corbelSpreadM: asNumber(
+                module.corbelSpreadM,
+                `wall_details.module_registry.hero_bay_modules[${index}].corbelSpreadM`,
+              ),
+              pedimentBaseWidthM: asNumber(
+                module.pedimentBaseWidthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pedimentBaseWidthM`,
+              ),
+              pedimentDepthM: asNumber(
+                module.pedimentDepthM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pedimentDepthM`,
+              ),
+              pedimentLayerHeightM: asNumber(
+                module.pedimentLayerHeightM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pedimentLayerHeightM`,
+              ),
+              pedimentLayerCount,
+              pedimentWidthStepM: asNumber(
+                module.pedimentWidthStepM,
+                `wall_details.module_registry.hero_bay_modules[${index}].pedimentWidthStepM`,
+              ),
+              pedimentBottomY: asNumber(
+                module.pedimentBottomY,
+                `wall_details.module_registry.hero_bay_modules[${index}].pedimentBottomY`,
+              ),
+            };
+          });
+        })();
+
+  return {
+    window_modules: windowModules,
+    door_modules: doorModules,
+    hero_bay_modules: heroBayModules,
+  };
+}
+
 export function deriveShotsRuntime(designShotsDoc) {
   const sourceShots = Array.isArray(designShotsDoc?.shots) ? designShotsDoc.shots : [];
   if (sourceShots.length === 0) {
-    fail("docs/map-design/shots.json must contain a non-empty 'shots' array");
+    fail(`${MAP_SOURCE.shots} must contain a non-empty 'shots' array`);
   }
 
   const shots = sourceShots.map((shot) => JSON.parse(JSON.stringify(shot)));
@@ -3063,10 +2532,10 @@ export function compileMapSpec(
     fail("map spec must be an object");
   }
 
-  const formatVersion =
-    typeof mapSpec.metadata?.version === "undefined"
-      ? undefined
-      : ensureString(mapSpec.metadata.version, "metadata.version");
+  const formatVersion = ensureString(mapSpec.metadata?.version, "metadata.version");
+  if (!isV3FormatVersion(formatVersion)) {
+    fail(`metadata.version '${formatVersion}' is not supported; the map compiler accepts only format 3.x`);
+  }
   const { zoneIds, zones } = deriveZones(mapSpec);
   validateMapPolishSurveyCameraOverrides(mapSpec, zoneIds);
   const zoneById = new Map(zones.map((zone) => [zone.id, zone]));
@@ -3079,39 +2548,35 @@ export function compileMapSpec(
   const explicitConnectivity = deriveExplicitConnectivity(mapSpec, zoneIds, surfaceById);
   validateConnectedTopology(zones, explicitConnectivity);
   const authoredSpawns = deriveAuthoredSpawns(mapSpec, zoneById, surfaceById);
-  const assetRegistry = deriveAssetRegistry(mapSpec, formatVersion);
+  const assetRegistry = deriveAssetRegistry(mapSpec);
   const assetById = new Map((assetRegistry ?? []).map((asset) => [asset.id, asset]));
-  const massingProfiles = deriveMassingProfiles(mapSpec, formatVersion);
+  const massingProfiles = deriveMassingProfiles(mapSpec);
   const massingById = new Map((massingProfiles ?? []).map((profile) => [profile.id, profile]));
-  const facadeModules = deriveFacadeModules(mapSpec, formatVersion, assetById);
+  const facadeModules = deriveFacadeModules(mapSpec, assetById);
   const moduleById = new Map((facadeModules ?? []).map((module) => [module.id, module]));
-  const facadeProfiles = deriveFacadeProfiles(mapSpec, formatVersion, massingById, moduleById);
+  const facadeProfiles = deriveFacadeProfiles(mapSpec, massingById, moduleById);
   const profileById = new Map((facadeProfiles ?? []).map((profile) => [profile.id, profile]));
   const frontages = deriveFrontages(
     mapSpec,
     zoneIds,
     zoneById,
     districtIds,
-    formatVersion,
     massingById,
     profileById,
     moduleById,
   );
-  let frontageCoverage;
-  if (isV3FormatVersion(formatVersion)) {
-    frontageCoverage = validateFrontageCoverage({
-      zones,
-      frontages,
-      exemptions: mapSpec.frontage_exemptions,
+  const frontageCoverage = validateFrontageCoverage({
+    zones,
+    frontages,
+    exemptions: mapSpec.frontage_exemptions,
+  });
+  validateAdjacentFrontageMaterialIdentity(frontages, zoneById, profileById);
+  for (const frontage of frontages ?? []) {
+    validateFixtureCenterlines({
+      frontage,
+      anchors: mapSpec.anchors ?? [],
+      moduleById,
     });
-    validateAdjacentFrontageMaterialIdentity(frontages, zoneById, profileById);
-    for (const frontage of frontages ?? []) {
-      validateFixtureCenterlines({
-        frontage,
-        anchors: mapSpec.anchors ?? [],
-        moduleById,
-      });
-    }
   }
   const anchors = deriveAnchors(mapSpec, zoneIds, zoneById, frontages, traversalSurfaces);
   const anchorById = new Map(anchors.map((anchor) => [anchor.id, anchor]));
@@ -3134,34 +2599,29 @@ export function compileMapSpec(
   );
   const dressingPlacements = deriveDressingPlacements(
     mapSpec,
-    formatVersion,
     dressingClusters,
     anchorById,
     assetById,
   );
-  if (isV3FormatVersion(formatVersion)) {
-    const compositionRules = normalizeCompositionRules(
-      mapSpec.composition_rules,
-      compositionWaivers,
-    );
-    validateCompositionRules({
-      zones,
-      frontages,
-      anchors,
-      architecturePlacements,
-      dressingPlacements,
-      rules: compositionRules,
-    });
-  }
+  const compositionRules = normalizeCompositionRules(
+    mapSpec.composition_rules,
+    compositionWaivers,
+  );
+  validateCompositionRules({
+    zones,
+    frontages,
+    anchors,
+    architecturePlacements,
+    dressingPlacements,
+    rules: compositionRules,
+  });
 
-  if (isV3FormatVersion(formatVersion)) {
-    const referencedAssets = new Set([
-      ...(dressingPlacements ?? []).map((placement) => placement.assetId),
-      ...(facadeModules ?? []).flatMap((module) => module.assetId ? [module.assetId] : []),
-    ]);
-    const unusedAssets = (assetRegistry ?? []).filter((asset) => !referencedAssets.has(asset.id)).map((asset) => asset.id);
-    if (unusedAssets.length > 0) fail(`V3 asset registry contains unrendered assets: ${unusedAssets.join(", ")}`);
-  }
+  const referencedAssets = new Set([
+    ...(dressingPlacements ?? []).map((placement) => placement.assetId),
+    ...(facadeModules ?? []).flatMap((module) => module.assetId ? [module.assetId] : []),
+  ]);
+  const unusedAssets = (assetRegistry ?? []).filter((asset) => !referencedAssets.has(asset.id)).map((asset) => asset.id);
+  if (unusedAssets.length > 0) fail(`V3 asset registry contains unrendered assets: ${unusedAssets.join(", ")}`);
 
   // Zone section models: origin at the rect's south-west corner on the zone's floor.
   const sectionModels = zones.filter((zone) => zone.sectionModelId).map((zone) => {
@@ -3177,13 +2637,14 @@ export function compileMapSpec(
       materialIds: runtimeModelMaterialIds.get(zone.sectionModelId) ?? [],
     };
   });
+  const authoredPlacements = deriveAuthoredPlacements(mapSpec);
   const blockoutSpec = deriveBlockoutSpec(mapSpec, zones);
   const mapCenter = deriveMapCenter(mapSpec, blockoutSpec.playable_boundary);
-  validateSealedPerimeter(formatVersion, blockoutSpec.playable_boundary, blockoutSpec.exterior_wall_patches);
+  validateSealedPerimeter(blockoutSpec.playable_boundary, blockoutSpec.exterior_wall_patches);
 
   return {
     ...blockoutSpec,
-    ...(formatVersion ? { formatVersion } : {}),
+    formatVersion,
     ...(mapCenter ? { mapCenter } : {}),
     ...(districts ? { districts } : {}),
     ...(traversalSurfaces ? { traversalSurfaces } : {}),
@@ -3198,6 +2659,7 @@ export function compileMapSpec(
     ...(facadeProfiles ? { facadeProfiles } : {}),
     ...(architecturePlacements ? { architecturePlacements } : {}),
     ...(sectionModels.length ? { sectionModels } : {}),
+    ...(authoredPlacements ? { authoredPlacements } : {}),
     ...(dressingClusters ? { dressingClusters } : {}),
     ...(dressingPlacements ? { dressingPlacements } : {}),
     anchors,

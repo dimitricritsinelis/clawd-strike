@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 import {
   type BuffType,
   BUFF_DEFINITIONS,
@@ -5,15 +6,21 @@ import {
   RALLYING_CRY_ICON_PATH,
 } from "../buffs/BuffTypes";
 
-export type BuffHudEntry = {
+type BuffHudEntry = {
   type: BuffType;
   remainingS: number;
   durationS: number;
+  /** No timer; Iron Skin shows its remaining shield instead. */
+  persistent: boolean;
 };
 
 export type BuffHudSnapshot = {
   buffs: BuffHudEntry[];
   rallyingCryActive: boolean;
+  /** Buff empowered by Rallying Cry; null when it grants all four at once. */
+  rallyingCryBuffType?: BuffType | null;
+  /** Iron Skin shield, drawn on its icon in place of a countdown. */
+  shield?: { remaining: number; capacity: number };
 };
 
 type BuffEntryElements = {
@@ -25,7 +32,6 @@ type BuffEntryElements = {
 };
 
 const ICON_SIZE = 48;
-const FONT_FAMILY = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 function hexToRgba(colorStr: string, alpha: number): string {
   return `rgba(${colorStr}, ${alpha})`;
@@ -59,18 +65,25 @@ export class BuffHud {
   }
 
   update(snapshot: BuffHudSnapshot, _deltaSeconds: number): void {
-    const activeTypes = new Set(snapshot.buffs.map((b) => b.type));
+    const rallyingCryType = snapshot.rallyingCryBuffType ?? null;
+    // Buffs represented by the Rallying Cry badge instead of their own icon:
+    // the one empowered buff, or every buff in all-four mode.
+    // Persistent buffs outlive the badge's timer, so they keep their own icon.
+    const coveredByRallyingCry = (buff: BuffHudEntry): boolean =>
+      snapshot.rallyingCryActive
+      && !buff.persistent
+      && (rallyingCryType === null || rallyingCryType === buff.type);
+    const rallyingCryBuffs = snapshot.buffs.filter(coveredByRallyingCry);
 
     // Show/hide Rallying Cry badge
-    if (snapshot.rallyingCryActive) {
+    if (snapshot.rallyingCryActive && rallyingCryBuffs.length > 0) {
       if (!this.rallyingCryEntry) {
         this.rallyingCryEntry = this.createEntry(RALLYING_CRY_NAME, RALLYING_CRY_ICON_PATH, "255, 68, 0");
         this.root.prepend(this.rallyingCryEntry.container);
       }
-      // Use the shortest buff remaining for the Rallying Cry timer
-      const shortest = snapshot.buffs.reduce(
+      // Time the badge from the buffs it represents, never an unrelated pickup.
+      const shortest = rallyingCryBuffs.reduce(
         (min, b) => (b.remainingS < min.remainingS ? b : min),
-        snapshot.buffs[0]!,
       );
       this.updateEntry(this.rallyingCryEntry, shortest.remainingS, shortest.durationS);
     } else if (this.rallyingCryEntry) {
@@ -78,31 +91,31 @@ export class BuffHud {
       this.rallyingCryEntry = null;
     }
 
-    // When Rallying Cry is active, hide all individual buff icons
-    if (snapshot.rallyingCryActive) {
-      for (const [, entry] of this.entries) {
-        entry.container.remove();
+    // Individual icons for every active buff the badge does not cover
+    const shownTypes = new Set<BuffType>();
+    for (const buff of snapshot.buffs) {
+      if (coveredByRallyingCry(buff)) continue;
+      shownTypes.add(buff.type);
+      let entry = this.entries.get(buff.type);
+      if (!entry) {
+        const def = BUFF_DEFINITIONS[buff.type];
+        entry = this.createEntry(def.name, def.iconPath, def.vignetteColor);
+        this.entries.set(buff.type, entry);
+        this.root.append(entry.container);
       }
-      this.entries.clear();
-    } else {
-      // Update individual buff entries
-      for (const buff of snapshot.buffs) {
-        let entry = this.entries.get(buff.type);
-        if (!entry) {
-          const def = BUFF_DEFINITIONS[buff.type];
-          entry = this.createEntry(def.name, def.iconPath, def.vignetteColor);
-          this.entries.set(buff.type, entry);
-          this.root.append(entry.container);
-        }
+      if (buff.persistent) {
+        const shield = snapshot.shield ?? { remaining: 0, capacity: 1 };
+        this.updateEntry(entry, shield.remaining, shield.capacity, "");
+      } else {
         this.updateEntry(entry, buff.remainingS, buff.durationS);
       }
+    }
 
-      // Remove entries for expired buffs
-      for (const [type, entry] of this.entries) {
-        if (!activeTypes.has(type)) {
-          entry.container.remove();
-          this.entries.delete(type);
-        }
+    // Remove entries for expired or badge-covered buffs
+    for (const [type, entry] of this.entries) {
+      if (!shownTypes.has(type)) {
+        entry.container.remove();
+        this.entries.delete(type);
       }
     }
   }
@@ -193,7 +206,7 @@ export class BuffHud {
       fontWeight: "700",
       color: "#fff",
       textShadow: "0 1px 3px rgba(0, 0, 0, 0.95)",
-      fontFamily: FONT_FAMILY,
+      fontFamily: SANS_FONT,
       lineHeight: "1",
     } satisfies Partial<CSSStyleDeclaration>);
 
@@ -204,14 +217,15 @@ export class BuffHud {
     return { container, iconEl, fallbackEl, timerOverlay, timerLabel };
   }
 
-  private updateEntry(entry: BuffEntryElements, remainingS: number, durationS: number): void {
+  /** Draws remaining/total as a radial sweep; timers label in seconds, shields in points. */
+  private updateEntry(entry: BuffEntryElements, remainingS: number, durationS: number, unit = "s"): void {
     const elapsed = durationS - remainingS;
-    const pct = Math.min(100, (elapsed / durationS) * 100);
+    const pct = durationS > 0 ? Math.min(100, Math.max(0, (elapsed / durationS) * 100)) : 0;
 
     // Conic gradient: transparent for remaining time, dark for elapsed
     entry.timerOverlay.style.background = `conic-gradient(from 0deg, rgba(0, 0, 0, 0.65) ${pct.toFixed(1)}%, transparent ${pct.toFixed(1)}%)`;
 
     const seconds = Math.ceil(Math.max(0, remainingS));
-    entry.timerLabel.textContent = `${seconds}s`;
+    entry.timerLabel.textContent = `${seconds}${unit}`;
   }
 }

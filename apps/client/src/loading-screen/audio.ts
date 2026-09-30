@@ -21,7 +21,7 @@ const DEFAULT_OPTIONS: LoadingAmbientAudioOptions = {
       type: "audio/mpeg",
     },
   ],
-  gain: 0.45,
+  gain: 0.2,
   playFromSec: 0,
   loopStartSec: 0,
   loopEndSec: Number.POSITIVE_INFINITY,

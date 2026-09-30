@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { PerspectiveCamera, Scene } from "three";
+import { Scene } from "three";
 import { BuffManager, type BuffDropResult } from "./BuffManager";
 import type { BuffActivationContext } from "./BuffManager";
 import {
@@ -56,7 +56,7 @@ test("refreshing a buff restores its full duration", () => {
   manager.debugActivateBuff("speed_boost");
   const full = manager.getActiveBuffs()[0]!.durationS;
 
-  manager.update(4, { x: 0, y: 0, z: 0 }, null as never);
+  manager.update(4, { x: 0, y: 0, z: 0 });
   const partial = manager.getActiveBuffs()[0]!.remainingS;
   assert.ok(partial < full, `expected the timer to burn down, got ${partial}/${full}`);
 
@@ -205,7 +205,7 @@ test("dt=0 pauses buffs and leaves dropped-orb spawns untouched", () => {
 
   const before = manager.getWaveCarryoverSnapshot();
   assert.equal(before.pendingOrbCount, 1);
-  manager.update(0, PLAYER_POSITION, null as never);
+  manager.update(0, PLAYER_POSITION);
   const after = manager.getWaveCarryoverSnapshot();
 
   assert.deepEqual(after, before, "paused simulation must not spawn, collect or age buff state");
@@ -217,17 +217,16 @@ test("dropped orbs expire on the profile lifetime using simulation time", () => 
     orbLifetimeS: 0.25,
   };
   const manager = new BuffManager(new Scene(), { seed: 18, tuning });
-  const camera = new PerspectiveCamera();
   const drop = manager.onEnemyDeath(0, DROP_POSITION);
   assert.equal(drop.dropped, true, "seed 18 should begin with a natural drop");
 
-  manager.update(0.1, PLAYER_POSITION, camera);
+  manager.update(0.1, PLAYER_POSITION);
   assert.equal(manager.getWaveCarryoverSnapshot().orbCount, 1);
-  manager.update(0.14, PLAYER_POSITION, camera);
+  manager.update(0.14, PLAYER_POSITION);
   assert.equal(manager.getWaveCarryoverSnapshot().orbCount, 1);
-  manager.update(0, PLAYER_POSITION, camera);
+  manager.update(0, PLAYER_POSITION);
   assert.equal(manager.getWaveCarryoverSnapshot().orbCount, 1, "paused time must not age the orb");
-  manager.update(0.02, PLAYER_POSITION, camera);
+  manager.update(0.02, PLAYER_POSITION);
   assert.equal(manager.getWaveCarryoverSnapshot().orbCount, 0);
 });
 
@@ -258,16 +257,31 @@ test("a wave-closing drop is banked and activates at the next active wave", () =
 
   manager.onNewWave();
   assert.deepEqual(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs, [drop.type]);
-  assert.equal(manager.beginActiveWave(), drop.type);
+  manager.reapplyActiveBuffEffects();
+  assert.equal(manager.activateBankedWaveClosingBuff(), drop.type);
   assert.equal(manager.isBuffActive(drop.type), true);
   assert.deepEqual(activations, [drop.type]);
   assert.deepEqual(manager.getWaveCarryoverSnapshot().bankedWaveClosingBuffs, []);
 });
 
-test("Rallying Cry selects one deterministic buff for 15 seconds", () => {
+function makeSingleRallyManager(seed: number): ReturnType<typeof makeManager> {
+  const base = getGameplayTuning("desktop-human").buffs;
+  const tuning = { ...base, perfectWave: { ...base.perfectWave, mode: "single-deterministic" as const } };
+  const manager = new BuffManager(new Scene(), { seed, tuning });
+  const activations: BuffType[] = [];
+  const expiries: BuffType[] = [];
+  manager.setOnBuffActivated((type) => activations.push(type));
+  manager.setOnBuffExpired((type) => expiries.push(type));
+  return { manager, activations, expiries };
+}
+
+test("single-deterministic Rallying Cry selects one buff for 15 seconds", () => {
   const rallyDurationS = getGameplayTuning("desktop-human").buffs.perfectWave.durationS;
-  const first = makeManager(0xc1a0);
-  const replay = makeManager(0xc1a0);
+  // speed_boost keeps this on the timed path; Iron Skin has its own tests.
+  let seed = 0xc1a0;
+  while (makeSingleRallyManager(seed).manager.activateRallyingCry() === "health_boost") seed += 1;
+  const first = makeSingleRallyManager(seed);
+  const replay = makeSingleRallyManager(seed);
   const selected = first.manager.activateRallyingCry();
 
   assert.equal(replay.manager.activateRallyingCry(), selected);
@@ -278,15 +292,16 @@ test("Rallying Cry selects one deterministic buff for 15 seconds", () => {
     type: selected,
     remainingS: rallyDurationS,
     durationS: rallyDurationS,
+    persistent: false,
   }]);
 
-  first.manager.update(5, PLAYER_POSITION, null as never);
+  first.manager.update(5, PLAYER_POSITION);
   assert.equal(first.manager.activateRallyingCry(), selected, "refresh should keep the active selection");
   assert.equal(first.manager.getActiveBuffs()[0]!.remainingS, rallyDurationS);
   assert.deepEqual(first.activations, [selected, selected]);
   assert.equal(first.manager.getActiveBuffs().length, 1, "Rallying Cry must not accumulate buffs");
 
-  first.manager.update(rallyDurationS, PLAYER_POSITION, null as never);
+  first.manager.update(rallyDurationS, PLAYER_POSITION);
   assert.equal(first.manager.isRallyingCryActive(), false);
   assert.equal(first.manager.getRallyingCryBuffType(), null);
   assert.deepEqual(first.manager.getActiveBuffs(), []);
@@ -295,6 +310,56 @@ test("Rallying Cry selects one deterministic buff for 15 seconds", () => {
   const nextSelection = first.manager.activateRallyingCry();
   assert.notEqual(nextSelection, selected, "successive Rallying Cries should preserve selection variety");
   assert.equal(first.manager.getActiveBuffs().length, 1);
+});
+
+test("baseline Rallying Cry grants all four buffs; timed ones last 15 seconds", () => {
+  const rallyDurationS = getGameplayTuning("desktop-human").buffs.perfectWave.durationS;
+  const { manager, expiries } = makeManager();
+
+  assert.equal(manager.activateRallyingCry(), null);
+  assert.equal(manager.isRallyingCryActive(), true);
+  assert.deepEqual(
+    manager.getActiveBuffs().map((buff) => buff.type).sort(),
+    [...BUFF_TYPES].sort(),
+  );
+  for (const buff of manager.getActiveBuffs()) {
+    if (buff.type === "health_boost") {
+      assert.equal(buff.persistent, true);
+    } else {
+      assert.equal(buff.remainingS, rallyDurationS);
+    }
+  }
+
+  manager.update(rallyDurationS, PLAYER_POSITION);
+  assert.equal(manager.isRallyingCryActive(), false, "the badge ends with the timed buffs");
+  assert.deepEqual(expiries.sort(), ["rapid_fire", "speed_boost", "unlimited_ammo"]);
+  assert.deepEqual(manager.getActiveBuffs().map((buff) => buff.type), ["health_boost"]);
+});
+
+test("Iron Skin has no timer and ends only when its shield is consumed", () => {
+  const { manager, expiries } = makeManager();
+  manager.debugActivateBuff("health_boost");
+
+  manager.update(600, PLAYER_POSITION);
+  assert.deepEqual(manager.getActiveBuffs(), [{
+    type: "health_boost",
+    remainingS: 0,
+    durationS: 0,
+    persistent: true,
+  }]);
+  assert.deepEqual(expiries, []);
+
+  manager.consumeBuff("health_boost");
+  assert.equal(manager.isBuffActive("health_boost"), false);
+  assert.deepEqual(expiries, ["health_boost"]);
+});
+
+test("a timed Iron Skin still expires when the profile disables persistence", () => {
+  const tuning = { ...getGameplayTuning("desktop-human").buffs, shieldPersistsUntilBroken: false };
+  const manager = new BuffManager(new Scene(), { seed: 1, tuning });
+  manager.debugActivateBuff("health_boost");
+  manager.update(tuning.standardDurationS, PLAYER_POSITION);
+  assert.equal(manager.isBuffActive("health_boost"), false);
 });
 
 test("activateAllBuffs remains available as a compatibility/debug helper", () => {
@@ -327,12 +392,11 @@ test("mobile human and desktop agent use the same pity and Rallying Cry baseline
     assert.equal(tuning, baselineTuning);
     assert.equal(results.at(-1)?.dropped, true, `${profileId} must retain pity protection`);
     assert.equal(manager.isRallyingCryActive(), true);
-    assert.notEqual(rallyType, null, `${profileId} must select one deterministic Rallying Cry buff`);
-    assert.deepEqual(manager.getActiveBuffs(), [{
-      type: rallyType,
-      remainingS: tuning.perfectWave.durationS,
-      durationS: tuning.perfectWave.durationS,
-    }]);
+    assert.equal(rallyType, null, `${profileId} Rallying Cry must grant all four buffs`);
+    assert.deepEqual(
+      manager.getActiveBuffs().map((buff) => buff.type).sort(),
+      [...BUFF_TYPES].sort(),
+    );
 
     baselineResults ??= results;
     baselineRallyType ??= rallyType;

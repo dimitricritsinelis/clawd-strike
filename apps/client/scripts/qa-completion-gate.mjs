@@ -10,15 +10,13 @@ import {
   captureRuntimeSnapshot,
   closeBrowserResources,
   ensureDir,
+  evaluateRuntimeState,
   gotoAgentRuntime,
   gotoHumanShot,
   launchBrowserProcess,
   loadShotsSpec,
   parseBooleanEnv,
-  readQaPerformanceState,
   readScreenshotCoverage,
-  readRuntimeState,
-  renderRuntimeFrame,
   runAgentRoute,
   sanitizeFileSegment,
   selectReviewShotIds,
@@ -37,7 +35,7 @@ import {
   resolveShotDefinition,
   summarizeCapturedShot,
 } from "./lib/shotReview.mjs";
-import { evaluateBazaarPerformance, summarizePerformanceSamples } from "./lib/performanceAcceptance.mjs";
+import { evaluateBazaarPerformance, sampleRenderedFrameCadence, summarizePerformanceSamples } from "./lib/performanceAcceptance.mjs";
 import { persistCompletionArtifacts } from "./lib/completionArtifacts.mjs";
 import { startQaServer } from "./lib/qaServer.mjs";
 import { assertGeneratedMapsFresh } from "./lib/generatedMapCheck.mjs";
@@ -152,19 +150,10 @@ function optionalPositiveNumber(value) {
 }
 
 async function collectPerformanceSamples(page, count = 7, artifactDir) {
-  const states = [];
-  for (let index = 0; index < count; index += 1) {
-    await renderRuntimeFrame(page);
-    await page.waitForTimeout(50);
-    const state = await readQaPerformanceState(page, {
-      operation: `performance-sample-${index + 1}`,
-      artifactDir,
-    });
-    states.push(state ?? await readRuntimeState(page, {
-      operation: `performance-fallback-sample-${index + 1}`,
-      artifactDir,
-    }));
-  }
+  const states = await evaluateRuntimeState(page, sampleRenderedFrameCadence, count, {
+    operation: "rendered-frame-cadence-samples",
+    artifactDir,
+  });
   return summarizePerformanceSamples(states);
 }
 
@@ -527,7 +516,7 @@ try {
     summary.performance.shotId = performanceShot;
     summary.performance.desktop.viewport = { width: 1440, height: 900 };
     summary.performance.mobile.viewport = { width: 844, height: 390 };
-    summary.performance.mobile.profile = "automatic mobile reduced-detail";
+    summary.performance.mobile.profile = "automatic mobile reduced-detail (emulated map-shot cadence)";
     await persist("performance:complete");
   } finally {
     await closeBrowserResources({ context: desktopContext });

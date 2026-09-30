@@ -242,7 +242,7 @@ try {
     events: consoleRecorder.snapshot(),
     counts: consoleRecorder.counts(),
   });
-  console.log(`[smoke:no-context] pass | deaths=${summary.runtime.deathsObserved} | respawns=${summary.runtime.respawnsObserved} | output=${OUTPUT_DIR}`);
+  console.log(`[smoke:public] pass | deaths=${summary.runtime.deathsObserved} | respawns=${summary.runtime.respawnsObserved} | output=${OUTPUT_DIR}`);
 } catch (error) {
   summary.finishedAt = new Date().toISOString();
   summary.failed = true;

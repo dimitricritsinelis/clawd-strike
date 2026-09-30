@@ -6,7 +6,7 @@ import {
   type SharedChampionRunSummary,
 } from "../../../shared/highScore";
 
-export type SharedChampionCompetitiveTelemetry = Readonly<{
+type SharedChampionCompetitiveTelemetry = Readonly<{
   kills: number;
   headshots: number;
   headshotsPerWave: readonly number[];

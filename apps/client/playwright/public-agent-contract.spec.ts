@@ -262,7 +262,20 @@ test("reveals the loading-screen overlay only after the first-paint art is fully
   expect(readyOverlayState.images.every((image) => /\.(avif|webp)$/.test(image.currentSrc))).toBe(true);
 
   await page.waitForTimeout(250);
-  expect(await readLoadingScreenRevealState(page)).toMatchObject(readyOverlayState);
+  // Hidden name-entry/info art may finish preloading after the first-paint
+  // overlay is ready. Assert the visible overlay stays ready, not that those
+  // independent background requests stop progressing.
+  expect(await readLoadingScreenRevealState(page)).toMatchObject({
+    backgroundReady: "true",
+    assetsReady: "true",
+    overlayOpacity: readyOverlayState.overlayOpacity,
+    overlayVisibility: "visible",
+    images: readyOverlayState.images,
+    nameEntryVisible: "false",
+    infoVisible: "false",
+    bannerVisible: readyOverlayState.bannerVisible,
+    bannerText: readyOverlayState.bannerText,
+  });
   expect(recorder.counts().errorCount).toBe(0);
 });
 
@@ -302,7 +315,8 @@ test("keeps name-entry hidden until the nameplate art is ready for both human an
       nameEntryVisible: "false",
     });
 
-    const pendingRelease = releaseNameplateRequest;
+    // Assigned inside the route handler, which control-flow analysis cannot see.
+    const pendingRelease = releaseNameplateRequest as (() => void) | null;
     if (!pendingRelease) {
       throw new Error("Expected the delayed nameplate request to be pending");
     }

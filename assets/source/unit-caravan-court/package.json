@@ -1,0 +1,40 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_caravan_court",
+      "file": "roof-bundle-caravan-court.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_caravan_court",
+      "file": "unit-caravan-court.glb",
+      "source": "repo://assets/source/unit-caravan-court/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "CARAVAN_COURT",
+    "modelId": "section_unit_caravan_court",
+    "faces": [
+      "north",
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_CARAVAN_COURT",
+      "modelId": "bz04_roof_bundle_unit_caravan_court",
+      "position": {
+        "x": 7.5,
+        "y": 38.75,
+        "z": 4.5
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "479680ab63c65e3c619fd42aa7f459b33e9dbab98e8293c9a19d7c3dcfb30b23"
+}

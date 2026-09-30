@@ -1,3 +1,5 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
+import { clamp01 } from "../utils/math";
 import { Vector3 } from "three";
 import { AabbCollisionSolver, type MotionResult, type MutablePosition } from "../sim/collision/Solver";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
@@ -14,7 +16,6 @@ const DEG_TO_RAD = Math.PI / 180;
 const RAD_TO_DEG = 180 / Math.PI;
 
 export const ENEMY_HALF_WIDTH_M = 0.3;
-export const ENEMY_HEIGHT_M = 1.8;
 export const ENEMY_EYE_HEIGHT_M = 1.5;
 const ENEMY_ROTATE_SPEED_MPS = 3.15;
 const ENEMY_INVESTIGATE_SPEED_MPS = 2.6;
@@ -33,7 +34,7 @@ const ENEMY_EXPECTED_PROGRESS_RATIO = 0.2;
 const ENEMY_ACCEL_MPS2 = 14;
 const ENEMY_SWEEP_CHANGE_S_MIN = 0.9;
 const ENEMY_SWEEP_CHANGE_S_MAX = 1.5;
-const ENEMY_MIN_NODE_RADIUS_M = 0.6;
+export const ENEMY_MIN_NODE_RADIUS_M = 0.6;
 const ENEMY_RELOAD_DECISION_MAG = 6;
 const GRAVITY_MPS2 = 20.0;
 const MAX_SUBSTEP_DT_S = 1 / 120;
@@ -317,10 +318,6 @@ export function applyCircularConeSpread(
   ).normalize();
 }
 
-function clamp01(value: number): number {
-  return Math.max(0, Math.min(1, value));
-}
-
 export type EnemyTarget = {
   id: string;
   team: EnemyTeam;
@@ -444,6 +441,23 @@ function normalizeAngleRad(angle: number): number {
   return normalized;
 }
 
+/** Bullet that struck an enemy: travel direction and entry point (world). */
+export type EnemyShotImpact = Readonly<{
+  dirX: number;
+  dirY: number;
+  dirZ: number;
+  hitX: number;
+  hitY: number;
+  hitZ: number;
+}>;
+
+/** A hit the visual has not reacted to yet (render-only; never affects combat). */
+export type EnemyHitReaction = Readonly<{
+  headshot: boolean;
+  killed: boolean;
+  impact: EnemyShotImpact | null;
+}>;
+
 export class EnemyController {
   readonly id: EnemyId;
   readonly name: string;
@@ -458,6 +472,7 @@ export class EnemyController {
   private readonly team: EnemyTeam = "enemy";
   private dead = false;
   private lastHitWasHeadshot = false;
+  private pendingHitReaction: EnemyHitReaction | null = null;
 
   private assignedNodeId: string | null = null;
   private targetNodeId: string | null = null;
@@ -569,6 +584,7 @@ export class EnemyController {
     this.role = "rifler";
     this.dead = false;
     this.lastHitWasHeadshot = false;
+    this.pendingHitReaction = null;
     this.assignedNodeId = null;
     this.targetNodeId = null;
     this.debugReason = "spawn hold";
@@ -751,6 +767,16 @@ export class EnemyController {
     const stepDt = clampedDt / stepCount;
     const preX = this.position.x;
     const preZ = this.position.z;
+    const commandedSpeedMps = Math.hypot(this.desiredVX, this.desiredVZ);
+    // Steer the command before acceleration. Collision can reset velocity to
+    // zero each frame; rotating that clipped velocity never builds enough
+    // lateral speed to get a stalled bot around the obstacle.
+    if (this.stuckEscapeTimerS > 0) {
+      const escapeX = -this.desiredVZ * this.stuckEscapeDir;
+      const escapeZ = this.desiredVX * this.stuckEscapeDir;
+      this.desiredVX = this.desiredVX * STUCK_ESCAPE_FORWARD_BLEND + escapeX * STUCK_ESCAPE_SIDE_BLEND;
+      this.desiredVZ = this.desiredVZ * STUCK_ESCAPE_FORWARD_BLEND + escapeZ * STUCK_ESCAPE_SIDE_BLEND;
+    }
     const maxDeltaV = ENEMY_ACCEL_MPS2 * clampedDt;
     const dvx = this.desiredVX - this.velX;
     const dvz = this.desiredVZ - this.velZ;
@@ -765,18 +791,6 @@ export class EnemyController {
     let vx = this.velX;
     let vz = this.velZ;
 
-    // Stuck escape: flipping peek direction only helps a bot that is peeking.
-    // A bot travelling into a prop or a wall corner keeps pushing straight at
-    // it forever, and because the wave only ends when every bot dies, one
-    // wedged bot can stall the whole run. Steering perpendicular to the blocked
-    // heading lets it slide along the obstacle and re-path.
-    if (this.stuckEscapeTimerS > 0) {
-      const escapeX = -vz * this.stuckEscapeDir;
-      const escapeZ = vx * this.stuckEscapeDir;
-      vx = vx * STUCK_ESCAPE_FORWARD_BLEND + escapeX * STUCK_ESCAPE_SIDE_BLEND;
-      vz = vz * STUCK_ESCAPE_FORWARD_BLEND + escapeZ * STUCK_ESCAPE_SIDE_BLEND;
-    }
-
     for (let i = 0; i < stepCount; i += 1) {
       this.velocityY -= GRAVITY_MPS2 * stepDt;
 
@@ -785,14 +799,26 @@ export class EnemyController {
       const previousZ = this.position.z;
       const wasGrounded = this.grounded;
 
+      // Resolve X before clipping Z so wall sliding and body blocking use
+      // the same position. Keep attempted body velocity for stuck escape.
       this.solver.moveAndCollide(
         this.position,
-        vx * stepDt,
-        vz * stepDt,
+        this.clipRaiderMotion(vx * stepDt, "x", enemyAabbs),
+        0,
+        0,
+        worldColliders,
+        this.motionResult,
+      );
+      const hitX = this.motionResult.hitX;
+      this.solver.moveAndCollide(
+        this.position,
+        0,
+        this.clipRaiderMotion(vz * stepDt, "z", enemyAabbs),
         this.velocityY * stepDt,
         worldColliders,
         this.motionResult,
       );
+      this.motionResult.hitX = hitX;
 
       if (worldColliders.hasTraversalSurfaces) {
         const surface = worldColliders.traversalSurfaces.sample(this.position.x, this.position.z, previousY);
@@ -862,7 +888,9 @@ export class EnemyController {
     } else {
       this.movementSpreadTimerS = Math.max(0, this.movementSpreadTimerS - clampedDt);
     }
-    if (hasInsufficientEnemyMotion(movedDistanceM, desiredSpeedMps, clampedDt)) {
+    // Collision zeroes velocity on blocked axes; compare against the movement
+    // command so a bot pressed against a wall still detects its stalled motion.
+    if (hasInsufficientEnemyMotion(movedDistanceM, commandedSpeedMps, clampedDt)) {
       this.stuckTimer += clampedDt;
       if (this.stuckTimer >= ENEMY_STUCK_THRESHOLD_S) {
         this.stuckTimer = 0;
@@ -885,6 +913,9 @@ export class EnemyController {
       this.burstShotsRemaining = 0;
     }
 
+    // The manager shares these objects with later raiders in this frame.
+    this.getAabb();
+
     if (onFootstep && this.grounded) {
       const speed = desiredSpeedMps;
       if (speed > 0.3) {
@@ -902,6 +933,28 @@ export class EnemyController {
     }
   }
 
+  private clipRaiderMotion(delta: number, axis: "x" | "z", bodies: readonly EnemyAabb[]): number {
+    const otherAxis = axis === "x" ? "z" : "x";
+    const separation = ENEMY_HALF_WIDTH_M * 2;
+    for (const body of bodies) {
+      if (body.id === this.id || body.id === "player") continue;
+      if (this.position.y >= body.maxY || this.position.y + ENEMY_HEIGHT_M <= body.minY) continue;
+      const centerX = (body.minX + body.maxX) * 0.5;
+      const centerZ = (body.minZ + body.maxZ) * 0.5;
+      const center = axis === "x" ? centerX : centerZ;
+      const side = this.position[otherAxis] - (axis === "x" ? centerZ : centerX);
+      if (Math.abs(side) >= separation) continue;
+      const clearance = Math.sqrt(separation * separation - side * side);
+      const offset = this.position[axis] - center;
+      if (delta > 0 && offset <= 0) {
+        delta = Math.min(delta, Math.max(0, -clearance - offset));
+      } else if (delta < 0 && offset >= 0) {
+        delta = Math.max(delta, Math.min(0, clearance - offset));
+      }
+    }
+    return delta;
+  }
+
   getAabb(): EnemyAabb {
     this.aabb.minX = this.position.x - ENEMY_HALF_WIDTH_M;
     this.aabb.minY = this.position.y;
@@ -912,13 +965,23 @@ export class EnemyController {
     return this.aabb;
   }
 
-  applyDamage(amount: number, isHeadshot = false): void {
+  applyDamage(amount: number, isHeadshot = false, impact: EnemyShotImpact | null = null): void {
     if (this.dead) return;
     this.lastHitWasHeadshot = isHeadshot;
     this.health = Math.max(0, this.health - amount);
     if (this.health <= 0) {
       this.dead = true;
     }
+    // The latest hit in a frame drives the flinch/flash/fall; the killing hit
+    // always wins because nothing lands after death.
+    this.pendingHitReaction = { headshot: isHeadshot, killed: this.dead, impact };
+  }
+
+  /** Returns and clears the hit the visual has not reacted to yet. */
+  consumeHitReaction(): EnemyHitReaction | null {
+    const reaction = this.pendingHitReaction;
+    this.pendingHitReaction = null;
+    return reaction;
   }
 
   isDead(): boolean { return this.dead; }
@@ -929,7 +992,6 @@ export class EnemyController {
   isReloading(): boolean { return this.reloading; }
   isGrounded(): boolean { return this.grounded; }
   getTeam(): EnemyTeam { return this.team; }
-  getRole(): EnemyRole { return this.role; }
   getPosition(): Readonly<MutablePosition> { return this.position; }
   getYaw(): number { return this.yaw; }
   isFiring(): boolean { return this.firingThisFrame; }

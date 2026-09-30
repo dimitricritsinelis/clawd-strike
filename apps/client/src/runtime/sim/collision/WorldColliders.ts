@@ -1,4 +1,4 @@
-import type { RuntimeRect } from "../../map/types";
+import type { RuntimeRect } from "../../map/spec/types";
 import {
   TraversalSurfaceResolver,
   type TraversalSurfaceLike,

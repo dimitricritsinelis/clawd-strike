@@ -2,65 +2,56 @@ import path from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { chromium } from "playwright";
 import sharp from "sharp";
-export {
-  TRAVERSAL_ROUTES,
-  resolveTraversalRoutes,
-} from "./traversalRoutes.mjs";
-import { TRAVERSAL_ROUTES } from "./traversalRoutes.mjs";
 
 export const DEFAULT_BASE_URL = "http://127.0.0.1:5174";
 export const SHIP_QA_SEARCH_PARAMS = Object.freeze({
   qa: 1,
   floors: "pbr",
   walls: "pbr",
-  props: "bazaar",
-  "prop-profile": "medium",
-  wallDetails: 1,
   floorRes: "1k",
-  lighting: "golden",
   ao: 1,
   shadows: 1,
 });
 export const DEFAULT_MAP_ID = "bazaar-map";
 export const DEFAULT_AGENT_NAME = "SmokeRunner";
-export const DEFAULT_HUMAN_NAME = "HumanProbe";
-export const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
+const DEFAULT_HUMAN_NAME = "HumanProbe";
+const DEFAULT_VIEWPORT = { width: 1440, height: 900 };
 export const DEFAULT_RUNTIME_READY_TIMEOUT_MS = 90_000;
 // Software-rendered hosts (no GPU in headless Chromium) can exceed the default
 // on their first shader-compiling frame; QA_STATE_READ_TIMEOUT_MS raises the
 // budget without loosening it for provisioned machines.
-export const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
+const DEFAULT_STATE_READ_TIMEOUT_MS = (() => {
   const override = Number(process.env.QA_STATE_READ_TIMEOUT_MS);
   return Number.isFinite(override) && override >= 1_000 ? override : 9_000;
 })();
-export const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
-export const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
+const DEFAULT_BROWSER_CLEANUP_TIMEOUT_MS = 30_000;
+const DEFAULT_SHOT_TIMEOUT_MS = 120_000;
 // Same escape hatch as QA_STATE_READ_TIMEOUT_MS: software-rendered hosts can
 // exceed the asset budget while shaders compile on first paint.
-export const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
+const DEFAULT_QA_ASSET_READY_TIMEOUT_MS = (() => {
   const override = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
   return Number.isFinite(override) && override >= 1_000 ? override : 20_000;
 })();
-export const DEFAULT_ROUTE_TICK_MS = 100;
-export const DEFAULT_WAYPOINT_TICK_MS = 200;
-export const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
+const DEFAULT_ROUTE_TICK_MS = 100;
+const DEFAULT_WAYPOINT_TICK_MS = 200;
+const DEFAULT_WAYPOINT_TIMEOUT_MS = 20_000;
 export const REQUIRED_CORE_SHOT_COUNT = 12;
 export const REQUIRED_CLOSEUP_SHOT_COUNT = 4;
-export const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
+const DEFAULT_REVIEW_SHOT_COUNT = REQUIRED_CORE_SHOT_COUNT + REQUIRED_CLOSEUP_SHOT_COUNT;
 export const DEFAULT_SHOT_CAMERA_TOLERANCE = Object.freeze({
   positionM: 0.02,
   angleDeg: 0.25,
   fovDeg: 0.05,
 });
-export const QA_CAPTURE_STATE_SCHEMA_VERSION = 1;
-export const RUNTIME_IDENTITY_SEARCH_PARAMS = Object.freeze([
+const QA_CAPTURE_STATE_SCHEMA_VERSION = 1;
+const RUNTIME_IDENTITY_SEARCH_PARAMS = Object.freeze([
   "map",
   "autostart",
   "name",
   "spawn",
   "shot",
 ]);
-export const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
+const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
   ...RUNTIME_IDENTITY_SEARCH_PARAMS,
   ...Object.keys(SHIP_QA_SEARCH_PARAMS),
   "qaProfile",
@@ -68,7 +59,7 @@ export const CAPTURE_PROTECTED_SEARCH_PARAMS = Object.freeze([
   "vm",
   "qaTargets",
 ]);
-export const SIGNOFF_CAPTURE_EXTRA_SEARCH_PARAMS = Object.freeze([
+const SIGNOFF_CAPTURE_EXTRA_SEARCH_PARAMS = Object.freeze([
   "qaAssetTimeoutMs",
 ]);
 
@@ -167,7 +158,7 @@ function captureProfileFromUrl(value) {
   }
 }
 
-export function assertSafeRuntimeSearchParams(extraSearchParams, options = {}) {
+function assertSafeRuntimeSearchParams(extraSearchParams, options = {}) {
   const protectedParams = new Set(options.protectedParams ?? RUNTIME_IDENTITY_SEARCH_PARAMS);
   const collisions = Object.entries(extraSearchParams ?? {})
     .filter(([key, value]) => protectedParams.has(key) && value !== null && value !== undefined && value !== false)
@@ -202,7 +193,7 @@ export function assertCaptureSearchParamsPolicy(extraSearchParams, options = {})
   }
 }
 
-export function assertAuthoredCaptureShotIds(shotIds, authoredShotIds) {
+function assertAuthoredCaptureShotIds(shotIds, authoredShotIds) {
   if (!Array.isArray(shotIds) || shotIds.length === 0) {
     throw new Error("[capture:shots] at least one authored shot id is required");
   }
@@ -326,7 +317,7 @@ export function evaluateRuntimeShotCameraPose(state, tolerance = {}) {
   };
 }
 
-export function assertRuntimeShotCameraPose(state, tolerance = {}) {
+function assertRuntimeShotCameraPose(state, tolerance = {}) {
   const result = evaluateRuntimeShotCameraPose(state, tolerance);
   if (!result.matches) {
     throw new Error(`[shot-camera] ${result.reason}`);
@@ -484,6 +475,13 @@ export function buildRuntimeUrl(baseUrl, options = {}) {
     url.searchParams.set("spawn", spawn);
   }
 
+  // Apply the asset-only host budget to every route builder, including human
+  // and mobile probes. Explicit per-test values continue to take precedence.
+  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
+  if (Number.isFinite(assetTimeoutOverride) && assetTimeoutOverride >= 1_000
+    && !("qaAssetTimeoutMs" in extraSearchParams)) {
+    url.searchParams.set("qaAssetTimeoutMs", String(Math.round(assetTimeoutOverride)));
+  }
   for (const [key, rawValue] of Object.entries(extraSearchParams)) {
     if (rawValue === null || rawValue === undefined || rawValue === false) continue;
     url.searchParams.set(key, String(rawValue));
@@ -553,6 +551,9 @@ export function attachConsoleRecorder(page) {
   };
 
   page.on("console", (message) => {
+    if (message.text().startsWith("[renderer] ")) {
+      console.info(`[browser ${page.context?.()?.browser?.()?.version?.() ?? "unknown"}] ${message.text()}`);
+    }
     push({
       kind: "console",
       type: message.type(),
@@ -705,7 +706,7 @@ export function findHighResolutionTextureRequests(requestUrls) {
 export function assertQaNetworkTexturePolicy(network, runtimeUrl) {
   const params = new URL(runtimeUrl).searchParams;
   const qaProfile = captureProfileFromUrl(runtimeUrl);
-  const requestedTier = params.get("floorRes") ?? params.get("floor-res") ?? "1k";
+  const requestedTier = params.get("floorRes") ?? "1k";
   if (
     params.get("qa") !== "1"
     || !["qa", "cell-review"].includes(qaProfile)
@@ -811,6 +812,8 @@ async function collectRuntimeFailureDiagnostics(page, options, error) {
     shotId: options.shotId ?? null,
     url: page.url(),
     lastSuccessfulStateAt: lastSuccessfulStateAtByPage.get(page) ?? null,
+    browserVersion: page.context?.()?.browser?.()?.version?.() ?? null,
+    rendererEvents: consolePayload.events.filter((event) => event.text?.startsWith("[renderer] ")),
     heartbeat,
     readyState,
     failureKind: classifyRuntimeFailure({
@@ -997,7 +1000,7 @@ export async function readDocumentedAgentState(page) {
   return state;
 }
 
-export async function waitForDocumentedRuntimeReady(page, options = {}) {
+async function waitForDocumentedRuntimeReady(page, options = {}) {
   const {
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
   } = options;
@@ -1047,6 +1050,7 @@ export async function gotoAgentRuntimeViaUi(page, options = {}) {
 }
 
 export async function waitForRuntimeReady(page, options = {}) {
+  if (!consoleRecorderByPage.has(page) && typeof page.on === "function") attachConsoleRecorder(page);
   const {
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
     expectedShotId = null,
@@ -1101,7 +1105,7 @@ export async function waitForRuntimeReady(page, options = {}) {
           }
           return { runtimeReady: false, readyState: null, qaCapture };
         }, expectedShotId),
-        Math.min(2_000, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
+        Math.min(DEFAULT_STATE_READ_TIMEOUT_MS, Math.max(1, timeoutMs - (Date.now() - bootStartedAt))),
         "runtime boot readiness probe",
       );
       consecutiveProbeTimeouts = 0;
@@ -1132,10 +1136,10 @@ export async function waitForRuntimeReady(page, options = {}) {
     } catch (error) {
       if (error instanceof Error && error.message.includes("[qa-capture]")) throw error;
       if (error instanceof RuntimeOperationTimeoutError) {
-        // Asset compilation can briefly occupy the browser main thread for
-        // more than the lightweight 2s probe budget. Treat one or two isolated
-        // stalls as boot progress; three consecutive stalls still fail fast
-        // instead of hiding a genuinely wedged runtime until the 90s deadline.
+        // Use the same operation deadline as actual state reads. Linux traces
+        // show valid Ready responses in 3.6–8.1s; the former 2s probe discarded
+        // those responses and falsely reported a permanently stalled runtime.
+        // Three failures still stop polling before the overall boot deadline.
         consecutiveProbeTimeouts += 1;
         lastBootError = error;
         if (consecutiveProbeTimeouts >= 3) {
@@ -1144,7 +1148,7 @@ export async function waitForRuntimeReady(page, options = {}) {
             {
               routeId,
               shotId: expectedShotId,
-              timeoutMs: error.details?.timeoutMs ?? 2_000,
+              timeoutMs: error.details?.timeoutMs ?? DEFAULT_STATE_READ_TIMEOUT_MS,
             },
           );
         }
@@ -1155,6 +1159,10 @@ export async function waitForRuntimeReady(page, options = {}) {
     await page.waitForTimeout(50);
   }
   if (lastBootState?.runtimeReady !== true) {
+    const failure = lastBootError ?? new Error(`Runtime did not become active within ${timeoutMs}ms`);
+    const diagnostics = await collectRuntimeFailureDiagnostics(page, {
+      operation: "runtime-ready", routeId, shotId: expectedShotId, ...(artifactDir ? { artifactDir } : {}),
+    }, failure);
     throw new RuntimeOperationTimeoutError(
       `[runtime-ready] boot did not become active within ${timeoutMs}ms | route=${routeId ?? "none"} | shot=${expectedShotId ?? "none"} | qaCapture=${JSON.stringify(lastBootState?.qaCapture ?? null)} | last=${lastBootError instanceof Error ? lastBootError.message : String(lastBootError ?? "none")}`,
       {
@@ -1162,6 +1170,7 @@ export async function waitForRuntimeReady(page, options = {}) {
         shotId: expectedShotId,
         timeoutMs,
         qaCapture: lastBootState?.qaCapture ?? null,
+        diagnostics,
       },
     );
   }
@@ -1194,14 +1203,7 @@ export async function gotoAgentRuntime(page, options = {}) {
     artifactDir = null,
     routeId = null,
   } = options;
-  // The runtime clamps this to [1s, 120s]; the env knob lets software-rendered
-  // hosts extend the in-page asset budget without touching every caller.
-  const assetTimeoutOverride = Number(process.env.QA_ASSET_READY_TIMEOUT_MS);
-  const extraSearchParams = Number.isFinite(assetTimeoutOverride)
-    && assetTimeoutOverride >= 1_000
-    && !("qaAssetTimeoutMs" in rawExtraSearchParams)
-    ? { ...rawExtraSearchParams, qaAssetTimeoutMs: Math.round(assetTimeoutOverride) }
-    : rawExtraSearchParams;
+  const extraSearchParams = rawExtraSearchParams;
 
   await page.goto(
     buildRuntimeUrl(baseUrl, {
@@ -1277,9 +1279,9 @@ export async function advanceRuntime(page, stepMs, options = {}) {
 export async function renderRuntimeFrame(page) {
   const rendered = await evaluateRuntimeState(
     page,
-    () => {
+    async () => {
       if (typeof window.__qa_render_frame !== "function") return false;
-      window.__qa_render_frame();
+      await window.__qa_render_frame();
       return true;
     },
     undefined,
@@ -1459,7 +1461,7 @@ export function validateQaCaptureState(state, options = {}) {
   return { passed: errors.length === 0, errors };
 }
 
-export async function readQaCaptureState(page, options = {}) {
+async function readQaCaptureState(page, options = {}) {
   return evaluateRuntimeState(
     page,
     () => window.__qa_capture_state?.() ?? null,

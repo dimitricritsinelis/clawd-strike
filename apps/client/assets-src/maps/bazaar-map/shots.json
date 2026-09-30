@@ -1,0 +1,1121 @@
+{
+  "metadata": {
+    "mapId": "bazaar-map",
+    "name": "bazaar-map",
+    "version": "3.0",
+    "units": "meters",
+    "coordinateSystem": {
+      "origin": "southwest_corner_of_playable_boundary",
+      "axes": {
+        "x": "east(+)",
+        "y": "north(+)",
+        "z": "up(+)"
+      },
+      "yaw_degrees": "0=+Y(north), 90=+X(east), 180=-Y(south), 270=-X(west)"
+    },
+    "shotCount": 16,
+    "coreShotCount": 12,
+    "closeupShotCount": 4,
+    "compareShotId": "SHOT_02_SPAWN_A_TO_BAZAAR",
+    "acceptanceDefaults": {
+      "expectedAssetModes": {
+        "floor": [
+          "pbr"
+        ],
+        "wall": [
+          "pbr"
+        ],
+        "props": [
+          "bazaar"
+        ]
+      },
+      "cameraTolerance": {
+        "positionM": 0.05,
+        "angleDeg": 0.35,
+        "fovDeg": 0.1
+      },
+      "visualTelemetry": {
+        "required": true,
+        "forbiddenRepresentations": [
+          "procedural-proxy",
+          "placeholder"
+        ],
+        "forbiddenArtifactTags": [
+          "duplicate-representation",
+          "exposed-shell",
+          "backface",
+          "floor-gap",
+          "unsupported-slab",
+          "exterior-opening",
+          "interpenetration",
+          "invalid-scale",
+          "placeholder",
+          "procedural-proxy"
+        ]
+      }
+    },
+    "humanReviewPolicy": {
+      "status": "NOT_APPROVED",
+      "approvalAuthority": "human",
+      "automatedApprovalAllowed": false,
+      "minimumCategoryScore": 4,
+      "categories": [
+        {
+          "id": "architecture",
+          "label": "Architecture",
+          "description": "Closed, supported massing and coherent facade construction."
+        },
+        {
+          "id": "materials",
+          "label": "Materials",
+          "description": "Consistent scale, palette, roughness, and believable transitions."
+        },
+        {
+          "id": "semantic-correctness",
+          "label": "Semantic correctness",
+          "description": "Doors, windows, signs, stalls, landmarks, and props read as their intended objects."
+        },
+        {
+          "id": "grounding",
+          "label": "Grounding and attachment",
+          "description": "Props, canopies, trims, and structures meet supporting surfaces without gaps or clipping."
+        },
+        {
+          "id": "district-identity",
+          "label": "District identity",
+          "description": "Each district is distinct while belonging to one Levantine old-city kit."
+        },
+        {
+          "id": "lighting",
+          "label": "Lighting",
+          "description": "Sun, shade, recesses, and contact shadows establish place without harming navigation."
+        },
+        {
+          "id": "gameplay-readability",
+          "label": "Gameplay readability",
+          "description": "Routes, cover, enemies, thresholds, and elevation remain immediately legible."
+        }
+      ]
+    },
+    "notes": [
+      "V3 deterministic visual review cameras. Camera coordinates use design x/east, y/north, z/up.",
+      "The required inventory is twelve core views plus four closeups; synthetic compare shots are forbidden.",
+      "Automated acceptance rejects camera drift, wrong asset identity, proxy duplication, grounding/scale/material/shadow errors, artifacts, sky-only frames, duplicate viewpoints, and runtime warnings. Automated checks never approve the map."
+    ]
+  },
+  "shots": [
+    {
+      "id": "SHOT_01_TOPDOWN_ESTABLISHING",
+      "captureKind": "core",
+      "expectedCameraZoneId": "FOUNTAIN_COURT",
+      "label": "V3 topdown establishing",
+      "description": "High oblique overview of all three routes and the raised west loop.",
+      "camera": {
+        "pos": {
+          "x": 28,
+          "y": 46,
+          "z": 95
+        },
+        "lookAt": {
+          "x": 28,
+          "y": 46,
+          "z": 0
+        },
+        "fovDeg": 55
+      },
+      "durationSec": 4,
+      "tags": [
+        "debug",
+        "overview",
+        "v3"
+      ],
+      "reviewFocus": [
+        "three macro routes",
+        "staggered cross-links",
+        "sealed perimeter",
+        "raised terrace loop"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        },
+        "requiredSceneTags": [
+          "LMK_FOUNTAIN_01"
+        ]
+      }
+    },
+    {
+      "id": "SHOT_02_SPAWN_A_TO_BAZAAR",
+      "captureKind": "core",
+      "expectedCameraZoneId": "SPAWN_A_COURTYARD",
+      "label": "Spawn A into Spice Street",
+      "description": "Player-eye entrance into the southern spice district.",
+      "camera": {
+        "pos": {
+          "x": 28,
+          "y": 8,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 24,
+          "y": 23,
+          "z": 1.8
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "spawn-a",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "three-route access",
+        "warm merchant frontage",
+        "broken distant sightline"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_03_FOUNTAIN_COURT",
+      "captureKind": "core",
+      "expectedCameraZoneId": "FOUNTAIN_COURT",
+      "label": "Fountain Court release",
+      "description": "Main-lane compression opens into the off-center fountain court.",
+      "camera": {
+        "pos": {
+          "x": 27,
+          "y": 34.5,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 24.5,
+          "y": 43.5,
+          "z": 1.2
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "fountain-court"
+      ],
+      "reviewFocus": [
+        "off-center fountain",
+        "lateral jog",
+        "clear rotation pocket"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        },
+        "requiredSceneTags": [
+          "lmk-fountain-01"
+        ],
+        "visualTelemetry": {
+          "requiredVisibleAssets": [
+            {
+              "placementId": "PLACE_FOUNTAIN_LMK_FOUNTAIN_01",
+              "assetId": "ASSET_FOUNTAIN",
+              "semanticClass": "landmark",
+              "representations": [
+                "model",
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.002,
+                "max": 0.35
+              },
+              "dimensionsM": {
+                "width": {
+                  "min": 2.8,
+                  "max": 3.2
+                },
+                "depth": {
+                  "min": 2.8,
+                  "max": 3.2
+                },
+                "height": {
+                  "min": 1.2,
+                  "max": 1.4
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "SHOT_04_TEXTILE_ARCADE",
+      "captureKind": "core",
+      "expectedCameraZoneId": "TEXTILE_ARCADE",
+      "label": "Textile Arcade compression",
+      "description": "Shaded textile passage looking north toward Rug Gate.",
+      "camera": {
+        "pos": {
+          "x": 29,
+          "y": 50,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 33,
+          "y": 58,
+          "z": 1.9
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "textile-arcade"
+      ],
+      "reviewFocus": [
+        "cloth shade",
+        "deep shop recesses",
+        "six-meter clear route"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_05_TEA_TERRACE",
+      "captureKind": "core",
+      "expectedCameraZoneId": "TEA_TERRACE",
+      "label": "Tea Terrace elevated route",
+      "description": "Player-eye view from the 1.4m terrace toward its stair descent.",
+      "camera": {
+        "pos": {
+          "x": 15,
+          "y": 59,
+          "z": 3.1
+        },
+        "lookAt": {
+          "x": 15,
+          "y": 70,
+          "z": 1.6
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "west",
+        "elevation",
+        "tea-terrace"
+      ],
+      "reviewFocus": [
+        "readable elevation",
+        "ten visual stair treads",
+        "four-meter clear terrace"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_06_CARAVAN_RAMP",
+      "captureKind": "core",
+      "expectedCameraZoneId": "CARAVAN_COURT",
+      "label": "Caravan Court to ramp",
+      "description": "West court frames the complete ramp ascent.",
+      "camera": {
+        "pos": {
+          "x": 10,
+          "y": 44,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 15,
+          "y": 54,
+          "z": 2.4
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "west",
+        "ramp"
+      ],
+      "reviewFocus": [
+        "smooth approach ramp",
+        "service character",
+        "no lower route beneath terrace"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_07_COVERED_DYERS_SOUK",
+      "captureKind": "core",
+      "expectedCameraZoneId": "COVERED_SOUK",
+      "label": "Covered Dyers Souk",
+      "description": "East route under blue-green cloth with dye-market dressing.",
+      "camera": {
+        "pos": {
+          "x": 49,
+          "y": 34,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 43,
+          "y": 44,
+          "z": 1.8
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "east",
+        "dyers-souk"
+      ],
+      "reviewFocus": [
+        "enclosed-feeling shade",
+        "dye vessels",
+        "merchant silhouette"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_08_DYERS_DOGLEG",
+      "captureKind": "core",
+      "expectedCameraZoneId": "DYERS_DOGLEG",
+      "label": "Dyers dogleg",
+      "description": "East lane S-bend confirms the long sightline is broken.",
+      "camera": {
+        "pos": {
+          "x": 49.5,
+          "y": 58,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 47.5,
+          "y": 70,
+          "z": 1.8
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "east",
+        "dogleg"
+      ],
+      "reviewFocus": [
+        "asymmetric S progression",
+        "quiet residential contrast",
+        "no cross-map sightline"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        },
+        "requiredSceneTags": [
+          "cover-north-01"
+        ]
+      }
+    },
+    {
+      "id": "SHOT_09_RUG_GATE",
+      "captureKind": "core",
+      "expectedCameraZoneId": "RUG_GATE",
+      "label": "Rug Gate approach",
+      "description": "Northern main lane frames the hero gate and rug merchants.",
+      "camera": {
+        "pos": {
+          "x": 27.5,
+          "y": 65.5,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 27.2,
+          "y": 76.3,
+          "z": 3.2
+        },
+        "fovDeg": 68
+      },
+      "durationSec": 4,
+      "tags": [
+        "visual",
+        "rug-gate",
+        "landmark"
+      ],
+      "reviewFocus": [
+        "hero arch hierarchy",
+        "rug dressing",
+        "restrained blue accents"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        },
+        "requiredSceneTags": [
+          "lmk-rug-gate-01"
+        ],
+        "visualTelemetry": {
+          "requiredVisibleAssets": [
+            {
+              "placementId": "PLACE_RUG_ARCH_LMK_RUG_GATE_01",
+              "assetId": "ASSET_BZ04_RUG_GATE",
+              "semanticClass": "landmark",
+              "representations": [
+                "model",
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.01,
+                "max": 0.75
+              },
+              "dimensionsM": {
+                "width": {
+                  "min": 15.1,
+                  "max": 16.1
+                },
+                "height": {
+                  "min": 5.2,
+                  "max": 8.2
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "SHOT_10_NORTH_COURT",
+      "captureKind": "core",
+      "expectedCameraZoneId": "NORTH_COURT",
+      "label": "North Court",
+      "description": "East upper court showing route release and background massing.",
+      "camera": {
+        "pos": {
+          "x": 47,
+          "y": 64,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 50,
+          "y": 75,
+          "z": 2.2
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "visual",
+        "east",
+        "north-court"
+      ],
+      "reviewFocus": [
+        "court release",
+        "low-mid-tall skyline",
+        "palm silhouette"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_11_SPICE_CANOPY",
+      "captureKind": "core",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Spice canopy and frontage",
+      "description": "Closer look at merchant bays, shutters, signs, and overhead cloth.",
+      "camera": {
+        "pos": {
+          "x": 27,
+          "y": 18,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 22.1,
+          "y": 20.4,
+          "z": 2.2
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "visual",
+        "spice-street",
+        "canopy"
+      ],
+      "reviewFocus": [
+        "stable frontage rhythm",
+        "teal shutters",
+        "cloth shadow"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_12_SPAWN_B_RETURN",
+      "captureKind": "core",
+      "expectedCameraZoneId": "SPAWN_B_COURTYARD",
+      "label": "Spawn B return",
+      "description": "Northern spawn looking south through Rug Gate toward the market.",
+      "camera": {
+        "pos": {
+          "x": 28,
+          "y": 85,
+          "z": 1.7
+        },
+        "lookAt": {
+          "x": 27.2,
+          "y": 70,
+          "z": 2.2
+        },
+        "fovDeg": 72
+      },
+      "durationSec": 4,
+      "tags": [
+        "gameplay",
+        "spawn-b",
+        "rug-gate"
+      ],
+      "reviewFocus": [
+        "sealed exterior",
+        "three-route access",
+        "distinct northern identity"
+      ],
+      "acceptance": {
+        "expectedAssetModes": {
+          "floor": [
+            "pbr"
+          ],
+          "wall": [
+            "pbr"
+          ],
+          "props": [
+            "bazaar"
+          ]
+        },
+        "forbiddenSceneTags": [
+          "sky-only"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.72,
+          "minNonSkyRatio": 0.28,
+          "minDetailRatio": 0.08
+        },
+        "cameraTolerance": {
+          "positionM": 0.05,
+          "angleDeg": 0.35,
+          "fovDeg": 0.1
+        },
+        "requiredSceneTags": [
+          "hero-landmark"
+        ]
+      }
+    },
+    {
+      "id": "SHOT_13_CLOSEUP_MERCHANT_FACADE",
+      "captureKind": "closeup",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Merchant door facade closeup",
+      "description": "Close inspection of an ordinary timber shop door, shuttered window, trim, and wall junction.",
+      "camera": {
+        "pos": {
+          "x": 25.2,
+          "y": 18.5,
+          "z": 1.55
+        },
+        "lookAt": {
+          "x": 21.1,
+          "y": 21.8,
+          "z": 2.2
+        },
+        "fovDeg": 52
+      },
+      "durationSec": 4,
+      "tags": [
+        "closeup",
+        "facade",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "opening depth and structural support",
+        "ordinary timber door semantics",
+        "material scale and wall-base contact",
+        "no overlapping opening, stall, sign, or canopy"
+      ],
+      "acceptance": {
+        "requiredSceneTags": [],
+        "screenCoverage": {
+          "maxSkyRatio": 0.35,
+          "minNonSkyRatio": 0.65,
+          "minDetailRatio": 0.1
+        }
+      }
+    },
+    {
+      "id": "SHOT_14_CLOSEUP_PROP_GROUNDING",
+      "captureKind": "closeup",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Cover-cluster grounding closeup",
+      "description": "Low player-eye inspection of the Spice Street cover cluster and its floor contact.",
+      "camera": {
+        "pos": {
+          "x": 25.5,
+          "y": 28,
+          "z": 1.25
+        },
+        "lookAt": {
+          "x": 23,
+          "y": 27.6,
+          "z": 0.55
+        },
+        "fovDeg": 50
+      },
+      "durationSec": 4,
+      "tags": [
+        "closeup",
+        "props",
+        "grounding",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "grounding gaps at or below three centimeters",
+        "credible object scale and pivots",
+        "no imported-model/proxy duplication",
+        "no floor clipping or interpenetration"
+      ],
+      "acceptance": {
+        "requiredSceneTags": [
+          "COVER_SPICE_01"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.3,
+          "minNonSkyRatio": 0.7,
+          "minDetailRatio": 0.1
+        },
+        "visualTelemetry": {
+          "requiredVisibleAssets": [
+            {
+              "placementId": "PLACE_SPICE_COVER_CORE_COVER_SPICE_01",
+              "assetId": "ASSET_COVER_GOODS",
+              "semanticClass": "cover",
+              "representations": [
+                "model",
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.08,
+                "max": 0.8
+              },
+              "dimensionsM": {
+                "width": {
+                  "min": 1.3,
+                  "max": 2.8
+                },
+                "depth": {
+                  "min": 0.7,
+                  "max": 1.8
+                },
+                "height": {
+                  "min": 0.7,
+                  "max": 1.7
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "SHOT_15_CLOSEUP_CANOPY_ATTACHMENT",
+      "captureKind": "closeup",
+      "expectedCameraZoneId": "SPICE_STREET",
+      "label": "Canopy attachment closeup",
+      "description": "Upward close inspection of supported cloth, finished edges, and its wall/pole attachments.",
+      "camera": {
+        "pos": {
+          "x": 25.2,
+          "y": 18.2,
+          "z": 3
+        },
+        "lookAt": {
+          "x": 21.05,
+          "y": 20.2,
+          "z": 5.4
+        },
+        "fovDeg": 50
+      },
+      "durationSec": 4,
+      "tags": [
+        "closeup",
+        "canopy",
+        "attachment",
+        "spice-street"
+      ],
+      "reviewFocus": [
+        "visible structural support",
+        "finished cloth edge and believable sag",
+        "no floating poles or unsupported slab silhouette",
+        "clean wall attachment and cast shadow"
+      ],
+      "acceptance": {
+        "screenCoverage": {
+          "maxSkyRatio": 0.82,
+          "minNonSkyRatio": 0.18,
+          "minDetailRatio": 0.08
+        }
+      }
+    },
+    {
+      "id": "SHOT_16_CLOSEUP_FOUNTAIN_MATERIAL",
+      "captureKind": "closeup",
+      "expectedCameraZoneId": "FOUNTAIN_COURT",
+      "label": "Fountain material closeup",
+      "description": "Player-eye material and contact inspection of the octagonal basin, water, tile, drain, and planter.",
+      "camera": {
+        "pos": {
+          "x": 27.5,
+          "y": 40.3,
+          "z": 1.3
+        },
+        "lookAt": {
+          "x": 24.5,
+          "y": 43.5,
+          "z": 0.7
+        },
+        "fovDeg": 50
+      },
+      "durationSec": 4,
+      "tags": [
+        "closeup",
+        "landmark",
+        "materials",
+        "fountain-court"
+      ],
+      "reviewFocus": [
+        "octagonal carved-stone silhouette",
+        "restrained tile and shallow water",
+        "wet rim, drain, planter, and floor transition",
+        "no primitive cylinders or floating palm"
+      ],
+      "acceptance": {
+        "requiredSceneTags": [
+          "LMK_FOUNTAIN_01"
+        ],
+        "screenCoverage": {
+          "maxSkyRatio": 0.35,
+          "minNonSkyRatio": 0.65,
+          "minDetailRatio": 0.1
+        },
+        "visualTelemetry": {
+          "requiredVisibleAssets": [
+            {
+              "placementId": "PLACE_FOUNTAIN_LMK_FOUNTAIN_01",
+              "assetId": "ASSET_FOUNTAIN",
+              "semanticClass": "landmark",
+              "representations": [
+                "model",
+                "module"
+              ],
+              "materialModes": [
+                "pbr"
+              ],
+              "shadowModes": [
+                "cast_receive"
+              ],
+              "maxGroundingGapM": 0.03,
+              "screenAreaRatio": {
+                "min": 0.08,
+                "max": 0.85
+              },
+              "dimensionsM": {
+                "width": {
+                  "min": 2.8,
+                  "max": 3.2
+                },
+                "depth": {
+                  "min": 2.8,
+                  "max": 3.2
+                },
+                "height": {
+                  "min": 1.2,
+                  "max": 1.4
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

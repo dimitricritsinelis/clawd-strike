@@ -7,6 +7,7 @@ import {
   normalizeCompositionWaiverRegistry,
 } from "./composition-waivers.mjs";
 import { validateMapSpecAgainstSchema } from "../gen-map-runtime.mjs";
+import { MAP_SOURCE_ABS } from "./mapPaths.mjs";
 
 function registryDocument(waivers) {
   return {
@@ -57,7 +58,7 @@ function approvedWaiver(overrides = {}) {
 
 test("authoritative legacy ids exactly match the allowlist while isolated subsets remain testable", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const registry = normalizeCompositionWaiverRegistry(raw);
@@ -80,7 +81,7 @@ test("authoritative legacy ids exactly match the allowlist while isolated subset
 
 test("legacy-migrated waivers must remain exact members of the closed migration", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const [legacyWaiver] = raw.waivers;
@@ -103,27 +104,29 @@ test("legacy-migrated waivers must remain exact members of the closed migration"
 
 test("normalizer and schema reject ignored or cross-shape fields", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const schema = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.schema.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaiversSchema,
     "utf8",
   ));
-  const canopy = raw.waivers.find((waiver) => waiver.kind === "canopy-opening");
-  assert.ok(canopy);
+  // The canopy-opening waivers were resolved on 2026-09-07; use the retained hard-overlap
+  // waiver and give it a field that only the canopy shape knows.
+  const overlap = raw.waivers.find((waiver) => waiver.kind === "hard-overlap");
+  assert.ok(overlap);
 
   const crossShapeMatch = structuredClone(raw);
-  const crossShapeCanopy = crossShapeMatch.waivers.find((waiver) => waiver.id === canopy.id);
-  assert.ok(crossShapeCanopy);
-  crossShapeCanopy.match.placementId = "IGNORED_BUT_SCHEMA_KNOWN";
+  const crossShapeOverlap = crossShapeMatch.waivers.find((waiver) => waiver.id === overlap.id);
+  assert.ok(crossShapeOverlap);
+  crossShapeOverlap.match.anchorId = "IGNORED_BUT_SCHEMA_KNOWN";
   assert.throws(
     () => normalizeTestRegistry(crossShapeMatch),
-    /match has unsupported fields: placementId/,
+    /match has unsupported fields: anchorId/,
   );
   assert.throws(
     () => validateMapSpecAgainstSchema(crossShapeMatch, schema),
-    /expected exactly one schema variant|placementId: additional property is not allowed/,
+    /expected exactly one schema variant|anchorId: additional property is not allowed/,
   );
 
   const rootExtra = { ...raw, unexpected: true };
@@ -142,7 +145,7 @@ test("normalizer and schema reject ignored or cross-shape fields", async () => {
 
 test("legacy hashes use canonical object-key order", async () => {
   const raw = JSON.parse(await readFile(
-    new URL("../../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+    MAP_SOURCE_ABS.compositionWaivers,
     "utf8",
   ));
   const reordered = {

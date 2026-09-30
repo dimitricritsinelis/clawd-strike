@@ -4,26 +4,20 @@ import test from "node:test";
 import {
   QA_PALM_DIRECT_TEXTURE_URLS,
   QA_RENDERER_DIRECT_TEXTURE_URLS,
-  QA_STAINED_GLASS_DIRECT_TEXTURE_URLS,
   QaAssetReadinessTracker,
   createQaAssetPlan,
   hashQaAssetRequestIds,
+  plannedFloorMaterialIds,
+  plannedPropModelIds,
   preloadQaDirectTextures,
   qaDirectTextureRequestId,
-  qaFacadeModelRequestId,
   resolveQaAssetProfile,
   resolveQaAssetTimeoutMs,
   type QaAssetPlan,
 } from "./assetReadiness";
-import {
-  parseAnchorsSpec,
-  parseBlockoutSpec,
-  type RuntimeMapAssets,
-} from "../map/types";
-import {
-  parsePropModelManifest,
-  resolvePropModelUrlForQuality,
-} from "../render/models/PropModelLibrary";
+import { parseAnchorsSpec, parseBlockoutSpec } from "../map/spec/parseMapSpec";
+import type { RuntimeMapAssets } from "../map/spec/types";
+import { WALL_FOOT_CLUTTER_MODEL_IDS } from "../map/atmosphere/buildWallFootClutter";
 
 function fixtureMap(): RuntimeMapAssets {
   return {
@@ -97,8 +91,6 @@ function trackerPlan(requestIds: readonly string[] = []): QaAssetPlan {
     floorMaterialIds: [],
     wallMaterialIds: [],
     propModelIds: [],
-    doorModelIds: [],
-    facadeModelIds: [],
     directTextureUrls: [],
     requiredLogicalRequestIds: requestIds,
     hash: hashQaAssetRequestIds("qa", requestIds),
@@ -112,6 +104,23 @@ function directTexturePlan(urls: readonly string[]): QaAssetPlan {
     directTextureUrls: urls,
   };
 }
+
+test("retained prefab children preload after standalone dressing is retired", () => {
+  const map=fixtureMap();
+  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_spawn_cover"};
+  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["ph_wooden_crate_01"]);
+  map.blockout.dressingPlacements![0]!.runtime={mode:"procedural",id:"bazaar_cover_goods"};
+  assert.deepEqual(createQaAssetPlan(map,"qa").propModelIds,["cc0_spice_sack"]);
+});
+
+test("mobile prop plan drops only the R8 wall-foot clutter models", () => {
+  const map = fixtureMap();
+  map.blockout.mapId = "bazaar-map";
+  map.blockout.dressingPlacements![0]!.runtime = { mode: "procedural", id: "bazaar_spawn_cover" };
+  assert.deepEqual(plannedPropModelIds(map, false), ["ph_wooden_crate_01"]);
+  assert.deepEqual(plannedPropModelIds(map), [...new Set(["ph_wooden_crate_01", ...WALL_FOOT_CLUTTER_MODEL_IDS])].sort());
+  assert.deepEqual(createQaAssetPlan(map, "qa").propModelIds, plannedPropModelIds(map));
+});
 
 test("QA asset plan is deterministic and sorts compiled dependencies", () => {
   const first = createQaAssetPlan(fixtureMap(), "cell-review");
@@ -138,168 +147,93 @@ test("QA asset plan is deterministic and sorts compiled dependencies", () => {
   );
 });
 
-test("current V3 plan derives door models only from compiled runtime placements", () => {
+test("the shipped map plans only floor, wall, prop and direct-texture requests", () => {
   const runtimeSpecUrl = new URL(
     "../../../public/maps/bazaar-map/map_spec.json",
     import.meta.url,
   );
   const raw = JSON.parse(readFileSync(runtimeSpecUrl, "utf8")) as unknown;
-  const blockout = parseBlockoutSpec(raw, runtimeSpecUrl.pathname);
   const mapAssets: RuntimeMapAssets = {
-    blockout,
+    blockout: parseBlockoutSpec(raw, runtimeSpecUrl.pathname),
     anchors: parseAnchorsSpec(raw, runtimeSpecUrl.pathname),
     shots: { metadata: {}, shots: [] },
   };
-  assert.match(blockout.formatVersion ?? "", /^3(?:\.|$)/);
-
-  const modelIdByAssetId = new Map(
-    (blockout.assetRegistry ?? [])
-      .filter((asset) => asset.runtime?.mode === "model")
-      .map((asset) => [asset.id, asset.runtime!.id] as const),
-  );
-  const compiledDoorModelIds = [...new Set(
-    (blockout.architecturePlacements ?? []).flatMap((placement) => {
-      if (placement.kind !== "facade_module" || placement.moduleKind !== "door" || !placement.assetId) {
-        return [];
-      }
-      const modelId = modelIdByAssetId.get(placement.assetId);
-      return modelId ? [modelId] : [];
-    }),
-  )].sort();
-  const plan = createQaAssetPlan(mapAssets, "cell-review", {
-    floorPbr: false,
-    wallPbr: false,
-    wallDetails: false,
-    bazaarProps: false,
-    doorModels: true,
-  });
-  assert.deepEqual(plan.doorModelIds, compiledDoorModelIds);
-  assert.ok(!plan.doorModelIds.includes("ph_rollershutter_window_02"));
-
-  const buildBlockoutSource = readFileSync(
-    new URL("../map/buildBlockout.ts", import.meta.url),
-    "utf8",
-  );
-  assert.match(
-    buildBlockoutSource,
-    /const wallDetailPlacements = isV3\s*\?\s*buildV3Architecture\(/,
-    "V3 maps must continue to bypass the legacy wallDetailPlacer door selector",
-  );
-});
-
-test("QA door loading selects the 1K derivative while normal loading keeps the 2K source", () => {
-  const manifestUrl = new URL(
-    "../../../public/assets/models/environment/bazaar/doors/models.json",
-    import.meta.url,
-  );
-  const entries = parsePropModelManifest(
-    JSON.parse(readFileSync(manifestUrl, "utf8")) as unknown,
-  );
-  const castleDoor = entries.find((entry) => entry.id === "ph_large_castle_door");
-  assert.ok(castleDoor);
-  assert.equal(
-    resolvePropModelUrlForQuality(castleDoor),
-    "large_castle_door/large_castle_door_2k.gltf",
-  );
-  assert.equal(
-    resolvePropModelUrlForQuality(castleDoor, "1k"),
-    "large_castle_door/large_castle_door_1k.gltf",
-  );
-  const rollerShutter = entries.find((entry) => entry.id === "ph_rollershutter_window_02");
-  assert.ok(rollerShutter);
-  assert.throws(
-    () => resolvePropModelUrlForQuality(rollerShutter, "1k"),
-    /missing required '1k' variant/,
-  );
-
-  const bootstrapSource = readFileSync(
-    new URL("../bootstrap.ts", import.meta.url),
-    "utf8",
-  );
-  assert.match(
-    bootstrapSource,
-    /if \(qaAssetTracker && qaAssetPlan\)[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL, \{[\s\S]*?quality: "1k",[\s\S]*?\}\);[\s\S]*?\} else \{[\s\S]*?PropModelLibrary\.load\(DOOR_MANIFEST_URL\)/,
-    "QA must select the 1K door variant while normal loading keeps the manifest default",
-  );
-});
-
-test("QA facade requests remain pending between prop and door packs until the GLB completes", async () => {
-  const map = fixtureMap();
-  map.blockout.architecturePlacements = [{
-    id: "massing", kind: "massing", frontageId: "frontage", zoneId: "A", face: "north",
-    profileId: "profile", massingProfileId: "mass", center: { x: 0, y: 0, z: 0 },
-    sizeM: { width: 4, depth: 2, height: 3 }, yawDeg: 0,
-    materialSlots: map.blockout.facadeProfiles![0]!.materialSlots,
-    roof: { style: "flat_parapet", setbackM: 0, parapetHeightM: 0.2, upperStorySetbackM: 0, elevationM: 3 },
-    facadeModelId: "spice-facade",
-  }];
-  const plan = createQaAssetPlan(map, "cell-review", {
-    floorPbr: false, wallPbr: false, wallDetails: false, bazaarProps: false, doorModels: true,
-  });
-  assert.deepEqual(plan.facadeModelIds, ["spice-facade"]);
-  const requestId = qaFacadeModelRequestId("spice-facade");
-  assert.ok(plan.requiredLogicalRequestIds.includes(requestId));
-  const tracker = new QaAssetReadinessTracker(plan, 20_000, () => 0, () => "stable");
-  let finishGlb!: () => void;
-  const loading = tracker.track(requestId, new Promise<void>((resolve) => { finishGlb = resolve; }));
-  // A poll after prior packs finish but before doors start must see the facade
-  // still pending, even when the manifest and all other requests have settled.
-  await Promise.resolve();
-  assert.deepEqual(tracker.state().pending, [requestId]);
-  assert.notEqual(tracker.state().observedPlanHash, plan.hash);
-  assert.equal(tracker.state().ready, false);
-  finishGlb();
-  await loading;
-  for (const id of plan.requiredLogicalRequestIds.filter((id) => id !== requestId)) {
-    tracker.start(id);
-    tracker.complete(id);
+  const plan = createQaAssetPlan(mapAssets, "cell-review");
+  assert.deepEqual(plan.floorMaterialIds, plannedFloorMaterialIds(mapAssets));
+  for (const id of plan.requiredLogicalRequestIds) {
+    assert.match(id, /^(?:floor-material|wall-material|prop-model|direct-texture):/);
   }
-  assert.deepEqual(tracker.state().pending, []);
-  assert.equal(tracker.state().observedPlanHash, plan.hash);
-
-  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
-  assert.match(bootstrapSource, /qaAssetPlan\?\.facadeModelIds\.map\(qaFacadeModelRequestId\)/);
-  assert.match(
-    bootstrapSource,
-    /for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\?\.start\(requestId\);\s*facadeModels = await PropModelLibrary\.load\(FACADE_MANIFEST_URL, \{[\s\S]*?requestObserver: qaAssetTracker\.observer[\s\S]*?\}\);\s*for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\?\.complete\(requestId\);/,
-    "the facade load must stay tracked across the entire awaited manifest and GLB load",
-  );
-  assert.match(bootstrapSource, /for \(const requestId of qaFacadeRequestIds\) qaAssetTracker\.fail\(requestId, error\);/);
 });
 
-test("QA direct-texture inventory matches every static buildProps asset URL", () => {
-  const buildPropsSource = readFileSync(
-    new URL("../map/buildProps.ts", import.meta.url),
-    "utf8",
+test("normal boot loads only the planned prop models, floor textures and wall textures", () => {
+  const assetLoadingSource = readFileSync(new URL("../bootstrap/assetLoading.ts", import.meta.url), "utf8");
+  const warmupSource = readFileSync(new URL("../warmup.ts", import.meta.url), "utf8");
+  const bootstrapSource = readFileSync(new URL("../bootstrap.ts", import.meta.url), "utf8");
+  for (const [name, source] of [
+    ["bootstrap.ts", bootstrapSource],
+    ["bootstrap/assetLoading.ts", assetLoadingSource],
+    ["warmup.ts", warmupSource],
+  ] as const) {
+    assert.doesNotMatch(source, /PropModelLibrary\.load\(PROP_MANIFEST_URL\)/, `${name} loads a whole model pack`);
+    assert.doesNotMatch(source, /preloadAllTextures\(wallQuality\)/, `${name} preloads every wall material`);
+    assert.doesNotMatch(
+      source,
+      /preloadAllTextures\((?:effectiveFloorQuality|parsed\.floorQuality)\)/,
+      `${name} preloads every floor material`,
+    );
+  }
+  assert.match(
+    assetLoadingSource,
+    /floorMaterials\.preloadAllTextures\(effectiveFloorQuality, \{\s*materialIds: new Set\(mapAssets \? plannedFloorMaterialIds\(mapAssets\) : \[\]\),\s*\}\);/,
   );
-  const declaredUrls = [...buildPropsSource.matchAll(
-    /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
-  )].map((match) => match[1]!);
+  assert.match(
+    warmupSource,
+    /if \(parsed\.floorMode === "pbr" && !isMobileDevice\(\)\) \{[\s\S]*?floorMaterials\.preloadAllTextures\(parsed\.floorQuality, \{\s*materialIds: new Set\(plannedFloorMaterialIds\(await mapLoad\)\),\s*\}\);/,
+    "warmup preloads only planned floors and skips them on mobile, where floors are blockout",
+  );
+  assert.match(
+    assetLoadingSource,
+    /propModels = await PropModelLibrary\.load\(PROP_MANIFEST_URL, \{\s*modelIds: new Set\(mapAssets \? plannedPropModelIds\(mapAssets, !mobile\) : \[\]\),\s*\}\);/,
+  );
+  assert.match(
+    assetLoadingSource,
+    /wallMaterials\.preloadAllTextures\(wallQuality, \{\s*materialIds: new Set\(mapAssets \? plannedWallMaterialIds\(mapAssets\) : \[\]\),\s*\}\);/,
+  );
+  assert.match(
+    warmupSource,
+    /wallMaterials\.preloadAllTextures\(wallQuality, \{\s*materialIds: new Set\(plannedWallMaterialIds\(await mapLoad\)\),\s*\}\);/,
+  );
+});
+
+test("QA facade GLB loads are observed and block capture when they fail", () => {
+  const assetLoadingSource = readFileSync(new URL("../bootstrap/assetLoading.ts", import.meta.url), "utf8");
+  assert.match(
+    assetLoadingSource,
+    /facadeModels = await PropModelLibrary\.load\(FACADE_MANIFEST_URL, \{[\s\S]*?\.\.\.\(qaAssetTracker \? \{ requestObserver: qaAssetTracker\.observer \} : \{\}\),\s*\}\);/,
+    "every facade manifest and GLB request must be tracked as a planned child request",
+  );
+  assert.match(
+    assetLoadingSource,
+    /if \(qaAssetTracker\) \{\s*throw new Error\(`\[qa-assets\] facade model pack failed; capture is blocked: \$\{message\}`\);/,
+  );
+});
+
+test("QA direct-texture inventory matches every static buildProps and propsCore asset URL", () => {
+  const declaredUrls = ["../map/props/buildProps.ts", "../map/props/families/propsCore.ts"].flatMap((path) => [
+    ...readFileSync(new URL(path, import.meta.url), "utf8").matchAll(
+      /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
+    ),
+  ].map((match) => match[1]!));
   assert.deepEqual(
     [...new Set(declaredUrls)].sort(),
     [...QA_RENDERER_DIRECT_TEXTURE_URLS].sort(),
-    "buildProps direct asset URLs changed without updating the QA asset plan",
+    "buildProps or propsCore direct asset URLs changed without updating the QA asset plan",
   );
-
-  const propsCoreSource = readFileSync(
-    new URL("../map/propFamilies/propsCore.ts", import.meta.url),
-    "utf8",
-  );
-  const propsCoreDeclaredUrls = [...propsCoreSource.matchAll(
-    /["'](\/assets\/(?:models|textures)\/[^"']+\.(?:jpg|jpeg|png|webp))["']/g,
-  )].map((match) => match[1]!);
-  const plannedPropTextureUrls = new Set<string>(QA_RENDERER_DIRECT_TEXTURE_URLS);
-  for (const url of new Set(propsCoreDeclaredUrls)) {
-    assert.ok(
-      plannedPropTextureUrls.has(url),
-      `propsCore direct asset '${url}' is absent from the QA asset plan`,
-    );
-  }
 });
 
-test("QA direct-texture inventory covers palm and stained-glass loader declarations", () => {
+test("QA direct-texture inventory covers palm loader declarations", () => {
   const palmSource = readFileSync(
-    new URL("../map/buildDecorativePalms.ts", import.meta.url),
+    new URL("../map/props/buildDecorativePalms.ts", import.meta.url),
     "utf8",
   );
   const palmDeclaredUrls = [...palmSource.matchAll(
@@ -313,41 +247,25 @@ test("QA direct-texture inventory covers palm and stained-glass loader declarati
     ])].sort(),
     "decorative palm texture declarations changed without updating the QA asset plan",
   );
-
-  const windowsSource = readFileSync(
-    new URL("../map/wallDetailFamilies/windows.ts", import.meta.url),
-    "utf8",
-  );
-  const stainedGlassBase = windowsSource.match(
-    /STAINED_GLASS_TEXTURE_BASE_URL\s*=\s*"([^"]+)"/,
-  )?.[1];
-  assert.ok(stainedGlassBase);
-  const stainedGlassDeclaredUrls = [...windowsSource.matchAll(
-    /\$\{STAINED_GLASS_TEXTURE_BASE_URL\}\/([^`]+\.(?:jpg|jpeg|png|webp))/g,
-  )].map((match) => `${stainedGlassBase}/${match[1]}`);
-  assert.deepEqual(
-    [...new Set(stainedGlassDeclaredUrls)].sort(),
-    [...QA_STAINED_GLASS_DIRECT_TEXTURE_URLS].sort(),
-    "stained-glass texture declarations changed without updating the QA asset plan",
-  );
 });
 
-test("QA plan includes only the selected palm tier and tracks stained glass when enabled", () => {
-  const map = fixtureMap();
-  map.anchors.anchors.push({
+test("QA plan includes only the selected palm tier and no unrendered window textures", () => {
+  const options = { floorPbr: false, wallPbr: false, bazaarProps: false, textureTier: "1k" } as const;
+  const anchorOnly = fixtureMap();
+  anchorOnly.anchors.anchors.push({
     id: "PALM_FIXTURE",
     type: "decorative_palm",
     zone: "A",
     pos: { x: 1, y: 1, z: 0 },
   });
-  const plan = createQaAssetPlan(map, "cell-review", {
-    floorPbr: false,
-    wallPbr: false,
-    wallDetails: true,
-    bazaarProps: false,
-    doorModels: false,
-    textureTier: "1k",
-  });
+  assert.deepEqual(
+    createQaAssetPlan(anchorOnly, "cell-review", options).directTextureUrls,
+    [],
+    "only the R8 atmosphere renders palms; a decorative_palm anchor alone does not",
+  );
+  const map = fixtureMap();
+  map.blockout.mapId = "bazaar-map";
+  const plan = createQaAssetPlan(map, "cell-review", options);
   for (const url of QA_PALM_DIRECT_TEXTURE_URLS["1k"]) {
     assert.ok(plan.directTextureUrls.includes(url));
   }
@@ -357,9 +275,7 @@ test("QA plan includes only the selected palm tier and tracks stained glass when
       assert.ok(!plan.directTextureUrls.includes(url));
     }
   }
-  for (const url of QA_STAINED_GLASS_DIRECT_TEXTURE_URLS) {
-    assert.ok(plan.directTextureUrls.includes(url));
-  }
+  assert.ok(!plan.directTextureUrls.some((url) => url.includes("/textures/environment/bazaar/windows/")));
 });
 
 test("QA readiness requires matching plan, zero failures, eight frames, and 500ms stability", () => {
@@ -592,4 +508,38 @@ test("QA profile and timeout require explicit, bounded parameters", () => {
   assert.equal(resolveQaAssetTimeoutMs(""), 20_000);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=100"), 1_000);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=500000"), 120_000);
+});
+
+
+test("pending snapshots include planned requests before starts and between completed batches", () => {
+  const tracker=new QaAssetReadinessTracker(trackerPlan(["logical:a","logical:b"]),1_000,()=>0,()=>"stable");
+  tracker.expectChild("child:a");
+  assert.deepEqual(tracker.state().pending,["child:a","logical:a","logical:b"]);
+  assert.equal(tracker.state().requestedCount,0);
+  assert.equal(tracker.state().completedCount,0);
+  tracker.start("logical:a");tracker.complete("logical:a");
+  const gap=tracker.state();
+  assert.deepEqual(gap.pending,["child:a","logical:b"]);
+  assert.equal(gap.requestedCount,1);assert.equal(gap.completedCount,1);
+  assert.notEqual(gap.observedPlanHash,gap.planHash);assert.equal(gap.ready,false);
+  tracker.start("unexpected:flight");
+  assert.deepEqual(tracker.state().pending,["child:a","logical:b","unexpected:flight"]);
+  tracker.fail("unexpected:flight",new Error("failed"));
+  assert.deepEqual(tracker.state().pending,["child:a","logical:b"]);
+  assert.deepEqual(tracker.state().unexpectedRequests,["unexpected:flight"]);
+  assert.equal(tracker.state().failed.length,1);
+});
+
+test("a planned request that never starts stays pending and times out", () => {
+  let now=0;
+  const tracker=new QaAssetReadinessTracker(trackerPlan(["logical"]),1_000,()=>now,()=>"stable");
+  tracker.expectChild("missing:child");
+  tracker.start("logical");tracker.complete("logical");
+  for(let i=0;i<8;i++)tracker.recordRenderedFrame(1);
+  now=1_001;
+  const state=tracker.state();
+  assert.deepEqual(state.pending,["missing:child"]);
+  assert.equal(state.requestedCount,1);assert.equal(state.completedCount,1);
+  assert.equal(state.observedPlanHash,state.planHash);
+  assert.equal(state.ready,false);assert.equal(state.timedOut,true);assert.equal(state.readyAtMs,null);
 });

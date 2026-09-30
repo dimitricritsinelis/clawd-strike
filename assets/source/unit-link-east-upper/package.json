@@ -1,0 +1,38 @@
+{
+  "models": [
+    {
+      "id": "bz04_roof_bundle_unit_link_east_upper",
+      "file": "roof-bundle-link-east-upper.glb",
+      "source": "repo://assets/source/bz04-shared-environment/build.py",
+      "license": "Project-Original"
+    },
+    {
+      "id": "section_unit_link_east_upper",
+      "file": "unit-link-east-upper.glb",
+      "source": "repo://assets/source/unit-link-east-upper/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_EAST_UPPER",
+    "modelId": "section_unit_link_east_upper",
+    "faces": [
+      "north",
+      "south"
+    ]
+  },
+  "placements": [
+    {
+      "id": "BZ04_ROOF_BUNDLE_UNIT_LINK_EAST_UPPER",
+      "modelId": "bz04_roof_bundle_unit_link_east_upper",
+      "position": {
+        "x": 37.5,
+        "y": 66.7,
+        "z": 7.0
+      },
+      "role": "dressing",
+      "yawDeg": 180
+    }
+  ],
+  "inputSha256": "b4afb9cec1d94821e1689e296b5395a362d3d447db9043e129bf1d59e307907d"
+}

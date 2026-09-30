@@ -23,18 +23,56 @@ function median(values) {
   return sorted.length % 2 === 0 ? (sorted[middle - 1] + sorted[middle]) / 2 : sorted[middle];
 }
 
+/** Runs inside page.evaluate; every measured rAF interval encloses a real QA render. */
+export function sampleRenderedFrameCadence(count) {
+  if (!Number.isInteger(count) || count < 1) throw new Error("Frame sample count must be positive.");
+  if (typeof window.__qa_render_frame !== "function" || typeof window.__qa_performance_state !== "function") {
+    throw new Error("Rendered frame sampling requires the QA render and performance hooks.");
+  }
+  return new Promise((resolve, reject) => {
+    const states = [];
+    let previousTimestamp = null;
+    let previousState = null;
+    const frame = async (timestamp) => {
+      try {
+        if (previousTimestamp !== null) {
+          const frameIntervalMs = timestamp - previousTimestamp;
+          if (!Number.isFinite(frameIntervalMs) || frameIntervalMs <= 0) {
+            throw new Error("requestAnimationFrame did not advance its timestamp.");
+          }
+          states.push({ ...previousState, frameIntervalMs });
+          if (states.length === count) {
+            resolve(states);
+            return;
+          }
+        }
+        await window.__qa_render_frame();
+        previousState = window.__qa_performance_state();
+        if (!previousState?.perf) throw new Error("Rendered frame performance telemetry is missing.");
+        previousTimestamp = timestamp;
+        window.requestAnimationFrame(frame);
+      } catch (error) {
+        reject(error);
+      }
+    };
+    window.requestAnimationFrame(frame);
+  });
+}
+
 export function summarizePerformanceSamples(states) {
   const perf = states.map((state) => state?.perf ?? {});
   const boot = states.map((state) => state?.boot?.readyAtMs);
+  const frameIntervals = states.map((state) => state?.frameIntervalMs)
+    .filter((value) => typeof value === "number" && Number.isFinite(value) && value > 0);
   return {
     sampleCount: states.length,
     drawCalls: Math.max(...finiteValues(perf.map((value) => value.drawCalls)), 0),
     triangles: Math.max(...finiteValues(perf.map((value) => value.triangles)), 0),
-    medianFps: median(perf.map((value) => value.fps)),
-    // The runtime's rAF-derived `msPerFrame` is vsync-pinned in browser QA.
-    // Prefer the rolling CPU step/render meter when present, while retaining
-    // the legacy field as a compatibility fallback for older captures.
-    medianFrameMs: median(perf.map((value) => value.cpuFrameMedianMs ?? value.msPerFrame)),
+    medianFps: median(frameIntervals.map((value) => 1000 / value)),
+    medianFrameIntervalMs: median(frameIntervals),
+    fpsMeasurement: "rendered-requestAnimationFrame-cadence",
+    // CPU submission cost is measured independently of display cadence.
+    medianFrameMs: median(perf.map((value) => value.cpuFrameMedianMs)),
     bootReadyMs: median(boot),
   };
 }

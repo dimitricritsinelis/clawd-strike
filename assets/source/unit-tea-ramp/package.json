@@ -1,0 +1,21 @@
+{
+  "models": [
+    {
+      "id": "section_unit_tea_ramp",
+      "file": "unit-tea-ramp.glb",
+      "source": "repo://assets/source/unit-tea-ramp/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "TEA_RAMP",
+    "modelId": "section_unit_tea_ramp",
+    "faces": [
+      "east",
+      "south",
+      "west"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "95ea4107eff07dac2ef0835553215b90bd53aabade58cafc2c4b16a479fed79b"
+}

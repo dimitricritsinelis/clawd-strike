@@ -1,9 +1,9 @@
-import type { RuntimeRect } from "../map/types";
+import type { RuntimeRect } from "../map/spec/types";
 
 const SURFACE_EPSILON_M = 0.001;
 const RAY_EPSILON = 1e-7;
 
-export type FlatTraversalSurfaceLike = {
+type FlatTraversalSurfaceLike = {
   id: string;
   zoneId: string;
   kind: "flat";
@@ -11,7 +11,7 @@ export type FlatTraversalSurfaceLike = {
   elevationM: number;
 };
 
-export type RampTraversalSurfaceLike = {
+type RampTraversalSurfaceLike = {
   id: string;
   zoneId: string;
   kind: "ramp";

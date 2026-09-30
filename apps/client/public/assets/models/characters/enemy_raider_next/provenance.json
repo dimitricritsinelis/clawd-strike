@@ -2,17 +2,17 @@
   "name": "Skinned raider candidate",
   "status": "Awaiting user design approval",
   "source": "repo://assets/source/enemy-raider/build.py",
-  "sourceMd5": "72f32baf24f696fb329204f18ad69bf7",
+  "sourceMd5": "c8f9c2a2ef31c6a89a8b910c0ab9fb6d",
   "license": "Existing project Tripo character; rifle derivative CC-BY-NC-4.0; new rig and motion Project-Original",
   "dependencies": [
     {
-      "file": "art-source/characters/enemy_raider/model_source_4k.glb",
+      "file": "assets/source/enemy-raider/donor/model_source_4k.glb",
       "source": "Existing repository Tripo export",
       "license": "Existing project asset; no new external acquisition",
       "md5": "d1d134b5700a6de5f412aa0d1072b41f"
     },
     {
-      "file": "apps/client/public/assets/models/weapons/ak47/ak47.glb",
+      "file": "assets/source/ak47/legacy/ak47.glb",
       "source": "https://sketchfab.com/3d-models/ak-47-384565b1779c450b90397232163e4e6d",
       "author": "lokeig",
       "license": "CC-BY-NC-4.0",
@@ -40,32 +40,8 @@
   ],
   "files": [
     {
-      "file": "raider-albedo.jpg",
-      "md5": "4520c3063937da2e650296003b639ae2"
-    },
-    {
-      "file": "raider-normal.jpg",
-      "md5": "8ba5f50389fdfd3a369fddf1a8d79517"
-    },
-    {
-      "file": "raider-orm.png",
-      "md5": "e633f2fc60d05aa55f049964f76ea8d9"
-    },
-    {
-      "file": "raider-rifle-0.jpg",
-      "md5": "8319d6def3240f9bbeb847a4d6b0620d"
-    },
-    {
-      "file": "raider-rifle-1.jpg",
-      "md5": "547ad398e318163cda6ebc201bdd36cb"
-    },
-    {
-      "file": "raider-rifle-2.jpg",
-      "md5": "0de42bfeee408e62a0b54d752593cdd3"
-    },
-    {
       "file": "raider.glb",
-      "md5": "99178d728b655a10ef1f0ff20e4c7dbf"
+      "md5": "40cdbd1c563635848f4f85c2b1fddee7"
     }
   ]
 }

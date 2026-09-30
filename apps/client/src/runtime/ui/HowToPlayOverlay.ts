@@ -1,3 +1,4 @@
+import { SANS_FONT, SERIF_FONT } from "../../shared/uiFonts";
 /**
  * HowToPlayOverlay — gameplay and buff guide opened from the PauseMenu.
  * Two sections: Gameplay Overview and Buffs.
@@ -18,8 +19,6 @@ import { createBuffDisplayCopy, type BuffDisplayCopy } from "./BuffDisplayCopy";
 
 /* ── Theme constants (mirrored from PauseMenu) ── */
 
-const SERIF_FONT = 'Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif';
-const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 /* ── Helpers ── */
 
@@ -364,7 +363,7 @@ export class HowToPlayOverlay {
         color: "#ffd78d",
         textAlign: "center",
       });
-      durationEl.textContent = this.buffCopy.standardDurationLabel;
+      durationEl.textContent = this.buffCopy.durationLabels[buffType];
 
       // Effect
       const effectEl = document.createElement("div");

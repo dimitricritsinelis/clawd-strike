@@ -20,16 +20,16 @@ export { normalizeChildExitCode };
 
 function assertOwnedServerIdentity(server) {
   if (server?.owned !== true) {
-    throw new Error("[bot:smoke:owned] server lifecycle did not return an owned server");
+    throw new Error("[smoke:bots] server lifecycle did not return an owned server");
   }
   if (typeof server.baseUrl !== "string" || server.baseUrl.length === 0) {
-    throw new Error("[bot:smoke:owned] owned server is missing its base URL");
+    throw new Error("[smoke:bots] owned server is missing its base URL");
   }
   if (typeof server.runToken !== "string" || server.runToken.length === 0) {
-    throw new Error("[bot:smoke:owned] owned server is missing its run token");
+    throw new Error("[smoke:bots] owned server is missing its run token");
   }
   if (!server.fingerprint || typeof server.fingerprint !== "object") {
-    throw new Error("[bot:smoke:owned] owned server is missing its source fingerprint");
+    throw new Error("[smoke:bots] owned server is missing its source fingerprint");
   }
 }
 
@@ -38,12 +38,12 @@ export async function runOwnedBotSmoke(options = {}) {
     childTimeoutMs = parseChildTimeout(
       process.env.BOT_SMOKE_TIMEOUT_MS,
       DEFAULT_BOT_SMOKE_TIMEOUT_MS,
-      "[bot:smoke:owned] BOT_SMOKE_TIMEOUT_MS",
+      "[smoke:bots] BOT_SMOKE_TIMEOUT_MS",
     ),
     killGraceMs = parseChildTimeout(
       process.env.QA_CHILD_KILL_GRACE_MS,
       5_000,
-      "[bot:smoke:owned] QA_CHILD_KILL_GRACE_MS",
+      "[smoke:bots] QA_CHILD_KILL_GRACE_MS",
     ),
     signalEmitter = process,
     spawnImpl = spawn,
@@ -87,7 +87,7 @@ export async function runOwnedBotSmoke(options = {}) {
 
     if (result.timedOut) {
       console.error(
-        `[bot:smoke:owned] timed out after ${childTimeoutMs}ms; terminated the bot smoke process`,
+        `[smoke:bots] timed out after ${childTimeoutMs}ms; terminated the bot smoke process`,
       );
       return 1;
     }

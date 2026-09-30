@@ -1,22 +1,18 @@
+import { asRecord, asString } from "../materials/pbrManifest";
 import { Group } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { disposeObjectRoot } from "../../utils/disposeObjectRoot";
+import { createSharedTextureLoadingManager } from "./sharedGltfTextures";
 
-type UnknownRecord = Record<string, unknown>;
-
-export type PropModelQuality = "1k";
-
-export type PropModelManifestEntry = {
+type PropModelManifestEntry = {
   id: string;
   url: string;
   scale: number;
-  variants: Partial<Record<PropModelQuality, { url: string }>>;
 };
 
 export type PropModelLoadOptions = {
   modelIds?: ReadonlySet<string>;
   concurrency?: number;
-  quality?: PropModelQuality;
   requestObserver?: {
     expectChild?: (id: string) => void;
     start: (id: string) => void;
@@ -37,29 +33,7 @@ export type PropModelLoadOptions = {
 const PROP_MODEL_ALBEDO_CORRECTION: Readonly<Record<string, readonly [number, number, number]>> = {
   ph_wooden_crate_01: [1.92, 1.66, 1.34],
   ph_wine_barrel_01: [1.86, 1.6, 1.3],
-  // The two door models ship as cool grey-blue weathered timber, which put a
-  // desaturated blue-grey slab in every opening on the map - the highest-contrast
-  // out-of-palette element in seven of the review cameras, reading as painted
-  // sheet metal rather than the dark oiled timber the references show. Scaling
-  // down and warming the base colour keeps the plank joints, ironwork and wear
-  // and only moves the wood species.
-  ph_large_castle_door: [0.72, 0.5, 0.32],
-  ph_rollershutter_window_02: [0.74, 0.53, 0.35],
 };
-
-function asRecord(value: unknown, context: string): UnknownRecord {
-  if (!value || typeof value !== "object" || Array.isArray(value)) {
-    throw new Error(`${context}: expected object`);
-  }
-  return value as UnknownRecord;
-}
-
-function asString(value: unknown, context: string): string {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error(`${context}: expected non-empty string`);
-  }
-  return value;
-}
 
 function asOptionalNumber(value: unknown, context: string): number | undefined {
   if (value === undefined) return undefined;
@@ -69,23 +43,7 @@ function asOptionalNumber(value: unknown, context: string): number | undefined {
   return value;
 }
 
-function parseVariants(
-  value: unknown,
-  context: string,
-): PropModelManifestEntry["variants"] {
-  if (value === undefined) return {};
-  const variants = asRecord(value, context);
-  const oneK = variants["1k"];
-  if (oneK === undefined) return {};
-  const oneKRecord = asRecord(oneK, `${context}.1k`);
-  return {
-    "1k": {
-      url: asString(oneKRecord.url, `${context}.1k.url`),
-    },
-  };
-}
-
-export function parsePropModelManifest(value: unknown): PropModelManifestEntry[] {
+function parsePropModelManifest(value: unknown): PropModelManifestEntry[] {
   const root = asRecord(value, "models.json");
   const rawModels = root.models;
   if (!Array.isArray(rawModels)) {
@@ -98,21 +56,8 @@ export function parsePropModelManifest(value: unknown): PropModelManifestEntry[]
       id: asString(model.id, `models[${index}].id`),
       url: asString(model.url, `models[${index}].url`),
       scale: Math.max(0.001, asOptionalNumber(model.scale, `models[${index}].scale`) ?? 1),
-      variants: parseVariants(model.variants, `models[${index}].variants`),
     };
   });
-}
-
-export function resolvePropModelUrlForQuality(
-  entry: PropModelManifestEntry,
-  quality?: PropModelQuality,
-): string {
-  if (!quality) return entry.url;
-  const variant = entry.variants[quality];
-  if (!variant) {
-    throw new Error(`Model '${entry.id}' is missing required '${quality}' variant`);
-  }
-  return variant.url;
 }
 
 export class PropModelLibrary {
@@ -154,15 +99,16 @@ export class PropModelLibrary {
         throw new Error(`Required registered prop models are missing: ${missingIds.sort().join(", ")}`);
       }
     }
-    const loader = new GLTFLoader();
+    // Image URIs resolve through one cache shared by every library, so a finish
+    // used by many facade GLBs is fetched, decoded and uploaded once.
+    const loader = new GLTFLoader(createSharedTextureLoadingManager());
     const templatesById = new Map<string, Group>();
 
     let nextEntryIndex = 0;
     const loadNext = async (): Promise<void> => {
       while (nextEntryIndex < entries.length) {
         const entry = entries[nextEntryIndex++]!;
-        const selectedUrl = resolvePropModelUrlForQuality(entry, options.quality);
-        const resolvedModelUrl = new URL(selectedUrl, resolvedManifestUrl).toString();
+        const resolvedModelUrl = new URL(entry.url, resolvedManifestUrl).toString();
         const requestId = `model:${entry.id}:${resolvedModelUrl}`;
         options.requestObserver?.expectChild?.(requestId);
         options.requestObserver?.start(requestId);
@@ -178,6 +124,7 @@ export class PropModelLibrary {
         root.name = `prop-template-${entry.id}`;
 
         const source = gltf.scene;
+        root.userData = { ...source.userData };
         if (entry.scale !== 1) {
           source.scale.multiplyScalar(entry.scale);
         }
@@ -192,7 +139,7 @@ export class PropModelLibrary {
             material?: unknown;
           };
           if (!mesh.isMesh) return;
-          mesh.castShadow = true;
+          mesh.castShadow = node.userData.bz04Shadow !== "receive";
           mesh.receiveShadow = true;
           const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
           for (const material of materials) {
@@ -205,6 +152,13 @@ export class PropModelLibrary {
             };
             if (pbrMaterial.isMeshStandardMaterial !== true || !pbrMaterial.userData) continue;
             pbrMaterial.userData.propModelId = entry.id;
+            // GLTFLoader leaves embedded textures at anisotropy 1, which blurs every
+            // receding facade and paving plane long before its mip level should.
+            // Three clamps this to the device limit at upload.
+            for (const slot of ["map", "normalMap", "roughnessMap", "metalnessMap", "aoMap"] as const) {
+              const texture = (material as Partial<Record<typeof slot, { anisotropy: number } | null>>)[slot];
+              if (texture) texture.anisotropy = 16;
+            }
             if (!albedoCorrection || !pbrMaterial.color) continue;
             // Templates are instanced, so each material is corrected once.
             if (correctedMaterials.has(pbrMaterial)) continue;
@@ -244,7 +198,7 @@ export class PropModelLibrary {
     clone.traverse((node) => {
       const mesh = node as { isMesh?: boolean; castShadow?: boolean; receiveShadow?: boolean };
       if (!mesh.isMesh) return;
-      mesh.castShadow = true;
+      mesh.castShadow = node.userData.bz04Shadow !== "receive";
       mesh.receiveShadow = true;
     });
     return clone;

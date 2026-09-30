@@ -1,11 +1,15 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 export type HealthHudSnapshot = {
   health: number;    // 0–maxHealth
   maxHealth?: number; // defaults to 100
+  /** Iron Skin overshield, shown as bonus HP on top of health (e.g. 100 + 30 = 130). */
+  overshield?: number;
 };
 
 const COLOR_HEALTHY = "#6ee87a";
 const COLOR_WOUNDED = "#f5b24a";
 const COLOR_CRITICAL = "#ff5f5f";
+const COLOR_SHIELD = "#bfe3ff";
 
 function healthColor(hp: number): string {
   if (hp > 60) return COLOR_HEALTHY;
@@ -16,12 +20,14 @@ function healthColor(hp: number): string {
 export class HealthHud {
   readonly root: HTMLDivElement;
   private readonly barFill: HTMLDivElement;
+  private readonly shieldFill: HTMLDivElement;
   private readonly numericEl: HTMLDivElement;
   private readonly godModeEl: HTMLDivElement;
 
   private visible = true;
   private displayHealth = 100;
-  private lastRenderedHealth = -1;
+  private displayShield = 0;
+  private lastRenderedKey = "";
 
   constructor(mountEl: HTMLElement) {
     this.root = document.createElement("div");
@@ -41,7 +47,7 @@ export class HealthHud {
 
     // Label row
     const labelEl = document.createElement("div");
-    labelEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    labelEl.style.fontFamily = SANS_FONT;
     labelEl.style.fontSize = "11px";
     labelEl.style.fontWeight = "600";
     labelEl.style.letterSpacing = "0.12em";
@@ -54,7 +60,7 @@ export class HealthHud {
     this.numericEl = document.createElement("div");
     this.numericEl.style.minWidth = "52px";
     this.numericEl.style.textAlign = "left";
-    this.numericEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.numericEl.style.fontFamily = SANS_FONT;
     this.numericEl.style.fontSize = "42px";
     this.numericEl.style.fontWeight = "780";
     this.numericEl.style.lineHeight = "0.95";
@@ -85,13 +91,23 @@ export class HealthHud {
     this.barFill.style.background = COLOR_HEALTHY;
     this.barFill.style.boxShadow = "0 0 8px rgba(110, 232, 122, 0.45)";
 
+    // Overshield segment, drawn directly after the health fill
+    this.shieldFill = document.createElement("div");
+    this.shieldFill.style.position = "absolute";
+    this.shieldFill.style.top = "0";
+    this.shieldFill.style.bottom = "0";
+    this.shieldFill.style.left = "100%";
+    this.shieldFill.style.width = "0";
+    this.shieldFill.style.background = COLOR_SHIELD;
+    this.shieldFill.style.boxShadow = "0 0 8px rgba(191, 227, 255, 0.6)";
+
     // GOD MODE label (hidden by default)
     this.godModeEl = document.createElement("div");
     this.godModeEl.style.position = "absolute";
     this.godModeEl.style.left = "0";
     this.godModeEl.style.bottom = "100%";
     this.godModeEl.style.marginBottom = "8px";
-    this.godModeEl.style.fontFamily = '"Segoe UI", Tahoma, Verdana, sans-serif';
+    this.godModeEl.style.fontFamily = SANS_FONT;
     this.godModeEl.style.fontSize = "18px";
     this.godModeEl.style.fontWeight = "780";
     this.godModeEl.style.letterSpacing = "0.08em";
@@ -103,7 +119,7 @@ export class HealthHud {
     this.godModeEl.textContent = "GOD MODE";
     this.godModeEl.style.display = "none";
 
-    barTrack.append(this.barFill);
+    barTrack.append(this.barFill, this.shieldFill);
     this.root.append(this.godModeEl, labelEl, this.numericEl, barTrack);
     mountEl.append(this.root);
   }
@@ -120,32 +136,41 @@ export class HealthHud {
 
   update(snapshot: HealthHudSnapshot, deltaSeconds: number): void {
     const maxHealth = snapshot.maxHealth ?? 100;
-    const target = Math.max(0, Math.min(maxHealth, snapshot.health));
+    const targetHealth = Math.max(0, Math.min(maxHealth, snapshot.health));
+    const targetShield = Math.max(0, snapshot.overshield ?? 0);
 
     // Frame-rate independent lerp — snappy but not instant
     const lerpRate = 8;
-    this.displayHealth += (target - this.displayHealth) * Math.min(1, deltaSeconds * lerpRate);
+    const blend = Math.min(1, deltaSeconds * lerpRate);
+    this.displayHealth += (targetHealth - this.displayHealth) * blend;
+    this.displayShield += (targetShield - this.displayShield) * blend;
 
-    const rendered = Math.round(this.displayHealth);
-    if (rendered === this.lastRenderedHealth) return;
-    this.lastRenderedHealth = rendered;
+    const renderedHealth = Math.round(this.displayHealth);
+    const renderedShield = Math.round(this.displayShield);
+    const key = `${renderedHealth}:${renderedShield}:${maxHealth}`;
+    if (key === this.lastRenderedKey) return;
+    this.lastRenderedKey = key;
 
-    const t = rendered / maxHealth;
-    // Color thresholds relative to max
-    const pct = rendered / maxHealth * 100;
+    // The shield extends the bar past full health; the track rescales so
+    // 100 HP + 30 shield fills it, with the shield as its own segment.
+    const barCapacity = Math.max(maxHealth, renderedHealth + renderedShield);
+    const healthFraction = renderedHealth / barCapacity;
+    const shieldFraction = renderedShield / barCapacity;
+    // Color thresholds follow real health; the shield never masks low HP.
+    const pct = renderedHealth / maxHealth * 100;
     const color = healthColor(pct);
 
-    this.barFill.style.transform = `scaleX(${t.toFixed(3)})`;
+    this.barFill.style.transform = `scaleX(${healthFraction.toFixed(3)})`;
     this.barFill.style.background = color;
     this.barFill.style.boxShadow = pct > 60
       ? "0 0 8px rgba(110, 232, 122, 0.45)"
       : pct > 30
         ? "0 0 8px rgba(245, 178, 74, 0.45)"
         : "0 0 8px rgba(255, 95, 95, 0.55)";
-    this.numericEl.textContent = maxHealth === 100
-      ? String(rendered)
-      : `${rendered} / ${maxHealth}`;
-    this.numericEl.style.color = color;
+    this.shieldFill.style.left = `${(healthFraction * 100).toFixed(2)}%`;
+    this.shieldFill.style.width = `${(shieldFraction * 100).toFixed(2)}%`;
+    this.numericEl.textContent = String(renderedHealth + renderedShield);
+    this.numericEl.style.color = renderedShield > 0 && pct > 60 ? COLOR_SHIELD : color;
   }
 
   dispose(): void {

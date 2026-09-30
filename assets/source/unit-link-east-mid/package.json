@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "section_unit_link_east_mid",
+      "file": "unit-link-east-mid.glb",
+      "source": "repo://assets/source/unit-link-east-mid/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "LINK_EAST_MID",
+    "modelId": "section_unit_link_east_mid",
+    "faces": [
+      "north",
+      "south"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "1863ff559b05fa9b6e6368d0dffc1625aa35661bc74f9e7bf963d0f15c6e0799"
+}

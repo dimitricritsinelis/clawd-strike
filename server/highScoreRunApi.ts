@@ -9,7 +9,6 @@ import {
   parseCurrentGameplayProfileIdentity,
   parseStoredGameplayProfileIdentity,
   sanitizeSharedChampionMapId,
-  sanitizeSharedChampionName,
   validateSharedChampionRunSummary,
   type SharedChampionRunFinishRequest,
   type SharedChampionRunFinishResponse,
@@ -17,6 +16,7 @@ import {
   type SharedChampionRunStartResponse,
 } from "../apps/shared/highScore.js";
 import type { GameplayProfileIdentity } from "../apps/shared/gameplayProfile.js";
+import { sanitizeValidatedPlayerName } from "../apps/shared/playerName.js";
 import {
   isSharedChampionPublicRunSubmissionEnabled,
   protectJsonWriteRequest,
@@ -24,14 +24,26 @@ import {
 } from "./highScoreSecurity.js";
 import {
   getSharedChampionRunTokenProfileIdentity,
+  type RateLimit,
   type SharedChampionAuditEvent,
   type SharedChampionStore,
-} from "./highScoreStore.js";
+} from "./highScoreStoreImpl.js";
+import { errorResponse, jsonResponse } from "./http.js";
 
-const JSON_HEADERS = {
-  "cache-control": "no-store",
-  "content-type": "application/json; charset=utf-8",
-} as const;
+/**
+ * Per-IP ceiling enforced in Postgres so it holds across lambda instances;
+ * the in-memory limiter inside protectJsonWriteRequest is per-instance only.
+ */
+const RUN_RATE_LIMIT: RateLimit = { windowMs: 60_000, maxRequests: 30 };
+
+async function consumeSharedRateLimit(
+  store: SharedChampionStore,
+  namespace: "run-start" | "run-finish",
+  ipFingerprint: string,
+): Promise<boolean> {
+  const key = `${namespace}:${ipFingerprint}`;
+  return store.consumeRateLimit(key, RUN_RATE_LIMIT);
+}
 
 /**
  * Ceiling on a run request body. Sized so that an implausible-but-parseable
@@ -67,20 +79,6 @@ function exceedsRunBodyLimit(request: Request): boolean {
   return Number.isFinite(declared) && declared > MAX_RUN_BODY_BYTES;
 }
 
-function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
-  return Response.json(body, {
-    ...init,
-    headers: {
-      ...JSON_HEADERS,
-      ...(init.headers ?? {}),
-    },
-  });
-}
-
-function errorResponse(status: number, error: string): Response {
-  return jsonResponse({ error }, { status });
-}
-
 function parseRunStartBody(value: unknown): SharedChampionRunStartRequest | null {
   if (!value || typeof value !== "object") return null;
   const record = value as Record<string, unknown>;
@@ -88,7 +86,7 @@ function parseRunStartBody(value: unknown): SharedChampionRunStartRequest | null
   const profileIdentity = parseCurrentGameplayProfileIdentity(record);
   if (!profileIdentity) return null;
   if (!isGameplayProfileCompatibleWithControlMode(profileIdentity, record.controlMode)) return null;
-  const playerName = sanitizeSharedChampionName(record.playerName, record.controlMode);
+  const playerName = sanitizeValidatedPlayerName(record.playerName);
   if (playerName === null) return null;
   return {
     playerName,
@@ -167,6 +165,11 @@ export async function handleSharedChampionRunStartRequest(
   if (writeCheck.ok === false) {
     logPreAuthRejection("run-start", writeCheck.status, writeCheck.error, writeCheck.clientIpFingerprint);
     return errorResponse(writeCheck.status, writeCheck.error);
+  }
+
+  if (!(await consumeSharedRateLimit(store, "run-start", writeCheck.clientIpFingerprint))) {
+    logPreAuthRejection("run-start", 429, "shared-rate-limited", writeCheck.clientIpFingerprint);
+    return errorResponse(429, "Too many run starts. Try again later.");
   }
 
   if (!isSharedChampionPublicRunSubmissionEnabled()) {
@@ -311,6 +314,11 @@ export async function handleSharedChampionRunFinishRequest(
     return buildRejectedFinishResponse(store, writeCheck.status, writeCheck.error);
   }
 
+  if (!(await consumeSharedRateLimit(store, "run-finish", writeCheck.clientIpFingerprint))) {
+    logPreAuthRejection("run-finish", 429, "shared-rate-limited", writeCheck.clientIpFingerprint);
+    return buildRejectedFinishResponse(store, 429, "shared-rate-limited");
+  }
+
   if (!isSharedChampionPublicRunSubmissionEnabled()) {
     await recordAuditEvent(store, {
       eventType: "run-finish",
@@ -417,10 +425,7 @@ export async function handleSharedChampionRunFinishRequest(
       return buildRejectedFinishResponse(store, 409, "profile-control-mode-mismatch", tokenIdentity);
     }
 
-    const normalizedTokenPlayerName = sanitizeSharedChampionName(
-      consumed.record.playerName,
-      consumed.record.controlMode,
-    );
+    const normalizedTokenPlayerName = sanitizeValidatedPlayerName(consumed.record.playerName);
     if (normalizedTokenPlayerName === null) {
       await recordAuditEvent(store, {
         eventType: "run-finish",

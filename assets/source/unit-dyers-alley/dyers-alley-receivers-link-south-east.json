@@ -1,0 +1,25 @@
+{
+  "modelId": "dyers_alley_receivers_link_south_east",
+  "file": "dyers-alley-receivers-link-south-east.glb",
+  "source": "repo://assets/source/unit-dyers-alley/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 39,
+    "y": 8,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "0c51dacbbc50165bed99ebf808f324e3ec49a8f3ee84fee5b9e7c6f4e5c79072",
+  "receiverParcelIds": [
+    "lse-n-part-2"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 13,
+      "start": 42.4,
+      "end": 46.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

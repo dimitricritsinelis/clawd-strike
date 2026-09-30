@@ -7,11 +7,10 @@ import {
   type Ak47FireUpdateResult,
   type Ak47ShotEvent,
 } from "./Ak47FireController";
+import { AK47_RELOAD_DURATION_S, AK47_RELOAD_MARKS } from "./ak47ReloadMarks";
 
 const DEFAULT_MAG_CAPACITY = 30;
 const RESERVE_START = 90;
-const RELOAD_TIME_S = 1.225;
-
 export type Ak47WeaponOptions = Ak47FireControllerOptions & {
   /** Rounds restored to the magazine at each wave/run reset. */
   magazineCapacity?: number;
@@ -25,7 +24,21 @@ export type Ak47AmmoSnapshot = {
   mag: number;
   reserve: number;
   reloading: boolean;
+  /**
+   * Progress over AK47_RELOAD_DURATION_S (one magazine-only reload for partial
+   * and empty magazines); 0 when not reloading. The rounds are already counted
+   * once this passes the latch mark.
+   */
   reloadT01: number;
+  /**
+   * Increments at every reload start. The viewmodel treats a change while the
+   * previous reload's clip is still returning to idle as a restart: it plays
+   * that return (backwards until it meets the new reload's progress, or
+   * forwards to the end and then catches up) rather than jumping the hand to
+   * clip time 0. Optional so hand-built snapshots that scrub reloadT01 skip
+   * restart handling.
+   */
+  reloadSerial?: number;
 };
 
 export class Ak47Weapon {
@@ -38,6 +51,7 @@ export class Ak47Weapon {
     reserve: RESERVE_START,
     reloading: false,
     reloadT01: 0,
+    reloadSerial: 0,
   };
   private readonly fireInput: Ak47FireUpdateInput = {
     deltaSeconds: 0,
@@ -53,12 +67,35 @@ export class Ak47Weapon {
   private mag = DEFAULT_MAG_CAPACITY;
   private reserve = RESERVE_START;
   private reloading = false;
+  /** Base-timeline seconds; advances at the speed the reload started with. */
   private reloadTimerS = 0;
+  /**
+   * Reload speed multiplier frozen at startReload. Reload audio is scheduled
+   * once from the duration reported then, so a buff that starts or expires
+   * mid-reload applies from the next reload instead of desyncing this one.
+   */
+  private activeReloadSpeed = 1.0;
+  /** True once the fresh magazine latched and its rounds were counted. */
+  private reloadCommitted = false;
+  /** A fresh trigger press between the release and the latch, fired at the latch if still held. */
+  private firePressedWhileCommitted = false;
   private reloadQueued = false;
+  private reloadSerial = 0;
 
   // Callbacks for audio events
-  onReloadStart: (() => void) | null = null;
-  onReloadEnd: (() => void) | null = null;
+  /** `durationSeconds` is already divided by the reload speed multiplier, which holds for the whole reload. */
+  onReloadStart: ((durationSeconds: number) => void) | null = null;
+  /**
+   * The reload finished with the fresh magazine counted. `finishedEarly` is
+   * false at the natural end of the timeline and true when a fire press after
+   * the latch, or one made after the release and still held at the latch,
+   * skipped the rest (the viewmodel fast-forwards the hand's return and fires).
+   */
+  onReloadEnd: ((finishedEarly: boolean) => void) | null = null;
+  /**
+   * The reload was abandoned and the old magazine count stands: a fire press
+   * before the release mark (the old magazine is still seated), or a reset.
+   */
   onReloadCancel: (() => void) | null = null;
   onDryFire: (() => void) | null = null;
 
@@ -100,6 +137,7 @@ export class Ak47Weapon {
     this.fireController.setFireIntervalS(interval);
   }
 
+  /** Takes effect at the next reload start; a reload in progress keeps its speed. */
   setReloadSpeedMultiplier(multiplier: number): void {
     this.reloadSpeedMultiplier = Math.max(0.1, multiplier);
   }
@@ -139,7 +177,8 @@ export class Ak47Weapon {
     this.ammoSnapshot.mag = this.mag;
     this.ammoSnapshot.reserve = this.reserve;
     this.ammoSnapshot.reloading = this.reloading;
-    this.ammoSnapshot.reloadT01 = this.reloading ? Math.min(1, this.reloadTimerS / RELOAD_TIME_S) : 0;
+    this.ammoSnapshot.reloadSerial = this.reloadSerial;
+    this.ammoSnapshot.reloadT01 = this.reloading ? Math.min(1, this.reloadTimerS / AK47_RELOAD_DURATION_S) : 0;
     return this.ammoSnapshot;
   }
 
@@ -153,21 +192,49 @@ export class Ak47Weapon {
     }
 
     if (this.reloading) {
-      this.reloadTimerS += Math.max(0, input.deltaSeconds) * this.reloadSpeedMultiplier;
+      this.reloadTimerS += Math.max(0, input.deltaSeconds) * this.activeReloadSpeed;
 
-      // Reload cancel: if trigger is pulled mid-reload and mag has bullets, interrupt.
+      // The rounds count on the frame the fresh magazine latches.
+      if (!this.reloadCommitted && this.reloadTimerS >= AK47_RELOAD_MARKS.latch) {
+        this.commitReloadRounds();
+      }
+
+      // A fresh trigger pull mid-reload with rounds in the magazine interrupts it.
+      // Before the release the old magazine is still seated: the press cancels
+      // and keeps the old count. From the release to the latch the old magazine
+      // is out (the player saw it thrown away), so the reload is committed; a
+      // press there is remembered and, if the trigger is still held when the
+      // fresh magazine latches, fires then. After the latch the new magazine is
+      // already counted and a press skips the rest of the reload.
       // Must go through fireAndAccount — returning the raw fire result here used
       // to skip the magazine deduction entirely, so every cancelled reload
       // granted a free, fully damaging round that the HUD never counted.
-      if (input.fireHeld && !this.wasFireHeld && this.mag > 0) {
-        this.cancelReload(true);
+      const freshPress = input.fireHeld && !this.wasFireHeld;
+      let interrupt = false;
+      if (this.reloadCommitted) {
+        interrupt = input.fireHeld && (freshPress || this.firePressedWhileCommitted) && this.mag > 0;
+        if (interrupt) {
+          this.finishReload();
+          this.onReloadEnd?.(true);
+        }
+      } else if (this.reloadTimerS < AK47_RELOAD_MARKS.release) {
+        interrupt = freshPress && this.mag > 0;
+        if (interrupt) this.cancelReload(true);
+        // An empty magazine has nothing to cancel back to: remember the press
+        // exactly as in the committed window, so an early pull fires at the
+        // latch instead of being dropped until the natural end.
+        else if (freshPress) this.firePressedWhileCommitted = true;
+      } else if (freshPress) {
+        this.firePressedWhileCommitted = true;
+      }
+      if (interrupt) {
         this.wasFireHeld = input.fireHeld;
         return this.fireAndAccount(input, onShot);
       }
 
-      if (this.reloadTimerS >= RELOAD_TIME_S) {
-        this.completeReload();
-        this.onReloadEnd?.();
+      if (this.reloadTimerS >= AK47_RELOAD_DURATION_S) {
+        this.finishReload();
+        this.onReloadEnd?.(false);
       }
       this.wasFireHeld = input.fireHeld;
       return this.updateWithoutFiring(input);
@@ -246,28 +313,42 @@ export class Ak47Weapon {
     if (this.reloading || !hasAmmoToLoad || this.mag >= this.magazineCapacity) return false;
 
     this.reloading = true;
+    this.reloadCommitted = false;
+    this.firePressedWhileCommitted = false;
     this.reloadTimerS = 0;
+    this.activeReloadSpeed = this.reloadSpeedMultiplier;
+    this.reloadSerial += 1;
     this.reloadQueued = false;
     this.fireController.cancelTrigger();
-    this.onReloadStart?.();
+    this.onReloadStart?.(AK47_RELOAD_DURATION_S / this.activeReloadSpeed);
     return true;
   }
 
   private cancelReload(emitCallback: boolean): void {
     if (!this.reloading) return;
     this.reloading = false;
+    this.reloadCommitted = false;
+    this.firePressedWhileCommitted = false;
     this.reloadTimerS = 0;
     if (emitCallback) {
       this.onReloadCancel?.();
     }
   }
 
-  private completeReload(): void {
+  /** Moves the fresh magazine's rounds in; called once per reload, at the latch mark. */
+  private commitReloadRounds(): void {
     const needed = Math.max(0, this.magazineCapacity - this.mag);
     const moved = this.freeReloads ? needed : Math.min(needed, this.reserve);
     this.mag += moved;
     if (!this.freeReloads) this.reserve -= moved;
+    this.reloadCommitted = true;
+  }
+
+  private finishReload(): void {
+    if (!this.reloadCommitted) this.commitReloadRounds();
     this.reloading = false;
+    this.reloadCommitted = false;
+    this.firePressedWhileCommitted = false;
     this.reloadTimerS = 0;
   }
 }

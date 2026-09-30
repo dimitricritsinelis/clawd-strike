@@ -3,17 +3,19 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { compileMapSpec, deriveShotsRuntime, validateMapSpecAgainstSchema } from "./gen-map-runtime.mjs";
 import { normalizeCompositionWaiverRegistry } from "./lib/composition-waivers.mjs";
+import { expectedSignWidthM } from "./lib/facade-layout-grammar.mjs";
+import { MAP_SOURCE_ABS } from "./lib/mapPaths.mjs";
 
 const authoritativeCompositionWaiverDocument = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/composition_waivers.json", import.meta.url),
+  MAP_SOURCE_ABS.compositionWaivers,
   "utf8",
 ));
 const compositionWaiverSchema = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/composition_waivers.schema.json", import.meta.url),
+  MAP_SOURCE_ABS.compositionWaiversSchema,
   "utf8",
 ));
 const generatedProvenanceSchema = JSON.parse(await readFile(
-  new URL("../../../docs/map-design/specs/generated_provenance.schema.json", import.meta.url),
+  MAP_SOURCE_ABS.generatedProvenanceSchema,
   "utf8",
 ));
 const authoritativeCompositionWaivers = normalizeCompositionWaiverRegistry(
@@ -51,13 +53,7 @@ function makeV3Spec() {
       ceiling_height_default: 10,
       floor_height_default: 0,
     },
-    wall_details: {
-      enabled: true,
-      style: "bazaar",
-      density: 0.4,
-      maxProtrusion: 0.73,
-      seed: 7,
-    },
+    wall_details: { style: "bazaar" },
     map_center: { x: 10, y: 6 },
     districts: [{ id: "DISTRICT_SPICE", label: "Spice Street" }],
     zones: [
@@ -314,7 +310,7 @@ test("compiles the optional v3 contract without source/runtime drift", () => {
 
   assert.equal(runtime.formatVersion, "3.0");
   assert.deepEqual(runtime.mapCenter, { x: 10, y: 6 });
-  assert.equal(runtime.wall_details.maxProtrusion, 0.73);
+  assert.deepEqual(runtime.wall_details, { style: "bazaar" });
   assert.equal(runtime.exterior_wall_patches.length, 4);
   assert.deepEqual(runtime.traversalSurfaces?.[1], {
     id: "SURFACE_RAMP",
@@ -358,7 +354,7 @@ test("compiles the optional v3 contract without source/runtime drift", () => {
 
 test("validates the source document against the owning schema before compilation", async () => {
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   const source = makeV3Spec();
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
@@ -368,11 +364,30 @@ test("validates the source document against the owning schema before compilation
     () => validateMapSpecAgainstSchema(source, schema),
     /visualStyle: additional property is not allowed/,
   );
+
+  for (const retiredKey of [
+    "enabled",
+    "density",
+    "maxProtrusion",
+    "seed",
+    "facade_overrides",
+    "composition_layout_overrides",
+    "door_layout_overrides",
+    "window_layout_overrides",
+    "balcony_layout_overrides",
+  ]) {
+    const retired = makeV3Spec();
+    retired.wall_details[retiredKey] = [];
+    assert.throws(
+      () => validateMapSpecAgainstSchema(retired, schema),
+      new RegExp(`wall_details\\.${retiredKey}: additional property is not allowed`),
+    );
+  }
 });
 
 test("schema owns the complete map polish survey camera override shape", async () => {
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   const source = makeV3Spec();
   source.map_polish_survey_camera_overrides = {
@@ -533,7 +548,7 @@ test("resolves stable frontage-relative anchors without persisting segment ordin
     vertical_offset_m: 2.2,
   });
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
 
@@ -548,10 +563,10 @@ test("resolves stable frontage-relative anchors without persisting segment ordin
 
 test("keeps authoritative v3 massing and frontage anchors out of authored connector gaps", async () => {
   const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.spec, "utf8"),
   );
   const schema = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec_schema.json", import.meta.url), "utf8"),
+    await readFile(MAP_SOURCE_ABS.specSchema, "utf8"),
   );
   assert.doesNotThrow(() => validateMapSpecAgainstSchema(source, schema));
   const runtime = compileMapSpec(source, authoritativeCompositionWaivers);
@@ -630,42 +645,22 @@ test("keeps authoritative v3 massing and frontage anchors out of authored connec
   }
 });
 
-test("keeps the legacy v2.3 shape valid when v3 sections are absent", () => {
-  const source = makeV3Spec();
-  for (const key of [
-    "map_center",
-    "districts",
-    "traversal_surfaces",
-    "tactical_lanes",
-    "explicit_connectivity",
-    "authored_spawns",
-    "frontages",
-    "frontage_exemptions",
-    "massing_profiles",
-    "facade_modules",
-    "facade_profiles",
-    "dressing_clusters",
-    "dressing_placements",
-    "asset_registry",
-    "exterior_wall_patches",
-  ]) {
-    delete source[key];
-  }
-  for (const zone of source.zones) {
-    delete zone.surfaceId;
-    delete zone.districtId;
-    delete zone.macroLane;
-    delete zone.floorMaterialId;
-    delete zone.facadeProfileId;
-    delete zone.clearWidthM;
-  }
-  source.metadata.version = "2.3";
+test("rejects source specs that are not format v3", () => {
+  const legacy = makeV3Spec();
+  legacy.metadata.version = "2.3";
+  assert.throws(() => compileMapSpec(legacy), /metadata\.version '2\.3' is not supported; the map compiler accepts only format 3\.x/);
 
-  const runtime = compileMapSpec(source);
-  assert.equal(runtime.formatVersion, "2.3");
-  assert.deepEqual(runtime.exterior_wall_patches, []);
-  assert.equal("traversalSurfaces" in runtime, false);
-  assert.equal("authoredSpawns" in runtime, false);
+  const unversioned = makeV3Spec();
+  delete unversioned.metadata.version;
+  assert.throws(() => compileMapSpec(unversioned), /metadata\.version must be a non-empty string/);
+});
+
+test("emits only the live wall-detail style", () => {
+  const emittedKeys = ["style"];
+  const source = makeV3Spec();
+  source.wall_details.module_registry = { window_modules: [], door_modules: [], hero_bay_modules: [] };
+  assert.deepEqual(Object.keys(compileMapSpec(source).wall_details).sort(), emittedKeys);
+  assert.deepEqual(Object.keys(authoritativeGeneratedMap.wall_details).sort(), emittedKeys);
 });
 
 test("preserves the exact authored shot inventory and points compare at a real shot", () => {
@@ -690,42 +685,130 @@ test("preserves the exact authored shot inventory and points compare at a real s
   );
 });
 
-test("compiles authored cloth spans at their true midpoint, span, width, and yaw", async () => {
-  const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
-  );
-  const first = compileMapSpec(source, authoritativeCompositionWaivers).dressingPlacements.find(
+function withProceduralDressing(spec, { anchors, asset, classification, placement }) {
+  spec.metadata.anchor_types.push(...new Set(anchors.map((anchor) => anchor.type)));
+  spec.anchors.push(...anchors);
+  spec.asset_registry.push({
+    source: { kind: "project_original", uri: `repo://procedural/${asset.runtime.id}` },
+    license: "Project-Original",
+    lodEligible: true,
+    transform: {
+      pivot: "base_center",
+      upAxis: "+y",
+      forwardAxis: "+z",
+      authoredScale: { x: 1, y: 1, z: 1 },
+    },
+    ...asset,
+  });
+  spec.dressing_clusters.push({
+    id: `CLUSTER_${placement.id}`,
+    zoneId: "ZONE_FLAT",
+    surfaceId: "SURFACE_FLAT",
+    districtId: "DISTRICT_SPICE",
+    classification,
+    anchors: anchors.map((anchor) => anchor.id),
+    assetIds: [asset.id],
+  });
+  spec.dressing_placements.push({
+    clusterId: `CLUSTER_${placement.id}`,
+    assetId: asset.id,
+    anchorIds: anchors.map((anchor) => anchor.id),
+    offsetM: { x: 0, y: 0, z: 0 },
+    yawOffsetDeg: 0,
+    ...placement,
+  });
+  return spec;
+}
+
+test("compiles authored cloth spans at their true midpoint, span, width, and yaw", () => {
+  // Both seats resolve through frontage anchors: FRONTAGE_SPICE_NORTH spans x 1..9
+  // on the y=10 north face, so along 0.25/0.75 with a 0.4m inset seat at (3|7, 9.6).
+  const source = withProceduralDressing(makeV3Spec(), {
+    anchors: [{
+      id: "CANOPY_SPICE_01",
+      type: "cloth_canopy_span",
+      zone: "ZONE_FLAT",
+      frontageId: "FRONTAGE_SPICE_NORTH",
+      along: 0.25,
+      inset_m: 0.4,
+      vertical_offset_m: 5.8,
+      end_frontage_id: "FRONTAGE_SPICE_NORTH",
+      end_along: 0.75,
+      end_inset_m: 0.4,
+      end_vertical_offset_m: 5.55,
+      width_m: 3.6,
+    }],
+    asset: {
+      id: "ASSET_CLOTH_CANOPY",
+      label: "Tensioned cloth canopy span",
+      dimensionsM: { width: 4, depth: 8, height: 0.18 },
+      collisionClass: "overhead",
+      shadowPolicy: "receive_only",
+      semanticClass: "overhead",
+      runtime: { mode: "procedural", id: "bazaar_cloth_canopy" },
+    },
+    classification: "overhead",
+    placement: { id: "PLACE_SPICE_CANOPIES", scale: { x: 1, y: 1, z: 1 } },
+  });
+  const first = compileMapSpec(source).dressingPlacements.find(
     (placement) => placement.anchorId === "CANOPY_SPICE_01",
   );
-  const second = compileMapSpec(source, authoritativeCompositionWaivers).dressingPlacements.find(
+  const second = compileMapSpec(structuredClone(source)).dressingPlacements.find(
     (placement) => placement.anchorId === "CANOPY_SPICE_01",
   );
 
   assert.ok(first);
   assert.equal(first.id, "PLACE_SPICE_CANOPIES_CANOPY_SPICE_01");
   assert.equal(first.id, second?.id, "compiled placement identity must remain stable");
-  assert.ok(Math.abs(first.position.x - 27) < 1e-9);
-  assert.ok(Math.abs(first.position.y - 20.5808) < 1e-9);
+  assert.ok(Math.abs(first.position.x - 5) < 1e-9);
+  assert.ok(Math.abs(first.position.y - 9.6) < 1e-9);
   assert.ok(Math.abs(first.position.z - 5.675) < 1e-9);
-  assert.deepEqual(first.spanSeats, {
-    start: { x: 21, y: 20.5808, z: 5.8 },
-    end: { x: 33, y: 20.5808, z: 5.55 },
-  });
-  assert.ok(Math.abs(first.dimensionsM.depth - 12) < 1e-9);
+  assert.equal(first.spanSeats.start.z, 5.8);
+  assert.equal(first.spanSeats.end.z, 5.55);
+  for (const [seat, x] of [[first.spanSeats.start, 3], [first.spanSeats.end, 7]]) {
+    assert.ok(Math.abs(seat.x - x) < 1e-9 && Math.abs(seat.y - 9.6) < 1e-9, `seat ${JSON.stringify(seat)}`);
+  }
+  // The authored span and width replace the asset's 8m depth and 4m width.
+  assert.ok(Math.abs(first.dimensionsM.depth - 4) < 1e-9);
   assert.equal(first.dimensionsM.width, 3.6);
   assert.equal(first.dimensionsM.height, 0.18);
   assert.ok(Math.abs(first.yawDeg - 90) < 1e-9);
 });
 
-test("compiles signboard width from its served-opening anchor", async () => {
-  const source = JSON.parse(
-    await readFile(new URL("../../../docs/map-design/specs/map_spec.json", import.meta.url), "utf8"),
-  );
-  const runtime = compileMapSpec(source, authoritativeCompositionWaivers);
-  for (const anchorId of ["SPICE_W_SIGN_1", "DYE_W_SIGN_2"]) {
-    const sourceAnchor = source.anchors.find((anchor) => anchor.id === anchorId);
-    const placement = runtime.dressingPlacements.find((candidate) => candidate.anchorId === anchorId);
-    assert.ok(sourceAnchor && placement);
+test("compiles signboard width from its served-opening anchor", () => {
+  // The generated merchant layout serves 2m shop_recess_market openings GROUND_01
+  // at along 0.2 and GROUND_02 at 0.8; each sign's width derives from its opening.
+  const signs = [["SPICE_W_SIGN_1", "GROUND_01", 0.2], ["DYE_E_SIGN_2", "GROUND_02", 0.8]]
+    .map(([id, servedBayId, along]) => ({
+      id,
+      type: "signage_anchor",
+      zone: "ZONE_FLAT",
+      frontageId: "FRONTAGE_SPICE_NORTH",
+      servedBayId,
+      along,
+      vertical_offset_m: 3.2,
+      inset_m: 0.12,
+      width_m: expectedSignWidthM(2),
+    }));
+  const source = withProceduralDressing(makeV3Spec(), {
+    anchors: signs,
+    asset: {
+      id: "ASSET_SIGNBOARD",
+      label: "Painted timber signboard",
+      dimensionsM: { width: 1.8, depth: 0.12, height: 0.38 },
+      collisionClass: "none",
+      shadowPolicy: "none",
+      semanticClass: "signage",
+      runtime: { mode: "procedural", id: "bazaar_signboard" },
+    },
+    classification: "soft_visual",
+    placement: { id: "PLACE_SPICE_SIGNS", scale: { x: 1, y: 1, z: 0.8 } },
+  });
+  const runtime = compileMapSpec(source);
+  for (const sourceAnchor of signs) {
+    const placement = runtime.dressingPlacements.find((candidate) => candidate.anchorId === sourceAnchor.id);
+    assert.ok(placement);
+    // The anchor's opening-derived width replaces the asset's 1.8m authored width.
     assert.equal(placement.dimensionsM.width, sourceAnchor.width_m);
   }
 });
@@ -735,9 +818,9 @@ test("rejects malformed geometry and broken v3 references", () => {
   badPatch.exterior_wall_patches[0].end = 0;
   assert.throws(() => compileMapSpec(badPatch), /start must be less than end/);
 
-  const badProtrusion = makeV3Spec();
-  badProtrusion.wall_details.maxProtrusion = 0;
-  assert.throws(() => compileMapSpec(badProtrusion), /maxProtrusion must be > 0/);
+  const badStyle = makeV3Spec();
+  badStyle.wall_details.style = "unsupported";
+  assert.throws(() => compileMapSpec(badStyle), /wall_details.style must be 'bazaar'/);
 
   const missingFrontageCoverage = makeV3Spec();
   missingFrontageCoverage.frontage_exemptions.pop();

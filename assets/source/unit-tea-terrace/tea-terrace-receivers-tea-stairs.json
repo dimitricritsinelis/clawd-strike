@@ -1,0 +1,25 @@
+{
+  "modelId": "tea_terrace_receivers_tea_stairs",
+  "file": "tea-terrace-receivers-tea-stairs.glb",
+  "source": "repo://assets/source/unit-tea-terrace/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 11,
+    "y": 66,
+    "z": 0.7
+  },
+  "yawDeg": 180,
+  "inputSha256": "726216e19d8dd170d848115c1bec3ca9198acae1e7a03d2480bbd025755d2225",
+  "receiverParcelIds": [
+    "ts-w"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "vertical",
+      "coord": 11,
+      "start": 66.0,
+      "end": 72.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

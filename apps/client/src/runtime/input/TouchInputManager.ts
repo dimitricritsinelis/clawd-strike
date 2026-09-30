@@ -136,10 +136,6 @@ export class TouchInputManager {
     }
   }
 
-  isCaptureEnabled(): boolean {
-    return this.captureEnabled;
-  }
-
   /** Register a button element so touches on it are assigned the correct role. */
   registerButton(role: ButtonRole, element: HTMLElement): void {
     this.buttonElements.set(role, element);

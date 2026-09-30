@@ -15,8 +15,8 @@ import {
   validateGeneratedSourceFingerprint,
   validateQaReadiness,
   waitForQaServer,
-  withQaServer,
 } from "./qaServer.mjs";
+import { MAP_SOURCE } from "./mapPaths.mjs";
 
 const execFileAsync = promisify(execFile);
 const sourceHash = "a".repeat(64);
@@ -33,7 +33,7 @@ const fingerprint = {
   },
   files: {
     sourceMap: {
-      path: "docs/map-design/specs/map_spec.json",
+      path: MAP_SOURCE.spec,
       sha256: sourceHash,
       bytes: 100,
     },
@@ -43,13 +43,13 @@ const fingerprint = {
       bytes: 200,
       generatedFrom: {
         schemaVersion: 1,
-        path: "docs/map-design/specs/map_spec.json",
+        path: MAP_SOURCE.spec,
         sha256: sourceHash,
         generator: QA_GENERATOR_IDENTITY,
       },
     },
     sourceShots: {
-      path: "docs/map-design/shots.json",
+      path: MAP_SOURCE.shots,
       sha256: sourceHash,
       bytes: 100,
     },
@@ -59,7 +59,7 @@ const fingerprint = {
       bytes: 200,
       generatedFrom: {
         schemaVersion: 1,
-        path: "docs/map-design/shots.json",
+        path: MAP_SOURCE.shots,
         sha256: sourceHash,
         generator: QA_GENERATOR_IDENTITY,
       },
@@ -239,38 +239,4 @@ test("server identity mismatch fails immediately instead of polling a stale serv
     /identity mismatch.*run token/,
   );
   assert.equal(calls, 1);
-});
-
-test("withQaServer closes its owned server after success", async () => {
-  let closed = 0;
-  const result = await withQaServer(async ({ baseUrl }) => baseUrl, {
-    startServer: async () => ({
-      baseUrl: "http://127.0.0.1:43210/",
-      owned: true,
-      async close() {
-        closed += 1;
-      },
-    }),
-  });
-  assert.equal(result, "http://127.0.0.1:43210/");
-  assert.equal(closed, 1);
-});
-
-test("withQaServer always closes its owned server when the callback fails", async () => {
-  let closed = 0;
-  const startServer = async () => ({
-    baseUrl: "http://127.0.0.1:43210/",
-    owned: true,
-    async close() {
-      closed += 1;
-    },
-  });
-
-  await assert.rejects(
-    withQaServer(async () => {
-      throw new Error("expected callback failure");
-    }, { startServer }),
-    /expected callback failure/,
-  );
-  assert.equal(closed, 1);
 });

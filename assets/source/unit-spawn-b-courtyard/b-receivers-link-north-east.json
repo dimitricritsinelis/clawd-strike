@@ -1,0 +1,25 @@
+{
+  "modelId": "b_receivers_link_north_east",
+  "file": "b-receivers-link-north-east.glb",
+  "source": "repo://assets/source/unit-spawn-b-courtyard/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 39,
+    "y": 76,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "125a952e653fedc8c5fbc36916b17704d939387f449c4d0985c44c82c5d709e8",
+  "receiverParcelIds": [
+    "lne-n"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 81,
+      "start": 39.0,
+      "end": 42.6
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}

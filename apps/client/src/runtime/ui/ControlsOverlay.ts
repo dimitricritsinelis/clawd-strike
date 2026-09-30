@@ -1,3 +1,4 @@
+import { SANS_FONT, SERIF_FONT } from "../../shared/uiFonts";
 /**
  * ControlsOverlay — shows keybinding reference when opened from the PauseMenu.
  * Sits above the PauseMenu at z-index 35.
@@ -6,8 +7,6 @@
  * Desert bazaar theme: warm sand/gold/brown palette matching the PauseMenu and loading screen.
  */
 
-const SERIF_FONT = 'Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif';
-const SANS_FONT = '"Segoe UI", Tahoma, Verdana, sans-serif';
 
 const KEYBINDINGS: Array<{ keys: string[]; action: string }> = [
   { keys: ["W", "A", "S", "D"], action: "Move" },

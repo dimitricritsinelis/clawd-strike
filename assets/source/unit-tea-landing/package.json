@@ -1,0 +1,20 @@
+{
+  "models": [
+    {
+      "id": "section_unit_tea_landing",
+      "file": "unit-tea-landing.glb",
+      "source": "repo://assets/source/unit-tea-landing/build.py",
+      "license": "Project-Original"
+    }
+  ],
+  "section": {
+    "zoneId": "TEA_LANDING",
+    "modelId": "section_unit_tea_landing",
+    "faces": [
+      "north",
+      "west"
+    ]
+  },
+  "placements": [],
+  "inputSha256": "6ddb22a062783fa61ab469bb6787afaaca0cf0f072777c4300d76f9cc922dbbd"
+}

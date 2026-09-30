@@ -1,3 +1,4 @@
+import { SANS_FONT } from "../../shared/uiFonts";
 /**
  * MobileFullscreenHint — one-time overlay suggesting users hide the Safari
  * address bar or add to home screen for a fullscreen experience.
@@ -39,7 +40,7 @@ export class MobileFullscreenHint {
     const text = document.createElement("div");
     Object.assign(text.style, {
       color: "rgba(255, 255, 255, 0.92)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "14px",
       fontWeight: "600",
       letterSpacing: "0.06em",
@@ -53,7 +54,7 @@ export class MobileFullscreenHint {
     const subtext = document.createElement("div");
     Object.assign(subtext.style, {
       color: "rgba(255, 255, 255, 0.55)",
-      fontFamily: '"Segoe UI", Tahoma, Verdana, sans-serif',
+      fontFamily: SANS_FONT,
       fontSize: "11px",
       fontWeight: "500",
       letterSpacing: "0.04em",

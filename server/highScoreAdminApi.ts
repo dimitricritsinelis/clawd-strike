@@ -14,26 +14,8 @@ import {
   type SharedChampionStatsOverviewResponse,
   type SharedChampionStatsRunsResponse,
 } from "./highScoreStats.js";
-import type { SharedChampionStore } from "./highScoreStore.js";
-
-const JSON_HEADERS = {
-  "cache-control": "no-store",
-  "content-type": "application/json; charset=utf-8",
-} as const;
-
-function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
-  return Response.json(body, {
-    ...init,
-    headers: {
-      ...JSON_HEADERS,
-      ...(init.headers ?? {}),
-    },
-  });
-}
-
-function errorResponse(status: number, error: string): Response {
-  return jsonResponse({ error }, { status });
-}
+import type { SharedChampionStore } from "./highScoreStoreImpl.js";
+import { errorResponse, jsonResponse } from "./http.js";
 
 function authorize(request: Request): Response | null {
   const auth = authorizeStatsAdminRequest(request);

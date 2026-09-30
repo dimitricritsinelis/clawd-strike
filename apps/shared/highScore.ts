@@ -1,8 +1,6 @@
 import {
-  PLAYER_NAME_MAX_LENGTH,
   normalizeValidatedPlayerName,
   parseStoredPlayerName,
-  sanitizeValidatedPlayerName,
 } from "./playerName.js";
 import {
   getGameplayProfileIdentity,
@@ -11,20 +9,19 @@ import {
   type GameplayProfileId,
 } from "./gameplayProfile.js";
 
-export const HIGH_SCORE_PLAYER_NAME_MAX_LENGTH = PLAYER_NAME_MAX_LENGTH;
 export const HIGH_SCORE_MAP_ID_MAX_LENGTH = 64;
-export const SITEWIDE_CHAMPION_SCOPE = "sitewide";
+const SITEWIDE_CHAMPION_SCOPE = "sitewide";
 export const SITEWIDE_CHAMPION_BOARD_KEY = "default";
 export const SHARED_CHAMPION_SCORE_RULESET = "wave-score-v4-k5-wi2-hs2x-b10";
-export const SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION = "profile-v1";
+const SHARED_CHAMPION_PROFILE_BOARD_KEY_VERSION = "profile-v1";
 export const SHARED_CHAMPION_WAVE_ENEMY_COUNT = 10;
 // Fastest legal cadence across every currently registered gameplay profile.
 // All three profiles currently share the Desktop Human 0.08 s Rapid Fire
 // baseline. A future faster profile must update this validation bound as part
 // of the same revisioned balance change.
 export const SHARED_CHAMPION_FIRE_INTERVAL_S = 0.08;
-export const SHARED_CHAMPION_KILL_SCORE = 5;
-export const SHARED_CHAMPION_WAVE_SCORE_INCREMENT = 2;
+const SHARED_CHAMPION_KILL_SCORE = 5;
+const SHARED_CHAMPION_WAVE_SCORE_INCREMENT = 2;
 export const SHARED_CHAMPION_RUN_TOKEN_TTL_MS = 30 * 60 * 1000;
 export const SHARED_CHAMPION_SCORE_WRITE_ENDPOINT = "/api/high-score";
 export const SHARED_CHAMPION_RUN_START_ENDPOINT = "/api/run/start";
@@ -64,26 +61,6 @@ export type SharedChampionSnapshot = {
 };
 
 export type SharedChampionGetResponse = {
-  champion: SharedChampion | null;
-};
-
-export type SharedChampionPostTelemetry = {
-  kills: number;
-  headshots: number;
-  shotsFired: number;
-  shotsHit: number;
-  survivalTimeS: number;
-};
-
-export type SharedChampionPostRequest = {
-  playerName: string;
-  score: number;
-  controlMode: SharedChampionControlMode;
-  telemetry?: SharedChampionPostTelemetry;
-};
-
-export type SharedChampionPostResponse = {
-  updated: boolean;
   champion: SharedChampion | null;
 };
 
@@ -144,7 +121,7 @@ export function isSharedChampionControlMode(value: unknown): value is SharedCham
   return value === "human" || value === "agent";
 }
 
-export function isSharedChampionRunDeathCause(value: unknown): value is SharedChampionRunDeathCause {
+function isSharedChampionRunDeathCause(value: unknown): value is SharedChampionRunDeathCause {
   return value === "enemy-fire" || value === "unknown";
 }
 
@@ -216,17 +193,6 @@ export function createSharedChampionBoardIdentity(
   };
 }
 
-export function clampSharedChampionName(value: string): string {
-  return normalizeValidatedPlayerName(value);
-}
-
-export function sanitizeSharedChampionName(
-  value: unknown,
-  _controlMode?: SharedChampionControlMode,
-): string | null {
-  return sanitizeValidatedPlayerName(value);
-}
-
 export function sanitizeSharedChampionMapId(value: unknown): string {
   if (typeof value !== "string") return "unknown-map";
   const normalized = value.trim().slice(0, HIGH_SCORE_MAP_ID_MAX_LENGTH);
@@ -239,7 +205,7 @@ export function normalizeScore(value: unknown): number {
   return Math.max(0, Math.round(parsed));
 }
 
-export function normalizeRunCount(value: unknown): number {
+function normalizeRunCount(value: unknown): number {
   const parsed = typeof value === "number" ? value : Number(value);
   if (!Number.isFinite(parsed)) return 0;
   return Math.max(0, Math.floor(parsed));
@@ -251,11 +217,11 @@ function normalizeTenths(value: unknown): number {
   return Math.max(0, Math.round(parsed * 10) / 10);
 }
 
-export function normalizeRunSeconds(value: unknown): number {
+function normalizeRunSeconds(value: unknown): number {
   return normalizeTenths(value);
 }
 
-export function normalizeAccuracyPercent(value: unknown): number {
+function normalizeAccuracyPercent(value: unknown): number {
   return normalizeTenths(value);
 }
 
@@ -265,21 +231,8 @@ export function computeAccuracyPercent(shotsHit: number, shotsFired: number): nu
 }
 
 /** Base kill value for a 1-indexed wave number. */
-export function getWaveKillValue(wave: number): number {
+function getWaveKillValue(wave: number): number {
   return SHARED_CHAMPION_KILL_SCORE + (Math.max(1, wave) - 1) * SHARED_CHAMPION_WAVE_SCORE_INCREMENT;
-}
-
-/** Headshot bonus for a 1-indexed wave number (2× multiplier: bonus = killValue). */
-export function getWaveHeadshotBonus(wave: number): number {
-  return getWaveKillValue(wave);
-}
-
-/** Flat score formula used only by admin telemetry validation. */
-export function calculateFlatScore(kills: number, headshots: number): number {
-  const normalizedKills = normalizeRunCount(kills);
-  const normalizedHeadshots = normalizeRunCount(headshots);
-  return (normalizedKills * SHARED_CHAMPION_KILL_SCORE)
-    + (normalizedHeadshots * SHARED_CHAMPION_KILL_SCORE);
 }
 
 /** Wave-scaled score from kills + per-wave headshot distribution. */
@@ -373,16 +326,6 @@ export function parseSharedChampionGetResponse(value: unknown): SharedChampionGe
   };
 }
 
-export function parseSharedChampionPostResponse(value: unknown): SharedChampionPostResponse | null {
-  if (!value || typeof value !== "object") return null;
-  const record = value as Record<string, unknown>;
-  if (typeof record.updated !== "boolean") return null;
-  return {
-    updated: record.updated,
-    champion: record.champion === null ? null : parseSharedChampion(record.champion),
-  };
-}
-
 /**
  * Absolute ceiling on per-wave entries. This sits far above any run the score
  * cap can accept — over-cap-but-plausible runs must still reach the semantic
@@ -470,14 +413,6 @@ export function parseSharedChampionRunFinishResponse(value: unknown): SharedCham
     champion: record.champion === null ? null : parseSharedChampion(record.champion),
     reason: normalizedReason,
   };
-}
-
-export function isBetterSharedChampionCandidate(
-  champion: SharedChampion | null,
-  score: number,
-): boolean {
-  const candidate = normalizeScore(score);
-  return champion === null || candidate > champion.score;
 }
 
 /**
@@ -693,69 +628,4 @@ export function formatSharedChampionScore(value: number): string {
 
 export function formatSharedChampionMode(mode: SharedChampionControlMode): string {
   return mode === "agent" ? "AGENT" : "HUMAN";
-}
-
-// ── Telemetry parsing & validation ──────────────────────────────────────────
-
-const TELEMETRY_SCORE_PER_KILL = 5;
-const TELEMETRY_SCORE_PER_HEADSHOT = 5;
-const MAX_KILLS_PER_SECOND = 5;
-
-export function parseTelemetry(value: unknown): SharedChampionPostTelemetry | null {
-  if (!value || typeof value !== "object") return null;
-  const r = value as Record<string, unknown>;
-
-  const kills = Math.round(Number(r.kills));
-  const headshots = Math.round(Number(r.headshots));
-  const shotsFired = Math.round(Number(r.shotsFired));
-  const shotsHit = Math.round(Number(r.shotsHit));
-  const survivalTimeS = Number(r.survivalTimeS);
-
-  if (
-    !Number.isFinite(kills) || kills < 0
-    || !Number.isFinite(headshots) || headshots < 0
-    || !Number.isFinite(shotsFired) || shotsFired < 0
-    || !Number.isFinite(shotsHit) || shotsHit < 0
-    || !Number.isFinite(survivalTimeS) || survivalTimeS <= 0
-  ) {
-    return null;
-  }
-
-  return { kills, headshots, shotsFired, shotsHit, survivalTimeS };
-}
-
-export type TelemetryValidationResult =
-  | { valid: true }
-  | { valid: false; reason: string };
-
-export function validateTelemetry(
-  score: number,
-  telemetry: SharedChampionPostTelemetry,
-): TelemetryValidationResult {
-  const { kills, headshots, shotsFired, shotsHit, survivalTimeS } = telemetry;
-
-  // Flat score formula (admin-only): score = kills * 5 + headshots * 5
-  const expectedScore =
-    kills * TELEMETRY_SCORE_PER_KILL + headshots * TELEMETRY_SCORE_PER_HEADSHOT;
-  if (score !== expectedScore) {
-    return { valid: false, reason: "score-mismatch" };
-  }
-
-  if (headshots > kills) {
-    return { valid: false, reason: "headshots-exceed-kills" };
-  }
-
-  if (kills > 0 && shotsHit < kills) {
-    return { valid: false, reason: "hits-below-kills" };
-  }
-
-  if (shotsFired < shotsHit) {
-    return { valid: false, reason: "fired-below-hits" };
-  }
-
-  if (survivalTimeS > 0 && kills / survivalTimeS > MAX_KILLS_PER_SECOND) {
-    return { valid: false, reason: "implausible-kill-rate" };
-  }
-
-  return { valid: true };
 }

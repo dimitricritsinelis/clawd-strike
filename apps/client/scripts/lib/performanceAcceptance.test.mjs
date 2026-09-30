@@ -1,12 +1,12 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { evaluateBazaarPerformance, summarizePerformanceSamples } from "./performanceAcceptance.mjs";
+import { evaluateBazaarPerformance, sampleRenderedFrameCadence, summarizePerformanceSamples } from "./performanceAcceptance.mjs";
 
 test("summarizes worst geometry and median timing samples", () => {
   assert.deepEqual(summarizePerformanceSamples([
-    { perf: { drawCalls: 400, triangles: 900_000, fps: 60, msPerFrame: 16 }, boot: { readyAtMs: 800 } },
-    { perf: { drawCalls: 410, triangles: 910_000, fps: 50, msPerFrame: 20 }, boot: { readyAtMs: 800 } },
-  ]), { sampleCount: 2, drawCalls: 410, triangles: 910_000, medianFps: 55, medianFrameMs: 18, bootReadyMs: 800 });
+    { frameIntervalMs: 20, perf: { drawCalls: 400, triangles: 900_000, fps: 9000, msPerFrame: 0.1, cpuFrameMedianMs: 16 }, boot: { readyAtMs: 800 } },
+    { frameIntervalMs: 25, perf: { drawCalls: 410, triangles: 910_000, fps: 9000, msPerFrame: 0.1, cpuFrameMedianMs: 20 }, boot: { readyAtMs: 800 } },
+  ]), { sampleCount: 2, drawCalls: 410, triangles: 910_000, medianFps: 45, medianFrameIntervalMs: 22.5, fpsMeasurement: "rendered-requestAnimationFrame-cadence", medianFrameMs: 18, bootReadyMs: 800 });
 });
 
 test("prefers the CPU frame meter over the vsync-pinned rAF interval", () => {
@@ -40,4 +40,50 @@ test("enforces committed frame and boot baselines when overrides are absent", ()
   assert.equal(result.comparisons.bootTime.status, "pass");
   assert.equal(result.comparisons.mobileFrameTime.status, "pass");
   assert.equal(result.comparisons.mobileBootTime.status, "pass");
+});
+
+
+test("rendered rAF samples measure display intervals rather than synthetic runtime FPS", async () => {
+  const previous = globalThis.window;
+  const timestamps = [100, 140, 180, 220];
+  let callbacks = 0;
+  let renders = 0;
+  globalThis.window = {
+    requestAnimationFrame: (callback) => queueMicrotask(() => callback(timestamps[callbacks++])),
+    __qa_render_frame: async () => { await Promise.resolve(); renders += 1; },
+    __qa_performance_state: () => {
+      assert.equal(renders, callbacks, "telemetry must follow the awaited real render");
+      return ({
+      perf: { drawCalls: 400, triangles: 900_000, fps: 10_000, msPerFrame: 0.1, cpuFrameMedianMs: 2 },
+      boot: { readyAtMs: 800 },
+      });
+    },
+  };
+  try {
+    const states = await sampleRenderedFrameCadence(3);
+    assert.equal(renders, 3);
+    assert.equal(callbacks, 4);
+    assert.deepEqual(states.map((state) => state.frameIntervalMs), [40, 40, 40]);
+    const summary = summarizePerformanceSamples(states);
+    assert.equal(summary.medianFps, 25);
+    assert.equal(summary.medianFrameIntervalMs, 40);
+    assert.equal(summary.medianFrameMs, 2, "CPU submission time remains a separate measurement");
+    const result = evaluateBazaarPerformance({ desktop: summary, mobile: summary });
+    assert.ok(result.findings.some((finding) => finding.code === "mobile-fps-floor"));
+  } finally {
+    if (previous === undefined) delete globalThis.window;
+    else globalThis.window = previous;
+  }
+});
+
+test("legacy FPS alone cannot satisfy measured frame cadence", () => {
+  const summary = summarizePerformanceSamples([{ perf: { fps: 10_000, msPerFrame: 0.1, cpuFrameMedianMs: 1 } }]);
+  assert.equal(summary.medianFps, null);
+  assert.equal(summary.medianFrameIntervalMs, null);
+});
+
+
+test("the simulation clock cannot stand in for measured CPU submission time", () => {
+  const summary = summarizePerformanceSamples([{ frameIntervalMs: 16.67, perf: { msPerFrame: 0.1 } }]);
+  assert.equal(summary.medianFrameMs, null);
 });

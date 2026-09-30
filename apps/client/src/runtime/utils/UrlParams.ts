@@ -1,25 +1,27 @@
-import { sanitizeValidatedPlayerName } from "../../../../shared/playerName";
+import type { LoadingScreenInitialNameEntry, LoadingScreenMode, RuntimeLaunchSelection } from "../../loading-screen/types";
+import { clampPlayerNameInput, validatePlayerName, sanitizeValidatedPlayerName } from "../../../../shared/playerName";
 
 const DEFAULT_MAP_ID = "bazaar-map";
-const DEFAULT_PROP_PROFILE = "medium";
 const DEFAULT_FLOOR_QUALITY = "1k";
 
 export type RuntimeSpawnId = "A" | "B";
 export type RuntimeControlMode = "human" | "agent";
-export type RuntimePropProfile = "subtle" | "medium" | "high";
 export type RuntimeFloorMode = "blockout" | "pbr";
 export type RuntimeWallMode = "blockout" | "pbr";
 export type RuntimeFloorQuality = "1k" | "2k" | "4k";
-export type RuntimeLightingPreset = "golden" | "flat";
-export type RuntimePropVisualMode = "blockout" | "bazaar";
-export type RuntimePropChaosOptions = {
-  profile: RuntimePropProfile;
-  jitter: number | null;
-  cluster: number | null;
-  density: number | null;
-};
+/**
+ * Desktop graphics tier. "high" (default) renders at native resolution up to
+ * 2x, loads 2k surface textures and enables GTAO in live play; "standard"
+ * keeps the earlier 1.1x / 1k / AO-off-in-play budget for weaker machines.
+ * Mobile is capped separately by bootstrap regardless of tier.
+ */
+type RuntimeQualityTier = "high" | "standard";
 
 export type RuntimeUrlParams = {
+  qaTargets: string[];
+  shadows: boolean;
+  audioForced: string | null;
+  forceHumanBootGate: boolean;
   mapId: string;
   controlMode: RuntimeControlMode;
   playerName: string | null;
@@ -27,22 +29,11 @@ export type RuntimeUrlParams = {
   spawn: RuntimeSpawnId;
   debug: boolean;
   perf: boolean;
-  highVis: boolean;
   vm: boolean;
-  vmDebug: boolean;
-  anchors: boolean;
-  labels: boolean;
-  anchorTypes: string[];
   seed: number | null;
   floorMode: RuntimeFloorMode;
   wallMode: RuntimeWallMode;
-  wallDetails: boolean;
-  wallDetailDensity: number | null;
   floorQuality: RuntimeFloorQuality;
-  lightingPreset: RuntimeLightingPreset;
-  environmentLighting: boolean;
-  propVisuals: RuntimePropVisualMode;
-  propChaos: RuntimePropChaosOptions;
   unlimitedHealth: boolean;
   /**
    * Whether the god-mode flag was named in the URL at all, and what it said.
@@ -52,7 +43,7 @@ export type RuntimeUrlParams = {
    */
   unlimitedHealthExplicit: boolean | null;
   ao: boolean;
-  post: boolean;
+  quality: RuntimeQualityTier;
 };
 
 function parseBooleanFlag(value: string | null): boolean {
@@ -66,18 +57,6 @@ function parseBooleanFlagWithDefault(value: string | null, fallback: boolean): b
   return parseBooleanFlag(value);
 }
 
-function parseAnchorTypes(value: string | null): string[] {
-  if (!value) return [];
-
-  const normalized = value
-    .split(",")
-    .map((item) => item.trim().toLowerCase())
-    .filter((item) => item.length > 0);
-
-  if (normalized.length === 0) return [];
-  return [...new Set(normalized)].sort((a, b) => a.localeCompare(b));
-}
-
 function parseSeed(value: string | null): number | null {
   if (!value) return null;
   const trimmed = value.trim();
@@ -85,28 +64,6 @@ function parseSeed(value: string | null): number | null {
   const parsed = Number.parseInt(trimmed, 10);
   if (!Number.isFinite(parsed)) return null;
   return parsed;
-}
-
-function parsePropProfile(value: string | null): RuntimePropProfile {
-  const normalized = value?.trim().toLowerCase();
-  if (normalized === "subtle" || normalized === "medium" || normalized === "high") {
-    return normalized;
-  }
-  return DEFAULT_PROP_PROFILE;
-}
-
-function parseUnitFloat(value: string | null): number | null {
-  if (!value) return null;
-  const parsed = Number.parseFloat(value.trim());
-  if (!Number.isFinite(parsed)) return null;
-  return Math.max(0, Math.min(1, parsed));
-}
-
-function parseDensityScale(value: string | null): number | null {
-  if (!value) return null;
-  const parsed = Number.parseFloat(value.trim());
-  if (!Number.isFinite(parsed)) return null;
-  return Math.max(0, Math.min(2, parsed));
 }
 
 function parseFloorMode(value: string | null): RuntimeFloorMode {
@@ -125,14 +82,6 @@ function parseFloorQuality(value: string | null): RuntimeFloorQuality {
     return normalized;
   }
   return DEFAULT_FLOOR_QUALITY;
-}
-
-function parseLightingPreset(value: string | null): RuntimeLightingPreset {
-  return value?.trim().toLowerCase() === "flat" ? "flat" : "golden";
-}
-
-function parsePropVisualMode(value: string | null): RuntimePropVisualMode {
-  return value?.trim().toLowerCase() === "blockout" ? "blockout" : "bazaar";
 }
 
 function getParam(params: URLSearchParams, ...keys: string[]): string | null {
@@ -156,88 +105,77 @@ function parseControlMode(modeValue: string | null, autostartValue: string | nul
   return "human";
 }
 
-export function sanitizeRuntimePlayerName(
-  value: string | null | undefined,
-): string | null {
-  return sanitizeValidatedPlayerName(value);
+function parseQualityTier(value: string | null): RuntimeQualityTier {
+  return value?.trim().toLowerCase() === "standard" ? "standard" : "high";
+}
+
+function resolveQualityTier(search: string): RuntimeQualityTier {
+  return parseQualityTier(getParam(new URLSearchParams(search), "quality", "gfx"));
+}
+
+/** Desktop pixel-ratio cap for a tier; the renderer still clamps to the device DPR. */
+export function resolveDesktopMaxPixelRatio(search: string): number {
+  return resolveQualityTier(search) === "high" ? 2.0 : 1.1;
+}
+
+/**
+ * Dynamic resolution (render/DynamicResolution.ts) guards 60 fps in live
+ * high-tier play. Review shots, QA and agent runs keep a fixed resolution so
+ * their frames stay comparable. `dynres=0|1` overrides.
+ */
+export function resolveDynamicResolution(search: string): boolean {
+  const params = new URLSearchParams(search);
+  const explicit = getParam(params, "dynres");
+  if (explicit !== null) return parseBooleanFlag(explicit);
+  if (resolveQualityTier(search) !== "high") return false;
+  if (getParam(params, "shot") !== null || params.get("qa") === "1" || params.has("qaProfile")) return false;
+  return parseControlMode(getParam(params, "mode"), getParam(params, "autostart")) === "human";
 }
 
 export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
   const params = new URLSearchParams(search);
   const rawMapId = getParam(params, "map");
-  const rawControlMode = getParam(params, "mode", "controlMode");
+  const rawControlMode = getParam(params, "mode");
   const rawAutostart = getParam(params, "autostart");
-  const rawPlayerName = getParam(params, "name", "player", "playerName");
+  const rawPlayerName = getParam(params, "name");
   const rawShot = getParam(params, "shot");
   const rawSpawn = getParam(params, "spawn");
   const rawDebug = getParam(params, "debug");
   const rawPerf = getParam(params, "perf");
-  const rawHighVis = getParam(params, "high-vis", "highvis");
   const rawVm = getParam(params, "vm");
-  const rawVmDebug = getParam(params, "vm-debug", "vmDebug");
-  const rawAnchors = getParam(params, "anchors");
-  const rawLabels = getParam(params, "labels");
-  const rawAnchorTypes = getParam(params, "anchor-types", "anchorTypes");
   const rawSeed = getParam(params, "seed");
   const rawFloors = getParam(params, "floors");
   const rawWalls = getParam(params, "walls");
-  const rawFloorRes = getParam(params, "floorRes", "floor-res");
-  const rawLighting = getParam(params, "lighting");
-  const rawEnvironmentLighting = getParam(params, "ibl", "environmentLighting", "environment-lighting");
-  const rawWallDetails = getParam(params, "wallDetails", "wall-details");
-  const rawWallDetailDensity = getParam(params, "wallDetailDensity", "wall-detail-density");
-  const rawProps = getParam(params, "props", "propVisuals", "prop-visuals");
-  const rawPropProfile = getParam(params, "prop-profile", "propProfile");
-  const rawPropJitter = getParam(params, "prop-jitter", "propJitter");
-  const rawPropCluster = getParam(params, "prop-cluster", "propCluster");
-  const rawPropDensity = getParam(params, "prop-density", "propDensity");
-  const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god", "godMode");
+  const rawFloorRes = getParam(params, "floorRes");
+  const rawUnlimitedHealth = getParam(params, "unlimitedHealth", "god");
   const rawAo = getParam(params, "ao");
-  const rawPost = getParam(params, "post");
 
   const mapId = rawMapId && rawMapId.trim().length > 0 ? rawMapId.trim() : DEFAULT_MAP_ID;
   const controlMode = parseControlMode(rawControlMode, rawAutostart);
-  const playerName = sanitizeRuntimePlayerName(rawPlayerName);
+  const playerName = sanitizeValidatedPlayerName(rawPlayerName);
   const shot = rawShot && rawShot.trim().length > 0 ? rawShot.trim() : null;
   const spawn = rawSpawn?.trim().toUpperCase() === "B" ? "B" : "A";
   const debug = parseBooleanFlag(rawDebug);
   const perf = parseBooleanFlag(rawPerf);
-  const highVis = parseBooleanFlag(rawHighVis);
   const vm = parseBooleanFlagWithDefault(rawVm, true);
-  const vmDebug = parseBooleanFlag(rawVmDebug);
-  const anchors = parseBooleanFlag(rawAnchors);
-  const labels = parseBooleanFlag(rawLabels);
-  const anchorTypes = parseAnchorTypes(rawAnchorTypes);
   const seed = parseSeed(rawSeed);
   const floorMode = parseFloorMode(rawFloors);
   const wallMode = parseWallMode(rawWalls);
-  const wallDetails = parseBooleanFlagWithDefault(rawWallDetails, true);
-  const wallDetailDensity = parseDensityScale(rawWallDetailDensity);
-  const floorQuality = parseFloorQuality(rawFloorRes);
-  const lightingPreset = parseLightingPreset(rawLighting);
-  const environmentLighting = parseBooleanFlagWithDefault(rawEnvironmentLighting, true);
-  const propVisuals = parsePropVisualMode(rawProps);
-  const propChaos: RuntimePropChaosOptions = {
-    profile: parsePropProfile(rawPropProfile),
-    jitter: parseUnitFloat(rawPropJitter),
-    cluster: parseUnitFloat(rawPropCluster),
-    density: parseUnitFloat(rawPropDensity),
-  };
+  const quality = parseQualityTier(getParam(params, "quality", "gfx"));
+  const floorQuality = rawFloorRes === null && quality === "high" ? "2k" : parseFloorQuality(rawFloorRes);
   const unlimitedHealth = parseBooleanFlag(rawUnlimitedHealth);
   const unlimitedHealthExplicit = rawUnlimitedHealth === null ? null : unlimitedHealth;
-  // GTAO re-renders the whole scene for its normal/depth buffer plus two heavy
-  // full-screen passes — far too expensive as a default for live gameplay.
-  // Authored-shot runs (review/capture cameras) keep it on by default so the
-  // tuned quality-bar look is unchanged; gameplay opts in via ?ao=1.
-  //
-  // Note this deliberately splits gameplay from authored shots: any performance
-  // measurement taken through a shot run is measuring GTAO-on and therefore is
-  // NOT representative of what players get. Performance gates that need to
-  // reflect live play must pass ?ao=0 explicitly.
-  const ao = parseBooleanFlagWithDefault(rawAo, shot !== null);
-  const post = parseBooleanFlagWithDefault(rawPost, true);
+  // GTAO is on for authored shots and for live play in the high tier. It reads
+  // the beauty pass's depth and runs on the CSS-pixel grid (SceneDepthGtaoPass),
+  // about 6 ms at 2x DPR on an M3 Pro. The standard tier opts in via ?ao=1, and
+  // performance gates that need an AO-free frame pass ?ao=0 explicitly.
+  const ao = parseBooleanFlagWithDefault(rawAo, shot !== null || quality === "high");
 
   return {
+    qaTargets: (params.get("qaTargets") ?? "").split(",").map((value) => value.trim()).filter(Boolean),
+    shadows: params.get("shadows") !== "0",
+    audioForced: params.get("audio"),
+    forceHumanBootGate: params.get("bootGate") === "1",
     mapId,
     controlMode,
     playerName,
@@ -245,25 +183,77 @@ export function parseRuntimeUrlParams(search: string): RuntimeUrlParams {
     spawn,
     debug,
     perf,
-    highVis,
     vm,
-    vmDebug,
-    anchors,
-    labels,
-    anchorTypes,
     seed,
     floorMode,
     wallMode,
-    wallDetails,
-    wallDetailDensity,
     floorQuality,
-    lightingPreset,
-    environmentLighting,
-    propVisuals,
-    propChaos,
     unlimitedHealth,
     unlimitedHealthExplicit,
     ao,
-    post,
+    quality,
   };
+}
+
+type AutoStartResolution = {
+  runtimeLaunchSelection: RuntimeLaunchSelection | null;
+  initialNameEntry: LoadingScreenInitialNameEntry | null;
+};
+
+export function parseAutoStartSelection(search: string): AutoStartResolution {
+  const params = new URLSearchParams(search);
+  const rawMode = params.get("autostart")?.trim().toLowerCase();
+  if (rawMode !== "human" && rawMode !== "agent") {
+    return {
+      runtimeLaunchSelection: null,
+      initialNameEntry: null,
+    };
+  }
+
+  const mode = rawMode as LoadingScreenMode;
+  const rawName = params.get("name");
+  const validation = validatePlayerName(rawName);
+  if (!validation.ok) {
+    return {
+      runtimeLaunchSelection: null,
+      initialNameEntry: {
+        mode,
+        playerName: clampPlayerNameInput(rawName),
+        validationReason: validation.reason,
+      },
+    };
+  }
+
+  return {
+    runtimeLaunchSelection: {
+      mode,
+      playerName: validation.normalized,
+    },
+    initialNameEntry: null,
+  };
+}
+
+export function parseLoadingUrlParams(search: string): { runtimeUrlIsAgent: boolean; audioForced: string | null } {
+  return {
+    // Preserve the menu's historical raw-query match, including case and duplicate keys.
+    runtimeUrlIsAgent: /(?:^|[?&])(?:autostart|mode)=agent(?:&|$)/i.test(search),
+    audioForced: new URLSearchParams(search).get("audio"),
+  };
+}
+
+export type QaAssetProfile = "qa" | "cell-review";
+
+export function resolveQaAssetProfile(search: string): QaAssetProfile | null {
+  const params = new URLSearchParams(search);
+  const namedProfile = params.get("qaProfile")?.trim().toLowerCase();
+  if (namedProfile === "cell-review") return "cell-review";
+  if (params.get("qa") !== "1") return null;
+  return params.has("shot") ? "cell-review" : "qa";
+}
+
+export function resolveQaAssetTimeoutMs(search: string): number {
+  const raw = new URLSearchParams(search).get("qaAssetTimeoutMs");
+  const parsed = raw === null ? Number.NaN : Number.parseInt(raw, 10);
+  if (!Number.isFinite(parsed)) return 20_000;
+  return Math.max(1_000, Math.min(120_000, parsed));
 }

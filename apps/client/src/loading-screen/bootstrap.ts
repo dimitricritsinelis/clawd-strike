@@ -1,3 +1,5 @@
+import { parseLoadingUrlParams } from "../runtime/utils/UrlParams";
+import { RUNTIME_TEXT_API_VERSION } from "../shared/runtimeTextApi";
 import { LoadingAmbientAudio } from "./audio";
 import {
   OVERLAY_PRELOAD_TIMEOUT_MS,
@@ -12,7 +14,7 @@ import {
   PUBLIC_AGENT_API_VERSION,
   PUBLIC_AGENT_CONTRACT,
 } from "../../../shared/publicAgentContract";
-import { isAutomatedClient, isLocalhostHostname } from "../shared/hostEnvironment";
+import { isAutomatedClient, isInternalDebugSurface as resolveInternalDebugSurface } from "../shared/hostEnvironment";
 import { resolveGameplayProfileIdentity } from "../../../shared/gameplayProfile";
 import { isMobileDevice } from "../runtime/input/MobileDetect";
 
@@ -30,7 +32,7 @@ export type LoadingScreenHandle = {
 
 const DEFAULT_AUDIO: LoadingAmbientAudioOptions = {
   sources: getLoadingScreenAmbientAudioSources(),
-  gain: 0.45,
+  gain: 0.2,
   playFromSec: 0,
   loopStartSec: 0,
   loopEndSec: Number.POSITIVE_INFINITY,
@@ -41,10 +43,8 @@ const OVERLAY_LOADING_BANNER = "Loading menu art...";
 const OVERLAY_FAILURE_BANNER = "Menu art unavailable";
 
 export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = {}): LoadingScreenHandle {
-  const isVirtualTime = typeof window.__vt_pending !== "undefined";
-  const isInternalDebugSurface = import.meta.env.DEV || isLocalhostHostname(window.location.hostname);
-  const runtimeUrlIsAgent = /(?:^|[?&])(?:autostart|mode|controlMode)=agent(?:&|$)/i
-    .test(window.location.search);
+  const isInternalDebugSurface = resolveInternalDebugSurface(import.meta.env.DEV, window.location.hostname);
+  const { runtimeUrlIsAgent, audioForced } = parseLoadingUrlParams(window.location.search);
   const mobileDevice = isMobileDevice();
   const loadingProfileResolution = resolveGameplayProfileIdentity({
     controlMode: runtimeUrlIsAgent ? "agent" : "human",
@@ -156,7 +156,6 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
   // for agent runs, so an LLM playtest never plays menu music at whoever is
   // watching. ?audio=1 forces it on, ?audio=0 forces it off. Real players match
   // none of these, so production behaviour is unchanged.
-  const audioForced = new URLSearchParams(window.location.search).get("audio");
   const ambientMuted = audioForced === "1"
     ? false
     : audioForced === "0" || isAutomatedClient() || runtimeUrlIsAgent;
@@ -213,12 +212,6 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
 
   void loadingAmbient.start();
 
-  if (isVirtualTime) {
-    window.advanceTime = async (_ms: number) => {
-      // Virtual-time harness: loading-screen mode intentionally has no simulation step.
-    };
-  }
-
   window.agent_apply_action = (_action: unknown) => {
     // Runtime-only API. Loading screen intentionally ignores agent actions.
   };
@@ -256,7 +249,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
 
     const uiState = ui.getState();
     return JSON.stringify({
-      apiVersion: 4,
+      apiVersion: RUNTIME_TEXT_API_VERSION,
       mode: "loading-screen",
       profile: loadingProfileIdentity,
       ui: {

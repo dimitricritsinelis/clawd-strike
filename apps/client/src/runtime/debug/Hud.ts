@@ -1,3 +1,4 @@
+import { MONO_FONT } from "../../shared/uiFonts";
 type HudSnapshot = {
   x: number;
   y: number;
@@ -8,16 +9,11 @@ type HudSnapshot = {
   speedMps: number;
   propStats?: {
     seed: number;
-    profile: "subtle" | "medium" | "high";
-    jitter: number;
-    cluster: number;
-    density: number;
     candidatesTotal: number;
     collidersPlaced: number;
     rejectedClearZone: number;
     rejectedBounds: number;
     rejectedGapRule: number;
-    visualOnlyLandmarks: number;
   };
   weaponStats?: {
     loaded: boolean;
@@ -44,7 +40,7 @@ export class Hud {
     this.root.style.borderRadius = "8px";
     this.root.style.background = "rgba(6, 14, 23, 0.78)";
     this.root.style.color = "#d5ecff";
-    this.root.style.fontFamily = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
+    this.root.style.fontFamily = MONO_FONT;
     this.root.style.fontSize = "12px";
     this.root.style.lineHeight = "1.35";
     this.root.style.whiteSpace = "pre";
@@ -64,15 +60,11 @@ export class Hud {
     if (snapshot.propStats) {
       lines.push(`seed: ${snapshot.propStats.seed}`);
       lines.push(
-        `props profile: ${snapshot.propStats.profile} (j ${snapshot.propStats.jitter.toFixed(2)} c ${snapshot.propStats.cluster.toFixed(2)} d ${snapshot.propStats.density.toFixed(2)})`,
-      );
-      lines.push(
         `props placed/candidates: ${snapshot.propStats.collidersPlaced}/${snapshot.propStats.candidatesTotal}`,
       );
       lines.push(
         `rejects clear/bounds/gap: ${snapshot.propStats.rejectedClearZone}/${snapshot.propStats.rejectedBounds}/${snapshot.propStats.rejectedGapRule}`,
       );
-      lines.push(`visual-only landmarks: ${snapshot.propStats.visualOnlyLandmarks}`);
     }
 
     if (snapshot.weaponStats) {

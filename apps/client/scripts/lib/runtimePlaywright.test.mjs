@@ -58,6 +58,25 @@ function validCaptureState(overrides = {}) {
   };
 }
 
+test("asset host budget reaches agent, human and mobile URLs without overriding an explicit budget", () => {
+  const previous = process.env.QA_ASSET_READY_TIMEOUT_MS;
+  process.env.QA_ASSET_READY_TIMEOUT_MS = "60000";
+  try {
+    for (const autostart of ["agent", "human"]) {
+      const url = new URL(buildRuntimeUrl("http://127.0.0.1:43210", { autostart }));
+      assert.equal(url.searchParams.get("qaAssetTimeoutMs"), "60000");
+    }
+    const explicit = new URL(buildRuntimeUrl("http://127.0.0.1:43210", {
+      autostart: "human", shot: "SHOT_02_SPAWN_A_TO_BAZAAR",
+      extraSearchParams: { qaAssetTimeoutMs: 2000 },
+    }));
+    assert.equal(explicit.searchParams.get("qaAssetTimeoutMs"), "2000");
+  } finally {
+    if (previous === undefined) delete process.env.QA_ASSET_READY_TIMEOUT_MS;
+    else process.env.QA_ASSET_READY_TIMEOUT_MS = previous;
+  }
+});
+
 test("withTimeout rejects a browser operation at its hard deadline", async () => {
   await assert.rejects(
     withTimeout(() => new Promise(() => {}), 20, "hung operation"),
@@ -219,6 +238,26 @@ test("runtime readiness surfaces an early asset failure before the runtime-ready
     /asset readiness failed during runtime boot.*missing grey_tiles/,
   );
   assert.equal(waited, 0);
+});
+
+test("readiness accepts a valid response beyond two seconds within the existing state-read budget", async () => {
+  let readinessReads = 0;
+  const page = {
+    async evaluate(fn) {
+      if (fn.toString().includes("__runtime_ready_state")) {
+        readinessReads += 1;
+        await new Promise((resolve) => setTimeout(resolve, 2_500));
+        return { runtimeReady: true, readyState: { mapLoaded: true, revealPhase: "active" }, qaCapture: null };
+      }
+      if (fn.toString().includes("__qa_capture_state")) return null;
+      return { mode: "runtime" };
+    },
+    url: () => "http://127.0.0.1:43210/?autostart=human",
+    waitForTimeout: async () => {},
+  };
+  const state = await waitForRuntimeReady(page, { timeoutMs: 9_000 });
+  assert.equal(state.mode, "runtime");
+  assert.equal(readinessReads, 1, "a responsive probe must not be abandoned and duplicated");
 });
 
 test("capture state validation rejects malformed, unstable, mismatched-profile, and non-1K evidence", () => {

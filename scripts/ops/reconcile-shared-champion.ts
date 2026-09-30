@@ -1,0 +1,119 @@
+import { reconcileSharedChampionStorage } from "../../server/highScoreStoreImpl.js";
+import { loadEnv } from "./lib/envFile.js";
+
+type CliOptions = {
+  envFile: string | null;
+  json: boolean;
+};
+
+function printUsage(): void {
+  console.log(`Usage:
+  pnpm db:reconcile -- [--env-file .env.production.local] [--json]
+
+Options:
+  --env-file <path>  Load environment variables from a local env file before reconciling.
+  --json             Print the reconcile report as JSON.
+`);
+}
+
+function parseArgs(argv: readonly string[]): CliOptions {
+  const options: CliOptions = {
+    envFile: null,
+    json: false,
+  };
+
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (!arg) continue;
+    if (arg === "--") continue;
+
+    if (arg === "--help" || arg === "-h") {
+      printUsage();
+      process.exit(0);
+    }
+    if (arg === "--json") {
+      options.json = true;
+      continue;
+    }
+    if (arg === "--env-file") {
+      const next = argv[index + 1];
+      if (!next) {
+        throw new Error("--env-file requires a path.");
+      }
+      options.envFile = next;
+      index += 1;
+      continue;
+    }
+    if (arg.startsWith("--env-file=")) {
+      options.envFile = arg.slice("--env-file=".length);
+      continue;
+    }
+
+    throw new Error(`Unknown argument: ${arg}`);
+  }
+
+  return options;
+}
+
+async function main(): Promise<void> {
+  const options = parseArgs(process.argv.slice(2));
+  const env = loadEnv(options.envFile);
+
+  const report = await reconcileSharedChampionStorage({ env });
+  if (options.json) {
+    console.log(JSON.stringify(report, null, 2));
+    return;
+  }
+
+  console.log("Shared champion reconcile report");
+  console.log(`inserted runs: ${report.insertedRuns}`);
+  console.log(`skipped existing runs: ${report.skippedExistingRuns}`);
+  console.log(`orphaned accepted finishes: ${report.orphanedAcceptedFinishes}`);
+  console.log(`malformed accepted finishes: ${report.malformedAcceptedFinishes}`);
+  console.log(`invalid champion rows: ${report.invalidChampionRows}`);
+  console.log(`invalid run-token names: ${report.invalidRunTokenNames}`);
+  console.log(`invalid run rows: ${report.invalidRunRows}`);
+  if (report.insertedRunIds.length > 0) {
+    console.log(`inserted run ids: ${report.insertedRunIds.join(", ")}`);
+  }
+  if (report.orphanedRunIds.length > 0) {
+    console.log(`orphaned run ids: ${report.orphanedRunIds.join(", ")}`);
+  }
+  if (report.malformedRunIds.length > 0) {
+    console.log(`malformed run ids: ${report.malformedRunIds.join(", ")}`);
+  }
+  if (report.invalidChampionBoardKeys.length > 0) {
+    console.log(`invalid champion boards: ${report.invalidChampionBoardKeys.join(", ")}`);
+  }
+  if (report.invalidRunTokenRunIds.length > 0) {
+    console.log(`invalid run-token ids: ${report.invalidRunTokenRunIds.join(", ")}`);
+  }
+  if (report.invalidRunIds.length > 0) {
+    console.log(`invalid run ids: ${report.invalidRunIds.join(", ")}`);
+  }
+  if (report.championDrift) {
+    console.log(`champion drift: ${report.championDrift.hasDrift ? "YES" : "no"}`);
+    if (report.championDrift.hasDrift) {
+      console.log(
+        `champion row: ${report.championDrift.championHolderName} `
+        + `(${report.championDrift.championHolderMode}) `
+        + `${report.championDrift.championScore}`,
+      );
+      console.log(
+        `best run: ${report.championDrift.bestRunHolderName} `
+        + `(${report.championDrift.bestRunHolderMode}) `
+        + `${report.championDrift.bestRunScore} `
+        + `[${report.championDrift.bestRunId}]`,
+      );
+    }
+  }
+}
+
+main().catch((error) => {
+  console.error(
+    error instanceof Error
+      ? `[db:reconcile] ${error.message}`
+      : "[db:reconcile] failed",
+  );
+  process.exitCode = 1;
+});

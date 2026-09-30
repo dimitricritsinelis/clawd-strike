@@ -1,12 +1,14 @@
+import { ENEMY_HEIGHT_M } from "./enemyDimensions";
+import { clamp01 } from "../utils/math";
 import { Mesh, PerspectiveCamera, Raycaster, Scene, Vector3 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { AK47_AUDIO_TUNING, type WeaponAudio } from "../audio/WeaponAudio";
+import { computeListenerSpatial, type WeaponAudio } from "../audio/WeaponAudio";
 import type {
   RuntimeAnchorsSpec,
   RuntimeAuthoredSpawn,
   RuntimeBlockoutSpec,
   RuntimeBlockoutZone,
-} from "../map/types";
+} from "../map/spec/types";
 import { PLAYER_EYE_HEIGHT_M, PLAYER_HEIGHT_M, PLAYER_WIDTH_M } from "../sim/PlayerController";
 import { intersectsAabb, setAabbFromFootPosition, type MutableAabb } from "../sim/collision/Aabb";
 import { rayVsAabb } from "../sim/collision/rayVsAabb";
@@ -20,20 +22,22 @@ import type { RuntimeSpawnId } from "../utils/UrlParams";
 import {
   EnemyController,
   ENEMY_EYE_HEIGHT_M,
-  ENEMY_HEIGHT_M,
   ENEMY_HALF_WIDTH_M,
+  ENEMY_MIN_NODE_RADIUS_M,
   clampEnemyTier,
   resolveEnemyTierProfile,
   type EnemyAabb,
   type EnemyDebugSnapshot,
   type EnemyDirective,
+  type EnemyHitReaction,
   type EnemyId,
   type EnemyPerceptionEvent,
   type EnemyRole,
   type EnemyState,
+  type EnemyShotImpact,
   type EnemyTarget,
 } from "./EnemyController";
-import { EnemyVisual } from "./EnemyVisual";
+import { EnemyVisual, type EnemyVisualHitReaction } from "./EnemyVisual";
 import {
   buildTacticalGraph,
   findZoneForPoint,
@@ -86,7 +90,7 @@ const SPAWN_ELEVATION_EPSILON_M = 0.05;
  * damage forces an immediate re-plan; between plans the cached directive only
  * has its per-frame sight flag and age refreshed.
  */
-const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
+export const DIRECTIVE_PLAN_INTERVAL_S = 0.15;
 /** Idle bots face the strongest zone belief; below this they fall back to the node's exposure yaw. */
 const FOCUS_BELIEF_MIN = 0.16;
 /** A belief zone this close to the bot's own node gives no useful facing. */
@@ -180,6 +184,7 @@ type NodeSelection = {
 type DirectiveMemory = {
   state: EnemyState;
   targetNodeId: string | null;
+  moveNodeId: string | null;
   score: number;
   startedAtS: number;
   commitUntilS: number;
@@ -374,6 +379,27 @@ export function resolveEnemyDeathCallbackBatch(
   };
 }
 
+/**
+ * Render-only reaction for a hit: the bullet's own horizontal direction when
+ * the shooter supplied it, else the line from the player to the enemy (the
+ * only shooter that damages enemies). Null when there was no hit.
+ */
+export function resolveVisualHitReaction(
+  reaction: EnemyHitReaction | null,
+  enemyPos: Readonly<{ x: number; z: number }>,
+  playerPos: Readonly<{ x: number; z: number }>,
+): EnemyVisualHitReaction | null {
+  if (!reaction) return null;
+  const impact = reaction.impact;
+  if (impact && Math.hypot(impact.dirX, impact.dirZ) > 1e-6) {
+    return {
+      dirX: impact.dirX, dirZ: impact.dirZ, headshot: reaction.headshot,
+      hitX: impact.hitX, hitZ: impact.hitZ,
+    };
+  }
+  return { dirX: enemyPos.x - playerPos.x, dirZ: enemyPos.z - playerPos.z, headshot: reaction.headshot };
+}
+
 export type EnemyManagerDebugSnapshot = {
   waveNumber: number;
   waveElapsedS: number;
@@ -407,10 +433,6 @@ function distanceSq(aX: number, aZ: number, bX: number, bZ: number): number {
 
 function distanceM(aX: number, aZ: number, bX: number, bZ: number): number {
   return Math.hypot(aX - bX, aZ - bZ);
-}
-
-function clamp01(value: number): number {
-  return Math.min(1, Math.max(0, value));
 }
 
 function laneFromPosition(x: number): TacticalLane {
@@ -549,6 +571,8 @@ export class EnemyManager {
     const cameraPitch = Math.atan2(forward.y, Math.hypot(forward.x, forward.z));
     const scratch = createLineOfSightScratch();
     const blockers = this.controllers.filter((controller) => !controller.isDead()).map((controller) => controller.getAabb());
+    // A falling corpse stays rendered for its death fall; it must not occlude.
+    const deadVisuals = this.visuals.filter((_, index) => this.controllers[index]?.isDead());
     const targets: VisibleTarget[] = [];
     for (let index = 0; index < this.controllers.length; index += 1) {
       const controller = this.controllers[index]!;
@@ -569,7 +593,8 @@ export class EnemyManager {
         const hit = raycaster.intersectObjects(meshes, false).find((entry) => {
           const material = (entry.object as Mesh).material;
           const faceMaterial = Array.isArray(material) ? material[entry.face?.materialIndex ?? 0] : material;
-          return faceMaterial?.visible && faceMaterial.opacity > 0;
+          return faceMaterial?.visible && faceMaterial.opacity > 0
+            && !deadVisuals.some((dead) => dead.ownsRenderedObject(entry.object));
         });
         if (!hit || !visual.ownsRenderedObject(hit.object)) continue;
         const combatHit = this.checkRaycastHit(camera.position, direction, raycaster.far);
@@ -602,6 +627,8 @@ export class EnemyManager {
     for (const visual of this.visuals) visual.setRenderVisible(visible);
   }
   private weaponAudio: WeaponAudio | null = null;
+  /** Main camera used to pan enemy gunshots; null keeps them centred. */
+  private audioListener: { matrixWorld: { elements: ArrayLike<number> } } | null = null;
   private onEnemyKilled: EnemyKillCallback | null = null;
 
   private readonly deathFadeStarted = new Set<number>();
@@ -719,8 +746,9 @@ export class EnemyManager {
     this.queueSharedContactReports(event.enemyId, contact, pressureProfile);
   };
 
-  setAudio(audio: WeaponAudio): void {
+  setAudio(audio: WeaponAudio, listener: { matrixWorld: { elements: ArrayLike<number> } } | null = null): void {
     this.weaponAudio = audio;
+    this.audioListener = listener;
   }
 
   setKillCallback(cb: EnemyKillCallback): void {
@@ -2132,11 +2160,12 @@ export class EnemyManager {
       const controller = this.controllers[i]!;
       const visual = this.visuals[i]!;
       const pos = controller.getPosition();
+      const hitReaction = resolveVisualHitReaction(controller.consumeHitReaction(), pos, playerTarget.position);
 
       if (controller.isDead()) {
         if (newlyDeadIndexSet.has(i)) {
           this.deathFadeStarted.add(i);
-          visual.startDeathFade();
+          visual.startDeathFade(hitReaction);
           const deathPos = controller.getPosition();
           this.onEnemyKilled?.(
             controller.name,
@@ -2150,6 +2179,8 @@ export class EnemyManager {
         continue;
       }
 
+      if (hitReaction) visual.triggerHitReaction(hitReaction);
+
       visual.update(pos.x, pos.y, pos.z, controller.getYaw(), true,
         deltaSeconds, controller.isGrounded(), worldColliders.traversalSurfaces,
         distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z));
@@ -2157,13 +2188,14 @@ export class EnemyManager {
       if (controller.isFiring()) {
         visual.triggerShotFx();
         const distanceToPlayerM = distanceM(pos.x, pos.z, playerTarget.position.x, playerTarget.position.z);
-        const distanceNorm = clamp01(
-          (distanceToPlayerM - AK47_AUDIO_TUNING.enemy.distanceMinM)
-            / Math.max(0.001, AK47_AUDIO_TUNING.enemy.distanceMaxM - AK47_AUDIO_TUNING.enemy.distanceMinM),
-        );
+        const spatial = this.audioListener
+          ? computeListenerSpatial(this.audioListener.matrixWorld.elements, pos.x, pos.y + ENEMY_EYE_HEIGHT_M, pos.z)
+          : null;
         this.weaponAudio?.playAk47ShotQuiet({
-          layerGainScale: 1,
-          distanceNorm,
+          sourceId: controller.id,
+          distanceM: distanceToPlayerM,
+          pan: spatial?.pan ?? 0,
+          behind: spatial?.behind ?? 0,
         });
       }
       visual.updateFx(deltaSeconds);
@@ -2312,11 +2344,13 @@ export class EnemyManager {
           const second = liveControllers[j]!;
           const firstPos = first.getPosition();
           const secondPos = second.getPosition();
+          if (firstPos.y >= secondPos.y + ENEMY_HEIGHT_M || secondPos.y >= firstPos.y + ENEMY_HEIGHT_M) continue;
           let dx = secondPos.x - firstPos.x;
           let dz = secondPos.z - firstPos.z;
           let distance = Math.hypot(dx, dz);
           if (distance >= LIVE_BOT_MIN_SEPARATION_M) continue;
 
+          const overlapM = LIVE_BOT_MIN_SEPARATION_M - distance;
           if (distance < 0.0001) {
             const stableSeed = (i + 1) * 97 + (j + 1) * 53;
             if (stableSeed % 2 === 0) {
@@ -2329,7 +2363,6 @@ export class EnemyManager {
             distance = 1;
           }
 
-          const overlapM = LIVE_BOT_MIN_SEPARATION_M - distance;
           if (overlapM <= 0) continue;
           const inverseDistance = 1 / distance;
           const pushX = dx * inverseDistance * overlapM * 0.5;
@@ -2574,9 +2607,25 @@ export class EnemyManager {
       debugReason = "full hunt mode";
     }
 
-    const path = this.findTacticalPathCached(currentNode?.id ?? null, targetNode?.id ?? null);
-    const moveNodeId = path.length > 1 ? path[1]! : targetNode?.id ?? null;
-    const moveNode = moveNodeId ? this.tacticalGraph?.nodeById.get(moveNodeId) ?? null : targetNode;
+    // Keep following the chosen waypoint until arrival. Re-anchoring to the
+    // nearest node mid-edge can select a portal whose path goes back through
+    // the previous zone center, making the bot reverse forever between them.
+    const previousMoveNode = previous?.targetNodeId === targetNode?.id && previous?.moveNodeId
+      ? this.tacticalGraph?.nodeById.get(previous.moveNodeId) ?? null
+      : null;
+    const atPreviousMoveNode = previousMoveNode
+      && distanceM(controllerPos.x, controllerPos.z, previousMoveNode.x, previousMoveNode.z) <= ENEMY_MIN_NODE_RADIUS_M;
+    const pathStart = previousMoveNode ?? currentNode;
+    const path = this.findTacticalPathCached(pathStart?.id ?? null, targetNode?.id ?? null);
+    // Distinct portal and zone nodes can occupy the same position. Skip those
+    // zero-length steps instead of pointing at an already-reached waypoint.
+    const nextMoveNodeId = path.slice(1).find((id) => {
+      const node = this.tacticalGraph?.nodeById.get(id);
+      return node && (!pathStart || node.x !== pathStart.x || node.y !== pathStart.y || node.z !== pathStart.z);
+    }) ?? targetNode?.id ?? null;
+    const moveNode = previousMoveNode && !atPreviousMoveNode
+      ? previousMoveNode
+      : nextMoveNodeId ? this.tacticalGraph?.nodeById.get(nextMoveNodeId) ?? null : targetNode;
     const holdPoint = targetNode ? { x: targetNode.x, z: targetNode.z } : null;
     const movePoint = moveNode ? { x: moveNode.x, z: moveNode.z } : holdPoint;
     const focusPoint = this.resolveFocusPoint(targetNode, knowledge);
@@ -2592,6 +2641,7 @@ export class EnemyManager {
     this.directiveMemoryByEnemyId.set(controller.id, {
       state,
       targetNodeId: targetNode?.id ?? null,
+      moveNodeId: moveNode?.id ?? null,
       score: targetScore,
       startedAtS,
       commitUntilS,
@@ -3362,10 +3412,14 @@ export class EnemyManager {
     return { node: best, score: bestScore };
   }
 
-  applyDamageToEnemy(enemyId: string, damage: number, isHeadshot = false): void {
+  /**
+   * `impact` (bullet direction and entry point) only steers the render-side
+   * flinch and death fall; without it the player-to-enemy line is used.
+   */
+  applyDamageToEnemy(enemyId: string, damage: number, isHeadshot = false, impact: EnemyShotImpact | null = null): void {
     for (const controller of this.controllers) {
       if (controller.id === enemyId) {
-        controller.applyDamage(damage, isHeadshot);
+        controller.applyDamage(damage, isHeadshot, impact);
         return;
       }
     }

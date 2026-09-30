@@ -1,0 +1,32 @@
+{
+  "modelId": "fountain_receivers_link_west_mid",
+  "file": "fountain-receivers-link-west-mid.glb",
+  "source": "repo://assets/source/unit-fountain-court/build-receivers.py",
+  "license": "Project-Original",
+  "position": {
+    "x": 15,
+    "y": 36,
+    "z": 0
+  },
+  "yawDeg": 180,
+  "inputSha256": "b880b8f401445e207fbca03cc374e2ddc119f60bd44f036ab2af83027bebd021",
+  "receiverParcelIds": [
+    "lwm-n",
+    "lwm-s"
+  ],
+  "boundaryCoverage": [
+    {
+      "orientation": "horizontal",
+      "coord": 41,
+      "start": 15.0,
+      "end": 20.0
+    },
+    {
+      "orientation": "horizontal",
+      "coord": 36,
+      "start": 15.0,
+      "end": 20.0
+    }
+  ],
+  "futureDisposition": "Replace this exact dependency placement atomically when its complete area section is installed; do not mark the complete area built."
+}
