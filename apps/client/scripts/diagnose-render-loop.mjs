@@ -1,5 +1,5 @@
 // Temporary controlled Linux diagnosis. It observes existing rendering and
-// never changes graphics options, frame cadence, simulation or readiness.
+// changes only the named driver/compositor probe, never game source or quality.
 import { chromium } from "@playwright/test";
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 
@@ -20,9 +20,12 @@ const bounded = async (promise, ms, label) => {
 };
 const browser = await chromium.launch({
   channel: "chromium", headless: true,
-  args: process.env.PW_SOFTWARE_RENDERING === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : [],
+  args: [
+    ...(process.env.PW_SOFTWARE_RENDERING === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []),
+    ...(process.env.DIAGNOSTIC_PROBE === "software-compositor" ? ["--disable-gpu-compositing"] : []),
+  ],
 });
-record({ source: process.env.DIAGNOSTIC_SOURCE, workers: process.env.DIAGNOSTIC_WORKERS, browser: browser.version() });
+record({ source: process.env.DIAGNOSTIC_SOURCE, probe: process.env.DIAGNOSTIC_PROBE, browser: browser.version() });
 const system = await browser.newBrowserCDPSession();
 let processSampling = false;
 const sampleProcesses = async () => {
@@ -43,7 +46,7 @@ const context = await browser.newContext({
 const page = await context.newPage();
 page.on("console", message => record({ console: message.text(), type: message.type() }));
 page.on("pageerror", error => record({ pageerror: error.message }));
-await page.addInitScript(() => {
+await page.addInitScript(({ probe }) => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
@@ -53,10 +56,15 @@ await page.addInitScript(() => {
   const nativeRaf = window.requestAnimationFrame.bind(window);
   let frame = 0;
   let inFrame = false;
+  let frameContext = null;
   let observed = new Set();
   window.requestAnimationFrame = callback => nativeRaf(time => {
     const diagnose = active && callback.name === "animate" && frame < 3;
-    if (!diagnose) return callback(time);
+    if (!diagnose) {
+      const result = callback(time);
+      if (active && callback.name === "animate" && probe === "finish-frame") frameContext?.finish();
+      return result;
+    }
     frame += 1;
     observed = new Set();
     inFrame = true;
@@ -66,6 +74,11 @@ await page.addInitScript(() => {
     finally {
       info(`[diagnostic] frame ${frame} exited ${(performance.now() - start).toFixed(1)}ms`);
       inFrame = false;
+      if (probe === "finish-frame" && frameContext) {
+        const finishStart = performance.now();
+        frameContext.finish();
+        info(`[diagnostic] frame ${frame} GPU retirement ${(performance.now() - finishStart).toFixed(1)}ms`);
+      }
     }
   });
   for (const prototype of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
@@ -73,6 +86,7 @@ await page.addInitScript(() => {
       const native = prototype[name];
       prototype[name] = function (...args) {
         if (!inFrame) return native.apply(this, args);
+        frameContext = this;
         const first = !observed.has(name);
         observed.add(name);
         if (first) info(`[diagnostic] frame ${frame} GL ${name} entered`);
@@ -85,7 +99,7 @@ await page.addInitScript(() => {
       };
     }
   }
-});
+}, { probe: process.env.DIAGNOSTIC_PROBE });
 const profiler = await context.newCDPSession(page);
 await profiler.send("Profiler.enable");
 await profiler.send("Profiler.setSamplingInterval", { interval: 10000 });
