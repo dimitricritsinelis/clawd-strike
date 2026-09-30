@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         source: [9cc6a44757757ca03de05f9c33da5ed10b50c78c]
-        probe: [native-stack, blockout]
+        probe: [anisotropy-one, two-workers]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -36,6 +36,10 @@ jobs:
           ln -s "$GITHUB_WORKSPACE/node_modules" comparison-src/node_modules
           ln -s "$GITHUB_WORKSPACE/apps/client/node_modules" comparison-src/apps/client/node_modules
           mkdir -p artifacts/render-loop-diagnosis
+          if [ '${{ matrix.probe }}' = 'two-workers' ]; then
+            printf '%s\n' '[Processor]' 'ThreadCount=2' > SwiftShader.ini
+            cat SwiftShader.ini
+          fi
           pnpm --dir comparison-src --filter @clawd-strike/client dev --host 127.0.0.1 --port 4173 --strictPort > artifacts/render-loop-diagnosis/vite.log 2>&1 &
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi

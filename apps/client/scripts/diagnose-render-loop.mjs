@@ -51,7 +51,7 @@ const context = await browser.newContext({
 const page = await context.newPage();
 page.on("console", message => record({ console: message.text(), type: message.type() }));
 page.on("pageerror", error => record({ pageerror: error.message }));
-await page.addInitScript(() => {
+await page.addInitScript(({ probe }) => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
@@ -61,6 +61,16 @@ await page.addInitScript(() => {
     }
     info(...args);
   };
+  if (probe === "anisotropy-one") {
+    for (const prototype of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      const nativeParameter = prototype.texParameterf;
+      prototype.texParameterf = function (target, parameter, value) {
+        // EXT_texture_filter_anisotropic's immutable enum. Only this temporary
+        // probe changes sampling cost; materials, texture resolution and scene stay fixed.
+        return nativeParameter.call(this, target, parameter, parameter === 0x84fe ? 1 : value);
+      };
+    }
+  }
   const nativeRaf = window.requestAnimationFrame.bind(window);
   let frame = 0;
   let inFrame = false;
@@ -97,16 +107,13 @@ await page.addInitScript(() => {
       };
     }
   }
-});
+}, { probe: process.env.DIAGNOSTIC_PROBE });
 const profiler = await context.newCDPSession(page);
 await profiler.send("Profiler.enable");
 await profiler.send("Profiler.setSamplingInterval", { interval: 10000 });
 await profiler.send("Profiler.start");
 try {
   const url = new URL("/?map=bazaar-map&autostart=human&name=HumanProbe&shot=SHOT_02_SPAWN_A_TO_BAZAAR&spawn=A&qaAssetTimeoutMs=60000&floors=pbr&walls=pbr&vm=0&perf=1", process.env.DIAGNOSTIC_BASE_URL ?? "http://127.0.0.1:4173");
-  if (process.env.DIAGNOSTIC_PROBE === "blockout") {
-    url.searchParams.set("floors", "blockout"); url.searchParams.set("walls", "blockout");
-  }
   await page.goto(url.toString(), { waitUntil: "domcontentloaded" });
   await bounded(page.waitForFunction(() => {
     try {
