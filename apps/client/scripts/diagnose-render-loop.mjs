@@ -22,7 +22,19 @@ const browser = await chromium.launch({
   channel: "chromium", headless: true,
   args: process.env.PW_SOFTWARE_RENDERING === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : [],
 });
-record({ source: process.env.DIAGNOSTIC_SOURCE, browser: browser.version() });
+record({ source: process.env.DIAGNOSTIC_SOURCE, workers: process.env.DIAGNOSTIC_WORKERS, browser: browser.version() });
+const system = await browser.newBrowserCDPSession();
+let processSampling = false;
+const sampleProcesses = async () => {
+  if (processSampling) return;
+  processSampling = true;
+  try {
+    record({ processes: (await bounded(system.send("SystemInfo.getProcessInfo"), 1000, "process info")).processInfo });
+  } catch (error) { record({ processInfoError: error.message }); }
+  finally { processSampling = false; }
+};
+await sampleProcesses();
+const processTimer = setInterval(sampleProcesses, 5000);
 const context = await browser.newContext({
   viewport: { width: 844, height: 390 }, screen: { width: 844, height: 390 },
   deviceScaleFactor: 1, isMobile: true, hasTouch: true,
@@ -103,6 +115,7 @@ try {
   record({ outcome: "failed", error: error.message });
   process.exitCode = 1;
 } finally {
+  clearInterval(processTimer);
   try {
     const profile = await bounded(profiler.send("Profiler.stop"), 5000, "profiler stop");
     writeFileSync(`${dir}/cpu-profile.json`, JSON.stringify(profile));

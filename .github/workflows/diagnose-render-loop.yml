@@ -14,7 +14,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        source: [3ec5d36e121523dfc9871435184ad58ce5c0b93a, 9cc6a44757757ca03de05f9c33da5ed10b50c78c]
+        source: [9cc6a44757757ca03de05f9c33da5ed10b50c78c]
+        workers: [2, 3]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -33,6 +34,11 @@ jobs:
           ln -s "$GITHUB_WORKSPACE/node_modules" comparison-src/node_modules
           ln -s "$GITHUB_WORKSPACE/apps/client/node_modules" comparison-src/apps/client/node_modules
           mkdir -p artifacts/render-loop-diagnosis
+          # Chromium145's pinned SwiftShader supports this processor setting.
+          # Reserve CPU for browser/JS work; scene and rendering quality stay fixed.
+          printf '[Processor]\nThreadCount=%s\n' '${{ matrix.workers }}' > SwiftShader.ini
+          getconf _NPROCESSORS_ONLN
+          cat SwiftShader.ini
           pnpm --dir comparison-src --filter @clawd-strike/client dev --host 127.0.0.1 --port 4173 --strictPort > artifacts/render-loop-diagnosis/vite.log 2>&1 &
           for attempt in $(seq 1 60); do
             if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
@@ -42,6 +48,7 @@ jobs:
       - name: Mobile real-time comparison and process sampling
         env:
           DIAGNOSTIC_SOURCE: ${{ matrix.source }}
+          DIAGNOSTIC_WORKERS: ${{ matrix.workers }}
         run: |
           node apps/client/scripts/diagnose-render-loop.mjs &
           diagnostic_pid=$!
@@ -54,6 +61,6 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: render-loop-${{ matrix.source }}
+          name: render-loop-${{ matrix.source }}-${{ matrix.workers }}workers
           path: artifacts/render-loop-diagnosis/
           retention-days: 7
