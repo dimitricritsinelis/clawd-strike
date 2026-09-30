@@ -184,15 +184,19 @@ test("desktop preserves PBR and its weapon after a warmup network timeout", asyn
   const rendererEvent = recorder.snapshot().find((event: { text?: string }) => event.text?.startsWith("[renderer] "));
   expect(rendererEvent).toBeTruthy();
   const rendererIdentity = JSON.parse(rendererEvent!.text.slice("[renderer] ".length));
-  // Hardware automation exercises the real player's gate. Software GL must
-  // recover the same assets without forcing synchronous whole-scene warmup.
-  expect(state.boot?.hiddenWarmupRenderDone).toBe(!rendererIdentity.softwareRendering);
+  // Both paths finish their first draw during boot. Software stages compilation
+  // and uploads first; it does not force the hardware asset gate.
+  expect(state.boot?.hiddenWarmupRenderDone).toBe(true);
   expect(state.boot?.precompiled).toBe(true);
   expect(rendererIdentity.shadows).toBe(true);
   expect(rendererIdentity.ao).toBe(true);
   expect(rendererIdentity.post).toBe(true);
   if (rendererIdentity.softwareRendering) {
     expect(rendererIdentity.composerSamples).toEqual([0, 0]);
+    expect(rendererIdentity.canvasAntialias).toBe(false);
+    const firstDraw = recorder.snapshot().find((event: { text?: string }) => event.text?.startsWith("[runtime:boot] software first draw completed"));
+    expect(firstDraw).toBeTruthy();
+    console.info(firstDraw!.text);
   }
   expect(state.assets?.floor?.activeMode).toBe("pbr");
   expect(state.assets?.wall?.activeMode).toBe("pbr");

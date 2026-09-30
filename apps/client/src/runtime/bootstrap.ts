@@ -1117,6 +1117,18 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         ]);
       }
       console.info("[runtime:boot] software scene precompile completed");
+      // compileAsync and initTexture do not initialize geometry buffers, shadow
+      // programs or postprocessing passes. Complete that first draw during boot,
+      // before readiness lets QA apply its steady-state frame deadline.
+      const firstDrawStartedAt = performance.now();
+      console.info("[runtime:boot] software first draw started");
+      renderer.renderWithViewModel(game.scene, game.camera,
+        viewModel?.viewModelScene ?? null, viewModel?.viewModelCamera ?? null, viewModelVisible);
+      // Retire this initialization frame once while still under the loading
+      // overlay; a submitted command queue is not a completed first draw.
+      webglRenderer?.getContext().finish();
+      bootTelemetry.hiddenWarmupRenderDone = true;
+      console.info(`[runtime:boot] software first draw completed (${(performance.now() - firstDrawStartedAt).toFixed(1)}ms)`);
     } finally {
       window.clearTimeout(compileTimeoutId);
     }

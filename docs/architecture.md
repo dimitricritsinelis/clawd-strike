@@ -6,6 +6,8 @@
 
 The runtime assembles the map, renderer, player/input, weapon/audio, enemies, HUD, and public agent hooks. Helpers under [runtime/bootstrap](../apps/client/src/runtime/bootstrap/) separate asset loading, HUD creation, score storage, runtime state types, and map/scene telemetry from the startup coordinator. [OrientationGuard.ts](../apps/client/src/shared/OrientationGuard.ts) shares the loading-screen and gameplay rotation overlay; `src/shared/runtimeTextApi.ts` owns their shared text-API version. [Game.ts](../apps/client/src/runtime/game/Game.ts) owns core simulation/rendering behavior; bootstrap connects those systems and their lifecycle. Browser startup and shader readiness are separate from the first user interaction that unlocks audio or pointer lock.
 
+Software GL stages shader compilation and texture uploads, then completes and retires one hidden initialization draw before reporting ready. The draw initializes geometry, shadow and postprocessing paths that compilation alone leaves lazy. Software uses single-sample framebuffers; hardware retains supported MSAA and canvas antialiasing. Both paths keep the complete scene and its effects.
+
 ## Map and asset flow
 
 Map modules are grouped by responsibility under `runtime/map/`: `spec`, `world`, `floors`, `walls`, `architecture`, `sections`, `props`, and `atmosphere`.

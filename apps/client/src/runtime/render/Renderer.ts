@@ -228,8 +228,8 @@ export class Renderer {
     }
     // Pixel-ratio caps determine actual supersampling, even on Retina displays.
     const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
-    const canvas = document.createElement("canvas");
-    const context = tryCreateWebGLContext(canvas, needsAA);
+    let canvas = document.createElement("canvas");
+    let context = tryCreateWebGLContext(canvas, needsAA);
     let rendererName = "unavailable";
     try {
       const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
@@ -238,6 +238,13 @@ export class Renderer {
       // Driver telemetry is optional and must not prevent a supported boot.
     }
     this.softwareRendering = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(rendererName);
+    if (this.softwareRendering && context?.getContextAttributes()?.antialias) {
+      // Context attributes are immutable. Release the unmounted probe and
+      // keep software's default framebuffer single-sample like its HDR targets.
+      context.getExtension("WEBGL_lose_context")?.loseContext();
+      canvas = document.createElement("canvas");
+      context = tryCreateWebGLContext(canvas, false);
+    }
 
     let renderer: WebGLRenderer | null = null;
     if (context) {
@@ -245,7 +252,7 @@ export class Renderer {
         renderer = new WebGLRenderer({
           canvas,
           context,
-          antialias: needsAA,
+          antialias: needsAA && !this.softwareRendering,
           alpha: false,
           powerPreference: "high-performance",
         });
@@ -359,6 +366,7 @@ export class Renderer {
       shadows: this.renderer?.shadowMap.enabled ?? false,
       ao: this.aoPass !== null,
       post: this.goldenPostPass !== null,
+      canvasAntialias: this.renderer?.getContext().getContextAttributes()?.antialias ?? false,
       composerSamples: this.composer
         ? [this.composer.renderTarget1.samples, this.composer.renderTarget2.samples]
         : [],
