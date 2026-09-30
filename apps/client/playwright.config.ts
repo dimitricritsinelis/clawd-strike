@@ -27,7 +27,16 @@ export default defineConfig({
     viewport: process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1"
       ? { width: 640, height: 400 }
       : { width: 1440, height: 900 },
-    trace: "retain-on-failure",
+    // Playwright awaits DOM snapshots before/after each API response. On Linux
+    // software GL, a valid 7.4s Ready response incurred another 3.7–3.9s snapshot
+    // delay and falsely exceeded the 9s operation budget. Keep API/console/source
+    // traces and explicit failure screenshots without timing visual recording.
+    trace: {
+      mode: "retain-on-failure",
+      screenshots: !(process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1"),
+      snapshots: !(process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1"),
+      sources: true,
+    },
     screenshot: "only-on-failure",
     video: "off",
   },
