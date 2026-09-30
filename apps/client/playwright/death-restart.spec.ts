@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
+  advanceRuntime,
   attachConsoleRecorder,
   gotoAgentRuntime,
   readDocumentedAgentState,
@@ -27,6 +28,9 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
     baseUrl: testInfo.project.use.baseURL as string,
     agentName: "RestartProbe",
     extraSearchParams: {
+      // Accelerate the same combat/movement simulation without also running
+      // the real-time clock. Startup still draws the complete QA scene.
+      qa: 1,
       floors: "blockout",
       walls: "blockout",
       ao: 0,
@@ -59,13 +63,7 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
         fire,
       });
     }, { stepIndex: step });
-    const submittedFrames = await page.evaluate(async (stepMs) => {
-      const before = window.__qa_heartbeat?.().renderedFrameCounter;
-      await window.advanceTime?.(stepMs);
-      const after = window.__qa_heartbeat?.().renderedFrameCounter;
-      return after! - before!;
-    }, COMBAT_STEP_MS);
-    expect(submittedFrames).toBe(1);
+    await advanceRuntime(page, COMBAT_STEP_MS);
   }
 
   expect(died).toBe(true);
@@ -76,6 +74,9 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
 
   await expect(page.getByTestId("game-over")).toBeVisible();
   await page.getByTestId("play-again").click();
+  // The existing restart fade is driven by simulation updates. Deterministic
+  // QA has no real-time loop, so advance it through the fade-out callback.
+  await advanceRuntime(page, 200);
 
   await page.waitForFunction(() => {
     if (typeof window.render_game_to_text !== "function") return false;
@@ -90,7 +91,7 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
     } catch {
       return false;
     }
-  }, { timeout: 20_000 });
+  }, undefined, { timeout: 20_000 });
 
   const restartedState = await readRuntimeState(page);
   const restartedPublicState = await readDocumentedAgentState(page);

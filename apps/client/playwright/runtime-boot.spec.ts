@@ -3,6 +3,7 @@ import { getGameplayProfileIdentity } from "../../shared/gameplayProfile";
 import {
   attachConsoleRecorder,
   buildRuntimeUrl,
+  evaluateRuntimeState,
   gotoAgentRuntime,
   gotoHumanShot,
   readDocumentedAgentState,
@@ -196,5 +197,12 @@ test("desktop preserves PBR and its weapon after a warmup network timeout", asyn
   expect(groups).toContain("map-blockout/map-pbr-floors");
   expect(groups).toContain("map-blockout/r8-atmosphere");
   expect(groups.some((name) => name.startsWith("AK47_AnimatedPose/"))).toBe(true);
+  const submittedFrames = await evaluateRuntimeState(page, async () => {
+    const before = window.__qa_heartbeat?.().renderedFrameCounter;
+    await window.advanceTime?.(500);
+    const after = window.__qa_heartbeat?.().renderedFrameCounter;
+    return after! - before!;
+  }, undefined, { operation: "rendered-simulation-batch" });
+  expect(submittedFrames).toBe(1);
   expect(recorder.counts().errorCount).toBe(0);
 });
