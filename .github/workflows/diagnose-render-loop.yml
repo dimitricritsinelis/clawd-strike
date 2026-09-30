@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         source: [9cc6a44757757ca03de05f9c33da5ed10b50c78c]
-        probe: [hidden-runtime, instant-reveal]
+        probe: [native-stack, blockout]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
@@ -25,6 +25,8 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
+      - name: Native GPU stack tool
+        run: command -v gdb || (sudo apt-get update -qq && sudo apt-get install -y gdb)
       - uses: actions/checkout@v7
         with:
           ref: ${{ matrix.source }}

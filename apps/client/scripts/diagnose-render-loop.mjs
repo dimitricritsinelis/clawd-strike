@@ -1,6 +1,7 @@
 // Temporary controlled Linux diagnosis. It observes existing rendering and
 // changes only the named driver/compositor probe, never game source or quality.
 import { chromium } from "@playwright/test";
+import { execFileSync } from "node:child_process";
 import { appendFileSync, mkdirSync, writeFileSync } from "node:fs";
 
 const dir = "artifacts/render-loop-diagnosis";
@@ -28,12 +29,15 @@ const browser = await chromium.launch({
 record({ source: process.env.DIAGNOSTIC_SOURCE, probe: process.env.DIAGNOSTIC_PROBE, browser: browser.version() });
 const system = await browser.newBrowserCDPSession();
 record({ system: await system.send("SystemInfo.getInfo") });
+let gpuPid = null;
 let processSampling = false;
 const sampleProcesses = async () => {
   if (processSampling) return;
   processSampling = true;
   try {
-    record({ processes: (await bounded(system.send("SystemInfo.getProcessInfo"), 1000, "process info")).processInfo });
+    const processes = (await bounded(system.send("SystemInfo.getProcessInfo"), 1000, "process info")).processInfo;
+    gpuPid = processes.find(entry => entry.type === "GPU")?.id ?? gpuPid;
+    record({ processes });
   } catch (error) { record({ processInfoError: error.message }); }
   finally { processSampling = false; }
 };
@@ -47,22 +51,13 @@ const context = await browser.newContext({
 const page = await context.newPage();
 page.on("console", message => record({ console: message.text(), type: message.type() }));
 page.on("pageerror", error => record({ pageerror: error.message }));
-await page.addInitScript(({ probe }) => {
+await page.addInitScript(() => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
     if (String(args[0]).includes("[runtime:boot] runtime active")) {
       active = true;
-      const root = document.querySelector("#runtime-root");
-      const canvas = root?.querySelector("canvas");
-      info(`[diagnostic] dimensions ${JSON.stringify({ root: [root?.clientWidth, root?.clientHeight], canvas: [canvas?.width, canvas?.height] })}`);
-      if (probe === "hidden-runtime" && root) { root.style.transition = "none"; root.style.opacity = "0"; }
-      if (probe === "instant-reveal" && root) {
-        root.style.transition = "none";
-        root.style.willChange = "auto";
-        const overlay = document.querySelector("#overlay");
-        if (overlay) { overlay.style.transition = "none"; overlay.style.display = "none"; }
-      }
+
     }
     info(...args);
   };
@@ -102,13 +97,16 @@ await page.addInitScript(({ probe }) => {
       };
     }
   }
-}, { probe: process.env.DIAGNOSTIC_PROBE });
+});
 const profiler = await context.newCDPSession(page);
 await profiler.send("Profiler.enable");
 await profiler.send("Profiler.setSamplingInterval", { interval: 10000 });
 await profiler.send("Profiler.start");
 try {
   const url = new URL("/?map=bazaar-map&autostart=human&name=HumanProbe&shot=SHOT_02_SPAWN_A_TO_BAZAAR&spawn=A&qaAssetTimeoutMs=60000&floors=pbr&walls=pbr&vm=0&perf=1", process.env.DIAGNOSTIC_BASE_URL ?? "http://127.0.0.1:4173");
+  if (process.env.DIAGNOSTIC_PROBE === "blockout") {
+    url.searchParams.set("floors", "blockout"); url.searchParams.set("walls", "blockout");
+  }
   await page.goto(url.toString(), { waitUntil: "domcontentloaded" });
   await bounded(page.waitForFunction(() => {
     try {
@@ -133,6 +131,15 @@ try {
   process.exitCode = 1;
 } finally {
   clearInterval(processTimer);
+  if (gpuPid) {
+    try {
+      const pid = String(gpuPid);
+      writeFileSync(`${dir}/gpu-cwd.txt`, execFileSync("readlink", [`/proc/${pid}/cwd`], { timeout: 2000 }));
+      writeFileSync(`${dir}/gpu-threads.txt`, execFileSync("ps", ["-L", "-p", pid, "-o", "pid,tid,pcpu,state,comm"], { timeout: 2000 }));
+      writeFileSync(`${dir}/gpu-native-stack.txt`, execFileSync("sudo", ["gdb", "--batch", "-p", pid, "-ex", "set pagination off", "-ex", "thread apply all bt 12", "-ex", "detach"], { timeout: 15000, maxBuffer: 1024 * 1024 }));
+      record({ nativeStackSaved: true });
+    } catch (error) { record({ nativeStackError: error.message }); }
+  }
   try {
     const profile = await bounded(profiler.send("Profiler.stop"), 5000, "profiler stop");
     writeFileSync(`${dir}/cpu-profile.json`, JSON.stringify(profile));
