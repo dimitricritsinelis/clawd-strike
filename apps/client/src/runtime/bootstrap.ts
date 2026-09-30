@@ -361,6 +361,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   });
   let disposed = false;
   let qaFrameCounter = 0;
+  let qaRenderedFrameCounter = 0;
   let qaLastFrameAt: number | null = null;
   let qaLastStateSerializationAt: number | null = null;
   let qaStateSerializationInProgress = false;
@@ -1091,6 +1092,33 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       appendWarning(
         `Map readiness gate failed. Revealing anyway.\n${error instanceof Error ? error.message : String(error)}`,
       );
+    }
+  } else if (mapAssets && renderer.softwareRendering) {
+    // Keep first-paint shader linking and texture uploads out of the first
+    // synchronous gameplay frame. Compile asynchronously and yield between
+    // texture batches while the loading overlay is still active; keep full quality.
+    console.info("[runtime:boot] software scene precompile started");
+    let compileTimeoutId = 0;
+    try {
+      await waitForPendingAssetLoads(MAP_ASSET_SETTLE_TIMEOUT_MS);
+      await Promise.race([
+        renderer.compileSceneAsync(game.scene, game.camera,
+          viewModel?.viewModelScene ?? null, viewModel?.viewModelCamera ?? null, viewModelVisible),
+        new Promise<never>((_, reject) => {
+          compileTimeoutId = window.setTimeout(() => reject(new Error(`Software scene precompile exceeded ${MAP_SCENE_COMPILE_TIMEOUT_MS}ms`)), MAP_SCENE_COMPILE_TIMEOUT_MS);
+        }),
+      ]);
+      bootTelemetry.precompiled = true;
+      const webglRenderer = renderer.getWebGLRenderer();
+      if (webglRenderer) {
+        await uploadTexturesInBatches(webglRenderer, [
+          ...collectSceneTextures(game.scene),
+          ...(viewModel?.viewModelScene ? collectSceneTextures(viewModel.viewModelScene) : []),
+        ]);
+      }
+      console.info("[runtime:boot] software scene precompile completed");
+    } finally {
+      window.clearTimeout(compileTimeoutId);
     }
   } else if (mapAssets) {
     // Deterministic QA and agent runs keep the historical behavior: their
@@ -2058,6 +2086,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       perfGeometries = perfInfo.geometries;
       perfTextures = perfInfo.textures;
       qaAssetTracker?.recordRenderedFrame(perfInfo.textures);
+      qaRenderedFrameCounter += 1;
     }
 
     if (renderFrame && perfHud.isVisible()) {
@@ -2384,12 +2413,15 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
         revealing: qaRevealFramingSnapshot,
       };
     };
+  }
+  if (isInternalDebugSurface || deterministicQa || isAutomatedRuntime) {
     window.__qa_heartbeat = () => {
       const now = Date.now();
       const staleAfterMs = deterministicQa ? 10_000 : 2_500;
       return {
         timestamp: now,
         frameCounter: qaFrameCounter,
+        renderedFrameCounter: qaRenderedFrameCounter,
         runtimePhase: disposed
           ? "disposed"
           : mapLoaded

@@ -60,9 +60,9 @@ test("death restart returns the runtime to a fresh wave-1 run", async ({ page },
       });
     }, { stepIndex: step });
     const submittedFrames = await page.evaluate(async (stepMs) => {
-      const before = window.__qa_heartbeat?.().frameCounter;
+      const before = window.__qa_heartbeat?.().renderedFrameCounter;
       await window.advanceTime?.(stepMs);
-      const after = window.__qa_heartbeat?.().frameCounter;
+      const after = window.__qa_heartbeat?.().renderedFrameCounter;
       return after! - before!;
     }, COMBAT_STEP_MS);
     expect(submittedFrames).toBe(1);

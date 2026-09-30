@@ -230,12 +230,14 @@ export class Renderer {
     const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;
     const canvas = document.createElement("canvas");
     const context = tryCreateWebGLContext(canvas, needsAA);
-    const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
-    const rendererName = context
-      ? String(context.getParameter(rendererInfo ? rendererInfo.UNMASKED_RENDERER_WEBGL : context.RENDERER))
-      : "unavailable";
+    let rendererName = "unavailable";
+    try {
+      const rendererInfo = context?.getExtension("WEBGL_debug_renderer_info");
+      if (context) rendererName = String(context.getParameter(rendererInfo ? rendererInfo.UNMASKED_RENDERER_WEBGL : context.RENDERER));
+    } catch {
+      // Driver telemetry is optional and must not prevent a supported boot.
+    }
     this.softwareRendering = /swiftshader|llvmpipe|softpipe|software|basic render/i.test(rendererName);
-    console.info(`[renderer] ${JSON.stringify({ renderer: rendererName, softwareRendering: this.softwareRendering, pixelRatioCap: this.effectiveMaxPixelRatio })}`);
 
     let renderer: WebGLRenderer | null = null;
     if (context) {
@@ -350,6 +352,14 @@ export class Renderer {
       // OutputPass applies tone mapping + sRGB conversion (required since Three.js r154+)
       this.composer.addPass(new OutputPass());
     }
+    console.info(`[renderer] ${JSON.stringify({
+      renderer: rendererName,
+      softwareRendering: this.softwareRendering,
+      pixelRatioCap: this.effectiveMaxPixelRatio,
+      shadows: this.renderer?.shadowMap.enabled ?? false,
+      ao: this.aoPass !== null,
+      post: this.goldenPostPass !== null,
+    })}`);
   }
 
   getAspect(): number {

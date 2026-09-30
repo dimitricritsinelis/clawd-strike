@@ -33,6 +33,7 @@ declare global {
     __qa_heartbeat?: () => {
       timestamp: number;
       frameCounter: number;
+      renderedFrameCounter: number;
       runtimePhase: string;
       mainLoopAdvancing: boolean;
       lastFrameAt: number | null;
