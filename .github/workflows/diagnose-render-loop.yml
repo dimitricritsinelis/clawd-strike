@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         source: [9cc6a44757757ca03de05f9c33da5ed10b50c78c]
-        probe: [finish-frame, software-compositor]
+        probe: [hidden-runtime, instant-reveal]
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

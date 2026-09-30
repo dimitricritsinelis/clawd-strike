@@ -22,11 +22,12 @@ const browser = await chromium.launch({
   channel: "chromium", headless: true,
   args: [
     ...(process.env.PW_SOFTWARE_RENDERING === "1" ? ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] : []),
-    ...(process.env.DIAGNOSTIC_PROBE === "software-compositor" ? ["--disable-gpu-compositing"] : []),
+
   ],
 });
 record({ source: process.env.DIAGNOSTIC_SOURCE, probe: process.env.DIAGNOSTIC_PROBE, browser: browser.version() });
 const system = await browser.newBrowserCDPSession();
+record({ system: await system.send("SystemInfo.getInfo") });
 let processSampling = false;
 const sampleProcesses = async () => {
   if (processSampling) return;
@@ -50,21 +51,28 @@ await page.addInitScript(({ probe }) => {
   const info = console.info.bind(console);
   let active = false;
   console.info = (...args) => {
-    if (String(args[0]).includes("[runtime:boot] runtime active")) active = true;
+    if (String(args[0]).includes("[runtime:boot] runtime active")) {
+      active = true;
+      const root = document.querySelector("#runtime-root");
+      const canvas = root?.querySelector("canvas");
+      info(`[diagnostic] dimensions ${JSON.stringify({ root: [root?.clientWidth, root?.clientHeight], canvas: [canvas?.width, canvas?.height] })}`);
+      if (probe === "hidden-runtime" && root) { root.style.transition = "none"; root.style.opacity = "0"; }
+      if (probe === "instant-reveal" && root) {
+        root.style.transition = "none";
+        root.style.willChange = "auto";
+        const overlay = document.querySelector("#overlay");
+        if (overlay) { overlay.style.transition = "none"; overlay.style.display = "none"; }
+      }
+    }
     info(...args);
   };
   const nativeRaf = window.requestAnimationFrame.bind(window);
   let frame = 0;
   let inFrame = false;
-  let frameContext = null;
   let observed = new Set();
   window.requestAnimationFrame = callback => nativeRaf(time => {
     const diagnose = active && callback.name === "animate" && frame < 3;
-    if (!diagnose) {
-      const result = callback(time);
-      if (active && callback.name === "animate" && probe === "finish-frame") frameContext?.finish();
-      return result;
-    }
+    if (!diagnose) return callback(time);
     frame += 1;
     observed = new Set();
     inFrame = true;
@@ -74,11 +82,7 @@ await page.addInitScript(({ probe }) => {
     finally {
       info(`[diagnostic] frame ${frame} exited ${(performance.now() - start).toFixed(1)}ms`);
       inFrame = false;
-      if (probe === "finish-frame" && frameContext) {
-        const finishStart = performance.now();
-        frameContext.finish();
-        info(`[diagnostic] frame ${frame} GPU retirement ${(performance.now() - finishStart).toFixed(1)}ms`);
-      }
+
     }
   });
   for (const prototype of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
@@ -86,7 +90,6 @@ await page.addInitScript(({ probe }) => {
       const native = prototype[name];
       prototype[name] = function (...args) {
         if (!inFrame) return native.apply(this, args);
-        frameContext = this;
         const first = !observed.has(name);
         observed.add(name);
         if (first) info(`[diagnostic] frame ${frame} GL ${name} entered`);
