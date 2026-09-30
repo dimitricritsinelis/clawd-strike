@@ -17,8 +17,10 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL,
-    // CI installs the Playwright-pinned Chromium, not the runner's system Chrome.
-    channel: process.env.CI ? "chromium" : "chrome",
+    // CI installs Playwright's pinned Chromium headless shell. Omitting the
+    // channel selects that supported default rather than full new-headless
+    // Chromium; local hardware QA keeps the user's full system Chrome.
+    channel: process.env.CI ? undefined : "chrome",
     launchOptions: process.env.PW_SOFTWARE_RENDERING === "1"
       ? { args: ["--use-angle=swiftshader", "--enable-unsafe-swiftshader"] }
       : {},
