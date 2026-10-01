@@ -16,7 +16,7 @@ export class RuntimeMapLoadError extends Error {
 async function fetchJson(url: string): Promise<unknown> {
   let response: Response;
   try {
-    response = await fetch(url);
+    response = await fetch(url, { cache: "no-cache" });
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     throw new RuntimeMapLoadError(url, `Network error: ${detail}`);

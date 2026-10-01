@@ -77,7 +77,7 @@ export class PropModelLibrary {
     options.requestObserver?.start(manifestRequestId);
     let response: Response;
     try {
-      response = await fetch(resolvedManifestUrl.toString());
+      response = await fetch(resolvedManifestUrl.toString(), { cache: "no-cache" });
       if (!response.ok) {
         throw new Error(`Failed to fetch prop manifest (${response.status} ${response.statusText})`);
       }

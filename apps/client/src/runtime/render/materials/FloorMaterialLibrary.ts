@@ -165,7 +165,7 @@ export class FloorMaterialLibrary {
     options.requestObserver?.start(requestId);
     let response: Response;
     try {
-      response = await fetch(resolvedManifestUrl.toString());
+      response = await fetch(resolvedManifestUrl.toString(), { cache: "no-cache" });
       if (!response.ok) {
         throw new Error(`Failed to fetch floor manifest (${response.status} ${response.statusText})`);
       }

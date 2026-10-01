@@ -33,7 +33,7 @@ The checked-in headers deny framing, disable MIME sniffing, restrict referrers, 
 | Other `/assets/*`, `/loading-screen/*`, `/maps/*` | Revalidate on every use; unchanged cached bodies can be reused |
 | `/api/*` | No store |
 
-Unhashed assets and map/manifests revalidate so a new deployment cannot continue loading an old model or a removed asset list for a week. Keep immutable caching only for content-addressed files and bundles. Verify served asset identity, conditional responses and headers on the target preview; a successful local build does not exercise the CDN.
+Unhashed assets and map/manifests revalidate so a new deployment cannot continue loading an old model or a removed asset list for a week. Map JSON and material/model manifest fetches also use `cache: "no-cache"` to revalidate responses stored under an earlier deployment's longer cache lifetime; new response headers alone cannot invalidate those browser copies. Keep immutable caching only for content-addressed files and bundles. Verify served asset identity, conditional responses and headers on the target preview; a successful local build does not exercise the CDN.
 
 ## Workflows
 

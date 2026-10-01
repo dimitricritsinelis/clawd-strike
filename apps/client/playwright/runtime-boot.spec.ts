@@ -1,4 +1,6 @@
 import { expect, test } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import { createServer } from "node:http";
 import { getGameplayProfileIdentity } from "../../shared/gameplayProfile";
 import {
   attachConsoleRecorder,
@@ -15,6 +17,108 @@ import {
 
 const DESKTOP_AGENT_IDENTITY = getGameplayProfileIdentity("desktop-agent");
 const MOBILE_HUMAN_IDENTITY = getGameplayProfileIdentity("mobile-human");
+
+const cacheTest = test.extend({ trace: "off" });
+
+cacheTest("revalidates maps and manifests cached by the previous deployment", async ({ page }, testInfo) => {
+  const currentMap = JSON.parse(await readFile(new URL("../public/maps/bazaar-map/map_spec.json", import.meta.url), "utf8"));
+  const currentShots = JSON.parse(await readFile(new URL("../public/maps/bazaar-map/shots.json", import.meta.url), "utf8"));
+  const oldMap = structuredClone(currentMap);
+  const oldPlacement = oldMap.dressingPlacements.find((placement: { runtime: { mode: string } }) => placement.runtime.mode === "procedural");
+  const retiredAssetId = oldPlacement.assetId;
+  oldPlacement.id = "PLACE_B4_SOUK_CART_B4_SOUK_W_CART_GROUND_01";
+  for (const placement of oldMap.dressingPlacements) {
+    if (placement.assetId === retiredAssetId) placement.runtime.id = "bazaar_market_cart";
+  }
+  oldMap.assetRegistry.find((asset: { id: string }) => asset.id === retiredAssetId).runtime.id = "bazaar_market_cart";
+  const oldShots = structuredClone(currentShots);
+  oldShots.shots[0].label = "Previous deployment shot";
+  const textures = { "1k": { albedo: "unused.jpg", normal: "unused.jpg", arm: "unused.jpg" } };
+  const modelUrl = `data:application/json,${encodeURIComponent(JSON.stringify({ asset: { version: "2.0" }, scene: 0, scenes: [{ nodes: [] }] }))}`;
+  const metadata = [
+    { path: "/maps/cache-probe/map_spec.json", old: oldMap, current: currentMap },
+    { path: "/maps/cache-probe/shots.json", old: oldShots, current: currentShots },
+    { path: "/assets/floors/materials.json", old: { materials: [{ id: "previous", tileSizeM: 1, textures }] }, current: { materials: [{ id: "current", tileSizeM: 1, textures }] } },
+    { path: "/assets/walls/materials.json", old: { materials: [{ id: "previous", tileSizeM: 1, textures }] }, current: { materials: [{ id: "current", tileSizeM: 1, textures }] } },
+    { path: "/assets/props/models.json", old: { models: [{ id: "previous", url: modelUrl }] }, current: { models: [{ id: "current", url: modelUrl }] } },
+  ];
+  const requests = new Map<string, number>();
+  let currentDeployment = false;
+  const server = createServer((request, response) => {
+    const item = metadata.find((candidate) => candidate.path === request.url);
+    if (!item) {
+      response.writeHead(200, { "Content-Type": "text/html" });
+      response.end("<!doctype html><title>Deployment cache probe</title>");
+      return;
+    }
+    requests.set(item.path, (requests.get(item.path) ?? 0) + 1);
+    response.writeHead(200, {
+      "Content-Type": "application/json",
+      "Cache-Control": item.path.startsWith("/maps/")
+        ? "public, max-age=3600, stale-while-revalidate=86400"
+        : "public, max-age=604800, stale-while-revalidate=86400",
+    });
+    response.end(JSON.stringify(currentDeployment ? item.current : item.old));
+  });
+  await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+  const address = server.address();
+  if (!address || typeof address === "string") throw new Error("Cache probe server has no TCP address");
+  const origin = `http://127.0.0.1:${address.port}`;
+
+  try {
+    await page.goto(origin);
+    const paths = metadata.map((item) => item.path);
+    await page.evaluate(async (urls) => {
+      await Promise.all(urls.map(async (url) => (await fetch(url)).json()));
+    }, paths);
+    currentDeployment = true;
+    const stillCached = await page.evaluate(async (urls) => {
+      return Promise.all(urls.map(async (url) => (await fetch(url)).json()));
+    }, paths);
+    expect(stillCached[0].dressingPlacements.some((placement: { runtime: { id: string } }) => placement.runtime.id === "bazaar_market_cart")).toBe(true);
+    expect(stillCached[1].shots[0].label).toBe("Previous deployment shot");
+    expect(stillCached.slice(2).map((manifest) => (manifest.materials ?? manifest.models)[0].id)).toEqual(["previous", "previous", "previous"]);
+    expect(paths.map((path) => requests.get(path))).toEqual([1, 1, 1, 1, 1]);
+
+    const loaded = await page.evaluate(async (baseUrl) => {
+      const [{ loadMap }, { FloorMaterialLibrary }, { WallMaterialLibrary }, { PropModelLibrary }] = await Promise.all([
+        import(`${baseUrl}/src/runtime/map/spec/loadMap.ts`),
+        import(`${baseUrl}/src/runtime/render/materials/FloorMaterialLibrary.ts`),
+        import(`${baseUrl}/src/runtime/render/materials/WallMaterialLibrary.ts`),
+        import(`${baseUrl}/src/runtime/render/models/PropModelLibrary.ts`),
+      ]);
+      const [map, floors, walls, props] = await Promise.all([
+        loadMap("cache-probe"),
+        FloorMaterialLibrary.load("/assets/floors/materials.json"),
+        WallMaterialLibrary.load("/assets/walls/materials.json"),
+        PropModelLibrary.load("/assets/props/models.json"),
+      ]);
+      const result = {
+        retiredCartPresent: map.blockout.dressingPlacements.some((placement: { runtime: { id: string } }) => placement.runtime.id === "bazaar_market_cart"),
+        shotLabel: map.shots.shots[0].label,
+        floorIds: floors.getMaterialIds(),
+        wallIds: walls.getMaterialIds(),
+        currentPropPresent: props.hasModel("current"),
+        previousPropPresent: props.hasModel("previous"),
+      };
+      props.dispose();
+      return result;
+    }, new URL(testInfo.project.use.baseURL as string).origin);
+
+    expect(loaded).toEqual({
+      retiredCartPresent: false,
+      shotLabel: currentShots.shots[0].label,
+      floorIds: ["current"],
+      wallIds: ["current"],
+      currentPropPresent: true,
+      previousPropPresent: false,
+    });
+    expect(paths.map((path) => requests.get(path))).toEqual([2, 2, 2, 2, 2]);
+  } finally {
+    await page.close();
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
 
 test("boots runtime in agent mode without console errors", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
