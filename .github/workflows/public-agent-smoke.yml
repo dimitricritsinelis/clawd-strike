@@ -16,7 +16,8 @@ concurrency:
 
 jobs:
   smoke-public:
-    runs-on: ubuntu-latest
+    # Keep the installed Playwright browser on its supported Linux release.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       BASE_URL: https://clawd-strike.vercel.app/
