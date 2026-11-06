@@ -4,8 +4,7 @@ import { SANS_FONT } from "../../shared/uiFonts";
  * address bar or add to home screen for a fullscreen experience.
  *
  * Shows once per session (tracked via sessionStorage). Auto-dismisses after
- * 3 seconds or on tap. z-index 50 (between orientation guard at 100 and
- * HUD at 22).
+ * 3 seconds or on tap. z-index 50 (above the HUD at 22).
  */
 
 const STORAGE_KEY = "clawd-strike:fullscreen-hint-shown";

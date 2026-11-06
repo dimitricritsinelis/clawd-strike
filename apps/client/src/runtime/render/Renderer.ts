@@ -136,6 +136,8 @@ type RendererOptions = {
   ao: boolean;
   post: boolean;
   maxPixelRatio?: number | undefined;
+  /** Adaptive floor for large touch displays; omitted keeps the desktop policy. */
+  minPixelRatio?: number | undefined;
   disableShadows?: boolean | undefined;
 };
 
@@ -224,9 +226,15 @@ export class Renderer {
   constructor(private readonly mountEl: HTMLElement, options: RendererOptions) {
     this.effectiveMaxPixelRatio = options.maxPixelRatio ?? resolveDesktopMaxPixelRatio(window.location.search);
     const fullPixelRatio = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio);
-    if (options.maxPixelRatio === undefined && fullPixelRatio > DYNAMIC_RESOLUTION_FLOOR
-      && resolveDynamicResolution(window.location.search)) {
-      this.dynamicResolution = new DynamicResolution({ maxPixelRatio: fullPixelRatio, minPixelRatio: DYNAMIC_RESOLUTION_FLOOR });
+    const minPixelRatio = options.minPixelRatio ?? DYNAMIC_RESOLUTION_FLOOR;
+    const adaptive = options.minPixelRatio !== undefined || options.maxPixelRatio === undefined;
+    // Mobile has an explicit budget independent of the desktop quality tier,
+    // but keeps QA, authored shots, agent runs and explicit overrides unchanged.
+    const dynamicResolutionEnabled = resolveDynamicResolution(window.location.search, {
+      bypassQualityTier: options.minPixelRatio !== undefined,
+    });
+    if (adaptive && fullPixelRatio > minPixelRatio && dynamicResolutionEnabled) {
+      this.dynamicResolution = new DynamicResolution({ maxPixelRatio: fullPixelRatio, minPixelRatio });
     }
     // Pixel-ratio caps determine actual supersampling, even on Retina displays.
     const needsAA = Math.min(window.devicePixelRatio || 1, this.effectiveMaxPixelRatio) < 1.5;

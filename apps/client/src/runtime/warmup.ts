@@ -8,6 +8,7 @@ import { parseRuntimeUrlParams } from "./utils/UrlParams";
 import { createAk47ViewModel, type WeaponViewModel } from "./weapons/Ak47AnimatedViewModel";
 import { plannedFloorMaterialIds, plannedWallMaterialIds, resolveQaAssetProfile } from "./qa/assetReadiness";
 import { FLOOR_MANIFEST_URL, WALL_MANIFEST_URL } from "./assetManifests";
+import { waitForWarmupBeforeDeadline } from "./bootstrap/warmupDeadline";
 
 // Bound speculative prefetch; bootstrap still owns required asset loading.
 const RUNTIME_WARMUP_TIMEOUT_MS = 20_000;
@@ -131,17 +132,18 @@ async function performWarmup(search: string): Promise<RuntimeWarmupAssets> {
 }
 
 export async function warmupRuntimeAssets(): Promise<RuntimeWarmupAssets> {
-  let timeoutId = 0;
-  const timeoutToken = Symbol("runtime-warmup-timeout");
-  const timeoutResult = await Promise.race<RuntimeWarmupAssets | symbol>([
+  const timeoutResult = await waitForWarmupBeforeDeadline(
     performWarmup(window.location.search),
-    new Promise<symbol>((resolve) => {
-      timeoutId = window.setTimeout(() => resolve(timeoutToken), RUNTIME_WARMUP_TIMEOUT_MS);
-    }),
-  ]);
-  window.clearTimeout(timeoutId);
+    RUNTIME_WARMUP_TIMEOUT_MS,
+    (assets) => {
+      // Bootstrap has already taken the fallback path and will load its own
+      // weapon. The late speculative model has no owner. Floor/wall textures
+      // and enemy templates use shared caches that bootstrap still reuses.
+      assets.viewModel?.dispose();
+    },
+  );
 
-  if (typeof timeoutResult === "symbol") {
+  if (timeoutResult === null) {
     console.warn(`[runtime:warmup] timed out after ${RUNTIME_WARMUP_TIMEOUT_MS}ms; continuing runtime startup`);
     return createEmptyWarmupAssets(true);
   }

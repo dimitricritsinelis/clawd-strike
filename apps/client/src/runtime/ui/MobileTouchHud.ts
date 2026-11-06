@@ -57,6 +57,7 @@ export class MobileTouchHud {
 
   private visible = true;
   private crouchActive = false;
+  private fireActive = false;
 
   /** Called when pause button is tapped. Set by bootstrap. */
   onPause: (() => void) | null = null;
@@ -123,7 +124,7 @@ export class MobileTouchHud {
 
     // ── Reload button ─────────────────────────────────────────────────
     this.reloadBtn = document.createElement("div");
-    applyButtonBase(this.reloadBtn, 40);
+    applyButtonBase(this.reloadBtn, 48);
     Object.assign(this.reloadBtn.style, {
       right: "calc(108px + env(safe-area-inset-right, 0px))",
       bottom: "calc(70px + env(safe-area-inset-bottom, 0px))",
@@ -138,7 +139,7 @@ export class MobileTouchHud {
 
     // ── Jump button ───────────────────────────────────────────────────
     this.jumpBtn = document.createElement("div");
-    applyButtonBase(this.jumpBtn, 40);
+    applyButtonBase(this.jumpBtn, 48);
     Object.assign(this.jumpBtn.style, {
       right: "calc(108px + env(safe-area-inset-right, 0px))",
       bottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
@@ -162,7 +163,7 @@ export class MobileTouchHud {
 
     // ── Crouch button ─────────────────────────────────────────────────
     this.crouchBtn = document.createElement("div");
-    applyButtonBase(this.crouchBtn, 40);
+    applyButtonBase(this.crouchBtn, 48);
     Object.assign(this.crouchBtn.style, {
       left: "calc(16px + env(safe-area-inset-left, 0px))",
       bottom: "calc(10px + env(safe-area-inset-bottom, 0px))",
@@ -190,8 +191,8 @@ export class MobileTouchHud {
       position: "absolute",
       top: "calc(12px + env(safe-area-inset-top, 0px))",
       left: "calc(12px + env(safe-area-inset-left, 0px))",
-      width: "36px",
-      height: "36px",
+      width: "44px",
+      height: "44px",
       borderRadius: "8px",
       background: "rgba(6, 10, 16, 0.5)",
       border: "1px solid rgba(255, 255, 255, 0.2)",
@@ -257,6 +258,8 @@ export class MobileTouchHud {
 
   /** Update fire button visual state for feedback. */
   updateFireVisual(held: boolean): void {
+    if (held === this.fireActive) return;
+    this.fireActive = held;
     this.fireBtn.style.background = held
       ? "rgba(255, 80, 60, 0.6)"
       : "rgba(220, 60, 40, 0.45)";

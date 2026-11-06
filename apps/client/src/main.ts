@@ -152,9 +152,8 @@ async function transitionToGame(selection?: RuntimeLaunchSelection): Promise<voi
       runtimeHandle = null;
       launchState = "idle";
       loadingHandle?.setTransitioning(false);
-      loadingHandle?.showBanner("Runtime launch failed");
+      loadingHandle?.showBanner("Could not start game. Tap Enter Game to retry.");
     }
-    throw error;
   }).finally(() => {
     runtimeBootPromise = null;
   });

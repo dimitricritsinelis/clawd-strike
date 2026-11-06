@@ -52,3 +52,14 @@ test("resolution recovers once the load drops, and failed probes back off", () =
   run(controller, clock, 10, 120);
   assert.equal(controller.pixelRatio, 2);
 });
+
+
+test("mobile pixel budget reduces GPU load on an open display and recovers at idle", () => {
+  const controller = new DynamicResolution({ maxPixelRatio: 1, minPixelRatio: 0.75 });
+  const clock = { now: 0 };
+  run(controller, clock, (ratio) => 28 * ratio ** 2, 20);
+  assert.deepEqual(controller.levels, [1, 0.75]);
+  assert.equal(controller.pixelRatio, 0.75);
+  run(controller, clock, 10, 120);
+  assert.equal(controller.pixelRatio, 1);
+});

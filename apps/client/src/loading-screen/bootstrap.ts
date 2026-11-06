@@ -282,7 +282,7 @@ export function bootstrapLoadingScreen(options: BootstrapLoadingScreenOptions = 
     },
     showBanner(message) {
       if (disposed) return;
-      ui.showBanner(message);
+      ui.showBanner(message, { persist: true });
     },
   };
 }

@@ -39,6 +39,8 @@ pnpm --filter @clawd-strike/client exec node scripts/run-playwright-qa.mjs test 
 
 `pnpm test:e2e:headed` shows the browser. `pnpm test:e2e:pointer-lock` is the headed pointer-lock check. A browser or server launch blocked by the execution environment is an unavailable check, not a passing test.
 
+`mobile-human-onboarding.spec.ts` exercises the actual Human/name/Enter Game path at portrait, landscape, and square touch viewports, then resizes the live game. `startup-recovery.spec.ts` checks a rejected startup and retry. Run these through the same owned-server wrapper. Device emulation establishes layout and input behavior; measure frame rate and thermal behavior on a physical iPhone separately.
+
 ## Real PostgreSQL integration
 
 Set `TEST_POSTGRES_URL` to a disposable local PostgreSQL database named `clawdstrike_test` (or `clawdstrike_test_<suffix>`), then run `pnpm test:postgres`. The test accepts only loopback or Unix-socket targets and rejects remote hosts, unknown database names, and ambiguous connection parameters. It never falls back to production connection variables. The database user needs permission to create databases.

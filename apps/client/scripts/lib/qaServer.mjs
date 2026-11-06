@@ -31,7 +31,6 @@ const FINGERPRINT_FILES = Object.freeze({
   runtimeAssetLoading: "apps/client/src/runtime/bootstrap/assetLoading.ts",
   runtimeUrlParams: "apps/client/src/runtime/utils/UrlParams.ts",
   runtimeTextApi: "apps/client/src/shared/runtimeTextApi.ts",
-  runtimeOrientationGuard: "apps/client/src/shared/OrientationGuard.ts",
   runtimeHostEnvironment: "apps/client/src/shared/hostEnvironment.ts",
   qaHarness: "apps/client/scripts/lib/runtimePlaywright.mjs",
   viteConfig: "apps/client/vite.config.ts",

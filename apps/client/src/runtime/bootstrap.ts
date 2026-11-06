@@ -47,7 +47,6 @@ import { normalizeAgentAction, type AgentAction } from "./input/AgentAction";
 import { isMobileDevice } from "./input/MobileDetect";
 import { TouchInputManager } from "./input/TouchInputManager";
 import { MobileTouchHud } from "./ui/MobileTouchHud";
-import { OrientationGuard } from "../shared/OrientationGuard";
 import { MobileFullscreenHint } from "./ui/MobileFullscreenHint";
 import { BulletHoleManager } from "./effects/BulletHoleManager";
 import { BuffManager } from "./buffs/BuffManager";
@@ -362,6 +361,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     ao: (performanceSafeFallback || mobile || overviewShotAtBoot) ? false : runtimeParams.ao,
     post: !(performanceSafeFallback || mobile || overviewShotAtBoot),
     maxPixelRatio: mobile ? 1.0 : undefined,
+    minPixelRatio: mobile ? 0.75 : undefined,
     disableShadows: mobile || overviewShotAtBoot || !shadowsEnabled,
   });
   let disposed = false;
@@ -904,7 +904,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     });
   };
 
-  // The human boot gate below serves real players in real browsers. It must
+  // The human boot gate below serves desktop players in real browsers. It must
   // never run for deterministic QA (own readiness tracker), automation
   // (Playwright specs and smokes boot autostart=human without qa=1 and their
   // wall-clock budgets assume the historical fast boot), authored-shot runs
@@ -912,7 +912,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   // rasterizers, where whole-scene compiles and renders have monopolized the
   // main thread in the past.
   // ?bootGate=1 opts hardware-backed automation back in. Without it this gate — the one every
-  // real player goes through — is unreachable from any test by construction,
+  // desktop player goes through — is unreachable from any test by construction,
   // so nothing would catch it hanging or regressing. It only ever makes boot do
   // more work behind the loading overlay. Software GL remains excluded because
   // synchronous driver work cannot be interrupted by the timer budgets.
@@ -920,6 +920,9 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
   const humanBootGateEligible =
     mapAssets !== null
     && !deterministicQa
+    // Whole-scene shader compilation can monopolize Safari's main thread;
+    // Promise timers cannot interrupt that driver work. Use staged mobile boot.
+    && !mobile
     && runtimeParams.controlMode === "human"
     && runtimeParams.shot === null
     && (navigator.webdriver !== true || forceHumanBootGate)
@@ -1153,7 +1156,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   let touchInput: TouchInputManager | null = null;
   let mobileTouchHud: MobileTouchHud | null = null;
-  let mobileOrientationGuard: OrientationGuard | null = null;
   let mobileFlashUpdate: ((dt: number, health: number, mag: number) => void) | null = null;
 
   if (
@@ -1170,8 +1172,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       aimAssistEnabled: gameplayTuning.touch.aimAssist.enabled,
     });
     mobileTouchHud = new MobileTouchHud(runtimeRoot, touchInput);
-    mobileOrientationGuard = new OrientationGuard(runtimeRoot, "landscape");
-    void mobileOrientationGuard.requestLandscape();
 
     // Pause button wiring
     mobileTouchHud.onPause = () => {
@@ -1252,7 +1252,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     pauseMenu.isVisible()
     || howToPlayOverlay.isVisible()
     || controlsOverlay.isVisible()
-    || mobileOrientationGuard?.isBlocking()
   );
   roundEndScreen.onContinue = () => {
     const skipAfterS = gameplayTuning.flow.skipAvailableAfterS;
@@ -1772,7 +1771,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
 
   function onResize(): void {
     syncViewportNow();
-    mobileOrientationGuard?.check();
     mobileTouchHud?.relayout();
   }
 
@@ -1822,7 +1820,7 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
       mobileTouchHud?.setVisible(touchVisible);
     }
 
-    // Freeze game input when pause menu, overlays, or orientation guard are open (death-freeze is managed inside Game.ts)
+    // Freeze game input when pause menu or overlays are open (death-freeze is managed inside Game.ts)
     if (simulationSuspended) {
       game.setFreezeInput(true);
     } else if (!game.getIsDead() && !inputFrozen) {
@@ -2305,7 +2303,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     document.addEventListener("visibilitychange", onVisibilityModeChange);
     pointerLock?.init();
     touchInput?.init();
-    mobileOrientationGuard?.check();
   };
 
   const readQaFramingSnapshot = () => {
@@ -2595,7 +2592,6 @@ export async function bootstrapRuntime(options: RuntimeBootstrapOptions = {}): P
     pointerLock?.dispose();
     touchInput?.dispose();
     mobileTouchHud?.dispose();
-    mobileOrientationGuard?.dispose();
     restoreOverviewRenderLod();
     game.teardown();
     weaponAudio.dispose();

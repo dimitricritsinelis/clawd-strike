@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parseRuntimeUrlParams, resolveDesktopMaxPixelRatio, parseAutoStartSelection, parseLoadingUrlParams, resolveQaAssetProfile, resolveQaAssetTimeoutMs } from "./UrlParams";
+import { parseRuntimeUrlParams, resolveDynamicResolution, resolveDesktopMaxPixelRatio, parseAutoStartSelection, parseLoadingUrlParams, resolveQaAssetProfile, resolveQaAssetTimeoutMs } from "./UrlParams";
 
 test("high quality tier is the default: native resolution, 2k surfaces, AO in live play", () => {
   const params = parseRuntimeUrlParams("?map=bazaar-map");
@@ -63,4 +63,20 @@ test("boot flags keep exact matching, duplicate-key precedence and QA bounds", (
   assert.equal(resolveQaAssetProfile("?qa=true"), null);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=2000junk"), 2000);
   assert.equal(resolveQaAssetTimeoutMs("?qaAssetTimeoutMs=-1"), 1000);
+});
+
+
+test("mobile adaptive budget bypasses only the desktop tier and preserves capture policies", () => {
+  const mobile = { bypassQualityTier: true };
+  assert.equal(resolveDynamicResolution("?quality=standard"), false);
+  assert.equal(resolveDynamicResolution("?quality=standard", mobile), true);
+  assert.equal(resolveDynamicResolution("?gfx=standard", mobile), true);
+  for (const capture of ["qa=1", "qaProfile=mobile-human", "shot=SHOT_1", "mode=agent", "autostart=agent"]) {
+    const search = `?quality=standard&${capture}`;
+    assert.equal(resolveDynamicResolution(search, mobile), false, capture);
+    assert.equal(resolveDynamicResolution(`${search}&dynres=1`, mobile), true, `explicit override: ${capture}`);
+  }
+  for (const value of ["0", "false", "FALSE", "off"]) {
+    assert.equal(resolveDynamicResolution(`?quality=standard&dynres=${value}`, mobile), false, value);
+  }
 });

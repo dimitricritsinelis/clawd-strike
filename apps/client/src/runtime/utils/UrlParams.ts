@@ -120,14 +120,14 @@ export function resolveDesktopMaxPixelRatio(search: string): number {
 
 /**
  * Dynamic resolution (render/DynamicResolution.ts) guards 60 fps in live
- * high-tier play. Review shots, QA and agent runs keep a fixed resolution so
+ * high-tier play (or a separate mobile budget). Review shots, QA and agent runs keep a fixed resolution so
  * their frames stay comparable. `dynres=0|1` overrides.
  */
-export function resolveDynamicResolution(search: string): boolean {
+export function resolveDynamicResolution(search: string, options: { bypassQualityTier?: boolean } = {}): boolean {
   const params = new URLSearchParams(search);
   const explicit = getParam(params, "dynres");
   if (explicit !== null) return parseBooleanFlag(explicit);
-  if (resolveQualityTier(search) !== "high") return false;
+  if (!options.bypassQualityTier && resolveQualityTier(search) !== "high") return false;
   if (getParam(params, "shot") !== null || params.get("qa") === "1" || params.has("qaProfile")) return false;
   return parseControlMode(getParam(params, "mode"), getParam(params, "autostart")) === "human";
 }

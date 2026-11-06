@@ -99,7 +99,7 @@ export class TouchInputManager {
   private readonly moveDeadzone: number;
 
   // While an overlay owns the screen (pause menu, How to Play, Controls, death
-  // screen, orientation guard) every touch must reach that overlay's own
+  // screen) every touch must reach that overlay's own
   // buttons. Gameplay claims a touch anywhere on screen and preventDefault()s
   // it, which suppresses the synthetic click — so gameplay capture is gated off
   // entirely rather than being trusted to miss the overlay.

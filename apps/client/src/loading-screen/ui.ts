@@ -1,5 +1,4 @@
 import type { LoadingScreenInitialNameEntry, LoadingScreenMode } from "./types";
-import { OrientationGuard } from "../shared/OrientationGuard";
 import {
   getDeviceVariant,
   getLoadingScreenFallbackAssetUrl,
@@ -284,9 +283,6 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
     enterAgentModeBtn.setAttribute("aria-hidden", "true");
   }
 
-  // Portrait lock: show overlay when mobile user rotates to landscape on loading screen
-  const loadingOrientationGuard = new OrientationGuard(start, "portrait");
-
   function setNameInputValidationState(reason: PlayerNameValidationReason): void {
     const invalid = reason !== "valid";
     playerNameInput.setAttribute("aria-invalid", invalid ? "true" : "false");
@@ -546,7 +542,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
   }
 
   function submitPendingModeSelection() {
-    if (!pendingMode) return;
+    if (!pendingMode || start.dataset.transitioning === "true") return;
     const validation = syncNameInputValidationState();
     if (!validation.ok) {
       return;
@@ -557,6 +553,8 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       persistedAgentName = validation.normalized;
       writePersistedAgentName(validation.normalized);
     }
+    // Dismiss the iOS keyboard before the runtime measures its viewport.
+    playerNameInput.blur();
     callbacks.onSelectMode(pendingMode, validation.normalized);
   }
 
@@ -589,6 +587,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       return;
     }
     if (event.key !== "Enter" || !pendingMode) return;
+    event.preventDefault();
     submitPendingModeSelection();
   }
 
@@ -714,6 +713,12 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       const nextValue = active ? "true" : "false";
       if (start.dataset.transitioning === nextValue) return;
       start.dataset.transitioning = nextValue;
+      start.setAttribute("aria-busy", nextValue);
+      if (active) {
+        showBanner("Loading game...", { persist: true });
+      } else {
+        hideBanner();
+      }
     },
     prepareMainMenuSurface() {
       return prepareMainMenuSurface();
@@ -748,7 +753,6 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       enterAgentModeBtn.removeEventListener("click", onEnterAgentMode);
       playerNameInput.removeEventListener("input", onNameInput);
       playerNameInput.removeEventListener("keydown", onNameInputKeyDown);
-      loadingOrientationGuard.dispose();
     },
     setMuteState(muted) {
       muteToggleBtn.classList.toggle("is-muted", muted);
