@@ -533,8 +533,7 @@ body {
 }
 /* ── name-entry container ── */
 #start .name-entry {
-  /* Keep the callsign field thumb-sized even on short landscape viewports. */
-  --vis-w: min(360px, calc(100vw - 48px));
+  --vis-w: var(--card-w);
   --ar: calc(768 / 512);
   --pad-t: 0.227; --pad-r: 0.016; --pad-b: 0.307; --pad-l: 0.014;
   display: none;
@@ -610,7 +609,7 @@ body {
   color: #2f1a0b;
   caret-color: transparent;
   font-family: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif;
-  font-size: clamp(16px, 1.2vw, 19px);
+  font-size: clamp(14px, 1.2vw, 19px);
   font-weight: 600;
   letter-spacing: 0.14em;
   text-align: center;
@@ -650,42 +649,7 @@ body {
   background: transparent;
   color: #2f1a0b;
 }
-#start[data-name-entry-visible="true"] #enter-game-btn {
-  display: block;
-  flex: none;
-  border: 2px solid rgba(205, 160, 90, 0.7);
-  background: linear-gradient(
-    180deg,
-    rgba(180, 130, 60, 0.85) 0%,
-    rgba(120, 75, 25, 0.92) 100%
-  );
-  color: #ffe2b0;
-  font-family: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif;
-  font-size: clamp(14px, 4vw, 20px);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  padding: 12px 48px;
-  border-radius: 14px;
-  white-space: nowrap;
-  cursor: pointer;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.4),
-    inset 0 1px 0 rgba(255, 225, 160, 0.25);
-  animation: name-entry-fade-in 420ms ease-out forwards;
-  opacity: 0;
-  -webkit-tap-highlight-color: transparent;
-}
-#start[data-name-entry-visible="true"] #enter-game-btn:active {
-  background: linear-gradient(
-    180deg,
-    rgba(160, 115, 50, 0.9) 0%,
-    rgba(100, 60, 20, 0.95) 100%
-  );
-  transform: scale(0.97);
-}
-@media (max-width: 820px), (pointer: coarse) {
+@media (max-width: 820px) {
   :root {
     --edge: 14px;
     --gap: clamp(14px, 2.2vh, 22px);
@@ -694,6 +658,41 @@ body {
     --card-w: calc(var(--base) * 1.1);
     --info-w: calc(100vw - 24px);
     --corner-h: clamp(30px, 11vw, 44px);
+  }
+  #start[data-name-entry-visible="true"] #enter-game-btn {
+    display: block;
+    flex: none;
+    border: 2px solid rgba(205, 160, 90, 0.7);
+    background: linear-gradient(
+      180deg,
+      rgba(180, 130, 60, 0.85) 0%,
+      rgba(120, 75, 25, 0.92) 100%
+    );
+    color: #ffe2b0;
+    font-family: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif;
+    font-size: clamp(14px, 4vw, 20px);
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 12px 48px;
+    border-radius: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow:
+      0 4px 14px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 225, 160, 0.25);
+    animation: name-entry-fade-in 420ms ease-out forwards;
+    opacity: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #start[data-name-entry-visible="true"] #enter-game-btn:active {
+    background: linear-gradient(
+      180deg,
+      rgba(160, 115, 50, 0.9) 0%,
+      rgba(100, 60, 20, 0.95) 100%
+    );
+    transform: scale(0.97);
   }
   #start #info-screen .info-screen-art-picture {
     border-image-source: url("/loading-screen/assets/info-screen-mobile.png");
@@ -752,4 +751,161 @@ body {
 }
 #runtime-root[data-beauty-shot="true"] > :not(canvas) {
   display: none !important;
+}
+
+/* Touch devices share the original artwork and keep their own layout budget.
+   Desktop selectors above remain unchanged, including keyboard-only name entry. */
+#start[data-touch-layout="true"] {
+  --edge: clamp(18px, 3vmin, 28px);
+  --gap: clamp(18px, 2.6vmin, 26px);
+  --base: min(68vw, 420px, calc((100dvh - 96px) * 0.8));
+  --btn-w: min(37vw, 200px);
+  --card-w: min(82vw, 400px);
+  --corner-h: 38px;
+  --touch-form-width: min(82vw, 420px);
+  --touch-submit-width: min(64vw, 300px);
+}
+#start[data-touch-layout="true"] .panel {
+  padding-left: calc(var(--edge) + env(safe-area-inset-left, 0px));
+  padding-right: calc(var(--edge) + env(safe-area-inset-right, 0px));
+}
+#start[data-touch-layout="true"][data-name-entry-visible="true"] .logo-wrap {
+  --logo-scale: 0.72;
+}
+#start[data-touch-layout="true"] .actions-nameplate {
+  width: var(--touch-form-width);
+}
+#start[data-touch-layout="true"] .name-entry {
+  --vis-w: var(--touch-form-width);
+  container-type: inline-size;
+  filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.3));
+}
+#start[data-touch-layout="true"] .name-input {
+  min-height: 44px;
+  font-size: clamp(16px, 4.5cqw, 20px);
+  letter-spacing: 0.08em;
+  caret-color: #4a2a12;
+  padding: 0 12px;
+}
+#start[data-touch-layout="true"] .shared-champion-card {
+  container-type: inline-size;
+  --shared-champion-name-size: clamp(10px, 3.6cqw, 16px);
+  --shared-champion-score-size: clamp(11px, 4cqw, 18px);
+  --shared-champion-name-spacing: 0.035em;
+  --shared-champion-score-spacing: 0;
+  filter: drop-shadow(0 7px 16px rgba(0, 0, 0, 0.3));
+}
+#start[data-touch-layout="true"] .shared-champion-field {
+  line-height: 1.15;
+}
+#start[data-touch-layout="true"] .shared-champion-card[data-state="loading"],
+#start[data-touch-layout="true"] .shared-champion-card[data-state="empty"],
+#start[data-touch-layout="true"] .shared-champion-card[data-state="unavailable"] {
+  --shared-champion-name-size: clamp(10px, 3.25cqw, 14px);
+  --shared-champion-score-size: clamp(11px, 3.6cqw, 16px);
+  --shared-champion-name-spacing: 0.055em;
+}
+/* The CTA uses the same parchment as the name field, at a smaller scale.
+   Crop only the transparent padding; preserve the artwork's aspect ratio. */
+#start[data-touch-layout="true"][data-name-entry-visible="true"] #enter-game-btn {
+  display: grid;
+  place-items: center;
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  flex: none;
+  width: var(--touch-submit-width);
+  height: calc(var(--touch-submit-width) * 0.31);
+  min-height: 56px;
+  padding: 0 16px calc(var(--touch-submit-width) * 0.065);
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  background: none;
+  box-shadow: none;
+  color: #38200d;
+  font-family: Georgia, "Palatino Linotype", Palatino, "Book Antiqua", serif;
+  font-size: clamp(16px, 4vmin, 21px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 235, 198, 0.45);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: filter 120ms ease, transform 120ms ease;
+}
+#start[data-touch-layout="true"] #enter-game-btn::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: calc(var(--touch-submit-width) * -0.151);
+  left: 0;
+  width: 100%;
+  aspect-ratio: 768 / 512;
+  background: url("/loading-screen/assets/loading-nameplate-callsign-mobile.webp") center / contain no-repeat;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
+}
+#start[data-touch-layout="true"][data-name-entry-visible="true"] #enter-game-btn:active {
+  background: none;
+  transform: scale(0.98);
+  filter: brightness(1.08);
+}
+#start[data-touch-layout="true"] #enter-game-btn:focus-visible {
+  outline: 2px solid #ffe2a6;
+  outline-offset: 4px;
+}
+@media (min-aspect-ratio: 3/2) {
+  #start[data-touch-layout="true"] {
+    --edge: 20px;
+    --gap: 20px;
+    --base: min(34vw, 290px, 66dvh);
+    --btn-w: min(18vw, 150px);
+    --card-w: min(36vw, 300px);
+    --touch-form-width: min(42vw, 360px);
+    --touch-submit-width: min(34vw, 280px);
+    --info-w: min(44vw, 440px);
+    --corner-h: 32px;
+  }
+  #start[data-touch-layout="true"] .panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    column-gap: 24px;
+    row-gap: var(--gap);
+  }
+  #start[data-touch-layout="true"] .logo-wrap {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  #start[data-touch-layout="true"] .actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  #start[data-touch-layout="true"] #enter-game-btn {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  #start[data-touch-layout="true"] .shared-champion-card {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+  #start[data-touch-layout="true"][data-name-entry-visible="true"] .shared-champion-card {
+    grid-column: 1;
+  }
+  #start[data-touch-layout="true"] #info-screen {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+  }
+}
+/* Hide the complete artwork when agent play is unavailable on touch devices. */
+#start[data-touch-layout="true"][data-agent-mode-available="false"] .option-art:has(#multi-player-btn) {
+  display: none;
 }

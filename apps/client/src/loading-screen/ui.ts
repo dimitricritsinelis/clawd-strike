@@ -234,6 +234,7 @@ function cancelIdleWork(handle: number): void {
 
 export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): LoadingScreenUI {
   const start = getRequiredEl<HTMLDivElement>("#start");
+  start.dataset.touchLayout = String(isMobileDevice());
   const loadingScreenOverlay = getRequiredEl<HTMLDivElement>("#loading-screen-overlay");
   const muteToggleBtn = getRequiredEl<HTMLButtonElement>("#mute-toggle-btn");
   const singlePlayerBtn = getRequiredEl<HTMLButtonElement>("#single-player-btn");
@@ -554,7 +555,7 @@ export function createLoadingScreenUI(callbacks: LoadingScreenUICallbacks): Load
       writePersistedAgentName(validation.normalized);
     }
     // Dismiss the iOS keyboard before the runtime measures its viewport.
-    playerNameInput.blur();
+    if (isMobileDevice()) playerNameInput.blur();
     callbacks.onSelectMode(pendingMode, validation.normalized);
   }
 

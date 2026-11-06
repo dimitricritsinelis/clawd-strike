@@ -48,7 +48,7 @@ test("wide touch name entry dismisses the keyboard and can retry a failed launch
     await enter.tap();
     await expect(input).not.toBeFocused();
     await expect(page.locator("#start")).toHaveAttribute("data-transitioning", "false");
-    await expect(page.getByText("Could not start game. Tap Enter Game to retry.")).toBeVisible();
+    await expect(page.getByText("Could not start game. Submit your name to retry.")).toBeVisible();
     await enter.tap();
     await expect(page.locator("#recovered-runtime")).toHaveAttribute("data-active", "true");
     await expect(page.locator("#overlay")).toBeHidden();
