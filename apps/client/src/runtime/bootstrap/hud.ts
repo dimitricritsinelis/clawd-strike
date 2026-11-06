@@ -92,11 +92,12 @@ export function configureMobileHud(
   timerHud: TimerHud,
   killFeed: KillFeed,
 ): (dt: number, currentHealth: number, currentMag: number) => void {
-  // ── PUBG-style compact HUD for iPhone landscape ──────────────
-  // Effective viewport: ~667x325 (SE) to ~932x380 (Pro Max)
+  // Compact status sits above the touch-action band in every aspect ratio.
+  // Reload reaches 118px above the safe-area edge; leave a 14px gap.
   // Design: strip away panel chrome, use thin bars + floating text
-  // Auto-opacity: 0.45 base, flash to 1.0 on state change for 1.5s
+  // Auto-opacity: 0.6 base, flash to 1.0 on state change for 1.5s
 
+  const MOBILE_STATUS_BOTTOM = "calc(132px + env(safe-area-inset-bottom, 0px))";
   const MOBILE_BASE_OPACITY = "0.6";
   const MOBILE_FLASH_OPACITY = "1";
   const MOBILE_FLASH_DURATION_S = 1.5;
@@ -108,7 +109,7 @@ export function configureMobileHud(
   // ── Health: thin edge bar + small number, no panel ──────────
   const hRoot = healthHud.root;
   Object.assign(hRoot.style, {
-    bottom: `calc(4px + env(safe-area-inset-bottom, 0px))`,
+    bottom: MOBILE_STATUS_BOTTOM,
     left: `calc(16px + env(safe-area-inset-left, 0px))`,
     padding: "0",
     background: "transparent",
@@ -139,7 +140,7 @@ export function configureMobileHud(
   // ── Ammo: floating text, no panel ───────────────────────────
   const aRoot = ammoHud.root;
   Object.assign(aRoot.style, {
-    bottom: `calc(4px + env(safe-area-inset-bottom, 0px))`,
+    bottom: MOBILE_STATUS_BOTTOM,
     right: `calc(10px + env(safe-area-inset-right, 0px))`,
     padding: "0",
     background: "transparent",

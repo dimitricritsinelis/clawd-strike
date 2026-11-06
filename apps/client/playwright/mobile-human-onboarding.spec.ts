@@ -1,4 +1,6 @@
 import { expect, test, type Locator } from "@playwright/test";
+import { mkdir } from "node:fs/promises";
+import path from "node:path";
 import { getGameplayProfileIdentity } from "../../shared/gameplayProfile";
 import {
   attachConsoleRecorder,
@@ -21,6 +23,18 @@ async function expectWithinViewport(locator: Locator, width: number, height: num
   expect(bounds!.y).toBeGreaterThanOrEqual(0);
   expect(bounds!.x + bounds!.width).toBeLessThanOrEqual(width + 1);
   expect(bounds!.y + bounds!.height).toBeLessThanOrEqual(height + 1);
+}
+
+async function expectNoOverlap(status: Locator, control: Locator): Promise<void> {
+  const statusBounds = await status.boundingBox();
+  const controlBounds = await control.boundingBox();
+  expect(statusBounds).not.toBeNull();
+  expect(controlBounds).not.toBeNull();
+  const intersects = statusBounds!.x < controlBounds!.x + controlBounds!.width
+    && statusBounds!.x + statusBounds!.width > controlBounds!.x
+    && statusBounds!.y < controlBounds!.y + controlBounds!.height
+    && statusBounds!.y + statusBounds!.height > controlBounds!.y;
+  expect(intersects, "status readout must not cover a touch control").toBe(false);
 }
 
 for (const viewport of VIEWPORTS) {
@@ -56,6 +70,10 @@ for (const viewport of VIEWPORTS) {
       await name.fill("TouchPilot");
       const enter = page.getByRole("button", { name: "Enter game", exact: true });
       await expectWithinViewport(enter, viewport.width, viewport.height);
+      const evidenceDir = path.resolve(process.cwd(), "../../artifacts/iphone-open-screen");
+      await mkdir(evidenceDir, { recursive: true });
+      const evidenceName = viewport.name.replaceAll(" ", "-");
+      await page.screenshot({ path: path.join(evidenceDir, `${evidenceName}-name.png`) });
       await enter.tap();
 
       const state = await waitForRuntimeReady(page, { routeId: `mobile-onboarding-${viewport.name}` });
@@ -65,7 +83,15 @@ for (const viewport of VIEWPORTS) {
       await expect(page.locator("#overlay")).toBeHidden();
       await expect(page.getByText(/Rotate your device to/)).toHaveCount(0);
       await expectWithinViewport(page.getByText("FIRE", { exact: true }), viewport.width, viewport.height);
-      await expectWithinViewport(page.getByText("R", { exact: true }), viewport.width, viewport.height);
+      await expectWithinViewport(page.getByText("R", { exact: true }).filter({ visible: true }), viewport.width, viewport.height);
+      const health = page.getByText("100", { exact: true }).filter({ visible: true }).locator("..");
+      const ammo = page.getByText("30", { exact: true }).filter({ visible: true }).locator("../..");
+      for (const status of [health, ammo]) {
+        for (const control of [page.getByText("FIRE", { exact: true }), page.getByText("R", { exact: true }).filter({ visible: true })]) {
+          await expectNoOverlap(status, control);
+        }
+      }
+      await page.screenshot({ path: path.join(evidenceDir, `${evidenceName}-game.png`) });
 
       const canvas = page.getByTestId("game-canvas");
       await expectWithinViewport(canvas, viewport.width, viewport.height);
@@ -77,7 +103,7 @@ for (const viewport of VIEWPORTS) {
       await expect(page.getByText(/Rotate your device to/)).toHaveCount(0);
       expect(recorder.snapshot().filter((event) => event.kind === "pageerror" || event.type === "error")).toEqual([]);
     } catch (error) {
-      console.error(`[mobile-onboarding] ${viewport.name}`, error);
+      console.error(`[mobile-onboarding] ${viewport.name}: ${error instanceof Error ? error.message : String(error)}`);
       throw error;
     } finally {
       await context.close();
