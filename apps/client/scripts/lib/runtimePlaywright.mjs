@@ -498,7 +498,7 @@ export async function launchBrowser(options = {}) {
 
   const browser = await chromium
     .launch({
-      channel: "chrome",
+      channel: process.env.CI ? "chromium" : "chrome",
       headless,
     })
     .catch(() => chromium.launch({ headless }));

@@ -40,7 +40,7 @@ const SKILLS_URL = new URL(
 const AGENT_NAME = trimAgentName(process.env.AGENT_NAME, DEFAULT_AGENT_NAME);
 const HEADLESS = parseBooleanEnv(process.env.HEADLESS, true);
 const REQUIRED_DEATHS = Math.max(1, Number(process.env.REQUIRED_DEATHS ?? 2));
-const STEP_MS = Math.max(100, Number(process.env.STEP_MS ?? 500));
+const STEP_MS = Math.max(100, Number(process.env.STEP_MS ?? 125));
 const DEFAULT_MAX_STEPS = Math.ceil(
   (REQUIRED_DEATHS * (WAVE_ONE_PRESSURE.fullPressureS + 30) * 1_000) / STEP_MS,
 );
@@ -52,7 +52,10 @@ const OUTPUT_DIR = path.resolve(
 
 await ensureDir(OUTPUT_DIR);
 
-const { browser, context, page } = await launchBrowser({ headless: HEADLESS });
+const { browser, context, page } = await launchBrowser({
+  headless: HEADLESS,
+  viewport: process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1" ? { width: 640, height: 400 } : undefined,
+});
 const consoleRecorder = attachConsoleRecorder(page);
 
 function hasRequiredSkillsText(skillsText) {
@@ -171,16 +174,8 @@ try {
       });
     }, { stepIndex: step });
 
-    if (typeof page.evaluate === "function") {
-      const usedAdvance = await page.evaluate(async (ms) => {
-        if (typeof window.advanceTime !== "function") return false;
-        await window.advanceTime(ms);
-        return true;
-      }, STEP_MS);
-      if (!usedAdvance) {
-        await page.waitForTimeout(STEP_MS);
-      }
-    }
+    // The public game advances on its own clock. Extra simulation time invalidates scored runs.
+    await page.waitForTimeout(STEP_MS);
   }
 
   if (summary.runtime.deathsObserved < REQUIRED_DEATHS) {

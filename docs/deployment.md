@@ -32,6 +32,8 @@ Inspect options with `pnpm <command> -- --help` before selecting a target. For t
 3. Vercel sends `vercel.deployment.ready` to GitHub. The [gameplay workflow](../.github/workflows/public-agent-smoke.yml) checks out the candidate commit, tests two death/restart cycles at its deployment URL, and compares its served `skills.md` with that commit. It reports the result on the deployed commit. The live version keeps serving while a check is pending or failed.
 4. After promotion, a half-hour [uptime check](../.github/workflows/uptime.yml) probes the homepage and leaderboard API. The daily gameplay run exercises the public URL and its advertised contract. For map, animation or device-specific changes, run the additional [focused checks](development.md) before release.
 
+The monitor plays in real time so the server can validate each run's elapsed time. Testing all leaderboard operations on a PR preview requires a separate preview database. An unconfigured preview can play the game while its leaderboard endpoints return HTTP 503.
+
 ## Release settings and recovery
 
 The Vercel Git integration must send repository dispatch events. Keep production domain auto-assignment enabled with both production Deployment Checks set to block domain assignment. The GitHub environment `production-smoke` allows the `main` branch and holds the project’s automation bypass secret. The smoke exchanges it for a browser cookie on the immutable deployment origin. Rotation requires updating the Vercel bypass and the GitHub environment secret together. [Deployment Checks](https://vercel.com/docs/deployment-checks)
