@@ -1,55 +1,29 @@
 # Clawd Strike
 
-A browser FPS set in Bazaar, with wave-based bots, a shared-champion leaderboard, and a public browser-agent API. Play at [clawd-strike.vercel.app](https://clawd-strike.vercel.app/).
-
-The client uses Three.js, Vite, and TypeScript. This pnpm workspace includes the browser client, shared contracts, Vercel API functions, and a Postgres backend.
+A browser FPS set in Bazaar, a three-lane market of limestone courtyards, shaded shopfronts and a raised tea terrace. Fight waves of enemies, or play through the public browser-agent API. Human and agent runs compete on separate leaderboard profiles. [Play Clawd Strike](https://clawd-strike.vercel.app/)
 
 ## Run locally
 
-Use Node 22 (`.nvmrc`) and pnpm 10.28.2 (`package.json`).
+Use Node 22 and pnpm 10.28.2. From the repository root:
 
 ```sh
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-Open [localhost:5174](http://localhost:5174). Development, build, and preview regenerate the runtime map first. The development API uses an in-memory store that resets with the server; no database credentials are needed. See [deployment](docs/deployment.md) for the production backend.
+Open [localhost:5174](http://localhost:5174). Vite serves the Three.js client and an in-memory score API. Restarting the dev server clears its scores. Use `pnpm build` for a production client bundle and `pnpm preview` to serve it locally.
 
-## Commands
+## Working on the game
 
-| Command | Purpose |
-|---|---|
-| `pnpm dev` | Start the client and local development API |
-| `pnpm build` / `pnpm preview` | Build / serve the built client |
-| `pnpm check:maps` | Verify committed generated maps match their sources |
-| `pnpm typecheck` / `pnpm lint:unused` | Check TypeScript, including Playwright, / unused code |
-| `pnpm test` | Run unit, tooling, and server tests |
-| `pnpm test:e2e:smoke` | Run the browser boot and gameplay smoke tests |
-| `pnpm test:e2e` | Run the full browser suite |
-| `pnpm test:e2e:traversal` | Check the canonical routes on the final map |
-| `pnpm map:check` | Check protected gameplay and authored placement clearance |
-| `pnpm capture:shots` / `pnpm qa:completion` | Capture review cameras / run completion QA |
-| `pnpm qa:release` | Run the combined map, test, traversal, completion, bot, and build gate |
-| `pnpm assets:loading-screen` | Rebuild loading-screen assets |
-| `pnpm sdk:export -- --dry-run --out <directory>` | Preview the companion SDK export |
+| Task | Start here |
+| --- | --- |
+| Change movement, enemy behavior, touch controls or game flow | [Runtime architecture](docs/architecture.md) |
+| Work on the rifle, animation or sound | [Weapons and reload](docs/weapons.md) |
+| Adjust the installed Bazaar or match its palette and materials | [Map layout, art direction and clearance](docs/map.md) |
+| Update a model, texture or loading-screen asset | [Asset pipeline](docs/assets.md) and [third-party notices](THIRD_PARTY_NOTICES.md) |
+| Run tests, browser smoke, traversal or camera captures | [Development and verification](docs/development.md) |
+| Work on the shared leaderboard, database or operations | [Deployment](docs/deployment.md) |
 
-Browser tests require Chromium: `pnpm --filter @clawd-strike/client exec playwright install chromium`. [Development](docs/development.md) explains focused checks and the limits of automated evidence.
+Each pull request gets a Vercel preview and GitHub checks, including desktop boot and portrait touch onboarding. Production releases wait for CI and a gameplay check on the candidate deployment. [Release process](docs/deployment.md#from-pull-request-to-production)
 
-## Repository
-
-- `apps/client/src/`: loading screen, runtime, UI, and rendering.
-- `apps/client/assets-src/`: map and loading-screen build inputs.
-- `apps/client/public/`: shipped assets, generated maps, and the public agent contract.
-- `apps/client/scripts/` and `apps/client/playwright/`: generation and QA.
-- `apps/shared/`: browser/server contracts.
-- `api/` and `server/`: Vercel routes and backend implementation.
-- `scripts/`: asset intake, database operations, map guard, and SDK export.
-- `assets/source/`: retained asset sources; frozen map builders are identified in its README.
-
-## Guides
-
-[Architecture](docs/architecture.md), [development](docs/development.md), [deployment](docs/deployment.md), [map](docs/map.md), [assets](docs/assets.md), and [weapons](docs/weapons.md).
-
-[AGENTS.md](AGENTS.md) contains repository engineering instructions. [skills.md](apps/client/public/skills.md) is the public browser-agent contract. The [SDK template](scripts/sdk/template/README.md) documents its current compatibility limits. [Third-party notices](THIRD_PARTY_NOTICES.md) record asset sources and unresolved provenance.
-
-The completed map-construction documents and generators remain in Git at `archive/bazaar-map-dev`. They are historical references, not the current work queue.
+[AGENTS.md](AGENTS.md) contains contributor instructions. The [public agent guide](apps/client/public/skills.md) defines the supported gameplay API and learning workflow. The [SDK export template](scripts/sdk/template/README.md) documents the older examples bundled with this repository.

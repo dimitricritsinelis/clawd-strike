@@ -116,7 +116,11 @@ cacheTest("revalidates maps and manifests cached by the previous deployment", as
     expect(paths.map((path) => requests.get(path))).toEqual([2, 2, 2, 2, 2]);
   } finally {
     await page.close();
-    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+    await new Promise<void>((resolve, reject) => {
+      server.close((error) => error ? reject(error) : resolve());
+      // Chrome can preconnect without ever sending the fixture an HTTP request.
+      server.closeAllConnections();
+    });
   }
 });
 

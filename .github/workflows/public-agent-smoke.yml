@@ -1,28 +1,61 @@
 name: Public Agent Smoke
 
-# Runs the no-context public agent smoke and the skills.md contract check
-# against production. Not a PR gate: it depends on the live deployment.
 on:
+  repository_dispatch:
+    types: [vercel.deployment.ready]
   schedule:
     - cron: "17 7 * * *"
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 concurrency:
-  group: public-agent-smoke
+  group: public-agent-smoke-${{ github.event.client_payload.git.sha || 'live' }}
   cancel-in-progress: false
 
 jobs:
   smoke-public:
+    if: >-
+      github.event_name != 'repository_dispatch' ||
+      (github.event.sender.login == 'vercel[bot]' &&
+       github.event.client_payload.project.id == 'prj_hIZDDdIJH3sAKX2ljzf7hNHOVydW' &&
+       github.event.client_payload.environment == 'production' &&
+       github.event.client_payload.git.ref == 'main')
+    permissions:
+      contents: read
+      statuses: write
+    environment:
+      name: ${{ github.event_name == 'repository_dispatch' && 'production-smoke' || 'public-monitor' }}
+      deployment: false
     # Keep the installed Playwright browser on its supported Linux release.
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     env:
-      BASE_URL: https://clawd-strike.vercel.app/
+      BASE_URL: ${{ github.event.client_payload.url || 'https://clawd-strike.vercel.app/' }}
+      DEPLOY_SHA: ${{ github.event.client_payload.git.sha }}
     steps:
+      # A repository_dispatch workflow runs at the default-branch HEAD. Report
+      # against the deployed commit even if main moves during the smoke.
+      - name: Verify the candidate and mark its check pending
+        id: candidate
+        if: github.event_name == 'repository_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [[ "$DEPLOY_SHA" =~ ^[a-f0-9]{40}$ ]]
+          ancestry=$(gh api "repos/$GITHUB_REPOSITORY/compare/$DEPLOY_SHA...main" --jq .status)
+          [[ "$ancestry" == identical || "$ancestry" == ahead ]]
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$DEPLOY_SHA" --silent \
+            -f state=pending -f context=production-gameplay \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+
+      - name: Verify the immutable deployment URL
+        id: target
+        if: github.event_name == 'repository_dispatch'
+        run: '[[ "$BASE_URL" =~ ^https://clawd-strike-[a-z0-9]+-dimitri-projects\.vercel\.app/?$ ]]'
+
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.client_payload.git.sha || github.sha }}
+          persist-credentials: false
 
       # Reads the pnpm version from packageManager in package.json.
       - uses: pnpm/action-setup@v6
@@ -39,15 +72,19 @@ jobs:
       - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
 
       - name: Public agent smoke
+        timeout-minutes: 4
         run: pnpm smoke:public
+        env:
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ github.event_name == 'repository_dispatch' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
 
-      # Vite copies public/skills.md into dist unchanged, so compare the source
-      # file directly instead of building.
-      - name: Deployed skills.md matches the repo
-        if: ${{ !cancelled() }}
+      # The live domain may intentionally serve an older release. Compare bytes
+      # only when the workflow knows exactly which commit built the target.
+      - name: Candidate skills.md matches its commit
+        if: ${{ !cancelled() && steps.target.outcome == 'success' }}
         run: pnpm verify:skills
         env:
           LOCAL_SKILLS_PATH: public/skills.md
+          VERCEL_AUTOMATION_BYPASS_SECRET: ${{ github.event_name == 'repository_dispatch' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
 
       - name: Upload diagnostics
         if: failure()
@@ -57,3 +94,13 @@ jobs:
           path: artifacts/playwright/no-context-agent-smoke/
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Report the production candidate result
+        if: ${{ always() && steps.candidate.outcome == 'success' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RESULT: ${{ job.status == 'cancelled' && 'error' || job.status }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/statuses/$DEPLOY_SHA" --silent \
+            -f state="$RESULT" -f context=production-gameplay \
+            -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"

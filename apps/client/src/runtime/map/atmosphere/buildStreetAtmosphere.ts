@@ -29,16 +29,8 @@ import atmosphereJson from "./atmosphere.json";
 import { buildMarketDressing, type MarketDressing } from "./buildMarketDressing";
 
 /**
- * R8 atmosphere overlay.
- *
- * Render-only street life read from the frozen atmosphere.generated.json: shop
- * awnings, cross-street cables, bunting, laundry and banners, wall utilities,
- * rooftop kit and upper rooms, procedural wall-foot goods and courtyard palms.
- * It creates no colliders. The generator and art direction are archived at
- * archive/bazaar-map-dev:docs/map-design/construction/{r8.py,r8-art-direction.md}.
- * The generator enforced the BZ-04 clearance contract (atmosphere.test.ts
- * re-checks its height and projection limits); this module only realises the
- * records.
+ * Builds render-only street dressing from the frozen atmosphere.json records.
+ * atmosphere.test.ts checks route clearance and the resulting meshes.
  */
 
 export type Vec2 = [number, number];

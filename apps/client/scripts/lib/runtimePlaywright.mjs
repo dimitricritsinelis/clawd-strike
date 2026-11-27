@@ -498,7 +498,7 @@ export async function launchBrowser(options = {}) {
 
   const browser = await chromium
     .launch({
-      channel: "chrome",
+      channel: process.env.CI ? "chromium" : "chrome",
       headless,
     })
     .catch(() => chromium.launch({ headless }));
@@ -1003,9 +1003,10 @@ export async function readDocumentedAgentState(page) {
 async function waitForDocumentedRuntimeReady(page, options = {}) {
   const {
     timeoutMs = DEFAULT_RUNTIME_READY_TIMEOUT_MS,
+    afterRestart = false,
   } = options;
 
-  await page.waitForFunction(() => {
+  const observation = await page.waitForFunction((afterRestart) => {
     const read = () => {
       if (typeof window.agent_observe === "function") {
         return window.agent_observe();
@@ -1021,14 +1022,19 @@ async function waitForDocumentedRuntimeReady(page, options = {}) {
 
     try {
       const state = JSON.parse(raw);
-      if (state.mode !== "runtime") return false;
-      return state.runtimeReady === true;
+      if (state.mode !== "runtime" || state.runtimeReady !== true) return false;
+      if (afterRestart && (state.gameplay?.alive !== true || state.gameplay?.gameOverVisible !== false)) return false;
+      return raw;
     } catch {
       return false;
     }
-  }, { timeout: timeoutMs });
+  }, afterRestart, { timeout: timeoutMs });
 
-  return readDocumentedAgentState(page);
+  try {
+    return JSON.parse(await observation.jsonValue());
+  } finally {
+    await observation.dispose();
+  }
 }
 
 export async function gotoAgentRuntimeViaUi(page, options = {}) {
@@ -1047,6 +1053,11 @@ export async function gotoAgentRuntimeViaUi(page, options = {}) {
   await agentNameInput.press("Enter");
 
   return waitForDocumentedRuntimeReady(page);
+}
+
+export async function restartPublicAgentRun(page) {
+  await page.getByTestId("play-again").click({ timeout: 20_000 });
+  return waitForDocumentedRuntimeReady(page, { afterRestart: true, timeoutMs: 20_000 });
 }
 
 export async function waitForRuntimeReady(page, options = {}) {

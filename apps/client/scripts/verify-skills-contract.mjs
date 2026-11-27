@@ -1,14 +1,15 @@
 import path from "node:path";
 import { readFile } from "node:fs/promises";
+import { deploymentRequestOptions } from "./lib/deploymentProtection.mjs";
 
 function normalize(text) {
   return text.replace(/\r\n/g, "\n").trim();
 }
 
-const baseUrl = process.env.BASE_URL ? new URL(process.env.BASE_URL).toString() : null;
+const baseUrl = process.env.BASE_URL || "http://127.0.0.1:5174/";
 const skillsUrl = new URL(
   process.env.SKILLS_URL ?? "/skills.md",
-  baseUrl ?? "http://127.0.0.1:5174/",
+  baseUrl,
 ).toString();
 const localPath = path.resolve(
   process.cwd(),
@@ -16,7 +17,7 @@ const localPath = path.resolve(
 );
 
 const localText = await readFile(localPath, "utf8");
-const response = await fetch(skillsUrl);
+const response = await fetch(skillsUrl, deploymentRequestOptions(baseUrl, skillsUrl));
 if (!response.ok) {
   throw new Error(`Failed to fetch ${skillsUrl}: ${response.status} ${response.statusText}`);
 }

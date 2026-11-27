@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
+import { runInNewContext } from "node:vm";
 import {
   RuntimeOperationTimeoutError,
   assertCaptureSearchParamsPolicy,
@@ -17,6 +18,7 @@ import {
   classifyRuntimeFailure,
   closeBrowserResources,
   findHighResolutionTextureRequests,
+  gotoAgentRuntimeViaUi,
   normalizeNetworkRequestUrl,
   readRouteRuntimeState,
   readRuntimeState,
@@ -75,6 +77,26 @@ test("asset host budget reaches agent, human and mobile URLs without overriding 
     if (previous === undefined) delete process.env.QA_ASSET_READY_TIMEOUT_MS;
     else process.env.QA_ASSET_READY_TIMEOUT_MS = previous;
   }
+});
+
+test("the public UI returns its ready observation after a 44-second boot without a second renderer read", async () => {
+  const ready = { mode: "runtime", runtimeReady: true };
+  const raw = JSON.stringify(ready);
+  let disposed = false;
+  const page = {
+    goto() {},
+    getByTestId: () => ({ click() {}, fill() {}, press() {} }),
+    url: () => "http://localhost:5174/",
+    waitForFunction(predicate, arg, { timeout = 30_000 } = {}) {
+      assert.ok(timeout >= 44_000, `first draw exceeded the ${timeout}ms Playwright timeout`);
+      const value = runInNewContext(`(${predicate})`, { window: { agent_observe: () => raw } })(arg);
+      assert.equal(value, raw);
+      return { jsonValue: async () => value, dispose: () => { disposed = true; } };
+    },
+    evaluate: () => assert.fail("the readiness poll already has the observed state"),
+  };
+  assert.deepEqual(await gotoAgentRuntimeViaUi(page), ready);
+  assert.equal(disposed, true);
 });
 
 test("withTimeout rejects a browser operation at its hard deadline", async () => {

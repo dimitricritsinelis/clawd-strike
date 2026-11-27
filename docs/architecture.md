@@ -1,61 +1,29 @@
 # Architecture
 
-## Startup and runtime
+## Launch and simulation
 
-[main.ts](../apps/client/src/main.ts) owns the launch state and loading-screen transition. It starts asset warmup while the loading UI is visible. On launch it dynamically imports [bootstrap.ts](../apps/client/src/runtime/bootstrap.ts), awaits any warmup result, and creates the runtime before revealing the canvas. A failed launch returns a persistent retry banner to the loading screen. Warmup has a 20-second deadline; a privately owned weapon model completed after expiry is disposed, while shared texture and enemy caches remain available to bootstrap.
+The loading screen starts asset warmup, collects a control mode and player name, then imports the runtime. Startup failures return to name entry with a retry message. Bootstrap assembles the scene, input, HUD, audio, enemies and score tracking, and owns the browser hooks and their teardown. [Entry point](../apps/client/src/main.ts) · [Bootstrap](../apps/client/src/runtime/bootstrap.ts)
 
-The runtime assembles the map, renderer, player/input, weapon/audio, enemies, HUD, and public agent hooks. Helpers under [runtime/bootstrap](../apps/client/src/runtime/bootstrap/) separate asset loading, HUD creation, score storage, runtime state types, and map/scene telemetry from the startup coordinator. Menus and gameplay adapt to the current viewport without rotation blockers or orientation locks; `src/shared/runtimeTextApi.ts` owns their shared text-API version. [Game.ts](../apps/client/src/runtime/game/Game.ts) owns core simulation/rendering behavior; bootstrap connects those systems and their lifecycle. Browser startup and shader readiness are separate from the first user interaction that unlocks audio or pointer lock.
+| Change | Start here |
+|---|---|
+| Player movement and collision | [PlayerController](../apps/client/src/runtime/sim/PlayerController.ts), [collision solver](../apps/client/src/runtime/sim/collision/Solver.ts) |
+| Simulation, weapon updates and drawing | [Game](../apps/client/src/runtime/game/Game.ts), [weapon and animation guide](weapons.md) |
+| Enemy behavior, movement and animation | [EnemyManager, EnemyController, TacticalGraph and RaiderAnimation](../apps/client/src/runtime/enemies/) |
+| Touch and desktop controls | [Input](../apps/client/src/runtime/input/), [in-game HUD and menus](../apps/client/src/runtime/ui/) |
+| Economy, waves and competitive balance | [Gameplay tuning](../apps/client/src/runtime/tuning/gameplayTuning.ts), [shared profile identity](../apps/shared/gameplayProfile.ts) |
 
-Mobile skips the desktop whole-scene compile/upload gate: Safari driver compilation can block JavaScript before its timeout fires. The mobile renderer starts at 1 render pixel per CSS pixel and adapts down to 0.75 when GPU frame time misses the target, recovering when load drops; `dynres=0` keeps it fixed. Mobile keeps shadows, AO and postprocessing disabled.
+Desktop human, mobile human and desktop agent runs have separate profile identities. The balance fingerprint contributes to the tuning revision and leaderboard board key. Update the public gameplay contract when documented mechanics change. [Board keys](../apps/shared/highScore.ts) · [Public contract](../apps/client/public/skills.md)
 
-Software GL stages shader compilation and texture uploads, then completes and retires one hidden initialization draw before reporting ready. The draw initializes geometry, shadow and postprocessing paths that compilation alone leaves lazy. Software uses single-sample framebuffers; hardware retains supported MSAA and canvas antialiasing. Desktop hardware and software paths keep the complete scene and its effects.
+## World and rendering
 
-## Map and asset flow
+The client loads the committed Bazaar map, builds traversal geometry and colliders, then installs facade models, props and atmosphere dressing. The map guide identifies the source for each layer. Asset loading selects model and material IDs used by the scene. Some textures also have direct runtime consumers. [Map](map.md) · [Asset loading](../apps/client/src/runtime/bootstrap/assetLoading.ts) · [Asset pipeline](assets.md)
 
-Map modules are grouped by responsibility under `runtime/map/`: `spec`, `world`, `floors`, `walls`, `architecture`, `sections`, `props`, and `atmosphere`.
+The world and first-person weapon have separate cameras. Desktop quality controls surface resolution, pixel ratio and ambient occlusion. Mobile uses its own pixel-ratio budget, skips the whole-scene shader warmup and disables shadows, AO and postprocessing. Software GL stages its initialization draw and uses a GPU fence to limit outstanding frames. QA, shots and agent runs default to fixed resolution. [Renderer](../apps/client/src/runtime/render/Renderer.ts) · [Quality and URL controls](../apps/client/src/runtime/utils/UrlParams.ts)
 
-The source files in [assets-src/maps/bazaar-map](../apps/client/assets-src/maps/bazaar-map/) pass through [gen-map-runtime.mjs](../apps/client/scripts/gen-map-runtime.mjs). It validates and compiles the spec and writes the committed `public/maps/bazaar-map/map_spec.json` and `shots.json`, with source provenance. The build uses those outputs; `check:maps` detects drift.
+## Browser agents
 
-[loadMap.ts](../apps/client/src/runtime/map/spec/loadMap.ts) loads and validates runtime data. `buildBlockout` creates the collision foundation, traversal geometry, and base visuals. Authored facade models replace designated procedural spans. `buildProps` installs compiled dressing and the authored shop colliders. The atmosphere overlay adds render-only market details, clutter, palms, and overhead elements. [Map](map.md) describes the ownership and clearance boundaries.
+Agent runs enter through the loading screen or `?autostart=agent&name=...`. The SDK reads `agent_observe()` and sends actions through `agent_apply_action()` on a real-time cadence. The compatibility hook `advanceTime()` advances simulation and animation before drawing the final state. Keep internal QA observations out of the public API. To preview the bundled legacy SDK export, run `pnpm sdk:export -- --dry-run --out <directory>` with a new path outside the game repository. [Contract](../apps/client/public/skills.md) · [SDK compatibility](../scripts/sdk/template/README.md)
 
-The loaders select map-used model/material IDs rather than treating each catalog as a request list. Model URLs, direct texture consumers, shared facade textures, and warmup all matter when removing an asset. Runtime readiness checks are not a substitute for inspecting missing or incorrect visuals.
+## Shared champion
 
-## Rendering
-
-The scene uses a desert daylight rig, authored surface materials, weathering, and a separate weapon viewmodel camera. [SceneDepthGtaoPass.ts](../apps/client/src/runtime/render/SceneDepthGtaoPass.ts) reuses scene depth, evaluates ambient occlusion on a CSS-pixel grid, and upsamples it with depth awareness.
-
-Facade GLBs reference content-addressed shared textures. [glbTextures.mjs](../scripts/assets/lib/glbTextures.mjs) writes them; [sharedGltfTextures.ts](../apps/client/src/runtime/render/models/sharedGltfTextures.ts) shares runtime texture instances to avoid duplicate uploads.
-
-Desktop `quality=high` uses a pixel-ratio cap of 2, 2k surface textures by default, and GTAO. `quality=standard` caps the ratio at 1.1, defaults to 1k textures, and leaves GTAO off unless requested. Device DPR still limits the actual ratio, and mobile has separate caps. [DynamicResolution.ts](../apps/client/src/runtime/render/DynamicResolution.ts) lowers resolution in steps when frame time misses the target, then probes upward; a reduction that does not help is reversed. QA, review shots, and agent runs default to fixed resolution. These policies are code behavior, not performance guarantees for a particular device.
-
-## Enemies and combat
-
-`EnemyManager` owns the active enemy population. `EnemyController`, `TacticalGraph`, and `enemyLineOfSight` provide decision making, navigation, and visibility. `EnemyVisual` loads the skinned raider and uses a capsule fallback if that visual is unavailable. Weapon firing, reload state, hit-zone damage, and feel tuning are separate modules; see [weapons](weapons.md).
-
-The gameplay tuning profile supplies player economy and bot behavior. Its fingerprint is part of the shared-champion board identity. Cosmetic changes must not accidentally alter that baseline.
-
-## Public browser contract
-
-[skills.md](../apps/client/public/skills.md) is authoritative for the public API and permitted observations. The entry points include `window.agent_observe`, `agent_apply_action`, `render_game_to_text`, and `advanceTime`; `?autostart=agent&name=...` selects an agent run. Internal QA state is not part of this public contract.
-
-Compatibility time advances keep the 60 Hz simulation and weapon-animation substeps, then render only the final state of the batch. A 500 ms advance therefore submits one frame rather than thirty synchronous full-map frames. The normal animation loop continues independently, as documented in the public contract.
-
-The exporter in `scripts/sdk/` packages a legacy helper snapshot. Its [README](../scripts/sdk/template/README.md) records the missing current learning-workflow features; exporting it does not establish full `agentic-gameplay-v1` conformance.
-
-## URL controls
-
-[UrlParams.ts](../apps/client/src/runtime/utils/UrlParams.ts) parses map, mode/autostart, name, spawn, shot, seed, debug/perf, viewmodel visibility, floor/wall modes, surface resolution, god mode, AO, quality/gfx, and dynamic-resolution settings. The same module owns launch/loading parameters, QA profile selection, and the `audio`, `shadows`, `bootGate`, and `qaTargets` controls. Check their consumers and parser tests before adding or renaming a flag.
-
-Use `floors=blockout&walls=blockout` for material diagnostics. Local runs use normal combat unless `god=1` explicitly requests unlimited health. Automated and agent runs normally suppress audio; `audio=1` requests it subject to browser audio activation rules.
-
-## Backend
-
-Vercel handlers under [api](../api/) call shared server modules:
-
-- `GET /api/high-score` reads the champion. Direct `POST /api/high-score` returns 403.
-- `/api/run/start` and `/api/run/finish` implement validated run submission.
-- `/api/admin/stats/overview`, `/runs`, `/names`, and `/daily` require the stats admin bearer token.
-
-[highScoreStoreImpl.ts](../server/highScoreStoreImpl.ts) preserves the store entry points. Implementations under [server/store](../server/store/) separate types, SQL, record conversion, connection selection, in-memory storage, schema maintenance, and Postgres operations. The deployed store uses Postgres. Privacy hashing uses `PRIVACY_HASH_SECRET`. [highScoreVitePlugin.ts](../server/highScoreVitePlugin.ts) exposes the same handlers during development with an explicit in-memory store. It is not a local Postgres integration test. See [deployment](deployment.md) for environment and operational boundaries.
-
-Software renderers keep at most one GPU frame in flight, using a nonblocking completion fence. Real-time simulation and UI updates continue when drawing must wait. Explicit QA renders and compatibility time advances wait for that draw slot, then submit and count an actual frame. Hardware keeps its normal submission policy.
+The client starts and finishes scored runs through the API. `GET /api/high-score` reads the champion. The server validates submissions through `/api/run/start` and `/api/run/finish`. Admin stats require bearer authentication. The Vercel handlers use the shared server modules and Postgres. Vite uses the same handlers with an in-memory store scoped to the dev server process. [Client lifecycle](../apps/client/src/shared/sharedChampionRunLifecycle.ts) · [API routes](../api/) · [Stores](../server/store/) · [Deployment](deployment.md)
