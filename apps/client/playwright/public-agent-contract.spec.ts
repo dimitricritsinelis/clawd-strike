@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { createSharedChampion } from "../../shared/highScore";
 import { getGameplayTuning } from "../src/runtime/tuning/gameplayTuning";
 import {
   advanceRuntime,
@@ -7,6 +8,7 @@ import {
   gotoAgentRuntime,
   gotoAgentRuntimeViaUi,
   readDocumentedAgentState,
+  restartPublicAgentRun,
 } from "../scripts/lib/runtimePlaywright.mjs";
 
 const AGENT_GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
@@ -20,18 +22,6 @@ const RETRY_COMBAT_WINDOW_S = Math.ceil(AGENT_WAVE_ONE_PRESSURE.fullPressureS + 
 const MAX_RETRY_STEPS = Math.ceil(
   (REQUIRED_RETRY_DEATHS * RETRY_COMBAT_WINDOW_S * 1_000) / RETRY_STEP_MS,
 );
-
-function expectSharedChampionShape(sharedChampion: unknown) {
-  if (sharedChampion === null) return;
-
-  expect(sharedChampion).toEqual({
-    holderName: expect.any(String),
-    score: expect.any(Number),
-    controlMode: expect.stringMatching(/^(human|agent)$/),
-    scope: "sitewide",
-    updatedAt: expect.any(String),
-  });
-}
 
 function expectFeedbackShape(feedback: unknown) {
   if (feedback === null || feedback === undefined) return;
@@ -184,6 +174,7 @@ async function readLoadingScreenRevealState(page: Page) {
 
 test("exposes the public agent contract before runtime boot", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
+  await page.route("**/api/high-score*", (route) => route.fulfill({ json: { champion: null } }));
 
   await page.goto(new URL("/", testInfo.project.use.baseURL as string).toString(), {
     waitUntil: "domcontentloaded",
@@ -200,8 +191,7 @@ test("exposes the public agent contract before runtime boot", async ({ page }, t
   expect(state.mode).toBe("loading-screen");
   expect(state.runtimeReady).toBe(false);
   expect(state.score?.scope).toBe("browser-session");
-  expect("sharedChampion" in state).toBe(true);
-  expectSharedChampionShape(state.sharedChampion ?? null);
+  expect(state.sharedChampion).toBeNull();
   expect(state.health).toBeNull();
   expect(state.ammo).toBeNull();
   expect("feedback" in state).toBe(true);
@@ -536,6 +526,17 @@ test("blocks invalid autostart names and returns to focused name entry", async (
 
 test("keeps the public agent payload fair and minimal in runtime", async ({ page }, testInfo) => {
   const recorder = attachConsoleRecorder(page);
+  const champion = createSharedChampion({
+    holderName: "AutoRecord",
+    score: 2_000,
+    controlMode: "agent",
+    updatedAt: "2026-03-07T12:05:00.000Z",
+    identity: AGENT_GAMEPLAY_TUNING.identity,
+  });
+  await page.route("**/api/high-score*", (route) => {
+    const profileId = new URL(route.request().url()).searchParams.get("profileId");
+    return route.fulfill({ json: { champion: profileId === champion.profileId ? champion : null } });
+  });
   await gotoAgentRuntime(page, {
     baseUrl: testInfo.project.use.baseURL as string,
     agentName: "PublicProbe",
@@ -569,8 +570,7 @@ test("keeps the public agent payload fair and minimal in runtime", async ({ page
     lastRun: null,
     scope: "browser-session",
   });
-  expect("sharedChampion" in state).toBe(true);
-  expectSharedChampionShape(state.sharedChampion ?? null);
+  await expect.poll(async () => (await readDocumentedAgentState(page)).sharedChampion).toEqual(champion);
   expect(state.lastRunSummary).toBeNull();
   expectFeedbackShape(state.feedback ?? null);
 
@@ -692,37 +692,7 @@ test("supports the documented no-context death and retry loop", async ({ page },
         expect(deathLastRunSummary).not.toBeNull();
       }
 
-      const playAgainButton = page.getByTestId("play-again");
-      if (await playAgainButton.isVisible().catch(() => false)) {
-        await playAgainButton.click().catch(() => {});
-      }
-
-      await page.waitForFunction(() => {
-        const read = () => {
-          if (typeof window.agent_observe === "function") {
-            return window.agent_observe();
-          }
-          if (typeof window.render_game_to_text === "function") {
-            return window.render_game_to_text();
-          }
-          return null;
-        };
-
-        const raw = read();
-        if (typeof raw !== "string") return false;
-
-        try {
-          const next = JSON.parse(raw);
-          return next.mode === "runtime"
-            && next.runtimeReady === true
-            && next.gameplay?.alive === true
-            && next.gameplay?.gameOverVisible !== true;
-        } catch {
-          return false;
-        }
-      }, { timeout: 20_000 });
-
-      const restartedState = await readDocumentedAgentState(page);
+      const restartedState = await restartPublicAgentRun(page);
       expect(restartedState.perception.movementBlocked).toBe(false);
       expect(Array.isArray(restartedState.perception.visibleTargets)).toBe(true);
       expect(restartedState.health).toBe(100);

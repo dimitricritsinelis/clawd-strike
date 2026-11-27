@@ -1,5 +1,6 @@
 import path from "node:path";
 import { tsImport } from "tsx/esm/api";
+import { authorizeDeploymentBrowser } from "./lib/deploymentProtection.mjs";
 import {
   DEFAULT_AGENT_NAME,
   DEFAULT_BASE_URL,
@@ -11,6 +12,7 @@ import {
   parseBaseUrl,
   parseBooleanEnv,
   readDocumentedAgentState,
+  restartPublicAgentRun,
   sanitizeFileSegment,
   trimAgentName,
   writeJson,
@@ -66,33 +68,6 @@ function hasRequiredSkillsText(skillsText) {
   ].every((snippet) => normalized.includes(snippet.toLowerCase()));
 }
 
-async function waitForRespawn(page) {
-  await page.waitForFunction(() => {
-    const read = () => {
-      if (typeof window.agent_observe === "function") {
-        return window.agent_observe();
-      }
-      if (typeof window.render_game_to_text === "function") {
-        return window.render_game_to_text();
-      }
-      return null;
-    };
-
-    const raw = read();
-    if (typeof raw !== "string") return false;
-
-    try {
-      const state = JSON.parse(raw);
-      return state.mode === "runtime"
-        && state.runtimeReady === true
-        && state.gameplay?.alive === true
-        && state.gameplay?.gameOverVisible !== true;
-    } catch {
-      return false;
-    }
-  }, { timeout: 20_000 });
-}
-
 const summary = {
   baseUrl: BASE_URL,
   skillsUrl: SKILLS_URL,
@@ -114,6 +89,7 @@ const summary = {
 };
 
 try {
+  await authorizeDeploymentBrowser(context, BASE_URL, SKILLS_URL);
   await page.goto(SKILLS_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
   const skillsText = (await page.textContent("body")) ?? "";
   summary.skills.requiredSnippetsPresent = hasRequiredSkillsText(skillsText);
@@ -154,13 +130,7 @@ try {
         });
       }
 
-      const playAgainButton = page.getByTestId("play-again");
-      if (await playAgainButton.isVisible().catch(() => false)) {
-        await playAgainButton.click().catch(() => {});
-      }
-
-      await waitForRespawn(page);
-      const restartedState = await readDocumentedAgentState(page);
+      const restartedState = await restartPublicAgentRun(page);
       if ((restartedState.score?.current ?? null) !== 0) {
         throw new Error(`Restarted run score should reset to 0, got ${restartedState.score?.current ?? "n/a"}`);
       }

@@ -17,6 +17,7 @@ import {
   classifyRuntimeFailure,
   closeBrowserResources,
   findHighResolutionTextureRequests,
+  gotoAgentRuntimeViaUi,
   normalizeNetworkRequestUrl,
   readRouteRuntimeState,
   readRuntimeState,
@@ -75,6 +76,20 @@ test("asset host budget reaches agent, human and mobile URLs without overriding 
     if (previous === undefined) delete process.env.QA_ASSET_READY_TIMEOUT_MS;
     else process.env.QA_ASSET_READY_TIMEOUT_MS = previous;
   }
+});
+
+test("the public UI accepts a 44-second boot on a software renderer", async () => {
+  const ready = { mode: "runtime", runtimeReady: true };
+  const page = {
+    goto() {},
+    getByTestId: () => ({ click() {}, fill() {}, press() {} }),
+    url: () => "http://localhost:5174/",
+    waitForFunction(_predicate, _arg, { timeout = 30_000 } = {}) {
+      assert.ok(timeout >= 44_000, `first draw exceeded the ${timeout}ms Playwright timeout`);
+    },
+    evaluate: async () => ready,
+  };
+  assert.deepEqual(await gotoAgentRuntimeViaUi(page), ready);
 });
 
 test("withTimeout rejects a browser operation at its hard deadline", async () => {

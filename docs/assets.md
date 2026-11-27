@@ -1,67 +1,35 @@
-# Asset sources and builds
+# Asset maintenance
 
-## Ownership
+[assets/source](../assets/source/README.md) holds Blender sources and audio provenance. [apps/client/assets-src](../apps/client/assets-src/) holds map build inputs and loading-screen masters. Vite copies `apps/client/public/` into the build. Put review renders and intermediate exports in ignored `artifacts/`.
 
-[assets/source](../assets/source/) contains retained Blender and audio sources. [apps/client/assets-src](../apps/client/assets-src/) contains loading-screen masters and map build inputs. `apps/client/public/` is deployed verbatim: put an output there only when the application uses it. Keep renders, diagnostics, and intermediate exports outside public assets, usually in ignored `exports/` or `artifacts/` directories.
+## Changing a shipped asset
 
-Shipped models and material catalogs carry source records in `models.json`, `provenance.json`, `sources.json`, or `SOURCE.md`. Record source URL/repository path, author when known, recorded license, modifications, and checksums. [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md) indexes third-party and unresolved sources; it does not replace per-file provenance.
+| Asset | Edit or build | Verify |
+|---|---|---|
+| Bazaar facades and props | Use the package and catalog workflow below. | Run `pnpm map:check` and review the affected route and camera views. See [Bazaar](map.md). |
+| First-person weapon and reload | Follow the [weapon export guide](weapons.md) for the retained Blender scene, reload marks and clip. | Run the weapon viewmodel spec and inspect a full reload and interruptions. |
+| Enemy raider | Run the [Blender builder](../assets/source/enemy-raider/build.py) against the retained character and rifle donors. It writes the source scene, runtime GLB and provenance. | Run the [raider spec](../apps/client/playwright/enemy-raider.spec.ts) for mesh tiers, sockets and motion. |
+| Loading screen | Edit the [masters and manifest](../apps/client/assets-src/loading-screen/), then run `pnpm assets:loading-screen`. This replaces the generated output directory. | Run `pnpm assets:loading-screen:verify` for file inventory, runtime references and size budgets. Check desktop and mobile layouts. |
+| Audio | Keep source credits and processing records under [assets/source/audio](../assets/source/audio/). | Run the [weapon audio spec](../apps/client/playwright/weapon-audio.spec.ts) for weapon changes and listen in game. |
 
-The asset-provenance tooling tests check catalog/disk consistency, selected hashes, texture families, and repository source paths. Passing them proves those mechanical contracts, not ownership, artistic acceptance, or every asset's legal status.
-
-## Blender
-
-For a live supported builder on macOS, run a separate headless process:
+Run Blender builders in a separate headless process. For the raider on macOS, run the following from the repository root.
 
 ```sh
 /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python-exit-code 1 --python assets/source/enemy-raider/build.py
 ```
 
-Read the chosen builder before running it: many install public output as part of their build. Author in metres with Blender Z up and export with `export_yup`; use the base centre as the origin where the asset contract requires it. Facade wall planes use Y=0, with the street toward negative Y. Do not overwrite a live user scene.
+## Bazaar packages
 
-Blender MCP is optional local tooling. Verify its connection for the current session rather than relying on an old setup record. Keep reproducible shipped builds in their existing source pipeline.
+To install a facade, supply `assets/source/<unit>/package.json` and every GLB named in it. From the repository root run `pnpm assets:facade apply <unit>`, then `pnpm map:check`. The installer updates the source map, facade catalog, GLBs and shared texture hashes. The guard regenerates the runtime map and checks protected gameplay and placement clearance. Review the changes together.
 
-## Frozen facade builders
+`pnpm assets:facade revert <unit>` restores the last apply from its local checkpoint in `artifacts/facade-packages/`. Run the map guard again after a revert. Use `pnpm assets:facade pack-textures` only when installed GLBs need their embedded images externalized. It processes the whole catalog without creating a checkpoint.
 
-Most map unit and shared-environment scripts depend on construction inputs removed from the tip. They are retained as provenance and reproduce at `archive/bazaar-map-dev` with that revision's complete design bundle. See [source README](../assets/source/README.md) and [map](map.md). Individual standalone prop builders may remain usable; check their imports and inputs before running them.
+For new Poly Haven assets use `pnpm assets:fetch-model <id> --res 1k` or `pnpm assets:fetch-texture <id> --res 1k,2k`. These populate the prop or wall catalog. Use a new family ID for texture intake. A failed download deletes that family's local directory, even if it existed before the run. [Texture intake](../scripts/assets/fetch-cc0-texture.mjs)
 
-Facade installation is still handled by:
+Place a new prop through the source map’s asset registry and dressing clusters. Before retiring a file, trace model placements, shared textures and direct texture URLs through the [runtime loader](../apps/client/src/runtime/bootstrap/assetLoading.ts) and [asset plan](../apps/client/src/runtime/qa/assetReadiness.ts).
 
-```sh
-pnpm assets:facade apply <unit>
-pnpm assets:facade revert <unit>
-pnpm assets:facade pack-textures
-```
+## Attribution
 
-`apply` consumes a unit package; `revert` needs its saved local backup. `pack-textures` externalizes embedded textures into the shared content-addressed texture directory. Review all catalog, GLB, texture, map-source, and generated-output changes together. Do not hand-edit hashed texture names or assume that a local rollback artifact exists in another checkout.
+Record each shipped asset’s source URL or tracked repository path, author when known, license evidence, modifications and checksums in its catalog or provenance file. Add third-party credits to [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md). The [owner declaration](../assets/source/owner-created.provenance.json) covers the named character donor, audio and loading-screen assets. The rifle used by both character and viewmodel has its own license.
 
-## CC0 intake
-
-The existing scripts fetch Poly Haven material/model data and write source records:
-
-```sh
-pnpm assets:fetch-texture <polyhaven-id> --res 1k,2k
-pnpm assets:fetch-model <polyhaven-id> --res 1k
-```
-
-Texture intake adds the `ph_<id>` material convention to the wall pack. Model intake updates the prop catalog. A downloaded entry is not automatically visible: use the supported source-spec asset registry and model dressing placement, regenerate maps, and verify the load plan includes it. Direct texture consumers and frozen atmosphere model IDs also participate in loading; a catalog-only search is insufficient for safe deletion.
-
-## Loading-screen assets
-
-The manifest and masters under `apps/client/assets-src/loading-screen/` generate `public/loading-screen/assets/`:
-
-```sh
-pnpm assets:loading-screen
-pnpm assets:loading-screen:verify
-```
-
-The verifier checks generated formats and size budgets. Visually inspect desktop and mobile layouts after image changes. Audio/source licensing needs its own recorded provenance; the optimization manifest describes processing, not license ownership.
-
-## Weapon and raider
-
-The AK has a live authoring/export pipeline and a single reload timeline; follow [weapons](weapons.md). The raider builder uses `assets/source/enemy-raider/donor/model_source_4k.glb` and the retained AK donor under `assets/source/ak47/legacy/`. Its current provenance records a 1.8 m character, `Raider_Low`/`Raider_High`, a rifle, `MuzzleSocket`, and nine idle/directional movement clips. Preserve the low/high triangle checks in the browser spec; runtime mesh simplification is not an equivalent export.
-
-The owner confirmed that the Tripo donor, older weapon/UI audio, and loading-screen imagery/music were their own creations. The [owner declaration](../assets/source/owner-created.provenance.json) records that statement. The raider's rifle retains its separate third-party source terms, and its historical design-approval field is not a new playtest sign-off.
-
-## Change verification
-
-Run `pnpm test:tools`, affected runtime tests, `pnpm check:maps`, `pnpm typecheck`, and `pnpm build` as applicable. For changed map assets also run the map guard and traversal/capture checks. For weapon, character, or audio changes run their browser specs and inspect the actual in-game result; audio requires listening. Confirm the loaded asset's bytes when stale browser/CDN content could invalidate the comparison.
+Run `pnpm test:tools` after catalog changes. Its [provenance tests](../apps/client/scripts/lib/asset-provenance.test.mjs) check Bazaar pack inventories, hashes and tracked source paths.

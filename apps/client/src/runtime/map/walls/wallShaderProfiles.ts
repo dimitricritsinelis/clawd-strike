@@ -2,9 +2,7 @@ import type { WallShaderTweakOptions } from "../../render/materials/applyWallSha
 
 export type WallShaderSurfaceKind = "wall" | "detail" | "balcony";
 
-// Numerical overrides from the BZ-04 materialRuntimeContract
-// (archive/bazaar-map-dev:docs/map-design/construction/design.json).
-// Legacy profiles remain independent.
+// Per-material overrides for the installed Bazaar wall finishes.
 const AUTHORED_PROFILES: Record<string, Partial<WallShaderTweakOptions>> = {
   "ph_bz04_painted_plaster_warm": {
     "macroColorAmplitude": 0.025,

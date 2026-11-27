@@ -1,58 +1,39 @@
-# Weapons and reload
+# Weapon gameplay and animation
 
-## Runtime ownership
+The game uses separate modules for ammunition and reload state, firing cadence, first-person animation and visual motion. Wave ammunition comes from the gameplay profile. Use the public contract for player-facing values and update it with balance changes. [Weapon modules](../apps/client/src/runtime/weapons/) · [Gameplay tuning](../apps/client/src/runtime/tuning/gameplayTuning.ts) · [Hit zones](../apps/client/src/runtime/combat/enemyHitZone.ts) · [Public contract](../apps/client/public/skills.md)
 
-[Ak47Weapon.ts](../apps/client/src/runtime/weapons/Ak47Weapon.ts) owns ammunition and reload state. [Ak47FireController.ts](../apps/client/src/runtime/weapons/Ak47FireController.ts) owns shot timing and firing behavior. [Ak47AnimatedViewModel.ts](../apps/client/src/runtime/weapons/Ak47AnimatedViewModel.ts) plays the authored first-person assembly. [ak47FeelTuning.ts](../apps/client/src/runtime/weapons/ak47FeelTuning.ts) holds visual/feel tuning; gameplay balance and hit-zone damage have separate owners.
+## Reload behavior
 
-Current base values are a 0.1 s fire interval (600 RPM), a 30-round magazine, and 25 body damage. [enemyHitZone.ts](../apps/client/src/runtime/combat/enemyHitZone.ts) applies head damage ×4 and leg damage ×0.5 rounded to an integer. The gameplay profile supplies 120 reserve rounds at wave start; the weapon constructor's standalone fallback is 90, so do not mistake it for the configured game economy. Check [gameplayTuning.ts](../apps/client/src/runtime/tuning/gameplayTuning.ts) and the public contract before changing balance. Fingerprinted profile changes affect leaderboard board identity.
+Gameplay, the Blender clip and reload audio share one timeline. The base duration is 1.7 seconds for partial and empty magazines. Reload-speed buffs scale the whole timeline. The support hand and magazine follow one authored clip. [Reload marks](../apps/client/src/runtime/weapons/ak47ReloadMarks.ts) · [Ammunition state](../apps/client/src/runtime/weapons/Ak47Weapon.ts)
 
-## One reload timeline
+| Fresh fire input | Result at base speed |
+|---|---|
+| Before `release` (0.30 s) | With rounds left, cancel and fire from the old magazine. An empty magazine remembers the press. |
+| From `release` until `latch` (1.10 s) | Remember the press and fire at the latch if the trigger is still held. |
+| From `latch` to `end` (1.70 s) | The new ammunition has committed once. A fresh press skips the remaining animation and fires. |
 
-[ak47ReloadMarks.ts](../apps/client/src/runtime/weapons/ak47ReloadMarks.ts) is the single source for gameplay, clip authoring, and audio. The base duration is 1.7 seconds. A reload-speed modifier scales every mark by the same factor. Both partial and empty magazines use one `Reload` clip with a magazine change and no charging-handle action.
+Idle and Reload share an endpoint pose. When a reload stops, the viewmodel follows the clip backward before release and forward afterward. A new `reloadSerial` lets a restarted reload catch up without blending through the model. Reload audio schedules cues from the same marks. [Viewmodel](../apps/client/src/runtime/weapons/Ak47AnimatedViewModel.ts) · [Audio](../apps/client/src/runtime/audio/WeaponAudio.ts) · [Foley sources](../assets/source/audio/reload-foley.provenance.json)
 
-| Mark | Base seconds | Behavior |
-|---|---|---|
-| `leaveHandguard` | 0.00 | Support hand leaves the handguard |
-| `grip` | 0.24 | Hand grips the seated magazine |
-| `release` | 0.30 | Paddle release |
-| `rockedOut` | 0.42 | Magazine rocked forward |
-| `drop` | 0.56 | Old magazine released out of frame |
-| `newMagazineInView` | 0.76 | Fresh magazine enters view |
-| `hook` | 0.98 | Front lug engages |
-| `latch` | 1.10 | New rounds commit once |
-| `gripOpens` | 1.16 | Support grip opens after seating |
-| `handOnHandguard` | 1.40 | Hand returns to the handguard |
-| `end` | 1.70 | Rifle settles at idle |
+## Blender source and export
 
-Before `release`, a fresh fire press can cancel if the old magazine still contains rounds; the shot then consumes a round normally, without committing new reserve ammunition. From `release` to `latch`, the old magazine is already out, so a fresh press is remembered and fires at the latch only if still held. An early press with an empty magazine is remembered the same way. After `latch`, a fresh press ends the reload early and fires from the updated magazine. Holding the trigger is not a new press. `reloading` and the HUD progress continue to the end unless interrupted.
+To export the retained, finished scene, run from the repository root with Blender on PATH:
 
-The viewmodel samples the clip from reload progress. `Idle` and `Reload` share the same endpoint pose and never blend joints during the transition. A stopped reload plays the clip home: backward before `release` at up to 2× speed, forward from `release` at up to 3×. `reloadSerial` detects restarts: a backward return joins the new progress where they meet; a forward return reaches the idle endpoint, wraps, and catches the new reload at up to 4×. Snapshots without a serial can scrub progress without implying a restart. Preserve these rules when refactoring animation state.
+```sh
+blender --background --python-exit-code 1 --python assets/source/ak47/build.py
+```
 
-## Authoring and export
+The [exporter](../assets/source/ak47/build.py) checks the authored marks and glove finish, then installs `ak47.glb` and provenance under `apps/client/public/assets/models/weapons/ak47-next/`. Its `--blend` option selects the input scene. The output still goes to the runtime asset directory.
 
-[viewmodel_v2.py](../assets/source/ak47/viewmodel_v2.py) requires the original v1 blend from commit `828ad9c`; it rejects an already-upgraded input. It does not retrieve that old file automatically. The safe regeneration sequence is:
+Rebuilding the authored clip requires its original v1 scene. The checked-in scene already contains the upgrade and the authoring script rejects it as input.
 
-1. Preserve the current source before rebuilding. Extract `828ad9c:assets/source/ak47/ak47.blend` into a separate scratch file with `git show`.
-2. Run `viewmodel_v2.py` through headless Blender with `-- --in <scratch-v1.blend> --out assets/source/ak47/ak47.blend`.
-3. Run [glove_finish.py](../assets/source/ak47/glove_finish.py) to apply the authored finish.
-4. Run [build.py](../assets/source/ak47/build.py) to export and install `apps/client/public/assets/models/weapons/ak47-next/ak47.glb` and its provenance.
+1. In a shallow checkout missing the v1 revision, run `git fetch --depth=1 origin 828ad9c88762b0303a7a7a62b0c43bc19ddaf443`. Extract the source into a separate scratch directory with `git show 828ad9c:assets/source/ak47/ak47.blend > /path/to/scratch/v1.blend`.
+2. Run [viewmodel_v2.py](../assets/source/ak47/viewmodel_v2.py) with headless Blender and `-- --in <scratch-v1.blend> --out assets/source/ak47/ak47.blend`. It uses the [grip data](../assets/source/ak47/grips/) and [hand pose calibration](../assets/source/ak47/hand_pose.py).
+3. Run [glove_finish.py](../assets/source/ak47/glove_finish.py) through headless Blender on the reauthored scene, then run the exporter above.
 
-This sequence changes the active source and runtime asset. Use it for an authorized asset change, not as a routine TypeScript check. `build.py` checks the authored reload marks against TypeScript and refuses to export an unfinished glove or mismatched timeline. Its `--blend` option selects an input blend but still uses the exporter's configured runtime destination.
+The Python tools parse TypeScript literals for `AK47_RELOAD_DURATION_S`, `AK47_RELOAD_MARKS = Object.freeze({...})`, `BASE_POSITION = new Vector3(...)`, `BASE_ROLL`, `VIEWMODEL_SCALE`, `viewModelCamera = new PerspectiveCamera(...)` and `this.modelRoot.rotation.y = Math.PI / 2`. Update the readers when changing declaration syntax. Use a separate headless process for authoring to protect an open Blender scene.
 
-The authoring inputs include [grips](../assets/source/ak47/grips/) and [hand_pose.py](../assets/source/ak47/hand_pose.py). The current script uses `grips/reload-fit.json` plus the idle grip and calibrated joint axes; do not reconstruct a grip from rounded prose. Preserve `JOINT_LIMITS`, the anatomical thumb hinge, both idle endpoints, magazine visibility, and left/right-hand behavior.
+## Verification
 
-The Python tools parse these exact TypeScript declaration forms: `AK47_RELOAD_DURATION_S = <number>;`, `AK47_RELOAD_MARKS = Object.freeze({...});`, `BASE_POSITION = new Vector3(...)`, `BASE_ROLL`, `VIEWMODEL_SCALE`, `viewModelCamera = new PerspectiveCamera(...)`, and `this.modelRoot.rotation.y = Math.PI / 2;`. Refactoring their syntax requires updating the parsers and verifying the export, even when TypeScript still compiles.
+Run the relevant weapon unit tests and both focused browser specs. The viewmodel spec measures thumb contact, magazine visibility, glove intersection, trigger framing and cancel/restart continuity. Listen to shots, reload interruptions and ambient balance after audio edits. These specs run outside the CI smoke subset. [Viewmodel spec](../apps/client/playwright/weapon-viewmodel.spec.ts) · [Audio spec](../apps/client/playwright/weapon-audio.spec.ts) · [Test commands](development.md#focused-browser-checks)
 
-## Audio
-
-[WeaponAudio.ts](../apps/client/src/runtime/audio/WeaponAudio.ts) and [ak47AudioDsp.ts](../apps/client/src/runtime/audio/ak47AudioDsp.ts) own loading, scheduling, and processing. Extension probing uses `.mp3`, `.ogg`, then `.wav`. Reload voices use the same timeline marks as the gameplay/clip. The reload foley's source cuts and processing are recorded in [reload-foley.provenance.json](../assets/source/audio/reload-foley.provenance.json).
-
-Keep trigger cadence, muzzle flash, and shot audio synchronized. Listen to single shots, bursts, a full magazine, reload interruptions, and ambient balance after audio changes; browser assertions do not establish audible quality.
-
-## Tests and current limitation
-
-The full browser suite includes [weapon-viewmodel.spec.ts](../apps/client/playwright/weapon-viewmodel.spec.ts) and [weapon-audio.spec.ts](../apps/client/playwright/weapon-audio.spec.ts); the four-spec CI smoke does not. The viewmodel spec checks timing/provenance, magazine visibility, glove intersections, framing, thumb contact, and cancel/restart continuity. Unit tests cover ammunition and timing logic separately.
-
-The thumb-wrap test is a known unresolved asset-quality failure. The September 26 recorded run found zero pad-side contact share across 38 samples despite passing bone-space bend checks, with additional game-camera bend and thumb/index ring failures. Those are historical measurements, not a fresh result for every later asset. The active test retains its thresholds; run it against the current bytes before claiming a fix. Passing reload timing or intersection checks alone does not prove a convincing thumb grip.
-
-Earlier Case 04 studies, old 1.225-second reload instructions, hashes, and scratch reports are archived in Git. They do not describe the current 1.7-second magazine-only pipeline.
+The reload thumb-wrap test fails for the asset at `17e4376`. Across 38 sampled poses, 0% of the measured thumb-pad vertices came within 2 mm of the held magazine. The test requires at least 20%. Recheck this assertion when changing the grip.

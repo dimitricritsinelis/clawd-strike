@@ -8,11 +8,11 @@ type CliOptions = {
 
 function printUsage(): void {
   console.log(`Usage:
-  pnpm db:export -- [--env-file .env.production.local] [--out /Users/dimitri/Desktop/clawd-strike-postgres-audit-2026-03-08.xlsx]
+  pnpm db:export -- [--env-file <path>] [--out <workbook.xlsx>]
 
 Options:
   --env-file <path>  Load environment variables from a local env file before exporting.
-  --out <path>       Workbook output path. Defaults to a dated Desktop-adjacent .xlsx path.
+  --out <path>       Defaults to a dated .xlsx file in the parent of the working directory.
 `);
 }
 
