@@ -30,8 +30,11 @@ const apiResponses = [];
 page.on("request", (request) => {
   const url = new URL(request.url());
   if (url.origin === origin && url.pathname.startsWith("/api/")) {
-    apiResponses.push(request.response().then((response) =>
-      response && response.status() >= 400 ? `${request.method()} ${url.pathname}: HTTP ${response.status()}` : null));
+    const label = `${request.method()} ${url.pathname}`;
+    apiResponses.push(request.response().then(
+      (response) => response && response.status() >= 400 ? `${label}: HTTP ${response.status()}` : null,
+      () => `${label}: response unavailable`,
+    ));
   }
 });
 
