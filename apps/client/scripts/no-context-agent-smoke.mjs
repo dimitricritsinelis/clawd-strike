@@ -154,6 +154,7 @@ try {
         activeCycle.restartedLastRunSummary = restartedState.lastRunSummary ?? null;
       }
       summary.runtime.respawnsObserved += 1;
+      console.log(`[smoke:public] restart verified ${summary.runtime.respawnsObserved}/${REQUIRED_DEATHS}`);
       await page.screenshot({
         path: path.join(OUTPUT_DIR, `respawn-${sanitizeFileSegment(String(summary.runtime.respawnsObserved))}.png`),
       });

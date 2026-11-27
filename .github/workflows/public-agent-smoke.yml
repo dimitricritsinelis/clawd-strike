@@ -74,6 +74,8 @@ jobs:
       - name: Public agent smoke
         run: pnpm smoke:public
         env:
+          # A release needs one complete play/restart journey. The daily run also checks repetition.
+          REQUIRED_DEATHS: ${{ github.event_name == 'schedule' && '2' || '1' }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ github.event_name == 'repository_dispatch' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
 
       # The live domain may intentionally serve an older release. Compare bytes
