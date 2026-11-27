@@ -1006,7 +1006,7 @@ async function waitForDocumentedRuntimeReady(page, options = {}) {
     afterRestart = false,
   } = options;
 
-  await page.waitForFunction((afterRestart) => {
+  const observation = await page.waitForFunction((afterRestart) => {
     const read = () => {
       if (typeof window.agent_observe === "function") {
         return window.agent_observe();
@@ -1023,13 +1023,18 @@ async function waitForDocumentedRuntimeReady(page, options = {}) {
     try {
       const state = JSON.parse(raw);
       if (state.mode !== "runtime" || state.runtimeReady !== true) return false;
-      return !afterRestart || (state.gameplay?.alive === true && state.gameplay?.gameOverVisible === false);
+      if (afterRestart && (state.gameplay?.alive !== true || state.gameplay?.gameOverVisible !== false)) return false;
+      return raw;
     } catch {
       return false;
     }
   }, afterRestart, { timeout: timeoutMs });
 
-  return readDocumentedAgentState(page);
+  try {
+    return JSON.parse(await observation.jsonValue());
+  } finally {
+    await observation.dispose();
+  }
 }
 
 export async function gotoAgentRuntimeViaUi(page, options = {}) {
