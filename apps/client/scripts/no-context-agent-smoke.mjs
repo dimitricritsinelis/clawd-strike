@@ -1,224 +1,97 @@
 import path from "node:path";
-import { tsImport } from "tsx/esm/api";
 import { authorizeDeploymentBrowser } from "./lib/deploymentProtection.mjs";
 import {
   DEFAULT_AGENT_NAME,
   DEFAULT_BASE_URL,
   attachConsoleRecorder,
   ensureDir,
+  evaluateRuntimeState,
   getDocumentedAgentApiStatus,
   gotoAgentRuntimeViaUi,
   launchBrowser,
   parseBaseUrl,
   parseBooleanEnv,
-  readDocumentedAgentState,
-  restartPublicAgentRun,
-  sanitizeFileSegment,
   trimAgentName,
+  withTimeout,
   writeJson,
 } from "./lib/runtimePlaywright.mjs";
 
-const { getGameplayTuning } = await tsImport(
-  "../src/runtime/tuning/gameplayTuning.ts",
-  import.meta.url,
-);
-const GAMEPLAY_TUNING = getGameplayTuning("desktop-agent");
-const WAVE_ONE_PRESSURE = GAMEPLAY_TUNING.waves.pressure.waveBands.find((band) => (
-  band.minWave <= 1 && (band.maxWaveInclusive === null || band.maxWaveInclusive >= 1)
-));
-if (!WAVE_ONE_PRESSURE) throw new Error("Missing desktop-agent wave-one pressure tuning");
-
-function timestampId() {
-  return new Date().toISOString().replace(/[:.]/g, "-");
-}
-
-const BASE_URL = parseBaseUrl(process.env.BASE_URL ?? DEFAULT_BASE_URL);
-const SKILLS_URL = new URL(
-  process.env.SKILLS_URL ?? "/skills.md",
-  BASE_URL,
-).toString();
-const AGENT_NAME = trimAgentName(process.env.AGENT_NAME, DEFAULT_AGENT_NAME);
-const HEADLESS = parseBooleanEnv(process.env.HEADLESS, true);
-const REQUIRED_DEATHS = Math.max(1, Number(process.env.REQUIRED_DEATHS ?? 2));
-const STEP_MS = Math.max(100, Number(process.env.STEP_MS ?? 125));
-const DEFAULT_MAX_STEPS = Math.ceil(
-  (REQUIRED_DEATHS * (WAVE_ONE_PRESSURE.fullPressureS + 30) * 1_000) / STEP_MS,
-);
-const MAX_STEPS = Math.max(1, Number(process.env.MAX_STEPS ?? DEFAULT_MAX_STEPS));
-const OUTPUT_DIR = path.resolve(
-  process.cwd(),
-  process.env.OUTPUT_DIR ?? `../../artifacts/playwright/no-context-agent-smoke/${timestampId()}`,
-);
-
-await ensureDir(OUTPUT_DIR);
-
+const baseUrl = parseBaseUrl(process.env.BASE_URL ?? DEFAULT_BASE_URL);
+const origin = new URL(baseUrl).origin;
+const skillsUrl = new URL(process.env.SKILLS_URL ?? "/skills.md", baseUrl).href;
+const outputDir = path.resolve(process.env.OUTPUT_DIR
+  ?? `../../artifacts/playwright/no-context-agent-smoke/${new Date().toISOString().replace(/[:.]/g, "-")}`);
 const { browser, context, page } = await launchBrowser({
-  headless: HEADLESS,
+  headless: parseBooleanEnv(process.env.HEADLESS, true),
   viewport: process.env.CI || process.env.PW_SOFTWARE_RENDERING === "1" ? { width: 640, height: 400 } : undefined,
 });
-const consoleRecorder = attachConsoleRecorder(page);
+const recorder = attachConsoleRecorder(page);
+const apiResponses = [];
+page.on("request", (request) => {
+  const url = new URL(request.url());
+  if (url.origin === origin && url.pathname.startsWith("/api/")) {
+    apiResponses.push(request.response().then((response) =>
+      response && response.status() >= 400 ? `${request.method()} ${url.pathname}: HTTP ${response.status()}` : null));
+  }
+});
 
-function hasRequiredSkillsText(skillsText) {
-  const normalized = skillsText.toLowerCase();
-  return [
-    "[data-testid=\"agent-mode\"]",
-    "[data-testid=\"play\"]",
-    "[data-testid=\"agent-name\"]",
-    "[data-testid=\"play-again\"]",
-    "agent_observe",
-    "render_game_to_text",
-    "contract mismatch",
-  ].every((snippet) => normalized.includes(snippet.toLowerCase()));
-}
-
-const summary = {
-  baseUrl: BASE_URL,
-  skillsUrl: SKILLS_URL,
-  agentName: AGENT_NAME,
-  headless: HEADLESS,
-  requiredDeaths: REQUIRED_DEATHS,
-  outputDir: OUTPUT_DIR,
-  startedAt: new Date().toISOString(),
-  skills: {
-    requiredSnippetsPresent: false,
-    title: null,
-  },
-  runtime: {
-    apiStatus: null,
-    deathsObserved: 0,
-    respawnsObserved: 0,
-    cycles: [],
-  },
-};
-
+let phase = "authenticate";
 try {
-  await authorizeDeploymentBrowser(context, BASE_URL, SKILLS_URL);
-  await page.goto(SKILLS_URL, { waitUntil: "domcontentloaded", timeout: 90_000 });
-  const skillsText = (await page.textContent("body")) ?? "";
-  summary.skills.requiredSnippetsPresent = hasRequiredSkillsText(skillsText);
-  summary.skills.title = skillsText.split("\n")[0] ?? null;
-
-  if (!summary.skills.requiredSnippetsPresent) {
-    throw new Error("skills.md is missing one or more required no-context contract snippets");
+  await authorizeDeploymentBrowser(context, baseUrl, skillsUrl);
+  phase = "public guide";
+  const guide = await page.goto(skillsUrl, { waitUntil: "domcontentloaded", timeout: 30_000 });
+  if (!guide?.ok()) throw new Error(`Public guide returned HTTP ${guide?.status() ?? "unknown"}`);
+  const text = (await page.locator("body").innerText()).toLowerCase();
+  for (const snippet of [
+    '[data-testid="agent-mode"]', '[data-testid="play"]', '[data-testid="agent-name"]',
+    '[data-testid="play-again"]', "agent_observe", "agent_apply_action", "render_game_to_text", "contract mismatch",
+  ]) {
+    if (!text.includes(snippet)) throw new Error(`Public guide is missing ${snippet}`);
   }
 
-  await gotoAgentRuntimeViaUi(page, {
-    baseUrl: BASE_URL,
-    agentName: AGENT_NAME,
+  phase = "start game";
+  const state = await gotoAgentRuntimeViaUi(page, {
+    baseUrl,
+    agentName: trimAgentName(process.env.AGENT_NAME, DEFAULT_AGENT_NAME),
   });
-
-  summary.runtime.apiStatus = await getDocumentedAgentApiStatus(page);
-  await page.screenshot({ path: path.join(OUTPUT_DIR, "runtime-start.png") });
-
-  let previousAlive = true;
-
-  for (let step = 0; step < MAX_STEPS && summary.runtime.deathsObserved < REQUIRED_DEATHS; step += 1) {
-    const state = await readDocumentedAgentState(page);
-    const alive = state.gameplay?.alive === true;
-    const gameOverVisible = state.gameplay?.gameOverVisible === true;
-
-    if (!alive || gameOverVisible) {
-      const deathLastRun = state.score?.lastRun ?? null;
-      const deathLastRunSummary = state.lastRunSummary ?? null;
-      if (previousAlive) {
-        summary.runtime.deathsObserved += 1;
-        summary.runtime.cycles.push({
-          deathIndex: summary.runtime.deathsObserved,
-          lastRun: deathLastRun,
-          best: state.score?.best ?? null,
-          lastRunSummary: deathLastRunSummary,
-        });
-        await page.screenshot({
-          path: path.join(OUTPUT_DIR, `death-${sanitizeFileSegment(String(summary.runtime.deathsObserved))}.png`),
-        });
-      }
-
-      const restartedState = await restartPublicAgentRun(page);
-      if ((restartedState.score?.current ?? null) !== 0) {
-        throw new Error(`Restarted run score should reset to 0, got ${restartedState.score?.current ?? "n/a"}`);
-      }
-      if ((restartedState.score?.lastRun ?? null) !== deathLastRun) {
-        throw new Error(
-          `Restarted run should preserve score.lastRun=${deathLastRun ?? "null"}, got ${restartedState.score?.lastRun ?? "null"}`,
-        );
-      }
-      if ((restartedState.lastRunSummary?.finalScore ?? null) !== (deathLastRunSummary?.finalScore ?? null)) {
-        throw new Error(
-          `Restarted run should preserve lastRunSummary.finalScore=${deathLastRunSummary?.finalScore ?? "null"}, got ${restartedState.lastRunSummary?.finalScore ?? "null"}`,
-        );
-      }
-      const activeCycle = summary.runtime.cycles[summary.runtime.cycles.length - 1] ?? null;
-      if (activeCycle) {
-        activeCycle.restartedCurrentScore = restartedState.score?.current ?? null;
-        activeCycle.restartedLastRun = restartedState.score?.lastRun ?? null;
-        activeCycle.restartedLastRunSummary = restartedState.lastRunSummary ?? null;
-      }
-      summary.runtime.respawnsObserved += 1;
-      console.log(`[smoke:public] restart verified ${summary.runtime.respawnsObserved}/${REQUIRED_DEATHS}`);
-      await page.screenshot({
-        path: path.join(OUTPUT_DIR, `respawn-${sanitizeFileSegment(String(summary.runtime.respawnsObserved))}.png`),
-      });
-      previousAlive = true;
-      continue;
-    }
-
-    previousAlive = true;
-    await page.evaluate(({ stepIndex }) => {
-      const fire = stepIndex % 10 === 0;
-      const moveX = stepIndex % 60 < 30 ? 0.25 : -0.2;
-      const lookYawDelta = stepIndex % 2 === 0 ? 1.35 : -0.7;
-      window.agent_apply_action?.({
-        moveX,
-        moveZ: 1,
-        lookYawDelta,
-        fire,
-      });
-    }, { stepIndex: step });
-
-    // The public game advances on its own clock. Extra simulation time invalidates scored runs.
-    await page.waitForTimeout(STEP_MS);
+  const api = await getDocumentedAgentApiStatus(page);
+  if (!api.agentObserve || !api.agentApplyAction || !api.advanceTime || !api.renderGameToText) {
+    throw new Error("A documented public agent API is missing");
+  }
+  if (state.mode !== "runtime" || !state.runtimeReady || state.gameplay?.alive !== true
+    || state.gameplay.gameOverVisible !== false) {
+    throw new Error("The player is not alive in the ready game");
+  }
+  const magazine = state.ammo?.mag;
+  if (!Number.isInteger(magazine) || magazine <= 0 || !Number.isInteger(state.ammo.reserve) || state.ammo.reserve < 0) {
+    throw new Error("Invalid starting ammunition");
   }
 
-  if (summary.runtime.deathsObserved < REQUIRED_DEATHS) {
-    throw new Error(
-      `Observed ${summary.runtime.deathsObserved} deaths; expected at least ${REQUIRED_DEATHS}`,
-    );
-  }
-  if (summary.runtime.respawnsObserved < REQUIRED_DEATHS) {
-    throw new Error(
-      `Observed ${summary.runtime.respawnsObserved} respawns; expected at least ${REQUIRED_DEATHS}`,
-    );
-  }
-  if ((summary.runtime.apiStatus?.agentApplyAction ?? false) !== true) {
-    throw new Error("agent_apply_action is unavailable during runtime");
-  }
-  if ((summary.runtime.apiStatus?.advanceTime ?? false) !== true) {
-    throw new Error("advanceTime is unavailable during runtime");
-  }
-  if ((summary.runtime.apiStatus?.agentObserve ?? false) !== true && (summary.runtime.apiStatus?.renderGameToText ?? false) !== true) {
-    throw new Error("Neither agent_observe nor render_game_to_text is available during runtime");
-  }
-  if (consoleRecorder.counts().errorCount > 0) {
-    throw new Error(`Console/page errors observed: ${consoleRecorder.counts().errorCount}`);
+  phase = "fire";
+  try {
+    await evaluateRuntimeState(page, () => window.agent_apply_action({ fire: true }));
+    await page.waitForFunction((initial) => {
+      const { ammo, gameplay } = JSON.parse(window.agent_observe());
+      return gameplay?.alive === true && Number.isInteger(ammo?.mag) && ammo.mag >= 0 && ammo.mag < initial;
+    }, magazine, { timeout: 9_000 });
+  } finally {
+    await evaluateRuntimeState(page, () => window.agent_apply_action({ fire: false }));
   }
 
-  summary.finishedAt = new Date().toISOString();
-  await writeJson(path.join(OUTPUT_DIR, "summary.json"), summary);
-  await writeJson(path.join(OUTPUT_DIR, "console.json"), {
-    events: consoleRecorder.snapshot(),
-    counts: consoleRecorder.counts(),
-  });
-  console.log(`[smoke:public] pass | deaths=${summary.runtime.deathsObserved} | respawns=${summary.runtime.respawnsObserved} | output=${OUTPUT_DIR}`);
+  phase = "browser and API checks";
+  const failures = (await withTimeout(() => Promise.all(apiResponses), 9_000, "Gameplay API requests")).filter(Boolean);
+  if (failures.length) throw new Error(failures.join(", "));
+  const { errorCount } = recorder.counts();
+  if (errorCount) throw new Error(`Observed ${errorCount} browser errors`);
+  console.log("[smoke:public] pass | game ready, firing consumed ammunition");
 } catch (error) {
-  summary.finishedAt = new Date().toISOString();
-  summary.failed = true;
-  summary.failure = error instanceof Error ? error.message : String(error);
-  await writeJson(path.join(OUTPUT_DIR, "summary.json"), summary);
-  await writeJson(path.join(OUTPUT_DIR, "console.json"), {
-    events: consoleRecorder.snapshot(),
-    counts: consoleRecorder.counts(),
-  });
-  throw error;
+  await ensureDir(outputDir);
+  const message = error instanceof Error ? error.message : String(error);
+  await writeJson(path.join(outputDir, "summary.json"), { failed: true, phase, failure: message });
+  await writeJson(path.join(outputDir, "console.json"), { counts: recorder.counts(), events: recorder.snapshot().slice(-30) });
+  await page.screenshot({ path: path.join(outputDir, "failure.png"), timeout: 5_000 }).catch(() => {});
+  console.error(`[smoke:public] failed during ${phase} | ${message} | output=${outputDir}`);
+  process.exitCode = 1;
 } finally {
   await context.close();
   await browser.close();

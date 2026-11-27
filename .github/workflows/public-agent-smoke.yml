@@ -27,7 +27,7 @@ jobs:
       deployment: false
     # Keep the installed Playwright browser on its supported Linux release.
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     env:
       BASE_URL: ${{ github.event.client_payload.url || 'https://clawd-strike.vercel.app/' }}
       DEPLOY_SHA: ${{ github.event.client_payload.git.sha }}
@@ -72,10 +72,9 @@ jobs:
       - run: pnpm --filter @clawd-strike/client exec playwright install --with-deps chromium
 
       - name: Public agent smoke
+        timeout-minutes: 4
         run: pnpm smoke:public
         env:
-          # A release needs one complete play/restart journey. The daily run also checks repetition.
-          REQUIRED_DEATHS: ${{ github.event_name == 'schedule' && '2' || '1' }}
           VERCEL_AUTOMATION_BYPASS_SECRET: ${{ github.event_name == 'repository_dispatch' && secrets.VERCEL_AUTOMATION_BYPASS_SECRET || '' }}
 
       # The live domain may intentionally serve an older release. Compare bytes

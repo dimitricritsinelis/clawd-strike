@@ -29,10 +29,10 @@ Inspect options with `pnpm <command> -- --help` before selecting a target. For t
 
 1. On a PR, GitHub runs the [CI job](../.github/workflows/ci.yml) and Vercel builds a preview. The required GitHub check on `main` is `build`.
 2. After merge, GitHub tests the merged commit and Vercel builds the production candidate in parallel. Production deployments must pass the Vercel Deployment Checks for the GitHub contexts `build` and `production-gameplay` before Vercel assigns the live domain.
-3. Vercel sends `vercel.deployment.ready` to GitHub. The [gameplay workflow](../.github/workflows/public-agent-smoke.yml) checks out the candidate commit, plays through one death and restart at its deployment URL, and compares its served `skills.md` with that commit. It reports the result on the deployed commit. The live version keeps serving while a check is pending or failed.
-4. After promotion, a half-hour [uptime check](../.github/workflows/uptime.yml) probes the homepage and leaderboard API. The daily gameplay run plays two rounds on the public URL to check repeated restarts. A manual run exercises one round. For map, animation or device-specific changes, run the additional [focused checks](development.md) before release.
+3. Vercel sends `vercel.deployment.ready` to GitHub. The [gameplay workflow](../.github/workflows/public-agent-smoke.yml) opens the candidate through the real menu, waits for a live player and fires. The check passes when the magazine count drops and the browser reports no errors. It also compares the served `skills.md` with the deployed commit. Vercel keeps serving the previous version until both required checks pass.
+4. After promotion, a half-hour [uptime check](../.github/workflows/uptime.yml) probes the homepage and leaderboard API. The daily and manual monitors repeat the same short gameplay check on the live URL. The PR browser suite covers death and restart. For map, animation or device-specific changes, run the additional [focused checks](development.md) before release.
 
-The monitor plays in real time so the server can validate each run's elapsed time. Testing all leaderboard operations on a PR preview requires a separate preview database. An unconfigured preview can play the game while its leaderboard endpoints return HTTP 503.
+Testing the leaderboard on a PR preview requires a separate preview database. An unconfigured preview can play the game while its leaderboard endpoints return HTTP 503.
 
 ## Release settings and recovery
 
